@@ -1,0 +1,1 @@
+export const getDocument = () => document;
