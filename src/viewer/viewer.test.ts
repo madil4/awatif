@@ -1,10 +1,12 @@
 import * as THREE from "three";
 import { GridHelper } from "three";
+import { Lines } from "./lines";
 import { OrbitControls } from "./utils/OrbitControls";
-import { Viewer } from "./viewer";
+import { Model, Viewer } from "./viewer";
 
 jest.mock("three");
 jest.mock("./utils/OrbitControls");
+jest.mock("./lines");
 
 describe("Viewer", () => {
   const renderer = {
@@ -20,6 +22,8 @@ describe("Viewer", () => {
   (THREE.GridHelper as unknown as jest.Mock).mockReturnValue(grid);
   const scene = { add: jest.fn() };
   (THREE.Scene as unknown as jest.Mock).mockReturnValue(scene);
+  const lines = { update: jest.fn() };
+  (Lines as unknown as jest.Mock).mockReturnValue(lines);
 
   test("should render a scene in animation loop on init", () => {
     new Viewer();
@@ -56,6 +60,13 @@ describe("Viewer", () => {
     expect(scene.add).toHaveBeenCalledWith(grid);
   });
 
+  test("should add lines on init", () => {
+    new Viewer();
+
+    expect(Lines).toHaveBeenCalled();
+    expect(scene.add).toHaveBeenCalledWith(lines);
+  });
+
   describe("render", () => {
     test("should return the dom element", () => {
       const viewer = new Viewer();
@@ -63,6 +74,29 @@ describe("Viewer", () => {
       const rendered = viewer.render();
 
       expect(rendered).toBe(renderer.domElement);
+    });
+  });
+
+  describe("update", () => {
+    it("should update lines", () => {
+      const viewer = new Viewer();
+      const model: Model = {
+        positions: [
+          [0, 0, 0],
+          [1, 2, 3],
+        ],
+        connectivities: [
+          [1, 2],
+          [3, 2],
+        ],
+      };
+
+      viewer.update(model);
+
+      expect(lines.update).toHaveBeenCalledWith(
+        model.positions,
+        model.connectivities
+      );
     });
   });
 });

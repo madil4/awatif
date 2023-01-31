@@ -1,10 +1,17 @@
 import * as THREE from "three";
 import { OrbitControls } from "./utils/OrbitControls";
+import { Lines } from "./lines";
+
+export interface Model {
+  positions: [number, number, number][];
+  connectivities: [number, number][];
+}
 
 export class Viewer {
   private _renderer: THREE.WebGLRenderer;
   private _scene: THREE.Scene;
   private _camera: THREE.PerspectiveCamera;
+  private _lines: Lines;
 
   constructor() {
     this._renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -25,9 +32,16 @@ export class Viewer {
     const grid = new THREE.GridHelper(10, 10);
     grid.position.set(0, -2, 0);
     this._scene.add(grid);
+
+    this._lines = new Lines();
+    this._scene.add(this._lines);
   }
 
   render(): HTMLElement {
     return this._renderer.domElement;
+  }
+
+  update(model: Model) {
+    this._lines.update(model.positions, model.connectivities);
   }
 }
