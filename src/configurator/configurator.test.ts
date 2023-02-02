@@ -1,29 +1,24 @@
 import { Pane } from "tweakpane";
-import { Configurtor, Parameters, ParameterType } from "./configurator";
-import { getDocument } from "./utils/getDocument";
+import { Configurator, Parameters, ParameterType } from "./configurator";
 
 jest.mock("tweakpane");
-jest.mock("./utils/getDocument");
 
 describe("Configurator", () => {
-  const container = { style: { width: "0px" } };
-  const document = { createElement: jest.fn().mockReturnValue(container) };
-  (getDocument as jest.Mock).mockReturnValue(document);
+  let configurator: Configurator;
+
+  const pane = { addInput: jest.fn(), element: { style: { width: "0px" } } };
+  (Pane as jest.Mock).mockReturnValue(pane);
+
+  beforeEach(() => {
+    configurator = new Configurator();
+  });
 
   test("should create a new Pane on init", () => {
-    new Configurtor();
-
-    expect(getDocument).toHaveBeenCalled();
-    expect(document.createElement).toHaveBeenCalledWith("div");
-    expect(Pane).toHaveBeenCalledWith({ container, title: "Parameters" });
-    expect(container.style.width).toBe("300px");
+    expect(Pane).toHaveBeenCalledWith({ title: "Parameters" });
+    expect(pane.element.style.width).toBe("300px");
   });
 
   describe("render", () => {
-    const pane = { addInput: jest.fn() };
-    (Pane as jest.Mock).mockReturnValue(pane);
-    const configurator = new Configurtor();
-
     test("should render a slider", () => {
       const parameters: Parameters = {
         height: {
@@ -43,7 +38,7 @@ describe("Configurator", () => {
         step: parameters.height.step,
         label: "height",
       });
-      expect(rendered).toBe(container);
+      expect(rendered).toBe(pane.element);
     });
 
     test("should render multiple sliders", () => {
@@ -67,19 +62,29 @@ describe("Configurator", () => {
       const rendered = configurator.render(parameters);
 
       expect(pane.addInput).toHaveBeenCalledTimes(2);
-      expect(pane.addInput).toHaveBeenCalledWith(parameters.height, "value", {
-        min: parameters.height.min,
-        max: parameters.height.max,
-        step: parameters.height.step,
-        label: "height",
-      });
-      expect(pane.addInput).toHaveBeenCalledWith(parameters.width, "value", {
-        min: parameters.width.min,
-        max: parameters.width.max,
-        step: parameters.width.step,
-        label: "width",
-      });
-      expect(rendered).toBe(container);
+      expect(pane.addInput).toHaveBeenNthCalledWith(
+        1,
+        parameters.height,
+        "value",
+        {
+          min: parameters.height.min,
+          max: parameters.height.max,
+          step: parameters.height.step,
+          label: "height",
+        }
+      );
+      expect(pane.addInput).toHaveBeenNthCalledWith(
+        2,
+        parameters.width,
+        "value",
+        {
+          min: parameters.width.min,
+          max: parameters.width.max,
+          step: parameters.width.step,
+          label: "width",
+        }
+      );
+      expect(rendered).toBe(pane.element);
     });
   });
 });
