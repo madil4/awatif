@@ -1,8 +1,8 @@
 import { Meta, StoryFn } from "@storybook/html";
 import {
-  Configurtor,
   ParameterType,
   Parameters,
+  Configurator,
 } from "../src/configurator/configurator";
 
 export default {
@@ -10,7 +10,7 @@ export default {
 } as Meta;
 
 const template: StoryFn = (args: Parameters): HTMLElement => {
-  const configurator = new Configurtor();
+  const configurator = new Configurator();
 
   return configurator.render(args);
 };
