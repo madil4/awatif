@@ -4,7 +4,16 @@ import { LineSegments2 } from "./utils/lines/LineSegments2";
 import { Lut } from "./utils/lut";
 import { convertToColors } from "./utils/convert-to-colors";
 import { convertToPositions } from "./utils/convert-to-positions";
-import { GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import {
+  BoxGeometry,
+  GridHelper,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer,
+} from "three";
+import { convertToSupports } from "./utils/convert-to-supports";
 
 export class Viewer {
   private _renderer: WebGLRenderer;
@@ -62,5 +71,14 @@ export class Viewer {
     (this._lines.geometry as any).setColors(
       convertToColors(model.connectivities, analysisResults, this._colorMapper)
     );
+
+    convertToSupports(model).map((position) => {
+      const cube = new Mesh(
+        new BoxGeometry(0.25, 0.25, 0.25),
+        new MeshBasicMaterial({ color: 0x00ff00 })
+      );
+      cube.position.fromArray(position);
+      this._scene.add(cube);
+    });
   }
 }

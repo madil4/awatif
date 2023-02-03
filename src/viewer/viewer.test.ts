@@ -130,5 +130,7 @@ describe("Viewer", () => {
       );
       expect(lines.geometry.setColors).toHaveBeenCalledWith(colors);
     });
+
+    it.todo("should update supports");
   });
 });

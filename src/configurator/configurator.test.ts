@@ -23,7 +23,7 @@ describe("Configurator", () => {
     test("should render a slider", () => {
       const parameters: Parameters = {
         height: {
-          type: ParameterType.Slider,
+          type: ParameterType.slider,
           value: 50,
           min: 0,
           max: 100,
@@ -45,14 +45,14 @@ describe("Configurator", () => {
     test("should render multiple sliders", () => {
       const parameters: Parameters = {
         height: {
-          type: ParameterType.Slider,
+          type: ParameterType.slider,
           value: 50,
           min: 0,
           max: 100,
           step: 1,
         },
         width: {
-          type: ParameterType.Slider,
+          type: ParameterType.slider,
           value: 40,
           min: 0,
           max: 50,
