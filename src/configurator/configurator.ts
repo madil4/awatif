@@ -1,17 +1,5 @@
 import { Pane } from "tweakpane";
-
-export enum ParameterType {
-  Slider = "Slider",
-}
-interface SliderParameter {
-  type: ParameterType.Slider;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-}
-type Parameter = SliderParameter;
-export type Parameters = { [name: string]: Parameter };
+import { Parameters } from "../interfaces";
 
 export class Configurator {
   private _pane: Pane;
