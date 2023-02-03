@@ -1,5 +1,10 @@
 import { Meta, StoryFn } from "@storybook/html";
-import { AnalysisResults, AnalysisResultType, Model } from "../src/interfaces";
+import {
+  AnalysisResults,
+  AnalysisResultType,
+  AssignmentType,
+  Model,
+} from "../src/interfaces";
 import { Viewer } from "../src/viewer/viewer";
 
 export default {
@@ -59,4 +64,38 @@ ColoredLines.args = {
     [1]: { type: AnalysisResultType.bar, stress: 0.5 },
     [2]: { type: AnalysisResultType.bar, stress: 1 },
   } as AnalysisResults,
+};
+
+export const Supports = template.bind({});
+Supports.args = {
+  model: {
+    positions: [
+      [-5, 0, 0],
+      [0, 5, 0],
+      [5, 0, 0],
+      [0, 0, 2],
+      [2, 5, -3],
+    ],
+    connectivities: [
+      [0, 1],
+      [1, 2],
+      [3, 4],
+    ],
+    assignments: [
+      [
+        0,
+        {
+          type: AssignmentType.barSupports,
+          firstNode: [true, true],
+        },
+      ],
+      [
+        1,
+        {
+          type: AssignmentType.barSupports,
+          secondNode: [true, false],
+        },
+      ],
+    ],
+  } as Model,
 };

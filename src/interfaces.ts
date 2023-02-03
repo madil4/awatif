@@ -1,3 +1,4 @@
+// parameters
 export enum ParameterType {
   slider = "slider",
 }
@@ -11,11 +12,23 @@ interface SliderParameter {
 type Parameter = SliderParameter;
 export type Parameters = { [name: string]: Parameter };
 
+// model
+export enum AssignmentType {
+  barSupports = "barSupports",
+}
+interface BarSupportsAssignment {
+  type: AssignmentType.barSupports;
+  firstNode: [boolean, boolean];
+  secondNode: [boolean, boolean];
+}
+export type Assignment = BarSupportsAssignment;
 export interface Model {
   positions: [number, number, number][];
   connectivities: [number, number][];
+  assignments?: [number, Assignment][];
 }
 
+// analysis result
 export enum AnalysisResultType {
   bar = "bar",
 }
@@ -25,3 +38,5 @@ interface BarAnalysisResult {
 }
 type AnalysisResult = BarAnalysisResult;
 export type AnalysisResults = { [element: number]: AnalysisResult };
+
+// design result
