@@ -5,6 +5,7 @@ import { Lines } from "./lines";
 export interface Model {
   positions: [number, number, number][];
   connectivities: [number, number][];
+  colors?: [number, number, number][];
 }
 
 export class Viewer {
@@ -42,6 +43,6 @@ export class Viewer {
   }
 
   update(model: Model) {
-    this._lines.update(model.positions, model.connectivities);
+    this._lines.update(model.positions, model.connectivities, model.colors);
   }
 }
