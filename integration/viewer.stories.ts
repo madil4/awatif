@@ -1,58 +1,62 @@
 import { Meta, StoryFn } from "@storybook/html";
-import { Model, Viewer } from "../src/viewer/viewer";
+import { AnalysisResults, AnalysisResultType, Model } from "../src/interfaces";
+import { Viewer } from "../src/viewer/viewer";
 
 export default {
   title: "Viewer",
 } as Meta;
 
-const template: StoryFn = (args: any): HTMLElement => {
+const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer();
-  viewer.update(args);
+  viewer.update(args.model, args.analysisResults);
   return viewer.render();
 };
 
 export const Grid = template.bind({});
 Grid.args = {
-  positions: [],
-  connectivities: [],
-} as Model;
+  model: {
+    positions: [],
+    connectivities: [],
+  } as Model,
+};
 
 export const Lines = template.bind({});
 Lines.args = {
-  positions: [
-    [-5, 0, 0],
-    [0, 5, 0],
-    [5, 0, 0],
-    [0, 0, 2],
-    [2, 5, -3],
-  ],
-  connectivities: [
-    [0, 1],
-    [1, 2],
-    [3, 4],
-  ],
-} as Model;
+  model: {
+    positions: [
+      [-5, 0, 0],
+      [0, 5, 0],
+      [5, 0, 0],
+      [0, 0, 2],
+      [2, 5, -3],
+    ],
+    connectivities: [
+      [0, 1],
+      [1, 2],
+      [3, 4],
+    ],
+  } as Model,
+};
 
 export const ColoredLines = template.bind({});
 ColoredLines.args = {
-  positions: [
-    [-5, 0, 0],
-    [0, 5, 0],
-    [5, 0, 0],
-    [0, 0, 2],
-    [2, 5, -3],
-  ],
-  connectivities: [
-    [0, 1],
-    [1, 2],
-    [3, 4],
-  ],
-  colors: [
-    [200, 0, 0],
-    [200, 0, 0],
-    [0, 100, 0],
-    [0, 100, 0],
-    [0, 0, 150],
-    [0, 0, 150],
-  ],
-} as Model;
+  model: {
+    positions: [
+      [-5, 0, 0],
+      [0, 5, 0],
+      [5, 0, 0],
+      [0, 0, 2],
+      [2, 5, -3],
+    ],
+    connectivities: [
+      [0, 1],
+      [1, 2],
+      [3, 4],
+    ],
+  } as Model,
+  analysisResults: {
+    [0]: { type: AnalysisResultType.bar, stress: 0 },
+    [1]: { type: AnalysisResultType.bar, stress: 0.5 },
+    [2]: { type: AnalysisResultType.bar, stress: 1 },
+  } as AnalysisResults,
+};

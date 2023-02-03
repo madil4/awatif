@@ -1,5 +1,6 @@
 import { Pane } from "tweakpane";
-import { Configurator, Parameters, ParameterType } from "./configurator";
+import { ParameterType, Parameters } from "../interfaces";
+import { Configurator } from "./configurator";
 
 jest.mock("tweakpane");
 

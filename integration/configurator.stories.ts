@@ -1,9 +1,6 @@
 import { Meta, StoryFn } from "@storybook/html";
-import {
-  ParameterType,
-  Parameters,
-  Configurator,
-} from "../src/configurator/configurator";
+import { Configurator } from "../src/configurator/configurator";
+import { ParameterType, Parameters } from "../src/interfaces";
 
 export default {
   title: "Configurator",
@@ -17,7 +14,7 @@ const template: StoryFn = (args: Parameters): HTMLElement => {
 export const Slider = template.bind({});
 Slider.args = {
   height: {
-    type: ParameterType.Slider,
+    type: ParameterType.slider,
     value: 50,
     min: 0,
     max: 100,
@@ -28,14 +25,14 @@ Slider.args = {
 export const Sliders = template.bind({});
 Sliders.args = {
   height: {
-    type: ParameterType.Slider,
+    type: ParameterType.slider,
     value: 50,
     min: 0,
     max: 100,
     step: 1,
   },
   width: {
-    type: ParameterType.Slider,
+    type: ParameterType.slider,
     value: 40,
     min: 0,
     max: 50,
