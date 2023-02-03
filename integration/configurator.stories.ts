@@ -11,7 +11,6 @@ export default {
 
 const template: StoryFn = (args: Parameters): HTMLElement => {
   const configurator = new Configurator();
-
   return configurator.render(args);
 };
 

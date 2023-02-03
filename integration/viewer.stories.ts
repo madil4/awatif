@@ -32,3 +32,27 @@ Lines.args = {
     [3, 4],
   ],
 } as Model;
+
+export const ColoredLines = template.bind({});
+ColoredLines.args = {
+  positions: [
+    [-5, 0, 0],
+    [0, 5, 0],
+    [5, 0, 0],
+    [0, 0, 2],
+    [2, 5, -3],
+  ],
+  connectivities: [
+    [0, 1],
+    [1, 2],
+    [3, 4],
+  ],
+  colors: [
+    [200, 0, 0],
+    [200, 0, 0],
+    [0, 100, 0],
+    [0, 100, 0],
+    [0, 0, 150],
+    [0, 0, 150],
+  ],
+} as Model;
