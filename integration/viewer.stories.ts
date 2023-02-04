@@ -99,3 +99,37 @@ Supports.args = {
     ],
   } as Model,
 };
+
+export const UniformLoad = template.bind({});
+UniformLoad.args = {
+  model: {
+    positions: [
+      [-5, 0, 0],
+      [0, 5, 0],
+      [5, 0, 0],
+      [0, 0, 2],
+      [2, 5, -3],
+    ],
+    connectivities: [
+      [0, 1],
+      [1, 2],
+      [3, 4],
+    ],
+    assignments: [
+      [
+        0,
+        {
+          type: AssignmentType.barUniformLoad,
+          load: -100,
+        },
+      ],
+      [
+        1,
+        {
+          type: AssignmentType.barUniformLoad,
+          load: -100,
+        },
+      ],
+    ],
+  } as Model,
+};
