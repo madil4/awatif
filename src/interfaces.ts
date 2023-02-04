@@ -15,13 +15,18 @@ export type Parameters = { [name: string]: Parameter };
 // model
 export enum AssignmentType {
   barSupports = "barSupports",
+  barUniformLoad = "barUniformLoad",
 }
 interface BarSupportsAssignment {
   type: AssignmentType.barSupports;
   firstNode: [boolean, boolean];
   secondNode: [boolean, boolean];
 }
-export type Assignment = BarSupportsAssignment;
+interface BarUniformLoadAssignment {
+  type: AssignmentType.barUniformLoad;
+  load: number;
+}
+export type Assignment = BarSupportsAssignment | BarUniformLoadAssignment;
 export interface Model {
   positions: [number, number, number][];
   connectivities: [number, number][];

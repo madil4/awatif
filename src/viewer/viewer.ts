@@ -6,14 +6,19 @@ import { convertToColors } from "./utils/convert-to-colors";
 import { convertToPositions } from "./utils/convert-to-positions";
 import {
   BoxGeometry,
+  DoubleSide,
   GridHelper,
   Mesh,
   MeshBasicMaterial,
   PerspectiveCamera,
+  PlaneGeometry,
+  Quaternion,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from "three";
 import { convertToSupports } from "./utils/convert-to-supports";
+import { getUniformLoads } from "./utils/get-uniform-loads";
 
 export class Viewer {
   private _renderer: WebGLRenderer;
@@ -65,6 +70,7 @@ export class Viewer {
   }
 
   update(model: Model, analysisResults?: AnalysisResults) {
+    // lines
     (this._lines.geometry as any).setPositions(
       convertToPositions(model.connectivities, model.positions)
     );
@@ -72,6 +78,7 @@ export class Viewer {
       convertToColors(model.connectivities, analysisResults, this._colorMapper)
     );
 
+    // supports
     convertToSupports(model).map((position) => {
       const cube = new Mesh(
         new BoxGeometry(0.25, 0.25, 0.25),
@@ -80,5 +87,48 @@ export class Viewer {
       cube.position.fromArray(position);
       this._scene.add(cube);
     });
+
+    // loads
+    getUniformLoads(model).map((element: any[]) => {
+      this.renderUniformLoad(element);
+    });
+  }
+
+  private renderUniformLoad(element: any[]) {
+    const start = new Vector3(...element[0]);
+    const end = new Vector3(...element[1]);
+    const vector = end.clone().sub(start);
+    const normal = start.clone().cross(end).normalize();
+    const length = start.distanceTo(end);
+
+    const beforeNormal = new Vector3(0, 0, 1);
+    const cross = normal.clone().cross(beforeNormal).normalize();
+    const angle = beforeNormal.angleTo(normal);
+    const rotation = new Quaternion()
+      .setFromAxisAngle(cross, angle)
+      .normalize();
+
+    const plane = new Mesh(
+      new PlaneGeometry(length, 0.5),
+      new MeshBasicMaterial({
+        color: 0x00ff00,
+        side: DoubleSide,
+      })
+    );
+
+    plane.position.copy(start);
+    plane.applyQuaternion(rotation);
+
+    const xAxis = new Vector3(1, 0, 0).applyQuaternion(rotation);
+    const angle2 = xAxis.angleTo(vector);
+    if (xAxis.cross(vector).z > 0) {
+      plane.rotateZ(angle2);
+    } else {
+      plane.rotateZ(-angle2);
+    }
+    plane.translateX(length / 2);
+    plane.translateY(0.5);
+
+    this._scene.add(plane);
   }
 }
