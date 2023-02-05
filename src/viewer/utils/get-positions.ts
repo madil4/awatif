@@ -1,4 +1,4 @@
-export const convertToPositions = (
+export const getPositions = (
   connectivities: [number, number][],
   positions: [number, number, number][]
 ): number[] => {

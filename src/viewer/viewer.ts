@@ -1,9 +1,8 @@
 import { OrbitControls } from "./utils/OrbitControls";
 import { AnalysisResults, Model } from "../interfaces";
 import { LineSegments2 } from "./utils/lines/LineSegments2";
-import { Lut } from "./utils/lut";
-import { convertToColors } from "./utils/convert-to-colors";
-import { convertToPositions } from "./utils/convert-to-positions";
+import { getColors } from "./utils/get-colors";
+import { getPositions } from "./utils/get-positions";
 import {
   BoxGeometry,
   DoubleSide,
@@ -17,17 +16,46 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
-import { convertToSupports } from "./utils/convert-to-supports";
+import { getSupports } from "./utils/get-supports";
 import { getUniformLoads } from "./utils/get-uniform-loads";
+import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
+import { ViewerLabel } from "./viewer-label";
+
+export interface ViewerSettingsState {
+  supports: boolean;
+  loads: boolean;
+  deformed: boolean;
+  result: string;
+}
 
 export class Viewer {
+  private _settingsState: ViewerSettingsState;
+  private _settingsPanel: ViewerSettingsPanel;
+  private _label: ViewerLabel;
   private _renderer: WebGLRenderer;
   private _scene: Scene;
   private _camera: PerspectiveCamera;
   private _lines: LineSegments2;
-  private _colorMapper: Lut;
 
   constructor() {
+    // settings state
+    this._settingsState = {
+      supports: false,
+      loads: false,
+      deformed: false,
+      result: "none",
+    };
+
+    // setting panel
+    this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
+    this._settingsPanel.setExpanded(false);
+
+    // label
+    this._label = new ViewerLabel();
+    this._label.setHidden(true);
+
+    // threeJS stuff
+    // 3d renderer
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     this._scene = new Scene();
@@ -61,25 +89,47 @@ export class Viewer {
     );
     this._scene.add(this._lines);
 
-    // colorMapper
-    this._colorMapper = new Lut("cooltowarm");
+    // handlers
+    this._settingsPanel.onChange(() => {
+      this._label.setHidden(
+        this._settingsState.result == "none" ? true : false
+      );
+    });
   }
 
-  render(): HTMLElement {
-    return this._renderer.domElement;
+  getHTML(): HTMLElement {
+    const container = document.createElement("div");
+
+    const viewer = this._renderer.domElement;
+    viewer.style.margin = "-1rem"; // only for storybook
+    container.appendChild(viewer);
+
+    const settings = this._settingsPanel.getHTML();
+    settings.style.position = "absolute";
+    settings.style.top = "0px";
+    settings.style.left = "2rem";
+    container.appendChild(settings);
+
+    const label = this._label.getHTML();
+    label.style.position = "absolute";
+    label.style.top = "10rem";
+    label.style.left = "2rem";
+    container.appendChild(label);
+
+    return container;
   }
 
-  update(model: Model, analysisResults?: AnalysisResults) {
+  update(model: Model, analysisResults?: AnalysisResults): void {
     // lines
     (this._lines.geometry as any).setPositions(
-      convertToPositions(model.connectivities, model.positions)
+      getPositions(model.connectivities, model.positions)
     );
     (this._lines.geometry as any).setColors(
-      convertToColors(model.connectivities, analysisResults, this._colorMapper)
+      getColors(model.connectivities, analysisResults, this._label.getColor)
     );
 
     // supports
-    convertToSupports(model).map((position) => {
+    getSupports(model).map((position) => {
       const cube = new Mesh(
         new BoxGeometry(0.25, 0.25, 0.25),
         new MeshBasicMaterial({ color: 0x00ff00 })
