@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const viewerSettingState: ViewerSettingsState = {
-  supports: true,
+  supports: false,
   loads: false,
   deformed: false,
   result: "none",
@@ -68,7 +68,7 @@ const analysisResults: AnalysisResults = {
 };
 
 const template: StoryFn = (args): HTMLElement => {
-  const viewer = new Viewer(args.ViewerSettingsState);
+  const viewer = new Viewer(args.viewerSettingState);
   viewer.update(args.model, args.analysisResults);
   return viewer.getHTML();
 };
@@ -83,6 +83,7 @@ Grid.args = {
 
 export const Lines = template.bind({});
 Lines.args = {
+  viewerSettingState,
   model,
 };
 
@@ -95,12 +96,12 @@ ColoredLines.args = {
 
 export const Supports = template.bind({});
 Supports.args = {
-  viewerSettingState,
+  viewerSettingState: { ...viewerSettingState, supports: true },
   model,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
-  viewerSettingState,
+  viewerSettingState: { ...viewerSettingState, loads: true },
   model,
 };

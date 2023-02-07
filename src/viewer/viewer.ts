@@ -38,13 +38,14 @@ export class Viewer {
   private _camera: PerspectiveCamera;
   private _lines: LineSegments2;
   private _supports: Group;
+  private _loads: Group;
 
-  constructor(viewerSettingState?: ViewerSettingsState) {
+  constructor(viewerSettingsState?: ViewerSettingsState) {
     // settings state
-    this._settingsState = viewerSettingState
-      ? viewerSettingState
+    this._settingsState = viewerSettingsState
+      ? viewerSettingsState
       : {
-          supports: true,
+          supports: false,
           loads: false,
           deformed: false,
           result: "none",
@@ -52,11 +53,11 @@ export class Viewer {
 
     // setting panel
     this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
-    this._settingsPanel.setExpanded(false);
+    this._settingsPanel.expanded = false;
 
     // label
     this._label = new ViewerLabel();
-    this._label.setHidden(true);
+    this._label.hidden = this._settingsState.result == "none" ? true : false;
 
     // threeJS stuff
     // 3d renderer
@@ -98,13 +99,16 @@ export class Viewer {
     this._supports.visible = this._settingsState.supports;
     this._scene.add(this._supports);
 
+    // loads
+    this._loads = new Group();
+    this._loads.visible = this._settingsState.loads;
+    this._scene.add(this._loads);
+
     // handlers
     this._settingsPanel.onChange(() => {
-      this._label.setHidden(
-        this._settingsState.result == "none" ? true : false
-      );
-
+      this._label.hidden = this._settingsState.result == "none" ? true : false;
       this._supports.visible = this._settingsState.supports;
+      this._loads.visible = this._settingsState.loads;
     });
   }
 
@@ -190,6 +194,6 @@ export class Viewer {
     plane.translateX(length / 2);
     plane.translateY(0.5);
 
-    this._scene.add(plane);
+    this._loads.add(plane);
   }
 }

@@ -11,7 +11,7 @@ export class ViewerLabel {
     this._canvas.style.width = "15px";
   }
 
-  setHidden(value: boolean) {
+  set hidden(value: boolean) {
     this._canvas.hidden = value;
   }
 
