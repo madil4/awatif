@@ -14,11 +14,11 @@ export class ViewerSettingsPanel {
     this._pane.addInput(this._state, "supports");
     this._pane.addInput(this._state, "loads");
     this._pane.addInput(this._state, "deformed");
-    this._pane.addInput(this._state, "result", {
+    this._pane.addInput(this._state, "results", {
       options: {
         none: "none",
-        forces: "forces",
-        stresses: "stresses",
+        stress: "stress",
+        steel: "steel",
       },
     });
   }
@@ -27,7 +27,7 @@ export class ViewerSettingsPanel {
     this._pane.expanded = value;
   }
 
-  getHTML() {
+  get HTML() {
     return this._pane.element;
   }
 

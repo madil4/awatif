@@ -7,7 +7,7 @@ export default {
 
 const template: StoryFn = (): any => {
   const viewerLabel = new ViewerLabel();
-  return viewerLabel.getHTML();
+  return viewerLabel.HTML;
 };
 
 export const Primary = template.bind({});

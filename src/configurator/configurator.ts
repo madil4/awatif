@@ -19,7 +19,7 @@ export class Configurator {
     });
   }
 
-  getHTML(): HTMLElement {
+  get HTML(): HTMLElement {
     return this._pane.element;
   }
 }
