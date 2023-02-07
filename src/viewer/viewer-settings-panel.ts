@@ -23,7 +23,7 @@ export class ViewerSettingsPanel {
     });
   }
 
-  setExpanded(value: boolean) {
+  set expanded(value: boolean) {
     this._pane.expanded = value;
   }
 
