@@ -14,6 +14,7 @@ import {
   PlaneGeometry,
   Quaternion,
   Scene,
+  Vector2,
   Vector3,
   WebGLRenderer,
 } from "three";
@@ -21,12 +22,13 @@ import { getSupports } from "./utils/get-supports";
 import { getUniformLoads } from "./utils/get-uniform-loads";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
+import { LineMaterial } from "./utils/lines/LineMaterial";
 
 export interface ViewerSettingsState {
   supports: boolean;
   loads: boolean;
   deformed: boolean;
-  result: string;
+  results: string;
 }
 
 export class Viewer {
@@ -48,7 +50,7 @@ export class Viewer {
           supports: false,
           loads: false,
           deformed: false,
-          result: "none",
+          results: "none",
         };
 
     // setting panel
@@ -57,7 +59,7 @@ export class Viewer {
 
     // label
     this._label = new ViewerLabel();
-    this._label.hidden = this._settingsState.result == "none" ? true : false;
+    this._label.hidden = this._settingsState.results == "none" ? true : false;
 
     // threeJS stuff
     // 3d renderer
@@ -84,14 +86,20 @@ export class Viewer {
     this._scene.add(grid);
 
     // lines
+    const linesNoColor = new LineMaterial({
+      color: "white",
+      linewidth: 2,
+      resolution: new Vector2(window.innerWidth, window.innerHeight),
+    });
+    const linesColor = new LineMaterial({
+      color: "white",
+      vertexColors: true,
+      linewidth: 2,
+      resolution: new Vector2(window.innerWidth, window.innerHeight),
+    });
     this._lines = new LineSegments2();
-    (this._lines.material as any).linewidth = 2;
-    (this._lines.material as any).vertexColors = true;
-    (this._lines.material as any).color.set("white");
-    (this._lines.material as any).resolution.set(
-      window.innerWidth,
-      window.innerHeight
-    );
+    this._lines.material =
+      this._settingsState.results == "none" ? linesNoColor : linesColor;
     this._scene.add(this._lines);
 
     // supports
@@ -106,26 +114,28 @@ export class Viewer {
 
     // handlers
     this._settingsPanel.onChange(() => {
-      this._label.hidden = this._settingsState.result == "none" ? true : false;
+      this._label.hidden = this._settingsState.results == "none" ? true : false;
+      this._lines.material =
+        this._settingsState.results == "none" ? linesNoColor : linesColor;
       this._supports.visible = this._settingsState.supports;
       this._loads.visible = this._settingsState.loads;
     });
   }
 
-  getHTML(): HTMLElement {
+  get HTML(): HTMLElement {
     const container = document.createElement("div");
 
     const viewer = this._renderer.domElement;
     viewer.style.margin = "-1rem"; // only for storybook
     container.appendChild(viewer);
 
-    const settings = this._settingsPanel.getHTML();
+    const settings = this._settingsPanel.HTML;
     settings.style.position = "absolute";
     settings.style.top = "0px";
     settings.style.left = "2rem";
     container.appendChild(settings);
 
-    const label = this._label.getHTML();
+    const label = this._label.HTML;
     label.style.position = "absolute";
     label.style.top = "10rem";
     label.style.left = "2rem";

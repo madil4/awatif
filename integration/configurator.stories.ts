@@ -8,7 +8,7 @@ export default {
 
 const template: StoryFn = (args: Parameters): HTMLElement => {
   const configurator = new Configurator(args);
-  return configurator.getHTML();
+  return configurator.HTML;
 };
 
 export const Slider = template.bind({});

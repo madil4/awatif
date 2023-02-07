@@ -10,9 +10,9 @@ const template: StoryFn = (): HTMLElement => {
     supports: false,
     loads: true,
     deformed: false,
-    result: "none",
+    results: "none",
   });
-  return viewerSettingsPanel.getHTML();
+  return viewerSettingsPanel.HTML;
 };
 
 export const Primary = template.bind({});

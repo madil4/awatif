@@ -15,7 +15,7 @@ export class ViewerLabel {
     this._canvas.hidden = value;
   }
 
-  getHTML() {
+  get HTML() {
     return this._canvas;
   }
 

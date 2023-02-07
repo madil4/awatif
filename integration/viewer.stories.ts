@@ -15,7 +15,7 @@ const viewerSettingState: ViewerSettingsState = {
   supports: false,
   loads: false,
   deformed: false,
-  result: "none",
+  results: "none",
 };
 const model: Model = {
   positions: [
@@ -70,7 +70,7 @@ const analysisResults: AnalysisResults = {
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer(args.viewerSettingState);
   viewer.update(args.model, args.analysisResults);
-  return viewer.getHTML();
+  return viewer.HTML;
 };
 
 export const Grid = template.bind({});
@@ -85,11 +85,12 @@ export const Lines = template.bind({});
 Lines.args = {
   viewerSettingState,
   model,
+  analysisResults,
 };
 
 export const ColoredLines = template.bind({});
 ColoredLines.args = {
-  viewerSettingState,
+  viewerSettingState: { ...viewerSettingState, results: "stress" },
   model,
   analysisResults,
 };
@@ -98,10 +99,12 @@ export const Supports = template.bind({});
 Supports.args = {
   viewerSettingState: { ...viewerSettingState, supports: true },
   model,
+  analysisResults,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
   viewerSettingState: { ...viewerSettingState, loads: true },
   model,
+  analysisResults,
 };
