@@ -14,7 +14,7 @@ export default {
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer();
   viewer.update(args.model, args.analysisResults);
-  return viewer.render();
+  return viewer.getHTML();
 };
 
 export const Grid = template.bind({});

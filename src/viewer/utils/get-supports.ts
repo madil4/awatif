@@ -1,6 +1,6 @@
 import { AssignmentType, Model } from "../../interfaces";
 
-export function convertToSupports(model: Model) {
+export function getSupports(model: Model) {
   const supports: any = [];
   model.assignments?.forEach((assignment) => {
     if (assignment[1].type == AssignmentType.barSupports) {

@@ -1,15 +1,14 @@
 import { AnalysisResults } from "../../interfaces";
-import { Lut } from "./lut";
 
-export const convertToColors = (
+export const getColors = (
   connectivities: [number, number][],
   analysisResults: AnalysisResults | undefined,
-  colorMapper: Lut
+  getColor: (value: number) => number[]
 ): number[] => {
-  const colors: [number, number, number][] = [];
+  const colors: number[][] = [];
   connectivities.forEach((_, index) => {
     const color = analysisResults
-      ? colorMapper.getColor(analysisResults[index].stress).toArray()
+      ? getColor(analysisResults[index].stress)
       : [1, 1, 1];
     colors.push(color);
     colors.push(color);

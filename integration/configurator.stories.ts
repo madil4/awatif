@@ -7,8 +7,8 @@ export default {
 } as Meta;
 
 const template: StoryFn = (args: Parameters): HTMLElement => {
-  const configurator = new Configurator();
-  return configurator.render(args);
+  const configurator = new Configurator(args);
+  return configurator.getHTML();
 };
 
 export const Slider = template.bind({});
