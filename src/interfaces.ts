@@ -19,8 +19,8 @@ export enum AssignmentType {
 }
 interface BarSupportsAssignment {
   type: AssignmentType.barSupports;
-  firstNode: [boolean, boolean];
-  secondNode: [boolean, boolean];
+  firstNode?: [boolean, boolean];
+  secondNode?: [boolean, boolean];
 }
 interface BarUniformLoadAssignment {
   type: AssignmentType.barUniformLoad;

@@ -5,14 +5,70 @@ import {
   AssignmentType,
   Model,
 } from "../src/interfaces";
-import { Viewer } from "../src/viewer/viewer";
+import { Viewer, ViewerSettingsState } from "../src/viewer/viewer";
 
 export default {
   title: "Viewer",
 } as Meta;
 
+const viewerSettingState: ViewerSettingsState = {
+  supports: true,
+  loads: false,
+  deformed: false,
+  result: "none",
+};
+const model: Model = {
+  positions: [
+    [-5, 0, 0],
+    [0, 5, 0],
+    [5, 0, 0],
+    [0, 0, 2],
+    [2, 5, -3],
+  ],
+  connectivities: [
+    [0, 1],
+    [1, 2],
+    [3, 4],
+  ],
+  assignments: [
+    [
+      0,
+      {
+        type: AssignmentType.barSupports,
+        firstNode: [true, true],
+      },
+    ],
+    [
+      1,
+      {
+        type: AssignmentType.barSupports,
+        secondNode: [true, false],
+      },
+    ],
+    [
+      0,
+      {
+        type: AssignmentType.barUniformLoad,
+        load: -100,
+      },
+    ],
+    [
+      1,
+      {
+        type: AssignmentType.barUniformLoad,
+        load: -100,
+      },
+    ],
+  ],
+};
+const analysisResults: AnalysisResults = {
+  [0]: { type: AnalysisResultType.bar, stress: 0 },
+  [1]: { type: AnalysisResultType.bar, stress: 0.5 },
+  [2]: { type: AnalysisResultType.bar, stress: 1 },
+};
+
 const template: StoryFn = (args): HTMLElement => {
-  const viewer = new Viewer();
+  const viewer = new Viewer(args.ViewerSettingsState);
   viewer.update(args.model, args.analysisResults);
   return viewer.getHTML();
 };
@@ -22,114 +78,29 @@ Grid.args = {
   model: {
     positions: [],
     connectivities: [],
-  } as Model,
+  },
 };
 
 export const Lines = template.bind({});
 Lines.args = {
-  model: {
-    positions: [
-      [-5, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [0, 0, 2],
-      [2, 5, -3],
-    ],
-    connectivities: [
-      [0, 1],
-      [1, 2],
-      [3, 4],
-    ],
-  } as Model,
+  model,
 };
 
 export const ColoredLines = template.bind({});
 ColoredLines.args = {
-  model: {
-    positions: [
-      [-5, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [0, 0, 2],
-      [2, 5, -3],
-    ],
-    connectivities: [
-      [0, 1],
-      [1, 2],
-      [3, 4],
-    ],
-  } as Model,
-  analysisResults: {
-    [0]: { type: AnalysisResultType.bar, stress: 0 },
-    [1]: { type: AnalysisResultType.bar, stress: 0.5 },
-    [2]: { type: AnalysisResultType.bar, stress: 1 },
-  } as AnalysisResults,
+  viewerSettingState,
+  model,
+  analysisResults,
 };
 
 export const Supports = template.bind({});
 Supports.args = {
-  model: {
-    positions: [
-      [-5, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [0, 0, 2],
-      [2, 5, -3],
-    ],
-    connectivities: [
-      [0, 1],
-      [1, 2],
-      [3, 4],
-    ],
-    assignments: [
-      [
-        0,
-        {
-          type: AssignmentType.barSupports,
-          firstNode: [true, true],
-        },
-      ],
-      [
-        1,
-        {
-          type: AssignmentType.barSupports,
-          secondNode: [true, false],
-        },
-      ],
-    ],
-  } as Model,
+  viewerSettingState,
+  model,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
-  model: {
-    positions: [
-      [-5, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [0, 0, 2],
-      [2, 5, -3],
-    ],
-    connectivities: [
-      [0, 1],
-      [1, 2],
-      [3, 4],
-    ],
-    assignments: [
-      [
-        0,
-        {
-          type: AssignmentType.barUniformLoad,
-          load: -100,
-        },
-      ],
-      [
-        1,
-        {
-          type: AssignmentType.barUniformLoad,
-          load: -100,
-        },
-      ],
-    ],
-  } as Model,
+  viewerSettingState,
+  model,
 };

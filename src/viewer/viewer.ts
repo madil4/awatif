@@ -7,6 +7,7 @@ import {
   BoxGeometry,
   DoubleSide,
   GridHelper,
+  Group,
   Mesh,
   MeshBasicMaterial,
   PerspectiveCamera,
@@ -36,15 +37,18 @@ export class Viewer {
   private _scene: Scene;
   private _camera: PerspectiveCamera;
   private _lines: LineSegments2;
+  private _supports: Group;
 
-  constructor() {
+  constructor(viewerSettingState?: ViewerSettingsState) {
     // settings state
-    this._settingsState = {
-      supports: false,
-      loads: false,
-      deformed: false,
-      result: "none",
-    };
+    this._settingsState = viewerSettingState
+      ? viewerSettingState
+      : {
+          supports: true,
+          loads: false,
+          deformed: false,
+          result: "none",
+        };
 
     // setting panel
     this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
@@ -89,11 +93,18 @@ export class Viewer {
     );
     this._scene.add(this._lines);
 
+    // supports
+    this._supports = new Group();
+    this._supports.visible = this._settingsState.supports;
+    this._scene.add(this._supports);
+
     // handlers
     this._settingsPanel.onChange(() => {
       this._label.setHidden(
         this._settingsState.result == "none" ? true : false
       );
+
+      this._supports.visible = this._settingsState.supports;
     });
   }
 
@@ -135,7 +146,7 @@ export class Viewer {
         new MeshBasicMaterial({ color: 0x00ff00 })
       );
       cube.position.fromArray(position);
-      this._scene.add(cube);
+      this._supports.add(cube);
     });
 
     // loads
