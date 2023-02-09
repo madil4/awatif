@@ -167,6 +167,11 @@ export class Viewer {
     getUniformLoads(model).map((element: any[]) => {
       this.renderUniformLoad(element);
     });
+
+    // label max and min
+    this._label.updateMaxMin(
+      this.getMaxMin(analysisResults, this._settingsState.results)
+    );
   }
 
   private renderUniformLoad(element: any[]) {
@@ -205,5 +210,24 @@ export class Viewer {
     plane.translateY(0.5);
 
     this._loads.add(plane);
+  }
+
+  private getMaxMin(
+    analysisResults: AnalysisResults | undefined,
+    type: string
+  ) {
+    const result: number[] = [0];
+    if (analysisResults) {
+      Object.keys(analysisResults).forEach((key) => {
+        if (type in analysisResults[key]) {
+          result.push(analysisResults[key][type]);
+        }
+      });
+    }
+
+    return {
+      max: Math.max(...result),
+      min: Math.min(...result),
+    };
   }
 }
