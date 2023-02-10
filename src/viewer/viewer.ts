@@ -1,7 +1,6 @@
 import { OrbitControls } from "./utils/OrbitControls";
 import { AnalysisResults, Model } from "../interfaces";
 import { LineSegments2 } from "./utils/lines/LineSegments2";
-import { getColors } from "./utils/get-colors";
 import { getPositions } from "./utils/get-positions";
 import {
   BoxGeometry,
@@ -23,13 +22,14 @@ import { getUniformLoads } from "./utils/get-uniform-loads";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "./utils/lines/LineMaterial";
+import { cacheResults } from "./utils/cache-results";
 
 export interface ViewerState {
   supports: boolean;
   loads: boolean;
   deformed: boolean;
   results: string;
-  cashed?: { [type: string]: { colors: number; max: number; min: number } };
+  cashed?: { [type: string]: { colors: number[]; max: number; min: number } };
 }
 
 export class Viewer {
@@ -112,6 +112,9 @@ export class Viewer {
       this._loads.visible = this._state.loads;
 
       if (this._state.cashed) {
+        (this._lines.geometry as any).setColors(
+          this._state.cashed[this._state.results].colors
+        );
         this._label.updateMaxMin(
           this._state.cashed[this._state.results].max,
           this._state.cashed[this._state.results].min
@@ -143,12 +146,10 @@ export class Viewer {
   }
 
   update(model: Model, analysisResults?: AnalysisResults): void {
-    // lines
     (this._lines.geometry as any).setPositions(
       getPositions(model.connectivities, model.positions)
     );
 
-    // supports
     getSupports(model).map((position) => {
       const cube = new Mesh(
         new BoxGeometry(0.25, 0.25, 0.25),
@@ -158,20 +159,20 @@ export class Viewer {
       this._supports.add(cube);
     });
 
-    // loads
     getUniformLoads(model).map((element: any[]) => {
       this.renderUniformLoad(element);
     });
 
-    // colors per type
-    (this._lines.geometry as any).setColors(
-      getColors(model.connectivities, analysisResults, this._label.getColor)
+    this._state.cashed = cacheResults(
+      model.connectivities,
+      analysisResults,
+      this._label.getColor
     );
 
-    // label max and min per type
-    this._state.cashed = this.cashResult(analysisResults);
-
-    if (this._state.cashed) {
+    if (this._state.cashed && this._state.results != "none") {
+      (this._lines.geometry as any).setColors(
+        this._state.cashed[this._state.results].colors
+      );
       this._label.updateMaxMin(
         this._state.cashed[this._state.results]?.max,
         this._state.cashed[this._state.results]?.min
@@ -215,26 +216,5 @@ export class Viewer {
     plane.translateY(0.5);
 
     this._loads.add(plane);
-  }
-
-  private cashResult(analysisResults: AnalysisResults | undefined) {
-    if (!analysisResults) return;
-
-    const stresses: number[] = [];
-    const forces: number[] = [];
-
-    Object.keys(analysisResults).forEach((key) => {
-      stresses.push(analysisResults[key].stress);
-      forces.push(analysisResults[key].force);
-    });
-
-    return {
-      stress: {
-        colors: 12,
-        max: Math.max(...stresses),
-        min: Math.min(...stresses),
-      },
-      force: { colors: 12, max: Math.max(...forces), min: Math.min(...forces) },
-    };
   }
 }

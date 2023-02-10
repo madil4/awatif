@@ -62,9 +62,9 @@ const model: Model = {
   ],
 };
 const analysisResults: AnalysisResults = {
-  [0]: { type: AnalysisResultType.bar, stress: 0, force: 10 },
-  [1]: { type: AnalysisResultType.bar, stress: 0.5, force: 20 },
-  [2]: { type: AnalysisResultType.bar, stress: 1, force: 30 },
+  [0]: { type: AnalysisResultType.bar, stress: 0, force: 0 },
+  [1]: { type: AnalysisResultType.bar, stress: 0.5, force: 90 },
+  [2]: { type: AnalysisResultType.bar, stress: 1, force: 100 },
 };
 
 const template: StoryFn = (args): HTMLElement => {
@@ -88,9 +88,16 @@ Lines.args = {
   analysisResults,
 };
 
-export const ColoredLines = template.bind({});
-ColoredLines.args = {
+export const ColoredLines1 = template.bind({});
+ColoredLines1.args = {
   state: { ...state, results: "stress" },
+  model,
+  analysisResults,
+};
+
+export const ColoredLines2 = template.bind({});
+ColoredLines2.args = {
+  state: { ...state, results: "force" },
   model,
   analysisResults,
 };
