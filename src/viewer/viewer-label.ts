@@ -47,7 +47,7 @@ export class ViewerLabel {
   getColor = (value: number): number[] =>
     this._colorMapper.getColor(value).toArray();
 
-  updateMaxMin = ({ max, min }: { max: number; min: number }) => {
+  updateMaxMin = (max: number, min: number) => {
     this._max.innerText = `max:${max}`;
     this._min.innerText = `min:${min}`;
   };

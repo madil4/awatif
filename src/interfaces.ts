@@ -40,6 +40,7 @@ export enum AnalysisResultType {
 interface BarAnalysisResult {
   type: AnalysisResultType.bar;
   stress: number;
+  force: number;
 }
 type AnalysisResult = BarAnalysisResult;
 export type AnalysisResults = { [element: number]: AnalysisResult };

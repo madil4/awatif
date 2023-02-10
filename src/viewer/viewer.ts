@@ -24,15 +24,16 @@ import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-pa
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "./utils/lines/LineMaterial";
 
-export interface ViewerSettingsState {
+export interface ViewerState {
   supports: boolean;
   loads: boolean;
   deformed: boolean;
   results: string;
+  cashed?: { [type: string]: { colors: number; max: number; min: number } };
 }
 
 export class Viewer {
-  private _settingsState: ViewerSettingsState;
+  private _state: ViewerState;
   private _settingsPanel: ViewerSettingsPanel;
   private _label: ViewerLabel;
   private _renderer: WebGLRenderer;
@@ -42,10 +43,9 @@ export class Viewer {
   private _supports: Group;
   private _loads: Group;
 
-  constructor(viewerSettingsState?: ViewerSettingsState) {
-    // settings state
-    this._settingsState = viewerSettingsState
-      ? viewerSettingsState
+  constructor(state?: ViewerState) {
+    this._state = state
+      ? state
       : {
           supports: false,
           loads: false,
@@ -53,16 +53,12 @@ export class Viewer {
           results: "none",
         };
 
-    // setting panel
-    this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
+    this._settingsPanel = new ViewerSettingsPanel(this._state);
     this._settingsPanel.expanded = false;
 
-    // label
     this._label = new ViewerLabel();
-    this._label.hidden = this._settingsState.results == "none" ? true : false;
+    this._label.hidden = this._state.results == "none" ? true : false;
 
-    // threeJS stuff
-    // 3d renderer
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     this._scene = new Scene();
@@ -77,15 +73,12 @@ export class Viewer {
       this._renderer.render(this._scene, this._camera);
     });
 
-    // orbit controls
     new OrbitControls(this._camera, this._renderer.domElement);
 
-    // grid
     const grid = new GridHelper(10, 10);
     grid.position.set(0, -2, 0);
     this._scene.add(grid);
 
-    // lines
     const linesNoColor = new LineMaterial({
       color: "white",
       linewidth: 2,
@@ -99,26 +92,31 @@ export class Viewer {
     });
     this._lines = new LineSegments2();
     this._lines.material =
-      this._settingsState.results == "none" ? linesNoColor : linesColor;
+      this._state.results == "none" ? linesNoColor : linesColor;
     this._scene.add(this._lines);
 
-    // supports
     this._supports = new Group();
-    this._supports.visible = this._settingsState.supports;
+    this._supports.visible = this._state.supports;
     this._scene.add(this._supports);
 
-    // loads
     this._loads = new Group();
-    this._loads.visible = this._settingsState.loads;
+    this._loads.visible = this._state.loads;
     this._scene.add(this._loads);
 
     // handlers
     this._settingsPanel.onChange(() => {
-      this._label.hidden = this._settingsState.results == "none" ? true : false;
+      this._label.hidden = this._state.results == "none" ? true : false;
       this._lines.material =
-        this._settingsState.results == "none" ? linesNoColor : linesColor;
-      this._supports.visible = this._settingsState.supports;
-      this._loads.visible = this._settingsState.loads;
+        this._state.results == "none" ? linesNoColor : linesColor;
+      this._supports.visible = this._state.supports;
+      this._loads.visible = this._state.loads;
+
+      if (this._state.cashed) {
+        this._label.updateMaxMin(
+          this._state.cashed[this._state.results].max,
+          this._state.cashed[this._state.results].min
+        );
+      }
     });
   }
 
@@ -149,9 +147,6 @@ export class Viewer {
     (this._lines.geometry as any).setPositions(
       getPositions(model.connectivities, model.positions)
     );
-    (this._lines.geometry as any).setColors(
-      getColors(model.connectivities, analysisResults, this._label.getColor)
-    );
 
     // supports
     getSupports(model).map((position) => {
@@ -168,10 +163,20 @@ export class Viewer {
       this.renderUniformLoad(element);
     });
 
-    // label max and min
-    this._label.updateMaxMin(
-      this.getMaxMin(analysisResults, this._settingsState.results)
+    // colors per type
+    (this._lines.geometry as any).setColors(
+      getColors(model.connectivities, analysisResults, this._label.getColor)
     );
+
+    // label max and min per type
+    this._state.cashed = this.cashResult(analysisResults);
+
+    if (this._state.cashed) {
+      this._label.updateMaxMin(
+        this._state.cashed[this._state.results]?.max,
+        this._state.cashed[this._state.results]?.min
+      );
+    }
   }
 
   private renderUniformLoad(element: any[]) {
@@ -212,22 +217,24 @@ export class Viewer {
     this._loads.add(plane);
   }
 
-  private getMaxMin(
-    analysisResults: AnalysisResults | undefined,
-    type: string
-  ) {
-    const result: number[] = [0];
-    if (analysisResults) {
-      Object.keys(analysisResults).forEach((key) => {
-        if (type in analysisResults[key]) {
-          result.push(analysisResults[key][type]);
-        }
-      });
-    }
+  private cashResult(analysisResults: AnalysisResults | undefined) {
+    if (!analysisResults) return;
+
+    const stresses: number[] = [];
+    const forces: number[] = [];
+
+    Object.keys(analysisResults).forEach((key) => {
+      stresses.push(analysisResults[key].stress);
+      forces.push(analysisResults[key].force);
+    });
 
     return {
-      max: Math.max(...result),
-      min: Math.min(...result),
+      stress: {
+        colors: 12,
+        max: Math.max(...stresses),
+        min: Math.min(...stresses),
+      },
+      force: { colors: 12, max: Math.max(...forces), min: Math.min(...forces) },
     };
   }
 }
