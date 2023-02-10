@@ -1,11 +1,11 @@
 import { Pane } from "tweakpane";
-import { ViewerSettingsState } from "./viewer";
+import { ViewerState } from "./viewer";
 
 export class ViewerSettingsPanel {
   private _pane: Pane;
-  private _state: ViewerSettingsState;
+  private _state: ViewerState;
 
-  constructor(state: ViewerSettingsState) {
+  constructor(state: ViewerState) {
     this._state = state;
     this._pane = new Pane({ title: "Viewer Settings" });
 
@@ -18,7 +18,7 @@ export class ViewerSettingsPanel {
       options: {
         none: "none",
         stress: "stress",
-        steel: "steel",
+        force: "force",
       },
     });
   }

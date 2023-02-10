@@ -5,13 +5,13 @@ import {
   AssignmentType,
   Model,
 } from "../src/interfaces";
-import { Viewer, ViewerSettingsState } from "../src/viewer/viewer";
+import { Viewer, ViewerState } from "../src/viewer/viewer";
 
 export default {
   title: "Viewer",
 } as Meta;
 
-const viewerSettingState: ViewerSettingsState = {
+const state: ViewerState = {
   supports: false,
   loads: false,
   deformed: false,
@@ -62,13 +62,13 @@ const model: Model = {
   ],
 };
 const analysisResults: AnalysisResults = {
-  [0]: { type: AnalysisResultType.bar, stress: 0 },
-  [1]: { type: AnalysisResultType.bar, stress: 0.5 },
-  [2]: { type: AnalysisResultType.bar, stress: 1 },
+  [0]: { type: AnalysisResultType.bar, stress: 0, force: 10 },
+  [1]: { type: AnalysisResultType.bar, stress: 0.5, force: 20 },
+  [2]: { type: AnalysisResultType.bar, stress: 1, force: 30 },
 };
 
 const template: StoryFn = (args): HTMLElement => {
-  const viewer = new Viewer(args.viewerSettingState);
+  const viewer = new Viewer(args.state);
   viewer.update(args.model, args.analysisResults);
   return viewer.HTML;
 };
@@ -83,28 +83,28 @@ Grid.args = {
 
 export const Lines = template.bind({});
 Lines.args = {
-  viewerSettingState,
+  state,
   model,
   analysisResults,
 };
 
 export const ColoredLines = template.bind({});
 ColoredLines.args = {
-  viewerSettingState: { ...viewerSettingState, results: "stress" },
+  state: { ...state, results: "stress" },
   model,
   analysisResults,
 };
 
 export const Supports = template.bind({});
 Supports.args = {
-  viewerSettingState: { ...viewerSettingState, supports: true },
+  state: { ...state, supports: true },
   model,
   analysisResults,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
-  viewerSettingState: { ...viewerSettingState, loads: true },
+  state: { ...state, loads: true },
   model,
   analysisResults,
 };
