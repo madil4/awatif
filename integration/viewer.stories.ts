@@ -5,13 +5,14 @@ import {
   AssignmentType,
   Model,
 } from "../src/interfaces";
-import { Viewer, ViewerState } from "../src/viewer/viewer";
+import { Viewer } from "../src/viewer/viewer";
+import { ViewerSettingsState } from "../src/viewer/viewer-settings-panel";
 
 export default {
   title: "Viewer",
 } as Meta;
 
-const state: ViewerState = {
+const settingsState: ViewerSettingsState = {
   supports: false,
   loads: false,
   deformed: false,
@@ -70,7 +71,7 @@ const analysisResults: AnalysisResults = {
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer(args.state);
   viewer.update(args.model, args.analysisResults);
-  return viewer.HTML;
+  return viewer.render();
 };
 
 export const Grid = template.bind({});
@@ -83,35 +84,35 @@ Grid.args = {
 
 export const Lines = template.bind({});
 Lines.args = {
-  state,
+  state: settingsState,
   model,
   analysisResults,
 };
 
 export const ColoredLines1 = template.bind({});
 ColoredLines1.args = {
-  state: { ...state, results: "stress" },
+  state: { ...settingsState, results: "stress" },
   model,
   analysisResults,
 };
 
 export const ColoredLines2 = template.bind({});
 ColoredLines2.args = {
-  state: { ...state, results: "force" },
+  state: { ...settingsState, results: "force" },
   model,
   analysisResults,
 };
 
 export const Supports = template.bind({});
 Supports.args = {
-  state: { ...state, supports: true },
+  state: { ...settingsState, supports: true },
   model,
   analysisResults,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
-  state: { ...state, loads: true },
+  state: { ...settingsState, loads: true },
   model,
   analysisResults,
 };
