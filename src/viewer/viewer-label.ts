@@ -1,19 +1,20 @@
-import { Lut } from "./utils/lut";
-
 export class ViewerLabel {
-  private _colorMapper: Lut;
   private _canvas: HTMLCanvasElement;
   private _container: HTMLElement;
   private _max: HTMLElement;
   private _min: HTMLElement;
 
-  constructor() {
-    this._colorMapper = new Lut("rainbow");
-    this._canvas = this._colorMapper.createCanvas();
+  constructor(colorMapperCanvas: HTMLCanvasElement) {
+    this._canvas = colorMapperCanvas;
     this._container = document.createElement("div");
     this._max = document.createElement("div");
     this._min = document.createElement("div");
 
+    this._max.innerText = "max:0";
+    this._min.innerText = "min:0";
+  }
+
+  render() {
     this._canvas.style.width = "15px";
     this._container.appendChild(this._canvas);
 
@@ -25,33 +26,28 @@ export class ViewerLabel {
       display:block;
       color: #ffffff;
     `;
-    this._max.innerText = "test";
     this._max.style.cssText = maxMinCss;
     this._max.style.top = "0px";
     this._container.appendChild(this._max);
 
-    this._min.innerText = "min:-50";
     this._min.style.cssText = maxMinCss;
     this._min.style.bottom = "0px";
     this._container.appendChild(this._min);
-  }
 
-  set hidden(value: boolean) {
-    this._container.hidden = value;
-  }
-
-  get HTML() {
     return this._container;
   }
 
-  getColor = (value: number, max: number, min: number): number[] => {
-    this._colorMapper.setMax(max);
-    this._colorMapper.setMin(min);
-    return this._colorMapper.getColor(value).toArray();
-  };
-
-  updateMaxMin = (max: number, min: number) => {
-    this._max.innerText = `max:${max}`;
-    this._min.innerText = `min:${min}`;
-  };
+  update({
+    hidden,
+    max,
+    min,
+  }: {
+    hidden?: boolean;
+    max?: number;
+    min?: number;
+  }) {
+    if (hidden != undefined) this._container.hidden = hidden;
+    if (max != undefined) this._max.innerText = `max:${max}`;
+    if (min != undefined) this._min.innerText = `min:${min}`;
+  }
 }

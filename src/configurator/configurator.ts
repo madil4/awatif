@@ -7,8 +7,6 @@ export class Configurator {
   constructor(parameters: Parameters) {
     this._pane = new Pane({ title: "Parameters" });
 
-    this._pane.element.style.width = "300px";
-
     Object.keys(parameters).forEach((key) => {
       this._pane.addInput(parameters[key], "value", {
         min: parameters[key].min,
@@ -19,7 +17,9 @@ export class Configurator {
     });
   }
 
-  get HTML(): HTMLElement {
+  render(): HTMLElement {
+    this._pane.element.style.width = "300px";
+
     return this._pane.element;
   }
 }

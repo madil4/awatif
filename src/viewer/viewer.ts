@@ -19,22 +19,19 @@ import {
 } from "three";
 import { getSupports } from "./utils/get-supports";
 import { getUniformLoads } from "./utils/get-uniform-loads";
-import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
+import {
+  ViewerSettingsPanel as ViewerSettingsPanel,
+  ViewerSettingsState,
+} from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "./utils/lines/LineMaterial";
 import { cacheResults } from "./utils/cache-results";
-
-export interface ViewerState {
-  supports: boolean;
-  loads: boolean;
-  deformed: boolean;
-  results: string;
-  cashed?: { [type: string]: { colors: number[]; max: number; min: number } };
-}
+import { Lut } from "./utils/lut";
 
 export class Viewer {
-  private _state: ViewerState;
+  private _settingsState: ViewerSettingsState;
   private _settingsPanel: ViewerSettingsPanel;
+  private _colorMapper: Lut;
   private _label: ViewerLabel;
   private _renderer: WebGLRenderer;
   private _scene: Scene;
@@ -42,10 +39,13 @@ export class Viewer {
   private _lines: LineSegments2;
   private _supports: Group;
   private _loads: Group;
+  private _cached?: {
+    [type: string]: { colors: number[]; max: number; min: number };
+  };
 
-  constructor(state?: ViewerState) {
-    this._state = state
-      ? state
+  constructor(settingsState?: ViewerSettingsState) {
+    this._settingsState = settingsState
+      ? settingsState
       : {
           supports: false,
           loads: false,
@@ -53,11 +53,15 @@ export class Viewer {
           results: "none",
         };
 
-    this._settingsPanel = new ViewerSettingsPanel(this._state);
-    this._settingsPanel.expanded = false;
+    this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
+    this._settingsPanel.update({ expanded: false });
 
-    this._label = new ViewerLabel();
-    this._label.hidden = this._state.results == "none" ? true : false;
+    this._colorMapper = new Lut();
+
+    this._label = new ViewerLabel(this._colorMapper.createCanvas());
+    this._label.update({
+      hidden: this._settingsState.results == "none" ? true : false,
+    });
 
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
@@ -92,51 +96,53 @@ export class Viewer {
     });
     this._lines = new LineSegments2();
     this._lines.material =
-      this._state.results == "none" ? linesNoColor : linesColor;
+      this._settingsState.results == "none" ? linesNoColor : linesColor;
     this._scene.add(this._lines);
 
     this._supports = new Group();
-    this._supports.visible = this._state.supports;
+    this._supports.visible = this._settingsState.supports;
     this._scene.add(this._supports);
 
     this._loads = new Group();
-    this._loads.visible = this._state.loads;
+    this._loads.visible = this._settingsState.loads;
     this._scene.add(this._loads);
 
-    // handlers
+    // on settings change
     this._settingsPanel.onChange(() => {
-      this._label.hidden = this._state.results == "none" ? true : false;
+      this._label.update({
+        hidden: this._settingsState.results == "none" ? true : false,
+      });
       this._lines.material =
-        this._state.results == "none" ? linesNoColor : linesColor;
-      this._supports.visible = this._state.supports;
-      this._loads.visible = this._state.loads;
+        this._settingsState.results == "none" ? linesNoColor : linesColor;
+      this._supports.visible = this._settingsState.supports;
+      this._loads.visible = this._settingsState.loads;
 
-      if (this._state.cashed) {
+      if (this._cached) {
         (this._lines.geometry as any).setColors(
-          this._state.cashed[this._state.results].colors
+          this._cached[this._settingsState.results].colors
         );
-        this._label.updateMaxMin(
-          this._state.cashed[this._state.results].max,
-          this._state.cashed[this._state.results].min
-        );
+        this._label.update({
+          max: this._cached[this._settingsState.results].max,
+          min: this._cached[this._settingsState.results].min,
+        });
       }
     });
   }
 
-  get HTML(): HTMLElement {
+  render(): HTMLElement {
     const container = document.createElement("div");
 
     const viewer = this._renderer.domElement;
     viewer.style.margin = "-1rem"; // only for storybook
     container.appendChild(viewer);
 
-    const settings = this._settingsPanel.HTML;
+    const settings = this._settingsPanel.render();
     settings.style.position = "absolute";
     settings.style.top = "0px";
     settings.style.left = "2rem";
     container.appendChild(settings);
 
-    const label = this._label.HTML;
+    const label = this._label.render();
     label.style.position = "absolute";
     label.style.top = "10rem";
     label.style.left = "2rem";
@@ -163,20 +169,20 @@ export class Viewer {
       this.renderUniformLoad(element);
     });
 
-    this._state.cashed = cacheResults(
+    this._cached = cacheResults(
       model.connectivities,
       analysisResults,
-      this._label.getColor
+      this.getColor
     );
 
-    if (this._state.cashed && this._state.results != "none") {
+    if (this._cached && this._settingsState.results != "none") {
       (this._lines.geometry as any).setColors(
-        this._state.cashed[this._state.results].colors
+        this._cached[this._settingsState.results].colors
       );
-      this._label.updateMaxMin(
-        this._state.cashed[this._state.results]?.max,
-        this._state.cashed[this._state.results]?.min
-      );
+      this._label.update({
+        max: this._cached[this._settingsState.results]?.max,
+        min: this._cached[this._settingsState.results]?.min,
+      });
     }
   }
 
@@ -217,4 +223,10 @@ export class Viewer {
 
     this._loads.add(plane);
   }
+
+  private getColor = (value: number, max: number, min: number): number[] => {
+    this._colorMapper.setMax(max);
+    this._colorMapper.setMin(min);
+    return this._colorMapper.getColor(value).toArray();
+  };
 }

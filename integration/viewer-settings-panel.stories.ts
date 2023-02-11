@@ -12,7 +12,7 @@ const template: StoryFn = (): HTMLElement => {
     deformed: false,
     results: "none",
   });
-  return viewerSettingsPanel.HTML;
+  return viewerSettingsPanel.render();
 };
 
 export const Primary = template.bind({});
