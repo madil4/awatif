@@ -1,24 +1,34 @@
-import { AnalysisResults } from "../../interfaces";
+import { AnalysisResults, DesignResults } from "../../interfaces";
 
 export function cacheResults(
   connectivities: [number, number][],
   analysisResults: AnalysisResults | undefined,
+  designResults: DesignResults | undefined,
   getColor: (value: number, max: number, min: number) => number[]
 ) {
-  if (!analysisResults) return;
-
   const stresses: number[] = [];
   const forces: number[] = [];
+  const steels: number[] = [];
 
-  Object.keys(analysisResults).forEach((key) => {
-    stresses.push(analysisResults[key].stress);
-    forces.push(analysisResults[key].force);
-  });
+  if (analysisResults) {
+    Object.keys(analysisResults).forEach((key) => {
+      stresses.push(analysisResults[key].stress);
+      forces.push(analysisResults[key].force);
+    });
+  }
+
+  if (designResults) {
+    Object.keys(designResults).forEach((key) => {
+      steels.push(designResults[key].ratio);
+    });
+  }
 
   const stressMax = Math.max(...stresses);
   const stressMin = Math.min(...stresses);
   const forceMax = Math.max(...forces);
   const forceMin = Math.min(...forces);
+  const steelMax = Math.max(...steels);
+  const steelMin = Math.min(...steels);
 
   const stressColors: number[][] = [];
   connectivities.forEach((_, index) => {
@@ -38,6 +48,15 @@ export function cacheResults(
     forceColors.push(color);
   });
 
+  const steelColors: number[][] = [];
+  connectivities.forEach((_, index) => {
+    const color = designResults
+      ? getColor(designResults[index]["ratio"], steelMax, steelMin)
+      : [1, 1, 1];
+    steelColors.push(color);
+    steelColors.push(color);
+  });
+
   return {
     stress: {
       colors: stressColors.flat(),
@@ -48,6 +67,11 @@ export function cacheResults(
       colors: forceColors.flat(),
       max: forceMax,
       min: forceMin,
+    },
+    steel: {
+      colors: steelColors.flat(),
+      max: steelMax,
+      min: steelMin,
     },
   };
 }

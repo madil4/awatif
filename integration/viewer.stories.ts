@@ -3,6 +3,8 @@ import {
   AnalysisResults,
   AnalysisResultType,
   AssignmentType,
+  DesignResults,
+  DesignResultType,
   Model,
 } from "../src/interfaces";
 import { Viewer } from "../src/viewer/viewer";
@@ -67,40 +69,53 @@ const analysisResults: AnalysisResults = {
   [1]: { type: AnalysisResultType.bar, stress: 0.5, force: 90 },
   [2]: { type: AnalysisResultType.bar, stress: 1, force: 100 },
 };
+const designResults: DesignResults = {
+  [0]: { type: DesignResultType.steel, ratio: 0.5 },
+  [1]: { type: DesignResultType.steel, ratio: 1 },
+  [2]: { type: DesignResultType.steel, ratio: 2 },
+};
 
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer(args.state);
-  viewer.update(args.model, args.analysisResults);
+  viewer.update(args.model, args.analysisResults, args.designResults);
   return viewer.render();
 };
 
-export const Grid = template.bind({});
-Grid.args = {
+export const Empty = template.bind({});
+Empty.args = {
+  state: settingsState,
   model: {
     positions: [],
     connectivities: [],
   },
 };
 
-export const Lines = template.bind({});
-Lines.args = {
+export const WithoutResults = template.bind({});
+WithoutResults.args = {
   state: settingsState,
   model,
-  analysisResults,
 };
 
-export const ColoredLines1 = template.bind({});
-ColoredLines1.args = {
+export const AnalysisResults1 = template.bind({});
+AnalysisResults1.args = {
   state: { ...settingsState, results: "stress" },
   model,
   analysisResults,
 };
 
-export const ColoredLines2 = template.bind({});
-ColoredLines2.args = {
+export const AnalysisResults2 = template.bind({});
+AnalysisResults2.args = {
   state: { ...settingsState, results: "force" },
   model,
   analysisResults,
+};
+
+export const DesignResult = template.bind({});
+DesignResult.args = {
+  state: { ...settingsState, results: "steel" },
+  model,
+  analysisResults,
+  designResults,
 };
 
 export const Supports = template.bind({});
