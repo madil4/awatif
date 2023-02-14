@@ -23,6 +23,7 @@ export class ViewerSettingsPanel {
         none: "none",
         stress: "stress",
         force: "force",
+        steel: "steel",
       },
     });
   }

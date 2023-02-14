@@ -1,5 +1,5 @@
 import { OrbitControls } from "./utils/OrbitControls";
-import { AnalysisResults, Model } from "../interfaces";
+import { AnalysisResults, DesignResults, Model } from "../interfaces";
 import { LineSegments2 } from "./utils/lines/LineSegments2";
 import { getPositions } from "./utils/get-positions";
 import {
@@ -151,7 +151,11 @@ export class Viewer {
     return container;
   }
 
-  update(model: Model, analysisResults?: AnalysisResults): void {
+  update(
+    model: Model,
+    analysisResults?: AnalysisResults,
+    designResults?: DesignResults
+  ): void {
     (this._lines.geometry as any).setPositions(
       getPositions(model.connectivities, model.positions)
     );
@@ -172,6 +176,7 @@ export class Viewer {
     this._cached = cacheResults(
       model.connectivities,
       analysisResults,
+      designResults,
       this.getColor
     );
 

@@ -46,3 +46,12 @@ type AnalysisResult = BarAnalysisResult;
 export type AnalysisResults = { [element: number]: AnalysisResult };
 
 // design result
+export enum DesignResultType {
+  steel = "steel",
+}
+interface SteelDesignResult {
+  type: DesignResultType.steel;
+  ratio: number;
+}
+type DesignResult = SteelDesignResult;
+export type DesignResults = { [element: number]: DesignResult };
