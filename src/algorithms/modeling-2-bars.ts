@@ -11,13 +11,13 @@ export function modeling2Bars(parameters: Parameters): Model {
     firstNode: [true, true],
     secondNode: [false, false],
   };
-  const load: Assignment = {
+  const load100: Assignment = {
     type: AssignmentType.barUniformLoad,
     load: 100,
   };
-  const design: Assignment = {
+  const design200: Assignment = {
     type: AssignmentType.steelDesign,
-    strength: 100,
+    strength: 200,
   };
 
   return {
@@ -31,13 +31,13 @@ export function modeling2Bars(parameters: Parameters): Model {
       [2, 1],
     ],
     assignments: [
-      [0, bar],
-      [1, bar],
-      [0, support],
-      [1, support],
-      [0, load],
-      [0, design],
-      [1, design],
+      { element: 0, ...bar },
+      { element: 1, ...bar },
+      { element: 0, ...support },
+      { element: 1, ...support },
+      { element: 0, ...load100 },
+      { element: 0, ...design200 },
+      { element: 1, ...design200 },
     ],
   };
 }
