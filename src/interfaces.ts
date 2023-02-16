@@ -52,25 +52,31 @@ export interface Model {
   assignments?: Assignment[];
 }
 
+// results
+interface BaseResult {
+  element: number;
+}
+
 // analysis result
 export enum AnalysisResultType {
   bar = "bar",
 }
-interface BarAnalysisResult {
+
+interface BarResult extends BaseResult {
   type: AnalysisResultType.bar;
   stress: number;
   force: number;
 }
-type AnalysisResult = BarAnalysisResult;
-export type AnalysisResults = { [element: number]: AnalysisResult };
+type AnalysisResult = BarResult;
+export type AnalysisResults = AnalysisResult[];
 
 // design result
 export enum DesignResultType {
   steel = "steel",
 }
-interface SteelDesignResult {
+interface SteelDesignResult extends BaseResult {
   type: DesignResultType.steel;
   ratio: number;
 }
 type DesignResult = SteelDesignResult;
-export type DesignResults = { [element: number]: DesignResult };
+export type DesignResults = DesignResult[];
