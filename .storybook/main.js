@@ -1,4 +1,4 @@
 module.exports = {
-  stories: ["../integration/**/*.stories.@(ts)"],
+  stories: ["../src/**/*.stories.@(ts)"],
   framework: "@storybook/html",
 };

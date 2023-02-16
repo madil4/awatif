@@ -1,12 +1,12 @@
 import { Meta, StoryFn } from "@storybook/html";
-import { Configurator } from "../src/configurator/configurator";
-import { ParameterType, Parameters } from "../src/interfaces";
+import { Configurator } from "./configurator";
+import { ParameterType, Parameters } from "../interfaces";
 
 export default {
-  title: "Configurator",
+  title: "UI/Configurator",
 } as Meta;
 
-const template: StoryFn = (args: Parameters): HTMLElement => {
+const template: StoryFn = (args): HTMLElement => {
   const configurator = new Configurator(args);
   return configurator.render();
 };

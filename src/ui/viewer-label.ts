@@ -34,6 +34,10 @@ export class ViewerLabel {
     this._min.style.bottom = "0px";
     this._container.appendChild(this._min);
 
+    this._container.style.position = "absolute";
+    this._container.style.top = "10rem";
+    this._container.style.left = "2rem";
+
     return this._container;
   }
 

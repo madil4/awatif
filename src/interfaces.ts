@@ -16,6 +16,13 @@ export type Parameters = { [name: string]: Parameter };
 export enum AssignmentType {
   barSupports = "barSupports",
   barUniformLoad = "barUniformLoad",
+  bar = "bar",
+  steelDesign = "steelDesign",
+}
+interface BarAnalysisAssignment {
+  type: AssignmentType.bar;
+  area: number;
+  elasticity: number;
 }
 interface BarSupportsAssignment {
   type: AssignmentType.barSupports;
@@ -26,7 +33,16 @@ interface BarUniformLoadAssignment {
   type: AssignmentType.barUniformLoad;
   load: number;
 }
-export type Assignment = BarSupportsAssignment | BarUniformLoadAssignment;
+interface SteelDesignAssignment {
+  type: AssignmentType.steelDesign;
+  strength: number;
+}
+export type Assignment =
+  | BarSupportsAssignment
+  | BarUniformLoadAssignment
+  | BarAnalysisAssignment
+  | SteelDesignAssignment;
+
 export interface Model {
   positions: [number, number, number][];
   connectivities: [number, number][];
