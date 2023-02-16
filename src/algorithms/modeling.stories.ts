@@ -1,11 +1,11 @@
 import { Meta, StoryFn } from "@storybook/html";
 import { Viewer } from "../ui/viewer";
 import { ParameterType } from "../interfaces";
-import { modeling2Bars } from "./modeling-2-bars";
+import { modeling } from "./modeling";
 import { Configurator } from "../ui/configurator";
 
 export default {
-  title: "Algorithms/Modeling/2-bars",
+  title: "Algorithms/Modeling",
 } as Meta;
 
 const template: StoryFn = (): HTMLElement => {
@@ -23,7 +23,7 @@ const template: StoryFn = (): HTMLElement => {
   const configurator = new Configurator(parameters);
 
   configurator.onChange(() => {
-    const model = modeling2Bars(parameters);
+    const model = modeling(parameters);
     viewer.update(model);
   });
 

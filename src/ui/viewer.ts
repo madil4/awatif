@@ -231,6 +231,7 @@ export class Viewer {
   private getColor = (value: number, max: number, min: number): number[] => {
     this._colorMapper.setMax(max);
     this._colorMapper.setMin(min);
-    return this._colorMapper.getColor(value).toArray();
+    const color = this._colorMapper.getColor(value);
+    return color ? color.toArray() : [1, 1, 1];
   };
 }

@@ -1,6 +1,6 @@
 import { Parameters, Model, Assignment, AssignmentType } from "../interfaces";
 
-export function modeling2Bars(parameters: Parameters): Model {
+export function modeling(parameters: Parameters): Model {
   const bar: Assignment = {
     type: AssignmentType.bar,
     area: 1,
@@ -13,7 +13,7 @@ export function modeling2Bars(parameters: Parameters): Model {
   };
   const load100: Assignment = {
     type: AssignmentType.barUniformLoad,
-    load: 100,
+    xLoad: 100,
   };
   const design200: Assignment = {
     type: AssignmentType.steelDesign,

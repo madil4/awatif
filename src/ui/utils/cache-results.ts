@@ -6,49 +6,39 @@ export function cacheResults(
   designResults: DesignResults | undefined,
   getColor: (value: number, max: number, min: number) => number[]
 ) {
-  const stresses: number[] = [];
-  const forces: number[] = [];
-  const steels: number[] = [];
+  const stresses: Map<number, number> = new Map();
+  const forces: Map<number, number> = new Map();
+  const steels: Map<number, number> = new Map();
 
   analysisResults?.forEach((result) => {
-    stresses.push(result.stress);
-    forces.push(result.force);
+    stresses.set(result.element, result.stress);
+    forces.set(result.element, result.force);
   });
 
   designResults?.forEach((result) => {
-    steels.push(result.ratio);
+    steels.set(result.element, result.ratio);
   });
 
-  const stressMax = Math.max(...stresses);
-  const stressMin = Math.min(...stresses);
-  const forceMax = Math.max(...forces);
-  const forceMin = Math.min(...forces);
-  const steelMax = Math.max(...steels);
-  const steelMin = Math.min(...steels);
+  const stressMax = Math.max(...stresses.values());
+  const stressMin = Math.min(...stresses.values());
+  const forceMax = Math.max(...forces.values());
+  const forceMin = Math.min(...forces.values());
+  const steelMax = Math.max(...steels.values());
+  const steelMin = Math.min(...steels.values());
 
   const stressColors: number[][] = [];
-  connectivities.forEach((_, index) => {
-    const color = analysisResults
-      ? getColor(analysisResults[index]["stress"], stressMax, stressMin)
-      : [1, 1, 1];
-    stressColors.push(color);
-    stressColors.push(color);
-  });
-
   const forceColors: number[][] = [];
-  connectivities.forEach((_, index) => {
-    const color = analysisResults
-      ? getColor(analysisResults[index]["force"], forceMax, forceMin)
-      : [1, 1, 1];
-    forceColors.push(color);
-    forceColors.push(color);
-  });
-
   const steelColors: number[][] = [];
   connectivities.forEach((_, index) => {
-    const color = designResults
-      ? getColor(designResults[index]["ratio"], steelMax, steelMin)
-      : [1, 1, 1];
+    let color = getColor(stresses.get(index) ?? 0, stressMax, stressMin);
+    stressColors.push(color);
+    stressColors.push(color);
+
+    color = getColor(forces.get(index) ?? 0, forceMax, forceMin);
+    forceColors.push(color);
+    forceColors.push(color);
+
+    color = getColor(steels.get(index) ?? 0, steelMax, steelMin);
     steelColors.push(color);
     steelColors.push(color);
   });
