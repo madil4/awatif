@@ -14,39 +14,42 @@ export type Parameters = { [name: string]: Parameter };
 
 // model
 export enum AssignmentType {
+  bar = "bar",
   barSupports = "barSupports",
   barUniformLoad = "barUniformLoad",
-  bar = "bar",
   steelDesign = "steelDesign",
 }
-interface BarAnalysisAssignment {
+interface BaseAssignment {
+  element?: number;
+}
+interface BarAssignment extends BaseAssignment {
   type: AssignmentType.bar;
   area: number;
   elasticity: number;
 }
-interface BarSupportsAssignment {
+interface BarSupportsAssignment extends BaseAssignment {
   type: AssignmentType.barSupports;
   firstNode?: [boolean, boolean];
   secondNode?: [boolean, boolean];
 }
-interface BarUniformLoadAssignment {
+interface BarUniformLoadAssignment extends BaseAssignment {
   type: AssignmentType.barUniformLoad;
   load: number;
 }
-interface SteelDesignAssignment {
+interface SteelDesignAssignment extends BaseAssignment {
   type: AssignmentType.steelDesign;
   strength: number;
 }
 export type Assignment =
+  | BarAssignment
   | BarSupportsAssignment
   | BarUniformLoadAssignment
-  | BarAnalysisAssignment
   | SteelDesignAssignment;
 
 export interface Model {
   positions: [number, number, number][];
   connectivities: [number, number][];
-  assignments?: [number, Assignment][];
+  assignments?: Assignment[];
 }
 
 // analysis result

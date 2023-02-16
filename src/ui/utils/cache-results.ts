@@ -60,18 +60,18 @@ export function cacheResults(
   return {
     stress: {
       colors: stressColors.flat(),
-      max: stressMax,
-      min: stressMin,
+      max: isFinite(stressMax) ? steelMax : 0,
+      min: isFinite(stressMin) ? stressMin : 0,
     },
     force: {
       colors: forceColors.flat(),
-      max: forceMax,
-      min: forceMin,
+      max: isFinite(forceMax) ? forceMax : 0,
+      min: isFinite(forceMin) ? forceMin : 0,
     },
     steel: {
       colors: steelColors.flat(),
-      max: steelMax,
-      min: steelMin,
+      max: isFinite(steelMax) ? steelMax : 0,
+      min: isFinite(steelMin) ? steelMin : 0,
     },
   };
 }

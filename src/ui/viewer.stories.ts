@@ -27,34 +27,26 @@ const model: Model = {
     [3, 4],
   ],
   assignments: [
-    [
-      0,
-      {
-        type: AssignmentType.barSupports,
-        firstNode: [true, true],
-      },
-    ],
-    [
-      1,
-      {
-        type: AssignmentType.barSupports,
-        secondNode: [true, false],
-      },
-    ],
-    [
-      0,
-      {
-        type: AssignmentType.barUniformLoad,
-        load: -100,
-      },
-    ],
-    [
-      1,
-      {
-        type: AssignmentType.barUniformLoad,
-        load: -100,
-      },
-    ],
+    {
+      element: 0,
+      type: AssignmentType.barSupports,
+      firstNode: [true, true],
+    },
+    {
+      element: 1,
+      type: AssignmentType.barSupports,
+      secondNode: [true, false],
+    },
+    {
+      element: 0,
+      type: AssignmentType.barUniformLoad,
+      load: -100,
+    },
+    {
+      element: 1,
+      type: AssignmentType.barUniformLoad,
+      load: -100,
+    },
   ],
 };
 const analysisResults: AnalysisResults = {
