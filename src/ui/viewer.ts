@@ -151,22 +151,10 @@ export class Viewer {
     analysisResults?: AnalysisResults,
     designResults?: DesignResults
   ): void {
+    // lines
     (this._lines.geometry as any).setPositions(
       getPositions(model.connectivities, model.positions)
     );
-
-    getSupports(model).map((position) => {
-      const cube = new Mesh(
-        new BoxGeometry(0.25, 0.25, 0.25),
-        new MeshBasicMaterial({ color: 0x00ff00 })
-      );
-      cube.position.fromArray(position);
-      this._supports.add(cube);
-    });
-
-    getUniformLoads(model).map((element: any[]) => {
-      this.renderUniformLoad(element);
-    });
 
     this._cached = cacheResults(
       model.connectivities,
@@ -174,7 +162,6 @@ export class Viewer {
       designResults,
       this.getColor
     );
-
     if (this._cached && this._settings.results != "none") {
       (this._lines.geometry as any).setColors(
         this._cached[this._settings.results].colors
@@ -184,6 +171,23 @@ export class Viewer {
         min: this._cached[this._settings.results]?.min,
       });
     }
+
+    // supports
+    this._supports.clear();
+    getSupports(model).map((position) => {
+      const cube = new Mesh(
+        new BoxGeometry(0.25, 0.25, 0.25),
+        new MeshBasicMaterial({ color: 0x00ff00 })
+      );
+      cube.position.fromArray(position);
+      this._supports.add(cube);
+    });
+
+    // loads
+    this._loads.clear();
+    getUniformLoads(model).map((element: any[]) => {
+      this.renderUniformLoad(element);
+    });
   }
 
   private renderUniformLoad(element: any[]) {

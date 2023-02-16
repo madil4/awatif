@@ -15,8 +15,8 @@ const template: StoryFn = (): HTMLElement => {
     height: {
       type: ParameterType.slider,
       value: 5,
-      min: -20,
-      max: 20,
+      min: -10,
+      max: 10,
       step: 0.01,
     },
   };
