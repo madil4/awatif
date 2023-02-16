@@ -6,20 +6,13 @@ import {
   DesignResults,
   DesignResultType,
   Model,
-} from "../src/interfaces";
-import { Viewer } from "../src/viewer/viewer";
-import { ViewerSettingsState } from "../src/viewer/viewer-settings-panel";
+} from "../interfaces";
+import { Viewer } from "./viewer";
 
 export default {
-  title: "Viewer",
+  title: "UI/Viewer",
 } as Meta;
 
-const settingsState: ViewerSettingsState = {
-  supports: false,
-  loads: false,
-  deformed: false,
-  results: "none",
-};
 const model: Model = {
   positions: [
     [-5, 0, 0],
@@ -76,14 +69,14 @@ const designResults: DesignResults = {
 };
 
 const template: StoryFn = (args): HTMLElement => {
-  const viewer = new Viewer(args.state);
+  const viewer = new Viewer(args.settings);
   viewer.update(args.model, args.analysisResults, args.designResults);
   return viewer.render();
 };
 
 export const Empty = template.bind({});
 Empty.args = {
-  state: settingsState,
+  settings: { expanded: true },
   model: {
     positions: [],
     connectivities: [],
@@ -92,27 +85,27 @@ Empty.args = {
 
 export const WithoutResults = template.bind({});
 WithoutResults.args = {
-  state: settingsState,
+  settings: { expanded: true },
   model,
 };
 
 export const AnalysisResults1 = template.bind({});
 AnalysisResults1.args = {
-  state: { ...settingsState, results: "stress" },
+  settings: { results: "stress", expanded: true },
   model,
   analysisResults,
 };
 
 export const AnalysisResults2 = template.bind({});
 AnalysisResults2.args = {
-  state: { ...settingsState, results: "force" },
+  settings: { results: "force", expanded: true },
   model,
   analysisResults,
 };
 
 export const DesignResult = template.bind({});
 DesignResult.args = {
-  state: { ...settingsState, results: "steel" },
+  settings: { results: "steel", expanded: true },
   model,
   analysisResults,
   designResults,
@@ -120,14 +113,14 @@ DesignResult.args = {
 
 export const Supports = template.bind({});
 Supports.args = {
-  state: { ...settingsState, supports: true },
+  settings: { supports: true, expanded: true },
   model,
   analysisResults,
 };
 
 export const UniformLoad = template.bind({});
 UniformLoad.args = {
-  state: { ...settingsState, loads: true },
+  settings: { loads: true, expanded: true },
   model,
   analysisResults,
 };

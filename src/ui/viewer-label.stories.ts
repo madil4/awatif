@@ -1,9 +1,9 @@
 import { Meta, StoryFn } from "@storybook/html";
-import { Lut } from "../src/viewer/utils/lut";
-import { ViewerLabel } from "../src/viewer/viewer-label";
+import { Lut } from "./utils/lut";
+import { ViewerLabel } from "./viewer-label";
 
 export default {
-  title: "Viewer Label",
+  title: "UI/Viewer Label",
 } as Meta;
 
 const template: StoryFn = (): any => {

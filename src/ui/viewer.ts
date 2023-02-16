@@ -19,17 +19,22 @@ import {
 } from "three";
 import { getSupports } from "./utils/get-supports";
 import { getUniformLoads } from "./utils/get-uniform-loads";
-import {
-  ViewerSettingsPanel as ViewerSettingsPanel,
-  ViewerSettingsState,
-} from "./viewer-settings-panel";
+import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "./utils/lines/LineMaterial";
 import { cacheResults } from "./utils/cache-results";
 import { Lut } from "./utils/lut";
 
+export interface Settings {
+  supports: boolean;
+  loads: boolean;
+  deformed: boolean;
+  results: string;
+  expanded: boolean;
+}
+
 export class Viewer {
-  private _settingsState: ViewerSettingsState;
+  private _settings: Settings;
   private _settingsPanel: ViewerSettingsPanel;
   private _colorMapper: Lut;
   private _label: ViewerLabel;
@@ -43,24 +48,23 @@ export class Viewer {
     [type: string]: { colors: number[]; max: number; min: number };
   };
 
-  constructor(settingsState?: ViewerSettingsState) {
-    this._settingsState = settingsState
-      ? settingsState
-      : {
-          supports: false,
-          loads: false,
-          deformed: false,
-          results: "none",
-        };
+  constructor(settings?: Partial<Settings>) {
+    this._settings = {
+      supports: false,
+      loads: false,
+      deformed: false,
+      results: "none",
+      expanded: false,
+      ...settings,
+    };
 
-    this._settingsPanel = new ViewerSettingsPanel(this._settingsState);
-    this._settingsPanel.update({ expanded: false });
+    this._settingsPanel = new ViewerSettingsPanel(this._settings);
 
     this._colorMapper = new Lut();
 
     this._label = new ViewerLabel(this._colorMapper.createCanvas());
     this._label.update({
-      hidden: this._settingsState.results == "none" ? true : false,
+      hidden: this._settings.results == "none" ? true : false,
     });
 
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -96,57 +100,48 @@ export class Viewer {
     });
     this._lines = new LineSegments2();
     this._lines.material =
-      this._settingsState.results == "none" ? linesNoColor : linesColor;
+      this._settings.results == "none" ? linesNoColor : linesColor;
     this._scene.add(this._lines);
 
     this._supports = new Group();
-    this._supports.visible = this._settingsState.supports;
+    this._supports.visible = this._settings.supports;
     this._scene.add(this._supports);
 
     this._loads = new Group();
-    this._loads.visible = this._settingsState.loads;
+    this._loads.visible = this._settings.loads;
     this._scene.add(this._loads);
 
     // on settings change
     this._settingsPanel.onChange(() => {
       this._label.update({
-        hidden: this._settingsState.results == "none" ? true : false,
+        hidden: this._settings.results == "none" ? true : false,
       });
       this._lines.material =
-        this._settingsState.results == "none" ? linesNoColor : linesColor;
-      this._supports.visible = this._settingsState.supports;
-      this._loads.visible = this._settingsState.loads;
+        this._settings.results == "none" ? linesNoColor : linesColor;
+      this._supports.visible = this._settings.supports;
+      this._loads.visible = this._settings.loads;
 
       if (this._cached) {
         (this._lines.geometry as any).setColors(
-          this._cached[this._settingsState.results].colors
+          this._cached[this._settings.results].colors
         );
         this._label.update({
-          max: this._cached[this._settingsState.results].max,
-          min: this._cached[this._settingsState.results].min,
+          max: this._cached[this._settings.results].max,
+          min: this._cached[this._settings.results].min,
         });
       }
     });
+
+    document.body.appendChild(this.render());
   }
 
   render(): HTMLElement {
     const container = document.createElement("div");
 
-    const viewer = this._renderer.domElement;
-    viewer.style.margin = "-1rem"; // only for storybook
-    container.appendChild(viewer);
-
-    const settings = this._settingsPanel.render();
-    settings.style.position = "absolute";
-    settings.style.top = "0px";
-    settings.style.left = "2rem";
-    container.appendChild(settings);
-
-    const label = this._label.render();
-    label.style.position = "absolute";
-    label.style.top = "10rem";
-    label.style.left = "2rem";
-    container.appendChild(label);
+    this._renderer.domElement.style.margin = "-1rem"; // only for storybook
+    container.appendChild(this._renderer.domElement);
+    container.appendChild(this._settingsPanel.render());
+    container.appendChild(this._label.render());
 
     return container;
   }
@@ -180,13 +175,13 @@ export class Viewer {
       this.getColor
     );
 
-    if (this._cached && this._settingsState.results != "none") {
+    if (this._cached && this._settings.results != "none") {
       (this._lines.geometry as any).setColors(
-        this._cached[this._settingsState.results].colors
+        this._cached[this._settings.results].colors
       );
       this._label.update({
-        max: this._cached[this._settingsState.results]?.max,
-        min: this._cached[this._settingsState.results]?.min,
+        max: this._cached[this._settings.results]?.max,
+        min: this._cached[this._settings.results]?.min,
       });
     }
   }

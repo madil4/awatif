@@ -15,11 +15,23 @@ export class Configurator {
         label: key,
       });
     });
+
+    document.body.appendChild(this.render());
   }
 
   render(): HTMLElement {
     this._pane.element.style.width = "300px";
+    this._pane.element.style.position = "absolute";
+    this._pane.element.style.top = "50px";
+    this._pane.element.style.right = "50px";
 
     return this._pane.element;
+  }
+
+  onChange(cb: () => void): void {
+    cb();
+    this._pane.on("change", () => {
+      cb();
+    });
   }
 }
