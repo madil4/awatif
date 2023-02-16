@@ -51,7 +51,9 @@ export class ViewerLabel {
     min?: number;
   }) {
     if (hidden != undefined) this._container.hidden = hidden;
-    if (max != undefined) this._max.innerText = `max:${max}`;
-    if (min != undefined) this._min.innerText = `min:${min}`;
+    if (max != undefined)
+      this._max.innerText = `max:${Math.round(max * 100) / 100}`;
+    if (min != undefined)
+      this._min.innerText = `min:${Math.round(min * 100) / 100}`;
   }
 }

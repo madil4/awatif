@@ -33,6 +33,7 @@
     "babel-loader": "^8.3.0"
   },
   "dependencies": {
+    "mathjs": "^11.5.1",
     "three": "^0.149.0",
     "tweakpane": "^3.1.4"
   }

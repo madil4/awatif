@@ -56,8 +56,8 @@ const analysisResults: AnalysisResults = [
 ];
 const designResults: DesignResults = [
   { element: 0, type: DesignResultType.steel, ratio: 0.5 },
-  { element: 0, type: DesignResultType.steel, ratio: 1 },
-  { element: 0, type: DesignResultType.steel, ratio: 2 },
+  { element: 1, type: DesignResultType.steel, ratio: 1 },
+  { element: 2, type: DesignResultType.steel, ratio: 2 },
 ];
 
 const template: StoryFn = (args): HTMLElement => {

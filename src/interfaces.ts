@@ -34,7 +34,8 @@ interface BarSupportsAssignment extends BaseAssignment {
 }
 interface BarUniformLoadAssignment extends BaseAssignment {
   type: AssignmentType.barUniformLoad;
-  load: number;
+  xLoad?: number;
+  yLoad?: number;
 }
 interface SteelDesignAssignment extends BaseAssignment {
   type: AssignmentType.steelDesign;
