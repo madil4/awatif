@@ -49,16 +49,16 @@ const model: Model = {
     },
   ],
 };
-const analysisResults: AnalysisResults = {
-  [0]: { type: AnalysisResultType.bar, stress: 0, force: 0 },
-  [1]: { type: AnalysisResultType.bar, stress: 0.5, force: 90 },
-  [2]: { type: AnalysisResultType.bar, stress: 1, force: 100 },
-};
-const designResults: DesignResults = {
-  [0]: { type: DesignResultType.steel, ratio: 0.5 },
-  [1]: { type: DesignResultType.steel, ratio: 1 },
-  [2]: { type: DesignResultType.steel, ratio: 2 },
-};
+const analysisResults: AnalysisResults = [
+  { element: 0, type: AnalysisResultType.bar, stress: 0, force: 0 },
+  { element: 1, type: AnalysisResultType.bar, stress: 0.5, force: 90 },
+  { element: 2, type: AnalysisResultType.bar, stress: 1, force: 100 },
+];
+const designResults: DesignResults = [
+  { element: 0, type: DesignResultType.steel, ratio: 0.5 },
+  { element: 0, type: DesignResultType.steel, ratio: 1 },
+  { element: 0, type: DesignResultType.steel, ratio: 2 },
+];
 
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer(args.settings);

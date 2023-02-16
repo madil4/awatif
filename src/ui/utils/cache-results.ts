@@ -10,18 +10,14 @@ export function cacheResults(
   const forces: number[] = [];
   const steels: number[] = [];
 
-  if (analysisResults) {
-    Object.keys(analysisResults).forEach((key) => {
-      stresses.push(analysisResults[key].stress);
-      forces.push(analysisResults[key].force);
-    });
-  }
+  analysisResults?.forEach((result) => {
+    stresses.push(result.stress);
+    forces.push(result.force);
+  });
 
-  if (designResults) {
-    Object.keys(designResults).forEach((key) => {
-      steels.push(designResults[key].ratio);
-    });
-  }
+  designResults?.forEach((result) => {
+    steels.push(result.ratio);
+  });
 
   const stressMax = Math.max(...stresses);
   const stressMin = Math.min(...stresses);
@@ -60,7 +56,7 @@ export function cacheResults(
   return {
     stress: {
       colors: stressColors.flat(),
-      max: isFinite(stressMax) ? steelMax : 0,
+      max: isFinite(stressMax) ? stressMax : 0,
       min: isFinite(stressMin) ? stressMin : 0,
     },
     force: {
