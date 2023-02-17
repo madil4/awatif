@@ -80,7 +80,11 @@ export class Viewer {
       0.01,
       50
     );
-    this._camera.position.set(0, 2, 10);
+    if (window.innerHeight / window.innerWidth > 1.6) {
+      this._camera.position.set(0, 2, 20);
+    } else {
+      this._camera.position.set(0, 2, 10);
+    }
     this._renderer.setAnimationLoop(() => {
       this._renderer.render(this._scene, this._camera);
     });

@@ -20,10 +20,14 @@ export class Configurator {
   }
 
   render(): HTMLElement {
-    this._pane.element.style.width = "300px";
+    this._pane.element.style.width = "20rem";
     this._pane.element.style.position = "absolute";
-    this._pane.element.style.top = "50px";
-    this._pane.element.style.right = "50px";
+    this._pane.element.style.right = "1.5rem";
+    if (window.innerWidth < 690) {
+      this._pane.element.style.bottom = "0rem";
+    } else {
+      this._pane.element.style.top = "1.5rem";
+    }
 
     return this._pane.element;
   }
