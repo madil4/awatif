@@ -1,9 +1,9 @@
 import { Meta, StoryFn } from "@storybook/html";
 import {
-  AnalysisResults,
+  AnalysisResult,
   AnalysisResultType,
   AssignmentType,
-  DesignResults,
+  DesignResult,
   DesignResultType,
   Model,
 } from "../interfaces";
@@ -56,7 +56,7 @@ const model: Model = {
     },
   ],
 };
-const analysisResults: AnalysisResults = [
+const analysisResults: AnalysisResult[] = [
   {
     element: 0,
     type: AnalysisResultType.bar,
@@ -88,7 +88,7 @@ const analysisResults: AnalysisResults = [
     ],
   },
 ];
-const designResults: DesignResults = [
+const designResults: DesignResult[] = [
   { element: 0, type: DesignResultType.steel, ratio: 0.5 },
   { element: 1, type: DesignResultType.steel, ratio: 1 },
   { element: 2, type: DesignResultType.steel, ratio: 2 },

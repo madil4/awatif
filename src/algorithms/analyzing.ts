@@ -1,13 +1,13 @@
 import { norm, subtract } from "mathjs";
 import {
   Model,
-  AnalysisResults,
   AnalysisResultType,
   AssignmentType,
+  AnalysisResult,
 } from "../interfaces";
 import { deforming } from "./deforming";
 
-export function analyzing(model: Model): AnalysisResults {
+export function analyzing(model: Model): AnalysisResult[] {
   const deformedPositions = deforming(model);
   model.deformedPositions = deformedPositions;
 
@@ -23,7 +23,7 @@ export function analyzing(model: Model): AnalysisResults {
       });
   });
 
-  const analysisResults: AnalysisResults = [];
+  const analysisResults: AnalysisResult[] = [];
   model.connectivities.forEach((element, index) => {
     const bar = bars.get(index) ?? { area: 0, elasticity: 0 };
     const L0 = norm(
