@@ -34,11 +34,21 @@ export function analyzing(model: Model): AnalysisResults {
     ) as number;
     const stress = (bar.elasticity * (L - L0)) / L;
 
+    const d0 = subtract(
+      deformedPositions[element[0]],
+      model.positions[element[0]]
+    );
+    const d1 = subtract(
+      deformedPositions[element[1]],
+      model.positions[element[1]]
+    );
+
     analysisResults.push({
       element: index,
       type: AnalysisResultType.bar,
       stress: stress,
       force: stress * bar.area,
+      deformation: [d0, d1],
     });
   });
 

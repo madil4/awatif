@@ -57,9 +57,36 @@ const model: Model = {
   ],
 };
 const analysisResults: AnalysisResults = [
-  { element: 0, type: AnalysisResultType.bar, stress: 0, force: 0 },
-  { element: 1, type: AnalysisResultType.bar, stress: 0.5, force: 90 },
-  { element: 2, type: AnalysisResultType.bar, stress: 1, force: 100 },
+  {
+    element: 0,
+    type: AnalysisResultType.bar,
+    stress: 0,
+    force: 0,
+    deformation: [
+      [0, 0, 0],
+      [5, -2, 0],
+    ],
+  },
+  {
+    element: 1,
+    type: AnalysisResultType.bar,
+    stress: 0.5,
+    force: 90,
+    deformation: [
+      [5, -2, 0],
+      [0, 0, 0],
+    ],
+  },
+  {
+    element: 2,
+    type: AnalysisResultType.bar,
+    stress: 1,
+    force: 100,
+    deformation: [
+      [0, 0, 0],
+      [0, 0, 0],
+    ],
+  },
 ];
 const designResults: DesignResults = [
   { element: 0, type: DesignResultType.steel, ratio: 0.5 },
@@ -82,8 +109,8 @@ Empty.args = {
   },
 };
 
-export const Positions = template.bind({});
-Positions.args = {
+export const Primary = template.bind({});
+Primary.args = {
   settings: { expanded: true },
   model,
 };
@@ -94,34 +121,48 @@ Supports.args = {
   model,
 };
 
-export const UniformLoad = template.bind({});
-UniformLoad.args = {
+export const Loads = template.bind({});
+Loads.args = {
   settings: { loads: true, expanded: true },
   model,
 };
 
-export const DeformedPositions = template.bind({});
-DeformedPositions.args = {
+export const Deformed = template.bind({});
+Deformed.args = {
   settings: { deformed: true, expanded: true },
   model,
 };
 
-export const AnalysisResults1 = template.bind({});
-AnalysisResults1.args = {
+export const StressResults = template.bind({});
+StressResults.args = {
   settings: { results: "stress", expanded: true },
   model,
   analysisResults,
 };
 
-export const AnalysisResults2 = template.bind({});
-AnalysisResults2.args = {
+export const ForceResults = template.bind({});
+ForceResults.args = {
   settings: { results: "force", expanded: true },
   model,
   analysisResults,
 };
 
-export const DesignResult = template.bind({});
-DesignResult.args = {
+export const DeformationXResults = template.bind({});
+DeformationXResults.args = {
+  settings: { results: "deformationX", expanded: true },
+  model,
+  analysisResults,
+};
+
+export const DeformationYResults = template.bind({});
+DeformationYResults.args = {
+  settings: { results: "deformationY", expanded: true },
+  model,
+  analysisResults,
+};
+
+export const SteelResults = template.bind({});
+SteelResults.args = {
   settings: { results: "steel", expanded: true },
   model,
   analysisResults,

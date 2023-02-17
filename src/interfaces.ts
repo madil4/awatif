@@ -68,6 +68,7 @@ interface BarResult extends BaseResult {
   type: AnalysisResultType.bar;
   stress: number;
   force: number;
+  deformation: number[][];
 }
 type AnalysisResult = BarResult;
 export type AnalysisResults = AnalysisResult[];

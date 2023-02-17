@@ -9,10 +9,12 @@ export function cacheResults(
   const stresses: Map<number, number> = new Map();
   const forces: Map<number, number> = new Map();
   const steels: Map<number, number> = new Map();
+  const deformations: Map<number, number[][]> = new Map();
 
   analysisResults?.forEach((result) => {
     stresses.set(result.element, result.stress);
     forces.set(result.element, result.force);
+    deformations.set(result.element, result.deformation);
   });
 
   designResults?.forEach((result) => {
@@ -26,9 +28,19 @@ export function cacheResults(
   const steelMax = Math.max(...steels.values());
   const steelMin = Math.min(...steels.values());
 
+  const defList = [...deformations.values()].flat();
+  const defX = defList.map((x) => x[0]);
+  const defY = defList.map((x) => x[1]);
+  const defXMax = Math.max(...defX);
+  const defXMin = Math.min(...defX);
+  const defYMax = Math.max(...defY);
+  const defYMin = Math.min(...defY);
+
   const stressColors: number[][] = [];
   const forceColors: number[][] = [];
   const steelColors: number[][] = [];
+  const deformationXColors: number[][] = [];
+  const deformationYColors: number[][] = [];
   connectivities.forEach((_, index) => {
     let color = getColor(stresses.get(index) ?? 0, stressMax, stressMin);
     stressColors.push(color);
@@ -41,6 +53,15 @@ export function cacheResults(
     color = getColor(steels.get(index) ?? 0, steelMax, steelMin);
     steelColors.push(color);
     steelColors.push(color);
+
+    const value = deformations.get(index) ?? [
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    deformationXColors.push(getColor(value[0][0], defXMax, defXMin));
+    deformationXColors.push(getColor(value[1][0], defXMax, defXMin));
+    deformationYColors.push(getColor(value[0][1], defYMax, defYMin));
+    deformationYColors.push(getColor(value[1][1], defYMax, defYMin));
   });
 
   return {
@@ -53,6 +74,16 @@ export function cacheResults(
       colors: forceColors.flat(),
       max: isFinite(forceMax) ? forceMax : 0,
       min: isFinite(forceMin) ? forceMin : 0,
+    },
+    deformationX: {
+      colors: deformationXColors.flat(),
+      max: isFinite(defXMax) ? defXMax : 0,
+      min: isFinite(defXMin) ? defXMin : 0,
+    },
+    deformationY: {
+      colors: deformationYColors.flat(),
+      max: isFinite(defYMax) ? defYMax : 0,
+      min: isFinite(defYMin) ? defYMin : 0,
     },
     steel: {
       colors: steelColors.flat(),
