@@ -11,6 +11,7 @@ export default {
 const template: StoryFn = (args): HTMLElement => {
   const viewer = new Viewer({
     supports: true,
+    deformed: true,
     results: args.results,
   });
   const parameters = {

@@ -18,7 +18,7 @@ import {
 } from "mathjs";
 import { Assignment, Model, AssignmentType } from "../interfaces";
 
-export function minimizing(model: Model): Model {
+export function deforming(model: Model): [number, number, number][] {
   const positions = model.positions.map((node) => node.slice(0, 2));
 
   // compute stiffness matrix, force, supports all in one loop with one lookup table if possible same keys
@@ -83,10 +83,11 @@ export function minimizing(model: Model): Model {
 
   x = subset(x, indexMathjs(freeInd), add(x_free, flatten(dx)));
 
-  const newPositions = reshape(x, [-1, 2]).toArray();
-  model.positions = newPositions.map((node) => node.concat(0));
+  const newPositions = reshape(x, [-1, 2])
+    .toArray()
+    .map((node) => node.concat(0));
 
-  return model;
+  return newPositions;
 }
 
 function getSupports(

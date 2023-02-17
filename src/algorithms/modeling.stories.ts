@@ -10,7 +10,6 @@ export default {
 
 const template: StoryFn = (): HTMLElement => {
   const viewer = new Viewer({ supports: true, loads: true });
-
   const parameters = {
     height: {
       type: ParameterType.slider,
@@ -24,6 +23,7 @@ const template: StoryFn = (): HTMLElement => {
 
   configurator.onChange(() => {
     const model = modeling(parameters);
+
     viewer.update(model);
   });
 
