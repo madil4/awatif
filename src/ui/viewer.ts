@@ -47,6 +47,10 @@ export class Viewer {
   private _cached?: {
     [type: string]: { colors: number[]; max: number; min: number };
   };
+  private _positions: {
+    undeformed: number[];
+    deformed: number[];
+  };
 
   constructor(settings?: Partial<Settings>) {
     this._settings = {
@@ -121,6 +125,12 @@ export class Viewer {
       this._supports.visible = this._settings.supports;
       this._loads.visible = this._settings.loads;
 
+      (this._lines.geometry as any).setPositions(
+        this._settings.deformed
+          ? this._positions.deformed
+          : this._positions.undeformed
+      );
+
       if (this._cached) {
         (this._lines.geometry as any).setColors(
           this._cached[this._settings.results].colors
@@ -152,8 +162,17 @@ export class Viewer {
     designResults?: DesignResults
   ): void {
     // lines
+    this._positions = {
+      undeformed: getPositions(model.connectivities, model.positions),
+      deformed: getPositions(
+        model.connectivities,
+        model.deformedPositions ?? model.positions
+      ),
+    };
     (this._lines.geometry as any).setPositions(
-      getPositions(model.connectivities, model.positions)
+      this._settings.deformed
+        ? this._positions.deformed
+        : this._positions.undeformed
     );
 
     this._cached = cacheResults(

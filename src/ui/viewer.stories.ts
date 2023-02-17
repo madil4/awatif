@@ -21,6 +21,13 @@ const model: Model = {
     [0, 0, 2],
     [2, 5, -3],
   ],
+  deformedPositions: [
+    [-5, 0, 0],
+    [0, 1, 0],
+    [5, 0, 0],
+    [0, 0, 2],
+    [2, 2, -3],
+  ],
   connectivities: [
     [0, 1],
     [1, 2],
@@ -40,12 +47,12 @@ const model: Model = {
     {
       element: 0,
       type: AssignmentType.barUniformLoad,
-      load: -100,
+      xLoad: -100,
     },
     {
       element: 1,
       type: AssignmentType.barUniformLoad,
-      load: -100,
+      yLoad: -100,
     },
   ],
 };
@@ -75,9 +82,27 @@ Empty.args = {
   },
 };
 
-export const WithoutResults = template.bind({});
-WithoutResults.args = {
+export const Positions = template.bind({});
+Positions.args = {
   settings: { expanded: true },
+  model,
+};
+
+export const Supports = template.bind({});
+Supports.args = {
+  settings: { supports: true, expanded: true },
+  model,
+};
+
+export const UniformLoad = template.bind({});
+UniformLoad.args = {
+  settings: { loads: true, expanded: true },
+  model,
+};
+
+export const DeformedPositions = template.bind({});
+DeformedPositions.args = {
+  settings: { deformed: true, expanded: true },
   model,
 };
 
@@ -101,18 +126,4 @@ DesignResult.args = {
   model,
   analysisResults,
   designResults,
-};
-
-export const Supports = template.bind({});
-Supports.args = {
-  settings: { supports: true, expanded: true },
-  model,
-  analysisResults,
-};
-
-export const UniformLoad = template.bind({});
-UniformLoad.args = {
-  settings: { loads: true, expanded: true },
-  model,
-  analysisResults,
 };

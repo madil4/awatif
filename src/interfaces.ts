@@ -49,6 +49,7 @@ export type Assignment =
 
 export interface Model {
   positions: [number, number, number][];
+  deformedPositions?: [number, number, number][];
   connectivities: [number, number][];
   assignments?: Assignment[];
 }
