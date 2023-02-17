@@ -15,28 +15,29 @@ export class ViewerLabel {
   }
 
   render() {
-    this._canvas.style.width = "15px";
+    this._canvas.style.width = "1rem";
+    this._canvas.style.height = "50vh";
     this._container.appendChild(this._canvas);
 
     const maxMinCss = `
       position: absolute;
       font: 12px Roboto Mono, Source Code Pro, Menlo, Courier, monospace;
-      left:22px;
+      left: 1.5rem;
       z-index: 100;
       display:block;
       color: #ffffff;
     `;
     this._max.style.cssText = maxMinCss;
-    this._max.style.top = "0px";
+    this._max.style.top = "0rem";
     this._container.appendChild(this._max);
 
     this._min.style.cssText = maxMinCss;
-    this._min.style.bottom = "0px";
+    this._min.style.bottom = "0rem";
     this._container.appendChild(this._min);
 
     this._container.style.position = "absolute";
-    this._container.style.top = "10rem";
-    this._container.style.left = "2rem";
+    this._container.style.top = "25vh";
+    this._container.style.left = "1.5rem";
 
     return this._container;
   }

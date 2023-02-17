@@ -28,9 +28,9 @@ export class ViewerSettingsPanel {
 
   render() {
     this._pane.element.style.position = "absolute";
-    this._pane.element.style.top = "0px";
-    this._pane.element.style.left = "2rem";
-    this._pane.element.style.width = "300px";
+    this._pane.element.style.width = "18rem";
+    this._pane.element.style.top = "0rem";
+    this._pane.element.style.left = "1.5rem";
 
     return this._pane.element;
   }
