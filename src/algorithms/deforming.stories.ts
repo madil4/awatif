@@ -2,16 +2,14 @@ import { Meta, StoryFn } from "@storybook/html";
 import { Viewer } from "../ui/viewer";
 import { AssignmentType, Model, ParameterType } from "../interfaces";
 import { Configurator } from "../ui/configurator";
-import { minimizing } from "./minimizing";
+import { deforming } from "./deforming";
 
 export default {
-  title: "Algorithms/Minimizing",
+  title: "Algorithms/Deforming",
 } as Meta;
 
 const template: StoryFn = (): HTMLElement => {
-  const viewer = new Viewer({
-    supports: true,
-  });
+  const viewer = new Viewer({ supports: true, deformed: true });
   const parameters = {
     xLoad: {
       type: ParameterType.slider,
@@ -65,7 +63,7 @@ const template: StoryFn = (): HTMLElement => {
       ],
     };
 
-    model = minimizing(model);
+    model.deformedPositions = deforming(model);
 
     viewer.update(model);
   });
