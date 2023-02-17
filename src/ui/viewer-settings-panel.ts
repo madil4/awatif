@@ -17,6 +17,8 @@ export class ViewerSettingsPanel {
         none: "none",
         stress: "stress",
         force: "force",
+        deformationX: "deformationX",
+        deformationY: "deformationY",
         steel: "steel",
       },
     });

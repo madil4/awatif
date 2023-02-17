@@ -83,3 +83,9 @@ Stress.args = { results: "stress" };
 
 export const Force = template.bind({});
 Force.args = { results: "force" };
+
+export const DeformationX = template.bind({});
+DeformationX.args = { results: "deformationX" };
+
+export const DeformationY = template.bind({});
+DeformationY.args = { results: "deformationY" };
