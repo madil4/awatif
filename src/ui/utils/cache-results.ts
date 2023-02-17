@@ -1,9 +1,9 @@
-import { AnalysisResults, DesignResults } from "../../interfaces";
+import { AnalysisResult, DesignResult } from "../../interfaces";
 
 export function cacheResults(
   connectivities: [number, number][],
-  analysisResults: AnalysisResults | undefined,
-  designResults: DesignResults | undefined,
+  analysisResults: AnalysisResult[] | undefined,
+  designResults: DesignResult[] | undefined,
   getColor: (value: number, max: number, min: number) => number[]
 ) {
   const stresses: Map<number, number> = new Map();
@@ -50,7 +50,7 @@ export function cacheResults(
     forceColors.push(color);
     forceColors.push(color);
 
-    color = getColor(steels.get(index) ?? 0, steelMax, steelMin);
+    color = getColor(steels.get(index) ?? 0, 1, 0);
     steelColors.push(color);
     steelColors.push(color);
 

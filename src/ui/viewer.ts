@@ -1,5 +1,5 @@
 import { OrbitControls } from "./utils/OrbitControls";
-import { AnalysisResults, DesignResults, Model } from "../interfaces";
+import { AnalysisResult, DesignResult, Model } from "../interfaces";
 import { LineSegments2 } from "./utils/lines/LineSegments2";
 import { getPositions } from "./utils/get-positions";
 import {
@@ -158,8 +158,8 @@ export class Viewer {
 
   update(
     model: Model,
-    analysisResults?: AnalysisResults,
-    designResults?: DesignResults
+    analysisResults?: AnalysisResult[],
+    designResults?: DesignResult[]
   ): void {
     // lines
     this._positions = {

@@ -63,15 +63,13 @@ interface BaseResult {
 export enum AnalysisResultType {
   bar = "bar",
 }
-
 interface BarResult extends BaseResult {
   type: AnalysisResultType.bar;
   stress: number;
   force: number;
   deformation: number[][];
 }
-type AnalysisResult = BarResult;
-export type AnalysisResults = AnalysisResult[];
+export type AnalysisResult = BarResult;
 
 // design result
 export enum DesignResultType {
@@ -81,5 +79,4 @@ interface SteelDesignResult extends BaseResult {
   type: DesignResultType.steel;
   ratio: number;
 }
-type DesignResult = SteelDesignResult;
-export type DesignResults = DesignResult[];
+export type DesignResult = SteelDesignResult;
