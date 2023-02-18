@@ -4,7 +4,8 @@
   "description": "A web-based open-source parametric structural engineering tool",
   "scripts": {
     "storybook": "start-storybook",
-    "examples:2d-truss": "vite --open ./examples/2d-truss/"
+    "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
+    "build": "vite build ./examples/2d-truss/"
   },
   "repository": {
     "type": "git",
