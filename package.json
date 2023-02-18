@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "A web-based open-source parametric structural engineering tool",
   "scripts": {
-    "storybook": "start-storybook -p 6006",
-    "examples:2d-truss": "node esbuild.js"
+    "storybook": "start-storybook",
+    "examples:2d-truss": "vite --open ./examples/2d-truss/"
   },
   "repository": {
     "type": "git",
@@ -24,16 +24,12 @@
     "url": "https://github.com/AwatifSoftware/awatif/issues"
   },
   "homepage": "https://github.com/AwatifSoftware/awatif#readme",
-  "type": "module",
   "devDependencies": {
-    "@babel/core": "^7.20.12",
-    "@storybook/builder-webpack4": "^6.5.16",
+    "@storybook/builder-vite": "^0.4.2",
     "@storybook/html": "^6.5.16",
-    "@storybook/manager-webpack4": "^6.5.16",
     "@tweakpane/core": "^1.1.4",
     "@types/three": "^0.148.1",
-    "babel-loader": "^8.3.0",
-    "esbuild": "^0.17.8"
+    "vite": "^4.1.2"
   },
   "dependencies": {
     "mathjs": "^11.5.1",
