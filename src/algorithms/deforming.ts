@@ -59,7 +59,10 @@ export function deforming(model: Model): [number, number, number][] {
     const new_K = multiply(transpose(O), k_O);
 
     // add to the big matrix
-    const ind = indexMathjs(range(0, 4), range(0, 4));
+    const node1Range = [element[0] * 2, element[0] * 2 + 1];
+    const node2Range = [element[1] * 2, element[1] * 2 + 1];
+    const range = [...node1Range, ...node2Range];
+    const ind = indexMathjs(range, range);
     const current_K = subset(k_global_T, ind);
     const sum = add(current_K, new_K);
     k_global_T = subset(k_global_T, ind, sum);
