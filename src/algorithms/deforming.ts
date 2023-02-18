@@ -161,16 +161,13 @@ function getForces(model: Model) {
 }
 
 function getBar(
-  element_index: number,
+  index: number,
   assignments: Assignment[] | undefined
 ): { area: number; elasticity: number } {
   assignments?.forEach((assignment) => {
-    if (
-      assignment.element == element_index &&
-      assignment.type == AssignmentType.bar
-    ) {
+    if (assignment.element == index && assignment.type == AssignmentType.bar) {
       return { area: assignment.area, elasticity: assignment.elasticity };
     }
   });
-  return { area: 1, elasticity: 300 };
+  return { area: 100, elasticity: 300 };
 }
