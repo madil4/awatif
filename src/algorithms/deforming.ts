@@ -134,22 +134,23 @@ function getForces(model: Model) {
 
   let f = zeros([model.positions.length * 2]);
   model.connectivities.forEach((element, index) => {
-    let force = forces.get(index) ?? [0, 0];
+    const force = forces.get(index) ?? [0, 0];
     const vector = subtract(
       model.positions[element[1]],
       model.positions[element[0]]
     );
-    force[0] = (force[0] * abs(vector[0])) / 2;
-    force[1] = (force[1] * abs(vector[1])) / 2;
+    const forceX = (force[0] * abs(vector[1])) / 2;
+    const forceY = (force[1] * abs(vector[0])) / 2;
+    const pointForce = [forceX, forceY];
 
     const indN1 = indexMathjs([element[0] * 2, element[0] * 2 + 1]);
     const currentF1 = subset(f, indN1);
-    const sumF1 = add(currentF1, force);
+    const sumF1 = add(currentF1, pointForce);
     f = subset(f, indN1, sumF1);
 
     const indN2 = indexMathjs([element[1] * 2, element[1] * 2 + 1]);
     const currentF2 = subset(f, indN2);
-    const sumF2 = add(currentF2, force);
+    const sumF2 = add(currentF2, pointForce);
     f = subset(f, indN2, sumF2);
   });
 
