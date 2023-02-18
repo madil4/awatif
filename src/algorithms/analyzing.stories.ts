@@ -35,9 +35,9 @@ const template: StoryFn = (args): HTMLElement => {
   configurator.onChange(() => {
     let model: Model = {
       positions: [
-        [-5, 0, 0],
-        [0, 5, 0],
-        [5, 0, 0],
+        [-10, 0, 0],
+        [0, 10, 0],
+        [10, 0, 0],
       ],
       connectivities: [
         [0, 1],

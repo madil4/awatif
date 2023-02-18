@@ -151,6 +151,9 @@ export class Viewer {
   }
 
   render(): HTMLElement {
+    document.body.style.padding = "0px";
+    document.body.style.margin = "0px";
+
     const container = document.createElement("div");
 
     container.appendChild(this._renderer.domElement);
