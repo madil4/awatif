@@ -24,6 +24,7 @@ import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "./utils/lines/LineMaterial";
 import { cacheResults } from "./utils/cache-results";
 import { Lut } from "./utils/lut";
+import { LineSegmentsGeometry } from "./utils/lines/LineSegmentsGeometry";
 
 export interface Settings {
   supports: boolean;
@@ -78,12 +79,12 @@ export class Viewer {
       70,
       window.innerWidth / window.innerHeight,
       0.01,
-      50
+      100
     );
     if (window.innerHeight / window.innerWidth > 1.6) {
-      this._camera.position.set(0, 2, 20);
+      this._camera.position.set(0, 2, 40);
     } else {
-      this._camera.position.set(0, 2, 10);
+      this._camera.position.set(0, 2, 30);
     }
     this._renderer.setAnimationLoop(() => {
       this._renderer.render(this._scene, this._camera);
@@ -91,8 +92,8 @@ export class Viewer {
 
     new OrbitControls(this._camera, this._renderer.domElement);
 
-    const grid = new GridHelper(10, 10);
-    grid.position.set(0, -2, 0);
+    const grid = new GridHelper(50, 10);
+    grid.position.set(0, -10, 0);
     this._scene.add(grid);
 
     const linesNoColor = new LineMaterial({
@@ -135,7 +136,7 @@ export class Viewer {
           : this._positions.undeformed
       );
 
-      if (this._cached) {
+      if (this._cached && this._settings.results != "none") {
         (this._lines.geometry as any).setColors(
           this._cached[this._settings.results].colors
         );
@@ -152,7 +153,6 @@ export class Viewer {
   render(): HTMLElement {
     const container = document.createElement("div");
 
-    this._renderer.domElement.style.margin = "-1rem"; // only for storybook
     container.appendChild(this._renderer.domElement);
     container.appendChild(this._settingsPanel.render());
     container.appendChild(this._label.render());
@@ -173,6 +173,7 @@ export class Viewer {
         model.deformedPositions ?? model.positions
       ),
     };
+    (this._lines.geometry as any) = new LineSegmentsGeometry(); // to save topology
     (this._lines.geometry as any).setPositions(
       this._settings.deformed
         ? this._positions.deformed
@@ -199,7 +200,7 @@ export class Viewer {
     this._supports.clear();
     getSupports(model).map((position) => {
       const cube = new Mesh(
-        new BoxGeometry(0.25, 0.25, 0.25),
+        new BoxGeometry(0.5, 0.5, 0.5),
         new MeshBasicMaterial({ color: 0x00ff00 })
       );
       cube.position.fromArray(position);
@@ -228,7 +229,7 @@ export class Viewer {
       .normalize();
 
     const plane = new Mesh(
-      new PlaneGeometry(length, 0.5),
+      new PlaneGeometry(length, 1),
       new MeshBasicMaterial({
         color: 0x00ff00,
         side: DoubleSide,
@@ -246,7 +247,7 @@ export class Viewer {
       plane.rotateZ(-angle2);
     }
     plane.translateX(length / 2);
-    plane.translateY(0.5);
+    plane.translateY(1);
 
     this._loads.add(plane);
   }

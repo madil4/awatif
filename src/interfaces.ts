@@ -1,3 +1,10 @@
+export interface State {
+  parameters?: Parameters;
+  model?: Model;
+  analysisResults?: AnalysisResult[];
+  designResults?: DesignResult[];
+}
+
 // parameters
 export enum ParameterType {
   slider = "slider",
