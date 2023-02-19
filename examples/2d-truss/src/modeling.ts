@@ -9,6 +9,9 @@ export function modeling(parameters: Parameters): Model {
   const span = parameters.span.value;
   const divisions = parameters.divisions.value;
   const height = parameters.height.value;
+  const elasticity = parameters.elasticity.value * 1e6;
+  const area = parameters.area.value * 1e-4;
+  const load = parameters.load.value;
 
   const positions: [number, number, number][] = [];
   const connectivities: [number, number][] = [];
@@ -30,18 +33,17 @@ export function modeling(parameters: Parameters): Model {
   }
 
   // top chord
-  const topChord: number[] = [];
-  for (let i = 0; i < divisions; i++) {
+  for (let i = 1; i < divisions - 1; i++) {
     connectivities.push([divisions + 1 + i, divisions + 1 + i + 1]);
-    topChord.push(connectivities.length - 1);
   }
-  for (let i = 0; i <= divisions; i++) {
+
+  for (let i = 1; i < divisions; i++) {
     connectivities.push([i, divisions + 1 + i]); // vertical post
   }
 
   // diagonal post
   for (let i = 0; i < divisions; i++) {
-    if (i % 2 == 0) {
+    if (i < divisions / 2) {
       connectivities.push([i, divisions + 1 + i + 1]);
     } else {
       connectivities.push([divisions + 1 + i, i + 1]);
@@ -62,12 +64,12 @@ export function modeling(parameters: Parameters): Model {
         secondNode: [true, true],
         element: bottomChord[bottomChord.length - 1],
       },
-      ...topChord.map(
+      ...bottomChord.map(
         (element) =>
           ({
             element: element,
             type: AssignmentType.barUniformLoad,
-            yLoad: -100,
+            yLoad: -load,
           } as Assignment)
       ),
       ...connectivities.map(
@@ -75,8 +77,8 @@ export function modeling(parameters: Parameters): Model {
           ({
             element: element,
             type: AssignmentType.bar,
-            elasticity: 100,
-            area: 100,
+            elasticity: elasticity,
+            area: area,
           } as Assignment)
       ),
     ],

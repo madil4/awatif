@@ -56,7 +56,7 @@ export function deforming(model: Model): [number, number, number][] {
       [0, 0, cos, sin],
     ]);
     const k_O = multiply(K_local, O);
-    const new_K = multiply(transpose(O), k_O);
+    const K_global = multiply(transpose(O), k_O);
 
     // add to the big matrix
     const node1Range = [element[0] * 2, element[0] * 2 + 1];
@@ -64,7 +64,7 @@ export function deforming(model: Model): [number, number, number][] {
     const range = [...node1Range, ...node2Range];
     const ind = indexMathjs(range, range);
     const current_K = subset(k_global_T, ind);
-    const sum = add(current_K, new_K);
+    const sum = add(current_K, K_global);
     k_global_T = subset(k_global_T, ind, sum);
   });
 
@@ -164,10 +164,11 @@ function getBar(
   index: number,
   assignments: Assignment[] | undefined
 ): { area: number; elasticity: number } {
+  let bar = { area: 1, elasticity: 1 };
   assignments?.forEach((assignment) => {
     if (assignment.element == index && assignment.type == AssignmentType.bar) {
-      return { area: assignment.area, elasticity: assignment.elasticity };
+      bar = { area: assignment.area, elasticity: assignment.elasticity };
     }
   });
-  return { area: 100, elasticity: 300 };
+  return bar;
 }

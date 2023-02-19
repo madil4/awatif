@@ -12,7 +12,7 @@ export class Configurator {
         min: parameters[key].min,
         max: parameters[key].max,
         step: parameters[key].step,
-        label: key,
+        label: parameters[key].label ?? key,
       });
     });
 

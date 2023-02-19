@@ -15,6 +15,7 @@ interface SliderParameter {
   min: number;
   max: number;
   step: number;
+  label?: string;
 }
 type Parameter = SliderParameter;
 export type Parameters = { [name: string]: Parameter };
