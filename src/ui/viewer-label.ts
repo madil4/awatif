@@ -16,7 +16,7 @@ export class ViewerLabel {
 
   render() {
     this._canvas.style.width = "1rem";
-    this._canvas.style.height = "50vh";
+    this._canvas.style.height = "40vh";
     this._container.appendChild(this._canvas);
 
     const maxMinCss = `
