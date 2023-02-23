@@ -1,12 +1,13 @@
 {
   "name": "awatif",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A parametric structural engineering tool that is open-source and web-based",
   "scripts": {
     "storybook": "start-storybook",
     "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
     "build": "vite build ./examples/2d-truss/"
   },
+  "main": "./src/interfaces.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/awatif-software/awatif.git"
@@ -26,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/awatif-software/awatif/issues"
   },
-  "homepage": "https://github.com/awatif-software/awatif#readme",
+  "homepage": "https://awatif.co",
   "devDependencies": {
     "@storybook/builder-vite": "^0.4.2",
     "@storybook/html": "^6.5.16",
