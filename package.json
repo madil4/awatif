@@ -1,7 +1,7 @@
 {
   "name": "awatif",
-  "version": "0.0.0",
-  "description": "A web-based open-source parametric structural engineering tool",
+  "version": "0.0.1",
+  "description": "A parametric structural engineering tool that is open-source and web-based",
   "scripts": {
     "storybook": "start-storybook",
     "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
@@ -9,22 +9,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AwatifSoftware/awatif.git"
+    "url": "git+https://github.com/awatif-software/awatif.git"
   },
   "keywords": [
-    "structural engineering",
-    "structural analysis",
-    "structural design",
-    "parametric modeling",
-    "algorithmic modeling",
-    "computational design"
+    "awatif",
+    "parametric",
+    "computational",
+    "structural",
+    "engineering",
+    "design",
+    "fem",
+    "bim"
   ],
   "author": "Mohamed Adil",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AwatifSoftware/awatif/issues"
+    "url": "https://github.com/awatif-software/awatif/issues"
   },
-  "homepage": "https://github.com/AwatifSoftware/awatif#readme",
+  "homepage": "https://github.com/awatif-software/awatif#readme",
   "devDependencies": {
     "@storybook/builder-vite": "^0.4.2",
     "@storybook/html": "^6.5.16",
