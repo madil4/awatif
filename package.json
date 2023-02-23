@@ -1,7 +1,7 @@
 {
   "name": "awatif",
   "version": "0.0.0",
-  "description": "A web-based open-source parametric structural engineering tool",
+  "description": "A parametric structural engineering tool that is open-source and web-based",
   "scripts": {
     "storybook": "start-storybook",
     "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
