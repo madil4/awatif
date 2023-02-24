@@ -67,8 +67,8 @@ export function cacheResults(
   return {
     stress: {
       colors: stressColors.flat(),
-      max: isFinite(stressMax) ? stressMax : 0,
-      min: isFinite(stressMin) ? stressMin : 0,
+      max: isFinite(stressMax * 1e-3) ? stressMax * 1e-3 : 0,
+      min: isFinite(stressMin * 1e-3) ? stressMin * 1e-3 : 0,
     },
     force: {
       colors: forceColors.flat(),
@@ -77,13 +77,13 @@ export function cacheResults(
     },
     deformationX: {
       colors: deformationXColors.flat(),
-      max: isFinite(defXMax) ? defXMax : 0,
-      min: isFinite(defXMin) ? defXMin : 0,
+      max: isFinite(defXMax * 1e3) ? defXMax * 1e3 : 0,
+      min: isFinite(defXMin * 1e3) ? defXMin * 1e3 : 0,
     },
     deformationY: {
       colors: deformationYColors.flat(),
-      max: isFinite(defYMax) ? defYMax : 0,
-      min: isFinite(defYMin) ? defYMin : 0,
+      max: isFinite(defYMax * 1e3) ? defYMax * 1e3 : 0,
+      min: isFinite(defYMin * 1e3) ? defYMin * 1e3 : 0,
     },
     steel: {
       colors: steelColors.flat(),

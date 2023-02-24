@@ -15,11 +15,11 @@ export class ViewerSettingsPanel {
     this._pane.addInput(this._settings, "results", {
       options: {
         none: "none",
-        stress: "stress",
-        force: "force",
-        deformationX: "deformationX",
-        deformationY: "deformationY",
-        steel: "steel",
+        "stress (mpa)": "stress",
+        "force (kn)": "force",
+        "deformationX (mm)": "deformationX",
+        "deformationY (mm)": "deformationY",
+        design: "steel",
       },
     });
 

@@ -12,6 +12,7 @@ export function modeling(parameters: Parameters): Model {
   const elasticity = parameters.elasticity.value * 1e6;
   const area = parameters.area.value * 1e-4;
   const load = parameters.load.value;
+  const strength = parameters.strength.value * 1e3;
 
   const positions: [number, number, number][] = [];
   const connectivities: [number, number][] = [];
@@ -79,6 +80,14 @@ export function modeling(parameters: Parameters): Model {
             type: AssignmentType.bar,
             elasticity: elasticity,
             area: area,
+          } as Assignment)
+      ),
+      ...connectivities.map(
+        (_, element) =>
+          ({
+            element: element,
+            type: AssignmentType.steelDesign,
+            strength: strength,
           } as Assignment)
       ),
     ],

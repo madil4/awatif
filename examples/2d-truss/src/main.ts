@@ -1,5 +1,5 @@
 import { analyzing } from "../../../src/algorithms/analyzing";
-import { ParameterType, State } from "../../../src/interfaces";
+import { designing, ParameterType, State } from "../../../src/interfaces";
 import { Configurator } from "../../../src/ui/configurator";
 import { Viewer } from "../../../src/ui/viewer";
 import { modeling } from "./modeling";
@@ -41,7 +41,7 @@ state.parameters = {
     min: 1,
     max: 250,
     step: 1,
-    label: "Elasticity (GPA)",
+    label: "Elasticity (gpa)",
   },
   area: {
     type: ParameterType.slider,
@@ -57,7 +57,15 @@ state.parameters = {
     min: 0,
     max: 300,
     step: 1,
-    label: "load (kN/m)",
+    label: "load (kn/m)",
+  },
+  strength: {
+    type: ParameterType.slider,
+    value: 200,
+    min: 0,
+    max: 300,
+    step: 1,
+    label: "strength (mpa)",
   },
 };
 
@@ -66,6 +74,7 @@ const configurator = new Configurator(state.parameters);
 configurator.onChange(() => {
   state.model = modeling(state.parameters!);
   state.analysisResults = analyzing(state.model);
+  state.designResults = designing(state.model, state.analysisResults);
 
-  viewer.update(state.model, state.analysisResults);
+  viewer.update(state.model, state.analysisResults, state.designResults);
 });
