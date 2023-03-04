@@ -220,37 +220,29 @@ export class Viewer {
   private renderUniformLoad(element: any[]) {
     const start = new Vector3(...element[0]);
     const end = new Vector3(...element[1]);
-    const vector = end.clone().sub(start);
     const normal = start.clone().cross(end).normalize();
-    const length = start.distanceTo(end);
 
     const beforeNormal = new Vector3(0, 0, 1);
     const cross = normal.clone().cross(beforeNormal).normalize();
     const angle = beforeNormal.angleTo(normal);
-    const rotation = new Quaternion()
-      .setFromAxisAngle(cross, angle)
-      .normalize();
+    const rotation = new Quaternion();
+    if (cross.z > 0) {
+      rotation.setFromAxisAngle(cross, angle).normalize();
+    } else {
+      rotation.setFromAxisAngle(cross, -angle).normalize();
+    }
 
     const plane = new Mesh(
-      new PlaneGeometry(length, 1),
+      new PlaneGeometry(1, 1),
       new MeshBasicMaterial({
-        color: 0x00ff00,
+        color: 0xff0000,
         side: DoubleSide,
       })
     );
 
-    plane.position.copy(start);
+    const midPoint = start.clone().add(end).multiplyScalar(0.5);
+    plane.position.copy(midPoint);
     plane.applyQuaternion(rotation);
-
-    const xAxis = new Vector3(1, 0, 0).applyQuaternion(rotation);
-    const angle2 = xAxis.angleTo(vector);
-    if (xAxis.cross(vector).z > 0) {
-      plane.rotateZ(angle2);
-    } else {
-      plane.rotateZ(-angle2);
-    }
-    plane.translateX(length / 2);
-    plane.translateY(1);
 
     this._loads.add(plane);
   }
