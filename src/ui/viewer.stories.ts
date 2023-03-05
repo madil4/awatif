@@ -37,12 +37,12 @@ const model: Model = {
     {
       element: 0,
       type: AssignmentType.barSupports,
-      firstNode: [true, true],
+      firstNode: [true, true, true],
     },
     {
       element: 1,
       type: AssignmentType.barSupports,
-      secondNode: [true, false],
+      secondNode: [true, false, false],
     },
     {
       element: 0,
@@ -51,6 +51,11 @@ const model: Model = {
     },
     {
       element: 1,
+      type: AssignmentType.barUniformLoad,
+      yLoad: -100,
+    },
+    {
+      element: 2,
       type: AssignmentType.barUniformLoad,
       yLoad: -100,
     },

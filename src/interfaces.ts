@@ -37,13 +37,14 @@ interface BarAssignment extends BaseAssignment {
 }
 interface BarSupportsAssignment extends BaseAssignment {
   type: AssignmentType.barSupports;
-  firstNode?: [boolean, boolean];
-  secondNode?: [boolean, boolean];
+  firstNode?: [boolean, boolean, boolean];
+  secondNode?: [boolean, boolean, boolean];
 }
 interface BarUniformLoadAssignment extends BaseAssignment {
   type: AssignmentType.barUniformLoad;
   xLoad?: number;
   yLoad?: number;
+  zLoad?: number;
 }
 interface SteelDesignAssignment extends BaseAssignment {
   type: AssignmentType.steelDesign;

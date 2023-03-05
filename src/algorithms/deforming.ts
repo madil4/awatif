@@ -19,53 +19,49 @@ import {
 import { Assignment, Model, AssignmentType } from "../interfaces";
 
 export function deforming(model: Model): [number, number, number][] {
-  const positions = model.positions.map((node) => node.slice(0, 2));
+  const positions = model.positions;
 
   // compute stiffness matrix, force, supports all in one loop with one lookup table if possible same keys
-  let k_global_T = zeros(positions.length * 2, positions.length * 2);
+  let stiffnessGlobalAssembly = zeros(
+    positions.length * 3,
+    positions.length * 3
+  );
 
   model.connectivities.forEach((element, index) => {
-    const n0 = matrix(positions[element[0]]);
-    const n1 = matrix(positions[element[1]]);
-
-    // transformation matrix
-    const d = subtract(n1, n0);
-    const i = matrix([1, 0]);
-    const j = matrix([0, 1]);
-    const cos = dot(d, i) / (norm(d) as number);
-    const sin = dot(d, j) / (norm(d) as number);
-    const T = matrix([
-      [cos, sin],
-      [-sin, cos],
-    ]);
+    const node0 = matrix(positions[element[0]]);
+    const node1 = matrix(positions[element[1]]);
+    const vector = subtract(node1, node0);
+    const length = norm(vector) as number;
 
     // local matrix
-    const n0_T = multiply(T, n0);
-    const n1_T = multiply(T, n1);
-    const L = n1_T.get([0]) - n0_T.get([0]);
     const { area, elasticity } = getBar(index, model.assignments);
-    let K_local = matrix([
+    let stiffnessLocal = matrix([
       [1, -1],
       [-1, 1],
     ]);
-    K_local = multiply(K_local, (area * elasticity) / L);
+    stiffnessLocal = multiply(stiffnessLocal, (area * elasticity) / length);
 
     // global matrix
-    const O = matrix([
-      [cos, sin, 0, 0],
-      [0, 0, cos, sin],
+    const cosX = dot(vector, matrix([1, 0, 0])) / length;
+    const cosY = dot(vector, matrix([0, 1, 0])) / length;
+    const cosZ = dot(vector, matrix([0, 0, 1])) / length;
+    const transformation = matrix([
+      [cosX, cosY, cosZ, 0, 0, 0],
+      [0, 0, 0, cosX, cosY, cosZ],
     ]);
-    const k_O = multiply(K_local, O);
-    const K_global = multiply(transpose(O), k_O);
+    const stiffnessGlobal = multiply(
+      transpose(transformation),
+      multiply(stiffnessLocal, transformation)
+    );
 
-    // add to the big matrix
-    const node1Range = [element[0] * 2, element[0] * 2 + 1];
-    const node2Range = [element[1] * 2, element[1] * 2 + 1];
+    // assemble stiffness's
+    const node1Range = [element[0] * 3, element[0] * 3 + 1, element[0] * 3 + 2];
+    const node2Range = [element[1] * 3, element[1] * 3 + 1, element[1] * 3 + 2];
     const range = [...node1Range, ...node2Range];
     const ind = indexMathjs(range, range);
-    const current_K = subset(k_global_T, ind);
-    const sum = add(current_K, K_global);
-    k_global_T = subset(k_global_T, ind, sum);
+    const current_K = subset(stiffnessGlobalAssembly, ind);
+    const sum = add(current_K, stiffnessGlobal);
+    stiffnessGlobalAssembly = subset(stiffnessGlobalAssembly, ind, sum);
   });
 
   // flatten positions for math
@@ -81,16 +77,12 @@ export function deforming(model: Model): [number, number, number][] {
   // compute step
   const f_free = subset(f, indexMathjs(freeInd));
   const x_free = subset(x, indexMathjs(freeInd));
-  const K_free = subset(k_global_T, indexMathjs(freeInd, freeInd));
+  const K_free = subset(stiffnessGlobalAssembly, indexMathjs(freeInd, freeInd));
   const dx = lusolve(K_free as any, f_free);
 
   x = subset(x, indexMathjs(freeInd), add(x_free, flatten(dx)));
 
-  const newPositions = reshape(x, [-1, 2])
-    .toArray()
-    .map((node) => node.concat(0));
-
-  return newPositions;
+  return reshape(x, [-1, 3]).toArray() as any;
 }
 
 function getSupports(
@@ -104,16 +96,18 @@ function getSupports(
     if (assignment.type == AssignmentType.barSupports) {
       let localSupportsFirst: number[] = [];
       const firstNode = connectivities[assignment.element ?? 0][0];
-      localSupportsFirst.push(firstNode * 2);
-      localSupportsFirst.push(firstNode * 2 + 1);
+      localSupportsFirst.push(firstNode * 3);
+      localSupportsFirst.push(firstNode * 3 + 1);
+      localSupportsFirst.push(firstNode * 3 + 2);
       localSupportsFirst = localSupportsFirst.filter((_, index) =>
         assignment.firstNode ? assignment.firstNode[index] : false
       );
 
       let localSupportsSecond: number[] = [];
       const secondNode = connectivities[assignment.element ?? 0][1];
-      localSupportsSecond.push(secondNode * 2);
-      localSupportsSecond.push(secondNode * 2 + 1);
+      localSupportsSecond.push(secondNode * 3);
+      localSupportsSecond.push(secondNode * 3 + 1);
+      localSupportsSecond.push(secondNode * 3 + 2);
       localSupportsSecond = localSupportsSecond.filter((_, index) =>
         assignment.secondNode ? assignment.secondNode[index] : false
       );
@@ -132,26 +126,36 @@ function getForces(model: Model) {
       forces.set(assignment.element ?? -1, [
         assignment.xLoad ?? 0,
         assignment.yLoad ?? 0,
+        assignment.zLoad ?? 0,
       ]);
   });
 
-  let f = zeros([model.positions.length * 2]);
+  let f = zeros([model.positions.length * 3]);
   model.connectivities.forEach((element, index) => {
-    const force = forces.get(index) ?? [0, 0];
+    const force = forces.get(index) ?? [0, 0, 0];
     const vector = subtract(
       model.positions[element[1]],
       model.positions[element[0]]
     );
     const forceX = (force[0] * abs(vector[1])) / 2;
     const forceY = (force[1] * abs(vector[0])) / 2;
-    const pointForce = [forceX, forceY];
+    const forceZ = (force[2] * abs(vector[2])) / 2; // needs verification
+    const pointForce = [forceX, forceY, forceZ];
 
-    const indN1 = indexMathjs([element[0] * 2, element[0] * 2 + 1]);
+    const indN1 = indexMathjs([
+      element[0] * 3,
+      element[0] * 3 + 1,
+      element[0] * 3 + 2,
+    ]);
     const currentF1 = subset(f, indN1);
     const sumF1 = add(currentF1, pointForce);
     f = subset(f, indN1, sumF1);
 
-    const indN2 = indexMathjs([element[1] * 2, element[1] * 2 + 1]);
+    const indN2 = indexMathjs([
+      element[1] * 3,
+      element[1] * 3 + 1,
+      element[1] * 3 + 2,
+    ]);
     const currentF2 = subset(f, indN2);
     const sumF2 = add(currentF2, pointForce);
     f = subset(f, indN2, sumF2);

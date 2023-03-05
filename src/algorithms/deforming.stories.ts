@@ -9,7 +9,10 @@ export default {
 } as Meta;
 
 const template: StoryFn = (): HTMLElement => {
-  const viewer = new Viewer({ supports: true, deformed: true });
+  const viewer = new Viewer({
+    supports: true,
+    deformed: true,
+  });
   const parameters = {
     xLoad: {
       type: ParameterType.slider,
@@ -18,7 +21,14 @@ const template: StoryFn = (): HTMLElement => {
       max: 50,
       step: 0.01,
     },
-    "-yLoad": {
+    yLoad: {
+      type: ParameterType.slider,
+      value: 25,
+      min: 0,
+      max: 50,
+      step: 0.01,
+    },
+    zLoad: {
       type: ParameterType.slider,
       value: 25,
       min: 0,
@@ -31,34 +41,41 @@ const template: StoryFn = (): HTMLElement => {
   configurator.onChange(() => {
     let model: Model = {
       positions: [
-        [-10, 0, 0],
+        [-10, 0, 10],
+        [10, 0, 10],
+        [0, 0, -10],
         [0, 10, 0],
-        [10, 0, 0],
       ],
       connectivities: [
-        [0, 1],
-        [2, 1],
+        [0, 3],
+        [1, 3],
+        [2, 3],
       ],
       assignments: [
         { element: 0, type: AssignmentType.bar, area: 5, elasticity: 200 },
         { element: 1, type: AssignmentType.bar, area: 5, elasticity: 200 },
+        { element: 2, type: AssignmentType.bar, area: 5, elasticity: 200 },
         {
           element: 0,
           type: AssignmentType.barSupports,
-          firstNode: [true, true],
-          secondNode: [false, false],
+          firstNode: [true, true, true],
         },
         {
           element: 1,
           type: AssignmentType.barSupports,
-          firstNode: [true, true],
-          secondNode: [false, false],
+          firstNode: [true, true, true],
+        },
+        {
+          element: 2,
+          type: AssignmentType.barSupports,
+          firstNode: [true, true, true],
         },
         {
           element: 0,
           type: AssignmentType.barUniformLoad,
           xLoad: parameters.xLoad.value,
-          yLoad: -parameters["-yLoad"].value,
+          yLoad: parameters.yLoad.value,
+          zLoad: parameters.zLoad.value,
         },
       ],
     };
