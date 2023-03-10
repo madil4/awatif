@@ -1,6 +1,6 @@
-import { OrbitControls } from "./utils/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { AnalysisResult, DesignResult, Model } from "../interfaces";
-import { LineSegments2 } from "./utils/lines/LineSegments2";
+import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { getPositions } from "./utils/get-positions";
 import {
   BoxGeometry,
@@ -21,10 +21,10 @@ import { getSupports } from "./utils/get-supports";
 import { getUniformLoads } from "./utils/get-uniform-loads";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
-import { LineMaterial } from "./utils/lines/LineMaterial";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { cacheResults } from "./utils/cache-results";
-import { Lut } from "./utils/lut";
-import { LineSegmentsGeometry } from "./utils/lines/LineSegmentsGeometry";
+import { Lut } from "three/examples/jsm/math/lut";
+import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 
 export interface Settings {
   supports: boolean;
@@ -97,12 +97,12 @@ export class Viewer {
     this._scene.add(grid);
 
     const linesNoColor = new LineMaterial({
-      color: "white",
+      color: 0xffffff,
       linewidth: 2,
       resolution: new Vector2(window.innerWidth, window.innerHeight),
     });
     const linesColor = new LineMaterial({
-      color: "white",
+      color: 0xffffff,
       vertexColors: true,
       linewidth: 2,
       resolution: new Vector2(window.innerWidth, window.innerHeight),

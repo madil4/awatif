@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/html";
-import { Lut } from "./utils/lut";
 import { ViewerLabel } from "./viewer-label";
+import { Lut } from "three/examples/jsm/math/lut";
 
 export default {
   title: "UI/Viewer Label",
