@@ -15,4 +15,4 @@ npm run storybook
 ```
 
 ## Sponsors
-Join me in creating affordable, safe, and eco-friendly structures! I'm working on this project in my free time and would love your support. As a small token of appreciation, I can include your company logo here (if you'd like 😊).
+Join me in creating affordable, safe, and eco-friendly structures! I'm working on this project in my free time and would love your support. As a small token of appreciation, I can include your company logo here.
