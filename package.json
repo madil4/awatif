@@ -5,6 +5,7 @@
   "scripts": {
     "storybook": "start-storybook",
     "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
+    "apps:pl-designer": "vite ./apps/pl-designer/ --open ",
     "build": "vite build ./examples/2d-truss/"
   },
   "main": "./src/interfaces.ts",

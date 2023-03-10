@@ -32,6 +32,7 @@ export interface Settings {
   deformed: boolean;
   results: string;
   expanded: boolean;
+  visible: boolean;
 }
 
 export class Viewer {
@@ -60,6 +61,7 @@ export class Viewer {
       deformed: false,
       results: "none",
       expanded: false,
+      visible: true,
       ...settings,
     };
 

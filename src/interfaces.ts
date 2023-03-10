@@ -8,6 +8,7 @@ export interface State {
 // parameters
 export enum ParameterType {
   slider = "slider",
+  toggle = "toggle",
 }
 interface SliderParameter {
   type: ParameterType.slider;
@@ -17,7 +18,12 @@ interface SliderParameter {
   step: number;
   label?: string;
 }
-type Parameter = SliderParameter;
+interface ToggleParameter {
+  type: ParameterType.toggle;
+  value: boolean;
+  label?: string;
+}
+type Parameter = SliderParameter | ToggleParameter;
 export type Parameters = { [name: string]: Parameter };
 
 // model
