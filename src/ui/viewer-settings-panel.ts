@@ -5,8 +5,16 @@ export class ViewerSettingsPanel {
   private _settings: Settings;
   private _pane: Pane;
 
-  constructor(settings: Settings) {
-    this._settings = settings;
+  constructor(settings?: Partial<Settings>) {
+    this._settings = {
+      supports: false,
+      loads: false,
+      deformed: false,
+      results: "none",
+      expanded: false,
+      visible: true,
+      ...settings,
+    };
     this._pane = new Pane({ title: "Viewer Settings" });
 
     this._pane.addInput(this._settings, "supports");

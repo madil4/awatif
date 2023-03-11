@@ -1,6 +1,11 @@
 import { Meta, StoryFn } from "@storybook/html";
 import { Viewer } from "../ui/viewer";
-import { AssignmentType, Model, ParameterType } from "../interfaces";
+import {
+  AssignmentType,
+  Model,
+  Parameters,
+  ParameterType,
+} from "../interfaces";
 import { Configurator } from "../ui/configurator";
 import { analyzing } from "./analyzing";
 import { designing } from "./designing";
@@ -15,7 +20,7 @@ const template: StoryFn = (): HTMLElement => {
     deformed: true,
     results: "steel",
   });
-  const parameters = {
+  const parameters: Parameters = {
     xLoad: {
       type: ParameterType.slider,
       value: 25,
@@ -42,13 +47,13 @@ const template: StoryFn = (): HTMLElement => {
 
   configurator.onChange(() => {
     let model: Model = {
-      positions: [
+      nodes: [
         [-10, 0, 10],
         [10, 0, 10],
         [0, 0, -10],
         [0, 10, 0],
       ],
-      connectivities: [
+      elements: [
         [0, 3],
         [1, 3],
         [2, 3],
@@ -75,9 +80,9 @@ const template: StoryFn = (): HTMLElement => {
         {
           element: 0,
           type: AssignmentType.barUniformLoad,
-          xLoad: parameters.xLoad.value,
-          yLoad: parameters.yLoad.value,
-          zLoad: parameters.zLoad.value,
+          xLoad: parameters.xLoad.value as number,
+          yLoad: parameters.yLoad.value as number,
+          zLoad: parameters.zLoad.value as number,
         },
         { element: 0, type: AssignmentType.steelDesign, strength: 50 },
         { element: 1, type: AssignmentType.steelDesign, strength: 50 },

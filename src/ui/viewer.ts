@@ -1,20 +1,13 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { AnalysisResult, DesignResult, Model } from "../interfaces";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
-import { getPositions } from "./utils/get-positions";
+import { getNodes } from "./utils/get-positions";
 import {
-  BoxGeometry,
-  DoubleSide,
   GridHelper,
   Group,
-  Mesh,
-  MeshBasicMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
-  Quaternion,
   Scene,
   Vector2,
-  Vector3,
   WebGLRenderer,
 } from "three";
 import { getSupports } from "./utils/get-supports";
@@ -22,9 +15,10 @@ import { getUniformLoads } from "./utils/get-uniform-loads";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
-import { cacheResults } from "./utils/cache-results";
-import { Lut } from "three/examples/jsm/math/lut";
+import { getResults } from "./utils/get-results";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
+import { renderUniformLoads } from "./utils/render-uniform-loads";
+import { renderSupports } from "./utils/render-supports";
 
 export interface Settings {
   supports: boolean;
@@ -36,44 +30,27 @@ export interface Settings {
 }
 
 export class Viewer {
-  private _settings: Settings;
-  private _settingsPanel: ViewerSettingsPanel;
-  private _colorMapper: Lut;
-  private _label: ViewerLabel;
   private _renderer: WebGLRenderer;
   private _scene: Scene;
   private _camera: PerspectiveCamera;
-  private _lines: LineSegments2;
-  private _supports: Group;
-  private _loads: Group;
-  private _cached?: {
-    [type: string]: { colors: number[]; max: number; min: number };
-  };
-  private _positions: {
+
+  private _settings: Settings;
+  private _settingsPanel: ViewerSettingsPanel;
+  private _label: ViewerLabel;
+
+  private _nodes: {
     undeformed: number[];
     deformed: number[];
   };
+  private _results?: {
+    [type: string]: { colors: number[]; max: number; min: number };
+  };
+
+  private _lines: LineSegments2;
+  private _supports: Group;
+  private _loads: Group;
 
   constructor(settings?: Partial<Settings>) {
-    this._settings = {
-      supports: false,
-      loads: false,
-      deformed: false,
-      results: "none",
-      expanded: false,
-      visible: true,
-      ...settings,
-    };
-
-    this._settingsPanel = new ViewerSettingsPanel(this._settings);
-
-    this._colorMapper = new Lut();
-
-    this._label = new ViewerLabel(this._colorMapper.createCanvas());
-    this._label.update({
-      hidden: this._settings.results == "none" ? true : false,
-    });
-
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     this._scene = new Scene();
@@ -91,9 +68,24 @@ export class Viewer {
     this._renderer.setAnimationLoop(() => {
       this._renderer.render(this._scene, this._camera);
     });
-
     new OrbitControls(this._camera, this._renderer.domElement);
 
+    this._settings = {
+      supports: false,
+      loads: false,
+      deformed: false,
+      results: "none",
+      expanded: false,
+      visible: true,
+      ...settings,
+    };
+    this._settingsPanel = new ViewerSettingsPanel(this._settings);
+    this._label = new ViewerLabel();
+    this._label.update({
+      hidden: this._settings.results == "none" ? true : false,
+    });
+
+    // rendering objects
     const grid = new GridHelper(50, 10);
     grid.position.set(0, -10, 0);
     this._scene.add(grid);
@@ -122,42 +114,39 @@ export class Viewer {
     this._loads.visible = this._settings.loads;
     this._scene.add(this._loads);
 
-    // on settings change
+    // event handlers
     this._settingsPanel.onChange(() => {
       this._label.update({
         hidden: this._settings.results == "none" ? true : false,
       });
+
       this._lines.material =
         this._settings.results == "none" ? linesNoColor : linesColor;
+      (this._lines.geometry as any).setPositions(
+        this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
+      );
       this._supports.visible = this._settings.supports;
       this._loads.visible = this._settings.loads;
 
-      (this._lines.geometry as any).setPositions(
-        this._settings.deformed
-          ? this._positions.deformed
-          : this._positions.undeformed
-      );
-
-      if (this._cached && this._settings.results != "none") {
-        (this._lines.geometry as any).setColors(
-          this._cached[this._settings.results].colors
-        );
+      if (this._results && this._settings.results != "none") {
         this._label.update({
-          max: this._cached[this._settings.results].max,
-          min: this._cached[this._settings.results].min,
+          max: this._results[this._settings.results].max,
+          min: this._results[this._settings.results].min,
         });
+        (this._lines.geometry as any).setColors(
+          this._results[this._settings.results].colors
+        );
       }
     });
 
-    document.body.appendChild(this.render());
+    document.body.appendChild(this.render()); // keep it at the end
   }
 
   render(): HTMLElement {
-    document.body.style.padding = "0px";
-    document.body.style.margin = "0px";
+    document.body.style.padding = "0px"; // due to storybook
+    document.body.style.margin = "0px"; // due to html default
 
     const container = document.createElement("div");
-
     container.appendChild(this._renderer.domElement);
     container.appendChild(this._settingsPanel.render());
     container.appendChild(this._label.render());
@@ -170,89 +159,36 @@ export class Viewer {
     analysisResults?: AnalysisResult[],
     designResults?: DesignResult[]
   ): void {
-    // lines
-    this._positions = {
-      undeformed: getPositions(model.connectivities, model.positions),
-      deformed: getPositions(
-        model.connectivities,
-        model.deformedPositions ?? model.positions
-      ),
+    this._nodes = {
+      undeformed: getNodes(model.elements, model.nodes),
+      deformed: getNodes(model.elements, model.deformedNodes ?? model.nodes),
     };
+    this._results = getResults(model.elements, analysisResults, designResults);
+
+    // lines
     (this._lines.geometry as any) = new LineSegmentsGeometry(); // to save topology
     (this._lines.geometry as any).setPositions(
-      this._settings.deformed
-        ? this._positions.deformed
-        : this._positions.undeformed
+      this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
     );
 
-    this._cached = cacheResults(
-      model.connectivities,
-      analysisResults,
-      designResults,
-      this.getColor
-    );
-    if (this._cached && this._settings.results != "none") {
-      (this._lines.geometry as any).setColors(
-        this._cached[this._settings.results].colors
-      );
+    if (this._results && this._settings.results != "none") {
       this._label.update({
-        max: this._cached[this._settings.results]?.max,
-        min: this._cached[this._settings.results]?.min,
+        max: this._results[this._settings.results]?.max,
+        min: this._results[this._settings.results]?.min,
       });
+      (this._lines.geometry as any).setColors(
+        this._results[this._settings.results].colors
+      );
     }
 
-    // supports
     this._supports.clear();
     getSupports(model).map((position) => {
-      const cube = new Mesh(
-        new BoxGeometry(0.5, 0.5, 0.5),
-        new MeshBasicMaterial({ color: 0x00ff00 })
-      );
-      cube.position.fromArray(position);
-      this._supports.add(cube);
+      this._supports.add(renderSupports(position));
     });
 
-    // loads
     this._loads.clear();
-    getUniformLoads(model).map((element: any[]) => {
-      this.renderUniformLoad(element);
+    getUniformLoads(model).map((element) => {
+      this._loads.add(renderUniformLoads(element));
     });
   }
-
-  private renderUniformLoad(element: any[]) {
-    const start = new Vector3(...element[0]);
-    const end = new Vector3(...element[1]);
-    const normal = start.clone().cross(end).normalize();
-
-    const beforeNormal = new Vector3(0, 0, 1);
-    const cross = normal.clone().cross(beforeNormal).normalize();
-    const angle = beforeNormal.angleTo(normal);
-    const rotation = new Quaternion();
-    if (cross.z > 0) {
-      rotation.setFromAxisAngle(cross, angle).normalize();
-    } else {
-      rotation.setFromAxisAngle(cross, -angle).normalize();
-    }
-
-    const plane = new Mesh(
-      new PlaneGeometry(1, 1),
-      new MeshBasicMaterial({
-        color: 0xff0000,
-        side: DoubleSide,
-      })
-    );
-
-    const midPoint = start.clone().add(end).multiplyScalar(0.5);
-    plane.position.copy(midPoint);
-    plane.applyQuaternion(rotation);
-
-    this._loads.add(plane);
-  }
-
-  private getColor = (value: number, max: number, min: number): number[] => {
-    this._colorMapper.setMax(max);
-    this._colorMapper.setMin(min);
-    const color = this._colorMapper.getColor(value);
-    return color ? color.toArray() : [1, 1, 1];
-  };
 }

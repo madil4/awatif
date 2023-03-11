@@ -8,8 +8,8 @@ import {
 import { deforming } from "./deforming";
 
 export function analyzing(model: Model): AnalysisResult[] {
-  const deformedPositions = deforming(model);
-  model.deformedPositions = deformedPositions;
+  const deformedNodes = deforming(model);
+  model.deformedNodes = deformedNodes;
 
   const bars: Map<number, { area: number; elasticity: number }> = new Map();
   model.assignments?.forEach((assignment) => {
@@ -24,24 +24,18 @@ export function analyzing(model: Model): AnalysisResult[] {
   });
 
   const analysisResults: AnalysisResult[] = [];
-  model.connectivities.forEach((element, index) => {
+  model.elements.forEach((element, index) => {
     const bar = bars.get(index) ?? { area: 0, elasticity: 0 };
     const L0 = norm(
-      subtract(model.positions[element[1]], model.positions[element[0]])
+      subtract(model.nodes[element[1]], model.nodes[element[0]])
     ) as number;
     const L = norm(
-      subtract(deformedPositions[element[1]], deformedPositions[element[0]])
+      subtract(deformedNodes[element[1]], deformedNodes[element[0]])
     ) as number;
     const stress = (bar.elasticity * (L - L0)) / L;
 
-    const d0 = subtract(
-      deformedPositions[element[0]],
-      model.positions[element[0]]
-    );
-    const d1 = subtract(
-      deformedPositions[element[1]],
-      model.positions[element[1]]
-    );
+    const d0 = subtract(deformedNodes[element[0]], model.nodes[element[0]]);
+    const d1 = subtract(deformedNodes[element[1]], model.nodes[element[1]]);
 
     analysisResults.push({
       element: index,

@@ -1,15 +1,15 @@
-import { AssignmentType, Model } from "../../interfaces";
+import { AssignmentType, Model, Node } from "../../interfaces";
 
-export function getUniformLoads(model: Model) {
-  const loads: number[][][] = [];
+export const getUniformLoads = (model: Model): [Node, Node][] => {
+  const loads: [Node, Node][] = [];
   model.assignments?.forEach((assignment) => {
     if (assignment.type == AssignmentType.barUniformLoad) {
       loads.push([
-        model.positions[model.connectivities[assignment.element!][0]],
-        model.positions[model.connectivities[assignment.element!][1]],
+        model.nodes[model.elements[assignment.element!][0]],
+        model.nodes[model.elements[assignment.element!][1]],
       ]);
     }
   });
 
   return loads;
-}
+};

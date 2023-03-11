@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/html";
 import { Viewer } from "../ui/viewer";
-import { ParameterType } from "../interfaces";
+import { Parameters, ParameterType } from "../interfaces";
 import { modeling } from "./modeling";
 import { Configurator } from "../ui/configurator";
 
@@ -10,7 +10,7 @@ export default {
 
 const template: StoryFn = (): HTMLElement => {
   const viewer = new Viewer({ supports: true, loads: true });
-  const parameters = {
+  const parameters: Parameters = {
     height: {
       type: ParameterType.slider,
       value: 10,

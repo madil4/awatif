@@ -1,8 +1,8 @@
-import { Model, Parameters } from "../../../src/interfaces";
+import { Element, Model, Node, Parameters } from "../../../src/interfaces";
 
 export function modeling(parameters: Parameters): Model {
-  const positions: [number, number, number][] = [];
-  const connectivities: [number, number][] = [];
+  const nodes: Node[] = [];
+  const elements: Element[] = [];
 
   let xLength = parameters.width.value as number;
   let xSpan = parameters.xSpan.value as number;
@@ -49,7 +49,7 @@ export function modeling(parameters: Parameters): Model {
         const zOffset = -zLength / 2;
 
         if (mainDirX) {
-          positions.push([
+          nodes.push([
             x * spacing > xLength
               ? (x - 1) * spacing + xOffset
               : x * spacing + xOffset,
@@ -61,7 +61,7 @@ export function modeling(parameters: Parameters): Model {
               : z * zSpan + zOffset,
           ]);
         } else {
-          positions.push([
+          nodes.push([
             x * xSpan > xLength
               ? (x - 1) * xSpan + xOffset
               : x * xSpan + xOffset,
@@ -84,11 +84,11 @@ export function modeling(parameters: Parameters): Model {
       for (let z = 0; z < zDivision; z++) {
         if (mainDirX) {
           if ((x * spacing) % xSpan == 0 || (x * spacing) % xLength == 0) {
-            connectivities.push([grid[x][y][z], grid[x][y + 1][z]]);
+            elements.push([grid[x][y][z], grid[x][y + 1][z]]);
           }
         } else {
           if ((z * spacing) % zSpan == 0 || (z * spacing) % zLength == 0) {
-            connectivities.push([grid[x][y][z], grid[x][y + 1][z]]);
+            elements.push([grid[x][y][z], grid[x][y + 1][z]]);
           }
         }
       }
@@ -100,7 +100,7 @@ export function modeling(parameters: Parameters): Model {
     for (let x = 0; x < xDivision - 1; x++) {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision; z++) {
-          connectivities.push([grid[x][y][z], grid[x + 1][y][z]]);
+          elements.push([grid[x][y][z], grid[x + 1][y][z]]);
         }
       }
     }
@@ -108,7 +108,7 @@ export function modeling(parameters: Parameters): Model {
     for (let x = 0; x < xDivision; x++) {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision - 1; z++) {
-          connectivities.push([grid[x][y][z], grid[x][y][z + 1]]);
+          elements.push([grid[x][y][z], grid[x][y][z + 1]]);
         }
       }
     }
@@ -117,7 +117,7 @@ export function modeling(parameters: Parameters): Model {
     for (let x = 0; x < xDivision; x++) {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision - 1; z++) {
-          connectivities.push([grid[x][y][z], grid[x][y][z + 1]]);
+          elements.push([grid[x][y][z], grid[x][y][z + 1]]);
         }
       }
     }
@@ -125,48 +125,48 @@ export function modeling(parameters: Parameters): Model {
     for (let x = 0; x < xDivision - 1; x++) {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision; z++) {
-          connectivities.push([grid[x][y][z], grid[x + 1][y][z]]);
+          elements.push([grid[x][y][z], grid[x + 1][y][z]]);
         }
       }
     }
   }
 
   return {
-    positions,
-    connectivities,
+    nodes,
+    elements,
   };
 }
 
 // Useful function but not used here, I don't know where to put it for future use
 function copy(
-  positions: [number, number, number][],
-  connectivities: [number, number][],
-  elements: [number, number][],
+  nodes: Node[],
+  elements: Element[],
+  targetElements: Element[],
   spacing: number[],
   repetitions: number
 ) {
-  const positionIndex = positions.length;
-  const numElements = elements.length;
-  const newElements: [number, number][] = [];
+  const nodesIndex = nodes.length;
+  const numElements = targetElements.length;
+  const newElements: Element[] = [];
 
   for (let i = 0; i < repetitions; i++) {
-    elements.forEach((element, e) => {
-      const p0 = positions[element[0]];
-      const p1 = positions[element[1]];
+    targetElements.forEach((element, e) => {
+      const p0 = nodes[element[0]];
+      const p1 = nodes[element[1]];
       const dx = spacing[0] * (i + 1);
       const dy = spacing[1] * (i + 1);
       const dz = spacing[2] * (i + 1);
       const p0New = [p0[0] + dx, p0[1] + dy, p0[2] + dz];
       const p1New = [p1[0] + dx, p1[1] + dy, p1[2] + dz];
 
-      positions.push(p0New as any);
-      positions.push(p1New as any);
+      nodes.push(p0New as any);
+      nodes.push(p1New as any);
 
-      const newElement: [number, number] = [
-        positionIndex + i * 2 * numElements + e * 2,
-        positionIndex + i * 2 * numElements + e * 2 + 1,
+      const newElement: Element = [
+        nodesIndex + i * 2 * numElements + e * 2,
+        nodesIndex + i * 2 * numElements + e * 2 + 1,
       ];
-      connectivities.push(newElement);
+      elements.push(newElement);
       newElements.push(newElement);
     });
   }

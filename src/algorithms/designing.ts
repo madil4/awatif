@@ -23,7 +23,7 @@ export function designing(
       stresses.set(result.element, result.stress);
   });
 
-  return model.connectivities.map((_, index) => {
+  return model.elements.map((_, index) => {
     const stress = stresses.get(index) ?? 0;
     const strength = strengths.get(index) ?? 1;
     return {
