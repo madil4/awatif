@@ -8,6 +8,7 @@ const viewer = new Viewer({
   supports: true,
   deformed: true,
   results: "deformationY",
+  points: false,
 });
 const state: State = {};
 
