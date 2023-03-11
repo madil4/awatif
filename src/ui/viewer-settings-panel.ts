@@ -2,25 +2,16 @@ import { Pane } from "tweakpane";
 import { Settings } from "./viewer";
 
 export class ViewerSettingsPanel {
-  private _settings: Settings;
   private _pane: Pane;
 
-  constructor(settings?: Partial<Settings>) {
-    this._settings = {
-      supports: false,
-      loads: false,
-      deformed: false,
-      results: "none",
-      expanded: false,
-      visible: true,
-      ...settings,
-    };
+  constructor(settings: Settings) {
     this._pane = new Pane({ title: "Viewer Settings" });
 
-    this._pane.addInput(this._settings, "supports");
-    this._pane.addInput(this._settings, "loads");
-    this._pane.addInput(this._settings, "deformed");
-    this._pane.addInput(this._settings, "results", {
+    this._pane.addInput(settings, "supports");
+    this._pane.addInput(settings, "loads");
+    this._pane.addInput(settings, "deformed");
+    this._pane.addInput(settings, "points");
+    this._pane.addInput(settings, "results", {
       options: {
         none: "none",
         "stress (mpa)": "stress",
@@ -31,8 +22,8 @@ export class ViewerSettingsPanel {
       },
     });
 
-    this._pane.expanded = this._settings.expanded;
-    this._pane.hidden = !this._settings.visible;
+    this._pane.expanded = settings.expanded;
+    this._pane.hidden = !settings.visible;
   }
 
   render() {

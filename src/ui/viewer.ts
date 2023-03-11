@@ -3,9 +3,13 @@ import { AnalysisResult, DesignResult, Model } from "../interfaces";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { getNodes } from "./utils/get-positions";
 import {
+  BufferGeometry,
+  Float32BufferAttribute,
   GridHelper,
   Group,
   PerspectiveCamera,
+  Points,
+  PointsMaterial,
   Scene,
   Vector2,
   WebGLRenderer,
@@ -27,6 +31,7 @@ export interface Settings {
   results: string;
   expanded: boolean;
   visible: boolean;
+  points: boolean;
 }
 
 export class Viewer {
@@ -47,6 +52,7 @@ export class Viewer {
   };
 
   private _lines: LineSegments2;
+  private _points: Points;
   private _supports: Group;
   private _loads: Group;
 
@@ -77,6 +83,7 @@ export class Viewer {
       results: "none",
       expanded: false,
       visible: true,
+      points: true,
       ...settings,
     };
     this._settingsPanel = new ViewerSettingsPanel(this._settings);
@@ -106,6 +113,13 @@ export class Viewer {
       this._settings.results == "none" ? linesNoColor : linesColor;
     this._scene.add(this._lines);
 
+    this._points = new Points(
+      new BufferGeometry(),
+      new PointsMaterial({ size: 0.4 })
+    );
+    this._points.visible = this._settings.points;
+    this._scene.add(this._points);
+
     this._supports = new Group();
     this._supports.visible = this._settings.supports;
     this._scene.add(this._supports);
@@ -125,6 +139,16 @@ export class Viewer {
       (this._lines.geometry as any).setPositions(
         this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
       );
+      this._points.geometry.setAttribute(
+        "position",
+        new Float32BufferAttribute(
+          this._settings.deformed
+            ? this._nodes.deformed
+            : this._nodes.undeformed,
+          3
+        )
+      );
+      this._points.visible = this._settings.points;
       this._supports.visible = this._settings.supports;
       this._loads.visible = this._settings.loads;
 
@@ -166,9 +190,16 @@ export class Viewer {
     this._results = getResults(model.elements, analysisResults, designResults);
 
     // lines
-    (this._lines.geometry as any) = new LineSegmentsGeometry(); // to save topology
-    (this._lines.geometry as any).setPositions(
+    this._lines.geometry = new LineSegmentsGeometry(); // to save topology
+    this._lines.geometry.setPositions(
       this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
+    );
+    this._points.geometry.setAttribute(
+      "position",
+      new Float32BufferAttribute(
+        this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed,
+        3
+      )
     );
 
     if (this._results && this._settings.results != "none") {
@@ -176,7 +207,7 @@ export class Viewer {
         max: this._results[this._settings.results]?.max,
         min: this._results[this._settings.results]?.min,
       });
-      (this._lines.geometry as any).setColors(
+      this._lines.geometry.setColors(
         this._results[this._settings.results].colors
       );
     }
