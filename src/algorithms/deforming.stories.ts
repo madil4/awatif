@@ -1,6 +1,11 @@
 import { Meta, StoryFn } from "@storybook/html";
 import { Viewer } from "../ui/viewer";
-import { AssignmentType, Model, ParameterType } from "../interfaces";
+import {
+  AssignmentType,
+  Model,
+  Parameters,
+  ParameterType,
+} from "../interfaces";
 import { Configurator } from "../ui/configurator";
 import { deforming } from "./deforming";
 
@@ -13,7 +18,7 @@ const template: StoryFn = (): HTMLElement => {
     supports: true,
     deformed: true,
   });
-  const parameters = {
+  const parameters: Parameters = {
     xLoad: {
       type: ParameterType.slider,
       value: 25,
@@ -40,13 +45,13 @@ const template: StoryFn = (): HTMLElement => {
 
   configurator.onChange(() => {
     let model: Model = {
-      positions: [
+      nodes: [
         [-10, 0, 10],
         [10, 0, 10],
         [0, 0, -10],
         [0, 10, 0],
       ],
-      connectivities: [
+      elements: [
         [0, 3],
         [1, 3],
         [2, 3],
@@ -73,14 +78,14 @@ const template: StoryFn = (): HTMLElement => {
         {
           element: 0,
           type: AssignmentType.barUniformLoad,
-          xLoad: parameters.xLoad.value,
-          yLoad: parameters.yLoad.value,
-          zLoad: parameters.zLoad.value,
+          xLoad: parameters.xLoad.value as number,
+          yLoad: parameters.yLoad.value as number,
+          zLoad: parameters.zLoad.value as number,
         },
       ],
     };
 
-    model.deformedPositions = deforming(model);
+    model.deformedNodes = deforming(model);
 
     viewer.update(model);
   });

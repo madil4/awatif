@@ -7,28 +7,28 @@ import {
   DesignResultType,
   Model,
 } from "../interfaces";
-import { Viewer } from "./viewer";
+import { Settings, Viewer } from "./viewer";
 
 export default {
   title: "UI/Viewer",
 } as Meta;
 
 const model: Model = {
-  positions: [
+  nodes: [
     [-10, 0, 0],
     [0, 10, 0],
     [10, 0, 0],
     [0, 0, 2],
     [4, 10, -6],
   ],
-  deformedPositions: [
+  deformedNodes: [
     [-10, 0, 0],
     [0, 2, 0],
     [10, 0, 0],
     [0, 0, 4],
     [4, 4, -6],
   ],
-  connectivities: [
+  elements: [
     [0, 1],
     [1, 2],
     [3, 4],
@@ -107,68 +107,68 @@ const template: StoryFn = (args): HTMLElement => {
 
 export const Empty = template.bind({});
 Empty.args = {
-  settings: { expanded: true },
+  settings: { expanded: true } as Settings,
   model: {
-    positions: [],
-    connectivities: [],
-  },
+    nodes: [],
+    elements: [],
+  } as Model,
 };
 
 export const Primary = template.bind({});
 Primary.args = {
-  settings: { expanded: true },
+  settings: { expanded: true } as Settings,
   model,
 };
 
 export const Supports = template.bind({});
 Supports.args = {
-  settings: { supports: true, expanded: true },
+  settings: { supports: true, expanded: true } as Settings,
   model,
 };
 
 export const Loads = template.bind({});
 Loads.args = {
-  settings: { loads: true, expanded: true },
+  settings: { loads: true, expanded: true } as Settings,
   model,
 };
 
 export const Deformed = template.bind({});
 Deformed.args = {
-  settings: { deformed: true, expanded: true },
+  settings: { deformed: true, expanded: true } as Settings,
   model,
 };
 
 export const StressResults = template.bind({});
 StressResults.args = {
-  settings: { results: "stress", expanded: true },
+  settings: { results: "stress", expanded: true } as Settings,
   model,
   analysisResults,
 };
 
 export const ForceResults = template.bind({});
 ForceResults.args = {
-  settings: { results: "force", expanded: true },
+  settings: { results: "force", expanded: true } as Settings,
   model,
   analysisResults,
 };
 
 export const DeformationXResults = template.bind({});
 DeformationXResults.args = {
-  settings: { results: "deformationX", expanded: true },
+  settings: { results: "deformationX", expanded: true } as Settings,
   model,
   analysisResults,
 };
 
 export const DeformationYResults = template.bind({});
 DeformationYResults.args = {
-  settings: { results: "deformationY", expanded: true },
+  settings: { results: "deformationY", expanded: true } as Settings,
   model,
   analysisResults,
 };
 
 export const SteelResults = template.bind({});
 SteelResults.args = {
-  settings: { results: "steel", expanded: true },
+  settings: { results: "steel", expanded: true } as Settings,
   model,
   analysisResults,
   designResults,

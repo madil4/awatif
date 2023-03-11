@@ -63,9 +63,9 @@ export type Assignment =
   | SteelDesignAssignment;
 
 export interface Model {
-  positions: [number, number, number][];
-  deformedPositions?: [number, number, number][];
-  connectivities: [number, number][];
+  nodes: Node[];
+  deformedNodes?: Node[];
+  elements: Element[];
   assignments?: Assignment[];
 }
 
@@ -95,6 +95,10 @@ interface SteelDesignResult extends BaseResult {
   ratio: number;
 }
 export type DesignResult = SteelDesignResult;
+
+// helper type
+export type Node = [number, number, number];
+export type Element = [number, number];
 
 // export public classes and functions
 export { Viewer } from "./ui/viewer";

@@ -1,11 +1,11 @@
-import { AnalysisResult, DesignResult } from "../../interfaces";
+import { Lut } from "three/examples/jsm/math/lut";
+import { AnalysisResult, DesignResult, Element } from "../../interfaces";
 
-export function cacheResults(
-  connectivities: [number, number][],
+export const getResults = (
+  elements: Element[],
   analysisResults: AnalysisResult[] | undefined,
-  designResults: DesignResult[] | undefined,
-  getColor: (value: number, max: number, min: number) => number[]
-) {
+  designResults: DesignResult[] | undefined
+) => {
   const stresses: Map<number, number> = new Map();
   const forces: Map<number, number> = new Map();
   const steels: Map<number, number> = new Map();
@@ -41,7 +41,7 @@ export function cacheResults(
   const steelColors: number[][] = [];
   const deformationXColors: number[][] = [];
   const deformationYColors: number[][] = [];
-  connectivities.forEach((_, index) => {
+  elements.forEach((_, index) => {
     let color = getColor(stresses.get(index) ?? 0, stressMax, stressMin);
     stressColors.push(color);
     stressColors.push(color);
@@ -91,4 +91,12 @@ export function cacheResults(
       min: isFinite(steelMin) ? steelMin : 0,
     },
   };
-}
+};
+
+const getColor = (value: number, max: number, min: number): number[] => {
+  const colorMapper = new Lut();
+  colorMapper.setMax(max);
+  colorMapper.setMin(min);
+  const color = colorMapper.getColor(value);
+  return color ? color.toArray() : [1, 1, 1];
+};

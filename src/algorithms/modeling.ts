@@ -20,13 +20,13 @@ export function modeling(parameters: Parameters): Model {
   };
 
   return {
-    positions: [
+    nodes: [
       [-10, 0, 10],
       [10, 0, 10],
       [0, 0, -10],
-      [0, parameters.height.value, 0],
+      [0, parameters.height.value as number, 0],
     ],
-    connectivities: [
+    elements: [
       [0, 3],
       [1, 3],
       [2, 3],

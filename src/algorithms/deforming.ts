@@ -16,20 +16,17 @@ import {
   reshape,
   abs,
 } from "mathjs";
-import { Assignment, Model, AssignmentType } from "../interfaces";
+import { Assignment, Model, AssignmentType, Node } from "../interfaces";
 
-export function deforming(model: Model): [number, number, number][] {
-  const positions = model.positions;
+export function deforming(model: Model): Node[] {
+  const nodes = model.nodes;
 
   // compute stiffness matrix, force, supports all in one loop with one lookup table if possible same keys
-  let stiffnessGlobalAssembly = zeros(
-    positions.length * 3,
-    positions.length * 3
-  );
+  let stiffnessGlobalAssembly = zeros(nodes.length * 3, nodes.length * 3);
 
-  model.connectivities.forEach((element, index) => {
-    const node0 = matrix(positions[element[0]]);
-    const node1 = matrix(positions[element[1]]);
+  model.elements.forEach((element, index) => {
+    const node0 = matrix(nodes[element[0]]);
+    const node1 = matrix(nodes[element[1]]);
     const vector = subtract(node1, node0);
     const length = norm(vector) as number;
 
@@ -65,10 +62,10 @@ export function deforming(model: Model): [number, number, number][] {
   });
 
   // flatten positions for math
-  let x = matrix(positions.flat());
+  let x = matrix(nodes.flat());
 
   // apply supports
-  const supports = getSupports(model.assignments, model.connectivities);
+  const supports = getSupports(model.assignments, model.elements);
   const freeInd = setDifference(range(0, x.size()[0]), supports);
 
   // apply forces
@@ -130,13 +127,10 @@ function getForces(model: Model) {
       ]);
   });
 
-  let f = zeros([model.positions.length * 3]);
-  model.connectivities.forEach((element, index) => {
+  let f = zeros([model.nodes.length * 3]);
+  model.elements.forEach((element, index) => {
     const force = forces.get(index) ?? [0, 0, 0];
-    const vector = subtract(
-      model.positions[element[1]],
-      model.positions[element[0]]
-    );
+    const vector = subtract(model.nodes[element[1]], model.nodes[element[0]]);
     const forceX = (force[0] * abs(vector[1])) / 2;
     const forceY = (force[1] * abs(vector[0])) / 2;
     const forceZ = (force[2] * abs(vector[2])) / 2; // needs verification

@@ -1,11 +1,13 @@
+import { Lut } from "three/examples/jsm/math/lut";
+
 export class ViewerLabel {
   private _canvas: HTMLCanvasElement;
   private _container: HTMLElement;
   private _max: HTMLElement;
   private _min: HTMLElement;
 
-  constructor(colorMapperCanvas: HTMLCanvasElement) {
-    this._canvas = colorMapperCanvas;
+  constructor() {
+    this._canvas = new Lut().createCanvas();
     this._container = document.createElement("div");
     this._max = document.createElement("div");
     this._min = document.createElement("div");
