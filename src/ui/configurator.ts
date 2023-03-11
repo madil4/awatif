@@ -1,5 +1,5 @@
 import { Pane } from "tweakpane";
-import { Parameters } from "../interfaces";
+import { Parameters, ParameterType } from "../interfaces";
 
 export class Configurator {
   private _pane: Pane;
@@ -7,13 +7,19 @@ export class Configurator {
   constructor(parameters: Parameters) {
     this._pane = new Pane({ title: "Parameters" });
 
-    Object.keys(parameters).forEach((key) => {
-      this._pane.addInput(parameters[key], "value", {
-        min: parameters[key].min,
-        max: parameters[key].max,
-        step: parameters[key].step,
-        label: parameters[key].label ?? key,
-      });
+    Object.entries(parameters).forEach(([key, parameter]) => {
+      if (parameter.type === ParameterType.slider) {
+        this._pane.addInput(parameter, "value", {
+          min: parameter.min,
+          max: parameter.max,
+          step: parameter.step,
+          label: parameter.label ?? key,
+        });
+      } else if (parameter.type === ParameterType.toggle) {
+        this._pane.addInput(parameter, "value", {
+          label: parameter.label ?? key,
+        });
+      }
     });
 
     document.body.appendChild(this.render());

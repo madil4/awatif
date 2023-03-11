@@ -19,11 +19,20 @@ Slider.args = {
     min: 0,
     max: 100,
     step: 1,
+    label: "height (m)",
   },
 } as Parameters;
 
-export const Sliders = template.bind({});
-Sliders.args = {
+export const Toggle = template.bind({});
+Toggle.args = {
+  bracing: {
+    type: ParameterType.toggle,
+    value: true,
+  },
+} as Parameters;
+
+export const Multiple = template.bind({});
+Multiple.args = {
   height: {
     type: ParameterType.slider,
     value: 50,
@@ -37,5 +46,9 @@ Sliders.args = {
     min: 0,
     max: 50,
     step: 2,
+  },
+  bracing: {
+    type: ParameterType.toggle,
+    value: true,
   },
 } as Parameters;

@@ -24,6 +24,7 @@ export class ViewerSettingsPanel {
     });
 
     this._pane.expanded = this._settings.expanded;
+    this._pane.hidden = !this._settings.visible;
   }
 
   render() {
