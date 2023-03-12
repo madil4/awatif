@@ -11,10 +11,11 @@ export class Nodes3D extends Points {
     super(new BufferGeometry(), new PointsMaterial({ size: 0.4 }));
   }
 
-  update(nodes: Node[]) {
-    this.geometry.setAttribute(
-      "position",
-      new Float32BufferAttribute(nodes.flat(), 3)
-    );
+  update(nodes?: Node[]) {
+    if (nodes)
+      this.geometry.setAttribute(
+        "position",
+        new Float32BufferAttribute(nodes.flat(), 3)
+      );
   }
 }

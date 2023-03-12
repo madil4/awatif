@@ -121,16 +121,16 @@ const template: StoryFn = (args): HTMLElement => {
 
 export const Empty = template.bind({});
 Empty.args = {
-  settings: { expanded: true } as Settings,
+  settings: { elements: false, expanded: true } as Settings,
   model: {
     nodes: [],
     elements: [],
   } as Model,
 };
 
-export const Primary = template.bind({});
-Primary.args = {
-  settings: { expanded: true } as Settings,
+export const elements = template.bind({});
+elements.args = {
+  settings: { elements: true, expanded: true } as Settings,
   model,
 };
 
