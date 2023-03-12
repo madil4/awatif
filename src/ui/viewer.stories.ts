@@ -134,6 +134,12 @@ Primary.args = {
   model,
 };
 
+export const Nodes = template.bind({});
+Nodes.args = {
+  settings: { nodes: true, expanded: true } as Settings,
+  model,
+};
+
 export const Supports = template.bind({});
 Supports.args = {
   settings: { supports: true, expanded: true } as Settings,
@@ -158,36 +164,15 @@ Profiles.args = {
   model,
 };
 
-export const StressResults = template.bind({});
-StressResults.args = {
-  settings: { results: "stress", expanded: true } as Settings,
-  model,
-  analysisResults,
-};
-
-export const ForceResults = template.bind({});
-ForceResults.args = {
+export const AnalysisResults = template.bind({});
+AnalysisResults.args = {
   settings: { results: "force", expanded: true } as Settings,
   model,
   analysisResults,
 };
 
-export const DeformationXResults = template.bind({});
-DeformationXResults.args = {
-  settings: { results: "deformationX", expanded: true } as Settings,
-  model,
-  analysisResults,
-};
-
-export const DeformationYResults = template.bind({});
-DeformationYResults.args = {
-  settings: { results: "deformationY", expanded: true } as Settings,
-  model,
-  analysisResults,
-};
-
-export const SteelResults = template.bind({});
-SteelResults.args = {
+export const DesignResults = template.bind({});
+DesignResults.args = {
   settings: { results: "steel", expanded: true } as Settings,
   model,
   analysisResults,
