@@ -40,7 +40,7 @@ export interface BarPropertiesAssignment extends BaseAssignment {
   type: AssignmentType.barProperties;
   area: number;
   elasticity: number;
-  profile?: string;
+  section?: string;
 }
 interface BarSupportsAssignment extends BaseAssignment {
   type: AssignmentType.barSupports;

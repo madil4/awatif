@@ -6,7 +6,7 @@ import {
 import { Viewer } from "../../../src/ui/viewer";
 import { modeling } from "./modeling";
 
-const viewer = new Viewer({ visible: false, points: false });
+const viewer = new Viewer({ visible: false, sections: true });
 
 const parameters: Parameters = {
   width: {

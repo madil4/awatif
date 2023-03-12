@@ -26,7 +26,7 @@ export class Sections3D extends Group {
     model.elements.forEach((element, index) => {
       const barProperty = barProperties?.get(index);
       if (barProperty) {
-        const { width, height } = this.extractDimensions(barProperty.profile);
+        const { width, height } = this.extractDimensions(barProperty.section);
         const geometry = new ExtrudeGeometry(
           this.createRectangle(width, height),
           {
