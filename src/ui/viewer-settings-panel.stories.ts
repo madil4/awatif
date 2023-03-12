@@ -13,11 +13,11 @@ const template: StoryFn = (args): HTMLElement => {
 
 export const Primary = template.bind({});
 Primary.args = {
+  nodes: false,
   supports: false,
   loads: false,
   deformed: false,
   results: "none",
-  points: false,
   profiles: false,
   expanded: true,
   visible: true,

@@ -7,10 +7,10 @@ export class ViewerSettingsPanel {
   constructor(settings: Settings) {
     this._pane = new Pane({ title: "Viewer Settings" });
 
+    this._pane.addInput(settings, "nodes");
     this._pane.addInput(settings, "supports");
     this._pane.addInput(settings, "loads");
     this._pane.addInput(settings, "deformed");
-    this._pane.addInput(settings, "points");
     this._pane.addInput(settings, "profiles");
     this._pane.addInput(settings, "results", {
       options: {
