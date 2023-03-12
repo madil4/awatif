@@ -7,22 +7,24 @@ import {
   Shape,
   Vector3,
 } from "three";
-import { BarPropertiesAssignment, Element, Node } from "../../../interfaces";
+import {
+  AssignmentType,
+  BarPropertiesAssignment,
+  Model,
+} from "../../../interfaces";
 
-export class Profiles extends Group {
+export class Sections3D extends Group {
   constructor() {
     super();
   }
 
-  update(
-    nodes: Node[],
-    elements: Element[],
-    barsProperties?: Map<number, BarPropertiesAssignment>
-  ) {
+  update(model: Model) {
     this.clear();
 
-    elements.forEach((element, index) => {
-      const barProperty = barsProperties?.get(index);
+    const barProperties = this.getBarProperties(model);
+
+    model.elements.forEach((element, index) => {
+      const barProperty = barProperties?.get(index);
       if (barProperty) {
         const { width, height } = this.extractDimensions(barProperty.profile);
         const geometry = new ExtrudeGeometry(
@@ -30,8 +32,8 @@ export class Profiles extends Group {
           {
             bevelEnabled: false,
             extrudePath: new LineCurve3(
-              new Vector3(...nodes[element[0]]),
-              new Vector3(...nodes[element[1]])
+              new Vector3(...model.nodes[element[0]]),
+              new Vector3(...model.nodes[element[1]])
             ),
           }
         );
@@ -59,5 +61,17 @@ export class Profiles extends Group {
       width: parseInt(numbers[0]) * 1e-3,
       height: parseInt(numbers[1]) * 1e-3,
     };
+  }
+
+  private getBarProperties(model: Model): Map<number, BarPropertiesAssignment> {
+    const barProperties: Map<number, BarPropertiesAssignment> = new Map();
+
+    model.assignments?.forEach((assignment) => {
+      if (assignment.type === AssignmentType.barProperties) {
+        barProperties.set(assignment.element ?? -1, assignment);
+      }
+    });
+
+    return barProperties;
   }
 }

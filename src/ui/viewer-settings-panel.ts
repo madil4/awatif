@@ -11,7 +11,7 @@ export class ViewerSettingsPanel {
     this._pane.addInput(settings, "supports");
     this._pane.addInput(settings, "loads");
     this._pane.addInput(settings, "deformed");
-    this._pane.addInput(settings, "profiles");
+    this._pane.addInput(settings, "sections");
     this._pane.addInput(settings, "results", {
       options: {
         none: "none",

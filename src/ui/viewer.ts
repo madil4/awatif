@@ -4,32 +4,28 @@ import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { getFullNodes } from "./utils/get-full-nodes";
 import {
   GridHelper,
-  Group,
   PerspectiveCamera,
   Scene,
   Vector2,
   WebGLRenderer,
 } from "three";
-import { getSupports } from "./utils/get-supports";
-import { getUniformLoads } from "./utils/get-uniform-loads";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { getResults } from "./utils/get-results";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
-import { renderUniformLoads } from "./utils/render-uniform-loads";
-import { renderSupports } from "./utils/render-supports";
-import { Profiles } from "./utils/3d-objects/profiles";
-import { getBarProperties } from "./utils/get-bar-properties";
-import { Nodes3D } from "./utils/3d-objects/nodes-3d";
+import { Sections3D } from "./utils/objects/sections-3d";
+import { Nodes3D } from "./utils/objects/nodes-3d";
+import { Supports3D } from "./utils/objects/supports-3d";
+import { Loads3D } from "./utils/objects/loads-3d";
 
 export interface Settings {
+  nodes: boolean;
   supports: boolean;
   loads: boolean;
+  sections: boolean;
   deformed: boolean;
   results: string;
-  nodes: boolean;
-  profiles: boolean;
   expanded: boolean;
   visible: boolean;
 }
@@ -53,9 +49,9 @@ export class Viewer {
 
   private _lines: LineSegments2;
   private _nodes3D: Nodes3D;
-  private _supports: Group;
-  private _loads: Group;
-  private _profiles: Profiles;
+  private _supports3D: Supports3D;
+  private _loads3D: Loads3D;
+  private _sections3D: Sections3D;
 
   constructor(settings?: Partial<Settings>) {
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -78,12 +74,12 @@ export class Viewer {
     new OrbitControls(this._camera, this._renderer.domElement);
 
     this._settings = {
+      nodes: false,
       supports: false,
       loads: false,
+      sections: false,
       deformed: false,
       results: "none",
-      nodes: false,
-      profiles: false,
       expanded: false,
       visible: true,
       ...settings,
@@ -119,17 +115,17 @@ export class Viewer {
     this._nodes3D.visible = this._settings.nodes;
     this._scene.add(this._nodes3D);
 
-    this._supports = new Group();
-    this._supports.visible = this._settings.supports;
-    this._scene.add(this._supports);
+    this._supports3D = new Supports3D();
+    this._supports3D.visible = this._settings.supports;
+    this._scene.add(this._supports3D);
 
-    this._loads = new Group();
-    this._loads.visible = this._settings.loads;
-    this._scene.add(this._loads);
+    this._loads3D = new Loads3D();
+    this._loads3D.visible = this._settings.loads;
+    this._scene.add(this._loads3D);
 
-    this._profiles = new Profiles();
-    this._profiles.visible = this._settings.profiles;
-    this._scene.add(this._profiles);
+    this._sections3D = new Sections3D();
+    this._sections3D.visible = this._settings.sections;
+    this._scene.add(this._sections3D);
 
     // event handlers
     this._settingsPanel.onChange(() => {
@@ -147,9 +143,9 @@ export class Viewer {
       this._nodes3D.update(fullNodes);
       this._nodes3D.visible = this._settings.nodes;
 
-      this._supports.visible = this._settings.supports;
-      this._loads.visible = this._settings.loads;
-      this._profiles.visible = this._settings.profiles;
+      this._supports3D.visible = this._settings.supports;
+      this._loads3D.visible = this._settings.loads;
+      this._sections3D.visible = this._settings.sections;
 
       if (this._results && this._settings.results != "none") {
         this._label.update({
@@ -210,16 +206,8 @@ export class Viewer {
       );
     }
 
-    this._supports.clear();
-    getSupports(model).map((position) => {
-      this._supports.add(renderSupports(position));
-    });
-
-    this._loads.clear();
-    getUniformLoads(model).map((element) => {
-      this._loads.add(renderUniformLoads(element));
-    });
-
-    this._profiles.update(model.nodes, model.elements, getBarProperties(model));
+    this._supports3D.update(model);
+    this._loads3D.update(model);
+    this._sections3D.update(model);
   }
 }

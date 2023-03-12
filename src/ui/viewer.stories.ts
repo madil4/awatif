@@ -158,9 +158,9 @@ Deformed.args = {
   model,
 };
 
-export const Profiles = template.bind({});
-Profiles.args = {
-  settings: { profiles: true, expanded: true } as Settings,
+export const Sections = template.bind({});
+Sections.args = {
+  settings: { sections: true, expanded: true } as Settings,
   model,
 };
 
