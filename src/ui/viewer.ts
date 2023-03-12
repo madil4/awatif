@@ -1,25 +1,18 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { AnalysisResult, DesignResult, Model, Node } from "../interfaces";
-import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
-import { getFullNodes } from "./utils/get-full-nodes";
-import {
-  GridHelper,
-  PerspectiveCamera,
-  Scene,
-  Vector2,
-  WebGLRenderer,
-} from "three";
+import { getElements } from "./utils/get-elements";
+import { GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { ViewerSettingsPanel as ViewerSettingsPanel } from "./viewer-settings-panel";
 import { ViewerLabel } from "./viewer-label";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { getResults } from "./utils/get-results";
-import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 import { Sections3D } from "./utils/objects/sections-3d";
 import { Nodes3D } from "./utils/objects/nodes-3d";
 import { Supports3D } from "./utils/objects/supports-3d";
 import { Loads3D } from "./utils/objects/loads-3d";
+import { Elements3D } from "./utils/objects/elements-3d";
 
 export interface Settings {
+  elements: boolean;
   nodes: boolean;
   supports: boolean;
   loads: boolean;
@@ -41,13 +34,17 @@ export class Viewer {
 
   private _nodes: {
     undeformed: Node[];
-    deformed: Node[];
+    deformed?: Node[];
+  };
+  private _elements: {
+    undeformed: [Node, Node][];
+    deformed?: [Node, Node][];
   };
   private _results?: {
     [type: string]: { colors: number[]; max: number; min: number };
   };
 
-  private _lines: LineSegments2;
+  private _elements3D: Elements3D;
   private _nodes3D: Nodes3D;
   private _supports3D: Supports3D;
   private _loads3D: Loads3D;
@@ -74,6 +71,7 @@ export class Viewer {
     new OrbitControls(this._camera, this._renderer.domElement);
 
     this._settings = {
+      elements: true,
       nodes: false,
       supports: false,
       loads: false,
@@ -95,21 +93,10 @@ export class Viewer {
     grid.position.set(0, -10, 0);
     this._scene.add(grid);
 
-    const linesNoColor = new LineMaterial({
-      color: 0xffffff,
-      linewidth: 2,
-      resolution: new Vector2(window.innerWidth, window.innerHeight),
-    });
-    const linesColor = new LineMaterial({
-      color: 0xffffff,
-      vertexColors: true,
-      linewidth: 2,
-      resolution: new Vector2(window.innerWidth, window.innerHeight),
-    });
-    this._lines = new LineSegments2();
-    this._lines.material =
-      this._settings.results == "none" ? linesNoColor : linesColor;
-    this._scene.add(this._lines);
+    this._elements3D = new Elements3D();
+    this._elements3D.visible = this._settings.elements;
+    this._elements3D.isColored(this._settings.results !== "none");
+    this._scene.add(this._elements3D);
 
     this._nodes3D = new Nodes3D();
     this._nodes3D.visible = this._settings.nodes;
@@ -129,18 +116,17 @@ export class Viewer {
 
     // event handlers
     this._settingsPanel.onChange(() => {
-      this._label.update({
-        hidden: this._settings.results == "none" ? true : false,
+      this._elements3D.visible = this._settings.elements;
+      this._elements3D.isColored(this._settings.results !== "none");
+      this._elements3D.update({
+        elements: this._settings.deformed
+          ? this._elements.deformed
+          : this._elements.undeformed,
       });
 
-      this._lines.material =
-        this._settings.results == "none" ? linesNoColor : linesColor;
-      const fullNodes = this._settings.deformed
-        ? this._nodes.deformed
-        : this._nodes.undeformed;
-      this._lines.geometry.setPositions(fullNodes.flat());
-
-      this._nodes3D.update(fullNodes);
+      this._nodes3D.update(
+        this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
+      );
       this._nodes3D.visible = this._settings.nodes;
 
       this._supports3D.visible = this._settings.supports;
@@ -152,10 +138,14 @@ export class Viewer {
           max: this._results[this._settings.results].max,
           min: this._results[this._settings.results].min,
         });
-        this._lines.geometry.setColors(
-          this._results[this._settings.results].colors
-        );
+        this._elements3D.update({
+          colors: this._results[this._settings.results].colors,
+        });
       }
+
+      this._label.update({
+        hidden: this._settings.results == "none" ? true : false,
+      });
     });
 
     document.body.appendChild(this.render()); // keep it at the end
@@ -179,35 +169,38 @@ export class Viewer {
     designResults?: DesignResult[]
   ): void {
     this._nodes = {
-      undeformed: getFullNodes(model.nodes, model.elements),
-      deformed: getFullNodes(
-        model.deformedNodes ?? model.nodes,
-        model.elements
-      ),
+      undeformed: model.nodes,
+      deformed: model.deformedNodes ? model.deformedNodes : undefined,
+    };
+    this._elements = {
+      undeformed: getElements(model.nodes, model.elements),
+      deformed: model.deformedNodes
+        ? getElements(model.deformedNodes, model.elements)
+        : undefined,
     };
     this._results = getResults(model.elements, analysisResults, designResults);
-    const fullNodes = this._settings.deformed
-      ? this._nodes.deformed
-      : this._nodes.undeformed;
 
-    // lines
-    this._lines.geometry = new LineSegmentsGeometry(); // to save topology
-    this._lines.geometry.setPositions(fullNodes.flat());
-
-    this._nodes3D.update(fullNodes);
+    this._elements3D.update({
+      elements: this._settings.deformed
+        ? this._elements.deformed
+        : this._elements.undeformed,
+    });
+    this._nodes3D.update(
+      this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
+    );
+    this._supports3D.update(model);
+    this._loads3D.update(model);
+    this._sections3D.update(model);
 
     if (this._results && this._settings.results != "none") {
       this._label.update({
         max: this._results[this._settings.results]?.max,
         min: this._results[this._settings.results]?.min,
       });
-      this._lines.geometry.setColors(
-        this._results[this._settings.results].colors
-      );
-    }
 
-    this._supports3D.update(model);
-    this._loads3D.update(model);
-    this._sections3D.update(model);
+      this._elements3D.update({
+        colors: this._results[this._settings.results].colors,
+      });
+    }
   }
 }
