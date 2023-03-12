@@ -28,7 +28,7 @@ export type Parameters = { [name: string]: Parameter };
 
 // model
 export enum AssignmentType {
-  bar = "bar",
+  barProperties = "barProperties",
   barSupports = "barSupports",
   barUniformLoad = "barUniformLoad",
   steelDesign = "steelDesign",
@@ -36,10 +36,11 @@ export enum AssignmentType {
 interface BaseAssignment {
   element?: number;
 }
-interface BarAssignment extends BaseAssignment {
-  type: AssignmentType.bar;
+export interface BarPropertiesAssignment extends BaseAssignment {
+  type: AssignmentType.barProperties;
   area: number;
   elasticity: number;
+  profile?: string;
 }
 interface BarSupportsAssignment extends BaseAssignment {
   type: AssignmentType.barSupports;
@@ -57,7 +58,7 @@ interface SteelDesignAssignment extends BaseAssignment {
   strength: number;
 }
 export type Assignment =
-  | BarAssignment
+  | BarPropertiesAssignment
   | BarSupportsAssignment
   | BarUniformLoadAssignment
   | SteelDesignAssignment;
