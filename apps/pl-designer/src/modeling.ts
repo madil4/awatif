@@ -1,4 +1,11 @@
-import { Element, Model, Node, Parameters } from "../../../src/interfaces";
+import {
+  Assignment,
+  AssignmentType,
+  Element,
+  Model,
+  Node,
+  Parameters,
+} from "../../../src/interfaces";
 
 export function modeling(parameters: Parameters): Model {
   const nodes: Node[] = [];
@@ -79,28 +86,36 @@ export function modeling(parameters: Parameters): Model {
   }
 
   // columns
+  const columns: number[] = [];
   for (let x = 0; x < xDivision; x++) {
     for (let y = 0; y < yDivision - 1; y++) {
       for (let z = 0; z < zDivision; z++) {
         if (mainDirX) {
           if ((x * spacing) % xSpan == 0 || (x * spacing) % xLength == 0) {
             elements.push([grid[x][y][z], grid[x][y + 1][z]]);
+            columns.push(elements.length - 1);
           }
         } else {
           if ((z * spacing) % zSpan == 0 || (z * spacing) % zLength == 0) {
             elements.push([grid[x][y][z], grid[x][y + 1][z]]);
+            columns.push(elements.length - 1);
           }
         }
       }
     }
   }
 
+  const mainBeamsX: number[] = [];
+  const mainBeamsZ: number[] = [];
+  const secondaryBeamsX: number[] = [];
+  const secondaryBeamsZ: number[] = [];
   if (mainDirX) {
     // main beams in x
     for (let x = 0; x < xDivision - 1; x++) {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision; z++) {
           elements.push([grid[x][y][z], grid[x + 1][y][z]]);
+          mainBeamsX.push(elements.length - 1);
         }
       }
     }
@@ -109,6 +124,7 @@ export function modeling(parameters: Parameters): Model {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision - 1; z++) {
           elements.push([grid[x][y][z], grid[x][y][z + 1]]);
+          secondaryBeamsX.push(elements.length - 1);
         }
       }
     }
@@ -118,6 +134,7 @@ export function modeling(parameters: Parameters): Model {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision - 1; z++) {
           elements.push([grid[x][y][z], grid[x][y][z + 1]]);
+          mainBeamsZ.push(elements.length - 1);
         }
       }
     }
@@ -126,6 +143,7 @@ export function modeling(parameters: Parameters): Model {
       for (let y = 1; y < yDivision; y++) {
         for (let z = 0; z < zDivision; z++) {
           elements.push([grid[x][y][z], grid[x + 1][y][z]]);
+          secondaryBeamsZ.push(elements.length - 1);
         }
       }
     }
@@ -134,6 +152,58 @@ export function modeling(parameters: Parameters): Model {
   return {
     nodes,
     elements,
+    assignments: [
+      ...columns.map(
+        (element) =>
+          ({
+            element: element,
+            type: AssignmentType.barProperties,
+            area: 10,
+            elasticity: 20,
+            section: "300x300",
+          } as Assignment)
+      ),
+      ...mainBeamsX.map(
+        (element) =>
+          ({
+            element: element,
+            type: AssignmentType.barProperties,
+            area: 10,
+            elasticity: 20,
+            section: "300x600",
+          } as Assignment)
+      ),
+      ...mainBeamsZ.map(
+        (element) =>
+          ({
+            element: element,
+            type: AssignmentType.barProperties,
+            area: 10,
+            elasticity: 20,
+            section: "600x300",
+          } as Assignment)
+      ),
+      ...secondaryBeamsX.map(
+        (element) =>
+          ({
+            element: element,
+            type: AssignmentType.barProperties,
+            area: 10,
+            elasticity: 20,
+            section: "300x100",
+          } as Assignment)
+      ),
+      ...secondaryBeamsZ.map(
+        (element) =>
+          ({
+            element: element,
+            type: AssignmentType.barProperties,
+            area: 10,
+            elasticity: 20,
+            section: "100x300",
+          } as Assignment)
+      ),
+    ],
   };
 }
 

@@ -6,56 +6,56 @@ import {
 import { Viewer } from "../../../src/ui/viewer";
 import { modeling } from "./modeling";
 
-const viewer = new Viewer({ visible: false, points: false });
+const viewer = new Viewer({ visible: false, sections: true });
 
 const parameters: Parameters = {
   width: {
     type: ParameterType.slider,
-    value: 10,
-    step: 1,
+    value: 12,
+    step: 2,
     min: 10,
-    max: 25,
+    max: 20,
   },
   breadth: {
     type: ParameterType.slider,
-    value: 10,
-    step: 1,
+    value: 12,
+    step: 2,
     min: 10,
-    max: 25,
+    max: 20,
   },
   height: {
     type: ParameterType.slider,
-    value: 25,
-    step: 1,
+    value: 20,
+    step: 2,
     min: 10,
-    max: 25,
+    max: 20,
   },
   xSpan: {
     type: ParameterType.slider,
-    value: 5,
-    step: 1,
-    min: 1,
-    max: 25,
+    value: 6,
+    step: 2,
+    min: 2,
+    max: 20,
   },
   ySpan: {
     type: ParameterType.slider,
-    value: 10,
-    step: 1,
-    min: 1,
-    max: 25,
+    value: 12,
+    step: 2,
+    min: 2,
+    max: 20,
   },
   zSpan: {
     type: ParameterType.slider,
-    value: 5,
-    step: 1,
+    value: 4,
+    step: 2,
     min: 2,
-    max: 25,
+    max: 20,
   },
   spacing: {
     type: ParameterType.slider,
     value: 0.5,
-    step: 0.2,
-    min: 0.2,
+    step: 0.5,
+    min: 0.5,
     max: 5,
   },
   mainDirX: {
