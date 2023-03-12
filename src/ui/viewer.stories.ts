@@ -59,6 +59,20 @@ const model: Model = {
       type: AssignmentType.barUniformLoad,
       yLoad: -100,
     },
+    {
+      element: 0,
+      type: AssignmentType.barProperties,
+      area: 10,
+      elasticity: 20,
+      profile: "500x500",
+    },
+    {
+      element: 1,
+      type: AssignmentType.barProperties,
+      area: 10,
+      elasticity: 20,
+      profile: "500x500",
+    },
   ],
 };
 const analysisResults: AnalysisResult[] = [
@@ -135,6 +149,12 @@ Loads.args = {
 export const Deformed = template.bind({});
 Deformed.args = {
   settings: { deformed: true, expanded: true } as Settings,
+  model,
+};
+
+export const Profiles = template.bind({});
+Profiles.args = {
+  settings: { profiles: true, expanded: true } as Settings,
   model,
 };
 

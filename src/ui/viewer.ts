@@ -1,7 +1,13 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { AnalysisResult, DesignResult, Model } from "../interfaces";
+import {
+  AnalysisResult,
+  DesignResult,
+  Model,
+  Node,
+  BarPropertiesAssignment,
+} from "../interfaces";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
-import { getNodes } from "./utils/get-positions";
+import { getFullNodes } from "./utils/get-full-nodes";
 import {
   BufferGeometry,
   Float32BufferAttribute,
@@ -23,15 +29,18 @@ import { getResults } from "./utils/get-results";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 import { renderUniformLoads } from "./utils/render-uniform-loads";
 import { renderSupports } from "./utils/render-supports";
+import { Profiles } from "./utils/3d-objects/profiles";
+import { getBarProperties } from "./utils/get-bar-properties";
 
 export interface Settings {
   supports: boolean;
   loads: boolean;
   deformed: boolean;
   results: string;
+  points: boolean;
+  profiles: boolean;
   expanded: boolean;
   visible: boolean;
-  points: boolean;
 }
 
 export class Viewer {
@@ -44,8 +53,8 @@ export class Viewer {
   private _label: ViewerLabel;
 
   private _nodes: {
-    undeformed: number[];
-    deformed: number[];
+    undeformed: Node[];
+    deformed: Node[];
   };
   private _results?: {
     [type: string]: { colors: number[]; max: number; min: number };
@@ -55,6 +64,7 @@ export class Viewer {
   private _points: Points;
   private _supports: Group;
   private _loads: Group;
+  private _profiles: Profiles;
 
   constructor(settings?: Partial<Settings>) {
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -81,9 +91,10 @@ export class Viewer {
       loads: false,
       deformed: false,
       results: "none",
+      points: false,
+      profiles: false,
       expanded: false,
       visible: true,
-      points: true,
       ...settings,
     };
     this._settingsPanel = new ViewerSettingsPanel(this._settings);
@@ -92,7 +103,7 @@ export class Viewer {
       hidden: this._settings.results == "none" ? true : false,
     });
 
-    // rendering objects
+    // 3D objects
     const grid = new GridHelper(50, 10);
     grid.position.set(0, -10, 0);
     this._scene.add(grid);
@@ -128,6 +139,10 @@ export class Viewer {
     this._loads.visible = this._settings.loads;
     this._scene.add(this._loads);
 
+    this._profiles = new Profiles();
+    this._profiles.visible = this._settings.profiles;
+    this._scene.add(this._profiles);
+
     // event handlers
     this._settingsPanel.onChange(() => {
       this._label.update({
@@ -136,21 +151,19 @@ export class Viewer {
 
       this._lines.material =
         this._settings.results == "none" ? linesNoColor : linesColor;
-      (this._lines.geometry as any).setPositions(
-        this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
-      );
+      const fullNodes = this._settings.deformed
+        ? this._nodes.deformed
+        : this._nodes.undeformed;
+      this._lines.geometry.setPositions(fullNodes.flat());
       this._points.geometry.setAttribute(
         "position",
-        new Float32BufferAttribute(
-          this._settings.deformed
-            ? this._nodes.deformed
-            : this._nodes.undeformed,
-          3
-        )
+        new Float32BufferAttribute(fullNodes.flat(), 3)
       );
       this._points.visible = this._settings.points;
+
       this._supports.visible = this._settings.supports;
       this._loads.visible = this._settings.loads;
+      this._profiles.visible = this._settings.profiles;
 
       if (this._results && this._settings.results != "none") {
         this._label.update({
@@ -184,22 +197,23 @@ export class Viewer {
     designResults?: DesignResult[]
   ): void {
     this._nodes = {
-      undeformed: getNodes(model.elements, model.nodes),
-      deformed: getNodes(model.elements, model.deformedNodes ?? model.nodes),
+      undeformed: getFullNodes(model.nodes, model.elements),
+      deformed: getFullNodes(
+        model.deformedNodes ?? model.nodes,
+        model.elements
+      ),
     };
     this._results = getResults(model.elements, analysisResults, designResults);
+    const fullNodes = this._settings.deformed
+      ? this._nodes.deformed
+      : this._nodes.undeformed;
 
     // lines
     this._lines.geometry = new LineSegmentsGeometry(); // to save topology
-    this._lines.geometry.setPositions(
-      this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed
-    );
+    this._lines.geometry.setPositions(fullNodes.flat());
     this._points.geometry.setAttribute(
       "position",
-      new Float32BufferAttribute(
-        this._settings.deformed ? this._nodes.deformed : this._nodes.undeformed,
-        3
-      )
+      new Float32BufferAttribute(fullNodes.flat(), 3)
     );
 
     if (this._results && this._settings.results != "none") {
@@ -221,5 +235,7 @@ export class Viewer {
     getUniformLoads(model).map((element) => {
       this._loads.add(renderUniformLoads(element));
     });
+
+    this._profiles.update(model.nodes, model.elements, getBarProperties(model));
   }
 }

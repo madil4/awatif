@@ -17,7 +17,8 @@ Primary.args = {
   loads: false,
   deformed: false,
   results: "none",
+  points: false,
+  profiles: false,
   expanded: true,
   visible: true,
-  points: true,
 } as Settings;
