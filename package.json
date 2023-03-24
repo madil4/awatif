@@ -1,14 +1,11 @@
 {
   "name": "awatif",
   "version": "0.1.0",
-  "description": "A parametric structural engineering tool that is open-source and web-based",
+  "description": "Online 3D parametric (algorithmic) structural engineering software",
   "scripts": {
-    "storybook": "start-storybook",
-    "examples:2d-truss": "vite ./examples/2d-truss/ --open ",
-    "apps:pl-designer": "vite ./apps/pl-designer/ --open ",
-    "build": "vite build ./examples/2d-truss/"
+    "dev": "vite dev"
   },
-  "main": "./src/interfaces.ts",
+  "main": "./src/index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/awatif-software/awatif.git"
@@ -30,15 +27,10 @@
   },
   "homepage": "https://awatif.co",
   "devDependencies": {
-    "@storybook/builder-vite": "^0.4.2",
-    "@storybook/html": "^6.5.16",
-    "@tweakpane/core": "^1.1.4",
-    "@types/three": "^0.148.1",
-    "vite": "^4.1.2"
+    "vite": "^4.2.1",
+    "vite-plugin-solid": "^2.6.1"
   },
   "dependencies": {
-    "mathjs": "^11.5.1",
-    "three": "^0.149.0",
-    "tweakpane": "^3.1.4"
+    "solid-js": "^1.6.15"
   }
 }
