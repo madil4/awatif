@@ -1,6 +1,6 @@
 {
   "name": "awatif",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Online 3D parametric (algorithmic) structural engineering software",
   "scripts": {
     "dev": "vite dev"
