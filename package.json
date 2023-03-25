@@ -4,8 +4,10 @@
   "description": "Online 3D parametric (algorithmic) structural engineering software",
   "scripts": {
     "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "dev": "vite dev",
-    "build": "vite build"
+    "build": "vite build",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "main": "./src/index.ts",
   "repository": {
@@ -30,6 +32,7 @@
   "homepage": "https://awatif.co",
   "devDependencies": {
     "@storybook/html-vite": "^7.0.0-rc.8",
+    "chromatic": "^6.17.2",
     "storybook": "^7.0.0-rc.8",
     "vite": "^4.2.1",
     "vite-plugin-solid": "^2.6.1"
