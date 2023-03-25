@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite dev",
     "storybook": "storybook dev -p 6006",
-    "build": "vite build"
+    "chromatic": "chromatic --exit-zero-on-changes",
+    "build": "vite build",
+    "build-storybook": "storybook build"
   },
   "main": "./src/index.ts",
   "repository": {
