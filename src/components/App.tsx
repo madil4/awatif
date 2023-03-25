@@ -1,4 +1,4 @@
-import { Layouter } from "./Layouter";
+import { Layouter } from "./Layouter/Layouter";
 
 export function App() {
   return (
