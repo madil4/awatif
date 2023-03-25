@@ -3,11 +3,9 @@
   "version": "0.2.0",
   "description": "Online 3D parametric (algorithmic) structural engineering software",
   "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
     "dev": "vite dev",
-    "build": "vite build",
-    "chromatic": "chromatic --exit-zero-on-changes"
+    "storybook": "storybook dev -p 6006",
+    "build": "vite build"
   },
   "main": "./src/index.ts",
   "repository": {
