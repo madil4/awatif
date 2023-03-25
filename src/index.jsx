@@ -1,12 +1,7 @@
 import { render } from "solid-js/web";
+import { App } from "./components/App";
 
-function App() {
-  return (
-    <div>
-      <p>Hello world!</p>
-    </div>
-  );
-}
+import "./index.css";
 
 // a dirty trick to the app disposing
 let HMRdata = {};

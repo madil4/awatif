@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+}
+.resizerHorizontal {
+  background-color: #cbd5e0;
+  cursor: ew-resize;
+  height: 100%;
+  width: 2px;
+}
+.resizerVertical {
+  background-color: #cbd5e0;
+  cursor: ns-resize;
+  height: 2px;
+  width: 100%;
+}
+.containerLeft {
+  width: 35%;
+  min-width: 100px;
+ 
+  flex-direction: column;
+  display: flex;
+}
+.containerRight {
+  flex: 1;
+  min-width: 100px;
+}
+.containerTop {
+  height: 75%;
+  min-height: 100px;
+}
+.containerBottom {
+  flex: 1;
+  min-height: 100px;
+}
