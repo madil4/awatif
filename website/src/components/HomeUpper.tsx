@@ -3,7 +3,8 @@ export const HomeUpper = () => {
     <section class="flex flex-col items-center md:flex-row mb-10">
       <div class="md:w-1/2  md:pr-14">
         <h2 class="text-3xl mb-5">
-          Online 3D parametric (algorithmic) structural engineering software
+          A New Online 3D parametric (algorithmic) structural engineering
+          software
         </h2>
         <p class="mb-5">
           Design and analyze trusses, frames, and beams with ease using our
