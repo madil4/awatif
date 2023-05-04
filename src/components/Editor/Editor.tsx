@@ -15,7 +15,7 @@ export const Editor: Component<{ text: string }> = (props) => {
 
   return (
     <>
-      <div ref={container!} style={{ width: "100", height: "600px" }}></div>
+      <div ref={container!} class="w-full h-full"></div>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import { render } from "solid-js/web";
+import "../src/index.css";
 
 let disposeStory;
 
