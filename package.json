@@ -3,10 +3,10 @@
   "version": "0.2.0",
   "description": "Online 3D parametric (algorithmic) structural engineering software",
   "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
     "dev": "vite dev",
     "build": "vite build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "chromatic": "chromatic --exit-zero-on-changes"
   },
   "main": "./src/index.ts",
@@ -38,6 +38,7 @@
     "vite-plugin-solid": "^2.6.1"
   },
   "dependencies": {
+    "monaco-editor": "^0.38.0",
     "solid-js": "^1.6.15"
   }
 }
