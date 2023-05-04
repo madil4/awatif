@@ -32,8 +32,11 @@
   "homepage": "https://awatif.co",
   "devDependencies": {
     "@storybook/html-vite": "^7.0.0-rc.8",
+    "autoprefixer": "^10.4.14",
     "chromatic": "^6.17.2",
+    "postcss": "^8.4.23",
     "storybook": "^7.0.0-rc.8",
+    "tailwindcss": "^3.3.2",
     "vite": "^4.2.1",
     "vite-plugin-solid": "^2.6.1"
   },

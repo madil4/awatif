@@ -6,7 +6,7 @@ type Story = StoryObj<any>;
 
 export const Default: Story = {
   args: {
-    children: ["Editor", "ModelConfigurator", "Viewer"],
+    children: ["Editor", "Viewer"],
   },
 };
 
