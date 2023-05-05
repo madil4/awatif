@@ -1,9 +1,11 @@
-import { onMount, ParentComponent } from "solid-js";
+import { children, onMount, ParentComponent } from "solid-js";
 
 export const Layouter: ParentComponent = (props: any) => {
   let container: HTMLDivElement;
   let leftView: HTMLDivElement;
   let resizerHorizontal: HTMLDivElement;
+
+  const c = children(() => props.children);
 
   onMount(() => {
     let x = 0;
@@ -43,13 +45,13 @@ export const Layouter: ParentComponent = (props: any) => {
   return (
     <div class="flex" ref={container!}>
       <div class="w-1/2 min-w-[200px]" ref={leftView!}>
-        {props.children[0]}
+        {c.toArray()[0]}
       </div>
       <div
         class="bg-[#cbd5e0] w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
-      <div class="flex-1 min-w-[200px]">{props.children[1]}</div>
+      <div class="flex-1 min-w-[200px]">{c.toArray()[1]}</div>
     </div>
   );
 };
