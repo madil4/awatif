@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/html";
-import type { ComponentProps } from "solid-js";
+import { Meta, StoryObj } from "@storybook/html";
+import { ComponentProps } from "solid-js";
 import { Editor } from "./Editor";
 
 type Args = ComponentProps<typeof Editor>;

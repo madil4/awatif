@@ -1,13 +1,16 @@
-import { Viewer } from "./Viewer";
 import { Meta, StoryObj } from "@storybook/html";
+import { Viewer } from "../Viewer";
+import { Grid } from "./Grid";
 
 export const Default: StoryObj = {};
 
 export default {
-  title: "Viewer",
+  title: "Grid",
   render: () => (
     <div class="w-screen h-screen">
-      <Viewer />
+      <Viewer>
+        <Grid />
+      </Viewer>
     </div>
   ),
 } as Meta;

@@ -1,7 +1,7 @@
 import { Editor } from "./Editor/Editor";
 import { Layouter } from "./Layouter/Layouter";
 import { Viewer } from "./Viewer/Viewer";
-import type { Meta, StoryObj } from "@storybook/html";
+import { Meta, StoryObj } from "@storybook/html";
 
 export const Default: StoryObj = {};
 
