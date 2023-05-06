@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/html";
 import type { ComponentProps } from "solid-js";
 import { Editor } from "./Editor";
 
-type Story = StoryObj<any>;
+type Args = ComponentProps<typeof Editor>;
 
-export const Default: Story = {
+export const Default: StoryObj<Args> = {
   args: {
     text: "Here is my code",
   },
@@ -17,4 +17,4 @@ export default {
       <Editor {...props} />,
     </div>
   ),
-} as Meta<ComponentProps<typeof Editor>>;
+} as Meta<Args>;
