@@ -1,8 +1,9 @@
 import { Editor } from "./Editor/Editor";
 import { Layouter } from "./Layouter/Layouter";
 import { Viewer } from "./Viewer/Viewer";
+import type { Meta, StoryObj } from "@storybook/html";
 
-export const Default = {};
+export const Default: StoryObj = {};
 
 export default {
   title: "App",
@@ -12,4 +13,4 @@ export default {
       <Viewer />
     </Layouter>
   ),
-};
+} as Meta;
