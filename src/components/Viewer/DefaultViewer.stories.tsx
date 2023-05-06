@@ -4,7 +4,7 @@ import { DefaultViewer } from "./DefaultViewer";
 export const Default: StoryObj = {};
 
 export default {
-  title: "Default Viewer",
+  title: "Viewer/Default Viewer",
   render: () => (
     <div class="w-screen h-screen">
       <DefaultViewer />

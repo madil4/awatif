@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/html";
 export const Default: StoryObj = {};
 
 export default {
-  title: "Viewer",
+  title: "Viewer/Viewer",
   render: () => (
     <div class="w-screen h-screen">
       <Viewer />

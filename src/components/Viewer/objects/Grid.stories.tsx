@@ -5,7 +5,7 @@ import { Grid } from "./Grid";
 export const Default: StoryObj = {};
 
 export default {
-  title: "Grid",
+  title: "Viewer/Grid",
   render: () => (
     <div class="w-screen h-screen">
       <Viewer>
