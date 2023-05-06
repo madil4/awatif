@@ -1,12 +1,12 @@
 import { Editor } from "./Editor/Editor";
 import { Layouter } from "./Layouter/Layouter";
-import { Viewer } from "./Viewer/Viewer";
+import { DefaultViewer } from "./Viewer/DefaultViewer";
 
 export function App() {
   return (
     <Layouter>
       <Editor text="Here is text as an example" />
-      <Viewer />
+      <DefaultViewer />
     </Layouter>
   );
 }

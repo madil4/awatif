@@ -1,8 +1,10 @@
 import * as THREE from "three";
-import { onMount } from "solid-js";
+import { children, onMount } from "solid-js";
 
-export function Viewer() {
+export function Viewer(props: any) {
   let container: HTMLDivElement;
+
+  const objects = children(() => props.children).toArray();
 
   onMount(() => {
     // the timeout is a hot fix for container.clientWidth/Height to give correct result
@@ -19,12 +21,9 @@ export function Viewer() {
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
 
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+      objects.forEach((object: any) => scene.add(object));
 
-      camera.position.z = 5;
+      camera.position.set(0, 1, 5);
 
       renderer.render(scene, camera);
     }, 0);

@@ -1,7 +1,7 @@
 import { Editor } from "./Editor/Editor";
 import { Layouter } from "./Layouter/Layouter";
-import { Viewer } from "./Viewer/Viewer";
-import type { Meta, StoryObj } from "@storybook/html";
+import { DefaultViewer } from "./Viewer/DefaultViewer";
+import { Meta, StoryObj } from "@storybook/html";
 
 export const Default: StoryObj = {};
 
@@ -10,7 +10,7 @@ export default {
   render: () => (
     <Layouter>
       <Editor text="Here is text as an example" />
-      <Viewer />
+      <DefaultViewer />
     </Layouter>
   ),
 } as Meta;
