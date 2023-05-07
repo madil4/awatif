@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/html";
 import { Layouter } from "./Layouter";
-import { ComponentProps } from "solid-js";
 
 export const Default: StoryObj = {};
 

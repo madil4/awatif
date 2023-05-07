@@ -5,7 +5,7 @@ export const Layouter: ParentComponent = (props: any) => {
   let leftView: HTMLDivElement;
   let resizerHorizontal: HTMLDivElement;
 
-  const c = children(() => props.children);
+  const c = children(() => props.children).toArray();
 
   onMount(() => {
     let x = 0;
@@ -14,16 +14,16 @@ export const Layouter: ParentComponent = (props: any) => {
 
     container.style.height = `${window.innerHeight}px`;
 
-    // mouse down
-    resizerHorizontal.addEventListener("mousedown", (e) => {
+    // pointer down
+    resizerHorizontal.addEventListener("pointerdown", (e) => {
       x = e.clientX;
       leftViewWidth = leftView.getBoundingClientRect().width;
 
-      document.addEventListener("mousemove", mouseMoveHandlerHorizontal);
+      document.addEventListener("pointermove", pointerMoveHandlerHorizontal);
     });
 
-    // mouse move
-    const mouseMoveHandlerHorizontal = (e: MouseEvent): void => {
+    // pointer move
+    const pointerMoveHandlerHorizontal = (e: PointerEvent): void => {
       dx = e.clientX - x;
       leftView.style.width = `${leftViewWidth + dx}px`;
       document.body.style.cursor = "col-resize";
@@ -34,9 +34,9 @@ export const Layouter: ParentComponent = (props: any) => {
     };
 
     //  clean up
-    document.addEventListener("mouseup", () => {
+    document.addEventListener("pointerup", () => {
       document.body.style.removeProperty("cursor");
-      document.removeEventListener("mousemove", mouseMoveHandlerHorizontal);
+      document.removeEventListener("pointermove", pointerMoveHandlerHorizontal);
       container.style.removeProperty("user-select");
       container.style.removeProperty("pointer-events");
     });
@@ -45,13 +45,13 @@ export const Layouter: ParentComponent = (props: any) => {
   return (
     <div class="flex" ref={container!}>
       <div class="w-1/2 min-w-[200px]" ref={leftView!}>
-        {c.toArray()[0]}
+        {c[0]}
       </div>
       <div
         class="bg-[#cbd5e0] w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
-      <div class="flex-1 min-w-[200px]">{c.toArray()[1]}</div>
+      <div class="flex-1 min-w-[200px]">{c[1]}</div>
     </div>
   );
 };

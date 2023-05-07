@@ -1,9 +1,12 @@
-import { Component, createSignal, onMount } from "solid-js";
+import { Component, onMount } from "solid-js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 
-export const [text, setText] = createSignal("");
+type EditorProps = {
+  text: string;
+  onTextChange?: (text: string) => void;
+};
 
-export const Editor: Component<{ text: string }> = (props) => {
+export const Editor: Component<EditorProps> = (props) => {
   let container: HTMLDivElement;
 
   onMount(() => {
@@ -14,10 +17,8 @@ export const Editor: Component<{ text: string }> = (props) => {
       minimap: { enabled: false },
     });
 
-    setText(props.text);
-
     editor.onDidChangeModelContent(() => {
-      setText(editor.getValue());
+      if (props.onTextChange) props.onTextChange(editor.getValue());
     });
   });
 
