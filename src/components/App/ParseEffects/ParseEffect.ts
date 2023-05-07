@@ -1,16 +1,15 @@
-import { createEffect, createSignal } from "solid-js";
-import { text } from "./Editor/Editor";
+import { createEffect } from "solid-js";
+import { setNodes, text } from "../store";
 
-export const [nodes, setNodes] = createSignal([]);
-
-export function Parse() {
+export function ParseEffect() {
   createEffect(() => {
     import(createURL(text()))
       .then((module) => {
         setNodes(module.nodes ? module.nodes.filter(nodeFilter) : []);
       })
       .catch((error) => {
-        console.error("Error importing module:", error);
+        setNodes([]);
+        console.warn("Error importing module:", error);
       });
   });
 }

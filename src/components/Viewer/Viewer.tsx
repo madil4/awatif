@@ -28,7 +28,7 @@ export function Viewer(props: any) {
       objects.forEach((object: any) => scene.add(object));
 
       const controls = new OrbitControls(camera, renderer.domElement);
-      camera.position.set(0, 1, 5);
+      camera.position.set(0, 5, 5);
       controls.update();
 
       renderer.render(scene, camera);
