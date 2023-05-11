@@ -1,7 +1,7 @@
 {
   "name": "awatif",
   "version": "0.2.0",
-  "description": "Online 3D parametric (algorithmic) structural engineering software",
+  "description": "The First Online Parametric Structural Engineering Software",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -25,7 +25,7 @@
     "bim"
   ],
   "author": "Mohamed Adil",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/awatif-software/awatif/issues"
   },
