@@ -9,8 +9,6 @@ export function parseEffect() {
         setElements(module.elements ?? []);
       })
       .catch((error) => {
-        setNodes([]);
-        setElements([]);
         console.warn("Error importing module:", error);
       });
   });
