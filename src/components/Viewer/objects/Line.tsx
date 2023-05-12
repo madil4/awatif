@@ -9,6 +9,14 @@ type LineProps = {
 };
 
 export function Line(props: LineProps) {
+  if (!props.start || !props.end) return;
+  if (props.start.length != 3 || props.end.length != 3) return;
+  if (
+    props.start.some((element) => typeof element !== "number") ||
+    props.end.some((element) => typeof element !== "number")
+  )
+    return;
+
   const line = new LineSegments2(
     new LineSegmentsGeometry(),
     new LineMaterial({

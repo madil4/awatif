@@ -25,7 +25,9 @@ export function Viewer(props: any) {
       renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(renderer.domElement);
 
-      objects.forEach((object: any) => scene.add(object));
+      objects.forEach((object: any) => {
+        if (object instanceof THREE.Object3D) scene.add(object);
+      });
 
       const controls = new OrbitControls(camera, renderer.domElement);
       camera.position.set(0, 5, 5);
@@ -44,7 +46,9 @@ export function Viewer(props: any) {
 
     if (scene) {
       scene.clear();
-      objects.forEach((object: any) => scene.add(object));
+      objects.forEach((object: any) => {
+        if (object instanceof THREE.Object3D) scene.add(object);
+      });
     }
 
     if (renderer) renderer.render(scene, camera);
