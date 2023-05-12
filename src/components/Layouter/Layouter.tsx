@@ -43,8 +43,8 @@ export const Layouter: ParentComponent = (props: any) => {
   });
 
   return (
-    <div class="flex" ref={container!}>
-      <div class="w-1/2 min-w-[200px]" ref={leftView!}>
+    <div class="flex flex-col-reverse md:flex-row" ref={container!}>
+      <div class="w-full md:w-1/2 min-w-[200px] min-h-[200px]" ref={leftView!}>
         {c[0]}
       </div>
       <div
