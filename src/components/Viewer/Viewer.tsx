@@ -12,13 +12,13 @@ export function Viewer(props: any) {
 
   onMount(() => {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
 
     const controls = new OrbitControls(camera, renderer.domElement);
 
     container.appendChild(renderer.domElement);
-    camera.position.set(0, 5, 5);
+    camera.position.set(0, 5, 10);
     controls.update();
 
     objects.forEach((object: any) => {

@@ -22,7 +22,7 @@ export function Line(props: LineProps) {
     new LineMaterial({
       color: 0xffffff,
       vertexColors: true,
-      linewidth: 2,
+      linewidth: 3,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     })
   );
