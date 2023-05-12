@@ -1,14 +1,12 @@
 import { createEffect } from "solid-js";
 import { setElements, setNodes, text } from "../store";
 
-export function ParseEffect() {
+export function parseEffect() {
   createEffect(() => {
     import(createURL(text()))
       .then((module) => {
-        setNodes(module.nodes ? module.nodes.filter(nodeFilter) : []);
-        setElements(
-          module.elements ? module.elements.filter(elementsFilter) : []
-        );
+        setNodes(module.nodes ?? []);
+        setElements(module.elements ?? []);
       })
       .catch((error) => {
         setNodes([]);
@@ -20,6 +18,3 @@ export function ParseEffect() {
 
 const createURL = (text: string): string =>
   URL.createObjectURL(new Blob([text], { type: "application/javascript" }));
-
-const nodeFilter = (node: number[]) => node.length == 3;
-const elementsFilter = (element: number[]) => element.length == 2;

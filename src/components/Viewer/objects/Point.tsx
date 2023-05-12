@@ -5,6 +5,12 @@ type PointProps = {
 };
 
 export function Point(props: PointProps) {
+  if (
+    props.position.length != 3 ||
+    props.position.some((element) => typeof element !== "number")
+  )
+    return;
+
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({ size: 0.2 })
