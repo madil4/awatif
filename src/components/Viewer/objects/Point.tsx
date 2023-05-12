@@ -13,7 +13,7 @@ export function Point(props: PointProps) {
 
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
-    new THREE.PointsMaterial({ size: 0.2 })
+    new THREE.PointsMaterial({ size: 0.3 })
   );
 
   points.geometry.setAttribute(

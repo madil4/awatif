@@ -13,7 +13,11 @@ type AppProps = {
 };
 
 export function App(props: AppProps) {
-  setText(props.text || "export const nodes=[[0,0,0],[1,0,0]];");
+  setText(
+    props.text ||
+      `export const nodes=[[0,0,0],[3,5,0]];
+export const elements=[[0,1]]`
+  );
 
   parseEffect();
 
