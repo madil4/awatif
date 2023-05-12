@@ -1,5 +1,6 @@
 import { Component, onMount } from "solid-js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import "./useWorker";
 
 type EditorProps = {
   text: string;
@@ -13,8 +14,9 @@ export const Editor: Component<EditorProps> = (props) => {
     const editor = monaco.editor.create(container, {
       value: props.text,
       automaticLayout: true,
-      theme: "vs-dark",
       minimap: { enabled: false },
+      theme: "vs-dark",
+      language: "typescript",
     });
 
     editor.onDidChangeModelContent(() => {
