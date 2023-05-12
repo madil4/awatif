@@ -19,6 +19,8 @@ jobs:
         run: yarn
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
         with:
