@@ -4,8 +4,9 @@ import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
 import { Point } from "../Viewer/objects/Point";
 import { Grid } from "../Viewer/objects/Grid";
-import { nodes, setText, text } from "./store";
+import { elements, nodes, setText, text } from "./store";
 import { ParseEffect } from "./ParseEffects/ParseEffect";
+import { Line } from "../Viewer/objects/Line";
 
 type AppProps = {
   text?: string;
@@ -22,6 +23,14 @@ export function App(props: AppProps) {
       <Viewer>
         <Index each={nodes()}>
           {(node) => <Point position={node()}></Point>}
+        </Index>
+        <Index each={elements()}>
+          {(element) => (
+            <Line
+              start={nodes()[element()[0]] ?? []}
+              end={nodes()[element()[1]] ?? []}
+            ></Line>
+          )}
         </Index>
         <Grid />
       </Viewer>
