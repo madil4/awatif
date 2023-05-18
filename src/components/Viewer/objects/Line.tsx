@@ -4,16 +4,17 @@ import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 
 type LineProps = {
-  start: number[];
-  end: number[];
+  start: any;
+  end: any;
 };
 
 export function Line(props: LineProps) {
   if (!props.start || !props.end) return;
-  if (props.start.length != 3 || props.end.length != 3) return;
   if (
-    props.start.some((element) => typeof element !== "number") ||
-    props.end.some((element) => typeof element !== "number")
+    props.start.length != 3 ||
+    props.end.length != 3 ||
+    props.start.some((e: any) => typeof e !== "number") ||
+    props.end.some((e: any) => typeof e !== "number")
   )
     return;
 
