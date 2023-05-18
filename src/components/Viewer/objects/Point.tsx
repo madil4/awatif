@@ -1,13 +1,14 @@
 import * as THREE from "three";
 
 type PointProps = {
-  position: number[];
+  position: any;
 };
 
 export function Point(props: PointProps) {
+  if (!props.position) return;
   if (
     props.position.length != 3 ||
-    props.position.some((element) => typeof element !== "number")
+    props.position.some((p: any) => typeof p !== "number")
   )
     return;
 
