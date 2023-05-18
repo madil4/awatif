@@ -23,7 +23,7 @@ export function Line(props: LineProps) {
       color: 0xffffff,
       vertexColors: true,
       linewidth: 3,
-      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight), // should be updated on resize with correct values
     })
   );
   const swapYZStart = [props.start[0], props.start[2], props.start[1]];
