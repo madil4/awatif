@@ -16,9 +16,11 @@ export function Point(props: PointProps) {
     new THREE.PointsMaterial({ size: 0.3 })
   );
 
+  const swapYZ = [props.position[0], props.position[2], props.position[1]];
+
   points.geometry.setAttribute(
     "position",
-    new THREE.Float32BufferAttribute(props.position, 3)
+    new THREE.Float32BufferAttribute(swapYZ, 3)
   );
 
   return <>{points}</>;

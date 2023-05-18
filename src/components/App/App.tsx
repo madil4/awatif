@@ -15,7 +15,7 @@ type AppProps = {
 export function App(props: AppProps) {
   setText(
     props.text ||
-      `export const nodes=[[0,0,0],[3,5,0]];
+      `export const nodes=[[0,0,0],[3,0,5]];
 export const elements=[[0,1]]`
   );
 

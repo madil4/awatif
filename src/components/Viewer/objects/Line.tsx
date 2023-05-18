@@ -26,8 +26,10 @@ export function Line(props: LineProps) {
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
     })
   );
+  const swapYZStart = [props.start[0], props.start[2], props.start[1]];
+  const swapYZEnd = [props.end[0], props.end[2], props.end[1]];
 
-  line.geometry.setPositions([...props.start, ...props.end]);
+  line.geometry.setPositions([...swapYZStart, ...swapYZEnd]);
   line.geometry.setColors([...Array(6).fill(255)]);
 
   return <>{line}</>;
