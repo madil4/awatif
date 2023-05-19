@@ -5,7 +5,7 @@ export const Default: StoryObj = {};
 
 export const InvalidText: StoryObj = {
   args: {
-    text: "invalid text",
+    text: "invalid text 2",
   },
 };
 
