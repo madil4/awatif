@@ -27,7 +27,7 @@ export default {
 
         <Support position={undefined} support={undefined} />
         <Support position={[0, 0]} support={[true, false]} />
-        <Support position={[0, 0, "k"]} support={[true, false, "k"]} />
+        <Support position={[0, 0, "k"]} support={[true, true, "k"]} />
         <Support position={[0, 0, 0]} support={[false, false, false]} />
         <Support position={[0, 0, 0]} support={[true, false, false]} />
         <Support position={[0, 0, 5]} support={[true, true, true]} />
