@@ -69,7 +69,6 @@ export const assignments = [
       <Editor text={text()} onTextChange={(text) => setText(text)} />
       <Viewer>
         <Grid />
-
         <Index each={nodes()}>
           {(node) => <Point position={node()}></Point>}
         </Index>

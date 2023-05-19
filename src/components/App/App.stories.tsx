@@ -11,7 +11,7 @@ export const InvalidText: StoryObj = {
 
 export const Nodes: StoryObj = {
   args: {
-    text: "export const nodes=[[0,0,0],[5,0,0]];",
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
   },
 };
 
