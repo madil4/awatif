@@ -30,34 +30,30 @@ export const elements=[[0,1],[1,2]]
 export const assignments = [
   {
     node: 0,
-    supports : [true,true,true]
+    support : [true,true,true]
   },
   {
     node: 2,
-    supports : [true,true,false]
+    support : [true,true,false]
   },
-  {
-    node: 1,
-    loads: [100,100,100]
-  }
 ]`,
   },
 };
 
-export const SupportsCombined: StoryObj = {
+export const PointLoads: StoryObj = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
       
 export const assignments = [
   {
-    node: [0,2],
-    supports : [true,true,true]
+    node: 1,
+    load : [0,0,-100]
   },
   {
     node: 1,
-    loads: [100,100,100]
-  }
+    load : [100,0,0]
+  },
 ]`,
   },
 };
