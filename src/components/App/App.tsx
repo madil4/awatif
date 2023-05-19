@@ -1,4 +1,4 @@
-import { Index, createEffect, createSignal } from "solid-js";
+import { Index, Show, createEffect, createSignal } from "solid-js";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
@@ -7,6 +7,7 @@ import { Grid } from "../Viewer/objects/Grid";
 import { Line } from "../Viewer/objects/Line";
 import { Support } from "../Viewer/objects/Support";
 import { PointLoad } from "../Viewer/objects/PointLoad";
+import { Section } from "../Viewer/objects/Section";
 
 type AppProps = {
   text?: string;
@@ -29,12 +30,21 @@ export const assignments = [
   {
     node: 1,
     load : [0,0,-100]
+  },
+  {
+    element: 0,
+    section : "r200x500"
+  },
+  {
+    element: 1,
+    section : "r200x200"
   }
 ]`);
   const [nodes, setNodes] = createSignal([]);
   const [elements, setElements] = createSignal([]);
   const [supports, setSupports] = createSignal([]);
   const [pointLoads, setPointLoads] = createSignal([]);
+  const [sections, setSections] = createSignal([]);
 
   if (props.text) setText(props.text);
 
@@ -48,15 +58,19 @@ export const assignments = [
         if (module.assignments) {
           const supports: any = [];
           const pointLoads: any = [];
+          const sections: any = [];
           (module.assignments as []).forEach((a) => {
             if ("support" in a) supports.push(a);
             if ("load" in a) pointLoads.push(a);
+            if ("section" in a) sections.push(a);
           });
           setSupports(supports);
           setPointLoads(pointLoads);
+          setSections(sections);
         } else {
           setSupports([]);
           setPointLoads([]);
+          setSections([]);
         }
       })
       .catch((error) => {
@@ -99,6 +113,18 @@ export const assignments = [
               position={nodes()[(pointLoad() as any).node]}
               load={(pointLoad() as any).load}
             />
+          )}
+        </Index>
+
+        <Index each={sections()}>
+          {(section) => (
+            <Show when={elements()[(section() as any).element]}>
+              <Section
+                start={nodes()[elements()[(section() as any).element][0]]}
+                end={nodes()[elements()[(section() as any).element][1]]}
+                section={(section() as any).section}
+              />
+            </Show>
           )}
         </Index>
       </Viewer>
