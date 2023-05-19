@@ -1,4 +1,4 @@
-import { Index, Show, createEffect, createSignal } from "solid-js";
+import { Index, createEffect, createSignal } from "solid-js";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
@@ -6,6 +6,7 @@ import { Point } from "../Viewer/objects/Point";
 import { Grid } from "../Viewer/objects/Grid";
 import { Line } from "../Viewer/objects/Line";
 import { Support } from "../Viewer/objects/Support";
+import { PointLoad } from "../Viewer/objects/PointLoad";
 
 type AppProps = {
   text?: string;
@@ -18,13 +19,22 @@ export const elements=[[0,1],[1,2]]
   
 export const assignments = [
   {
-    node: [0,2],
-    supports : [true,true,true]
+    node: 0,
+    support : [true,true,true]
+  },
+  {
+    node: 2,
+    support : [true,true,true]
+  },
+  {
+    node: 1,
+    load : [0,0,-100]
   }
 ]`);
   const [nodes, setNodes] = createSignal([]);
   const [elements, setElements] = createSignal([]);
   const [supports, setSupports] = createSignal([]);
+  const [pointLoads, setPointLoads] = createSignal([]);
 
   if (props.text) setText(props.text);
 
@@ -37,12 +47,16 @@ export const assignments = [
 
         if (module.assignments) {
           const supports: any = [];
+          const pointLoads: any = [];
           (module.assignments as []).forEach((a) => {
-            if ("supports" in a) supports.push(a);
+            if ("support" in a) supports.push(a);
+            if ("load" in a) pointLoads.push(a);
           });
           setSupports(supports);
+          setPointLoads(pointLoads);
         } else {
           setSupports([]);
+          setPointLoads([]);
         }
       })
       .catch((error) => {
@@ -73,24 +87,19 @@ export const assignments = [
 
         <Index each={supports()}>
           {(support) => (
-            <Show
-              when={Array.isArray((support() as any).node)}
-              fallback={
-                <Support
-                  position={nodes()[(support() as any).node]}
-                  supports={(support() as any).supports}
-                />
-              }
-            >
-              <Index each={(support() as any).node}>
-                {(node) => (
-                  <Support
-                    position={nodes()[node()]}
-                    supports={(support() as any).supports}
-                  />
-                )}
-              </Index>
-            </Show>
+            <Support
+              position={nodes()[(support() as any).node]}
+              support={(support() as any).support}
+            />
+          )}
+        </Index>
+
+        <Index each={pointLoads()}>
+          {(pointLoad) => (
+            <PointLoad
+              position={nodes()[(pointLoad() as any).node]}
+              load={(pointLoad() as any).load}
+            />
           )}
         </Index>
       </Viewer>
