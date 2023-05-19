@@ -6,6 +6,7 @@ import { Point } from "./objects/Point";
 import { Support } from "./objects/Support";
 import { PointLoad } from "./objects/PointLoad";
 import { Section } from "./objects/Section";
+import { Material } from "./objects/Material";
 
 export const Default: StoryObj = {};
 
@@ -60,6 +61,12 @@ export default {
 
         <Section start={[0, 0, 2]} end={[5, 0, 2]} section={"r200x500"} />
         <Section start={[0, 0, 4]} end={[5, 0, 4]} section={"r500x200"} />
+
+        <Material start={undefined} end={undefined} />
+        <Material start={[0, 0]} end={[5, 0]} />
+        <Material start={[0, 0, "k"]} end={[5, 0, "k"]} />
+
+        <Material start={[0, 0, 0]} end={[2.5, 0, 0]} />
       </Viewer>
     </div>
   ),

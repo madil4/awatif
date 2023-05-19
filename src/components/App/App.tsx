@@ -8,6 +8,7 @@ import { Line } from "../Viewer/objects/Line";
 import { Support } from "../Viewer/objects/Support";
 import { PointLoad } from "../Viewer/objects/PointLoad";
 import { Section } from "../Viewer/objects/Section";
+import { Material } from "../Viewer/objects/Material";
 
 type AppProps = {
   text?: string;
@@ -21,23 +22,25 @@ export const elements=[[0,1],[1,2]]
 export const assignments = [
   {
     node: 0,
-    support : [true,true,true]
+    support: [true,true,true]
   },
   {
     node: 2,
-    support : [true,true,true]
+    support: [true,true,true]
   },
   {
     node: 1,
-    load : [0,0,-100]
+    load: [0,0,-100]
   },
   {
     element: 0,
-    section : "r200x500"
+    section: "r200x500",
+    material: 7500
   },
   {
     element: 1,
-    section : "r200x200"
+    section: "r200x200",
+    material: 7500
   }
 ]`);
   const [nodes, setNodes] = createSignal([]);
@@ -45,6 +48,7 @@ export const assignments = [
   const [supports, setSupports] = createSignal([]);
   const [pointLoads, setPointLoads] = createSignal([]);
   const [sections, setSections] = createSignal([]);
+  const [materials, setMaterials] = createSignal([]);
 
   if (props.text) setText(props.text);
 
@@ -59,18 +63,22 @@ export const assignments = [
           const supports: any = [];
           const pointLoads: any = [];
           const sections: any = [];
+          const materials: any = [];
           (module.assignments as []).forEach((a) => {
             if ("support" in a) supports.push(a);
             if ("load" in a) pointLoads.push(a);
             if ("section" in a) sections.push(a);
+            if ("material" in a) materials.push(a);
           });
           setSupports(supports);
           setPointLoads(pointLoads);
           setSections(sections);
+          setMaterials(materials);
         } else {
           setSupports([]);
           setPointLoads([]);
           setSections([]);
+          setMaterials([]);
         }
       })
       .catch((error) => {
@@ -123,6 +131,17 @@ export const assignments = [
                 start={nodes()[elements()[(section() as any).element][0]]}
                 end={nodes()[elements()[(section() as any).element][1]]}
                 section={(section() as any).section}
+              />
+            </Show>
+          )}
+        </Index>
+
+        <Index each={materials()}>
+          {(material) => (
+            <Show when={elements()[(material() as any).element]}>
+              <Material
+                start={nodes()[elements()[(material() as any).element][0]]}
+                end={nodes()[elements()[(material() as any).element][1]]}
               />
             </Show>
           )}

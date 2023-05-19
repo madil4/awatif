@@ -3,12 +3,12 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 
-type LineProps = {
+type MaterialProps = {
   start: any;
   end: any;
 };
 
-export function Line(props: LineProps) {
+export function Material(props: MaterialProps) {
   if (!props.start || !props.end) return;
   if (
     props.start.length != 3 ||
@@ -21,9 +21,9 @@ export function Line(props: LineProps) {
   const line = new LineSegments2(
     new LineSegmentsGeometry(),
     new LineMaterial({
-      color: 0xffffff,
+      color: 0xe6b800,
       vertexColors: true,
-      linewidth: 3,
+      linewidth: 4,
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight), // should be updated on resize with correct values
     })
   );

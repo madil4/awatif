@@ -55,10 +55,6 @@ export const assignments = [
     load : [0,0,-100]
   },
   {
-    node: 1,
-    support : [true,true,true]
-  },
-  {
     node: 3,
     load : [0,0,-100]
   },
@@ -77,12 +73,26 @@ export const assignments = [
     section : "r500x500"
   },
   {
-    element: 1,
-    material : 250
+    element: 2,
+    section : "r500x500"
+  },
+]`,
+  },
+};
+
+export const Materials: StoryObj = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]
+      
+export const assignments = [
+  {
+    element: 0,
+    material : 7500
   },
   {
     element: 2,
-    section : "r500x500"
+    material : 7500
   },
 ]`,
   },
