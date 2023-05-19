@@ -8,8 +8,6 @@ export function Viewer(props: any) {
   let renderer: THREE.Renderer;
   let camera: THREE.PerspectiveCamera;
 
-  const objects = children(() => props.children).toArray();
-
   onMount(() => {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
@@ -22,10 +20,6 @@ export function Viewer(props: any) {
     container.appendChild(renderer.domElement);
     camera.position.set(0, 5, 10);
     controls.update();
-
-    objects.forEach((object: any) => {
-      if (object instanceof THREE.Object3D) scene.add(object);
-    });
 
     // on control change
     controls.addEventListener("change", () => {
