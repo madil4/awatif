@@ -1,4 +1,4 @@
-import { Index, Show, createEffect, createSignal } from "solid-js";
+import { Index, Show, batch, createEffect, createSignal } from "solid-js";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
@@ -56,30 +56,32 @@ export const assignments = [
   createEffect(() => {
     import(createURL(text()))
       .then((module) => {
-        setNodes(module.nodes ?? []);
-        setElements(module.elements ?? []);
+        batch(() => {
+          setNodes(module.nodes ?? []);
+          setElements(module.elements ?? []);
 
-        if (module.assignments) {
-          const supports: any = [];
-          const pointLoads: any = [];
-          const sections: any = [];
-          const materials: any = [];
-          (module.assignments as []).forEach((a) => {
-            if ("support" in a) supports.push(a);
-            if ("load" in a) pointLoads.push(a);
-            if ("section" in a) sections.push(a);
-            if ("material" in a) materials.push(a);
-          });
-          setSupports(supports);
-          setPointLoads(pointLoads);
-          setSections(sections);
-          setMaterials(materials);
-        } else {
-          setSupports([]);
-          setPointLoads([]);
-          setSections([]);
-          setMaterials([]);
-        }
+          if (module.assignments) {
+            const supports: any = [];
+            const pointLoads: any = [];
+            const sections: any = [];
+            const materials: any = [];
+            (module.assignments as []).forEach((a) => {
+              if ("support" in a) supports.push(a);
+              if ("load" in a) pointLoads.push(a);
+              if ("section" in a) sections.push(a);
+              if ("material" in a) materials.push(a);
+            });
+            setSupports(supports);
+            setPointLoads(pointLoads);
+            setSections(sections);
+            setMaterials(materials);
+          } else {
+            setSupports([]);
+            setPointLoads([]);
+            setSections([]);
+            setMaterials([]);
+          }
+        });
       })
       .catch((error) => {
         console.warn("Error importing module:", error);
@@ -91,6 +93,7 @@ export const assignments = [
       <Editor text={text()} onTextChange={(text) => setText(text)} />
       <Viewer>
         <Grid />
+
         <Index each={nodes()}>
           {(node) => <Point position={node()}></Point>}
         </Index>
