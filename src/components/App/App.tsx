@@ -1,11 +1,9 @@
-import { Index, Show, createEffect } from "solid-js";
+import { Index, Show, createEffect, createSignal } from "solid-js";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
 import { Point } from "../Viewer/objects/Point";
 import { Grid } from "../Viewer/objects/Grid";
-import { elements, nodes, setText, supports, text } from "./store";
-import { parseEffect } from "./parseEffect";
 import { Line } from "../Viewer/objects/Line";
 import { Support } from "../Viewer/objects/Support";
 
@@ -14,20 +12,43 @@ type AppProps = {
 };
 
 export function App(props: AppProps) {
-  setText(
-    props.text ||
-      `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+  const [text, setText] =
+    createSignal(`export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
-
+  
 export const assignments = [
   {
     node: [0,2],
     supports : [true,true,true]
   }
-]`
-  );
+]`);
+  const [nodes, setNodes] = createSignal([]);
+  const [elements, setElements] = createSignal([]);
+  const [supports, setSupports] = createSignal([]);
 
-  parseEffect();
+  if (props.text) setText(props.text);
+
+  // parsing effect
+  createEffect(() => {
+    import(createURL(text()))
+      .then((module) => {
+        setNodes(module.nodes ?? []);
+        setElements(module.elements ?? []);
+
+        if (module.assignments) {
+          const supports: any = [];
+          (module.assignments as []).forEach((a) => {
+            if ("supports" in a) supports.push(a);
+          });
+          setSupports(supports);
+        } else {
+          setSupports([]);
+        }
+      })
+      .catch((error) => {
+        console.warn("Error importing module:", error);
+      });
+  });
 
   return (
     <Layouter>
@@ -76,3 +97,7 @@ export const assignments = [
     </Layouter>
   );
 }
+
+// helpers
+const createURL = (text: string): string =>
+  URL.createObjectURL(new Blob([text], { type: "application/javascript" }));
