@@ -1,28 +1,33 @@
 import { Meta, StoryObj } from "@storybook/html";
 import { App } from "./App";
+import { ComponentProps } from "solid-js";
 
-export const Default: StoryObj = {};
+type Args = ComponentProps<typeof App>;
 
-export const InvalidText: StoryObj = {
+export const Default: StoryObj<Args> = {};
+
+export const InvalidText: StoryObj<Args> = {
   args: {
     text: "invalid text",
   },
 };
 
-export const Nodes: StoryObj = {
+export const Nodes: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
+    settings: { nodes: true },
   },
 };
 
-export const Elements: StoryObj = {
+export const Elements: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]`,
+    settings: { elements: true },
   },
 };
 
-export const Supports: StoryObj = {
+export const Supports: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
@@ -41,10 +46,11 @@ export const assignments = [
     support : [true,true,false]
   },
 ]`,
+    settings: { supports: true },
   },
 };
 
-export const PointLoads: StoryObj = {
+export const PointLoads: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
@@ -59,10 +65,11 @@ export const assignments = [
     load : [0,0,-100]
   },
 ]`,
+    settings: { loads: true },
   },
 };
 
-export const Sections: StoryObj = {
+export const Sections: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
@@ -77,10 +84,11 @@ export const assignments = [
     section : "r500x500"
   },
 ]`,
+    settings: { sections: true },
   },
 };
 
-export const Materials: StoryObj = {
+export const Materials: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
@@ -95,10 +103,11 @@ export const assignments = [
     material : 7500
   },
 ]`,
+    settings: { materials: true },
   },
 };
 
 export default {
   title: "App",
-  render: (props) => <App text={props.text} />,
-} as Meta;
+  render: (props) => <App {...props} />,
+} as Meta<Args>;
