@@ -14,7 +14,7 @@ export const Layouter: ParentComponent = (props: any) => {
 
     container.style.height = `${window.innerHeight}px`;
 
-    // pointer down
+    // one pointer down
     resizerHorizontal.addEventListener("pointerdown", (e) => {
       x = e.clientX;
       leftViewWidth = leftView.getBoundingClientRect().width;
@@ -22,7 +22,7 @@ export const Layouter: ParentComponent = (props: any) => {
       document.addEventListener("pointermove", pointerMoveHandlerHorizontal);
     });
 
-    // pointer move
+    // on pointer move
     const pointerMoveHandlerHorizontal = (e: PointerEvent): void => {
       dx = e.clientX - x;
       leftView.style.width = `${leftViewWidth + dx}px`;
@@ -33,7 +33,7 @@ export const Layouter: ParentComponent = (props: any) => {
       container.style.pointerEvents = "none";
     };
 
-    //  clean up
+    // on pointer up
     document.addEventListener("pointerup", () => {
       document.body.style.removeProperty("cursor");
       document.removeEventListener("pointermove", pointerMoveHandlerHorizontal);
