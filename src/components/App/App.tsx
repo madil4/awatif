@@ -62,7 +62,6 @@ export const assignments = [
   }
 ]`);
 
-  // parsing effect
   createEffect(() => {
     import(createURL(text()))
       .then((module) => {
@@ -106,20 +105,13 @@ export const assignments = [
         <Grid />
 
         <Show when={settings.nodes}>
-          <Index each={nodes()}>
-            {(node) => <Point position={node()}></Point>}
-          </Index>
+          <Index each={nodes()}>{(node) => <Point position={node()} />}</Index>
         </Show>
 
         <Show when={settings.elements}>
           <Index each={elements()}>
             {(element) => (
-              <>
-                <Line
-                  start={nodes()[element()[0]]}
-                  end={nodes()[element()[1]]}
-                ></Line>
-              </>
+              <Line start={nodes()[element()[0]]} end={nodes()[element()[1]]} />
             )}
           </Index>
         </Show>
@@ -183,6 +175,5 @@ export const assignments = [
   );
 }
 
-// helpers
 const createURL = (text: string): string =>
   URL.createObjectURL(new Blob([text], { type: "application/javascript" }));

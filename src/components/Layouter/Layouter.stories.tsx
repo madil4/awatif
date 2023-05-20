@@ -9,6 +9,7 @@ export default {
     <Layouter>
       <div>Editor</div>
       <div>Viewer</div>
+      <div>SettingsPane</div>
     </Layouter>
   ),
 } as Meta;
