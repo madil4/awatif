@@ -14,7 +14,7 @@ export const Layouter: ParentComponent = (props: any) => {
 
     container.style.height = `${window.innerHeight}px`;
 
-    // one pointer down
+    // on pointer down
     resizerHorizontal.addEventListener("pointerdown", (e) => {
       x = e.clientX;
       leftViewWidth = leftView.getBoundingClientRect().width;

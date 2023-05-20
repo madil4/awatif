@@ -111,10 +111,7 @@ export const assignments = [
         <Show when={settings.elements}>
           <Index each={elements()}>
             {(element) => (
-              <Line
-                start={nodes()[element()[0]]}
-                end={nodes()[element()[1]]}
-              ></Line>
+              <Line start={nodes()[element()[0]]} end={nodes()[element()[1]]} />
             )}
           </Index>
         </Show>
