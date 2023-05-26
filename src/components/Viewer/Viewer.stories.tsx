@@ -7,6 +7,7 @@ import { Support } from "./objects/Support";
 import { PointLoad } from "./objects/PointLoad";
 import { Section } from "./objects/Section";
 import { Material } from "./objects/Material";
+import { BarResult } from "./objects/BarResult";
 
 export const Default: StoryObj = {};
 
@@ -67,6 +68,31 @@ export default {
         <Material start={[0, 0, "k"]} end={[5, 0, "k"]} />
 
         <Material start={[0, 0, 0]} end={[2.5, 0, 0]} />
+
+        <BarResult start={undefined} end={undefined} result={10} />
+        <BarResult start={[0, 0]} end={[5, 0]} result={10} />
+        <BarResult start={[0, 0, "k"]} end={[5, 0, "k"]} result={10} />
+
+        <BarResult start={[0, 0, 0]} end={[-3, 0, 1]} result={undefined} />
+        <BarResult start={[0, 0, 0]} end={[-3, 0, 1]} result={true} />
+
+        <BarResult start={[-5, 0, 0]} end={[-2, 2, 2]} result={10} />
+        <Line start={[-5, 0, 0]} end={[-2, 2, 2]} />
+        <BarResult start={[-5, 0, 0]} end={[-8, -2, 3]} result={-10} />
+        <Line start={[-5, 0, 0]} end={[-8, -2, 3]} />
+        <BarResult start={[-5, 0, 0]} end={[-8, -1, -2]} result={10} />
+        <Line start={[-5, 0, 0]} end={[-8, -1, -2]} />
+        <BarResult start={[-5, 0, 0]} end={[-4, 1, -3]} result={-10} />
+        <Line start={[-5, 0, 0]} end={[-4, 1, -3]} />
+
+        <BarResult start={[-5, 0, 0]} end={[-2, 0.5, 0]} result={10} />
+        <Line start={[-5, 0, 0]} end={[-2, 0.5, 0]} />
+        <BarResult start={[-5, 0, 0]} end={[-8, 0, 0]} result={-10} />
+        <Line start={[-5, 0, 0]} end={[-8, 0, 0]} />
+        <BarResult start={[-5, 0, 0]} end={[-5, 0, 3]} result={10} />
+        <Line start={[-5, 0, 0]} end={[-5, 0, 3]} />
+        <BarResult start={[-5, 0, 0]} end={[-5, 0, -3]} result={-10} />
+        <Line start={[-5, 0, 0]} end={[-5, 0, -3]} />
       </Viewer>
     </div>
   ),
