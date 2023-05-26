@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Text } from "./Text";
 
 type BarResultProps = {
   start: any;
@@ -32,7 +33,7 @@ export function BarResult(props: BarResultProps) {
   });
   const plane = new THREE.Mesh(geometry, material);
 
-  // rotate starts here
+  // rotation
   const line = end.clone().sub(start).normalize();
   const unitY = new THREE.Vector3(0, 1, 0);
   let lineUnitYNorm = new THREE.Vector3().crossVectors(line, unitY).normalize();
@@ -64,5 +65,17 @@ export function BarResult(props: BarResultProps) {
   plane.translateX(-lineLength / 2);
   plane.translateY(size / 2 + 0.05 * size);
 
-  return <>{plane}</>;
+  // text
+  const textPosition = start.clone().add(end).multiplyScalar(0.5);
+
+  return (
+    <>
+      {plane}
+      <Text
+        position={[textPosition.x, textPosition.z, textPosition.y]}
+        text={`${props.result}`}
+        size={0.3}
+      ></Text>
+    </>
+  );
 }
