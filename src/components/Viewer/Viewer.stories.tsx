@@ -8,6 +8,7 @@ import { PointLoad } from "./objects/PointLoad";
 import { Section } from "./objects/Section";
 import { Material } from "./objects/Material";
 import { BarResult } from "./objects/BarResult";
+import { Text } from "./objects/Text";
 
 export const Default: StoryObj = {};
 
@@ -93,6 +94,16 @@ export default {
         <Line start={[-5, 0, 0]} end={[-5, 0, 3]} />
         <BarResult start={[-5, 0, 0]} end={[-5, 0, -3]} result={-10} />
         <Line start={[-5, 0, 0]} end={[-5, 0, -3]} />
+
+        <Text text={undefined} position={[-8, 0, 5]} size={1} />
+        <Text text={"here is text"} position={undefined} size={1} />
+        <Text text={"here is text"} position={[-8, 0, 5]} size={undefined} />
+
+        <Text text={true} position={[-8, 0, 5]} size={0.5} />
+        <Text text={"here is text"} position={["k", 0, 5]} size={0.5} />
+        <Text text={"here is text"} position={[-8, 0, 5]} size={false} />
+
+        <Text text={"here is text"} position={[-5, 0, 5]} size={0.5} />
       </Viewer>
     </div>
   ),
