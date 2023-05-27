@@ -107,6 +107,27 @@ export const assignments = [
   },
 };
 
+export const ElementResults: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]
+      
+export const results = [
+  {
+    element: 0,
+    strain: 5,
+    stress: -10,
+    force: 100
+  },
+  {
+    element: 2,
+    strain : 6
+  },
+]`,
+    settings: { elementResults: "strain" },
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,
