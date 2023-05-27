@@ -3,11 +3,11 @@ import { createStore } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer } from "../Viewer/Viewer";
-import { Point } from "../Viewer/objects/Point";
+import { Node } from "../Viewer/objects/Node";
 import { Grid } from "../Viewer/objects/Grid";
-import { Line } from "../Viewer/objects/Line";
-import { Support } from "../Viewer/objects/Support";
-import { PointLoad } from "../Viewer/objects/PointLoad";
+import { Element } from "../Viewer/objects/Element";
+import { NodeSupport } from "../Viewer/objects/NodeSupport";
+import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { Section } from "../Viewer/objects/Section";
 import { Material } from "../Viewer/objects/Material";
 import {
@@ -24,8 +24,8 @@ export function App(props: AppProps) {
   const [text, setText] = createSignal("");
   const [nodes, setNodes] = createSignal([]);
   const [elements, setElements] = createSignal([]);
-  const [supports, setSupports] = createSignal([]);
-  const [pointLoads, setPointLoads] = createSignal([]);
+  const [nodeSupports, setNodeSupports] = createSignal([]);
+  const [nodeLoads, setNodeLoads] = createSignal([]);
   const [sections, setSections] = createSignal([]);
   const [materials, setMaterials] = createSignal([]);
   const [settings, setSettings] = createStore(
@@ -70,23 +70,23 @@ export const assignments = [
           setElements(module.elements ?? []);
 
           if (module.assignments) {
-            const supports: any = [];
-            const pointLoads: any = [];
+            const nodeSupports: any = [];
+            const nodeLoads: any = [];
             const sections: any = [];
             const materials: any = [];
             (module.assignments as []).forEach((a) => {
-              if ("support" in a) supports.push(a);
-              if ("load" in a) pointLoads.push(a);
+              if ("support" in a) nodeSupports.push(a);
+              if ("load" in a) nodeLoads.push(a);
               if ("section" in a) sections.push(a);
               if ("material" in a) materials.push(a);
             });
-            setSupports(supports);
-            setPointLoads(pointLoads);
+            setNodeSupports(nodeSupports);
+            setNodeLoads(nodeLoads);
             setSections(sections);
             setMaterials(materials);
           } else {
-            setSupports([]);
-            setPointLoads([]);
+            setNodeSupports([]);
+            setNodeLoads([]);
             setSections([]);
             setMaterials([]);
           }
@@ -105,21 +105,24 @@ export const assignments = [
         <Grid />
 
         <Show when={settings.nodes}>
-          <Index each={nodes()}>{(node) => <Point position={node()} />}</Index>
+          <Index each={nodes()}>{(node) => <Node position={node()} />}</Index>
         </Show>
 
         <Show when={settings.elements}>
           <Index each={elements()}>
             {(element) => (
-              <Line start={nodes()[element()[0]]} end={nodes()[element()[1]]} />
+              <Element
+                start={nodes()[element()[0]]}
+                end={nodes()[element()[1]]}
+              />
             )}
           </Index>
         </Show>
 
         <Show when={settings.supports}>
-          <Index each={supports()}>
+          <Index each={nodeSupports()}>
             {(support) => (
-              <Support
+              <NodeSupport
                 position={nodes()[(support() as any).node]}
                 support={(support() as any).support}
               />
@@ -128,9 +131,9 @@ export const assignments = [
         </Show>
 
         <Show when={settings.loads}>
-          <Index each={pointLoads()}>
+          <Index each={nodeLoads()}>
             {(pointLoad) => (
-              <PointLoad
+              <NodeLoad
                 position={nodes()[(pointLoad() as any).node]}
                 load={(pointLoad() as any).load}
               />
