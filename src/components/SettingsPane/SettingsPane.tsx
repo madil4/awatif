@@ -23,7 +23,6 @@ export function SettingsPane(props: SettingsPaneProps) {
   pane.addInput(settings, "loads");
   pane.addInput(settings, "sections");
   pane.addInput(settings, "materials");
-
   pane.addInput(settings, "elementResults", {
     options: {
       none: "none",

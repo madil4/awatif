@@ -115,7 +115,13 @@ export const elements=[[0,1],[1,2]]
 export const results = [
   {
     element: 0,
-    strain: 5,
+    strain: -5,
+    stress: -10,
+    force: 100
+  },
+  {
+    element: 1,
+    strain: 7,
     stress: -10,
     force: 100
   },

@@ -79,7 +79,6 @@ export const assignments = [
             const nodeLoads: any = [];
             const sections: any = [];
             const materials: any = [];
-            const elementResults: Map<number, any> = new Map();
             (module.assignments as []).forEach((a) => {
               if ("support" in a) nodeSupports.push(a);
               if ("load" in a) nodeLoads.push(a);
@@ -184,7 +183,7 @@ export const assignments = [
           </Index>
         </Show>
 
-        {/* <> remove strain, stress, and force by fine grain updates to ElementResult and Text</> */}
+        {/* <> remove strain, stress, and force duplication by fine grain updates to ElementResult and Text</> */}
         <Show when={settings.elementResults == "strain"}>
           <Index each={elementResults()}>
             {(elementResult) => (
