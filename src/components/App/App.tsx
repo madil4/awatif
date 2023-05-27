@@ -14,6 +14,7 @@ import {
   SettingsPane,
   settings as defaultSettings,
 } from "../SettingsPane/SettingsPane";
+import { ElementResult } from "../Viewer/objects/ElementResult";
 
 type AppProps = {
   text?: string;
@@ -28,8 +29,12 @@ export function App(props: AppProps) {
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [sections, setSections] = createSignal([]);
   const [materials, setMaterials] = createSignal([]);
+  const [elementResults, setElementResults] = createSignal([]);
   const [settings, setSettings] = createStore(
-    Object.assign({}, { ...defaultSettings, ...props.settings })
+    Object.assign(
+      {},
+      { ...defaultSettings, ...props.settings, elementResults: "strain" }
+    ) // better pass one settings object from the store to SettingsPane to keep in sync
   );
 
   if (props.text) setText(props.text);
@@ -89,6 +94,16 @@ export const assignments = [
             setNodeLoads([]);
             setSections([]);
             setMaterials([]);
+          }
+
+          if (module.results) {
+            const elementResults: any = [];
+            (module.results as []).forEach((a) => {
+              if ("element" in a) elementResults.push(a);
+            });
+            setElementResults(elementResults);
+          } else {
+            setElementResults([]);
           }
         });
       })
@@ -162,6 +177,55 @@ export const assignments = [
                 <Material
                   start={nodes()[elements()[(material() as any).element][0]]}
                   end={nodes()[elements()[(material() as any).element][1]]}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        {/* <> remove strain, stress, and force duplication by fine grain updates to ElementResult and Text</> */}
+        <Show when={settings.elementResults == "strain"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={(elementResult() as any)["strain"]}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        <Show when={settings.elementResults == "stress"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={(elementResult() as any)["stress"]}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        <Show when={settings.elementResults == "force"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={(elementResult() as any)["force"]}
                 />
               </Show>
             )}

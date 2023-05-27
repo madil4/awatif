@@ -7,6 +7,7 @@ export const settings = {
   loads: true,
   sections: false,
   materials: false,
+  elementResults: "none",
 };
 
 type SettingsPaneProps = {
@@ -22,10 +23,19 @@ export function SettingsPane(props: SettingsPaneProps) {
   pane.addInput(settings, "loads");
   pane.addInput(settings, "sections");
   pane.addInput(settings, "materials");
+  pane.addInput(settings, "elementResults", {
+    options: {
+      none: "none",
+      strain: "strain",
+      stress: "stress",
+      force: "force",
+    },
+    label: "element results",
+  });
 
   pane.on("change", (ev) => {
     if (props.onChange) props.onChange(ev);
   });
 
-  return <div class="absolute top-0 left-5 w-64">{pane.element}</div>;
+  return <div class="absolute top-0 left-5 w-72">{pane.element}</div>;
 }
