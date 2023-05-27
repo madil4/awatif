@@ -3,12 +3,12 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 
-type LineProps = {
+type ElementProps = {
   start: any;
   end: any;
 };
 
-export function Line(props: LineProps) {
+export function Element(props: ElementProps) {
   if (!props.start || !props.end) return;
   if (
     props.start.length != 3 ||

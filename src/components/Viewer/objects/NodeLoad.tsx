@@ -5,7 +5,7 @@ type PointLoadProps = {
   load: any;
 };
 
-export function PointLoad(props: PointLoadProps) {
+export function NodeLoad(props: PointLoadProps) {
   if (!props.position || !props.load) return;
   if (
     props.position.length != 3 ||

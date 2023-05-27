@@ -1,13 +1,13 @@
 import * as THREE from "three";
 import { Text } from "./Text";
 
-type BarResultProps = {
+type ElementResultProps = {
   start: any;
   end: any;
   result: any;
 };
 
-export function BarResult(props: BarResultProps) {
+export function ElementResult(props: ElementResultProps) {
   if (!props.start || !props.end || !props.result) return;
   if (
     props.start.length != 3 ||

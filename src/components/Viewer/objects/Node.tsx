@@ -1,10 +1,10 @@
 import * as THREE from "three";
 
-type PointProps = {
+type NodeProps = {
   position: any;
 };
 
-export function Point(props: PointProps) {
+export function Node(props: NodeProps) {
   if (!props.position) return;
   if (
     props.position.length != 3 ||

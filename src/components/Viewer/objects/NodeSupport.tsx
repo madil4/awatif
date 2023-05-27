@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
-type SupportProps = {
+type NodeSupportProps = {
   position: any;
   support: any;
 };
 
-export function Support(props: SupportProps) {
+export function NodeSupport(props: NodeSupportProps) {
   if (!props.position || !props.support) return;
   if (
     props.position.length != 3 ||
