@@ -43,6 +43,7 @@
     "vite-plugin-solid": "^2.6.1"
   },
   "dependencies": {
+    "mathjs": "^11.8.0",
     "monaco-editor": "^0.38.0",
     "solid-js": "^1.6.15",
     "three": "^0.152.2",

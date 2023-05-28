@@ -31,17 +31,16 @@ export function App(props: AppProps) {
   const [materials, setMaterials] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
   const [settings, setSettings] = createStore(
-    Object.assign(
-      {},
-      { ...defaultSettings, ...props.settings, elementResults: "strain" }
-    ) // better pass one settings object from the store to SettingsPane to keep in sync
+    Object.assign({}, { ...defaultSettings, ...props.settings }) // better pass one settings object from the store to SettingsPane to keep in sync
   );
 
   if (props.text) setText(props.text);
   else
-    setText(`export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+    setText(`import { analyzing } from 'awatif';
+
+export let nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
-  
+      
 export const assignments = [
   {
     node: 0,
@@ -53,7 +52,7 @@ export const assignments = [
   },
   {
     node: 1,
-    load: [0,0,-100]
+    load: [0,0,-10]
   },
   {
     element: 0,
@@ -65,7 +64,9 @@ export const assignments = [
     section: "r200x200",
     material: 7500
   }
-]`);
+]
+
+export const results = analyzing(nodes,elements,assignments);`);
 
   createEffect(() => {
     import(createURL(text()))

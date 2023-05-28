@@ -134,6 +134,43 @@ export const results = [
   },
 };
 
+export const Analyzing: StoryObj<Args> = {
+  args: {
+    text: `import { analyzing } from 'awatif';
+
+export let nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]
+  
+export const assignments = [
+  {
+    node: 0,
+    support: [true,true,true]
+  },
+  {
+    node: 2,
+    support: [true,true,true]
+  },
+  {
+    node: 1,
+    load: [0,0,-10]
+  },
+  {
+    element: 0,
+    section: "r200x500",
+    material: 7500
+  },
+  {
+    element: 1,
+    section: "r200x200",
+    material: 7500
+  }
+]
+
+export const results = analyzing(nodes,elements,assignments);`,
+    settings: { elementResults: "strain" },
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,
