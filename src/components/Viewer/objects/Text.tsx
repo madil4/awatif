@@ -24,7 +24,7 @@ export function Text(props: TextProps) {
   )
     return;
 
-  const fontHeightPx = 50;
+  const fontHeightPx = 70;
   const fontHeightPxScaled = fontHeightPx * props.size * devicePixelRatio;
 
   const canvas = document.createElement("canvas");
@@ -35,15 +35,25 @@ export function Text(props: TextProps) {
     canvas.width = ctx.measureText(props.text).width;
     canvas.height = fontHeightPxScaled;
 
+    ctx.fillStyle = "#0d0d0d";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
-    ctx.font = `${fontHeightPxScaled}px Arial`;
-    ctx.fillText(props.text, canvas.width / 2, canvas.height / 2);
+    const toMargin = 0.9;
+    ctx.font = `${fontHeightPxScaled * toMargin}px Arial`;
+    const toCenterTextV = 0.08 * canvas.height;
+    ctx.fillText(
+      props.text,
+      canvas.width / 2,
+      canvas.height / 2 + toCenterTextV
+    );
   }
 
   material.map = new THREE.Texture(canvas);
   material.map.needsUpdate = true;
+  material.depthTest = false;
 
   const text = new THREE.Sprite(material);
   text.position.set(props.position[0], props.position[2], props.position[1]);
@@ -52,6 +62,7 @@ export function Text(props: TextProps) {
     props.size,
     1
   );
+  text.renderOrder = 99;
 
   return <>{text}</>;
 }
