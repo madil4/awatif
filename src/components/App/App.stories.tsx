@@ -138,7 +138,7 @@ export const Analyzing: StoryObj<Args> = {
   args: {
     text: `import { analyzing } from 'awatif';
 
-export let nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]
   
 export const assignments = [
@@ -166,7 +166,8 @@ export const assignments = [
   }
 ]
 
-export const results = analyzing(nodes,elements,assignments);`,
+export const results = analyzing(nodes,elements,assignments);
+`,
     settings: { elementResults: "strain" },
   },
 };
