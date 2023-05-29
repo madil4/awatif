@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { children, createEffect, onMount } from "solid-js";
+import { children, createEffect, createSignal, on, onMount } from "solid-js";
 
 export function Viewer(props: any) {
   let container: HTMLDivElement;
@@ -52,9 +52,19 @@ export function Viewer(props: any) {
     if (renderer) renderer.render(scene, camera);
   });
 
+  // on render action
+  createEffect(
+    on(renderAction, () => {
+      if (renderer) renderer.render(scene, camera);
+    })
+  );
+
   return (
     <>
       <div ref={container!} class="w-full h-full"></div>
     </>
   );
 }
+
+// actions
+export const [renderAction, setRenderAction] = createSignal(0);

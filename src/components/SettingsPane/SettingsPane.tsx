@@ -1,29 +1,30 @@
 import { Pane, TpChangeEvent } from "tweakpane";
 
-export const settings = {
-  nodes: true,
-  elements: true,
-  supports: true,
-  loads: true,
-  sections: false,
-  materials: false,
-  elementResults: "none",
+export type Settings = {
+  nodes: boolean;
+  elements: boolean;
+  supports: boolean;
+  loads: boolean;
+  sections: boolean;
+  materials: boolean;
+  elementResults: string;
 };
 
-type SettingsPaneProps = {
+export type SettingsPaneProps = {
+  settings: Settings;
   onChange?: (ev: TpChangeEvent<unknown>) => void;
 };
 
 export function SettingsPane(props: SettingsPaneProps) {
   let pane = new Pane({ title: "Settings", expanded: false });
 
-  pane.addInput(settings, "nodes");
-  pane.addInput(settings, "elements");
-  pane.addInput(settings, "supports");
-  pane.addInput(settings, "loads");
-  pane.addInput(settings, "sections");
-  pane.addInput(settings, "materials");
-  pane.addInput(settings, "elementResults", {
+  pane.addInput(props.settings, "nodes");
+  pane.addInput(props.settings, "elements");
+  pane.addInput(props.settings, "supports");
+  pane.addInput(props.settings, "loads");
+  pane.addInput(props.settings, "sections");
+  pane.addInput(props.settings, "materials");
+  pane.addInput(props.settings, "elementResults", {
     options: {
       none: "none",
       strain: "strain",
