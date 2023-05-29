@@ -5,5 +5,17 @@ export const Default: StoryObj = {};
 
 export default {
   title: "SettingsPane",
-  render: () => <SettingsPane />,
+  render: () => (
+    <SettingsPane
+      settings={{
+        nodes: true,
+        elements: true,
+        supports: true,
+        loads: true,
+        sections: false,
+        materials: false,
+        elementResults: "none",
+      }}
+    />
+  ),
 } as Meta;
