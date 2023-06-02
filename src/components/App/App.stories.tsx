@@ -149,6 +149,30 @@ export const results = [
   },
 };
 
+export const NodeResults: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]
+      
+export const results = [
+  {
+    node: 0,
+    displacement: [0,0,20],
+  },
+  {
+    node: 2,
+    displacement: [10,10,20],
+    reaction: [50,10,0]
+  },
+  {
+    node: 3,
+    displacement: [10,10,20],
+  },
+]`,
+    settings: { nodeResults: "displacement" },
+  },
+};
+
 export const Analyzing: StoryObj<Args> = {
   args: {
     text: `import { analyzing } from 'awatif';

@@ -17,6 +17,7 @@ export const analyzing = (nodes: any, elements: any, assignments: any) => {
   });
 
   const results: any[] = [];
+
   elements.forEach((e: any, i: any) => {
     const bar = bars.get(i) ?? { area: 0, material: 0 };
     const undeformedLength = mathjs.norm(
@@ -33,6 +34,16 @@ export const analyzing = (nodes: any, elements: any, assignments: any) => {
       force: roundTo2(strain * bar.material * bar.area),
     });
   });
+
+  nodes.forEach((node: any, index: any) => {
+    results.push({
+      node: index,
+      displacement: mathjs
+        .subtract(deformedNodes[index], node)
+        .map((v: number) => roundTo2(v)),
+    });
+  });
+
   return results;
 };
 

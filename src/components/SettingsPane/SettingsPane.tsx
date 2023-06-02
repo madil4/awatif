@@ -10,6 +10,7 @@ export type Settings = {
   sections: boolean;
   materials: boolean;
   elementResults: string;
+  nodeResults: string;
 };
 
 export type SettingsPaneProps = {
@@ -38,6 +39,13 @@ export function SettingsPane(props: SettingsPaneProps) {
       force: "force",
     },
     label: "element results",
+  });
+  pane.addInput(props.settings, "nodeResults", {
+    options: {
+      none: "none",
+      displacement: "displacement",
+    },
+    label: "node results",
   });
 
   pane.on("change", (ev) => {

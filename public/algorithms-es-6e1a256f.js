@@ -1,12 +1,12 @@
-function st() {
-  return st = Object.assign ? Object.assign.bind() : function(r) {
+function ft() {
+  return ft = Object.assign ? Object.assign.bind() : function(r) {
     for (var e = 1; e < arguments.length; e++) {
       var n = arguments[e];
       for (var a in n)
         Object.prototype.hasOwnProperty.call(n, a) && (r[a] = n[a]);
     }
     return r;
-  }, st.apply(this, arguments);
+  }, ft.apply(this, arguments);
 }
 var Aa = {
   // minimum relative difference between two compared values,
@@ -42,17 +42,17 @@ function Wt(r) {
 function Ea(r) {
   return r && r.constructor.prototype.isUnit === !0 || !1;
 }
-function ae(r) {
+function ie(r) {
   return typeof r == "string";
 }
 var Cr = Array.isArray;
 function Sr(r) {
   return r && r.constructor.prototype.isMatrix === !0 || !1;
 }
-function ft(r) {
+function ct(r) {
   return Array.isArray(r) || Sr(r);
 }
-function ct(r) {
+function lt(r) {
   return r && r.isDenseMatrix && r.constructor.prototype.isMatrix === !0 || !1;
 }
 function Ie(r) {
@@ -61,7 +61,7 @@ function Ie(r) {
 function Fa(r) {
   return r && r.constructor.prototype.isRange === !0 || !1;
 }
-function Ct(r) {
+function bt(r) {
   return r && r.constructor.prototype.isIndex === !0 || !1;
 }
 function Gi(r) {
@@ -175,13 +175,13 @@ function Au(r, e) {
     He(e, n) && (r[n] = e[n]);
   return r;
 }
-function lt(r, e) {
+function vt(r, e) {
   var n, a, t;
   if (Array.isArray(r)) {
     if (!Array.isArray(e) || r.length !== e.length)
       return !1;
     for (a = 0, t = r.length; a < t; a++)
-      if (!lt(r[a], e[a]))
+      if (!vt(r[a], e[a]))
         return !1;
     return !0;
   } else {
@@ -191,7 +191,7 @@ function lt(r, e) {
       if (Array.isArray(e) || !(e instanceof Object))
         return !1;
       for (n in r)
-        if (!(n in e) || !lt(r[n], e[n]))
+        if (!(n in e) || !vt(r[n], e[n]))
           return !1;
       for (n in e)
         if (!(n in r))
@@ -223,11 +223,11 @@ Example:
 `);
   return Object.freeze(Aa);
 };
-st(Gr, Aa, {
+ft(Gr, Aa, {
   MATRIX_OPTIONS: Fu,
   NUMBER_OPTIONS: Cu
 });
-function ne(r, e) {
+function ae(r, e) {
   var n = typeof Symbol < "u" && r[Symbol.iterator] || r["@@iterator"];
   if (!n) {
     if (Array.isArray(r) || (n = bu(r)) || e && r && typeof r.length == "number") {
@@ -355,7 +355,7 @@ function Ca() {
     var _ = a.get(N);
     if (_)
       return _;
-    var P = 'Unknown type "' + N + '"', V = N.toLowerCase(), W, H = ne(t), tr;
+    var P = 'Unknown type "' + N + '"', V = N.toLowerCase(), W, H = ae(t), tr;
     try {
       for (H.s(); !(tr = H.n()).done; )
         if (W = tr.value, W.toLowerCase() === V) {
@@ -395,7 +395,7 @@ function Ca() {
   }
   l(), v(e);
   function o() {
-    var N, _ = ne(t), P;
+    var N, _ = ae(t), P;
     try {
       for (_.s(); !(P = _.n()).done; )
         N = P.value, a.get(N).conversionsTo = [];
@@ -434,7 +434,7 @@ function Ca() {
     } else
       lr = N._typedFunctionData.signatures;
     for (var ar = 0; ar < rr; ++ar) {
-      var Jr = H[ar], Pr = [], Vr = void 0, Ir = ne(lr), Kr;
+      var Jr = H[ar], Pr = [], Vr = void 0, Ir = ae(lr), Kr;
       try {
         for (Ir.s(); !(Kr = Ir.n()).done; ) {
           Vr = Kr.value;
@@ -462,7 +462,7 @@ function Ca() {
       if (lr = Pr, lr.length === 0)
         break;
     }
-    var Qr, Xr = ne(lr), be;
+    var Qr, Xr = ae(lr), be;
     try {
       for (Xr.s(); !(be = Xr.n()).done; )
         if (Qr = be.value, Qr.params.length <= rr)
@@ -632,7 +632,7 @@ function Ca() {
   function B(N, _) {
     var P = /* @__PURE__ */ new Set();
     return N.forEach(function(V) {
-      var W = b(V.params, _), H, tr = ne(W), X;
+      var W = b(V.params, _), H, tr = ae(W), X;
       try {
         for (tr.s(); !(X = tr.n()).done; )
           H = X.value, P.add(H);
@@ -736,7 +736,7 @@ function Ca() {
         return 1;
     } else if (X && H.hasAny)
       return -1;
-    var rr = 0, lr = 0, yr, ar = ne(P), Jr;
+    var rr = 0, lr = 0, yr, ar = ae(P), Jr;
     try {
       for (ar.s(); !(Jr = ar.n()).done; )
         yr = Jr.value, yr.hasAny && ++rr, yr.hasConversion && ++lr;
@@ -745,7 +745,7 @@ function Ca() {
     } finally {
       ar.f();
     }
-    var Pr = 0, Vr = 0, Ir = ne(V), Kr;
+    var Pr = 0, Vr = 0, Ir = ae(V), Kr;
     try {
       for (Ir.s(); !(Kr = Ir.n()).done; )
         yr = Kr.value, yr.hasAny && ++Pr, yr.hasConversion && ++Vr;
@@ -794,7 +794,7 @@ function Ca() {
       return P;
     P = P.concat([]);
     for (var V = new Set(N), W = 1; W < _.length; ++W) {
-      var H = void 0, tr = ne(_[W].conversionsTo), X;
+      var H = void 0, tr = ae(_[W].conversionsTo), X;
       try {
         for (tr.s(); !(X = tr.n()).done; )
           H = X.value, V.has(H.from) || (P.push(H), V.add(H.from));
@@ -890,7 +890,7 @@ function Ca() {
   }
   function R(N, _) {
     for (var P = Math.max(N.length, _.length), V = 0; V < P; V++) {
-      var W = b(N, V), H = b(_, V), tr = !1, X = void 0, rr = ne(H), lr;
+      var W = b(N, V), H = b(_, V), tr = !1, X = void 0, rr = ae(H), lr;
       try {
         for (rr.s(); !(lr = rr.n()).done; )
           if (X = lr.value, W.has(X)) {
@@ -914,7 +914,7 @@ function Ca() {
     });
   }
   function L(N, _, P) {
-    var V = [], W, H = ne(N), tr;
+    var V = [], W, H = ae(N), tr;
     try {
       for (H.s(); !(tr = H.n()).done; ) {
         W = tr.value;
@@ -974,7 +974,7 @@ function Ca() {
       }), P.push(Rr);
       var pn = V.length;
       V.push(_[tr]);
-      var Xi = Rr.map(w), at = void 0, it = ne(I(Xi)), dn;
+      var Xi = Rr.map(w), at = void 0, it = ae(I(Xi)), dn;
       try {
         for (it.s(); !(dn = it.n()).done; ) {
           at = dn.value;
@@ -1179,7 +1179,7 @@ function Mr(r) {
 var Mu = Math.sign || function(r) {
   return r > 0 ? 1 : r < 0 ? -1 : 0;
 };
-function It(r, e, n) {
+function Ot(r, e, n) {
   var a = {
     2: "0b",
     8: "0o",
@@ -1219,11 +1219,11 @@ function Rt(r, e) {
     case "engineering":
       return Su(r, a);
     case "bin":
-      return It(r, 2, t);
+      return Ot(r, 2, t);
     case "oct":
-      return It(r, 8, t);
+      return Ot(r, 8, t);
     case "hex":
-      return It(r, 16, t);
+      return Ot(r, 16, t);
     case "auto":
       return Nu(r, a, e && e).replace(/((\.\d*?)(0+))($|e)/, function() {
         var u = arguments[2], c = arguments[4];
@@ -1233,7 +1233,7 @@ function Rt(r, e) {
       throw new Error('Unknown notation "' + n + '". Choose "auto", "exponential", "fixed", "bin", "oct", or "hex.');
   }
 }
-function bt(r) {
+function Mt(r) {
   var e = String(r).toLowerCase().match(/^(-?)(\d+\.?\d*)(e([+-]?\d+))?$/);
   if (!e)
     throw new SyntaxError("Invalid number " + r);
@@ -1253,7 +1253,7 @@ function bt(r) {
 function Su(r, e) {
   if (isNaN(r) || !isFinite(r))
     return String(r);
-  var n = bt(r), a = Mt(n, e), t = a.exponent, u = a.coefficients, c = t % 3 === 0 ? t : t < 0 ? t - 3 - t % 3 : t - t % 3;
+  var n = Mt(r), a = St(n, e), t = a.exponent, u = a.coefficients, c = t % 3 === 0 ? t : t < 0 ? t - 3 - t % 3 : t - t % 3;
   if (xr(e))
     for (; e > u.length || t - c + 1 > u.length; )
       u.push(0);
@@ -1268,13 +1268,13 @@ function Su(r, e) {
 function Bu(r, e) {
   if (isNaN(r) || !isFinite(r))
     return String(r);
-  var n = bt(r), a = typeof e == "number" ? Mt(n, n.exponent + 1 + e) : n, t = a.coefficients, u = a.exponent + 1, c = u + (e || 0);
+  var n = Mt(r), a = typeof e == "number" ? St(n, n.exponent + 1 + e) : n, t = a.coefficients, u = a.exponent + 1, c = u + (e || 0);
   return t.length < c && (t = t.concat(qe(c - t.length))), u < 0 && (t = qe(-u + 1).concat(t), u = 1), u < t.length && t.splice(u, 0, u === 0 ? "0." : "."), a.sign + t.join("");
 }
 function ba(r, e) {
   if (isNaN(r) || !isFinite(r))
     return String(r);
-  var n = bt(r), a = e ? Mt(n, e) : n, t = a.coefficients, u = a.exponent;
+  var n = Mt(r), a = e ? St(n, e) : n, t = a.coefficients, u = a.exponent;
   t.length < e && (t = t.concat(qe(e - t.length)));
   var c = t.shift();
   return a.sign + c + (t.length > 0 ? "." + t.join("") : "") + "e" + (u >= 0 ? "+" : "") + u;
@@ -1282,7 +1282,7 @@ function ba(r, e) {
 function Nu(r, e, n) {
   if (isNaN(r) || !isFinite(r))
     return String(r);
-  var a = n && n.lowerExp !== void 0 ? n.lowerExp : -3, t = n && n.upperExp !== void 0 ? n.upperExp : 5, u = bt(r), c = e ? Mt(u, e) : u;
+  var a = n && n.lowerExp !== void 0 ? n.lowerExp : -3, t = n && n.upperExp !== void 0 ? n.upperExp : 5, u = Mt(r), c = e ? St(u, e) : u;
   if (c.exponent < a || c.exponent >= t)
     return ba(r, e);
   var p = c.coefficients, v = c.exponent;
@@ -1290,7 +1290,7 @@ function Nu(r, e, n) {
   var l = v > 0 ? v : 0;
   return l < p.length - 1 && p.splice(l + 1, 0, "."), c.sign + p.join("");
 }
-function Mt(r, e) {
+function St(r, e) {
   for (var n = {
     sign: r.sign,
     coefficients: r.coefficients,
@@ -1329,7 +1329,7 @@ function pe(r, e, n) {
   }
   return !1;
 }
-function Ot(r, e, n) {
+function $t(r, e, n) {
   var a = r.constructor, t = new a(2), u = "";
   if (n) {
     if (n < 1)
@@ -1369,11 +1369,11 @@ function zu(r, e) {
     case "engineering":
       return Tu(r, a);
     case "bin":
-      return Ot(r, 2, t);
+      return $t(r, 2, t);
     case "oct":
-      return Ot(r, 8, t);
+      return $t(r, 8, t);
     case "hex":
-      return Ot(r, 16, t);
+      return $t(r, 16, t);
     case "auto": {
       var u = e && e.lowerExp !== void 0 ? e.lowerExp : -3, c = e && e.upperExp !== void 0 ? e.upperExp : 5;
       if (r.isZero())
@@ -1411,7 +1411,7 @@ function Ou(r, e) {
     return !e || e.fraction !== "decimal" ? r.s * r.n + "/" + r.d : r.toString();
   if (Array.isArray(r))
     return Ma(r, e);
-  if (ae(r))
+  if (ie(r))
     return '"' + r + '"';
   if (typeof r == "function")
     return r.syntax ? String(r.syntax) : "function";
@@ -1490,7 +1490,7 @@ function br(r, e) {
   if (r < 0 || typeof e == "number" && r >= e)
     throw new Se(r, e);
 }
-function vt(r, e, n) {
+function ht(r, e, n) {
   if (!Array.isArray(r) || !Array.isArray(e))
     throw new TypeError("Array expected");
   if (e.length === 0)
@@ -1613,12 +1613,12 @@ function Cn(r) {
     e.push(r[n].value);
   return e;
 }
-function ht(r, e) {
+function pt(r, e) {
   for (var n, a = 0, t = 0; t < r.length; t++) {
     var u = r[t], c = Array.isArray(u);
     if (t === 0 && c && (a = u.length), c && u.length !== a)
       return;
-    var p = c ? ht(u, e) : e(u);
+    var p = c ? pt(u, e) : e(u);
     if (n === void 0)
       n = p;
     else if (n !== p)
@@ -1732,11 +1732,11 @@ var $a = function() {
     // what to differentiate over must (currently) be a variable.
     {
       name: "identifier",
-      test: (p) => ae && /^(?:[A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])(?:[0-9A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])*$/.test(p)
+      test: (p) => ie && /^(?:[A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])(?:[0-9A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CA\uA7D0\uA7D1\uA7D3\uA7D5-\uA7D9\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDE80-\uDEA9\uDEB0\uDEB1\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDD00-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])*$/.test(p)
     },
     {
       name: "string",
-      test: ae
+      test: ie
     },
     {
       name: "Chain",
@@ -1752,7 +1752,7 @@ var $a = function() {
     },
     {
       name: "DenseMatrix",
-      test: ct
+      test: lt
     },
     {
       name: "SparseMatrix",
@@ -1764,7 +1764,7 @@ var $a = function() {
     },
     {
       name: "Index",
-      test: Ct
+      test: bt
     },
     {
       name: "boolean",
@@ -1875,7 +1875,7 @@ var $a = function() {
     from: "number",
     to: "BigNumber",
     convert: function(v) {
-      if (n || $t(v), xu(v) > 15)
+      if (n || qt(v), xu(v) > 15)
         throw new TypeError("Cannot implicitly convert a number with >15 significant digits to BigNumber (value: " + v + "). Use function bignumber(x) to convert to BigNumber.");
       return new n(v);
     }
@@ -1907,7 +1907,7 @@ var $a = function() {
     from: "number",
     to: "Fraction",
     convert: function(v) {
-      u || qt(v);
+      u || Pt(v);
       var l = new u(v);
       if (l.valueOf() !== v)
         throw new TypeError("Cannot implicitly convert a number to a Fraction when there will be a loss of precision (value: " + v + "). Use function fraction(x) to convert to Fraction.");
@@ -1933,7 +1933,7 @@ var $a = function() {
     from: "string",
     to: "BigNumber",
     convert: function(v) {
-      n || $t(v);
+      n || qt(v);
       try {
         return new n(v);
       } catch {
@@ -1944,7 +1944,7 @@ var $a = function() {
     from: "string",
     to: "Fraction",
     convert: function(v) {
-      u || qt(v);
+      u || Pt(v);
       try {
         return new u(v);
       } catch {
@@ -1972,13 +1972,13 @@ var $a = function() {
     from: "boolean",
     to: "BigNumber",
     convert: function(v) {
-      return n || $t(v), new n(+v);
+      return n || qt(v), new n(+v);
     }
   }, {
     from: "boolean",
     to: "Fraction",
     convert: function(v) {
-      return u || qt(v), new u(+v);
+      return u || Pt(v), new u(+v);
     }
   }, {
     from: "boolean",
@@ -2000,7 +2000,7 @@ var $a = function() {
     }
   }]), c.onMismatch = (p, v, l) => {
     var o = c.createError(p, v, l);
-    if (["wrongType", "mismatch"].includes(o.data.category) && v.length === 1 && ft(v[0]) && // check if the function can be unary:
+    if (["wrongType", "mismatch"].includes(o.data.category) && v.length === 1 && ct(v[0]) && // check if the function can be unary:
     l.some((f) => !f.params.includes(","))) {
       var i = new TypeError("Function '".concat(p, "' doesn't apply to matrices. To call it ") + "elementwise on a matrix 'M', try 'map(M, ".concat(p, ")'."));
       throw i.data = o.data, i;
@@ -2008,7 +2008,7 @@ var $a = function() {
     throw o;
   }, c.onMismatch = (p, v, l) => {
     var o = c.createError(p, v, l);
-    if (["wrongType", "mismatch"].includes(o.data.category) && v.length === 1 && ft(v[0]) && // check if the function can be unary:
+    if (["wrongType", "mismatch"].includes(o.data.category) && v.length === 1 && ct(v[0]) && // check if the function can be unary:
     l.some((f) => !f.params.includes(","))) {
       var i = new TypeError("Function '".concat(p, "' doesn't apply to matrices. To call it ") + "elementwise on a matrix 'M', try 'map(M, ".concat(p, ")'."));
       throw i.data = o.data, i;
@@ -2016,7 +2016,7 @@ var $a = function() {
     throw o;
   }, c;
 });
-function $t(r) {
+function qt(r) {
   throw new Error("Cannot convert value ".concat(r, " into a BigNumber: no class 'BigNumber' provided"));
 }
 function ut(r) {
@@ -2025,7 +2025,7 @@ function ut(r) {
 function Ku() {
   throw new Error("Cannot convert array into a Matrix: no class 'DenseMatrix' provided");
 }
-function qt(r) {
+function Pt(r) {
   throw new Error("Cannot convert value ".concat(r, " into a Fraction, no class 'Fraction' provided."));
 }
 /*!
@@ -2035,7 +2035,7 @@ function qt(r) {
  *  Copyright (c) 2022 Michael Mclaughlin <M8ch88l@gmail.com>
  *  MIT Licence
  */
-var $e = 9e15, Ae = 1e9, Lt = "0123456789abcdef", pt = "2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254650828067566662873690987816894829072083255546808437998948262331985283935053089653777326288461633662222876982198867465436674744042432743651550489343149393914796194044002221051017141748003688084012647080685567743216228355220114804663715659121373450747856947683463616792101806445070648000277502684916746550586856935673420670581136429224554405758925724208241314695689016758940256776311356919292033376587141660230105703089634572075440370847469940168269282808481184289314848524948644871927809676271275775397027668605952496716674183485704422507197965004714951050492214776567636938662976979522110718264549734772662425709429322582798502585509785265383207606726317164309505995087807523710333101197857547331541421808427543863591778117054309827482385045648019095610299291824318237525357709750539565187697510374970888692180205189339507238539205144634197265287286965110862571492198849978748873771345686209167058", dt = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989380952572010654858632789", Zt = {
+var $e = 9e15, Ae = 1e9, Lt = "0123456789abcdef", dt = "2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254650828067566662873690987816894829072083255546808437998948262331985283935053089653777326288461633662222876982198867465436674744042432743651550489343149393914796194044002221051017141748003688084012647080685567743216228355220114804663715659121373450747856947683463616792101806445070648000277502684916746550586856935673420670581136429224554405758925724208241314695689016758940256776311356919292033376587141660230105703089634572075440370847469940168269282808481184289314848524948644871927809676271275775397027668605952496716674183485704422507197965004714951050492214776567636938662976979522110718264549734772662425709429322582798502585509785265383207606726317164309505995087807523710333101197857547331541421808427543863591778117054309827482385045648019095610299291824318237525357709750539565187697510374970888692180205189339507238539205144634197265287286965110862571492198849978748873771345686209167058", Dt = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989380952572010654858632789", Zt = {
   // These values must be integers within the stated ranges (inclusive).
   // Most of these values can be changed at run-time using the `Decimal.config` method.
   // The maximum number of significant digits of the result of a calculation or base conversion.
@@ -2093,7 +2093,7 @@ var $e = 9e15, Ae = 1e9, Lt = "0123456789abcdef", pt = "2.3025850929940456840179
   // Whether to use cryptographically-secure random number generation, if available.
   crypto: !1
   // true/false
-}, qa, ve, hr = !0, St = "[DecimalError] ", we = St + "Invalid argument: ", Pa = St + "Precision limit exceeded", Ra = St + "crypto unavailable", Ua = "[object Decimal]", Yr = Math.floor, Or = Math.pow, Wu = /^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$/i, Hu = /^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$/i, ku = /^0o([0-7]+(\.[0-7]*)?|\.[0-7]+)(p[+-]?\d+)?$/i, La = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i, ue = 1e7, vr = 7, ju = 9007199254740991, ro = pt.length - 1, Vt = dt.length - 1, G = { toStringTag: Ua };
+}, qa, ve, hr = !0, Bt = "[DecimalError] ", we = Bt + "Invalid argument: ", Pa = Bt + "Precision limit exceeded", Ra = Bt + "crypto unavailable", Ua = "[object Decimal]", Yr = Math.floor, Or = Math.pow, Wu = /^0b([01]+(\.[01]*)?|\.[01]+)(p[+-]?\d+)?$/i, Hu = /^0x([0-9a-f]+(\.[0-9a-f]*)?|\.[0-9a-f]+)(p[+-]?\d+)?$/i, ku = /^0o([0-7]+(\.[0-7]*)?|\.[0-7]+)(p[+-]?\d+)?$/i, La = /^(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i, oe = 1e7, vr = 7, ju = 9007199254740991, ro = dt.length - 1, Vt = Dt.length - 1, G = { toStringTag: Ua };
 G.absoluteValue = G.abs = function() {
   var r = new this.constructor(this);
   return r.s < 0 && (r.s = 1), sr(r);
@@ -2182,7 +2182,7 @@ G.hyperbolicCosine = G.cosh = function() {
     return new c(u.s ? 1 / 0 : NaN);
   if (u.isZero())
     return p;
-  n = c.precision, a = c.rounding, c.precision = n + Math.max(u.e, u.sd()) + 4, c.rounding = 1, t = u.d.length, t < 32 ? (r = Math.ceil(t / 3), e = (1 / Nt(4, r)).toString()) : (r = 16, e = "2.3283064365386962890625e-10"), u = Re(c, 1, u.times(e), new c(1), !0);
+  n = c.precision, a = c.rounding, c.precision = n + Math.max(u.e, u.sd()) + 4, c.rounding = 1, t = u.d.length, t < 32 ? (r = Math.ceil(t / 3), e = (1 / xt(4, r)).toString()) : (r = 16, e = "2.3283064365386962890625e-10"), u = Re(c, 1, u.times(e), new c(1), !0);
   for (var v, l = r, o = new c(8); l--; )
     v = u.times(u), u = p.minus(v.times(o.minus(v.times(o))));
   return sr(u, c.precision = n, c.rounding = a, !0);
@@ -2194,7 +2194,7 @@ G.hyperbolicSine = G.sinh = function() {
   if (e = u.precision, n = u.rounding, u.precision = e + Math.max(t.e, t.sd()) + 4, u.rounding = 1, a = t.d.length, a < 3)
     t = Re(u, 2, t, t, !0);
   else {
-    r = 1.4 * Math.sqrt(a), r = r > 16 ? 16 : r | 0, t = t.times(1 / Nt(5, r)), t = Re(u, 2, t, t, !0);
+    r = 1.4 * Math.sqrt(a), r = r > 16 ? 16 : r | 0, t = t.times(1 / xt(5, r)), t = Re(u, 2, t, t, !0);
     for (var c, p = new u(5), v = new u(16), l = new u(20); r--; )
       c = t.times(t), t = t.times(p.plus(c.times(v.times(c).plus(l))));
   }
@@ -2206,7 +2206,7 @@ G.hyperbolicTangent = G.tanh = function() {
 };
 G.inverseCosine = G.acos = function() {
   var r, e = this, n = e.constructor, a = e.abs().cmp(1), t = n.precision, u = n.rounding;
-  return a !== -1 ? a === 0 ? e.isNeg() ? ie(n, t, u) : new n(0) : new n(NaN) : e.isZero() ? ie(n, t + 4, u).times(0.5) : (n.precision = t + 6, n.rounding = 1, e = e.asin(), r = ie(n, t + 4, u).times(0.5), n.precision = t, n.rounding = u, r.minus(e));
+  return a !== -1 ? a === 0 ? e.isNeg() ? ue(n, t, u) : new n(0) : new n(NaN) : e.isZero() ? ue(n, t + 4, u).times(0.5) : (n.precision = t + 6, n.rounding = 1, e = e.asin(), r = ue(n, t + 4, u).times(0.5), n.precision = t, n.rounding = u, r.minus(e));
 };
 G.inverseHyperbolicCosine = G.acosh = function() {
   var r, e, n = this, a = n.constructor;
@@ -2222,7 +2222,7 @@ G.inverseHyperbolicTangent = G.atanh = function() {
 };
 G.inverseSine = G.asin = function() {
   var r, e, n, a, t = this, u = t.constructor;
-  return t.isZero() ? new u(t) : (e = t.abs().cmp(1), n = u.precision, a = u.rounding, e !== -1 ? e === 0 ? (r = ie(u, n + 4, a).times(0.5), r.s = t.s, r) : new u(NaN) : (u.precision = n + 6, u.rounding = 1, t = t.div(new u(1).minus(t.times(t)).sqrt().plus(1)).atan(), u.precision = n, u.rounding = a, t.times(2)));
+  return t.isZero() ? new u(t) : (e = t.abs().cmp(1), n = u.precision, a = u.rounding, e !== -1 ? e === 0 ? (r = ue(u, n + 4, a).times(0.5), r.s = t.s, r) : new u(NaN) : (u.precision = n + 6, u.rounding = 1, t = t.div(new u(1).minus(t.times(t)).sqrt().plus(1)).atan(), u.precision = n, u.rounding = a, t.times(2)));
 };
 G.inverseTangent = G.atan = function() {
   var r, e, n, a, t, u, c, p, v, l = this, o = l.constructor, i = o.precision, f = o.rounding;
@@ -2230,12 +2230,12 @@ G.inverseTangent = G.atan = function() {
     if (l.isZero())
       return new o(l);
     if (l.abs().eq(1) && i + 4 <= Vt)
-      return c = ie(o, i + 4, f).times(0.25), c.s = l.s, c;
+      return c = ue(o, i + 4, f).times(0.25), c.s = l.s, c;
   } else {
     if (!l.s)
       return new o(NaN);
     if (i + 4 <= Vt)
-      return c = ie(o, i + 4, f).times(0.5), c.s = l.s, c;
+      return c = ue(o, i + 4, f).times(0.5), c.s = l.s, c;
   }
   for (o.precision = p = i + 10, o.rounding = 1, n = Math.min(28, p / vr + 2 | 0), r = n; r; --r)
     l = l.div(l.times(l).plus(1).sqrt().plus(1));
@@ -2288,9 +2288,9 @@ G.logarithm = G.log = function(r) {
         t /= 10;
       u = t !== 1;
     }
-  if (hr = !1, p = i + h, c = ye(l, p), a = e ? Dt(o, p + 10) : ye(r, p), v = Br(c, a, p, 1), ke(v.d, t = i, f))
+  if (hr = !1, p = i + h, c = ye(l, p), a = e ? mt(o, p + 10) : ye(r, p), v = Br(c, a, p, 1), ke(v.d, t = i, f))
     do
-      if (p += 10, c = ye(l, p), a = e ? Dt(o, p + 10) : ye(r, p), v = Br(c, a, p, 1), !u) {
+      if (p += 10, c = ye(l, p), a = e ? mt(o, p + 10) : ye(r, p), v = Br(c, a, p, 1), !u) {
         +Zr(v.d).slice(t + 1, t + 15) + 1 == 1e14 && (v = sr(v, i + 1, 0));
         break;
       }
@@ -2329,8 +2329,8 @@ G.minus = G.sub = function(r) {
   for (a = f.length; a > u; ) {
     if (l[--a] < f[a]) {
       for (t = a; t && l[--t] === 0; )
-        l[t] = ue - 1;
-      --l[t], l[a] += ue;
+        l[t] = oe - 1;
+      --l[t], l[a] += oe;
     }
     l[a] -= f[a];
   }
@@ -2338,7 +2338,7 @@ G.minus = G.sub = function(r) {
     l.pop();
   for (; l[0] === 0; l.shift())
     --n;
-  return l[0] ? (r.d = l, r.e = Bt(l, n), hr ? sr(r, p, v) : r) : new d(v === 3 ? -0 : 0);
+  return l[0] ? (r.d = l, r.e = Nt(l, n), hr ? sr(r, p, v) : r) : new d(v === 3 ? -0 : 0);
 };
 G.modulo = G.mod = function(r) {
   var e, n = this, a = n.constructor;
@@ -2368,10 +2368,10 @@ G.plus = G.add = function(r) {
     n.reverse();
   }
   for (c = l.length, t = o.length, c - t < 0 && (t = c, n = o, o = l, l = n), e = 0; t; )
-    e = (l[--t] = l[t] + o[t] + e) / ue | 0, l[t] %= ue;
+    e = (l[--t] = l[t] + o[t] + e) / oe | 0, l[t] %= oe;
   for (e && (l.unshift(e), ++a), c = l.length; l[--c] == 0; )
     l.pop();
-  return r.d = l, r.e = Bt(l, a), hr ? sr(r, p, v) : r;
+  return r.d = l, r.e = Nt(l, a), hr ? sr(r, p, v) : r;
 };
 G.precision = G.sd = function(r) {
   var e, n = this;
@@ -2417,12 +2417,12 @@ G.times = G.mul = function(r) {
     u.push(0);
   for (a = l; --a >= 0; ) {
     for (e = 0, t = v + a; t > a; )
-      p = u[t] + h[a] * f[t - a - 1] + e, u[t--] = p % ue | 0, e = p / ue | 0;
-    u[t] = (u[t] + e) % ue | 0;
+      p = u[t] + h[a] * f[t - a - 1] + e, u[t--] = p % oe | 0, e = p / oe | 0;
+    u[t] = (u[t] + e) % oe | 0;
   }
   for (; !u[--c]; )
     u.pop();
-  return e ? ++n : u.shift(), r.d = u, r.e = Bt(u, n), hr ? sr(r, i.precision, i.rounding) : r;
+  return e ? ++n : u.shift(), r.d = u, r.e = Nt(u, n), hr ? sr(r, i.precision, i.rounding) : r;
 };
 G.toBinary = function(r, e) {
   return kt(this, 2, r, e);
@@ -2536,7 +2536,7 @@ function ke(r, e, n, a) {
     --e;
   return --e < 0 ? (e += vr, t = 0) : (t = Math.ceil((e + 1) / vr), e %= vr), u = Or(10, vr - e), p = r[t] % u | 0, a == null ? e < 3 ? (e == 0 ? p = p / 100 | 0 : e == 1 && (p = p / 10 | 0), c = n < 4 && p == 99999 || n > 3 && p == 49999 || p == 5e4 || p == 0) : c = (n < 4 && p + 1 == u || n > 3 && p + 1 == u / 2) && (r[t + 1] / u / 100 | 0) == Or(10, e - 2) - 1 || (p == u / 2 || p == 0) && (r[t + 1] / u / 100 | 0) == 0 : e < 4 ? (e == 0 ? p = p / 1e3 | 0 : e == 1 ? p = p / 100 | 0 : e == 2 && (p = p / 10 | 0), c = (a || n < 4) && p == 9999 || !a && n > 3 && p == 4999) : c = ((a || n < 4) && p + 1 == u || !a && n > 3 && p + 1 == u / 2) && (r[t + 1] / u / 1e3 | 0) == Or(10, e - 3) - 1, c;
 }
-function ot(r, e, n) {
+function st(r, e, n) {
   for (var a, t = [0], u, c = 0, p = r.length; c < p; ) {
     for (u = t.length; u--; )
       t[u] *= e;
@@ -2549,7 +2549,7 @@ function eo(r, e) {
   var n, a, t;
   if (e.isZero())
     return e;
-  a = e.d.length, a < 32 ? (n = Math.ceil(a / 3), t = (1 / Nt(4, n)).toString()) : (n = 16, t = "2.3283064365386962890625e-10"), r.precision += n, e = Re(r, 1, e.times(t), new r(1));
+  a = e.d.length, a < 32 ? (n = Math.ceil(a / 3), t = (1 / xt(4, n)).toString()) : (n = 16, t = "2.3283064365386962890625e-10"), r.precision += n, e = Re(r, 1, e.times(t), new r(1));
   for (var u = n; u--; ) {
     var c = e.times(e);
     e = c.times(c).minus(c).times(8).plus(1);
@@ -2591,7 +2591,7 @@ var Br = function() {
           O && O[0] == 0 || !x ? $ * 0 : $ / 0
         )
       );
-    for (v ? (h = 1, o = a.e - t.e) : (v = ue, h = vr, o = Yr(a.e / h) - Yr(t.e / h)), B = x.length, b = O.length, m = new z($), w = m.d = [], i = 0; x[i] == (O[i] || 0); i++)
+    for (v ? (h = 1, o = a.e - t.e) : (v = oe, h = vr, o = Yr(a.e / h) - Yr(t.e / h)), B = x.length, b = O.length, m = new z($), w = m.d = [], i = 0; x[i] == (O[i] || 0); i++)
       ;
     if (x[i] > (O[i] || 0) && o--, u == null ? (g = u = z.precision, c = z.rounding) : p ? g = u + (a.e - t.e) + 1 : g = u, g < 0)
       w.push(1), d = !0;
@@ -2653,10 +2653,10 @@ function sr(r, e, n, a) {
               u++;
             for (c = i[0] += p, p = 1; c >= 10; c /= 10)
               p++;
-            u != p && (r.e++, i[0] == ue && (i[0] = 1));
+            u != p && (r.e++, i[0] == oe && (i[0] = 1));
             break;
           } else {
-            if (i[f] += p, i[f] != ue)
+            if (i[f] += p, i[f] != oe)
               break;
             i[f--] = 0, p = 1;
           }
@@ -2671,21 +2671,21 @@ function fe(r, e, n) {
   var a, t = r.e, u = Zr(r.d), c = u.length;
   return e ? (n && (a = n - c) > 0 ? u = u.charAt(0) + "." + u.slice(1) + me(a) : c > 1 && (u = u.charAt(0) + "." + u.slice(1)), u = u + (r.e < 0 ? "e" : "e+") + r.e) : t < 0 ? (u = "0." + me(-t - 1) + u, n && (a = n - c) > 0 && (u += me(a))) : t >= c ? (u += me(t + 1 - c), n && (a = n - t - 1) > 0 && (u = u + "." + me(a))) : ((a = t + 1) < c && (u = u.slice(0, a) + "." + u.slice(a)), n && (a = n - c) > 0 && (t + 1 === c && (u += "."), u += me(a))), u;
 }
-function Bt(r, e) {
+function Nt(r, e) {
   var n = r[0];
   for (e *= vr; n >= 10; n /= 10)
     e++;
   return e;
 }
-function Dt(r, e, n) {
+function mt(r, e, n) {
   if (e > ro)
     throw hr = !0, n && (r.precision = n), Error(Pa);
-  return sr(new r(pt), e, 1, !0);
+  return sr(new r(dt), e, 1, !0);
 }
-function ie(r, e, n) {
+function ue(r, e, n) {
   if (e > Vt)
     throw Error(Pa);
-  return sr(new r(dt), e, n, !0);
+  return sr(new r(Dt), e, n, !0);
 }
 function Za(r) {
   var e = r.length - 1, n = e * vr + 1;
@@ -2756,10 +2756,10 @@ function ye(r, e) {
       s = s.times(r), n = Zr(s.d), a = n.charAt(0), h++;
     u = s.e, a > 1 ? (s = new m("0." + n), u++) : s = new m(a + "." + n.slice(1));
   } else
-    return l = Dt(m, o + 2, y).times(u + ""), s = ye(new m(a + "." + n.slice(1)), o - d).plus(l), m.precision = y, e == null ? sr(s, y, w, hr = !0) : s;
+    return l = mt(m, o + 2, y).times(u + ""), s = ye(new m(a + "." + n.slice(1)), o - d).plus(l), m.precision = y, e == null ? sr(s, y, w, hr = !0) : s;
   for (i = s, v = c = s = Br(s.minus(1), s.plus(1), o, 1), f = sr(s.times(s), o, 1), t = 3; ; ) {
     if (c = sr(c.times(f), o, 1), l = v.plus(Br(c, new m(t), o, 1)), Zr(l.d).slice(0, o) === Zr(v.d).slice(0, o))
-      if (v = v.times(2), u !== 0 && (v = v.plus(Dt(m, o + 2, y).times(u + ""))), v = Br(v, new m(h), o, 1), e == null)
+      if (v = v.times(2), u !== 0 && (v = v.plus(mt(m, o + 2, y).times(u + ""))), v = Br(v, new m(h), o, 1), e == null)
         if (ke(v.d, o - d, w, p))
           m.precision = o += d, l = c = s = Br(i.minus(1), i.plus(1), o, 1), f = sr(s.times(s), o, 1), t = p = 1;
         else
@@ -2807,15 +2807,15 @@ function to(r, e) {
     n = 8;
   else
     throw Error(we + e);
-  for (u = e.search(/p/i), u > 0 ? (v = +e.slice(u + 1), e = e.substring(2, u)) : e = e.slice(2), u = e.indexOf("."), c = u >= 0, a = r.constructor, c && (e = e.replace(".", ""), p = e.length, u = p - u, t = Va(a, new a(n), u, u * 2)), l = ot(e, n, ue), o = l.length - 1, u = o; l[u] === 0; --u)
+  for (u = e.search(/p/i), u > 0 ? (v = +e.slice(u + 1), e = e.substring(2, u)) : e = e.slice(2), u = e.indexOf("."), c = u >= 0, a = r.constructor, c && (e = e.replace(".", ""), p = e.length, u = p - u, t = Va(a, new a(n), u, u * 2)), l = st(e, n, oe), o = l.length - 1, u = o; l[u] === 0; --u)
     l.pop();
-  return u < 0 ? new a(r.s * 0) : (r.e = Bt(l, o), r.d = l, hr = !1, c && (r = Br(r, t, p * 4)), v && (r = r.times(Math.abs(v) < 54 ? Or(2, v) : Ue.pow(2, v))), hr = !0, r);
+  return u < 0 ? new a(r.s * 0) : (r.e = Nt(l, o), r.d = l, hr = !1, c && (r = Br(r, t, p * 4)), v && (r = r.times(Math.abs(v) < 54 ? Or(2, v) : Ue.pow(2, v))), hr = !0, r);
 }
 function no(r, e) {
   var n, a = e.d.length;
   if (a < 3)
     return e.isZero() ? e : Re(r, 2, e, e);
-  n = 1.4 * Math.sqrt(a), n = n > 16 ? 16 : n | 0, e = e.times(1 / Nt(5, n)), e = Re(r, 2, e, e);
+  n = 1.4 * Math.sqrt(a), n = n > 16 ? 16 : n | 0, e = e.times(1 / xt(5, n)), e = Re(r, 2, e, e);
   for (var t, u = new r(5), c = new r(16), p = new r(20); n--; )
     t = e.times(e), e = e.times(u.plus(t.times(c.times(t).minus(p))));
   return e;
@@ -2833,13 +2833,13 @@ function Re(r, e, n, a, t) {
   }
   return hr = !0, c.d.length = o + 1, c;
 }
-function Nt(r, e) {
+function xt(r, e) {
   for (var n = r; --e; )
     n *= r;
   return n;
 }
 function Qa(r, e) {
-  var n, a = e.s < 0, t = ie(r, r.precision, 1), u = t.times(0.5);
+  var n, a = e.s < 0, t = ue(r, r.precision, 1), u = t.times(0.5);
   if (e = e.abs(), e.lte(u))
     return ve = a ? 4 : 1, e;
   if (n = e.divToInt(t), n.isZero())
@@ -2856,7 +2856,7 @@ function kt(r, e, n, a) {
   if (d ? (Hr(n, 1, Ae), a === void 0 ? a = h.rounding : Hr(a, 0, 8)) : (n = h.precision, a = h.rounding), !r.isFinite())
     o = Ja(r);
   else {
-    for (o = fe(r), c = o.indexOf("."), d ? (t = 2, e == 16 ? n = n * 4 - 3 : e == 8 && (n = n * 3 - 2)) : t = e, c >= 0 && (o = o.replace(".", ""), f = new h(1), f.e = o.length - c, f.d = ot(fe(f), 10, t), f.e = f.d.length), i = ot(o, 10, t), u = v = i.length; i[--v] == 0; )
+    for (o = fe(r), c = o.indexOf("."), d ? (t = 2, e == 16 ? n = n * 4 - 3 : e == 8 && (n = n * 3 - 2)) : t = e, c >= 0 && (o = o.replace(".", ""), f = new h(1), f.e = o.length - c, f.d = st(fe(f), 10, t), f.e = f.d.length), i = st(o, 10, t), u = v = i.length; i[--v] == 0; )
       i.pop();
     if (!i[0])
       o = d ? "0p+0" : "0";
@@ -2873,7 +2873,7 @@ function kt(r, e, n, a) {
           if (e == 16 || e == 8) {
             for (c = e == 16 ? 4 : 3, --v; v % c; v++)
               o += "0";
-            for (i = ot(o, t, e), v = i.length; !i[v - 1]; --v)
+            for (i = st(o, t, e), v = i.length; !i[v - 1]; --v)
               ;
             for (c = 1, o = "1."; c < v; c++)
               o += Lt.charAt(i[c]);
@@ -2925,7 +2925,7 @@ function lo(r) {
 function vo(r, e) {
   r = new this(r), e = new this(e);
   var n, a = this.precision, t = this.rounding, u = a + 4;
-  return !r.s || !e.s ? n = new this(NaN) : !r.d && !e.d ? (n = ie(this, u, 1).times(e.s > 0 ? 0.25 : 0.75), n.s = r.s) : !e.d || r.isZero() ? (n = e.s < 0 ? ie(this, a, t) : new this(0), n.s = r.s) : !r.d || e.isZero() ? (n = ie(this, u, 1).times(0.5), n.s = r.s) : e.s < 0 ? (this.precision = u, this.rounding = 1, n = this.atan(Br(r, e, u, 1)), e = ie(this, u, 1), this.precision = a, this.rounding = t, n = r.s < 0 ? n.minus(e) : n.plus(e)) : n = this.atan(Br(r, e, u, 1)), n;
+  return !r.s || !e.s ? n = new this(NaN) : !r.d && !e.d ? (n = ue(this, u, 1).times(e.s > 0 ? 0.25 : 0.75), n.s = r.s) : !e.d || r.isZero() ? (n = e.s < 0 ? ue(this, a, t) : new this(0), n.s = r.s) : !r.d || e.isZero() ? (n = ue(this, u, 1).times(0.5), n.s = r.s) : e.s < 0 ? (this.precision = u, this.rounding = 1, n = this.atan(Br(r, e, u, 1)), e = ue(this, u, 1), this.precision = a, this.rounding = t, n = r.s < 0 ? n.minus(e) : n.plus(e)) : n = this.atan(Br(r, e, u, 1)), n;
 }
 function ho(r) {
   return new this(r).cbrt();
@@ -2938,7 +2938,7 @@ function Do(r, e, n) {
 }
 function mo(r) {
   if (!r || typeof r != "object")
-    throw Error(St + "Object expected");
+    throw Error(Bt + "Object expected");
   var e, n, a, t = r.defaults === !0, u = [
     "precision",
     1,
@@ -3136,8 +3136,8 @@ function Vo(r) {
 G[Symbol.for("nodejs.util.inspect.custom")] = G.toString;
 G[Symbol.toStringTag] = "Decimal";
 var Ue = G.constructor = Xa(Zt);
-pt = new Ue(pt);
 dt = new Ue(dt);
+Dt = new Ue(Dt);
 var Yo = "BigNumber", Jo = ["?on", "config"], Qo = /* @__PURE__ */ k(Yo, Jo, (r) => {
   var {
     on: e,
@@ -4430,7 +4430,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
   function n(o, i) {
     if (!(this instanceof n))
       throw new SyntaxError("Constructor must be called with the new operator");
-    if (i && !ae(i))
+    if (i && !ie(i))
       throw new Error("Invalid datatype: " + i);
     if (Sr(o))
       o.type === "DenseMatrix" ? (this._data = wr(o._data), this._size = wr(o._size), this._datatype = i || o._datatype) : (this._data = o.toArray(), this._size = o.size(), this._datatype = i || o._datatype);
@@ -4449,7 +4449,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
   }, Object.defineProperty(n, "name", {
     value: "DenseMatrix"
   }), n.prototype.constructor = n, n.prototype.type = "DenseMatrix", n.prototype.isDenseMatrix = !0, n.prototype.getDataType = function() {
-    return ht(this._data, se);
+    return pt(this._data, se);
   }, n.prototype.storage = function() {
     return "dense";
   }, n.prototype.datatype = function() {
@@ -4493,7 +4493,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
     return s = o[o.length - 1], br(s, m.length), m[s] = i, this;
   };
   function a(o, i) {
-    if (!Ct(i))
+    if (!bt(i))
       throw new TypeError("Invalid index");
     var f = i.isScalar();
     if (f)
@@ -4533,7 +4533,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
           w++, m++;
         f = xa(f, d.length, w, D);
       }
-      if (!lt(d, D))
+      if (!vt(d, D))
         throw new Ar(d, D, ">");
       var y = i.max().map(function(g) {
         return g + 1;
@@ -4553,7 +4553,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
     });
   }
   n.prototype.resize = function(o, i, f) {
-    if (!ft(o))
+    if (!ct(o))
       throw new TypeError("Array or Matrix expected");
     var h = o.valueOf().map((s) => Array.isArray(s) && s.length === 1 ? s[0] : s), d = f ? this.clone() : this;
     return p(d, h, i);
@@ -4564,7 +4564,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
         h = h[0];
       return h;
     }
-    return o._size = i.slice(0), o._data = vt(o._data, o._size, f), o;
+    return o._size = i.slice(0), o._data = ht(o._data, o._size, f), o;
   }
   n.prototype.reshape = function(o, i) {
     var f = i ? this.clone() : this;
@@ -4593,7 +4593,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
       return Cr(m) ? m.map(function(y, A) {
         return D(y, w.concat(A));
       }) : f === 1 ? o(m) : f === 2 ? o(m, w) : o(m, w, i);
-    }, d = h(this._data, []), s = this._datatype !== void 0 ? ht(d, se) : void 0;
+    }, d = h(this._data, []), s = this._datatype !== void 0 ? pt(d, se) : void 0;
     return new n(d, s);
   }, n.prototype.forEach = function(o) {
     var i = this, f = function h(d, s) {
@@ -4695,7 +4695,7 @@ var as = "DenseMatrix", is = ["Matrix"], us = /* @__PURE__ */ k(as, is, (r) => {
     h || (h = zr(y(0)) ? y(0).mul(0) : 0);
     var C = [];
     if (o.length > 0) {
-      C = vt(C, o, h);
+      C = ht(C, o, h);
       for (var g = 0; g < w; g++)
         C[g + s][g + d] = y(g);
     }
@@ -4825,14 +4825,14 @@ var Ve = /* @__PURE__ */ k("compareUnits", ["typed"], (r) => {
       return e.find(n, [a.valueType(), t.valueType()])(a.value, t.value);
     })
   };
-}), mt = "equalScalar", hs = ["typed", "config"], ps = /* @__PURE__ */ k(mt, hs, (r) => {
+}), gt = "equalScalar", hs = ["typed", "config"], ps = /* @__PURE__ */ k(gt, hs, (r) => {
   var {
     typed: e,
     config: n
   } = r, a = Ve({
     typed: e
   });
-  return e(mt, {
+  return e(gt, {
     "boolean, boolean": function(u, c) {
       return u === c;
     },
@@ -4850,12 +4850,12 @@ var Ve = /* @__PURE__ */ k("compareUnits", ["typed"], (r) => {
     }
   }, a);
 });
-k(mt, ["typed", "config"], (r) => {
+k(gt, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(mt, {
+  return e(gt, {
     "number, number": function(t, u) {
       return pe(t, u, n.epsilon);
     }
@@ -4870,7 +4870,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
   function t(s, D) {
     if (!(this instanceof t))
       throw new SyntaxError("Constructor must be called with the new operator");
-    if (D && !ae(D))
+    if (D && !ie(D))
       throw new Error("Invalid datatype: " + D);
     if (Sr(s))
       u(this, s, D);
@@ -4890,7 +4890,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
   function c(s, D, m) {
     s._values = [], s._index = [], s._ptr = [], s._datatype = m;
     var w = D.length, y = 0, A = n, C = 0;
-    if (ae(m) && (A = e.find(n, [m, m]) || n, C = e.convert(0, m)), w > 0) {
+    if (ie(m) && (A = e.find(n, [m, m]) || n, C = e.convert(0, m)), w > 0) {
       var g = 0;
       do {
         s._ptr.push(s._index.length);
@@ -4914,7 +4914,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
   }, Object.defineProperty(t, "name", {
     value: "SparseMatrix"
   }), t.prototype.constructor = t, t.prototype.type = "SparseMatrix", t.prototype.isSparseMatrix = !0, t.prototype.getDataType = function() {
-    return ht(this._values, se);
+    return pt(this._values, se);
   }, t.prototype.storage = function() {
     return "sparse";
   }, t.prototype.datatype = function() {
@@ -4938,7 +4938,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
     }
   };
   function p(s, D) {
-    if (!Ct(D))
+    if (!bt(D))
       throw new TypeError("Invalid index");
     var m = D.isScalar();
     if (m)
@@ -4983,7 +4983,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
           M++, g++;
         m = xa(m, y.length, M, C);
       }
-      if (!lt(y, C))
+      if (!vt(y, C))
         throw new Ar(y, C, ">");
       if (y.length === 1) {
         var E = D.dimension(0);
@@ -5020,7 +5020,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
     if (!this._values)
       throw new Error("Cannot invoke set on a Pattern only matrix");
     var w = s[0], y = s[1], A = this._size[0], C = this._size[1], g = n, M = 0;
-    ae(this._datatype) && (g = e.find(n, [this._datatype, this._datatype]) || n, M = e.convert(0, this._datatype)), (w > A - 1 || y > C - 1) && (f(this, Math.max(w + 1, A), Math.max(y + 1, C), m), A = this._size[0], C = this._size[1]), br(w, A), br(y, C);
+    ie(this._datatype) && (g = e.find(n, [this._datatype, this._datatype]) || n, M = e.convert(0, this._datatype)), (w > A - 1 || y > C - 1) && (f(this, Math.max(w + 1, A), Math.max(y + 1, C), m), A = this._size[0], C = this._size[1]), br(w, A), br(y, C);
     var E = l(w, this._ptr[y], this._ptr[y + 1], this._index);
     return E < this._ptr[y + 1] && this._index[E] === w ? g(D, M) ? o(E, y, this._values, this._index, this._ptr) : this._values[E] = D : g(D, M) || i(E, w, y, D, this._values, this._index, this._ptr), this;
   };
@@ -5043,7 +5043,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
       C[g]++;
   }
   t.prototype.resize = function(s, D, m) {
-    if (!ft(s))
+    if (!ct(s))
       throw new TypeError("Array or Matrix expected");
     var w = s.valueOf().map((A) => Array.isArray(A) && A.length === 1 ? A[0] : A);
     if (w.length !== 2)
@@ -5057,7 +5057,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
   };
   function f(s, D, m, w) {
     var y = w || 0, A = n, C = 0;
-    ae(s._datatype) && (A = e.find(n, [s._datatype, s._datatype]) || n, C = e.convert(0, s._datatype), y = e.convert(y, s._datatype));
+    ie(s._datatype) && (A = e.find(n, [s._datatype, s._datatype]) || n, C = e.convert(0, s._datatype), y = e.convert(y, s._datatype));
     var g = !A(y, C), M = s._size[0], E = s._size[1], b, F, B;
     if (m > E) {
       for (F = E; F < m; F++)
@@ -5143,7 +5143,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
   };
   function h(s, D, m, w, y, A, C) {
     var g = [], M = [], E = [], b = n, F = 0;
-    ae(s._datatype) && (b = e.find(n, [s._datatype, s._datatype]) || n, F = e.convert(0, s._datatype));
+    ie(s._datatype) && (b = e.find(n, [s._datatype, s._datatype]) || n, F = e.convert(0, s._datatype));
     for (var B = function(L, q, J) {
       L = A(L, q, J), b(L, F) || (g.push(L), M.push(q));
     }, S = w; S <= y; S++) {
@@ -5278,7 +5278,7 @@ var ds = "SparseMatrix", Ds = ["typed", "equalScalar", "Matrix"], ms = /* @__PUR
     } else
       m = 0;
     var A = n, C = 0;
-    ae(y) && (A = e.find(n, [y, y]) || n, C = e.convert(0, y));
+    ie(y) && (A = e.find(n, [y, y]) || n, C = e.convert(0, y));
     var g = m > 0 ? m : 0, M = m < 0 ? -m : 0, E = s[0], b = s[1], F = Math.min(E - M, b - g), B;
     if (Cr(D)) {
       if (D.length !== F)
@@ -6637,7 +6637,7 @@ var Zn = "column", qf = ["typed", "Index", "matrix", "range"], Pf = /* @__PURE__
         return u.diagonal(s, h, 0, d);
       throw new TypeError('Unknown matrix type "'.concat(i, '"'));
     }
-    for (var D = vt([], s, d), m = l < o ? l : o, w = 0; w < m; w++)
+    for (var D = ht([], s, d), m = l < o ? l : o, w = 0; w < m; w++)
       D[w][w] = h;
     return D;
   }
@@ -6838,7 +6838,7 @@ var Qn = "range", Qf = ["typed", "config", "?matrix", "?bignumber", "smaller", "
   });
 });
 function r0(r, e) {
-  if (!Ct(e))
+  if (!bt(e))
     throw new TypeError("Index expected");
   if (e.size().length !== 1)
     throw new Ar(e.size().length, 1);
@@ -7008,7 +7008,7 @@ var Hn = "transpose", n0 = ["typed", "matrix"], a0 = /* @__PURE__ */ k(Hn, n0, (
       return v.length > 0 ? f.resize(v, i) : f;
     } else {
       var h = [];
-      return v.length > 0 ? vt(h, v, i) : h;
+      return v.length > 0 ? ht(h, v, i) : h;
     }
   }
   function c(v) {
@@ -7142,7 +7142,7 @@ var Hn = "transpose", n0 = ["typed", "matrix"], a0 = /* @__PURE__ */ k(Hn, n0, (
     return u(i(h.valueOf(), d));
   }
 });
-function xt(r) {
+function _t(r) {
   var {
     DenseMatrix: e
   } = r;
@@ -7170,7 +7170,7 @@ function xt(r) {
       if (o.length === 2) {
         if (o[0] !== p || o[1] !== 1)
           throw new RangeError("Dimension mismatch. Matrix columns must match vector length.");
-        if (ct(t)) {
+        if (lt(t)) {
           if (u) {
             l = [];
             for (var h = 0; h < p; h++)
@@ -7234,7 +7234,7 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     subtract: u,
     equalScalar: c,
     DenseMatrix: p
-  } = r, v = xt({
+  } = r, v = _t({
     DenseMatrix: p
   });
   return e(ta, {
@@ -7304,7 +7304,7 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     subtract: u,
     equalScalar: c,
     DenseMatrix: p
-  } = r, v = xt({
+  } = r, v = _t({
     DenseMatrix: p
   });
   return e(na, {
@@ -7374,7 +7374,7 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     subtract: u,
     equalScalar: c,
     DenseMatrix: p
-  } = r, v = xt({
+  } = r, v = _t({
     DenseMatrix: p
   });
   return e(aa, {
@@ -7454,7 +7454,7 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
       size: [d, 1]
     }));
   }
-}), gt = "compare", E0 = ["typed", "config", "matrix", "equalScalar", "BigNumber", "Fraction", "DenseMatrix", "concat"], F0 = /* @__PURE__ */ k(gt, E0, (r) => {
+}), yt = "compare", E0 = ["typed", "config", "matrix", "equalScalar", "BigNumber", "Fraction", "DenseMatrix", "concat"], F0 = /* @__PURE__ */ k(yt, E0, (r) => {
   var {
     typed: e,
     config: n,
@@ -7479,7 +7479,7 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
   }), h = Ve({
     typed: e
   });
-  return e(gt, C0({
+  return e(yt, C0({
     typed: e,
     config: n
   }), {
@@ -7500,12 +7500,12 @@ var ta = "lsolve", D0 = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     DS: l,
     Ss: i
   }));
-}), C0 = /* @__PURE__ */ k(gt, ["typed", "config"], (r) => {
+}), C0 = /* @__PURE__ */ k(yt, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(gt, {
+  return e(yt, {
     "number, number": function(t, u) {
       return pe(t, u, n.epsilon) ? 0 : t > u ? 1 : -1;
     }
@@ -7563,7 +7563,7 @@ var ia = "compareNatural", M0 = ["typed", "compare"], S0 = /* @__PURE__ */ k(ia,
     throw new TypeError('Unsupported type of value "' + o + '"');
   }
   function u(v, l, o) {
-    return Ie(l) && Ie(o) ? c(v, l.toJSON().values, o.toJSON().values) : Ie(l) ? u(v, l.toArray(), o) : Ie(o) ? u(v, l, o.toArray()) : ct(l) ? u(v, l.toJSON().data, o) : ct(o) ? u(v, l, o.toJSON().data) : Array.isArray(l) ? Array.isArray(o) ? c(v, l, o) : u(v, l, [o]) : u(v, [l], o);
+    return Ie(l) && Ie(o) ? c(v, l.toJSON().values, o.toJSON().values) : Ie(l) ? u(v, l.toArray(), o) : Ie(o) ? u(v, l, o.toArray()) : lt(l) ? u(v, l.toJSON().data, o) : lt(o) ? u(v, l, o.toJSON().data) : Array.isArray(l) ? Array.isArray(o) ? c(v, l, o) : u(v, l, [o]) : u(v, [l], o);
   }
   function c(v, l, o) {
     for (var i = 0, f = Math.min(l.length, o.length); i < f; i++) {
@@ -7590,7 +7590,7 @@ var ia = "compareNatural", M0 = ["typed", "compare"], S0 = /* @__PURE__ */ k(ia,
 function B0(r, e) {
   return r.re > e.re ? 1 : r.re < e.re ? -1 : r.im > e.im ? 1 : r.im < e.im ? -1 : 0;
 }
-var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat"], x0 = /* @__PURE__ */ k(yt, N0, (r) => {
+var wt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat"], x0 = /* @__PURE__ */ k(wt, N0, (r) => {
   var {
     typed: e,
     matrix: n,
@@ -7610,7 +7610,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     matrix: n,
     concat: u
   });
-  return e(yt, _0({
+  return e(wt, _0({
     typed: e,
     equalScalar: a
   }), l({
@@ -7619,17 +7619,17 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     DS: c,
     Ss: v
   }));
-}), _0 = k(yt, ["typed", "equalScalar"], (r) => {
+}), _0 = k(wt, ["typed", "equalScalar"], (r) => {
   var {
     typed: e,
     equalScalar: n
   } = r;
-  return e(yt, {
+  return e(wt, {
     "any, any": function(t, u) {
       return t === null ? u === null : u === null ? t === null : t === void 0 ? u === void 0 : u === void 0 ? t === void 0 : n(t, u);
     }
   });
-}), wt = "smaller", z0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], T0 = /* @__PURE__ */ k(wt, z0, (r) => {
+}), At = "smaller", z0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], T0 = /* @__PURE__ */ k(At, z0, (r) => {
   var {
     typed: e,
     config: n,
@@ -7651,7 +7651,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
   }), o = Ve({
     typed: e
   });
-  return e(wt, I0({
+  return e(At, I0({
     typed: e,
     config: n
   }), {
@@ -7668,17 +7668,17 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     DS: c,
     Ss: v
   }));
-}), I0 = /* @__PURE__ */ k(wt, ["typed", "config"], (r) => {
+}), I0 = /* @__PURE__ */ k(At, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(wt, {
+  return e(At, {
     "number, number": function(t, u) {
       return t < u && !pe(t, u, n.epsilon);
     }
   });
-}), At = "smallerEq", O0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], $0 = /* @__PURE__ */ k(At, O0, (r) => {
+}), Et = "smallerEq", O0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], $0 = /* @__PURE__ */ k(Et, O0, (r) => {
   var {
     typed: e,
     config: n,
@@ -7700,7 +7700,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
   }), o = Ve({
     typed: e
   });
-  return e(At, q0({
+  return e(Et, q0({
     typed: e,
     config: n
   }), {
@@ -7717,17 +7717,17 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     DS: c,
     Ss: v
   }));
-}), q0 = /* @__PURE__ */ k(At, ["typed", "config"], (r) => {
+}), q0 = /* @__PURE__ */ k(Et, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(At, {
+  return e(Et, {
     "number, number": function(t, u) {
       return t <= u || pe(t, u, n.epsilon);
     }
   });
-}), Et = "larger", P0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], R0 = /* @__PURE__ */ k(Et, P0, (r) => {
+}), Ft = "larger", P0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], R0 = /* @__PURE__ */ k(Ft, P0, (r) => {
   var {
     typed: e,
     config: n,
@@ -7749,7 +7749,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
   }), o = Ve({
     typed: e
   });
-  return e(Et, U0({
+  return e(Ft, U0({
     typed: e,
     config: n
   }), {
@@ -7766,17 +7766,17 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     DS: c,
     Ss: v
   }));
-}), U0 = /* @__PURE__ */ k(Et, ["typed", "config"], (r) => {
+}), U0 = /* @__PURE__ */ k(Ft, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(Et, {
+  return e(Ft, {
     "number, number": function(t, u) {
       return t > u && !pe(t, u, n.epsilon);
     }
   });
-}), Ft = "largerEq", L0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], Z0 = /* @__PURE__ */ k(Ft, L0, (r) => {
+}), Ct = "largerEq", L0 = ["typed", "config", "matrix", "DenseMatrix", "concat"], Z0 = /* @__PURE__ */ k(Ct, L0, (r) => {
   var {
     typed: e,
     config: n,
@@ -7798,7 +7798,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
   }), o = Ve({
     typed: e
   });
-  return e(Ft, V0({
+  return e(Ct, V0({
     typed: e,
     config: n
   }), {
@@ -7815,12 +7815,12 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
     DS: c,
     Ss: v
   }));
-}), V0 = /* @__PURE__ */ k(Ft, ["typed", "config"], (r) => {
+}), V0 = /* @__PURE__ */ k(Ct, ["typed", "config"], (r) => {
   var {
     typed: e,
     config: n
   } = r;
-  return e(Ft, {
+  return e(Ct, {
     "number, number": function(t, u) {
       return t >= u || pe(t, u, n.epsilon);
     }
@@ -7833,7 +7833,7 @@ var yt = "equal", N0 = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat
   function a(t, u) {
     if (!(this instanceof a))
       throw new SyntaxError("Constructor must be called with the new operator");
-    if (u && !ae(u))
+    if (u && !ie(u))
       throw new Error("Invalid datatype: " + u);
     if (Sr(t) || Cr(t)) {
       var c = new n(t, u);
@@ -8596,7 +8596,7 @@ P: ` + this.p;
     subtract: d,
     complex: s
   } = r;
-  return st(e(pa, {
+  return ft(e(pa, {
     DenseMatrix: function(A) {
       return m(A);
     },
@@ -9142,7 +9142,7 @@ var ga = "lusolve", Xc = ["typed", "matrix", "lup", "slu", "usolve", "lsolve", "
     usolve: u,
     lsolve: c,
     DenseMatrix: p
-  } = r, v = xt({
+  } = r, v = _t({
     DenseMatrix: p
   });
   return e(ga, {
@@ -9844,13 +9844,13 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   }
 }), Ye = /* @__PURE__ */ Qo({
   config: Gr
-}), _t = /* @__PURE__ */ Wo({}), zt = /* @__PURE__ */ rs({}), tn = /* @__PURE__ */ ns({}), $r = /* @__PURE__ */ us({
+}), zt = /* @__PURE__ */ Wo({}), Tt = /* @__PURE__ */ rs({}), tn = /* @__PURE__ */ ns({}), $r = /* @__PURE__ */ us({
   Matrix: tn
 }), or = /* @__PURE__ */ Gu({
   BigNumber: Ye,
-  Complex: _t,
+  Complex: zt,
   DenseMatrix: $r,
-  Fraction: zt
+  Fraction: Tt
 }), rt = /* @__PURE__ */ Rs({
   typed: or
 }), de = /* @__PURE__ */ Ls({
@@ -9861,11 +9861,11 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   BigNumber: Ye,
   typed: or
 }), an = /* @__PURE__ */ Bs({
-  Complex: _t,
+  Complex: zt,
   typed: or
-}), Tt = /* @__PURE__ */ xf({
+}), It = /* @__PURE__ */ xf({
   typed: or
-}), te = /* @__PURE__ */ ps({
+}), ne = /* @__PURE__ */ ps({
   config: Gr,
   typed: or
 }), il = /* @__PURE__ */ zf({
@@ -9882,25 +9882,25 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   typed: or
 }), ol = /* @__PURE__ */ Af({
   BigNumber: Ye,
-  Fraction: zt,
+  Fraction: Tt,
   complex: an,
   typed: or
 }), sl = /* @__PURE__ */ sc({
   typed: or
 }), Je = /* @__PURE__ */ ms({
   Matrix: tn,
-  equalScalar: te,
+  equalScalar: ne,
   typed: or
 }), fl = /* @__PURE__ */ uc({
   typed: or
 }), on = /* @__PURE__ */ Cf({
-  Complex: _t,
+  Complex: zt,
   config: Gr,
   typed: or
 }), et = /* @__PURE__ */ qs({
   typed: or
 }), di = /* @__PURE__ */ _s({
-  Fraction: zt,
+  Fraction: Tt,
   typed: or
 }), Dr = /* @__PURE__ */ Ts({
   DenseMatrix: $r,
@@ -9935,7 +9935,7 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   matrix: Dr,
   typed: or
 }), vl = /* @__PURE__ */ u0({
-  conj: Tt,
+  conj: It,
   transpose: fn,
   typed: or
 }), hl = /* @__PURE__ */ Uf({
@@ -9949,7 +9949,7 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
 }), Di = /* @__PURE__ */ x0({
   DenseMatrix: $r,
   concat: Ce,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   typed: or
 }), ln = /* @__PURE__ */ Zf({
@@ -9984,21 +9984,21 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   SparseMatrix: Je,
   addScalar: de,
   concat: Ce,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   typed: or
 }), dl = /* @__PURE__ */ F0({
   BigNumber: Ye,
   DenseMatrix: $r,
-  Fraction: zt,
+  Fraction: Tt,
   concat: Ce,
   config: Gr,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   typed: or
 }), We = /* @__PURE__ */ Dc({
   addScalar: de,
-  conj: Tt,
+  conj: It,
   multiplyScalar: Fe,
   size: sn,
   typed: or
@@ -10016,7 +10016,7 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
 }), he = /* @__PURE__ */ yf({
   addScalar: de,
   dot: We,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   multiplyScalar: Fe,
   typed: or
@@ -10026,21 +10026,21 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   config: Gr,
   matrix: Dr,
   typed: or
-}), oe = /* @__PURE__ */ Mf({
+}), te = /* @__PURE__ */ Mf({
   DenseMatrix: $r,
   addScalar: de,
   concat: Ce,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   typed: or,
   unaryMinus: et
 }), gi = /* @__PURE__ */ y0({
   DenseMatrix: $r,
   divideScalar: De,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   multiplyScalar: Fe,
-  subtract: oe,
+  subtract: te,
   typed: or
 }), gl = /* @__PURE__ */ S0({
   compare: dl,
@@ -10050,7 +10050,7 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   isZero: pi,
   matrix: Dr,
   multiply: he,
-  subtract: oe,
+  subtract: te,
   typed: or,
   unaryMinus: et
 }), wl = /* @__PURE__ */ k0({
@@ -10062,15 +10062,15 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
 }), Al = /* @__PURE__ */ m0({
   DenseMatrix: $r,
   divideScalar: De,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   multiplyScalar: Fe,
-  subtract: oe,
+  subtract: te,
   typed: or
 }), El = /* @__PURE__ */ Ec({
   addScalar: de,
   complex: an,
-  conj: Tt,
+  conj: It,
   divideScalar: De,
   equal: Di,
   identity: vn,
@@ -10079,7 +10079,7 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   multiplyScalar: Fe,
   sign: ol,
   sqrt: on,
-  subtract: oe,
+  subtract: te,
   typed: or,
   unaryMinus: et,
   zeros: cn
@@ -10100,20 +10100,20 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   larger: Qe,
   largerEq: mi,
   multiply: he,
-  subtract: oe,
+  subtract: te,
   transpose: fn,
   typed: or
 }), Cl = /* @__PURE__ */ ec({
   FibonacciHeap: wl,
   addScalar: de,
-  equalScalar: te
+  equalScalar: ne
 }), bl = /* @__PURE__ */ A0({
   DenseMatrix: $r,
   divideScalar: De,
-  equalScalar: te,
+  equalScalar: ne,
   matrix: Dr,
   multiplyScalar: Fe,
-  subtract: oe,
+  subtract: te,
   typed: or
 }), Ml = /* @__PURE__ */ Pf({
   Index: hn,
@@ -10144,15 +10144,15 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   abs: rt,
   addScalar: de,
   divideScalar: De,
-  equalScalar: te,
+  equalScalar: ne,
   larger: Qe,
   matrix: Dr,
   multiplyScalar: Fe,
-  subtract: oe,
+  subtract: te,
   typed: or,
   unaryMinus: et
 }), Nl = /* @__PURE__ */ d0({
-  Complex: _t,
+  Complex: zt,
   config: Gr,
   fraction: di,
   identity: vn,
@@ -10197,17 +10197,17 @@ var el = "eigs", tl = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   sin: sl,
   smaller: tt,
   sqrt: on,
-  subtract: oe,
+  subtract: te,
   typed: or,
   usolve: gi,
   usolveAll: bl
 }), Gt = /* @__PURE__ */ pc({
   abs: rt,
   add: Le,
-  conj: Tt,
+  conj: It,
   ctranspose: vl,
   eigs: _l,
-  equalScalar: te,
+  equalScalar: ne,
   larger: Qe,
   matrix: Dr,
   multiply: he,
@@ -10222,7 +10222,7 @@ const zl = (r, e, n) => {
     r.length * 3
   );
   e.forEach((f, h) => {
-    const d = Dr(r[f[0]]), s = Dr(r[f[1]]), D = oe(s, d), m = Gt(D), { area: w, elasticity: y } = Ol(h, n);
+    const d = Dr(r[f[0]]), s = Dr(r[f[1]]), D = te(s, d), m = Gt(D), { area: w, elasticity: y } = Ol(h, n);
     let A = Dr([
       [1, -1],
       [-1, 1]
@@ -10296,15 +10296,20 @@ const ql = (r, e, n) => {
   const u = [];
   return e.forEach((c, p) => {
     const v = t.get(p) ?? { area: 0, material: 0 }, l = Gt(
-      oe(r[c[1]], r[c[0]])
+      te(r[c[1]], r[c[0]])
     ), o = Gt(
-      oe(a[c[1]], a[c[0]])
+      te(a[c[1]], a[c[0]])
     ), i = (o - l) / o;
     u.push({
       element: p,
-      strain: Pt(i),
-      stress: Pt(i * v.material),
-      force: Pt(i * v.material * v.area)
+      strain: ot(i),
+      stress: ot(i * v.material),
+      force: ot(i * v.material * v.area)
+    });
+  }), r.forEach((c, p) => {
+    u.push({
+      node: p,
+      displacement: te(a[p], c).map((v) => ot(v))
     });
   }), u;
 };
@@ -10315,7 +10320,7 @@ function $l(r) {
     height: (parseInt(e[1]) || 1) * 1e-3
   };
 }
-const Pt = (r) => Math.round(r * 1e3) / 1e3;
+const ot = (r) => Math.round(r * 1e3) / 1e3;
 export {
   ql as analyzing,
   zl as deforming
