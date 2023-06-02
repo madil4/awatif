@@ -3,6 +3,8 @@ import { Pane, TpChangeEvent } from "tweakpane";
 export type Settings = {
   nodes: boolean;
   elements: boolean;
+  nodesIndices: boolean;
+  elementsIndices: boolean;
   supports: boolean;
   loads: boolean;
   sections: boolean;
@@ -20,6 +22,10 @@ export function SettingsPane(props: SettingsPaneProps) {
 
   pane.addInput(props.settings, "nodes");
   pane.addInput(props.settings, "elements");
+  pane.addInput(props.settings, "nodesIndices", { label: "nodes indices" });
+  pane.addInput(props.settings, "elementsIndices", {
+    label: "elements indices",
+  });
   pane.addInput(props.settings, "supports");
   pane.addInput(props.settings, "loads");
   pane.addInput(props.settings, "sections");
@@ -38,5 +44,5 @@ export function SettingsPane(props: SettingsPaneProps) {
     if (props.onChange) props.onChange(ev);
   });
 
-  return <div class="absolute top-0 left-5 w-72">{pane.element}</div>;
+  return <div class="absolute top-0 left-5 w-[19rem]">{pane.element}</div>;
 }

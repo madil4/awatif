@@ -27,6 +27,21 @@ export const elements=[[0,1],[1,2]]`,
   },
 };
 
+export const NodesIndices: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
+    settings: { nodesIndices: true },
+  },
+};
+
+export const ElementsIndices: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]`,
+    settings: { elementsIndices: true },
+  },
+};
+
 export const Supports: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];

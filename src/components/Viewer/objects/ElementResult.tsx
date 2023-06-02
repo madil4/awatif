@@ -74,7 +74,7 @@ export function ElementResult(props: ElementResultProps) {
       <Text
         position={[textPosition.x, textPosition.z, textPosition.y]}
         text={`${props.result}`}
-        size={0.3}
+        size={0.4}
       ></Text>
     </>
   );
