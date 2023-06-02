@@ -1,9 +1,10 @@
 import { Index, Show, batch, createEffect, createSignal, on } from "solid-js";
-import { createStore, unwrap } from "solid-js/store";
+import { createStore } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer, setRenderAction } from "../Viewer/Viewer";
 import { Node } from "../Viewer/objects/Node";
+import { Text } from "../Viewer/objects/Text";
 import { Grid } from "../Viewer/objects/Grid";
 import { Element } from "../Viewer/objects/Element";
 import { NodeSupport } from "../Viewer/objects/NodeSupport";
@@ -49,11 +50,12 @@ export const assignments = [
   }
 ]
 
-export const results = analyzing(nodes,elements,assignments);
-`;
+export const results = analyzing(nodes,elements,assignments);`;
   const defaultSettings = {
     nodes: true,
     elements: true,
+    nodesIndices: false,
+    elementsIndices: false,
     supports: true,
     loads: true,
     sections: false,
@@ -157,6 +159,29 @@ export const results = analyzing(nodes,elements,assignments);
           </Index>
         </Show>
 
+        <Show when={settings.nodesIndices}>
+          <Index each={nodes()}>
+            {(node, index) => (
+              <Text text={`${index}`} position={node()} size={0.4} />
+            )}
+          </Index>
+        </Show>
+
+        <Show when={settings.elementsIndices}>
+          <Index each={elements()}>
+            {(element, index) => (
+              <Text
+                text={`${index}`}
+                position={computeCenter(
+                  nodes()[element()[0]],
+                  nodes()[element()[1]]
+                )}
+                size={0.4}
+              />
+            )}
+          </Index>
+        </Show>
+
         <Show when={settings.supports}>
           <Index each={nodeSupports()}>
             {(support) => (
@@ -232,3 +257,6 @@ export const results = analyzing(nodes,elements,assignments);
     </Layouter>
   );
 }
+
+const computeCenter = (point1: number[], point2: number[]): number[] =>
+  point1.map((v, i) => (v + point2[i]) * 0.5);

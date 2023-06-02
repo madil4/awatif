@@ -10,6 +10,8 @@ export default {
       settings={{
         nodes: true,
         elements: true,
+        nodesIndices: false,
+        elementsIndices: false,
         supports: true,
         loads: true,
         sections: false,

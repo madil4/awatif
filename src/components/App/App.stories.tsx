@@ -19,11 +19,26 @@ export const Nodes: StoryObj<Args> = {
   },
 };
 
+export const NodesIndices: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
+    settings: { nodesIndices: true },
+  },
+};
+
 export const Elements: StoryObj<Args> = {
   args: {
     text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
 export const elements=[[0,1],[1,2]]`,
     settings: { elements: true },
+  },
+};
+
+export const ElementsIndices: StoryObj<Args> = {
+  args: {
+    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
+export const elements=[[0,1],[1,2]]`,
+    settings: { elementsIndices: true },
   },
 };
 
