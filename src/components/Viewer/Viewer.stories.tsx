@@ -9,6 +9,7 @@ import { Section } from "./objects/Section";
 import { Material } from "./objects/Material";
 import { ElementResult } from "./objects/ElementResult";
 import { Text } from "./objects/Text";
+import { NodeResult } from "./objects/NodeResults";
 
 export const Default: StoryObj = {};
 
@@ -94,6 +95,16 @@ export default {
         <Element start={[-5, 0, 0]} end={[-5, 0, 3]} />
         <ElementResult start={[-5, 0, 0]} end={[-5, 0, -3]} result={-10} />
         <Element start={[-5, 0, 0]} end={[-5, 0, -3]} />
+
+        <NodeResult position={undefined} result={[0, 0, 100]} />
+        <NodeResult position={[5, 0]} result={[0, 0, 100]} />
+        <NodeResult position={[5, 0, "k"]} result={[0, 0, 100]} />
+
+        <NodeResult position={[5, 0, 0]} result={undefined} />
+        <NodeResult position={[5, 0, 0]} result={[1, 2]} />
+        <NodeResult position={[5, 0, 0]} result={[1, 2, "k"]} />
+
+        <NodeResult position={[0, 0, 0]} result={[-50, 0, 100]} />
 
         <Text text={undefined} position={[-8, 0, 5]} size={1} />
         <Text text={"here is text"} position={undefined} size={1} />

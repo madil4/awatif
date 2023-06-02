@@ -13,6 +13,7 @@ import { Section } from "../Viewer/objects/Section";
 import { Material } from "../Viewer/objects/Material";
 import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
 import { ElementResult } from "../Viewer/objects/ElementResult";
+import { NodeResult } from "../Viewer/objects/NodeResults";
 
 type AppProps = {
   text?: string;
@@ -22,21 +23,21 @@ type AppProps = {
 export function App(props: AppProps) {
   const defaultText = `import { analyzing } from 'awatif';
 
-export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
+export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const assignments = [
   {
     node: 0,
-    support: [true,true,true]
+    support: [true, true, true]
   },
   {
     node: 2,
-    support: [true,true,true]
+    support: [true, true, true]
   },
   {
     node: 1,
-    load: [0,0,-10]
+    load: [0, 0, -10]
   },
   {
     element: 0,
@@ -50,7 +51,7 @@ export const assignments = [
   }
 ]
 
-export const results = analyzing(nodes,elements,assignments);`;
+export const results = analyzing(nodes, elements, assignments);`;
   const defaultSettings = {
     nodes: true,
     elements: true,
@@ -61,6 +62,7 @@ export const results = analyzing(nodes,elements,assignments);`;
     sections: false,
     materials: false,
     elementResults: "none",
+    nodeResults: "none",
     ...props.settings,
   };
 
@@ -73,6 +75,7 @@ export const results = analyzing(nodes,elements,assignments);`;
   const [sections, setSections] = createSignal([]);
   const [materials, setMaterials] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
+  const [nodeResults, setNodeResults] = createSignal([]);
 
   // on text change
   createEffect(
@@ -112,12 +115,16 @@ export const results = analyzing(nodes,elements,assignments);`;
 
             if (module.results) {
               const elementResults: any = [];
+              const nodeResults: any = [];
               (module.results as []).forEach((a) => {
                 if ("element" in a) elementResults.push(a);
+                if ("node" in a) nodeResults.push(a);
               });
               setElementResults(elementResults);
+              setNodeResults(nodeResults);
             } else {
               setElementResults([]);
+              setNodeResults([]);
             }
           });
         })
@@ -127,10 +134,20 @@ export const results = analyzing(nodes,elements,assignments);`;
     })
   );
 
-  // on settings result change
+  // on settings element results change
   createEffect(
     on(
       () => settings.elementResults,
+      () => {
+        setRenderAction((c) => c + 1);
+      }
+    )
+  );
+
+  // on settings node results change
+  createEffect(
+    on(
+      () => settings.nodeResults,
       () => {
         setRenderAction((c) => c + 1);
       }
@@ -241,6 +258,21 @@ export const results = analyzing(nodes,elements,assignments);`;
                   }
                   end={nodes()[elements()[(elementResult() as any).element][1]]}
                   result={(elementResult() as any)[settings.elementResults]}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        {/* the line below is a hot fix to add nodeResults to reactive system */}
+        <>{settings.nodeResults}</>
+        <Show when={settings.nodeResults !== "none"}>
+          <Index each={nodeResults()}>
+            {(nodeResult) => (
+              <Show when={nodes()[(nodeResult() as any).node]}>
+                <NodeResult
+                  position={nodes()[(nodeResult() as any).node]}
+                  result={(nodeResult() as any)[settings.nodeResults]}
                 />
               </Show>
             )}

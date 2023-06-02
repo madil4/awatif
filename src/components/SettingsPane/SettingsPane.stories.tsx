@@ -17,6 +17,7 @@ export default {
         sections: false,
         materials: false,
         elementResults: "none",
+        nodeResults: "none",
       }}
     />
   ),
