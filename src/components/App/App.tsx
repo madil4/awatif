@@ -37,7 +37,7 @@ export const assignments = [
   },
   {
     node: 1,
-    load: [0, 0, -10]
+    load: [0, 0, -30]
   },
   {
     element: 0,
@@ -61,6 +61,7 @@ export const results = analyzing(nodes, elements, assignments);`;
     loads: true,
     sections: false,
     materials: false,
+    deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
     ...props.settings,
@@ -68,7 +69,8 @@ export const results = analyzing(nodes, elements, assignments);`;
 
   const [text, setText] = createSignal<string>(props.text || defaultText);
   const [settings, setSettings] = createStore<Settings>(defaultSettings);
-  const [nodes, setNodes] = createSignal([]);
+  const [undeformedNodes, setUndeformedNodes] = createSignal([]);
+  const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
@@ -76,6 +78,9 @@ export const results = analyzing(nodes, elements, assignments);`;
   const [materials, setMaterials] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
+
+  const nodes = () =>
+    settings.deformedShape ? deformedNodes() : undeformedNodes();
 
   // on text change
   createEffect(
@@ -88,7 +93,7 @@ export const results = analyzing(nodes, elements, assignments);`;
       import(createURL(text()))
         .then((module) => {
           batch(() => {
-            setNodes(module.nodes ?? []);
+            setUndeformedNodes(module.nodes ?? []);
             setElements(module.elements ?? []);
 
             if (module.assignments) {
@@ -152,6 +157,25 @@ export const results = analyzing(nodes, elements, assignments);`;
         setRenderAction((c) => c + 1);
       }
     )
+  );
+
+  // on undeformed node change
+  createEffect(
+    on(undeformedNodes, () => {
+      const displacement = new Map<number, number[]>();
+      if (nodeResults().length) {
+        nodeResults().forEach((nodeResult: any) => {
+          if ("displacement" in nodeResult)
+            displacement.set(nodeResult.node, nodeResult.displacement);
+        });
+      }
+      setDeformedNodes(
+        undeformedNodes().map((v: any, i) => {
+          const dis = displacement.get(i) || [0, 0, 0];
+          return v.map((vv: any, ii: any) => vv + dis[ii]);
+        })
+      );
+    })
   );
 
   return (
@@ -291,4 +315,4 @@ export const results = analyzing(nodes, elements, assignments);`;
 }
 
 const computeCenter = (point1: number[], point2: number[]): number[] =>
-  point1.map((v, i) => (v + point2[i]) * 0.5);
+  point1?.map((v, i) => (v + point2[i]) * 0.5);
