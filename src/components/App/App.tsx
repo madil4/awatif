@@ -162,19 +162,19 @@ export const results = analyzing(nodes, elements, assignments);`;
   // on undeformed node change
   createEffect(
     on(undeformedNodes, () => {
+      const displacement = new Map<number, number[]>();
       if (nodeResults().length) {
-        const displacement = new Map();
         nodeResults().forEach((nodeResult: any) => {
           if ("displacement" in nodeResult)
             displacement.set(nodeResult.node, nodeResult.displacement);
         });
-
-        setDeformedNodes(
-          undeformedNodes().map((v: any, i) =>
-            v.map((vv: any, ii: any) => vv + displacement.get(i)[ii])
-          )
-        );
       }
+      setDeformedNodes(
+        undeformedNodes().map((v: any, i) => {
+          const dis = displacement.get(i) || [0, 0, 0];
+          return v.map((vv: any, ii: any) => vv + dis[ii]);
+        })
+      );
     })
   );
 
@@ -315,4 +315,4 @@ export const results = analyzing(nodes, elements, assignments);`;
 }
 
 const computeCenter = (point1: number[], point2: number[]): number[] =>
-  point1.map((v, i) => (v + point2[i]) * 0.5);
+  point1?.map((v, i) => (v + point2[i]) * 0.5);

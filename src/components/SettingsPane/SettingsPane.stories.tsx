@@ -16,6 +16,7 @@ export default {
         loads: true,
         sections: false,
         materials: false,
+        deformedShape: true,
         elementResults: "none",
         nodeResults: "none",
       }}
