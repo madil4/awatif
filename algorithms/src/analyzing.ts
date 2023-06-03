@@ -2,9 +2,10 @@ import * as mathjs from "mathjs";
 import { deforming } from "./deforming";
 
 export const analyzing = (nodes: any, elements: any, assignments: any) => {
-  const deformedNodes = deforming(nodes, elements, assignments);
+  const { deformedNodes, forces } = deforming(nodes, elements, assignments);
 
   const bars: Map<number, { area: number; material: number }> = new Map();
+  const supports: number[] = [];
   assignments?.forEach((a: any) => {
     if ("section" in a && "material" in a) {
       const { width, height } = extractDimensions(a.section);
@@ -14,6 +15,8 @@ export const analyzing = (nodes: any, elements: any, assignments: any) => {
         material: a.material,
       });
     }
+
+    if ("support" in a && "node" in a) supports.push(a.node);
   });
 
   const results: any[] = [];
@@ -42,6 +45,17 @@ export const analyzing = (nodes: any, elements: any, assignments: any) => {
         .subtract(deformedNodes[index], node)
         .map((v: number) => roundTo2(v)),
     });
+
+    if (supports.includes(index)) {
+      results.push({
+        node: index,
+        reaction: [
+          roundTo2(forces[index * 3] as number),
+          roundTo2(forces[index * 3 + 1] as number),
+          roundTo2(forces[index * 3 + 2] as number),
+        ],
+      });
+    }
   });
 
   return results;

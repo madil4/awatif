@@ -281,22 +281,26 @@ export const results = analyzing(nodes, elements, assignments);`;
                     nodes()[elements()[(elementResult() as any).element][0]]
                   }
                   end={nodes()[elements()[(elementResult() as any).element][1]]}
-                  result={(elementResult() as any)[settings.elementResults]}
+                  result={
+                    (elementResult() as any)[settings.elementResults] || [
+                      0, 0, 0,
+                    ]
+                  }
                 />
               </Show>
             )}
           </Index>
         </Show>
 
-        {/* the line below is a hot fix to add nodeResults to reactive system */}
-        <>{settings.nodeResults}</>
         <Show when={settings.nodeResults !== "none"}>
           <Index each={nodeResults()}>
             {(nodeResult) => (
               <Show when={nodes()[(nodeResult() as any).node]}>
                 <NodeResult
                   position={nodes()[(nodeResult() as any).node]}
-                  result={(nodeResult() as any)[settings.nodeResults]}
+                  result={
+                    (nodeResult() as any)[settings.nodeResults] || [0, 0, 0]
+                  }
                 />
               </Show>
             )}
