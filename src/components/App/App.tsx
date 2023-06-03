@@ -293,7 +293,6 @@ export const results = analyzing(nodes, elements, assignments);`;
         </Show>
 
         <Show when={settings.nodeResults !== "none"}>
-          {settings.nodeResults}
           <Index each={nodeResults()}>
             {(nodeResult) => (
               <Show when={nodes()[(nodeResult() as any).node]}>
