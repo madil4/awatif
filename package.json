@@ -43,6 +43,7 @@
     "vite-plugin-solid": "^2.6.1"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.24.0",
     "mathjs": "^11.8.0",
     "monaco-editor": "^0.38.0",
     "solid-js": "^1.6.15",
