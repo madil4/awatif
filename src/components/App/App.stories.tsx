@@ -157,16 +157,16 @@ export const elements=[[0,1],[1,2]]
 export const results = [
   {
     node: 0,
-    displacement: [0,0,0],
+    reaction: [50,10,0]
   },
   {
     node: 1,
     displacement: [-1,3,1],
-    reaction: [50,10,0]
   },
   {
     node: 3,
     displacement: [10,10,20],
+    reaction: [50,10,0]
   },
 ]`,
     settings: { nodeResults: "displacement" },

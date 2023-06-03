@@ -72,7 +72,18 @@ export const deforming = (nodes: any, elements: any, assignments: any) => {
     mathjs.add(x_free, mathjs.flatten(dx))
   );
 
-  return mathjs.reshape(x, [-1, 3]).toArray() as any;
+  // compute forces with reactions
+  const dxGlobal = mathjs.subset(
+    mathjs.multiply(x, 0),
+    mathjs.index(freeInd),
+    mathjs.flatten(dx)
+  );
+  const forces = mathjs.multiply(stiffnessGlobalAssembly, dxGlobal);
+
+  return {
+    deformedNodes: mathjs.reshape(x, [-1, 3]).toArray() as any,
+    forces: forces.toArray(),
+  };
 };
 
 function getNodeLoads(nodes: any, elements: any, assignments: any) {

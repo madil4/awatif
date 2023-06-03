@@ -46,6 +46,7 @@ export function SettingsPane(props: SettingsPaneProps) {
     options: {
       none: "none",
       displacement: "displacement",
+      reaction: "reaction",
     },
     label: "node results",
   });
