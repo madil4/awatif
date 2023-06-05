@@ -7,8 +7,6 @@ export type Settings = {
   elementsIndices: boolean;
   supports: boolean;
   loads: boolean;
-  sections: boolean;
-  materials: boolean;
   deformedShape: boolean;
   elementResults: string;
   nodeResults: string;
@@ -30,8 +28,6 @@ export function SettingsPane(props: SettingsPaneProps) {
   });
   pane.addInput(props.settings, "supports");
   pane.addInput(props.settings, "loads");
-  pane.addInput(props.settings, "sections");
-  pane.addInput(props.settings, "materials");
   pane.addInput(props.settings, "deformedShape", { label: "deformed shape" });
   pane.addInput(props.settings, "elementResults", {
     options: {

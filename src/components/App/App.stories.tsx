@@ -14,51 +14,51 @@ export const InvalidText: StoryObj<Args> = {
 
 export const Nodes: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
     settings: { nodes: true },
   },
 };
 
 export const Elements: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]`,
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]`,
     settings: { elements: true },
   },
 };
 
 export const NodesIndices: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];`,
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
     settings: { nodesIndices: true },
   },
 };
 
 export const ElementsIndices: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]`,
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]`,
     settings: { elementsIndices: true },
   },
 };
 
 export const Supports: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const assignments = [
   {
     node: 0,
-    support : [true,true,true]
+    support: [true, true, true]
   },
   {
     node: 2,
-    support : [true,true,false]
+    support: [true, true, false]
   },
   {
     node: 3,
-    support : [true,true,false]
+    support: [true, true, false]
   },
 ]`,
     settings: { supports: true },
@@ -67,66 +67,28 @@ export const assignments = [
 
 export const PointLoads: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const assignments = [
   {
     node: 1,
-    load : [0,0,-100]
+    load: [0, 0, -100]
   },
   {
     node: 3,
-    load : [0,0,-100]
+    load: [0, 0, -100]
   },
 ]`,
     settings: { loads: true },
   },
 };
 
-export const Sections: StoryObj<Args> = {
-  args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
-export const assignments = [
-  {
-    element: 0,
-    section : "r500x500"
-  },
-  {
-    element: 2,
-    section : "r500x500"
-  },
-]`,
-    settings: { sections: true },
-  },
-};
-
-export const Materials: StoryObj<Args> = {
-  args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
-export const assignments = [
-  {
-    element: 0,
-    material : 7500
-  },
-  {
-    element: 2,
-    material : 7500
-  },
-]`,
-    settings: { materials: true },
-  },
-};
-
 export const ElementResults: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const results = [
   {
     element: 0,
@@ -142,7 +104,7 @@ export const results = [
   },
   {
     element: 2,
-    strain : 6
+    strain: 6
   },
 ]`,
     settings: { elementResults: "strain" },
@@ -151,22 +113,22 @@ export const results = [
 
 export const NodeResults: StoryObj<Args> = {
   args: {
-    text: `export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-      
+    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const results = [
   {
     node: 0,
-    reaction: [50,10,0]
+    reaction: [50, 10, 0]
   },
   {
     node: 1,
-    displacement: [-1,3,1],
+    displacement: [-1, 3, 1],
   },
   {
     node: 3,
-    displacement: [10,10,20],
-    reaction: [50,10,0]
+    displacement: [10, 10, 20],
+    reaction: [50, 10, 0]
   },
 ]`,
     settings: { nodeResults: "displacement" },
@@ -177,37 +139,36 @@ export const Analyzing: StoryObj<Args> = {
   args: {
     text: `import { analyzing } from 'awatif';
 
-export const nodes=[[0,0,0],[5,0,0],[0,0,5]];
-export const elements=[[0,1],[1,2]]
-  
+export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
 export const assignments = [
   {
     node: 0,
-    support: [true,true,true]
+    support: [true, true, true]
   },
   {
     node: 2,
-    support: [true,true,true]
+    support: [true, true, true]
   },
   {
     node: 1,
-    load: [0,0,-10]
+    load: [0, 0, -10]
   },
   {
     element: 0,
-    section: "r200x500",
-    material: 7500
+    area: 1.2,
+    elasticity: 200
   },
   {
     element: 1,
-    section: "r200x200",
-    material: 7500
+    area: 1.2,
+    elasticity: 200
   }
 ]
 
-export const results = analyzing(nodes,elements,assignments);
-`,
-    settings: { elementResults: "strain" },
+export const results = analyzing(nodes, elements, assignments);`,
+    settings: { elementResults: "force" },
   },
 };
 

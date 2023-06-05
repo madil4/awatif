@@ -10276,36 +10276,19 @@ function Il(r) {
   }), e;
 }
 function Ol(r, e) {
-  function n(t) {
-    const u = t.substring(1).split("x");
-    return {
-      width: (parseInt(u[0]) || 1) * 1e-3,
-      height: (parseInt(u[1]) || 1) * 1e-3
-    };
-  }
-  let a = { area: 1, elasticity: 1 };
-  return e == null || e.forEach((t) => {
-    if (t.element == r && "material" in t && "section" in t) {
-      const { width: u, height: c } = n(t.section);
-      a = { area: u * c, elasticity: t.material };
-    }
-  }), a;
+  let n = { area: 1, elasticity: 1 };
+  return e == null || e.forEach((a) => {
+    a.element == r && "area" in a && "elasticity" in a && (n = { area: a.area, elasticity: a.elasticity });
+  }), n;
 }
-const ql = (r, e, n) => {
+const $l = (r, e, n) => {
   const { deformedNodes: a, forces: t } = zl(r, e, n), u = /* @__PURE__ */ new Map(), c = [];
   n == null || n.forEach((v) => {
-    if ("section" in v && "material" in v) {
-      const { width: l, height: o } = $l(v.section);
-      u.set(v.element, {
-        area: l * o,
-        material: v.material
-      });
-    }
-    "support" in v && "node" in v && c.push(v.node);
+    "area" in v && "elasticity" in v && u.set(v.element, { area: v.area, elasticity: v.elasticity }), "support" in v && "node" in v && c.push(v.node);
   });
   const p = [];
   return e.forEach((v, l) => {
-    const o = u.get(l) ?? { area: 0, material: 0 }, i = Kt(
+    const o = u.get(l) ?? { area: 0, elasticity: 0 }, i = Kt(
       te(r[v[1]], r[v[0]])
     ), f = Kt(
       te(a[v[1]], a[v[0]])
@@ -10313,8 +10296,8 @@ const ql = (r, e, n) => {
     p.push({
       element: l,
       strain: Se(h),
-      stress: Se(h * o.material),
-      force: Se(h * o.material * o.area)
+      stress: Se(h * o.elasticity),
+      force: Se(h * o.elasticity * o.area)
     });
   }), r.forEach((v, l) => {
     p.push({
@@ -10329,16 +10312,8 @@ const ql = (r, e, n) => {
       ]
     });
   }), p;
-};
-function $l(r) {
-  const e = r.substring(1).split("x");
-  return {
-    width: (parseInt(e[0]) || 1) * 1e-3,
-    height: (parseInt(e[1]) || 1) * 1e-3
-  };
-}
-const Se = (r) => Math.round(r * 1e3) / 1e3;
+}, Se = (r) => Math.round(r * 1e3) / 1e3;
 export {
-  ql as analyzing,
+  $l as analyzing,
   zl as deforming
 };

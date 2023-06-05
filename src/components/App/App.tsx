@@ -9,8 +9,6 @@ import { Grid } from "../Viewer/objects/Grid";
 import { Element } from "../Viewer/objects/Element";
 import { NodeSupport } from "../Viewer/objects/NodeSupport";
 import { NodeLoad } from "../Viewer/objects/NodeLoad";
-import { Section } from "../Viewer/objects/Section";
-import { Material } from "../Viewer/objects/Material";
 import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
@@ -37,30 +35,28 @@ export const assignments = [
   },
   {
     node: 1,
-    load: [0, 0, -30]
+    load: [0, 0, -10]
   },
   {
     element: 0,
-    section: "r200x500",
-    material: 7500
+    area: 1.2,
+    elasticity: 200
   },
   {
     element: 1,
-    section: "r200x200",
-    material: 7500
+    area: 1.2,
+    elasticity: 200
   }
 ]
 
 export const results = analyzing(nodes, elements, assignments);`;
-  const defaultSettings = {
+  const defaultSettings: Settings = {
     nodes: true,
     elements: true,
     nodesIndices: false,
     elementsIndices: false,
     supports: true,
     loads: true,
-    sections: false,
-    materials: false,
     deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
@@ -74,8 +70,6 @@ export const results = analyzing(nodes, elements, assignments);`;
   const [elements, setElements] = createSignal([]);
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
-  const [sections, setSections] = createSignal([]);
-  const [materials, setMaterials] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
 
@@ -99,23 +93,15 @@ export const results = analyzing(nodes, elements, assignments);`;
             if (module.assignments) {
               const nodeSupports: any = [];
               const nodeLoads: any = [];
-              const sections: any = [];
-              const materials: any = [];
               (module.assignments as []).forEach((a) => {
                 if ("support" in a) nodeSupports.push(a);
                 if ("load" in a) nodeLoads.push(a);
-                if ("section" in a) sections.push(a);
-                if ("material" in a) materials.push(a);
               });
               setNodeSupports(nodeSupports);
               setNodeLoads(nodeLoads);
-              setSections(sections);
-              setMaterials(materials);
             } else {
               setNodeSupports([]);
               setNodeLoads([]);
-              setSections([]);
-              setMaterials([]);
             }
 
             if (module.results) {
@@ -241,33 +227,6 @@ export const results = analyzing(nodes, elements, assignments);`;
                 position={nodes()[(pointLoad() as any).node]}
                 load={(pointLoad() as any).load}
               />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.sections}>
-          <Index each={sections()}>
-            {(section) => (
-              <Show when={elements()[(section() as any).element]}>
-                <Section
-                  start={nodes()[elements()[(section() as any).element][0]]}
-                  end={nodes()[elements()[(section() as any).element][1]]}
-                  section={(section() as any).section}
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.materials}>
-          <Index each={materials()}>
-            {(material) => (
-              <Show when={elements()[(material() as any).element]}>
-                <Material
-                  start={nodes()[elements()[(material() as any).element][0]]}
-                  end={nodes()[elements()[(material() as any).element][1]]}
-                />
-              </Show>
             )}
           </Index>
         </Show>
