@@ -119,26 +119,10 @@ function getBar(
   index: number,
   assignments: any[]
 ): { area: number; elasticity: number } {
-  function extractDimensions(section: string): {
-    width: number;
-    height: number;
-  } {
-    const numbers = section.substring(1).split("x");
-    return {
-      width: (parseInt(numbers[0]) || 1) * 1e-3,
-      height: (parseInt(numbers[1]) || 1) * 1e-3,
-    };
-  }
-
   let bar = { area: 1, elasticity: 1 };
-  assignments?.forEach((assignment) => {
-    if (
-      assignment.element == index &&
-      "material" in assignment &&
-      "section" in assignment
-    ) {
-      const { width, height } = extractDimensions(assignment.section);
-      bar = { area: width * height, elasticity: assignment.material };
+  assignments?.forEach((a) => {
+    if (a.element == index && "area" in a && "elasticity" in a) {
+      bar = { area: a.area, elasticity: a.elasticity };
     }
   });
   return bar;

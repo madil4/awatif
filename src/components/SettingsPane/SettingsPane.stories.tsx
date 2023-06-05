@@ -14,8 +14,6 @@ export default {
         elementsIndices: false,
         supports: true,
         loads: true,
-        sections: false,
-        materials: false,
         deformedShape: true,
         elementResults: "none",
         nodeResults: "none",

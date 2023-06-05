@@ -5,8 +5,6 @@ import { Element } from "./objects/Element";
 import { Node } from "./objects/Node";
 import { NodeSupport } from "./objects/NodeSupport";
 import { NodeLoad } from "./objects/NodeLoad";
-import { Section } from "./objects/Section";
-import { Material } from "./objects/Material";
 import { ElementResult } from "./objects/ElementResult";
 import { Text } from "./objects/Text";
 import { NodeResult } from "./objects/NodeResults";
@@ -54,22 +52,6 @@ export default {
 
         <NodeLoad position={[5, 0, 0]} load={[0, 0, 100]} />
         <NodeLoad position={[5, 0, 0]} load={[100, , -100]} />
-
-        <Section start={undefined} end={undefined} section={"r100x100"} />
-        <Section start={[0, 0]} end={[5, 0]} section={"r100x100"} />
-        <Section start={[0, 0, "k"]} end={[5, 0, "k"]} section={"r100x100"} />
-
-        <Section start={[0, 0, 2]} end={[5, 0, 2]} section={undefined} />
-        <Section start={[0, 0, 2]} end={[5, 0, 2]} section={"invalid"} />
-
-        <Section start={[0, 0, 2]} end={[5, 0, 2]} section={"r200x500"} />
-        <Section start={[0, 0, 4]} end={[5, 0, 4]} section={"r500x200"} />
-
-        <Material start={undefined} end={undefined} />
-        <Material start={[0, 0]} end={[5, 0]} />
-        <Material start={[0, 0, "k"]} end={[5, 0, "k"]} />
-
-        <Material start={[0, 0, 0]} end={[2.5, 0, 0]} />
 
         <ElementResult start={undefined} end={undefined} result={10} />
         <ElementResult start={[0, 0]} end={[5, 0]} result={10} />
