@@ -12,6 +12,7 @@ import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
+import { UserPane } from "../UserPane/UserPane";
 
 type AppProps = {
   text?: string;
@@ -273,6 +274,8 @@ export const results = analyzing(nodes, elements, assignments);`;
           setSettings(ev.presetKey as any, ev.value);
         }}
       />
+
+      <UserPane />
     </Layouter>
   );
 }

@@ -8,23 +8,15 @@ export const UserPane = () => {
   );
 
   const [session, setSession] = createSignal<Session | null>();
-  const [active, setActive] = createSignal(true);
-  const [username, setUsername] = createSignal("");
-  const [password, setPassword] = createSignal("");
 
-  const login = async () => {
-    let { data, error } = await supabase.auth.signInWithPassword({
-      email: username(),
-      password: password(),
+  async function signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
     });
-
-    if (data) setSession(data.session);
-  };
+  }
 
   const logout = async () => {
     await supabase.auth.signOut();
-    setUsername("");
-    setPassword("");
   };
 
   supabase.auth.onAuthStateChange((_event, session) => {
@@ -32,52 +24,74 @@ export const UserPane = () => {
   });
 
   return (
-    <>
-      <div class="absolute top-0 right-10">
-        <button
-          class="w-20 h-6 bg-[#38383d] text-[#bbbcc4] float-right"
-          onclick={() => setActive((v) => !v)}
+    <div class="absolute top-2 right-2 dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-ghost btn-xs">
+        <div class="avatar">
+          <div class="w-7 rounded-full">
+            <img src="./avatar.jpg" />
+          </div>
+        </div>
+        <svg
+          width="8px"
+          height="8px"
+          class="hidden h-2 w-2 fill-current opacity-60 sm:inline-block"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 2048 2048"
         >
-          User
-        </button>
-        <Show when={active()}>
+          <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+        </svg>
+      </label>
+      <div
+        tabindex="0"
+        class="dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content"
+      >
+        <div class="card-body">
           <Show
             when={session()}
-            fallback={
-              <div class="w-72 bg-[#29292e] mt-6 py-4 px-2">
-                <input
-                  type="text"
-                  placeholder="Username"
-                  class="bg-[#38383d] text-[#bbbcc4] block w-full mx-auto text-sm py-2 px-3 rounded"
-                  onchange={(e: any) => setUsername(e.target.value)}
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  class="bg-[#38383d] text-[#bbbcc4] block w-full mx-auto text-sm py-2 px-3 rounded my-3"
-                  onchange={(e: any) => setPassword(e.target.value)}
-                />
-                <button
-                  onclick={login}
-                  class=" text-[#28292e] bg-[#adafb8] rounded block mx-auto w-full"
-                >
-                  Login
-                </button>
-              </div>
-            }
+            fallback={<Login onGoogleClick={signInWithGoogle} />}
           >
-            <div class="w-72 bg-[#29292e] mt-6 py-4 px-2">
-              <p class=" text-[#bbbcc4]">Hi, {session()?.user.email}</p>
-              <button
-                onclick={logout}
-                class=" text-[#28292e] bg-[#adafb8] rounded block mx-auto w-full mt-2"
-              >
-                Log out
-              </button>
-            </div>
+            <button class="btn btn-block btn-neutral" onclick={logout}>
+              logout
+            </button>
           </Show>
-        </Show>
+        </div>
       </div>
+    </div>
+  );
+};
+
+const Login = (props: any) => {
+  return (
+    <>
+      <p>Sign in to your account</p>
+      <button
+        class="btn btn-block btn-neutral mt-2"
+        onclick={props.onGoogleClick}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          class="h-4 w-4"
+          viewBox="0 0 256 256"
+        >
+          <path d="M128,228A100,100,0,1,1,198.71069,57.28906,12.0001,12.0001,0,1,1,181.74,74.25977,75.99547,75.99547,0,1,0,203.05371,140H128a12,12,0,0,1,0-24h88a12,12,0,0,1,12,12A100.11332,100.11332,0,0,1,128,228Z" />
+        </svg>
+        Continue with Google
+      </button>
+      <button class="btn btn-block btn-neutral">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          class="h-4 w-4"
+          viewBox="0 0 512 512"
+        >
+          <path d="M31.87,30.58H244.7V243.39H31.87Z" />
+          <path d="M266.89,30.58H479.7V243.39H266.89Z" />
+          <path d="M31.87,265.61H244.7v212.8H31.87Z" />
+          <path d="M266.89,265.61H479.7v212.8H266.89Z" />
+        </svg>
+        Continue with Microsoft
+      </button>
     </>
   );
 };
