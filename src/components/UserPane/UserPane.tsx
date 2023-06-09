@@ -15,6 +15,15 @@ export const UserPane = () => {
     });
   }
 
+  async function signInWithAzure() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "azure",
+      options: {
+        scopes: "email",
+      },
+    });
+  }
+
   const logout = async () => {
     await supabase.auth.signOut();
   };
@@ -48,7 +57,12 @@ export const UserPane = () => {
         <div class="card-body">
           <Show
             when={session()}
-            fallback={<Login onGoogleClick={signInWithGoogle} />}
+            fallback={
+              <Login
+                onGoogleClick={signInWithGoogle}
+                onAzureClick={signInWithAzure}
+              />
+            }
           >
             <button class="btn btn-block btn-neutral" onclick={logout}>
               logout
@@ -78,7 +92,7 @@ const Login = (props: any) => {
         </svg>
         Continue with Google
       </button>
-      <button class="btn btn-block btn-neutral">
+      <button class="btn btn-block btn-neutral" onclick={props.onAzureClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
