@@ -17,25 +17,7 @@ export default {
       </div>
       <div class="dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content mt-10">
         <div class="card-body">
-          <Projects
-            projects={[
-              {
-                name: "first project",
-              },
-              {
-                name: "second project",
-              },
-              {
-                name: "second project",
-              },
-              {
-                name: "second project",
-              },
-              {
-                name: "second project",
-              },
-            ]}
-          />
+          <Projects />
         </div>
       </div>
     </div>

@@ -1,27 +1,15 @@
 import { Session, createClient } from "@supabase/supabase-js";
 import { Show, createSignal } from "solid-js";
 import { Login } from "./components/Login";
-import { Project, Projects } from "./components/Projects";
+import { Projects } from "./components/Projects";
+
+export const supabase = createClient(
+  "https://cayyihbcbshvvffjtbky.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNheXlpaGJjYnNodnZmZmp0Ymt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MTg0OTIsImV4cCI6MjAwMTM5NDQ5Mn0.gN9iy2Gd2utQa7Ii5mp7hd81BRVqUKnLMX8wg3O6kgk"
+);
 
 export const UserPane = () => {
-  const apiKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNheXlpaGJjYnNodnZmZmp0Ymt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MTg0OTIsImV4cCI6MjAwMTM5NDQ5Mn0.gN9iy2Gd2utQa7Ii5mp7hd81BRVqUKnLMX8wg3O6kgk";
-  const supabase = createClient(
-    "https://cayyihbcbshvvffjtbky.supabase.co",
-    apiKey
-  );
-
   const [session, setSession] = createSignal<Session | null>();
-  const [projects, setProjects] = createSignal<Project[]>([]);
-
-  async function getProjects() {
-    let { data, error } = await supabase.from("projects").select("*");
-    if (data) {
-      setProjects(data as Project[]);
-    }
-  }
-
-  getProjects();
 
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -36,10 +24,6 @@ export const UserPane = () => {
         scopes: "email",
       },
     });
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
   }
 
   supabase.auth.onAuthStateChange((_event, session) => {
@@ -78,7 +62,7 @@ export const UserPane = () => {
               />
             }
           >
-            <Projects projects={projects()} />
+            <Projects />
           </Show>
         </div>
       </div>
