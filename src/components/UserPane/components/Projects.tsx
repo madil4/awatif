@@ -26,7 +26,6 @@ export function Projects(props: ProjectsProps) {
 
   async function addProject(e: SubmitEvent) {
     e.preventDefault();
-    setProjectName("");
 
     if (props.testingProjects) return;
 
@@ -36,6 +35,7 @@ export function Projects(props: ProjectsProps) {
         .insert([{ name: projectName() }]);
     }
 
+    setProjectName("");
     getProjects();
   }
 
