@@ -6,14 +6,18 @@ export type Project = {
 };
 
 type ProjectsProps = {
-  projects?: Project[];
+  testingProjects?: Project[];
 };
 
 export function Projects(props: ProjectsProps) {
-  const [projects, setProjects] = createSignal<Project[]>(props.projects || []);
+  const [projects, setProjects] = createSignal<Project[]>(
+    props.testingProjects || []
+  );
   const [projectName, setProjectName] = createSignal("");
 
   async function getProjects() {
+    if (props.testingProjects) return;
+
     let { data, error } = await supabase.from("projects").select("*");
     if (data) {
       setProjects(data as Project[]);
@@ -22,6 +26,9 @@ export function Projects(props: ProjectsProps) {
 
   async function addProject(e: SubmitEvent) {
     e.preventDefault();
+    setProjectName("");
+
+    if (props.testingProjects) return;
 
     if (projectName()) {
       const { data, error } = await supabase
@@ -29,7 +36,6 @@ export function Projects(props: ProjectsProps) {
         .insert([{ name: projectName() }]);
     }
 
-    setProjectName("");
     getProjects();
   }
 

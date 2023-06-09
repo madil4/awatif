@@ -5,7 +5,7 @@ import { Projects } from "./components/Projects";
 
 export const supabase = createClient(
   "https://cayyihbcbshvvffjtbky.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNheXlpaGJjYnNodnZmZmp0Ymt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU4MTg0OTIsImV4cCI6MjAwMTM5NDQ5Mn0.gN9iy2Gd2utQa7Ii5mp7hd81BRVqUKnLMX8wg3O6kgk"
+  import.meta.env.VITE_API_KEY || "dummy-key"
 );
 
 export const UserPane = () => {
