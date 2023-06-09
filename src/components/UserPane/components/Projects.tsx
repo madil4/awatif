@@ -31,9 +31,11 @@ export function Projects(props: ProjectsProps) {
     if (props.testingProjects) return;
 
     if (projectName()) {
+      const user = await supabase.auth.getUser();
+
       const { data, error } = await supabase
         .from("projects")
-        .insert([{ name: projectName() }]);
+        .insert([{ name: projectName(), user_id: user.data.user?.id }]);
     }
 
     setProjectName("");
