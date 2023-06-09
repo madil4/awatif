@@ -3,6 +3,7 @@ import { supabase } from "../UserPane";
 
 export type Project = {
   name: string;
+  id: number;
 };
 
 type ProjectsProps = {
@@ -39,6 +40,15 @@ export function Projects(props: ProjectsProps) {
     getProjects();
   }
 
+  async function deleteProject(id: number) {
+    const { data, error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", `${id}`);
+
+    getProjects();
+  }
+
   async function logout() {
     await supabase.auth.signOut();
   }
@@ -53,8 +63,20 @@ export function Projects(props: ProjectsProps) {
           <tbody>
             <Index each={projects()}>
               {(project) => (
-                <tr class="hover">
-                  <td>{project().name}</td>
+                <tr class="group/item">
+                  <td class="w-4/5">
+                    <button class="btn btn-sm btn-neutral">
+                      {project().name}
+                    </button>
+                  </td>
+                  <td class="w-1/5">
+                    <button
+                      class="group-hover/item:visible btn btn-xs btn-error invisible"
+                      onclick={() => deleteProject(project().id)}
+                    >
+                      delete
+                    </button>
+                  </td>
                 </tr>
               )}
             </Index>
