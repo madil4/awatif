@@ -39,6 +39,10 @@ export function Projects(props: ProjectsProps) {
     getProjects();
   }
 
+  async function logout() {
+    await supabase.auth.signOut();
+  }
+
   getProjects();
 
   return (
@@ -57,15 +61,20 @@ export function Projects(props: ProjectsProps) {
           </tbody>
         </table>
       </div>
-      <form onSubmit={addProject}>
-        <input
-          class="input input-sm mt-3 input-bordered"
-          type="text"
-          placeholder="Add new project"
-          value={projectName()}
-          onInput={(e) => setProjectName(e.currentTarget.value)}
-        />
-      </form>
+      <div class="flex justify-between mt-3">
+        <form onSubmit={addProject}>
+          <input
+            class="input input-sm input-bordered w-11/12"
+            type="text"
+            placeholder="Add new project"
+            value={projectName()}
+            onInput={(e) => setProjectName(e.currentTarget.value)}
+          />
+        </form>
+        <button class="btn btn-sm btn-neutral" onclick={logout}>
+          Logout
+        </button>
+      </div>
     </>
   );
 }
