@@ -1,4 +1,4 @@
-import { Component, onMount } from "solid-js";
+import { Component, createEffect, onMount } from "solid-js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import "./useWorker";
 
@@ -9,9 +9,10 @@ type EditorProps = {
 
 export const Editor: Component<EditorProps> = (props) => {
   let container: HTMLDivElement;
+  let editor: monaco.editor.IStandaloneCodeEditor;
 
   onMount(() => {
-    const editor = monaco.editor.create(container, {
+    editor = monaco.editor.create(container, {
       value: props.text,
       automaticLayout: true,
       minimap: { enabled: false },
@@ -22,6 +23,11 @@ export const Editor: Component<EditorProps> = (props) => {
     editor.onDidChangeModelContent(() => {
       if (props.onTextChange) props.onTextChange(editor.getValue());
     });
+  });
+
+  // on text change
+  createEffect(() => {
+    if (editor) editor.setValue(props.text);
   });
 
   return (

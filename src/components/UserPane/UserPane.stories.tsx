@@ -19,8 +19,8 @@ export default {
         <div class="card-body">
           <Projects
             testingProjects={[
-              { name: "first project", id: -1 },
-              { name: "second project", id: -2 },
+              { title: "first project", id: -1 },
+              { title: "second project", id: -2 },
             ]}
           />
         </div>
