@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "The First Online Parametric Structural Engineering Software",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --open",
     "build": "vite build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
