@@ -2,8 +2,8 @@ import { Index, createSignal } from "solid-js";
 import { supabase } from "../UserPane";
 
 export type Project = {
-  name: string;
   id: number;
+  title: string;
 };
 
 type ProjectsProps = {
@@ -14,7 +14,7 @@ export function Projects(props: ProjectsProps) {
   const [projects, setProjects] = createSignal<Project[]>(
     props.testingProjects || []
   );
-  const [projectName, setProjectName] = createSignal("");
+  const [projectTitle, setProjectTitle] = createSignal("");
 
   async function getProjects() {
     if (props.testingProjects) return;
@@ -30,15 +30,19 @@ export function Projects(props: ProjectsProps) {
 
     if (props.testingProjects) return;
 
-    if (projectName()) {
+    if (projectTitle()) {
       const user = await supabase.auth.getUser();
 
-      const { data, error } = await supabase
-        .from("projects")
-        .insert([{ name: projectName(), user_id: user.data.user?.id }]);
+      const { data, error } = await supabase.from("projects").insert([
+        {
+          title: projectTitle(),
+          slug: extractSlug(projectTitle()),
+          user_id: user.data.user?.id,
+        },
+      ]);
     }
 
-    setProjectName("");
+    setProjectTitle("");
     getProjects();
   }
 
@@ -67,7 +71,7 @@ export function Projects(props: ProjectsProps) {
               {(project) => (
                 <tr class="group/item">
                   <td class="w-4/5">
-                    <a class="btn btn-sm btn-neutral">{project().name}</a>
+                    <a class="btn btn-sm btn-neutral">{project().title}</a>
                   </td>
                   <td class="w-1/5">
                     <a
@@ -89,8 +93,8 @@ export function Projects(props: ProjectsProps) {
             class="input input-sm input-bordered w-11/12"
             type="text"
             placeholder="Add new project"
-            value={projectName()}
-            onInput={(e) => setProjectName(e.currentTarget.value)}
+            value={projectTitle()}
+            onInput={(e) => setProjectTitle(e.currentTarget.value)}
           />
         </form>
         <a class="btn btn-sm btn-neutral" onclick={logout}>
@@ -99,4 +103,12 @@ export function Projects(props: ProjectsProps) {
       </div>
     </>
   );
+}
+
+function extractSlug(text: string) {
+  let slug = text.toLowerCase().replace(/\s+/g, "-");
+  slug = slug.replace(/[^a-z0-9-]/g, "");
+  slug = slug.replace(/^-+|-+$/g, "");
+
+  return slug;
 }

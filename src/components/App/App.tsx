@@ -12,7 +12,7 @@ import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
-import { UserPane } from "../UserPane/UserPane";
+import { UserPane, supabase } from "../UserPane/UserPane";
 
 type AppProps = {
   text?: string;
@@ -64,7 +64,7 @@ export const results = analyzing(nodes, elements, assignments);`;
     ...props.settings,
   };
 
-  const [text, setText] = createSignal<string>(props.text || defaultText);
+  const [text, setText] = createSignal("");
   const [settings, setSettings] = createStore<Settings>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
@@ -164,6 +164,32 @@ export const results = analyzing(nodes, elements, assignments);`;
       );
     })
   );
+
+  async function setTextOnInit() {
+    const url = window.location.href;
+    const matches = url.match(/localhost\:5173\/([^\/]+)\/([^\/]+)/);
+
+    if (matches) {
+      const [_, userID, slug] = matches;
+      const { data, error } = await supabase
+        .from("projects")
+        .select("data")
+        .eq("user_id", userID)
+        .eq("slug", slug);
+
+      if (props.text) {
+        setText(props.text);
+      } else if (data?.length) {
+        setText(data[0].data);
+      } else {
+        setText(defaultText);
+      }
+    }
+
+    return;
+  }
+
+  setTextOnInit();
 
   return (
     <Layouter>
