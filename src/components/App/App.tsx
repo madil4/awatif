@@ -166,20 +166,15 @@ export const results = analyzing(nodes, elements, assignments);`;
   );
 
   async function setTextOnInit() {
-    const url = window.location.href;
-    const matches = url.match(/awatif\.co\/([^\/]+)\/([^\/]+)/);
-    let textFromURL = "";
+    const urlParams = new URL(window.location.href).searchParams;
 
-    if (matches) {
-      const [_, userID, slug] = matches;
-      const { data, error } = await supabase
-        .from("projects")
-        .select("data")
-        .eq("user_id", userID)
-        .eq("slug", slug);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("data")
+      .eq("user_id", urlParams.get("user_id"))
+      .eq("slug", urlParams.get("slug"));
 
-      if (data) textFromURL = data.length ? data[0].data : "";
-    }
+    const textFromURL = data?.length ? data[0].data : "";
 
     setText(props.text || textFromURL || defaultText);
   }
