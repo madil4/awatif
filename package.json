@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.24.0",
+    "es-module-shims": "^1.7.3",
     "mathjs": "^11.8.0",
     "monaco-editor": "^0.38.0",
     "solid-js": "^1.6.15",

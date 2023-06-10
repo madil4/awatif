@@ -46,52 +46,25 @@ export function App(props: AppProps) {
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
 
+  const importWorker = new Worker(new URL("./importWorker.ts", import.meta.url),{
+    type:"module"
+  })
+
   // on algorithm change
   createEffect(
     on(algorithm, () => {
-      const createURL = (text: string): string =>
-        URL.createObjectURL(
-          new Blob([text], { type: "application/javascript" })
-        );
+      importWorker.postMessage(algorithm());
 
-      import(createURL(algorithm()))
-        .then((module) => {
-          batch(() => {
-            setUndeformedNodes(module.nodes ?? []);
-            setElements(module.elements ?? []);
-
-            if (module.assignments) {
-              const nodeSupports: any = [];
-              const nodeLoads: any = [];
-              (module.assignments as []).forEach((a) => {
-                if ("support" in a) nodeSupports.push(a);
-                if ("load" in a) nodeLoads.push(a);
-              });
-              setNodeSupports(nodeSupports);
-              setNodeLoads(nodeLoads);
-            } else {
-              setNodeSupports([]);
-              setNodeLoads([]);
-            }
-
-            if (module.results) {
-              const elementResults: any = [];
-              const nodeResults: any = [];
-              (module.results as []).forEach((a) => {
-                if ("element" in a) elementResults.push(a);
-                if ("node" in a) nodeResults.push(a);
-              });
-              setElementResults(elementResults);
-              setNodeResults(nodeResults);
-            } else {
-              setElementResults([]);
-              setNodeResults([]);
-            }
-          });
-        })
-        .catch((error) => {
-          console.warn("Error importing module:", error);
+      importWorker.onmessage = (event) => {
+        batch(() => {
+          setUndeformedNodes(event.data.nodes);
+          setElements(event.data.elements);
+          setNodeSupports(event.data.nodeSupports);
+          setNodeLoads(event.data.nodeLoads);
+          setElementResults(event.data.elementResults);
+          setNodeResults(event.data.nodeResults);
         });
+      };
     })
   );
 
@@ -135,7 +108,7 @@ export function App(props: AppProps) {
   );
 
   async function setInitAlgorithmOnInit() {
-    const defaultAlgorithm = `import { analyzing } from 'awatif';
+    const defaultAlgorithm = `import { analyzing } from 'https://awatif.co/algorithms-es-5d54be4f.js';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
@@ -165,7 +138,7 @@ export const assignments = [
   }
 ]
 
-export const results = analyzing(nodes, elements, assignments);`;
+export const results = analyzing(nodes, elements, assignments); `;
     const urlParams = new URL(window.location.href).searchParams;
     let algorithmFromURL = "";
 
@@ -182,6 +155,9 @@ export const results = analyzing(nodes, elements, assignments);`;
     const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
     setInitAlgorithm(algorithm);
     setAlgorithm(algorithm);
+    setTimeout(() => {
+      importWorker.postMessage(algorithm);
+    }, 1000);
   }
 
   setInitAlgorithmOnInit();

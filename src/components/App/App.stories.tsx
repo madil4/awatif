@@ -137,7 +137,7 @@ export const results = [
 
 export const Analyzing: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'awatif';
+    algorithm: `import { analyzing } from 'https://awatif.co/algorithms-es-5d54be4f.js';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
@@ -175,4 +175,7 @@ export const results = analyzing(nodes, elements, assignments);`,
 export default {
   title: "App",
   render: (props) => <App {...props} />,
+  parameters: {
+    chromatic: { delay: 1300 },
+  },
 } as Meta<Args>;
