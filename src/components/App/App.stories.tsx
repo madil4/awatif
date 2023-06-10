@@ -6,22 +6,22 @@ type Args = ComponentProps<typeof App>;
 
 export const Default: StoryObj<Args> = {};
 
-export const InvalidText: StoryObj<Args> = {
+export const InvalidAlgorithm: StoryObj<Args> = {
   args: {
-    text: "invalid text",
+    algorithm: "invalid text",
   },
 };
 
 export const Nodes: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
     settings: { nodes: true },
   },
 };
 
 export const Elements: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]`,
     settings: { elements: true },
   },
@@ -29,14 +29,14 @@ export const elements = [[0, 1], [1, 2]]`,
 
 export const NodesIndices: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
     settings: { nodesIndices: true },
   },
 };
 
 export const ElementsIndices: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]`,
     settings: { elementsIndices: true },
   },
@@ -44,7 +44,7 @@ export const elements = [[0, 1], [1, 2]]`,
 
 export const Supports: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -67,7 +67,7 @@ export const assignments = [
 
 export const PointLoads: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -86,7 +86,7 @@ export const assignments = [
 
 export const ElementResults: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
 export const results = [
@@ -113,7 +113,7 @@ export const results = [
 
 export const NodeResults: StoryObj<Args> = {
   args: {
-    text: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
 export const results = [
@@ -137,7 +137,7 @@ export const results = [
 
 export const Analyzing: StoryObj<Args> = {
   args: {
-    text: `import { analyzing } from 'awatif';
+    algorithm: `import { analyzing } from 'awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
