@@ -4,6 +4,8 @@ import { supabase } from "../UserPane";
 export type Project = {
   id: number;
   title: string;
+  slug: string;
+  user_id: string;
 };
 
 type ProjectsProps = {
@@ -71,7 +73,14 @@ export function Projects(props: ProjectsProps) {
               {(project) => (
                 <tr class="group/item">
                   <td class="w-4/5">
-                    <a class="btn btn-sm btn-neutral">{project().title}</a>
+                    <a
+                      class="btn btn-sm btn-neutral"
+                      href={`./?user_id=${project().user_id}&slug=${
+                        project().slug
+                      }`}
+                    >
+                      {project().title}
+                    </a>
                   </td>
                   <td class="w-1/5">
                     <a

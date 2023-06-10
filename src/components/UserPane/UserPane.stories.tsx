@@ -19,8 +19,18 @@ export default {
         <div class="card-body">
           <Projects
             testingProjects={[
-              { title: "first project", id: -1 },
-              { title: "second project", id: -2 },
+              {
+                title: "first project",
+                id: -1,
+                user_id: "123",
+                slug: "first-project",
+              },
+              {
+                title: "second project",
+                id: -2,
+                user_id: "123",
+                slug: "first-project",
+              },
             ]}
           />
         </div>
