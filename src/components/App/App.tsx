@@ -168,13 +168,16 @@ export const results = analyzing(nodes, elements, assignments);`;
 
     const urlParams = new URL(window.location.href).searchParams;
 
-    const { data, error } = await supabase
-      .from("projects")
-      .select("algorithm")
-      .eq("user_id", urlParams.get("user_id"))
-      .eq("slug", urlParams.get("slug"));
+    let algorithmFromURL = "";
+    if (urlParams.get("user_id") && urlParams.get("slug")) {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("algorithm")
+        .eq("user_id", urlParams.get("user_id"))
+        .eq("slug", urlParams.get("slug"));
 
-    const algorithmFromURL = data?.length ? data[0].algorithm : "";
+      algorithmFromURL = data?.length ? data[0].algorithm : "";
+    }
 
     setAlgorithm(props.algorithm || algorithmFromURL || defaultAlgorithm);
   }
