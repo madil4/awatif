@@ -33,6 +33,7 @@ export function App(props: AppProps) {
     ...props.settings,
   };
   const [algorithm, setAlgorithm] = createSignal("");
+  const [initAlgorithm, setInitAlgorithm] = createSignal("");
   const [settings, setSettings] = createStore<Settings>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
@@ -133,7 +134,7 @@ export function App(props: AppProps) {
     })
   );
 
-  async function setAlgorithmOnInit() {
+  async function setInitAlgorithmOnInit() {
     const defaultAlgorithm = `import { analyzing } from 'awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
@@ -165,10 +166,9 @@ export const assignments = [
 ]
 
 export const results = analyzing(nodes, elements, assignments);`;
-
     const urlParams = new URL(window.location.href).searchParams;
-
     let algorithmFromURL = "";
+
     if (urlParams.get("user_id") && urlParams.get("slug")) {
       const { data, error } = await supabase
         .from("projects")
@@ -179,14 +179,19 @@ export const results = analyzing(nodes, elements, assignments);`;
       algorithmFromURL = data?.length ? data[0].algorithm : "";
     }
 
-    setAlgorithm(props.algorithm || algorithmFromURL || defaultAlgorithm);
+    const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
+    setInitAlgorithm(algorithm);
+    setAlgorithm(algorithm);
   }
 
-  setAlgorithmOnInit();
+  setInitAlgorithmOnInit();
 
   return (
     <Layouter>
-      <Editor text={algorithm()} onTextChange={(text) => setAlgorithm(text)} />
+      <Editor
+        text={initAlgorithm()}
+        onTextChange={(text) => setAlgorithm(text)}
+      />
 
       <Viewer>
         <Grid />
