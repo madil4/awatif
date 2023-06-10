@@ -67,17 +67,15 @@ export function Projects(props: ProjectsProps) {
               {(project) => (
                 <tr class="group/item">
                   <td class="w-4/5">
-                    <button class="btn btn-sm btn-neutral">
-                      {project().name}
-                    </button>
+                    <a class="btn btn-sm btn-neutral">{project().name}</a>
                   </td>
                   <td class="w-1/5">
-                    <button
-                      class="group-hover/item:visible btn btn-xs btn-error invisible"
+                    <a
+                      class="btn btn-xs btn-error invisible group-hover/item:visible "
                       onclick={() => deleteProject(project().id)}
                     >
                       delete
-                    </button>
+                    </a>
                   </td>
                 </tr>
               )}
@@ -95,9 +93,9 @@ export function Projects(props: ProjectsProps) {
             onInput={(e) => setProjectName(e.currentTarget.value)}
           />
         </form>
-        <button class="btn btn-sm btn-neutral" onclick={logout}>
+        <a class="btn btn-sm btn-neutral" onclick={logout}>
           Logout
-        </button>
+        </a>
       </div>
     </>
   );
