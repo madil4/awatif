@@ -113,7 +113,7 @@ export const results = [
 
 export const NodeResults: StoryObj<Args> = {
   args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    algorithm: `export const nodes = [[0, 0, 0], [4, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
 export const results = [
