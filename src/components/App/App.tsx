@@ -46,52 +46,28 @@ export function App(props: AppProps) {
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
 
+  const importWorker = new Worker(
+    new URL("./importWorker.ts", import.meta.url),
+    {
+      type: "module",
+    }
+  );
+
   // on algorithm change
   createEffect(
     on(algorithm, () => {
-      const createURL = (text: string): string =>
-        URL.createObjectURL(
-          new Blob([text], { type: "application/javascript" })
-        );
+      importWorker.postMessage(algorithm());
 
-      import(createURL(algorithm()))
-        .then((module) => {
-          batch(() => {
-            setUndeformedNodes(module.nodes ?? []);
-            setElements(module.elements ?? []);
-
-            if (module.assignments) {
-              const nodeSupports: any = [];
-              const nodeLoads: any = [];
-              (module.assignments as []).forEach((a) => {
-                if ("support" in a) nodeSupports.push(a);
-                if ("load" in a) nodeLoads.push(a);
-              });
-              setNodeSupports(nodeSupports);
-              setNodeLoads(nodeLoads);
-            } else {
-              setNodeSupports([]);
-              setNodeLoads([]);
-            }
-
-            if (module.results) {
-              const elementResults: any = [];
-              const nodeResults: any = [];
-              (module.results as []).forEach((a) => {
-                if ("element" in a) elementResults.push(a);
-                if ("node" in a) nodeResults.push(a);
-              });
-              setElementResults(elementResults);
-              setNodeResults(nodeResults);
-            } else {
-              setElementResults([]);
-              setNodeResults([]);
-            }
-          });
-        })
-        .catch((error) => {
-          console.warn("Error importing module:", error);
+      importWorker.onmessage = (ev) => {
+        batch(() => {
+          setUndeformedNodes(ev.data.nodes);
+          setElements(ev.data.elements);
+          setNodeSupports(ev.data.nodeSupports);
+          setNodeLoads(ev.data.nodeLoads);
+          setNodeResults(ev.data.nodeResults);
+          setElementResults(ev.data.elementResults);
         });
+      };
     })
   );
 
