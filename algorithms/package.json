@@ -1,12 +1,12 @@
 {
-  "name": "algorithms",
-  "version": "0.0.0",
+  "name": "awatif",
+  "version": "0.2.0",
   "type": "module",
+  "main": "./dist/awatif.js",
   "scripts": {
-    "build": "tsc && vite build"
+    "build": "vite build"
   },
   "devDependencies": {
-    "typescript": "^5.0.2",
     "vite": "^4.3.2"
   },
   "dependencies": {
