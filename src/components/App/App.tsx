@@ -135,7 +135,7 @@ export function App(props: AppProps) {
   );
 
   async function setInitAlgorithmOnInit() {
-    const defaultAlgorithm = `import { analyzing } from 'awatif';
+    const defaultAlgorithm = `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
