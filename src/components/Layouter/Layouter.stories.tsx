@@ -7,6 +7,7 @@ export default {
   title: "Layouter",
   render: () => (
     <Layouter>
+      <div>EditorBar</div>
       <div>Editor</div>
       <div>Viewer</div>
       <div>SettingsPane</div>

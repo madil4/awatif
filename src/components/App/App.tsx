@@ -13,6 +13,7 @@ import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
 import { UserPane, supabase } from "../UserPane/UserPane";
+import { EditorBar } from "../EditorBar/EditorBar";
 
 type AppProps = {
   algorithm?: string;
@@ -164,6 +165,8 @@ export const results = analyzing(nodes, elements, assignments);`;
 
   return (
     <Layouter>
+      <EditorBar />
+
       <Editor
         text={initAlgorithm()}
         onTextChange={(text) => setAlgorithm(text)}
