@@ -46,15 +46,16 @@ export const Layouter: ParentComponent = (props: any) => {
     <div class="flex flex-col-reverse md:flex-row" ref={container!}>
       <div class="w-full md:w-1/2 min-w-[200px] min-h-[200px]" ref={leftView!}>
         {c[0]}
+        {c[1]}
       </div>
       <div
         class="bg-[#cbd5e0] w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
       <div class="relative flex-1 min-w-[200px]">
-        {c[1]}
         {c[2]}
         {c[3]}
+        {c[4]}
       </div>
     </div>
   );
