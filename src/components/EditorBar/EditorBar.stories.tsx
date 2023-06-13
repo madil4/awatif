@@ -1,13 +1,16 @@
 import { Meta, StoryObj } from "@storybook/html";
 import { EditorBar } from "./EditorBar";
+import { ComponentProps } from "solid-js";
 
-export const Default: StoryObj = {};
+type Args = ComponentProps<typeof EditorBar>;
+
+export const Default: StoryObj<Args> = {};
 
 export default {
   title: "EditorBar",
   render: () => (
     <div class="h-screen w-screen">
-      <EditorBar />
+      <EditorBar error={"there is an error"} />
     </div>
   ),
-} as Meta;
+} as Meta<Args>;
