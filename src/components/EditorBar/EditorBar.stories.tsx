@@ -1,20 +1,13 @@
 import { Meta, StoryObj } from "@storybook/html";
-import { ComponentProps } from "solid-js";
 import { EditorBar } from "./EditorBar";
 
-type Args = ComponentProps<typeof EditorBar>;
-
-export const Default: StoryObj<Args> = {
-  args: {
-    text: "Here is my code",
-  },
-};
+export const Default: StoryObj = {};
 
 export default {
   title: "EditorBar",
-  render: (props) => (
+  render: () => (
     <div class="h-screen w-screen">
-      <EditorBar {...props} />
+      <EditorBar />
     </div>
   ),
-} as Meta<Args>;
+} as Meta;

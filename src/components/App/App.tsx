@@ -166,6 +166,7 @@ export const results = analyzing(nodes, elements, assignments);`;
   return (
     <Layouter>
       <EditorBar />
+
       <Editor
         text={initAlgorithm()}
         onTextChange={(text) => setAlgorithm(text)}
