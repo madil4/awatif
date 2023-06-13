@@ -1,5 +1,12 @@
 self.onmessage = async (ev) => {
-  const module = await import(createURL(ev.data));
+  let module = [];
+
+  try {
+    module = await import(createURL(ev.data));
+  } catch (e) {
+    self.postMessage({ error: e });
+    return;
+  }
 
   const nodes = module.nodes || [];
   const elements = module.elements || [];

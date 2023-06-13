@@ -18,7 +18,6 @@ export const Editor: Component<EditorProps> = (props) => {
         minimap: { enabled: false },
         theme: "vs-dark",
         language: "typescript",
-        scrollbar: { useShadows: false },
       });
 
       editor.onDidChangeModelContent(() => {

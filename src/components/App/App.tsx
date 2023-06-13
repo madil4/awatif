@@ -43,6 +43,7 @@ export function App(props: AppProps) {
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
+  const [error, setError] = createSignal(undefined);
 
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
@@ -59,15 +60,20 @@ export function App(props: AppProps) {
     on(algorithm, () => {
       importWorker.postMessage(algorithm());
 
-      importWorker.onmessage = (ev) => {
-        batch(() => {
-          setUndeformedNodes(ev.data.nodes);
-          setElements(ev.data.elements);
-          setNodeSupports(ev.data.nodeSupports);
-          setNodeLoads(ev.data.nodeLoads);
-          setNodeResults(ev.data.nodeResults);
-          setElementResults(ev.data.elementResults);
-        });
+      importWorker.onmessage = (e) => {
+        if (e.data.error) {
+          setError(e.data.error);
+        } else {
+          batch(() => {
+            setError(undefined);
+            setUndeformedNodes(e.data.nodes);
+            setElements(e.data.elements);
+            setNodeSupports(e.data.nodeSupports);
+            setNodeLoads(e.data.nodeLoads);
+            setNodeResults(e.data.nodeResults);
+            setElementResults(e.data.elementResults);
+          });
+        }
       };
     })
   );
@@ -165,7 +171,7 @@ export const results = analyzing(nodes, elements, assignments);`;
 
   return (
     <Layouter>
-      <EditorBar />
+      <EditorBar error={error()} />
 
       <Editor
         text={initAlgorithm()}
