@@ -44,6 +44,7 @@ export function App(props: AppProps) {
   const [elementResults, setElementResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
   const [error, setError] = createSignal(undefined);
+  const [projectId, setProjectId] = createSignal(undefined);
 
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
@@ -57,7 +58,7 @@ export function App(props: AppProps) {
 
   // on algorithm change
   createEffect(
-    on(algorithm, () => {
+    on(algorithm, async () => {
       importWorker.postMessage(algorithm());
 
       importWorker.onmessage = (e) => {
@@ -75,6 +76,12 @@ export function App(props: AppProps) {
           });
         }
       };
+
+      if (projectId())
+        await supabase
+          .from("projects")
+          .update({ algorithm: algorithm() })
+          .eq("id", projectId());
     })
   );
 
@@ -155,11 +162,12 @@ export const results = analyzing(nodes, elements, assignments);`;
     if (urlParams.get("user_id") && urlParams.get("slug")) {
       const { data, error } = await supabase
         .from("projects")
-        .select("algorithm")
+        .select("algorithm,id")
         .eq("user_id", urlParams.get("user_id"))
         .eq("slug", urlParams.get("slug"));
 
       algorithmFromURL = data?.length ? data[0].algorithm : "";
+      setProjectId(data?.length ? data[0].id : undefined);
     }
 
     const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
