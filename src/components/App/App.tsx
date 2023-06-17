@@ -127,8 +127,8 @@ export function App(props: AppProps) {
   async function setInitAlgorithmOnInit() {
     const defaultAlgorithm = `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
+export const nodes = [[-3, 1, 3], [3, 1, 3], [0, -3, 3], [0, 0, 0]];
+export const elements = [[0, 3], [2, 3], [1, 3]]
 
 export const assignments = [
   {
@@ -136,12 +136,12 @@ export const assignments = [
     support: [true, true, true]
   },
   {
-    node: 2,
+    node: 1,
     support: [true, true, true]
   },
   {
-    node: 1,
-    load: [0, 0, -10]
+    node: 2,
+    support: [true, true, true]
   },
   {
     element: 0,
@@ -152,7 +152,16 @@ export const assignments = [
     element: 1,
     area: 1.2,
     elasticity: 200
-  }
+  },
+  {
+    element: 2,
+    area: 1.2,
+    elasticity: 200
+  },
+  {
+    node: 3,
+    load: [0, 0, -250]
+  },
 ]
 
 export const results = analyzing(nodes, elements, assignments);`;

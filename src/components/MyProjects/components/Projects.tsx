@@ -59,6 +59,7 @@ export function Projects(props: ProjectsProps) {
 
   async function logout() {
     await supabase.auth.signOut();
+    window.location.assign("/");
   }
 
   getProjects();
@@ -104,7 +105,7 @@ export function Projects(props: ProjectsProps) {
             onInput={(e) => setProjectTitle(e.currentTarget.value)}
           />
         </form>
-        <a class="btn btn-xs btn-neutral mt-1 " onclick={logout}>
+        <a class="btn btn-xs btn-neutral mt-1" onclick={logout}>
           Logout
         </a>
       </div>
