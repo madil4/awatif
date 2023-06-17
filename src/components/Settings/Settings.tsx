@@ -1,6 +1,6 @@
 import { Pane, TpChangeEvent } from "tweakpane";
 
-export type Settings = {
+export type SettingsType = {
   nodes: boolean;
   elements: boolean;
   nodesIndices: boolean;
@@ -12,12 +12,12 @@ export type Settings = {
   nodeResults: string;
 };
 
-export type SettingsPaneProps = {
-  settings: Settings;
+export type SettingsProps = {
+  settings: SettingsType;
   onChange?: (ev: TpChangeEvent<unknown>) => void;
 };
 
-export function SettingsPane(props: SettingsPaneProps) {
+export function Settings(props: SettingsProps) {
   let pane = new Pane({ title: "Settings", expanded: false });
 
   pane.addInput(props.settings, "nodes");

@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from "@storybook/html";
-import { SettingsPane } from "./SettingsPane";
+import { Settings } from "./Settings";
 
 export const Default: StoryObj = {};
 
 export default {
   title: "SettingsPane",
   render: () => (
-    <SettingsPane
+    <Settings
       settings={{
         nodes: true,
         elements: true,

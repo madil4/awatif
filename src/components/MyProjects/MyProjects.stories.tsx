@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from "@storybook/html";
-import { UserPane } from "./UserPane";
+import { MyProjects } from "./MyProjects";
 import { Login } from "./components/Login";
 import { Projects } from "./components/Projects";
 
 export const Default: StoryObj = {};
 
 export default {
-  title: "UserPane",
+  title: "MyProjects",
   render: () => (
     <div>
-      <UserPane />
+      <MyProjects />
       <div class="dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content">
         <div class="card-body">
           <Login onGoogleClick={() => {}} onAzureClick={() => {}} />
