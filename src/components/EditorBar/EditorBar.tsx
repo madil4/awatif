@@ -1,3 +1,5 @@
+import { MyProjects } from "../MyProjects/MyProjects";
+
 type EditorBarProps = {
   error?: string;
 };
@@ -6,17 +8,27 @@ export function EditorBar(props: EditorBarProps) {
   return (
     <div class="tabs">
       <a class="tab tab-bordered tab-active bg-[#1e1e1e]">main.js</a>
-      <div class="badge badge-sm mb-auto mt-2 ml-3">In Alpha Testing</div>
-      <div class="text-xl ml-auto mr-2 mb-[0.1rem]">
+      <div class="badge badge-sm mb-auto mt-2 ml-3">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSc9k3Wv6jbPreGL39C7-0piytRyO9AoQlDvXoonI-sBf_M0EQ/viewform"
+          target="_blank"
+        >
+          Calling for Alpha Testing Feedback
+        </a>
+      </div>
+      <div class="text-l ml-auto mr-1 mb-[0.2rem]">
         {props.error ? (
           <>
             <div class="tooltip tooltip-bottom" data-tip={props.error}>
-              😔
+              ❌
             </div>
           </>
         ) : (
           <>👌</>
         )}
+      </div>
+      <div class="mb-auto mt-[0.15rem]">
+        <MyProjects />
       </div>
     </div>
   );

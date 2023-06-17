@@ -31,13 +31,9 @@ export const MyProjects = () => {
   });
 
   return (
-    <div class="absolute top-2 right-2 dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-ghost btn-xs">
-        <div class="avatar">
-          <div class="w-7 rounded-full">
-            <img src="./avatar.jpg" />
-          </div>
-        </div>
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-xs">
+        <span>My Projects</span>
         <svg
           width="8px"
           height="8px"
@@ -50,7 +46,7 @@ export const MyProjects = () => {
       </label>
       <div
         tabindex="0"
-        class="dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content"
+        class="z-50 dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content"
       >
         <div class="card-body">
           <Show

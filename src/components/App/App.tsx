@@ -291,8 +291,6 @@ export const results = analyzing(nodes, elements, assignments);`;
           setSettings(ev.presetKey as any, ev.value);
         }}
       />
-
-      <MyProjects />
     </Layouter>
   );
 }
