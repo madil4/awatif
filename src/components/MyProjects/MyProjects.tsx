@@ -8,7 +8,7 @@ export const supabase = createClient(
   import.meta.env.VITE_API_KEY || "dummy-key"
 );
 
-export const UserPane = () => {
+export const MyProjects = () => {
   const [session, setSession] = createSignal<Session | null>();
 
   async function signInWithGoogle() {

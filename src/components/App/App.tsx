@@ -9,19 +9,19 @@ import { Grid } from "../Viewer/objects/Grid";
 import { Element } from "../Viewer/objects/Element";
 import { NodeSupport } from "../Viewer/objects/NodeSupport";
 import { NodeLoad } from "../Viewer/objects/NodeLoad";
-import { SettingsPane, Settings } from "../SettingsPane/SettingsPane";
+import { Settings, SettingsType } from "../Settings/Settings";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
-import { UserPane, supabase } from "../UserPane/UserPane";
+import { MyProjects, supabase } from "../MyProjects/MyProjects";
 import { EditorBar } from "../EditorBar/EditorBar";
 
 type AppProps = {
   algorithm?: string;
-  settings?: Partial<Settings>;
+  settings?: Partial<SettingsType>;
 };
 
 export function App(props: AppProps) {
-  const defaultSettings: Settings = {
+  const defaultSettings: SettingsType = {
     nodes: true,
     elements: true,
     nodesIndices: false,
@@ -35,7 +35,7 @@ export function App(props: AppProps) {
   };
   const [algorithm, setAlgorithm] = createSignal("");
   const [initAlgorithm, setInitAlgorithm] = createSignal("");
-  const [settings, setSettings] = createStore<Settings>(defaultSettings);
+  const [settings, setSettings] = createStore<SettingsType>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
@@ -285,14 +285,14 @@ export const results = analyzing(nodes, elements, assignments);`;
         </Show>
       </Viewer>
 
-      <SettingsPane
+      <Settings
         settings={Object.assign({}, settings)}
         onChange={(ev) => {
           setSettings(ev.presetKey as any, ev.value);
         }}
       />
 
-      <UserPane />
+      <MyProjects />
     </Layouter>
   );
 }
