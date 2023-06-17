@@ -32,7 +32,7 @@ export const MyProjects = () => {
 
   return (
     <div class="dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-xs">
+      <label tabindex="0" class="btn btn-xs btn-neutral">
         <span>My Projects</span>
         <svg
           width="8px"
@@ -46,7 +46,7 @@ export const MyProjects = () => {
       </label>
       <div
         tabindex="0"
-        class="z-50 dropdown-content card card-compact w-80 p-2 bg-base-100 text-primary-content"
+        class="z-50 dropdown-content card card-compact w-80 p-2 bg-base-100 "
       >
         <div class="card-body">
           <Show
