@@ -65,7 +65,6 @@ export function Projects(props: ProjectsProps) {
 
   return (
     <>
-      <p>Projects</p>
       <div class="overflow-x-auto max-h-44">
         <table class="table table-sm">
           <tbody>
@@ -95,17 +94,17 @@ export function Projects(props: ProjectsProps) {
           </tbody>
         </table>
       </div>
-      <div class="flex justify-between mt-3">
+      <div class="flex justify-between">
         <form onSubmit={addProject}>
           <input
-            class="input input-sm input-bordered w-11/12"
+            class="input input-sm border-primary w-11/12"
             type="text"
             placeholder="Add new project"
             value={projectTitle()}
             onInput={(e) => setProjectTitle(e.currentTarget.value)}
           />
         </form>
-        <a class="btn btn-xs mt-1 btn-neutral" onclick={logout}>
+        <a class="btn btn-xs btn-neutral mt-1 " onclick={logout}>
           Logout
         </a>
       </div>
