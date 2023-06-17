@@ -65,7 +65,7 @@ export function Projects(props: ProjectsProps) {
 
   return (
     <>
-      <p>Projects List</p>
+      <p>Projects</p>
       <div class="overflow-x-auto max-h-44">
         <table class="table table-sm">
           <tbody>
@@ -74,7 +74,6 @@ export function Projects(props: ProjectsProps) {
                 <tr class="group/item">
                   <td class="w-4/5">
                     <a
-                      class="btn btn-sm btn-neutral"
                       href={`./?user_id=${project().user_id}&slug=${
                         project().slug
                       }`}
@@ -82,12 +81,12 @@ export function Projects(props: ProjectsProps) {
                       {project().title}
                     </a>
                   </td>
-                  <td class="w-1/5">
+                  <td class="w-1/5 act">
                     <a
-                      class="btn btn-xs btn-error invisible group-hover/item:visible "
+                      class="btn btn-xs invisible group-hover/item:visible "
                       onclick={() => deleteProject(project().id)}
                     >
-                      delete
+                      🗑
                     </a>
                   </td>
                 </tr>
@@ -106,7 +105,7 @@ export function Projects(props: ProjectsProps) {
             onInput={(e) => setProjectTitle(e.currentTarget.value)}
           />
         </form>
-        <a class="btn btn-sm btn-neutral" onclick={logout}>
+        <a class="btn btn-xs mt-1 btn-neutral" onclick={logout}>
           Logout
         </a>
       </div>

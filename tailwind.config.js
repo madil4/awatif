@@ -6,7 +6,14 @@ module.exports = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    base: false,
     logs: false,
+    themes: [
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["[data-theme=dark]"],
+          primary: "#3f8ba3",
+        },
+      },
+    ],
   },
 };

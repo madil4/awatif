@@ -52,7 +52,7 @@ export const Layouter: ParentComponent = (props: any) => {
         {c[1]}
       </div>
       <div
-        class="bg-[#cbd5e0] w-[2px] cursor-ew-resize"
+        class="bg-primary w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
       <div class="relative flex-1 min-w-[200px]">
