@@ -1,0 +1,54 @@
+{
+  "name": "awatif",
+  "version": "0.2.0",
+  "description": "The First Online Parametric Structural Engineering Software",
+  "scripts": {
+    "dev": "vite dev --open",
+    "build": "vite build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic --exit-zero-on-changes"
+  },
+  "main": "./src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awatif-software/awatif.git"
+  },
+  "keywords": [
+    "awatif",
+    "parametric",
+    "computational",
+    "structural",
+    "engineering",
+    "design",
+    "fem",
+    "bim"
+  ],
+  "author": "Mohamed Adil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/awatif-software/awatif/issues"
+  },
+  "homepage": "https://awatif.co",
+  "devDependencies": {
+    "@storybook/html-vite": "^7.0.20",
+    "@tweakpane/core": "^1.1.8",
+    "@types/three": "^0.152.0",
+    "autoprefixer": "^10.4.14",
+    "chromatic": "^6.17.2",
+    "daisyui": "^3.1.0",
+    "postcss": "^8.4.23",
+    "storybook": "^7.0.20",
+    "tailwindcss": "^3.3.2",
+    "vite": "^4.2.1",
+    "vite-plugin-solid": "^2.6.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.24.0",
+    "mathjs": "^11.8.0",
+    "monaco-editor": "^0.38.0",
+    "solid-js": "^1.6.15",
+    "three": "^0.152.2",
+    "tweakpane": "^3.1.9"
+  }
+}
