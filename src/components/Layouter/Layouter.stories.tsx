@@ -10,8 +10,7 @@ export default {
       <div>EditorBar</div>
       <div>Editor</div>
       <div>Viewer</div>
-      <div>SettingsPane</div>
-      <div>UserPane</div>
+      <div>Setting</div>
     </Layouter>
   ),
 } as Meta;

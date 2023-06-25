@@ -58,7 +58,6 @@ export const Layouter: ParentComponent = (props: any) => {
       <div class="relative flex-1 min-w-[200px]">
         {c[2]}
         {c[3]}
-        {c[4]}
       </div>
     </div>
   );
