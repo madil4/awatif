@@ -12,8 +12,9 @@ import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { Settings, SettingsType } from "../Settings/Settings";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
-import { MyProjects, supabase } from "../MyProjects/MyProjects";
+import { supabase } from "../MyProjects/MyProjects";
 import { EditorBar } from "../EditorBar/EditorBar";
+import { Parameters, ParametersType } from "../Parameters/Parameters";
 
 type AppProps = {
   algorithm?: string;
@@ -45,6 +46,7 @@ export function App(props: AppProps) {
   const [nodeResults, setNodeResults] = createSignal([]);
   const [error, setError] = createSignal(undefined);
   const [projectId, setProjectId] = createSignal(undefined);
+  const [parameters, setParameters] = createSignal<ParametersType>({});
 
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
@@ -73,6 +75,7 @@ export function App(props: AppProps) {
             setNodeLoads(e.data.nodeLoads);
             setNodeResults(e.data.nodeResults);
             setElementResults(e.data.elementResults);
+            setParameters(e.data.parameters);
           });
         }
       };
@@ -300,6 +303,8 @@ export const results = analyzing(nodes, elements, assignments);`;
           setSettings(ev.presetKey as any, ev.value);
         }}
       />
+
+      <Parameters parameters={parameters()} />
     </Layouter>
   );
 }
