@@ -146,7 +146,7 @@ export const assignments = [
     support: [true, true, true]
   },
   {
-    node: 1,
+    node: 2,
     support: [true, true, true]
   },
   {
