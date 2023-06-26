@@ -92,7 +92,7 @@ export function App(props: AppProps) {
 
   // on parameter change
   function onParameterChange(e: any) {
-    importWorker.postMessage({ key: e.target.label, value: e.value });
+    importWorker.postMessage({ key: e.presetKey, value: e.value });
   }
 
   // on settings element results change
