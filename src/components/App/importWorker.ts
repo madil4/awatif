@@ -14,6 +14,7 @@ self.onmessage = async (ev) => {
   const nodeLoads: any = [];
   const nodeResults: any = [];
   const elementResults: any = [];
+  const parameters = module.parameters || {};
 
   if (module.assignments) {
     (module.assignments as []).forEach((a) => {
@@ -36,6 +37,7 @@ self.onmessage = async (ev) => {
     nodeLoads,
     nodeResults,
     elementResults,
+    parameters,
   });
 };
 

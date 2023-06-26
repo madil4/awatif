@@ -172,6 +172,25 @@ export const results = analyzing(nodes, elements, assignments);`,
   },
 };
 
+export const Parameters: StoryObj<Args> = {
+  args: {
+    algorithm: `export const parameters = {
+  width: {
+    value: 5,
+    min: 1,
+    max: 10,
+    step: 1
+  },
+  height: {
+    value: 50,
+    min: 0,
+    max: 100,
+    step: 5
+  }
+}`,
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,

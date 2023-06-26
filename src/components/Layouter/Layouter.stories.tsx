@@ -11,6 +11,7 @@ export default {
       <div>Editor</div>
       <div>Viewer</div>
       <div>Setting</div>
+      <div>Parameters</div>
     </Layouter>
   ),
 } as Meta;
