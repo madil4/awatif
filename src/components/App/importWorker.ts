@@ -1,43 +1,54 @@
-self.onmessage = async (ev) => {
-  let module = [];
+let parameters: any;
+let onParameterChange: any;
 
-  try {
-    module = await import(createURL(ev.data));
-  } catch (e) {
-    self.postMessage({ error: e });
-    return;
+self.onmessage = async (e) => {
+  let module: any;
+  let onChangeResults: any;
+
+  if (e.data.key) {
+    parameters[e.data.key].value = e.data.value;
+    onChangeResults = onParameterChange(parameters);
+  } else {
+    try {
+      module = await import(createURL(e.data));
+    } catch (e) {
+      self.postMessage({ error: e });
+      return;
+    }
+
+    parameters = module.parameters || {};
+    onParameterChange = module.onParameterChange || undefined;
+
+    if (onParameterChange) onChangeResults = onParameterChange(parameters);
   }
 
-  const nodes = module.nodes || [];
-  const elements = module.elements || [];
-  const nodeSupports: any = [];
-  const nodeLoads: any = [];
-  const nodeResults: any = [];
-  const elementResults: any = [];
-  const parameters = module.parameters || {};
+  const nodes = onChangeResults?.nodes || module.nodes || [];
+  const elements = onChangeResults?.elements || module.elements || [];
+  const assignments = onChangeResults?.assignments || module.assignments || [];
+  const results = onChangeResults?.results || module.results || [];
 
-  if (module.assignments) {
-    (module.assignments as []).forEach((a) => {
-      if ("support" in a) nodeSupports.push(a);
-      if ("load" in a) nodeLoads.push(a);
-    });
-  }
+  const nodeSupports: any[] = [];
+  const nodeLoads: any[] = [];
+  assignments?.forEach((a: any) => {
+    if ("support" in a) nodeSupports.push(a);
+    if ("load" in a) nodeLoads.push(a);
+  });
 
-  if (module.results) {
-    (module.results as []).forEach((a) => {
-      if ("node" in a) nodeResults.push(a);
-      if ("element" in a) elementResults.push(a);
-    });
-  }
+  const nodeResults: any[] = [];
+  const elementResults: any[] = [];
+  results?.forEach((a: any) => {
+    if ("node" in a) nodeResults.push(a);
+    if ("element" in a) elementResults.push(a);
+  });
 
   self.postMessage({
+    parameters: e.data.key ? undefined : parameters,
     nodes,
     elements,
     nodeSupports,
     nodeLoads,
     nodeResults,
     elementResults,
-    parameters,
   });
 };
 
