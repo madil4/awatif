@@ -8,7 +8,7 @@ export const Default: StoryObj<Args> = {};
 
 export const InvalidAlgorithm: StoryObj<Args> = {
   args: {
-    algorithm: "invalid text",
+    algorithm: "invalid  text",
   },
 };
 
