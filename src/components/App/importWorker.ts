@@ -16,16 +16,16 @@ self.onmessage = async (e) => {
       return;
     }
 
-    parameters = module.parameters || {};
-    onParameterChange = module.onParameterChange || undefined;
+    parameters = module?.parameters || {};
+    onParameterChange = module?.onParameterChange || undefined;
 
     if (onParameterChange) onChangeResults = onParameterChange(parameters);
   }
 
-  const nodes = onChangeResults?.nodes || module.nodes || [];
-  const elements = onChangeResults?.elements || module.elements || [];
-  const assignments = onChangeResults?.assignments || module.assignments || [];
-  const results = onChangeResults?.results || module.results || [];
+  const nodes = onChangeResults?.nodes || module?.nodes || [];
+  const elements = onChangeResults?.elements || module?.elements || [];
+  const assignments = onChangeResults?.assignments || module?.assignments || [];
+  const results = onChangeResults?.results || module?.results || [];
 
   const nodeSupports: any[] = [];
   const nodeLoads: any[] = [];
