@@ -174,20 +174,60 @@ export const results = analyzing(nodes, elements, assignments);`,
 
 export const Parameters: StoryObj<Args> = {
   args: {
-    algorithm: `export const parameters = {
-  width: {
+    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
+
+export const parameters = {
+  xPosition: {
     value: 5,
     min: 1,
-    max: 10,
+    max: 50,
     step: 1
   },
-  height: {
-    value: 50,
+  zPosition: {
+    value: 5,
     min: 0,
-    max: 100,
-    step: 5
+    max: 50,
+    step: 1
   }
-}`,
+}
+
+export const onParameterChange = (parameters) => {
+  const nodes = [
+    [0, 0, 0],
+    [parameters.xPosition.value, 0, parameters.zPosition.value],
+    [0, 0, 5]];
+  const elements = [[0, 1], [1, 2]]
+
+  const assignments = [
+    {
+      node: 0,
+      support: [true, true, true]
+    },
+    {
+      node: 2,
+      support: [true, true, true]
+    },
+    {
+      node: 1,
+      load: [0, 0, -10]
+    },
+    {
+      element: 0,
+      area: 1.2,
+      elasticity: 200
+    },
+    {
+      element: 1,
+      area: 1.2,
+      elasticity: 200
+    }
+  ]
+
+  const results = analyzing(nodes, elements, assignments);
+
+  return { nodes, elements, assignments, results }
+}
+`,
   },
 };
 

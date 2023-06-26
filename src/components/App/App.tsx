@@ -15,6 +15,7 @@ import { NodeResult } from "../Viewer/objects/NodeResults";
 import { supabase } from "../MyProjects/MyProjects";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
+import { TpChangeEvent } from "tweakpane";
 
 type AppProps = {
   algorithm?: string;
@@ -68,6 +69,8 @@ export function App(props: AppProps) {
           setError(e.data.error);
         } else {
           batch(() => {
+            if (e.data.parameters) setParameters(e.data.parameters);
+
             setError(undefined);
             setUndeformedNodes(e.data.nodes);
             setElements(e.data.elements);
@@ -75,7 +78,6 @@ export function App(props: AppProps) {
             setNodeLoads(e.data.nodeLoads);
             setNodeResults(e.data.nodeResults);
             setElementResults(e.data.elementResults);
-            setParameters(e.data.parameters);
           });
         }
       };
@@ -87,6 +89,11 @@ export function App(props: AppProps) {
           .eq("id", projectId());
     })
   );
+
+  // on parameter change
+  function onParameterChange(e: any) {
+    importWorker.postMessage({ key: e.target.label, value: e.value });
+  }
 
   // on settings element results change
   createEffect(
@@ -304,7 +311,10 @@ export const results = analyzing(nodes, elements, assignments);`;
         }}
       />
 
-      <Parameters parameters={parameters()} />
+      <Parameters
+        parameters={parameters()}
+        onChange={(e) => onParameterChange(e)}
+      />
     </Layouter>
   );
 }

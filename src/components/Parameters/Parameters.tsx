@@ -1,5 +1,5 @@
 import { createEffect } from "solid-js";
-import { Pane } from "tweakpane";
+import { Pane, TpChangeEvent } from "tweakpane";
 
 type numberSlider = {
   value: number;
@@ -11,6 +11,7 @@ export type ParametersType = Record<string, numberSlider>;
 
 export type SettingsProps = {
   parameters: ParametersType;
+  onChange?: (ev: TpChangeEvent<unknown>) => void;
 };
 
 export function Parameters(props: SettingsProps) {
@@ -33,6 +34,10 @@ export function Parameters(props: SettingsProps) {
         })
       );
     });
+  });
+
+  pane.on("change", (ev) => {
+    if (props.onChange) props.onChange(ev);
   });
 
   return <div class="absolute bottom-0 right-5 w-[19rem]">{pane.element}</div>;
