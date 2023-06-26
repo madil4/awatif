@@ -1,13 +1,14 @@
 import { createEffect } from "solid-js";
 import { Pane, TpChangeEvent } from "tweakpane";
 
-type numberSlider = {
-  value: number;
-  min: number;
-  max: number;
-  step: number;
+type Parameter = {
+  value: unknown;
+  min?: number;
+  max?: number;
+  step?: number;
+  label?: string;
 };
-export type ParametersType = Record<string, numberSlider>;
+export type ParametersType = Record<string, Parameter>;
 
 export type SettingsProps = {
   parameters: ParametersType;
@@ -24,13 +25,14 @@ export function Parameters(props: SettingsProps) {
     inputs.forEach((i) => pane.remove(i));
 
     Object.keys(props.parameters).forEach((key) => {
-      const slider = props.parameters[key];
+      const parameter = props.parameters[key];
       inputs.push(
-        pane.addInput(slider, "value", {
-          min: slider.min,
-          max: slider.max,
-          step: slider.step,
-          label: key,
+        pane.addInput(parameter, "value", {
+          min: parameter.min,
+          max: parameter.max,
+          step: parameter.step,
+          label: parameter.label || key,
+          presetKey: key,
         })
       );
     });

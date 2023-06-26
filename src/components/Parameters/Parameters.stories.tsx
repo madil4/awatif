@@ -19,6 +19,10 @@ export default {
           min: 0,
           max: 100,
           step: 5,
+          label: "another height",
+        },
+        toggle: {
+          value: true,
         },
       }}
     />
