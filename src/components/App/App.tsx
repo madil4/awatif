@@ -135,46 +135,60 @@ export function App(props: AppProps) {
   );
 
   async function setInitAlgorithmOnInit() {
-    const defaultAlgorithm = `import { analyzing } from 'https://unpkg.com/awatif';
+    const defaultAlgorithm = `// Default Template, customize to begin 
+import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[-3, 1, 3], [3, 1, 3], [0, -3, 3], [0, 0, 0]];
-export const elements = [[0, 3], [2, 3], [1, 3]]
+export const parameters = {
+  xPosition: {
+    value: -3,
+    min:-3,
+    max:2,
+    label: "support xPosition"
+  }
+}
 
-export const assignments = [
-  {
-    node: 0,
-    support: [true, true, true]
-  },
-  {
-    node: 1,
-    support: [true, true, true]
-  },
-  {
-    node: 2,
-    support: [true, true, true]
-  },
-  {
-    element: 0,
-    area: 1.2,
-    elasticity: 200
-  },
-  {
-    element: 1,
-    area: 1.2,
-    elasticity: 200
-  },
-  {
-    element: 2,
-    area: 1.2,
-    elasticity: 200
-  },
-  {
-    node: 3,
-    load: [0, 0, -250]
-  },
-]
+export function onParameterChange(parameters) {
+  const nodes = [[parameters.xPosition.value, 1, 3], [3, 1, 3], [0, -3, 3], [0, 0, 0]];
+  const elements = [[0, 3], [2, 3], [1, 3]]
 
-export const results = analyzing(nodes, elements, assignments);`;
+  const assignments = [
+    {
+      node: 0,
+      support: [true, true, true]
+    },
+    {
+      node: 1,
+      support: [true, true, true]
+    },
+    {
+      node: 2,
+      support: [true, true, true]
+    },
+    {
+      element: 0,
+      area: 1.2,
+      elasticity: 200
+    },
+    {
+      element: 1,
+      area: 1.2,
+      elasticity: 200
+    },
+    {
+      element: 2,
+      area: 1.2,
+      elasticity: 200
+    },
+    {
+      node: 3,
+      load: [0, 0, -250]
+    },
+  ]
+
+  const results = analyzing(nodes, elements, assignments);
+
+  return {nodes,elements,assignments,results}
+}`;
     const urlParams = new URL(window.location.href).searchParams;
     let algorithmFromURL = "";
 
