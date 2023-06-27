@@ -1,12 +1,19 @@
-import { render } from "solid-js/web";
-import "../src/index.css";
+/* @refresh reload */
+/**
+ * Don't forget the line above for HMR!
+ *
+ * Note: for some reason HMR breaks if you change .stories file,
+ * however reloading the page fixes this issue
+ */
 
-let disposeStory;
+import { render } from "solid-js/web";
+
 export const decorators = [
   (Story) => {
-    disposeStory?.();
     const solidRoot = document.createElement("div");
-    disposeStory = render(Story, solidRoot);
+
+    render(Story, solidRoot);
+
     return solidRoot;
   },
 ];
@@ -20,5 +27,4 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  layout: "fullscreen",
 };
