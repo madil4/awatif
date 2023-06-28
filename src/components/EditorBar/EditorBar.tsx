@@ -13,7 +13,7 @@ export function EditorBar(props: EditorBarProps) {
           href="https://docs.google.com/forms/d/e/1FAIpQLSc9k3Wv6jbPreGL39C7-0piytRyO9AoQlDvXoonI-sBf_M0EQ/viewform"
           target="_blank"
         >
-          📢 Feedback?
+          In Beta, Feedback?
         </a>
       </div>
       <div class="text-l ml-auto mr-1 mb-[0.2rem]">
