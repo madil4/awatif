@@ -45,7 +45,7 @@ export const Layouter: ParentComponent = (props: any) => {
   return (
     <div class="flex flex-col-reverse md:flex-row" ref={container!}>
       <div
-        class="flex flex-col w-full md:w-1/2 min-w-[200px] min-h-[200px]"
+        class="flex flex-col w-full md:w-1/2 min-w-[350px] min-h-[200px]"
         ref={leftView!}
       >
         {c[0]}
@@ -55,7 +55,7 @@ export const Layouter: ParentComponent = (props: any) => {
         class="bg-primary w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
-      <div class="relative flex-1 min-w-[200px]">
+      <div class="relative flex-1 min-w-[350px]">
         {c[2]}
         {c[3]}
         {c[4]}
