@@ -21,7 +21,12 @@ export function Projects(props: ProjectsProps) {
   async function getProjects() {
     if (props.testingProjects) return;
 
-    let { data, error } = await supabase.from("projects").select("*");
+    const user = await supabase.auth.getUser();
+
+    let { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("user_id", user.data.user?.id);
     if (data) {
       setProjects(data as Project[]);
     }
