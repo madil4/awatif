@@ -7,7 +7,12 @@ self.onmessage = async (e) => {
 
   if (e.data.key) {
     parameters[e.data.key].value = e.data.value;
-    onChangeResults = onParameterChange(parameters);
+    try {
+      onChangeResults = onParameterChange(parameters);
+    } catch (e) {
+      self.postMessage({ error: e });
+      return;
+    }
   } else {
     try {
       module = await import(createURL(e.data));
@@ -19,7 +24,14 @@ self.onmessage = async (e) => {
     parameters = module?.parameters || {};
     onParameterChange = module?.onParameterChange || undefined;
 
-    if (onParameterChange) onChangeResults = onParameterChange(parameters);
+    if (onParameterChange) {
+      try {
+        onChangeResults = onParameterChange(parameters);
+      } catch (e) {
+        self.postMessage({ error: e });
+        return;
+      }
+    }
   }
 
   const nodes = onChangeResults?.nodes || module?.nodes || [];

@@ -1,3 +1,4 @@
+import { Show } from "solid-js";
 import { MyProjects } from "../MyProjects/MyProjects";
 import { Upgrade } from "../Upgrade/Upgrade";
 
@@ -20,6 +21,12 @@ export function EditorBar(props: EditorBarProps) {
         </div>
       </div>
       <div class="flex flex-row space-x-2 mr-2 mt-[0.15rem]">
+        {/* @ts-ignore */}
+        <Show when={props.error?.message === "er"}>
+          <div class="badge badge-sm badge-warning mt-[0.35rem]">
+            Reached 20 free element limit. Upgrade to Pro
+          </div>
+        </Show>
         <div class="mt-[0.2rem]">
           {props.error ? (
             <>
