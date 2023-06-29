@@ -5,7 +5,7 @@ import { Projects } from "./components/Projects";
 
 export const supabase = createClient(
   "https://cayyihbcbshvvffjtbky.supabase.co",
-  import.meta.env.VITE_API_KEY || "dummy-key"
+  import.meta.env.VITE_SUPABASE_KEY || "dummy-key"
 );
 
 export const MyProjects = () => {

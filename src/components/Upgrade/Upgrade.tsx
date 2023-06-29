@@ -3,7 +3,7 @@ import { Show, createSignal } from "solid-js";
 
 export const supabase = createClient(
   "https://cayyihbcbshvvffjtbky.supabase.co",
-  import.meta.env.VITE_API_KEY || "dummy-key"
+  import.meta.env.VITE_SUPABASE_KEY || "dummy-key"
 );
 
 export function Upgrade() {
