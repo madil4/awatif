@@ -17,8 +17,8 @@ serve(async (request) => {
         quantity: 1,
       },
     ],
-    success_url: "https://app.awatif.co/?success=ture",
-    cancel_url: "https://app.awatif.co/?cancel=false",
+    success_url: "https://app.awatif.co/?upgraded=ture",
+    cancel_url: "https://app.awatif.co",
   });
 
   return Response.redirect(session.url, 303);
