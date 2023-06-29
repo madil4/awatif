@@ -27,23 +27,16 @@ export function EditorBar(props: EditorBarProps) {
             Reached 20 free element limit. Upgrade to Pro
           </div>
         </Show>
-        <div class="mt-[0.2rem]">
-          {props.error ? (
-            <>
-              <div class="tooltip tooltip-bottom" data-tip={props.error}>
-                ❌
-              </div>
-            </>
-          ) : (
-            <>👌</>
-          )}
-        </div>
-        <div>
-          <Upgrade />
-        </div>
-        <div>
-          <MyProjects />
-        </div>
+        <Show when={props.error}>
+          <div
+            class="tooltip tooltip-bottom mt-[0.2rem]"
+            data-tip={props.error}
+          >
+            ❌
+          </div>
+        </Show>
+        <Upgrade />
+        <MyProjects />
       </div>
     </div>
   );
