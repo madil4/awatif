@@ -5,6 +5,9 @@ self.onmessage = async (e) => {
   let module: any;
   let onChangeResults: any;
 
+  // @ts-ignore
+  self.$k = e.data.$k;
+
   if (e.data.key) {
     parameters[e.data.key].value = e.data.value;
     try {
@@ -15,7 +18,7 @@ self.onmessage = async (e) => {
     }
   } else {
     try {
-      module = await import(createURL(e.data));
+      module = await import(createURL(e.data.algorithm));
     } catch (e) {
       self.postMessage({ error: e });
       return;
