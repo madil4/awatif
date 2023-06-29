@@ -53,7 +53,7 @@ export function Upgrade() {
               />
             }
           >
-            <Plans />
+            <Plans email={session()?.user.email || ""} />
           </Show>
         </form>
         <form method="dialog" class="modal-backdrop">
@@ -64,7 +64,7 @@ export function Upgrade() {
   );
 }
 
-function Plans() {
+function Plans(props: { email: string }) {
   return (
     <>
       <h3 class="font-bold text-lg mb-5">Your plan</h3>
@@ -86,19 +86,23 @@ function Plans() {
             <li>✅ Unlimited projects</li>
             <li>✅ Unlimited elements</li>
           </ul>
-          <a class="btn btn-primary btn-wide">Upgrade plan</a>
+          <form
+            action="https://cayyihbcbshvvffjtbky.supabase.co/functions/v1/stripe-checkout"
+            // @ts-ignore
+            method="POST"
+          >
+            <input type="hidden" name="email" value={props.email} />
+            <button class="btn btn-primary btn-wide" type="submit">
+              Upgrade plan
+            </button>
+          </form>
         </div>
       </div>
     </>
   );
 }
 
-type LoginProps = {
-  onGoogleClick: () => void;
-  onAzureClick: () => void;
-};
-
-function Login(props: LoginProps) {
+function Login(props: { onGoogleClick: () => void; onAzureClick: () => void }) {
   return (
     <>
       <h3 class="font-bold text-lg mb-5">Login First</h3>
