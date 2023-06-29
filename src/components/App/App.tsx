@@ -15,7 +15,6 @@ import { NodeResult } from "../Viewer/objects/NodeResults";
 import { supabase } from "../MyProjects/MyProjects";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
-import { TpChangeEvent } from "tweakpane";
 
 type AppProps = {
   algorithm?: string;
@@ -48,6 +47,7 @@ export function App(props: AppProps) {
   const [error, setError] = createSignal(undefined);
   const [projectId, setProjectId] = createSignal(undefined);
   const [parameters, setParameters] = createSignal<ParametersType>({});
+  const [allow, setAllow] = createSignal("");
 
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
@@ -61,8 +61,8 @@ export function App(props: AppProps) {
 
   // on algorithm change
   createEffect(
-    on(algorithm, async () => {
-      importWorker.postMessage(algorithm());
+    on([algorithm, allow], async () => {
+      importWorker.postMessage({ algorithm: algorithm(), $k: allow() });
 
       importWorker.onmessage = (e) => {
         if (e.data.error) {
@@ -92,7 +92,7 @@ export function App(props: AppProps) {
 
   // on parameter change
   function onParameterChange(e: any) {
-    importWorker.postMessage({ key: e.presetKey, value: e.value });
+    importWorker.postMessage({ key: e.presetKey, value: e.value, $k: allow() });
   }
 
   // on settings element results change
@@ -206,6 +206,15 @@ export function onParameterChange(parameters) {
     const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
     setInitAlgorithm(algorithm);
     setAlgorithm(algorithm);
+
+    // exception to examples
+    const $k = import.meta.env.VITE_AWATIF_KEY;
+    if (
+      urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+      urlParams.get("slug") === "2d-truss"
+    ) {
+      setAllow($k);
+    }
   }
 
   setInitAlgorithmOnInit();
