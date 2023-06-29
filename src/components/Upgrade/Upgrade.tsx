@@ -67,24 +67,26 @@ export function Upgrade() {
 function Plans() {
   return (
     <>
-      <h3 class="font-bold text-lg mb-5">Your plan!</h3>
-      <div class="grid grid-cols-1 gap-6 mx-auto text-center mb-16 md:grid-cols-2">
+      <h3 class="font-bold text-lg mb-5">Your plan</h3>
+      <div class="grid grid-cols-1 gap-6 mx-auto text-center md:grid-cols-2">
         <div class="overflow-hidden border-2 border-gray-100 rounded-md p-5">
           <p class="mb-4 text-lg font-medium text-gray-500">BASIC</p>
           <p class="text-4xl font-bold mb-5">Free</p>
-          <ul class="space-y-1">
-            <li>For learning and evaluation</li>
-            <li>All Pro features, but limited to 20 elements</li>
+          <ul class="text-left space-y-1 mb-5">
+            <li>✔️ Limit of 10 free projects</li>
+            <li>✔️ Limit of 20 elements</li>
           </ul>
+          <a class="btn btn-disabled btn-wide">Your current plan</a>
         </div>
 
         <div class="overflow-hidden border-2 border-gray-100 rounded-md p-5">
           <p class="mb-4 text-lg font-medium text-gray-500">PRO</p>
           <p class="text-4xl font-bold mb-5">$25/m</p>
-          <ul class="space-y-1">
-            <li>For day-to-day structural design</li>
-            <li>Bar and frame elements</li>
+          <ul class="text-left space-y-1 mb-5">
+            <li>✅ Unlimited projects</li>
+            <li>✅ Unlimited elements</li>
           </ul>
+          <a class="btn btn-primary btn-wide">Upgrade plan</a>
         </div>
       </div>
     </>
@@ -99,7 +101,7 @@ type LoginProps = {
 function Login(props: LoginProps) {
   return (
     <>
-      <h3 class="font-bold text-lg mb-5">Please Login First</h3>
+      <h3 class="font-bold text-lg mb-5">Login First</h3>
       <div class="flex flex-col space-y-3 w-2/3 mx-auto">
         <a class="btn btn-neutral" onclick={props.onGoogleClick}>
           <svg
