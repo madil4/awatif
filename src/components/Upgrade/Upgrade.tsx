@@ -1,5 +1,5 @@
 import { Session, createClient } from "@supabase/supabase-js";
-import { Show, createSignal } from "solid-js";
+import { Show, createSignal, onMount } from "solid-js";
 
 export const supabase = createClient(
   "https://cayyihbcbshvvffjtbky.supabase.co",
@@ -60,6 +60,8 @@ export function Upgrade() {
           <button />
         </form>
       </dialog>
+
+      <Upgraded />
     </>
   );
 }
@@ -134,5 +136,31 @@ function Login(props: { onGoogleClick: () => void; onAzureClick: () => void }) {
         </a>
       </div>
     </>
+  );
+}
+
+function Upgraded() {
+  onMount(() => {
+    const urlParams = new URL(window.location.href).searchParams;
+    if (urlParams.get("upgraded")) {
+      // @ts-ignore
+      my_modal_3.showModal();
+    }
+  });
+
+  return (
+    <dialog id="my_modal_3" class="modal">
+      <form method="dialog" class="modal-box w-11/12 max-w-2xl">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 outline-none">
+          ✕
+        </button>
+
+        <h3 class="font-bold text-lg mb-5">Subscription succeeded 🎉</h3>
+        <p>Now you can enjoy the full potentials of Awatif</p>
+      </form>
+      <form method="dialog" class="modal-backdrop">
+        <button />
+      </form>
+    </dialog>
   );
 }
