@@ -7,14 +7,17 @@ export const supabase = createClient(
 );
 
 export function Upgrade() {
+  const redirectTo =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:4600/"
+      : "https://app.awatif.co/";
+
   const [session, setSession] = createSignal<Session | null>();
 
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: "https://app.awatif.co/?app=123",
-      },
+      options: { redirectTo },
     });
   }
 
@@ -22,6 +25,7 @@ export function Upgrade() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "azure",
       options: {
+        redirectTo,
         scopes: "email",
       },
     });
