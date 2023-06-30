@@ -145,11 +145,17 @@ export const parameters = {
     min:-3,
     max:2,
     label: "support xPosition"
+  },
+  yPosition: {
+    value: 1,
+    min:-3,
+    max:2,
+    label: "support yPosition"
   }
 }
 
 export function onParameterChange(parameters) {
-  const nodes = [[parameters.xPosition.value, 1, 3], [3, 1, 3], [0, -3, 3], [0, 0, 0]];
+  const nodes = [[parameters.xPosition.value, parameters.yPosition.value, 3], [3, 1, 3], [0, -3, 3], [0, 0, 0]];
   const elements = [[0, 3], [2, 3], [1, 3]]
 
   const assignments = [
