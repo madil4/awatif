@@ -1,9 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe?target=deno";
 
-const stripe = Stripe(Deno.env.get("STRIPE_API_KEY"));
+const stripe = Stripe(Deno.env.get("STRIPE_API_KEY_TEST"));
 
-console.log(`Stripe-checkout function initialized`);
+console.log(`Stripe-checkout-test function initialized`);
 
 serve(async (request) => {
   const body = await request.formData();
@@ -17,8 +17,8 @@ serve(async (request) => {
         quantity: 1,
       },
     ],
-    success_url: "https://app.awatif.co",
-    cancel_url: "https://app.awatif.co",
+    success_url: "http://localhost:4600",
+    cancel_url: "http://localhost:4600",
   });
 
   console.log("checkout url created");
