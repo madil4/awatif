@@ -4,6 +4,7 @@ import { Upgrade } from "../Upgrade/Upgrade";
 
 type EditorBarProps = {
   error?: string;
+  userPlan?: string;
 };
 
 export function EditorBar(props: EditorBarProps) {
@@ -35,7 +36,9 @@ export function EditorBar(props: EditorBarProps) {
             ❌
           </div>
         </Show>
-        <Upgrade />
+        <Show when={props.userPlan === "free"}>
+          <Upgrade />
+        </Show>
         <MyProjects />
       </div>
     </div>

@@ -48,6 +48,7 @@ export function App(props: AppProps) {
   const [projectId, setProjectId] = createSignal(undefined);
   const [parameters, setParameters] = createSignal<ParametersType>({});
   const [allow, setAllow] = createSignal("");
+  const [userPlan, setUserPlan] = createSignal("");
 
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
@@ -207,11 +208,14 @@ export function onParameterChange(parameters) {
     setInitAlgorithm(algorithm);
     setAlgorithm(algorithm);
 
-    // exception to examples
+    // exception to limits
+    const userPhone = (await supabase.auth.getUser()).data.user?.phone;
+    setUserPlan(userPhone ? "pro" : "free");
     const $k = import.meta.env.VITE_AWATIF_KEY;
     if (
-      urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-      urlParams.get("slug") === "2d-truss"
+      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+        urlParams.get("slug") === "2d-truss") ||
+      userPlan() === "pro"
     ) {
       setAllow($k);
     }
@@ -221,7 +225,7 @@ export function onParameterChange(parameters) {
 
   return (
     <Layouter>
-      <EditorBar error={error()} />
+      <EditorBar error={error()} userPlan={userPlan()} />
 
       <Editor
         text={initAlgorithm()}
