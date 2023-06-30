@@ -69,11 +69,27 @@ export function Upgrade() {
 }
 
 function Plans(props: { email: string }) {
+  const checkoutURL =
+    import.meta.env.MODE === "development"
+      ? "https://cayyihbcbshvvffjtbky.supabase.co/functions/v1/stripe-checkout-test"
+      : "https://cayyihbcbshvvffjtbky.supabase.co/functions/v1/stripe-checkout";
+  const prices: { monthly: string; annually: string } =
+    import.meta.env.MODE === "development"
+      ? {
+          monthly: "price_1NOiZwJwIWdjwnrnNgZRoxv6",
+          annually: "price_1NOiamJwIWdjwnrn6VVlu1DA",
+        }
+      : {
+          monthly: "price_1NMd3SJwIWdjwnrnd1wxUXjf",
+          annually: "price_1NOj4nJwIWdjwnrnPMXi0Ozo",
+        };
+
   const [annual, setAnnual] = createSignal(false);
 
   const toggleAnnual = () => {
     setAnnual((v) => !v);
   };
+
   return (
     <>
       <div class="flex flex-row justify-between">
@@ -106,7 +122,7 @@ function Plans(props: { email: string }) {
             <li>✅ Unlimited elements</li>
           </ul>
           <form
-            action="https://cayyihbcbshvvffjtbky.supabase.co/functions/v1/stripe-checkout"
+            action={checkoutURL}
             // @ts-ignore
             method="POST"
           >
@@ -114,11 +130,7 @@ function Plans(props: { email: string }) {
             <input
               type="hidden"
               name="price"
-              value={
-                annual()
-                  ? "price_1NOexeJwIWdjwnrn9YosYWXm"
-                  : "price_1NO5QpJwIWdjwnrnn4NGJ6z0"
-              }
+              value={annual() ? prices.annually : prices.monthly}
             />
             <button class="btn btn-primary btn-wide" type="submit">
               Upgrade plan

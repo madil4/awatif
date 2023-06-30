@@ -2,10 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const stripe = Stripe(Deno.env.get("STRIPE_API_KEY"));
+const stripe = Stripe(Deno.env.get("STRIPE_API_KEY_TEST"));
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
-console.log(`Stripe-webhook function initialized`);
+console.log(`Stripe-webhook-test function initialized`);
 
 serve(async (req) => {
   const body = await req.text();
@@ -14,7 +14,7 @@ serve(async (req) => {
     event = await stripe.webhooks.constructEventAsync(
       body,
       req.headers.get("Stripe-Signature"),
-      Deno.env.get("STRIPE_WEBHOOK_SIGNING_SECRET"),
+      Deno.env.get("STRIPE_WEBHOOK_SIGNING_SECRET_TEST"),
       undefined,
       cryptoProvider
     );
