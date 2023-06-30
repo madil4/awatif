@@ -137,7 +137,7 @@ export function App(props: AppProps) {
 
   async function setInitAlgorithmOnInit() {
     const defaultAlgorithm = `// Default Template, customize to begin 
-import { analyzing } from 'https://unpkg.com/awatif2';
+import { analyzing } from 'https://unpkg.com/awatif';
 
 export const parameters = {
   xPosition: {

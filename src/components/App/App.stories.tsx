@@ -137,7 +137,7 @@ export const results = [
 
 export const Analyzing: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'https://unpkg.com/awatif2';
+    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
@@ -174,7 +174,7 @@ export const results = analyzing(nodes, elements, assignments);`,
 
 export const Parameters: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'https://unpkg.com/awatif2';
+    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const parameters = {
   xPosition: {

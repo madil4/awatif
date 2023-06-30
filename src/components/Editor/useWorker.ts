@@ -14,7 +14,7 @@ self.MonacoEnvironment = {
 
 monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 monaco.languages.typescript.typescriptDefaults.addExtraLib(
-  `declare module 'https://unpkg.com/awatif2' {
+  `declare module 'https://unpkg.com/awatif' {
     export function analyzing(nodes: any, elements:any, assignments:any): any;
   }`
 );
