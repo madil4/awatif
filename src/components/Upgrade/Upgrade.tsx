@@ -86,7 +86,7 @@ function Plans(props: { email: string }) {
           <p class="mb-4 text-lg font-medium text-gray-500">Free</p>
           <p class="text-4xl font-bold mb-5">Free</p>
           <ul class="text-left space-y-1 mb-5">
-            <li>✔️ Limit of 10 free projects</li>
+            <li>✔️ Limit of 10 projects</li>
             <li>✔️ Limit of 20 elements</li>
           </ul>
           <a class="btn btn-disabled btn-wide">Your current plan</a>
