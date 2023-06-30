@@ -9,11 +9,17 @@ export const supabase = createClient(
 );
 
 export const MyProjects = () => {
+  const redirectTo =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:4600/"
+      : "https://app.awatif.co/";
+
   const [session, setSession] = createSignal<Session | null>();
 
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: { redirectTo },
     });
   }
 
@@ -21,6 +27,7 @@ export const MyProjects = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "azure",
       options: {
+        redirectTo,
         scopes: "email",
       },
     });
