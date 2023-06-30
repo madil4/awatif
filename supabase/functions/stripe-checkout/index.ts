@@ -13,7 +13,7 @@ serve(async (request) => {
     customer_email: body.get("email"),
     line_items: [
       {
-        price: "price_1NO5QpJwIWdjwnrnn4NGJ6z0",
+        price: body.get("price"),
         quantity: 1,
       },
     ],

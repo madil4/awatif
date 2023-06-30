@@ -65,9 +65,22 @@ export function Upgrade() {
 }
 
 function Plans(props: { email: string }) {
+  const [annual, setAnnual] = createSignal(false);
+
+  const toggleAnnual = () => {
+    setAnnual((v) => !v);
+  };
   return (
     <>
-      <h3 class="font-bold text-lg mb-5">Your plan</h3>
+      <div class="flex flex-row justify-between">
+        <h3 class="font-bold text-lg mb-5">Your plan</h3>
+        <div class="form-control mr-2">
+          <label class="label cursor-pointer">
+            <span class="label-text mr-2">Annual Plan</span>
+            <input type="checkbox" class="toggle" onclick={toggleAnnual} />
+          </label>
+        </div>
+      </div>
       <div class="grid grid-cols-1 gap-6 mx-auto text-center md:grid-cols-2">
         <div class="overflow-hidden border-2 border-gray-100 rounded-md p-5">
           <p class="mb-4 text-lg font-medium text-gray-500">BASIC</p>
@@ -81,7 +94,9 @@ function Plans(props: { email: string }) {
 
         <div class="overflow-hidden border-2 border-gray-100 rounded-md p-5">
           <p class="mb-4 text-lg font-medium text-gray-500">PRO</p>
-          <p class="text-4xl font-bold mb-5">$25/m</p>
+          <p class="text-4xl font-bold mb-5">
+            {annual() ? <>$250/y</> : <>$25/m</>}
+          </p>
           <ul class="text-left space-y-1 mb-5">
             <li>✅ Unlimited projects</li>
             <li>✅ Unlimited elements</li>
@@ -92,6 +107,15 @@ function Plans(props: { email: string }) {
             method="POST"
           >
             <input type="hidden" name="email" value={props.email} />
+            <input
+              type="hidden"
+              name="price"
+              value={
+                annual()
+                  ? "price_1NOexeJwIWdjwnrn9YosYWXm"
+                  : "price_1NO5QpJwIWdjwnrnn4NGJ6z0"
+              }
+            />
             <button class="btn btn-primary btn-wide" type="submit">
               Upgrade plan
             </button>
