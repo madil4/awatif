@@ -17,7 +17,7 @@ serve(async (request) => {
         quantity: 1,
       },
     ],
-    success_url: "https://app.awatif.co/?upgraded=ture",
+    success_url: "https://app.awatif.co/",
     cancel_url: "https://app.awatif.co",
   });
 
