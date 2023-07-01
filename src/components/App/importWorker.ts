@@ -40,7 +40,8 @@ self.onmessage = async (e) => {
   const nodes = onChangeResults?.nodes || module?.nodes || [];
   const elements = onChangeResults?.elements || module?.elements || [];
   const assignments = onChangeResults?.assignments || module?.assignments || [];
-  const results = onChangeResults?.results || module?.results || [];
+  const analysisResults =
+    onChangeResults?.analysisResults || module?.analysisResults || [];
 
   const nodeSupports: any[] = [];
   const nodeLoads: any[] = [];
@@ -51,7 +52,7 @@ self.onmessage = async (e) => {
 
   const nodeResults: any[] = [];
   const elementResults: any[] = [];
-  results?.forEach((a: any) => {
+  analysisResults?.forEach((a: any) => {
     if ("node" in a) nodeResults.push(a);
     if ("element" in a) elementResults.push(a);
   });

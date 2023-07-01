@@ -89,7 +89,7 @@ export const ElementResults: StoryObj<Args> = {
     algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
-export const results = [
+export const analysisResults = [
   {
     element: 0,
     strain: -5,
@@ -116,7 +116,7 @@ export const NodeResults: StoryObj<Args> = {
     algorithm: `export const nodes = [[0, 0, 0], [4, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
 
-export const results = [
+export const analysisResults = [
   {
     node: 0,
     reaction: [50, 10, 0]
@@ -167,7 +167,7 @@ export const assignments = [
   }
 ]
 
-export const results = analyzing(nodes, elements, assignments);`,
+export const analysisResults = analyzing(nodes, elements, assignments);`,
     settings: { elementResults: "force" },
   },
 };
@@ -223,9 +223,9 @@ export const onParameterChange = (parameters) => {
     }
   ]
 
-  const results = analyzing(nodes, elements, assignments);
+  const analysisResults = analyzing(nodes, elements, assignments);
 
-  return { nodes, elements, assignments, results }
+  return { nodes, elements, assignments, analysisResults }
 }
 `,
   },

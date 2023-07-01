@@ -192,9 +192,9 @@ export function onParameterChange(parameters) {
     },
   ]
 
-  const results = analyzing(nodes, elements, assignments);
+  const analysisResults = analyzing(nodes, elements, assignments);
 
-  return {nodes,elements,assignments,results}
+  return {nodes,elements,assignments,analysisResults}
 }`;
     const urlParams = new URL(window.location.href).searchParams;
     let algorithmFromURL = "";
