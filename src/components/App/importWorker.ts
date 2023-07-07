@@ -6,7 +6,7 @@ self.onmessage = async (e) => {
   let onChangeResults: any;
 
   // @ts-ignore
-  self.$k = e.data.$k;
+  self.$k = e.data.$e;
 
   if (e.data.key) {
     parameters[e.data.key].value = e.data.value;
