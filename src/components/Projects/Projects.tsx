@@ -1,58 +1,127 @@
-import { Session, createClient } from "@supabase/supabase-js";
-import { Show, createSignal } from "solid-js";
-import { Projects } from "./components/Projects";
+import { Index, createSignal } from "solid-js";
+import { supabase } from "../Login/Login";
 
-export const supabase = createClient(
-  "https://cayyihbcbshvvffjtbky.supabase.co",
-  import.meta.env.VITE_SUPABASE_KEY || "dummy-key"
-);
+export type Project = {
+  id: number;
+  title: string;
+  slug: string;
+  user_id: string;
+};
 
-export const MyProjects = () => {
-  const [session, setSession] = createSignal<Session | null>();
+type ProjectsProps = {
+  testingProjects?: Project[];
+};
 
-  supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-  });
+export function Projects(props: ProjectsProps) {
+  const [projects, setProjects] = createSignal<Project[]>(
+    props.testingProjects || []
+  );
+  const [projectTitle, setProjectTitle] = createSignal("");
+
+  async function getProjects() {
+    if (props.testingProjects) return;
+
+    const user = await supabase.auth.getUser();
+
+    let { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("user_id", user.data.user?.id);
+    if (data) {
+      setProjects(data as Project[]);
+    }
+  }
+
+  async function addProject(e: SubmitEvent) {
+    e.preventDefault();
+
+    if (props.testingProjects) return;
+
+    if (projectTitle()) {
+      const user = await supabase.auth.getUser();
+
+      const { data, error } = await supabase.from("projects").insert([
+        {
+          title: projectTitle(),
+          slug: extractSlug(projectTitle()),
+          user_id: user.data.user?.id,
+        },
+      ]);
+    }
+
+    setProjectTitle("");
+    getProjects();
+  }
+
+  async function deleteProject(id: number) {
+    const { data, error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", `${id}`);
+
+    getProjects();
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    window.location.assign("/");
+  }
+
+  getProjects();
 
   return (
-    <div class="dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-xs btn-neutral">
-        <span>My Projects</span>
-        <svg
-          width="8px"
-          height="8px"
-          class="hidden h-2 w-2 fill-current opacity-60 sm:inline-block"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 2048 2048"
-        >
-          <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-        </svg>
-      </label>
-
-      <div
-        tabindex="0"
-        class="z-50 dropdown-content card card-compact w-80 p-2 bg-base-100 "
-      >
-        <div class="card-body">
-          <Show
-            when={session()}
-            fallback={
-              <>
-                <p>Login first to manage your cloud-backed up projects</p>
-                <button
-                  class="btn btn-xs btn-neutral"
-                  // @ts-ignore
-                  onclick="LoginModal.showModal()"
-                >
-                  Login
-                </button>
-              </>
-            }
-          >
-            <Projects />
-          </Show>
-        </div>
+    <>
+      <div class="overflow-x-auto max-h-44">
+        <table class="table table-sm">
+          <tbody>
+            <Index each={projects()}>
+              {(project) => (
+                <tr class="group/item">
+                  <td class="w-4/5">
+                    <a
+                      href={`./?user_id=${project().user_id}&slug=${
+                        project().slug
+                      }`}
+                    >
+                      {project().title}
+                    </a>
+                  </td>
+                  <td class="w-1/5 act">
+                    <a
+                      class="btn btn-xs invisible group-hover/item:visible "
+                      onclick={() => deleteProject(project().id)}
+                    >
+                      🗑
+                    </a>
+                  </td>
+                </tr>
+              )}
+            </Index>
+          </tbody>
+        </table>
       </div>
-    </div>
+      <div class="flex justify-between">
+        <form onSubmit={addProject}>
+          <input
+            class="input input-sm border-primary w-11/12"
+            type="text"
+            placeholder="Add new project"
+            value={projectTitle()}
+            onInput={(e) => setProjectTitle(e.currentTarget.value)}
+          />
+        </form>
+        <a class="btn btn-xs btn-neutral mt-1" onclick={logout}>
+          Logout
+        </a>
+      </div>
+    </>
   );
-};
+}
+
+function extractSlug(text: string) {
+  let slug = text.toLowerCase().replace(/\s+/g, "-");
+  slug = slug.replace(/[^a-z0-9-]/g, "");
+  slug = slug.replace(/^-+|-+$/g, "");
+
+  return slug;
+}

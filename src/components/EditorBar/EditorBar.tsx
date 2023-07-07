@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { MyProjects } from "../Projects/Projects";
+import { MyProjects } from "../Projects/MyProjects";
 import { Upgrade } from "../Upgrade/Upgrade";
 
 type EditorBarProps = {
