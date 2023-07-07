@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/html";
-import { MyProjects } from "./MyProjects";
+import { MyProjects } from "./Projects";
 import { Login } from "./components/Login";
 import { Projects } from "./components/Projects";
 

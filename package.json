@@ -31,16 +31,16 @@
   },
   "homepage": "https://awatif.co",
   "devDependencies": {
-    "@storybook/html-vite": "^7.0.24",
+    "@storybook/html-vite": "^7.0.26",
     "@tweakpane/core": "^1.1.9",
-    "@types/three": "^0.152.1",
+    "@types/three": "^0.153.0",
     "autoprefixer": "^10.4.14",
     "chromatic": "^6.19.9",
-    "daisyui": "^3.1.7",
-    "postcss": "^8.4.24",
-    "storybook": "^7.0.24",
+    "daisyui": "^3.1.10",
+    "postcss": "^8.4.25",
+    "storybook": "^7.0.26",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.9",
+    "vite": "^4.4.2",
     "vite-plugin-solid": "^2.7.0"
   },
   "dependencies": {
