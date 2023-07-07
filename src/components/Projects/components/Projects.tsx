@@ -1,5 +1,5 @@
 import { Index, createSignal } from "solid-js";
-import { supabase } from "../MyProjects";
+import { supabase } from "../Projects";
 
 export type Project = {
   id: number;
