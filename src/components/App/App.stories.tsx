@@ -4,138 +4,13 @@ import { ComponentProps } from "solid-js";
 
 type Args = ComponentProps<typeof App>;
 
-export const Default: StoryObj<Args> = {};
-
-export const InvalidAlgorithm: StoryObj<Args> = {
+export const Invalid: StoryObj<Args> = {
   args: {
-    algorithm: "invalid text",
+    algorithm: "Invalid text",
   },
 };
 
-export const Nodes: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
-    settings: { nodes: true },
-  },
-};
-
-export const Elements: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]`,
-    settings: { elements: true },
-  },
-};
-
-export const NodesIndices: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];`,
-    settings: { nodesIndices: true },
-  },
-};
-
-export const ElementsIndices: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]`,
-    settings: { elementsIndices: true },
-  },
-};
-
-export const Supports: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
-
-export const assignments = [
-  {
-    node: 0,
-    support: [true, true, true]
-  },
-  {
-    node: 2,
-    support: [true, true, false]
-  },
-  {
-    node: 3,
-    support: [true, true, false]
-  },
-]`,
-    settings: { supports: true },
-  },
-};
-
-export const PointLoads: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
-
-export const assignments = [
-  {
-    node: 1,
-    load: [0, 0, -100]
-  },
-  {
-    node: 3,
-    load: [0, 0, -100]
-  },
-]`,
-    settings: { loads: true },
-  },
-};
-
-export const ElementResults: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
-
-export const analysisResults = [
-  {
-    element: 0,
-    strain: -5,
-    stress: -10,
-    force: 100
-  },
-  {
-    element: 1,
-    strain: 7,
-    stress: -10,
-    force: 100
-  },
-  {
-    element: 2,
-    strain: 6
-  },
-]`,
-    settings: { elementResults: "strain" },
-  },
-};
-
-export const NodeResults: StoryObj<Args> = {
-  args: {
-    algorithm: `export const nodes = [[0, 0, 0], [4, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
-
-export const analysisResults = [
-  {
-    node: 0,
-    reaction: [50, 10, 0]
-  },
-  {
-    node: 1,
-    displacement: [-1, 3, 1],
-  },
-  {
-    node: 3,
-    displacement: [10, 10, 20],
-    reaction: [50, 10, 0]
-  },
-]`,
-    settings: { nodeResults: "displacement" },
-  },
-};
-
-export const Analyzing: StoryObj<Args> = {
+export const Basic: StoryObj<Args> = {
   args: {
     algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
 
@@ -168,7 +43,43 @@ export const assignments = [
 ]
 
 export const analysisResults = analyzing(nodes, elements, assignments);`,
-    settings: { elementResults: "force" },
+  },
+};
+
+export const Undeformed: StoryObj<Args> = {
+  args: {
+    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
+
+export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
+export const assignments = [
+  {
+    node: 0,
+    support: [true, true, true]
+  },
+  {
+    node: 2,
+    support: [true, true, true]
+  },
+  {
+    node: 1,
+    load: [0, 0, -10]
+  },
+  {
+    element: 0,
+    area: 1.2,
+    elasticity: 200
+  },
+  {
+    element: 1,
+    area: 1.2,
+    elasticity: 200
+  }
+]
+
+export const analysisResults = analyzing(nodes, elements, assignments);`,
+    settings: { deformedShape: false },
   },
 };
 
@@ -180,13 +91,13 @@ export const parameters = {
   xPosition: {
     value: 5,
     min: 1,
-    max: 50,
+    max: 10,
     step: 1
   },
   zPosition: {
-    value: 5,
+    value: 0,
     min: 0,
-    max: 50,
+    max: 10,
     step: 1
   }
 }
@@ -228,6 +139,15 @@ export const onParameterChange = (parameters) => {
   return { nodes, elements, assignments, analysisResults }
 }
 `,
+    settings: { elementResults: "force", nodeResults: "reaction" },
+  },
+};
+
+export const Indices: StoryObj<Args> = {
+  args: {
+    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]`,
+    settings: { nodesIndices: true, elementsIndices: true },
   },
 };
 
