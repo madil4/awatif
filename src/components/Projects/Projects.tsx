@@ -1,6 +1,5 @@
 import { Session, createClient } from "@supabase/supabase-js";
 import { Show, createSignal } from "solid-js";
-import { Login } from "./components/Login";
 import { Projects } from "./components/Projects";
 
 export const supabase = createClient(
@@ -9,29 +8,7 @@ export const supabase = createClient(
 );
 
 export const MyProjects = () => {
-  const redirectTo =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:4600/"
-      : "https://app.awatif.co/";
-
   const [session, setSession] = createSignal<Session | null>();
-
-  async function signInWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo },
-    });
-  }
-
-  async function signInWithAzure() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "azure",
-      options: {
-        redirectTo,
-        scopes: "email",
-      },
-    });
-  }
 
   supabase.auth.onAuthStateChange((_event, session) => {
     setSession(session);
@@ -51,6 +28,7 @@ export const MyProjects = () => {
           <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
         </svg>
       </label>
+
       <div
         tabindex="0"
         class="z-50 dropdown-content card card-compact w-80 p-2 bg-base-100 "
@@ -59,10 +37,16 @@ export const MyProjects = () => {
           <Show
             when={session()}
             fallback={
-              <Login
-                onGoogleClick={signInWithGoogle}
-                onAzureClick={signInWithAzure}
-              />
+              <>
+                <p>Login first to manage your cloud-backed up projects</p>
+                <button
+                  class="btn btn-xs btn-neutral"
+                  // @ts-ignore
+                  onclick="LoginModal.showModal()"
+                >
+                  Login
+                </button>
+              </>
             }
           >
             <Projects />
