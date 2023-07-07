@@ -1,4 +1,12 @@
-import { Index, Show, batch, createEffect, createSignal, on } from "solid-js";
+import {
+  Index,
+  Show,
+  batch,
+  createEffect,
+  createSignal,
+  on,
+  onMount,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
@@ -22,6 +30,45 @@ type AppProps = {
 };
 
 export function App(props: AppProps) {
+  const importWorker = new Worker(
+    new URL("./importWorker.ts", import.meta.url),
+    {
+      type: "module",
+    }
+  );
+  const defaultAlgorithm = `// Here's a default template to start with. Documentation at https://awatif.co/docs
+
+  import { analyzing } from 'https://unpkg.com/awatif';
+  
+  export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+  export const elements = [[0, 1], [1, 2]]
+  
+  export const assignments = [
+    {
+      node: 0,
+      support: [true, true, true]
+    },
+    {
+      node: 2,
+      support: [true, true, true]
+    },
+    {
+      node: 1,
+      load: [0, 0, -10]
+    },
+    {
+      element: 0,
+      area: 1.2,
+      elasticity: 200
+    },
+    {
+      element: 1,
+      area: 1.2,
+      elasticity: 200
+    }
+  ]
+  
+  export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
     nodes: true,
     elements: true,
@@ -49,21 +96,48 @@ export function App(props: AppProps) {
   const [parameters, setParameters] = createSignal<ParametersType>({});
   const [allow, setAllow] = createSignal("");
   const [userPlan, setUserPlan] = createSignal("");
-
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
 
-  const importWorker = new Worker(
-    new URL("./importWorker.ts", import.meta.url),
-    {
-      type: "module",
+  onMount(async () => {
+    const urlParams = new URL(window.location.href).searchParams;
+    let algorithmFromURL = "";
+
+    if (urlParams.get("user_id") && urlParams.get("slug")) {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("algorithm,id")
+        .eq("user_id", urlParams.get("user_id"))
+        .eq("slug", urlParams.get("slug"));
+
+      algorithmFromURL = data?.length ? data[0].algorithm : "";
+      setProjectId(data?.length ? data[0].id : undefined);
     }
-  );
+
+    const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
+    setInitAlgorithm(algorithm);
+    setAlgorithm(algorithm);
+
+    // exception to limits
+    setUserPlan(
+      (await supabase.auth.getSession()).data.session?.user?.phone
+        ? "pro"
+        : "free"
+    );
+
+    if (
+      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+        urlParams.get("slug") === "2d-truss") ||
+      userPlan() === "pro"
+    ) {
+      setAllow(import.meta.env.VITE_AWATIF_KEY);
+    }
+  });
 
   // on algorithm change
   createEffect(
     on([algorithm, allow], async () => {
-      importWorker.postMessage({ algorithm: algorithm(), $k: allow() });
+      importWorker.postMessage({ algorithm: algorithm(), $e: allow() });
 
       importWorker.onmessage = (e) => {
         if (e.data.error) {
@@ -90,11 +164,6 @@ export function App(props: AppProps) {
           .eq("id", projectId());
     })
   );
-
-  // on parameter change
-  function onParameterChange(e: any) {
-    importWorker.postMessage({ key: e.presetKey, value: e.value, $k: allow() });
-  }
 
   // on settings element results change
   createEffect(
@@ -135,72 +204,10 @@ export function App(props: AppProps) {
     })
   );
 
-  async function setInitAlgorithmOnInit() {
-    const defaultAlgorithm = `// Here's a default template to start with. Documentation at https://awatif.co/docs
-
-import { analyzing } from 'https://unpkg.com/awatif';
-
-export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]
-
-export const assignments = [
-  {
-    node: 0,
-    support: [true, true, true]
-  },
-  {
-    node: 2,
-    support: [true, true, true]
-  },
-  {
-    node: 1,
-    load: [0, 0, -10]
-  },
-  {
-    element: 0,
-    area: 1.2,
-    elasticity: 200
-  },
-  {
-    element: 1,
-    area: 1.2,
-    elasticity: 200
+  // on parameter change
+  function onParameterChange(e: any) {
+    importWorker.postMessage({ key: e.presetKey, value: e.value, $e: allow() });
   }
-]
-
-export const analysisResults = analyzing(nodes, elements, assignments);`;
-    const urlParams = new URL(window.location.href).searchParams;
-    let algorithmFromURL = "";
-
-    if (urlParams.get("user_id") && urlParams.get("slug")) {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("algorithm,id")
-        .eq("user_id", urlParams.get("user_id"))
-        .eq("slug", urlParams.get("slug"));
-
-      algorithmFromURL = data?.length ? data[0].algorithm : "";
-      setProjectId(data?.length ? data[0].id : undefined);
-    }
-
-    const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
-    setInitAlgorithm(algorithm);
-    setAlgorithm(algorithm);
-
-    // exception to limits
-    const userPhone = (await supabase.auth.getUser()).data.user?.phone;
-    setUserPlan(userPhone ? "pro" : "free");
-    const $k = import.meta.env.VITE_AWATIF_KEY;
-    if (
-      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-        urlParams.get("slug") === "2d-truss") ||
-      userPlan() === "pro"
-    ) {
-      setAllow($k);
-    }
-  }
-
-  setInitAlgorithmOnInit();
 
   return (
     <Layouter>
