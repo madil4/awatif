@@ -18,7 +18,7 @@ self.onmessage = async (e) => {
     }
   } else {
     try {
-      module = await import(createURL(e.data.algorithm));
+      module = await import(createURL(e.data.script));
     } catch (e) {
       self.postMessage({ error: e });
       return;
