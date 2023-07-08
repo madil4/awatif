@@ -165,24 +165,11 @@ export function App(props: AppProps) {
     })
   );
 
-  // on settings element results change
+  // on settings node/element results change
   createEffect(
-    on(
-      () => settings.elementResults,
-      () => {
-        setRenderAction((c) => c + 1);
-      }
-    )
-  );
-
-  // on settings node results change
-  createEffect(
-    on(
-      () => settings.nodeResults,
-      () => {
-        setRenderAction((c) => c + 1);
-      }
-    )
+    on([() => settings.nodeResults, () => settings.elementResults], () => {
+      setRenderAction((c) => c + 1);
+    })
   );
 
   // on undeformed node change
