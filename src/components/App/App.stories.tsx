@@ -6,13 +6,13 @@ type Args = ComponentProps<typeof App>;
 
 export const Invalid: StoryObj<Args> = {
   args: {
-    algorithm: "Invalid text",
+    script: "Invalid text",
   },
 };
 
 export const Basic: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
@@ -48,7 +48,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`,
 
 export const Undeformed: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
@@ -85,7 +85,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`,
 
 export const Parameters: StoryObj<Args> = {
   args: {
-    algorithm: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const parameters = {
   xPosition: {
@@ -145,7 +145,7 @@ export const onParameterChange = (parameters) => {
 
 export const Indices: StoryObj<Args> = {
   args: {
-    algorithm: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    script: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]`,
     settings: { nodesIndices: true, elementsIndices: true },
   },

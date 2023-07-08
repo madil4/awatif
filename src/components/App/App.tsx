@@ -25,7 +25,7 @@ import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { supabase } from "../Login/Login";
 
 type AppProps = {
-  algorithm?: string;
+  script?: string;
   settings?: Partial<SettingsType>;
 };
 
@@ -36,7 +36,7 @@ export function App(props: AppProps) {
       type: "module",
     }
   );
-  const defaultAlgorithm = `// Here's a default template to start with. Documentation at https://awatif.co/docs
+  const defaultScript = `// Here's a default template to start with. Documentation at https://awatif.co/docs
 
   import { analyzing } from 'https://unpkg.com/awatif';
   
@@ -81,8 +81,8 @@ export function App(props: AppProps) {
     nodeResults: "none",
     ...props.settings,
   };
-  const [algorithm, setAlgorithm] = createSignal("");
-  const [initAlgorithm, setInitAlgorithm] = createSignal("");
+  const [script, setScript] = createSignal("");
+  const [initScript, setInitScript] = createSignal("");
   const [settings, setSettings] = createStore<SettingsType>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
@@ -101,22 +101,22 @@ export function App(props: AppProps) {
 
   onMount(async () => {
     const urlParams = new URL(window.location.href).searchParams;
-    let algorithmFromURL = "";
+    let scriptFromURL = "";
 
     if (urlParams.get("user_id") && urlParams.get("slug")) {
       const { data, error } = await supabase
         .from("projects")
-        .select("algorithm,id")
+        .select("script,id")
         .eq("user_id", urlParams.get("user_id"))
         .eq("slug", urlParams.get("slug"));
 
-      algorithmFromURL = data?.length ? data[0].algorithm : "";
+      scriptFromURL = data?.length ? data[0].script : "";
       setProjectId(data?.length ? data[0].id : undefined);
     }
 
-    const algorithm = props.algorithm || algorithmFromURL || defaultAlgorithm;
-    setInitAlgorithm(algorithm);
-    setAlgorithm(algorithm);
+    const script = props.script || scriptFromURL || defaultScript;
+    setInitScript(script);
+    setScript(script);
 
     // exception to limits
     setUserPlan(
@@ -134,10 +134,10 @@ export function App(props: AppProps) {
     }
   });
 
-  // on algorithm change
+  // on script change
   createEffect(
-    on([algorithm, allow], async () => {
-      importWorker.postMessage({ algorithm: algorithm(), $e: allow() });
+    on([script, allow], async () => {
+      importWorker.postMessage({ script: script(), $e: allow() });
 
       importWorker.onmessage = (e) => {
         if (e.data.error) {
@@ -160,7 +160,7 @@ export function App(props: AppProps) {
       if (projectId())
         await supabase
           .from("projects")
-          .update({ algorithm: algorithm() })
+          .update({ script: script() })
           .eq("id", projectId());
     })
   );
@@ -213,10 +213,7 @@ export function App(props: AppProps) {
     <Layouter>
       <EditorBar error={error()} userPlan={userPlan()} />
 
-      <Editor
-        text={initAlgorithm()}
-        onTextChange={(text) => setAlgorithm(text)}
-      />
+      <Editor text={initScript()} onTextChange={(text) => setScript(text)} />
 
       <Viewer>
         <Grid />
