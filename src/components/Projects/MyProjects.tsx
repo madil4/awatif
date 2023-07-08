@@ -36,7 +36,7 @@ export const MyProjects = () => {
               <>
                 <p>Login first to manage your cloud-backed up projects</p>
                 <button
-                  class="btn btn-xs btn-neutral"
+                  class="btn btn-neutral"
                   // @ts-ignore
                   onclick="LoginModal.showModal()"
                 >
