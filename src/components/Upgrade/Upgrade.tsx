@@ -1,64 +1,28 @@
-import { Session, createClient } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { Show, createSignal, onMount } from "solid-js";
-
-export const supabase = createClient(
-  "https://cayyihbcbshvvffjtbky.supabase.co",
-  import.meta.env.VITE_SUPABASE_KEY || "dummy-key"
-);
+import { supabase } from "../Login/Login";
 
 export function Upgrade() {
-  const redirectTo =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:4600/"
-      : "https://app.awatif.co/";
-
   const [session, setSession] = createSignal<Session | null>();
 
-  async function signInWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo },
-    });
-  }
-
-  async function signInWithAzure() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "azure",
-      options: {
-        redirectTo,
-        scopes: "email",
-      },
-    });
-  }
-
-  supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
+  onMount(async () => {
+    setSession((await supabase.auth.getSession()).data.session);
   });
 
   return (
     <>
       {/* @ts-ignore */}
-      <button class="btn btn-xs btn-primary" onclick="my_modal_2.showModal()">
+      <button class="btn btn-xs btn-primary" onclick="UpgradeModal.showModal()">
         Upgrade to Pro
       </button>
 
-      <dialog id="my_modal_2" class="modal">
+      <dialog id="UpgradeModal" class="modal">
         <form method="dialog" class="modal-box w-11/12 max-w-2xl">
           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
 
-          <Show
-            when={session()}
-            fallback={
-              <Login
-                onGoogleClick={signInWithGoogle}
-                onAzureClick={signInWithAzure}
-              />
-            }
-          >
-            <Plans email={session()?.user.email || ""} />
-          </Show>
+          <Plans email={session()?.user.email || ""} />
         </form>
         <form method="dialog" class="modal-backdrop">
           <button />
@@ -130,46 +94,28 @@ function Plans(props: { email: string }) {
               name="price"
               value={annual() ? prices.annually : prices.monthly}
             />
-            <button class="btn btn-primary btn-wide" type="submit">
-              Upgrade plan
-            </button>
+            <Show
+              when={props.email}
+              fallback={
+                <a
+                  class="btn btn-primary btn-wide"
+                  onclick={() => {
+                    // @ts-ignore
+                    UpgradeModal.close();
+                    // @ts-ignore
+                    LoginModal.showModal();
+                  }}
+                >
+                  Login first
+                </a>
+              }
+            >
+              <button class="btn btn-primary btn-wide" type="submit">
+                Upgrade plan
+              </button>
+            </Show>
           </form>
         </div>
-      </div>
-    </>
-  );
-}
-
-function Login(props: { onGoogleClick: () => void; onAzureClick: () => void }) {
-  return (
-    <>
-      <h3 class="font-bold text-lg mb-5">Login First</h3>
-      <div class="flex flex-col space-y-3 w-2/3 mx-auto">
-        <a class="btn btn-neutral" onclick={props.onGoogleClick}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            class="h-4 w-4"
-            viewBox="0 0 256 256"
-          >
-            <path d="M128,228A100,100,0,1,1,198.71069,57.28906,12.0001,12.0001,0,1,1,181.74,74.25977,75.99547,75.99547,0,1,0,203.05371,140H128a12,12,0,0,1,0-24h88a12,12,0,0,1,12,12A100.11332,100.11332,0,0,1,128,228Z" />
-          </svg>
-          Continue with Google
-        </a>
-        <a class="btn btn-neutral" onclick={props.onAzureClick}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            class="h-4 w-4"
-            viewBox="0 0 512 512"
-          >
-            <path d="M31.87,30.58H244.7V243.39H31.87Z" />
-            <path d="M266.89,30.58H479.7V243.39H266.89Z" />
-            <path d="M31.87,265.61H244.7v212.8H31.87Z" />
-            <path d="M266.89,265.61H479.7v212.8H266.89Z" />
-          </svg>
-          Continue with Microsoft
-        </a>
       </div>
     </>
   );
