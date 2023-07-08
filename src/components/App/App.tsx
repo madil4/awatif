@@ -20,9 +20,9 @@ import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { Settings, SettingsType } from "../Settings/Settings";
 import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
-import { supabase } from "../Projects/Projects";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
+import { supabase } from "../Login/Login";
 
 type AppProps = {
   algorithm?: string;
