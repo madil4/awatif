@@ -6,10 +6,11 @@ type PointLoadProps = {
 };
 
 export function NodeLoad(props: PointLoadProps) {
-  if (!props.position || !props.load) return;
   if (
-    props.position.length != 3 ||
-    props.load.length != 3 ||
+    !props.position ||
+    !props.load ||
+    props.position.flat().length != 3 ||
+    props.load.flat().length != 3 ||
     props.position.some((element: any) => typeof element !== "number") ||
     props.load.some((element: any) => typeof element !== "number")
   )

@@ -8,18 +8,19 @@ type TextProps = {
 };
 
 export function Text(props: TextProps) {
-  const material = new THREE.SpriteMaterial();
-
-  if (!props.text || !props.position || !props.size) return;
   if (
+    !props.text ||
+    !props.position ||
+    !props.size ||
     typeof props.text != "string" ||
-    props.position.length != 3 ||
+    props.position.flat().length != 3 ||
     props.position.some((e: any) => typeof e !== "number") ||
     typeof props.size != "number"
   )
     return;
 
   const resolution = 100;
+  const material = new THREE.SpriteMaterial();
   material.map = createTexture(props.text, props.size, resolution);
   material.depthTest = false;
 

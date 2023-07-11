@@ -8,10 +8,12 @@ type ElementResultProps = {
 };
 
 export function ElementResult(props: ElementResultProps) {
-  if (!props.start || !props.end || !props.result) return;
   if (
-    props.start.length != 3 ||
-    props.end.length != 3 ||
+    !props.start ||
+    !props.end ||
+    !props.result ||
+    props.start.flat().length != 3 ||
+    props.end.flat().length != 3 ||
     props.start.some((e: any) => typeof e !== "number") ||
     props.end.some((e: any) => typeof e !== "number") ||
     typeof props.result !== "number"

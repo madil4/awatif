@@ -21,6 +21,7 @@ export default {
         <Node position={undefined} />
         <Node position={[5, 0]} />
         <Node position={[5, 0, "k"]} />
+        <Node position={[5, , 0]} />
 
         <Node position={[5, 0, 0]} />
 
@@ -51,7 +52,7 @@ export default {
         <NodeLoad position={[5, 0, 0]} load={[1, 2, "k"]} />
 
         <NodeLoad position={[5, 0, 0]} load={[0, 0, 100]} />
-        <NodeLoad position={[5, 0, 0]} load={[100, , -100]} />
+        <NodeLoad position={[5, 0, 0]} load={[100, 0, -100]} />
 
         <ElementResult start={undefined} end={undefined} result={10} />
         <ElementResult start={[0, 0]} end={[5, 0]} result={10} />

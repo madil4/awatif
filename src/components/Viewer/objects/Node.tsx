@@ -5,9 +5,9 @@ type NodeProps = {
 };
 
 export function Node(props: NodeProps) {
-  if (!props.position) return;
   if (
-    props.position.length != 3 ||
+    !props.position ||
+    props.position.flat().length != 3 || // flat() to fix a weird javascript bug with [0,,1]
     props.position.some((p: any) => typeof p !== "number")
   )
     return;
