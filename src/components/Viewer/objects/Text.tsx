@@ -13,8 +13,9 @@ export function Text(props: TextProps) {
     !props.position ||
     !props.size ||
     typeof props.text != "string" ||
-    props.position.flat().length != 3 ||
+    props.position.length != 3 ||
     props.position.some((e: any) => typeof e !== "number") ||
+    props.position.flat().length != props.position.length ||
     typeof props.size != "number"
   )
     return;

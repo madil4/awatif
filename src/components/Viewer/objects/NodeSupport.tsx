@@ -9,10 +9,12 @@ export function NodeSupport(props: NodeSupportProps) {
   if (
     !props.position ||
     !props.support ||
-    props.position.flat().length != 3 ||
-    props.support.flat().length != 3 ||
+    props.position.length != 3 ||
+    props.support.length != 3 ||
     props.position.some((element: any) => typeof element !== "number") ||
     props.support.some((element: any) => typeof element !== "boolean") ||
+    props.position.flat().length != props.position.length ||
+    props.support.flat().length != props.support.length ||
     props.support.every((s: boolean) => !s)
   )
     return;

@@ -7,8 +7,9 @@ type NodeProps = {
 export function Node(props: NodeProps) {
   if (
     !props.position ||
-    props.position.flat().length != 3 || // flat() to fix a weird javascript bug with [0,,1]
-    props.position.some((p: any) => typeof p !== "number")
+    props.position.length != 3 ||
+    props.position.some((p: any) => typeof p !== "number") ||
+    props.position.flat().length != props.position.length // fix a weird javascript bug with [0,,1]
   )
     return;
 
