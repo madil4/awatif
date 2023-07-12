@@ -12,10 +12,12 @@ export function ElementResult(props: ElementResultProps) {
     !props.start ||
     !props.end ||
     !props.result ||
-    props.start.flat().length != 3 ||
-    props.end.flat().length != 3 ||
+    props.start.length != 3 ||
+    props.end.length != 3 ||
     props.start.some((e: any) => typeof e !== "number") ||
     props.end.some((e: any) => typeof e !== "number") ||
+    props.start.flat().length != props.start.length ||
+    props.end.flat().length != props.end.length ||
     typeof props.result !== "number"
   )
     return;

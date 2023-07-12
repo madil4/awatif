@@ -11,10 +11,12 @@ export function NodeResult(props: NodeResultProps) {
   if (
     !props.position ||
     !props.result ||
-    props.position.flat().length != 3 ||
-    props.result.flat().length != 3 ||
+    props.position.length != 3 ||
+    props.result.length != 3 ||
     props.position.some((element: any) => typeof element !== "number") ||
-    props.result.some((element: any) => typeof element !== "number")
+    props.result.some((element: any) => typeof element !== "number") ||
+    props.position.flat().length != props.position.length ||
+    props.result.flat().length != props.result.length
   )
     return;
 

@@ -28,16 +28,19 @@ export default {
         <Element start={undefined} end={undefined} />
         <Element start={[0, 0]} end={[5, 0]} />
         <Element start={[0, 0, "k"]} end={[5, 0, "k"]} />
+        <Element start={[0, , 0]} end={[5, , 0]} />
 
         <Element start={[0, 0, 0]} end={[5, 0, 0]} />
 
         <NodeSupport position={undefined} support={[true, false, false]} />
         <NodeSupport position={[0, 0]} support={[true, false, false]} />
         <NodeSupport position={[0, 0, "k"]} support={[true, false, false]} />
+        <NodeSupport position={[0, , 0]} support={[true, false, false]} />
 
         <NodeSupport position={[0, 0, 0]} support={undefined} />
         <NodeSupport position={[0, 0, 0]} support={[true, false]} />
         <NodeSupport position={[0, 0, 0]} support={[true, true, "k"]} />
+        <NodeSupport position={[0, 0, 0]} support={[true, , false]} />
 
         <NodeSupport position={[0, 0, 0]} support={[false, false, false]} />
         <NodeSupport position={[0, 0, 0]} support={[true, false, false]} />
@@ -46,10 +49,12 @@ export default {
         <NodeLoad position={undefined} load={[0, 0, 100]} />
         <NodeLoad position={[5, 0]} load={[0, 0, 100]} />
         <NodeLoad position={[5, 0, "k"]} load={[0, 0, 100]} />
+        <NodeLoad position={[5, , 0]} load={[0, 0, 100]} />
 
         <NodeLoad position={[5, 0, 0]} load={undefined} />
         <NodeLoad position={[5, 0, 0]} load={[1, 2]} />
         <NodeLoad position={[5, 0, 0]} load={[1, 2, "k"]} />
+        <NodeLoad position={[5, 0, 0]} load={[1, , 3]} />
 
         <NodeLoad position={[5, 0, 0]} load={[0, 0, 100]} />
         <NodeLoad position={[5, 0, 0]} load={[100, 0, -100]} />
@@ -57,6 +62,7 @@ export default {
         <ElementResult start={undefined} end={undefined} result={10} />
         <ElementResult start={[0, 0]} end={[5, 0]} result={10} />
         <ElementResult start={[0, 0, "k"]} end={[5, 0, "k"]} result={10} />
+        <ElementResult start={[0, , 0]} end={[5, , 0]} result={10} />
 
         <ElementResult start={[0, 0, 0]} end={[-3, 0, 1]} result={undefined} />
         <ElementResult start={[0, 0, 0]} end={[-3, 0, 1]} result={true} />
@@ -82,10 +88,12 @@ export default {
         <NodeResult position={undefined} result={[0, 0, 100]} />
         <NodeResult position={[5, 0]} result={[0, 0, 100]} />
         <NodeResult position={[5, 0, "k"]} result={[0, 0, 100]} />
+        <NodeResult position={[5, , 0]} result={[0, 0, 100]} />
 
         <NodeResult position={[5, 0, 0]} result={undefined} />
         <NodeResult position={[5, 0, 0]} result={[1, 2]} />
         <NodeResult position={[5, 0, 0]} result={[1, 2, "k"]} />
+        <NodeResult position={[5, 0, 0]} result={[1, , 3]} />
 
         <NodeResult position={[0, 0, 0]} result={[-50, 0, 100]} />
 
@@ -95,6 +103,7 @@ export default {
 
         <Text text={true} position={[-8, 0, 5]} size={0.5} />
         <Text text={"here is text"} position={["k", 0, 5]} size={0.5} />
+        <Text text={"here is text"} position={[0, , 5]} size={0.5} />
         <Text text={"here is text"} position={[-8, 0, 5]} size={false} />
 
         <Text text={"here is text"} position={[-5, 0, 5]} size={0.5} />
