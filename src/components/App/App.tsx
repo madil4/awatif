@@ -277,9 +277,7 @@ export function App(props: AppProps) {
                   }
                   end={nodes()[elements()[(elementResult() as any).element][1]]}
                   result={
-                    (elementResult() as any)[settings.elementResults] || [
-                      0, 0, 0,
-                    ]
+                    (elementResult() as any)[settings.elementResults] || 0
                   }
                 />
               </Show>
