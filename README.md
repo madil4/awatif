@@ -17,7 +17,7 @@ You can either use the hosted version at https://app.awatif.co or run it locally
 git clone https://github.com/madil4/awatif.git
 cd awatif
 npm install
-npm dev
+npm run dev
 ```
 The local development server will start, and the app will open in the browser. Make sure you read the documentation at https://awatif.co/docsn to understand the app.
 
