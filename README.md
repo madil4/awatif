@@ -19,7 +19,7 @@ cd awatif
 npm install
 npm run dev
 ```
-The local development server will start, and the app will open in the browser. Make sure you read the documentation at https://awatif.co/docsn to understand the app.
+The local development server will start, and the app will open in the browser. Make sure you read the documentation at https://awatif.co/docs to understand the app.
 
 ## Want to contribute?
 I have a long list of features with different levels of complexity. If you are brand new and want to learn, don't hesitate to join. I'm more approachable through LinkedIn at https://www.linkedin.com/in/madil4/.
