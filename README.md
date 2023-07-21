@@ -1,7 +1,7 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bbd7a065-cc1a-4f34-b0b7-cd45a48cb76a/deploy-status)](https://app.netlify.com/sites/awatif-app/deploys)
 
 ## What is Awatif?
-Awatif is the first online parametric structural engineering software with the following features:
+Awatif is the first online parametric structural engineering software:
 - 🚀 Battle-tested FEM solver for only $10 per month
 - 🌐 Design and simulate from any browser
 - 🏓 Interactive realtime simulations
