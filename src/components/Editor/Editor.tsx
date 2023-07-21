@@ -9,26 +9,32 @@ type EditorProps = {
 
 export const Editor: Component<EditorProps> = (props) => {
   let container: HTMLDivElement;
+  let editor: monaco.editor.IStandaloneCodeEditor;
 
-  createEffect(() => {
-    if (props.text) {
-      const editor = monaco.editor.create(container, {
-        value: props.text,
-        automaticLayout: true,
-        minimap: { enabled: false },
-        theme: "vs-dark",
-        language: "typescript",
-      });
+  onMount(() => {
+    editor = monaco.editor.create(container, {
+      value: props.text,
+      automaticLayout: true,
+      minimap: { enabled: false },
+      theme: "vs-dark",
+      language: "typescript",
+    });
 
-      editor.onDidChangeModelContent(() => {
-        if (props.onTextChange) props.onTextChange(editor.getValue());
-      });
-    }
+    editor.onDidChangeModelContent(() => {
+      if (props.onTextChange) props.onTextChange(editor.getValue());
+    });
   });
 
-  return (
-    <>
-      <div ref={container!} class="w-full h-full"></div>
-    </>
-  );
+  // on text change: render the text while preserving undo stack
+  createEffect(() => {
+    editor.executeEdits(null, [
+      {
+        text: props.text,
+        range: editor.getModel()?.getFullModelRange() as any,
+      },
+    ]);
+    editor.pushUndoStop();
+  });
+
+  return <div ref={container!} class="w-full h-full"></div>;
 };
