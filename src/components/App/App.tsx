@@ -38,37 +38,37 @@ export function App(props: AppProps) {
   );
   const defaultScript = `// Here's a default template to start with. Documentation at https://awatif.co/docs
 
-  import { analyzing } from 'https://unpkg.com/awatif';
-  
-  export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-  export const elements = [[0, 1], [1, 2]]
-  
-  export const assignments = [
-    {
-      node: 0,
-      support: [true, true, true]
-    },
-    {
-      node: 2,
-      support: [true, true, true]
-    },
-    {
-      node: 1,
-      load: [0, 0, -10]
-    },
-    {
-      element: 0,
-      area: 1.2,
-      elasticity: 200
-    },
-    {
-      element: 1,
-      area: 1.2,
-      elasticity: 200
-    }
-  ]
-  
-  export const analysisResults = analyzing(nodes, elements, assignments);`;
+import { analyzing } from 'https://unpkg.com/awatif';
+
+export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]]
+
+export const assignments = [
+  {
+    node: 0,
+    support: [true, true, true]
+  },
+  {
+    node: 2,
+    support: [true, true, true]
+  },
+  {
+    node: 1,
+    load: [0, 0, -10]
+  },
+  {
+    element: 0,
+    area: 1.2,
+    elasticity: 200
+  },
+  {
+    element: 1,
+    area: 1.2,
+    elasticity: 200
+  }
+]
+
+export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
     nodes: true,
     elements: true,
@@ -81,8 +81,9 @@ export function App(props: AppProps) {
     nodeResults: "none",
     ...props.settings,
   };
+  const [currentScript, setCurrentScript] = createSignal("");
   const [script, setScript] = createSignal("");
-  const [initScript, setInitScript] = createSignal("");
+  const [showSave, setShowSave] = createSignal(false);
   const [settings, setSettings] = createStore<SettingsType>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
@@ -94,15 +95,33 @@ export function App(props: AppProps) {
   const [error, setError] = createSignal(undefined);
   const [projectId, setProjectId] = createSignal(undefined);
   const [parameters, setParameters] = createSignal<ParametersType>({});
-  const [allow, setAllow] = createSignal("");
+  const [awatifKey, setAwatifKey] = createSignal("");
   const [userPlan, setUserPlan] = createSignal("");
   const nodes = () =>
     settings.deformedShape ? deformedNodes() : undeformedNodes();
 
   onMount(async () => {
     const urlParams = new URL(window.location.href).searchParams;
-    let scriptFromURL = "";
 
+    // set User plan and Awatif key
+    setUserPlan(
+      (await supabase.auth.getSession()).data.session?.user?.phone
+        ? "pro"
+        : "free"
+    );
+
+    if (
+      userPlan() === "pro" ||
+      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+        urlParams.get("slug") === "2d-truss") ||
+      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+        urlParams.get("slug") === "3d-tower")
+    ) {
+      setAwatifKey(import.meta.env.VITE_AWATIF_KEY);
+    }
+
+    // set script
+    let scriptFromURL = "";
     if (urlParams.get("user_id") && urlParams.get("slug")) {
       const { data, error } = await supabase
         .from("projects")
@@ -115,66 +134,37 @@ export function App(props: AppProps) {
     }
 
     const script = props.script || scriptFromURL || defaultScript;
-    setInitScript(script);
     setScript(script);
+    setCurrentScript(script);
+    importModel({ script: script });
 
-    // exception to limits
-    setUserPlan(
-      (await supabase.auth.getSession()).data.session?.user?.phone
-        ? "pro"
-        : "free"
-    );
-
-    if (
-      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-        urlParams.get("slug") === "2d-truss") ||
-      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-        urlParams.get("slug") === "3d-tower") ||
-      userPlan() === "pro"
-    ) {
-      setAllow(import.meta.env.VITE_AWATIF_KEY);
-    }
+    // add save shortcut
+    document.addEventListener("keydown", (event) => {
+      if (
+        (event.ctrlKey && event.key === "s") ||
+        (event.metaKey && event.key === "s")
+      ) {
+        event.preventDefault();
+        onSave();
+      }
+    });
   });
 
-  // on script change
+  // on script change: define saving status
   createEffect(
-    on([script, allow], async () => {
-      importWorker.postMessage({ script: script(), $e: allow() });
-
-      importWorker.onmessage = (e) => {
-        if (e.data.error) {
-          setError(e.data.error);
-        } else {
-          batch(() => {
-            if (e.data.parameters) setParameters(e.data.parameters);
-
-            setError(undefined);
-            setUndeformedNodes(e.data.nodes);
-            setElements(e.data.elements);
-            setNodeSupports(e.data.nodeSupports);
-            setNodeLoads(e.data.nodeLoads);
-            setNodeResults(e.data.nodeResults);
-            setElementResults(e.data.elementResults);
-          });
-        }
-      };
-
-      if (projectId())
-        await supabase
-          .from("projects")
-          .update({ script: script() })
-          .eq("id", projectId());
-    })
+    on([currentScript, script], () =>
+      setShowSave(currentScript() === script() ? false : true)
+    )
   );
 
-  // on settings node/element results change
+  // on settings node/element results change: render the scene
   createEffect(
     on([() => settings.nodeResults, () => settings.elementResults], () => {
       setRenderAction((c) => c + 1);
     })
   );
 
-  // on undeformed node change
+  // on undeformed node change: compute deformed nodes
   createEffect(
     on(undeformedNodes, () => {
       const displacement = new Map<number, number[]>();
@@ -193,16 +183,63 @@ export function App(props: AppProps) {
     })
   );
 
-  // on parameter change
+  // on parameter change: import model by running onParameterChange function
   function onParameterChange(e: any) {
-    importWorker.postMessage({ key: e.presetKey, value: e.value, $e: allow() });
+    importModel({ key: e.presetKey, value: e.value });
+  }
+
+  // on save: import model from the script, then sync the script
+  async function onSave() {
+    importModel({ script: currentScript() });
+
+    // sync with memory
+    setScript(currentScript());
+
+    // sync with the cloud
+    if (projectId())
+      await supabase
+        .from("projects")
+        .update({ script: currentScript() })
+        .eq("id", projectId());
+  }
+
+  function importModel(
+    message: { key: string; value: any } | { script: string }
+  ) {
+    importWorker.postMessage({ ...message, $e: awatifKey() });
+    importWorker.onmessage = (e) => {
+      if (e.data.error) {
+        setError(e.data.error);
+      } else {
+        batch(() => {
+          if (e.data.parameters) setParameters(e.data.parameters);
+
+          setError(undefined);
+          setUndeformedNodes(e.data.nodes);
+          setElements(e.data.elements);
+          setNodeSupports(e.data.nodeSupports);
+          setNodeLoads(e.data.nodeLoads);
+          setNodeResults(e.data.nodeResults);
+          setElementResults(e.data.elementResults);
+        });
+      }
+    };
+  }
+
+  function computeCenter(point1: number[], point2: number[]): number[] {
+    return point1?.map((v, i) => (v + point2[i]) * 0.5);
   }
 
   return (
     <Layouter>
-      <EditorBar error={error()} userPlan={userPlan()} />
+      <EditorBar
+        error={error()}
+        userPlan={userPlan()}
+        showSave={showSave()}
+        onSave={onSave}
+      />
 
-      <Editor text={initScript()} onTextChange={(text) => setScript(text)} />
+      <Editor text={script()} onTextChange={(text) => setCurrentScript(text)} />
 
       <Viewer>
         <Grid />
@@ -315,6 +352,3 @@ export function App(props: AppProps) {
     </Layouter>
   );
 }
-
-const computeCenter = (point1: number[], point2: number[]): number[] =>
-  point1?.map((v, i) => (v + point2[i]) * 0.5);

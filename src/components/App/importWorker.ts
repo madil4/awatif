@@ -8,6 +8,7 @@ self.onmessage = async (e) => {
   // @ts-ignore
   self.$k = e.data.$e;
 
+  // two cases: either running onParameterChange function or importing as js
   if (e.data.key) {
     parameters[e.data.key].value = e.data.value;
     try {
