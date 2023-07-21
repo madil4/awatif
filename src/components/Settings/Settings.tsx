@@ -32,8 +32,6 @@ export function Settings(props: SettingsProps) {
   pane.addInput(props.settings, "elementResults", {
     options: {
       none: "none",
-      strain: "strain",
-      stress: "stress",
       force: "force",
     },
     label: "element results",
