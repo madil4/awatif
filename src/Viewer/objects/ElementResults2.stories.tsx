@@ -28,6 +28,16 @@ export default {
         <Element start={[0, 0, 0]} end={[5, 0, 0]} />
         <ElementResult2 start={[0, 0, 3]} end={[5, 0, 3]} result={[-1, -1]} />
         <Element start={[0, 0, 3]} end={[5, 0, 3]} />
+
+        {/* linear  */}
+        <ElementResult2 start={[-6, 0, 6]} end={[-1, 0, 6]} result={[0, -1]} />
+        <Element start={[-6, 0, 6]} end={[-1, 0, 6]} />
+        <ElementResult2 start={[-6, 0, 4]} end={[-1, 0, 4]} result={[1, 0.5]} />
+        <Element start={[-6, 0, 4]} end={[-1, 0, 4]} />
+        <ElementResult2 start={[-6, 0, 2]} end={[-1, 0, 2]} result={[1, -1]} />
+        <Element start={[-6, 0, 2]} end={[-1, 0, 2]} />
+        <ElementResult2 start={[-6, 0, 0]} end={[-1, 0, 0]} result={[-1, 1]} />
+        <Element start={[-6, 0, 0]} end={[-1, 0, 0]} />
       </Viewer>
     </div>
   ),
