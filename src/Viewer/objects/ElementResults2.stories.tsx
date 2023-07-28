@@ -1,0 +1,34 @@
+import { Viewer } from "../Viewer";
+import { Meta, StoryObj } from "@storybook/html";
+import { Grid } from "./Grid";
+import { Element } from "./Element";
+import { ElementResult2 } from "./ElementResult2";
+
+export const Default: StoryObj = {};
+
+export default {
+  title: "ElementResults2",
+  render: () => (
+    <div class="w-screen h-screen">
+      <Viewer>
+        <Grid />
+
+        <ElementResult2 start={undefined} end={undefined} result={[10, 10]} />
+        <ElementResult2 start={[0, 0]} end={[5, 0]} result={[10, 10]} />
+        <ElementResult2
+          start={[0, 0, "k"]}
+          end={[5, 0, "k"]}
+          result={[10, 10]}
+        />
+        <ElementResult2 start={[0, , 0]} end={[5, , 0]} result={[10, 10]} />
+        <ElementResult2 start={[0, 0, 0]} end={[-3, 0, 1]} result={["", 10]} />
+
+        {/* constant  */}
+        <ElementResult2 start={[0, 0, 0]} end={[5, 0, 0]} result={[1, 1]} />
+        <Element start={[0, 0, 0]} end={[5, 0, 0]} />
+        <ElementResult2 start={[0, 0, 3]} end={[5, 0, 3]} result={[-1, -1]} />
+        <Element start={[0, 0, 3]} end={[5, 0, 3]} />
+      </Viewer>
+    </div>
+  ),
+} as Meta;
