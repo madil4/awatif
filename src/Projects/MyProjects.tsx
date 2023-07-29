@@ -34,9 +34,9 @@ export const MyProjects = () => {
             when={session()}
             fallback={
               <>
-                <p>Login first to manage your cloud-backed up projects</p>
+                <p>Login to manage your projects</p>
                 <button
-                  class="btn btn-neutral"
+                  class="btn btn-sm btn-neutral"
                   // @ts-ignore
                   onclick="LoginModal.showModal()"
                 >
