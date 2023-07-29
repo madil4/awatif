@@ -24,6 +24,8 @@ import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { supabase } from "../Login/Login";
 
+export const staging = localStorage.getItem("staging") ? true : false;
+
 type AppProps = {
   script?: string;
   settings?: Partial<SettingsType>;
