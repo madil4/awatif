@@ -1,7 +1,7 @@
 import { Show } from "solid-js";
 import { MyProjects } from "../Projects/MyProjects";
 import { Upgrade } from "../Upgrade/Upgrade";
-import { staging } from "..";
+import { staging } from "../App/App";
 
 type EditorBarProps = {
   error?: string;
