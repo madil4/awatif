@@ -36,9 +36,7 @@ export function App(props: AppProps) {
       type: "module",
     }
   );
-  const defaultScript = `// Here's a default template to start with. Documentation at https://awatif.co/docs
-
-import { analyzing } from 'https://unpkg.com/awatif';
+  const defaultScript = `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
 export const elements = [[0, 1], [1, 2]]
