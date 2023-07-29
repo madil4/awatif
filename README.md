@@ -13,7 +13,7 @@ Wanna dig deeper? Read the article [The Benefits of Parametric Modeling in Struc
 
 ## Getting started
 You can either use the hosted version at https://app.awatif.co or run it locally by following these steps:
- 1. Make sure you have downloaded and installed [Node.js](https://nodejs.org/en)
+ 1. Make sure you have downloaded and installed [Node.js](https://nodejs.org/en) and [Git](https://git-scm.com/)
  2. Run the following commands in the terminal:
 ```terminal
 git clone https://github.com/madil4/awatif.git
