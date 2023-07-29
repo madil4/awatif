@@ -99,9 +99,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     settings.deformedShape ? deformedNodes() : undeformedNodes();
 
   onMount(async () => {
-    const urlParams = new URL(window.location.href).searchParams;
-
     // set User plan and Awatif key
+    const urlParams = new URL(window.location.href).searchParams;
     setUserPlan(
       (await supabase.auth.getSession()).data.session?.user?.phone
         ? "pro"
@@ -130,7 +129,6 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       scriptFromURL = data?.length ? data[0].script : "";
       setProjectId(data?.length ? data[0].id : undefined);
     }
-
     const script = props.script || scriptFromURL || defaultScript;
     setScript(script);
     setCurrentScript(script);
