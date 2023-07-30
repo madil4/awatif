@@ -33,12 +33,9 @@ type AppProps = {
 };
 
 export function App(props: AppProps) {
-  const importWorker = new Worker(
-    new URL("./importWorker.ts", import.meta.url),
-    {
-      type: "module",
-    }
-  );
+  const solveWorker = new Worker(new URL("./solveWorker.ts", import.meta.url), {
+    type: "module",
+  });
   const defaultScript = `import { analyzing } from 'https://unpkg.com/awatif';
 
 export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
@@ -135,7 +132,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     const script = props.script || scriptFromURL || defaultScript;
     setScript(script);
     setCurrentScript(script);
-    importModel({ script: script });
+    solveModel({ script: script });
 
     // add save shortcut
     document.addEventListener("keydown", (event) => {
@@ -182,14 +179,14 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     })
   );
 
-  // on parameter change: import model by running onParameterChange function
+  // on parameter change: solve model by running onParameterChange function
   function onParameterChange(e: any) {
-    importModel({ key: e.presetKey, value: e.value });
+    solveModel({ key: e.presetKey, value: e.value });
   }
 
-  // on save: import model from the script, then sync the script
+  // on save: solve model from the script, then sync the script
   async function onSave() {
-    importModel({ script: currentScript() });
+    solveModel({ script: currentScript() });
 
     // sync with memory
     setScript(currentScript());
@@ -202,11 +199,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
         .eq("id", projectId());
   }
 
-  function importModel(
+  function solveModel(
     message: { key: string; value: any } | { script: string }
   ) {
-    importWorker.postMessage({ ...message, $e: awatifKey() });
-    importWorker.onmessage = (e) => {
+    solveWorker.postMessage({ ...message, $e: awatifKey() });
+    solveWorker.onmessage = (e) => {
       if (e.data.error) {
         setError(e.data.error);
       } else {
