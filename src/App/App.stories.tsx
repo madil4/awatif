@@ -151,6 +151,96 @@ export const elements = [[0, 1], [1, 2]]`,
   },
 };
 
+export const ShearMajor: StoryObj<Args> = {
+  args: {
+    script: `import { analyzing2 } from 'https://unpkg.com/awatif';
+
+const P = 1;
+const E = 200;
+const I = 10;
+const L = 5;
+
+export const nodes = [
+    [0, 0, 0],
+    [L, 0, 0],
+    [2 * L, 0, 0],
+];
+
+export const elements = [
+    [0, 1],
+    [1, 2],
+];
+
+export const assignments = [
+    {
+        node: 1,
+        support: [true, false],
+    },
+    {
+        node: 2,
+        support: [true, true],
+    },
+    {
+        node: 0,
+        force: [-P, 0],
+    },
+    ...elements.map((_, i) => ({
+        element: i,
+        inertia: I,
+        elasticity: E,
+    })),
+];
+
+export const analysisResults = analyzing2(nodes, elements, assignments);`,
+    settings: { elementResults: "shearMajor", nodeResults: "reaction" },
+  },
+};
+
+export const BendingMajor: StoryObj<Args> = {
+  args: {
+    script: `import { analyzing2 } from 'https://unpkg.com/awatif';
+
+const P = 0.5;
+const E = 200;
+const I = 10;
+const L = 5;
+
+export const nodes = [
+    [0, 0, 0],
+    [L, 0, 0],
+    [2 * L, 0, 0],
+];
+
+export const elements = [
+    [0, 1],
+    [1, 2],
+];
+
+export const assignments = [
+    {
+        node: 1,
+        support: [true, false],
+    },
+    {
+        node: 2,
+        support: [true, true],
+    },
+    {
+        node: 0,
+        force: [-P, 0],
+    },
+    ...elements.map((_, i) => ({
+        element: i,
+        inertia: I,
+        elasticity: E,
+    })),
+];
+
+export const analysisResults = analyzing2(nodes, elements, assignments);`,
+    settings: { elementResults: "bendingMajor", nodeResults: "reaction" },
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,

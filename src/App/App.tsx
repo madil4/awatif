@@ -23,6 +23,7 @@ import { NodeResult } from "../Viewer/objects/NodeResults";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { supabase } from "../Login/Login";
+import { ElementResult2 } from "../Viewer/objects/ElementResult2";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -314,6 +315,44 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   result={
                     (elementResult() as any)[settings.elementResults] || 0
                   }
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        <Show when={settings.elementResults == "shearMajor"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult2
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={
+                    (elementResult() as any)[settings.elementResults] || 0
+                  }
+                  degree={0}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
+        <Show when={settings.elementResults == "bendingMajor"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult2
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={
+                    (elementResult() as any)[settings.elementResults] || 0
+                  }
+                  degree={1}
                 />
               </Show>
             )}

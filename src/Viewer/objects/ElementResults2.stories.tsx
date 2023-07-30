@@ -77,21 +77,21 @@ export default {
         <ElementResult2
           start={[-6, 0, 4]}
           end={[-1, 0, 4]}
-          result={[1, 0.5]}
+          result={[-1, 0.5]}
           degree={1}
         />
         <Element start={[-6, 0, 4]} end={[-1, 0, 4]} />
         <ElementResult2
           start={[-6, 0, 2]}
           end={[-1, 0, 2]}
-          result={[1, -1]}
+          result={[1, 1]}
           degree={1}
         />
         <Element start={[-6, 0, 2]} end={[-1, 0, 2]} />
         <ElementResult2
           start={[-6, 0, 0]}
           end={[-1, 0, 0]}
-          result={[-1, 1]}
+          result={[-1, -1]}
           degree={1}
         />
         <Element start={[-6, 0, 0]} end={[-1, 0, 0]} />
