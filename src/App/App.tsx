@@ -22,7 +22,7 @@ import { ElementResult } from "../Viewer/objects/ElementResult";
 import { NodeResult } from "../Viewer/objects/NodeResults";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
-import { supabase } from "../Login/Login";
+import { Login, supabase } from "../Login/Login";
 import { ElementResult2 } from "../Viewer/objects/ElementResult2";
 
 export const staging = localStorage.getItem("staging") ? true : false;
@@ -236,6 +236,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       />
 
       <Editor text={script()} onTextChange={(text) => setCurrentScript(text)} />
+
+      <Login />
 
       <Viewer>
         <Grid />

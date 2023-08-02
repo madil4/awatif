@@ -1,5 +1,4 @@
 import { children, onMount, ParentComponent } from "solid-js";
-import { Login } from "../Login/Login";
 
 export const Layouter: ParentComponent = (props: any) => {
   let container: HTMLDivElement;
@@ -51,16 +50,16 @@ export const Layouter: ParentComponent = (props: any) => {
       >
         {c[0]}
         {c[1]}
-        <Login />
+        {c[2]}
       </div>
       <div
         class="bg-primary w-[2px] cursor-ew-resize"
         ref={resizerHorizontal!}
       ></div>
       <div class="relative flex-1 min-w-[350px]">
-        {c[2]}
         {c[3]}
         {c[4]}
+        {c[5]}
       </div>
     </div>
   );

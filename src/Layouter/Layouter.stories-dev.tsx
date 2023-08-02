@@ -9,6 +9,7 @@ export default {
     <Layouter>
       <div>EditorBar</div>
       <div>Editor</div>
+      <div>Login</div>
       <div>Viewer</div>
       <div>Setting</div>
       <div>Parameters</div>
