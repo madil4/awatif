@@ -320,6 +320,25 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           </Index>
         </Show>
 
+        <Show when={settings.elementResults == "normal"}>
+          <Index each={elementResults()}>
+            {(elementResult) => (
+              <Show when={elements()[(elementResult() as any).element]}>
+                <ElementResult2
+                  start={
+                    nodes()[elements()[(elementResult() as any).element][0]]
+                  }
+                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  result={
+                    (elementResult() as any)[settings.elementResults] || 0
+                  }
+                  degree={0}
+                />
+              </Show>
+            )}
+          </Index>
+        </Show>
+
         <Show when={settings.elementResults == "shearMajor"}>
           <Index each={elementResults()}>
             {(elementResult) => (
