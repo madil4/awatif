@@ -33,8 +33,6 @@ export function Settings(props: SettingsProps) {
     options: {
       none: "none",
       force: "force",
-      shearMajor: "shearMajor",
-      bendingMajor: "bendingMajor",
     },
     label: "element results",
   });
