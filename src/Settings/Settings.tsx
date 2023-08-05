@@ -32,14 +32,14 @@ export function Settings(props: SettingsProps) {
   pane.addInput(props.settings, "elementResults", {
     options: {
       none: "none",
-      force: "force",
+      normal: "normal",
     },
     label: "element results",
   });
   pane.addInput(props.settings, "nodeResults", {
     options: {
       none: "none",
-      displacement: "displacement",
+      deformation: "deformation",
       reaction: "reaction",
     },
     label: "node results",
