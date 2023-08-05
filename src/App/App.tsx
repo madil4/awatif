@@ -23,7 +23,6 @@ import { NodeResult } from "../Viewer/objects/NodeResults";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
-import { ElementResult2 } from "../Viewer/objects/ElementResult2";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -163,16 +162,16 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   // on undeformed node change: compute deformed nodes
   createEffect(
     on(undeformedNodes, () => {
-      const displacement = new Map<number, number[]>();
+      const deformation = new Map<number, number[]>();
       if (nodeResults().length) {
         nodeResults().forEach((nodeResult: any) => {
-          if ("displacement" in nodeResult)
-            displacement.set(nodeResult.node, nodeResult.displacement);
+          if ("deformation" in nodeResult)
+            deformation.set(nodeResult.node, nodeResult.deformation);
         });
       }
       setDeformedNodes(
         undeformedNodes().map((v: any, i) => {
-          const dis = displacement.get(i) || [0, 0, 0];
+          const dis = deformation.get(i) || [0, 0, 0];
           return v.map((vv: any, ii: any) => vv + dis[ii]);
         })
       );
@@ -312,65 +311,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   }
                   end={nodes()[elements()[(elementResult() as any).element][1]]}
                   result={
-                    (elementResult() as any)[settings.elementResults] || 0
+                    (elementResult() as any)[settings.elementResults][0] || 0
                   }
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elementResults == "normal"}>
-          <Index each={elementResults()}>
-            {(elementResult) => (
-              <Show when={elements()[(elementResult() as any).element]}>
-                <ElementResult2
-                  start={
-                    nodes()[elements()[(elementResult() as any).element][0]]
-                  }
-                  end={nodes()[elements()[(elementResult() as any).element][1]]}
-                  result={
-                    (elementResult() as any)[settings.elementResults] || 0
-                  }
-                  degree={0}
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elementResults == "shearMajor"}>
-          <Index each={elementResults()}>
-            {(elementResult) => (
-              <Show when={elements()[(elementResult() as any).element]}>
-                <ElementResult2
-                  start={
-                    nodes()[elements()[(elementResult() as any).element][0]]
-                  }
-                  end={nodes()[elements()[(elementResult() as any).element][1]]}
-                  result={
-                    (elementResult() as any)[settings.elementResults] || 0
-                  }
-                  degree={0}
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elementResults == "bendingMajor"}>
-          <Index each={elementResults()}>
-            {(elementResult) => (
-              <Show when={elements()[(elementResult() as any).element]}>
-                <ElementResult2
-                  start={
-                    nodes()[elements()[(elementResult() as any).element][0]]
-                  }
-                  end={nodes()[elements()[(elementResult() as any).element][1]]}
-                  result={
-                    (elementResult() as any)[settings.elementResults] || 0
-                  }
-                  degree={1}
                 />
               </Show>
             )}
