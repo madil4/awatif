@@ -151,6 +151,18 @@ export const elements = [[0, 1], [1, 2]]`,
   },
 };
 
+export const OverrideSettings: StoryObj<Args> = {
+  args: {
+    script: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const elements = [[0, 1], [1, 2]];
+
+export const settings = {
+    nodesIndices: true,
+    elementsIndices: true
+};`,
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,

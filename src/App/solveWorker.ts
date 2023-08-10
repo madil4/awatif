@@ -66,6 +66,7 @@ self.onmessage = async (e) => {
     nodeLoads,
     nodeResults,
     elementResults,
+    settings: module?.settings || {},
   });
 };
 

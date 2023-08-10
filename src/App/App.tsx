@@ -7,7 +7,7 @@ import {
   on,
   onMount,
 } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createMutable } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer, setRenderAction } from "../Viewer/Viewer";
@@ -81,7 +81,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   const [currentScript, setCurrentScript] = createSignal("");
   const [script, setScript] = createSignal("");
   const [showSave, setShowSave] = createSignal(false);
-  const [settings, setSettings] = createStore<SettingsType>(defaultSettings);
+  const settings = createMutable<SettingsType>(defaultSettings);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
@@ -218,6 +218,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           setNodeLoads(e.data.nodeLoads);
           setNodeResults(e.data.nodeResults);
           setElementResults(e.data.elementResults);
+
+          Object.assign(settings, e.data.settings);
         });
       }
     };
@@ -337,12 +339,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
         </Show>
       </Viewer>
 
-      <Settings
-        settings={Object.assign({}, settings)}
-        onChange={(ev) => {
-          setSettings(ev.presetKey as any, ev.value);
-        }}
-      />
+      <Settings settings={settings} />
 
       <Parameters
         parameters={parameters()}
