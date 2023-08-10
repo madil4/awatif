@@ -1,3 +1,4 @@
+import { createEffect } from "solid-js";
 import { Pane, TpChangeEvent } from "tweakpane";
 
 export type SettingsType = {
@@ -47,6 +48,10 @@ export function Settings(props: SettingsProps) {
 
   pane.on("change", (ev) => {
     if (props.onChange) props.onChange(ev);
+  });
+
+  createEffect(() => {
+    pane.refresh();
   });
 
   return <div class="absolute top-0 left-5 w-[19rem]">{pane.element}</div>;
