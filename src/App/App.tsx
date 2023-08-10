@@ -111,7 +111,9 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
         urlParams.get("slug") === "2d-truss") ||
       (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-        urlParams.get("slug") === "3d-tower")
+        urlParams.get("slug") === "3d-tower") ||
+      (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
+        urlParams.get("slug") === "truss-designer")
     ) {
       setAwatifKey(import.meta.env.VITE_AWATIF_KEY);
     }
