@@ -111,7 +111,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
         urlParams.get("slug") === "2d-truss") ||
       (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
-        urlParams.get("slug") === "3d-tower")
+        urlParams.get("slug") === "3d-tower") ||
+      window.location.href.split("/").pop() === "truss-designer"
     ) {
       setAwatifKey(import.meta.env.VITE_AWATIF_KEY);
     }
@@ -128,7 +129,19 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       scriptFromURL = data?.length ? data[0].script : "";
       setProjectId(data?.length ? data[0].id : undefined);
     }
-    const script = props.script || scriptFromURL || defaultScript;
+
+    let scriptForTrussDesigner = "";
+    if (window.location.href.split("/").pop() === "truss-designer") {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("script,id")
+        .eq("user_id", "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81")
+        .eq("slug", "truss-designer");
+      scriptFromURL = data?.length ? data[0].script : "";
+    }
+
+    const script =
+      props.script || scriptForTrussDesigner || scriptFromURL || defaultScript;
     setScript(script);
     setCurrentScript(script);
     solveModel({ script: script });
