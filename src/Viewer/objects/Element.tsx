@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
+import { onCleanup } from "solid-js";
 
 type ElementProps = {
   start: any;
@@ -35,6 +36,11 @@ export function Element(props: ElementProps) {
 
   line.geometry.setPositions([...swapYZStart, ...swapYZEnd]);
   line.geometry.setColors([...Array(6).fill(1)]);
+
+  onCleanup(() => {
+    line.geometry.dispose();
+    line.material.dispose();
+  });
 
   return <>{line}</>;
 }

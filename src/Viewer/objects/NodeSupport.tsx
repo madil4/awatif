@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { onCleanup } from "solid-js";
 
 type NodeSupportProps = {
   position: any;
@@ -19,11 +20,10 @@ export function NodeSupport(props: NodeSupportProps) {
   )
     return;
 
-  const geometry = props.support.every((s: boolean) => s)
-    ? new THREE.BoxGeometry(0.3, 0.3, 0.3)
-    : new THREE.SphereGeometry(0.15);
-  const material = new THREE.MeshBasicMaterial({ color: 0xb30000 });
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.3, 0.3),
+    new THREE.MeshBasicMaterial({ color: 0xb30000 })
+  );
 
   const swapYZ: [number, number, number] = [
     props.position[0],
@@ -31,6 +31,11 @@ export function NodeSupport(props: NodeSupportProps) {
     props.position[1],
   ];
   mesh.position.set(...swapYZ);
+
+  onCleanup(() => {
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  });
 
   return <>{mesh}</>;
 }

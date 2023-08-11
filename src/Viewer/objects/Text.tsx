@@ -35,6 +35,7 @@ export function Text(props: TextProps) {
   );
 
   onCleanup(() => {
+    text.geometry.dispose();
     material.map?.dispose();
     material.dispose();
   });

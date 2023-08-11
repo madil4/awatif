@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Text } from "./Text";
-import { Show } from "solid-js";
+import { Show, onCleanup } from "solid-js";
 
 type NodeResultProps = {
   position: any;
@@ -72,6 +72,12 @@ export function NodeResult(props: NodeResultProps) {
   )
     .add(new THREE.Vector3(...props.position))
     .toArray();
+
+  onCleanup(() => {
+    xArrow.dispose();
+    yArrow.dispose();
+    zArrow.dispose();
+  });
 
   return (
     <>
