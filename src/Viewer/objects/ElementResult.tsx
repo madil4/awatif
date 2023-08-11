@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Text } from "./Text";
+import { onCleanup } from "solid-js";
 
 type ElementResultProps = {
   start: any;
@@ -71,6 +72,11 @@ export function ElementResult(props: ElementResultProps) {
 
   // text
   const textPosition = start.clone().add(end).multiplyScalar(0.5);
+
+  onCleanup(() => {
+    plane.geometry.dispose();
+    plane.material.dispose();
+  });
 
   return (
     <>

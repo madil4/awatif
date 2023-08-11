@@ -1,3 +1,4 @@
+import { onCleanup } from "solid-js";
 import * as THREE from "three";
 
 type PointLoadProps = {
@@ -37,6 +38,10 @@ export function NodeLoad(props: PointLoadProps) {
     0.3,
     0.3
   );
+
+  onCleanup(() => {
+    arrow.dispose();
+  });
 
   return <>{arrow}</>;
 }

@@ -4,36 +4,33 @@ import { children, createEffect, createSignal, on, onMount } from "solid-js";
 
 export function Viewer(props: any) {
   let container: HTMLDivElement;
-  let scene: THREE.Scene;
-  let renderer: THREE.Renderer;
-  let camera: THREE.PerspectiveCamera;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  camera.position.set(0, 5, 10);
+  controls.minDistance = 1;
+  controls.maxDistance = 40;
+  controls.update();
+
+  // on control change
+  controls.addEventListener("change", () => {
+    renderer.render(scene, camera);
+  });
 
   onMount(() => {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 1;
-    controls.maxDistance = 40;
-
     container.appendChild(renderer.domElement);
-    camera.position.set(0, 5, 10);
-    controls.update();
-
-    // on control change
-    controls.addEventListener("change", () => {
-      renderer.render(scene, camera);
-    });
 
     // on container size change
     new ResizeObserver((entries) => {
-      const c = entries[0].contentRect;
+      const content = entries[0].contentRect;
 
-      camera.aspect = c.width / c.height;
+      camera.aspect = content.width / content.height;
       camera.updateProjectionMatrix();
 
-      renderer.setSize(c.width, c.height);
+      renderer.setSize(content.width, content.height);
       renderer.render(scene, camera);
     }).observe(container);
   });
@@ -42,28 +39,22 @@ export function Viewer(props: any) {
   createEffect(() => {
     const objects = children(() => props.children).toArray();
 
-    if (scene) {
-      scene.clear();
-      objects.forEach((object: any) => {
-        if (object instanceof THREE.Object3D) scene.add(object);
-      });
-    }
+    scene.clear();
+    objects.forEach((object: any) => {
+      if (object instanceof THREE.Object3D) scene.add(object);
+    });
 
-    if (renderer) renderer.render(scene, camera);
+    renderer.render(scene, camera);
   });
 
   // on render action
   createEffect(
     on(renderAction, () => {
-      if (renderer) renderer.render(scene, camera);
+      renderer.render(scene, camera);
     })
   );
 
-  return (
-    <>
-      <div ref={container!} class="w-full h-full"></div>
-    </>
-  );
+  return <div ref={container!} class="w-full h-full"></div>;
 }
 
 // actions
