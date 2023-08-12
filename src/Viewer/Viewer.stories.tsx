@@ -15,8 +15,8 @@ export default {
   title: "Viewer",
   render: () => (
     <div class="w-screen h-screen">
-      <Viewer>
-        <Grid />
+      <Viewer size={[10, 0]}>
+        <Grid size={[20, 0]} />
 
         <Node position={undefined} />
         <Node position={[5, 0]} />

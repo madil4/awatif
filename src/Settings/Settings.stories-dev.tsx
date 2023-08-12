@@ -8,6 +8,7 @@ export default {
   render: () => (
     <Settings
       settings={{
+        gridSize: 40,
         nodes: true,
         elements: true,
         nodesIndices: false,

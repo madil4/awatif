@@ -10,8 +10,8 @@ export default {
   title: "ElementResults2",
   render: () => (
     <div class="w-screen h-screen">
-      <Viewer>
-        <Grid />
+      <Viewer size={[15, 0]}>
+        <Grid size={[15, 0]} />
 
         <ElementResult2
           start={undefined}
