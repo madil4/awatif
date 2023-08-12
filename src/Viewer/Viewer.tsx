@@ -2,23 +2,18 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { children, createEffect, createSignal, on, onMount } from "solid-js";
 
-export function Viewer(props: any) {
+type ViewerProps = {
+  size: [number, number];
+  children: any;
+};
+
+export function Viewer(props: ViewerProps) {
   let container: HTMLDivElement;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(45, 1.0, 0.1, 2 * 1e6); // supported view till 1e6
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
-
-  camera.position.set(0, 5, 10);
-  controls.minDistance = 1;
-  controls.maxDistance = 40;
-  controls.update();
-
-  // on control change
-  controls.addEventListener("change", () => {
-    renderer.render(scene, camera);
-  });
 
   onMount(() => {
     container.appendChild(renderer.domElement);
@@ -35,6 +30,16 @@ export function Viewer(props: any) {
     }).observe(container);
   });
 
+  // on grid size change
+  createEffect(() => {
+    const gridSize = Math.abs(props.size[0]);
+    const z2fit = gridSize / 2 + gridSize / 2 / Math.tan(45 / 2);
+    camera.position.set(0, gridSize / 2, z2fit);
+    controls.minDistance = 1;
+    controls.maxDistance = z2fit * 1.5;
+    controls.update();
+  });
+
   // on children (objects) change
   createEffect(() => {
     const objects = children(() => props.children).toArray();
@@ -44,6 +49,11 @@ export function Viewer(props: any) {
       if (object instanceof THREE.Object3D) scene.add(object);
     });
 
+    renderer.render(scene, camera);
+  });
+
+  // on control change
+  controls.addEventListener("change", () => {
     renderer.render(scene, camera);
   });
 

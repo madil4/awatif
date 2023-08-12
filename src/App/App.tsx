@@ -67,6 +67,7 @@ export const assignments = [
 
 export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
+    gridSize: 25,
     nodes: true,
     elements: true,
     nodesIndices: false,
@@ -242,8 +243,8 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Login />
 
-      <Viewer>
-        <Grid />
+      <Viewer size={[settings.gridSize, 1]}>
+        <Grid size={[settings.gridSize, 1]} />
 
         <Show when={settings.nodes}>
           <Index each={nodes()}>{(node) => <Node position={node()} />}</Index>
