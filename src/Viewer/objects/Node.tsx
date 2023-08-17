@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { onCleanup } from "solid-js";
+import { createEffect, onCleanup } from "solid-js";
 
 type NodeProps = {
   position: any;
+  size: number;
 };
 
 export function Node(props: NodeProps) {
@@ -15,7 +16,7 @@ export function Node(props: NodeProps) {
 
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
-    new THREE.PointsMaterial({ size: 0.3 })
+    new THREE.PointsMaterial()
   );
 
   points.geometry.setAttribute(
@@ -25,6 +26,10 @@ export function Node(props: NodeProps) {
       3
     )
   );
+
+  createEffect(() => {
+    points.material.size = props.size;
+  });
 
   onCleanup(() => {
     points.geometry.dispose();

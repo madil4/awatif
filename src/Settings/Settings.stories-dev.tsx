@@ -9,6 +9,7 @@ export default {
     <Settings
       settings={{
         gridSize: 40,
+        displayScale: 1,
         nodes: true,
         elements: true,
         nodesIndices: false,

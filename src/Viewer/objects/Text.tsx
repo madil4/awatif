@@ -4,7 +4,7 @@ import * as THREE from "three";
 type TextProps = {
   text: any;
   position: any;
-  size: any;
+  size: number;
 };
 
 export function Text(props: TextProps) {
@@ -15,8 +15,7 @@ export function Text(props: TextProps) {
     typeof props.text != "string" ||
     props.position.length != 3 ||
     props.position.some((e: any) => typeof e !== "number") ||
-    props.position.flat().length != props.position.length ||
-    typeof props.size != "number"
+    props.position.flat().length != props.position.length
   )
     return;
 
@@ -27,18 +26,11 @@ export function Text(props: TextProps) {
 
   const text = new THREE.Sprite(material);
   text.renderOrder = 99;
-  text.position.set(props.position[0], props.position[2], props.position[1]);
   text.scale.set(
     material.map.image.width / resolution / devicePixelRatio,
     props.size,
     1
   );
-
-  onCleanup(() => {
-    text.geometry.dispose();
-    material.map?.dispose();
-    material.dispose();
-  });
 
   // on text change or size change
   createEffect(() => {
@@ -49,6 +41,17 @@ export function Text(props: TextProps) {
       props.size,
       1
     );
+  });
+
+  // on position change
+  createEffect(() => {
+    text.position.set(props.position[0], props.position[2], props.position[1]);
+  });
+
+  onCleanup(() => {
+    text.geometry.dispose();
+    material.map?.dispose();
+    material.dispose();
   });
 
   return <>{text}</>;

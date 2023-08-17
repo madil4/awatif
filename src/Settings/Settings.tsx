@@ -2,7 +2,6 @@ import { createEffect } from "solid-js";
 import { Pane, TpChangeEvent } from "tweakpane";
 
 export type SettingsType = {
-  gridSize: number;
   nodes: boolean;
   elements: boolean;
   nodesIndices: boolean;
@@ -12,6 +11,8 @@ export type SettingsType = {
   deformedShape: boolean;
   elementResults: string;
   nodeResults: string;
+  gridSize: number;
+  displayScale: number;
 };
 
 export type SettingsProps = {
@@ -22,7 +23,13 @@ export type SettingsProps = {
 export function Settings(props: SettingsProps) {
   let pane = new Pane({ title: "Settings", expanded: false });
 
-  pane.addInput(props.settings, "gridSize", { label: "grid size" });
+  pane.addInput(props.settings, "gridSize", { label: "grid size", min: 1 });
+  pane.addInput(props.settings, "displayScale", {
+    label: "display scale",
+    min: -10,
+    max: 10,
+    step: 1,
+  });
   pane.addInput(props.settings, "nodes");
   pane.addInput(props.settings, "elements");
   pane.addInput(props.settings, "nodesIndices", { label: "nodes indices" });

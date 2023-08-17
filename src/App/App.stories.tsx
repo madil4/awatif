@@ -10,7 +10,7 @@ export const Invalid: StoryObj<Args> = {
   },
 };
 
-export const Basic: StoryObj<Args> = {
+export const Default: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
@@ -46,7 +46,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`,
   },
 };
 
-export const Undeformed: StoryObj<Args> = {
+export const UndeformedAndSize: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
@@ -79,11 +79,11 @@ export const assignments = [
 ]
 
 export const analysisResults = analyzing(nodes, elements, assignments);`,
-    settings: { deformedShape: false },
+    settings: { gridSize: 10, deformedShape: false },
   },
 };
 
-export const Parameters: StoryObj<Args> = {
+export const ParametersAndResults: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
@@ -139,7 +139,11 @@ export const onParameterChange = (parameters) => {
   return { nodes, elements, assignments, analysisResults }
 }
 `,
-    settings: { elementResults: "force", nodeResults: "reaction" },
+    settings: {
+      displayScale: 2,
+      elementResults: "normal",
+      nodeResults: "reaction",
+    },
   },
 };
 

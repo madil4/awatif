@@ -1,9 +1,10 @@
-import { onCleanup } from "solid-js";
+import { createEffect, onCleanup } from "solid-js";
 import * as THREE from "three";
 
 type PointLoadProps = {
   position: any;
   load: any;
+  size: number;
 };
 
 export function NodeLoad(props: PointLoadProps) {
@@ -38,6 +39,10 @@ export function NodeLoad(props: PointLoadProps) {
     0.3,
     0.3
   );
+
+  createEffect(() => {
+    arrow.scale.set(props.size, props.size, props.size);
+  });
 
   onCleanup(() => {
     arrow.dispose();
