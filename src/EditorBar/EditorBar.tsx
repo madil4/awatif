@@ -1,7 +1,6 @@
 import { Show } from "solid-js";
 import { MyProjects } from "../Projects/MyProjects";
 import { Upgrade } from "../Upgrade/Upgrade";
-import { staging } from "../App/App";
 
 type EditorBarProps = {
   error?: string;
@@ -43,9 +42,6 @@ export function EditorBar(props: EditorBarProps) {
         </Show>
         <Show when={props.userPlan === "free"}>
           <Upgrade />
-        </Show>
-        <Show when={staging}>
-          <Export />
         </Show>
         <MyProjects />
         <Help />
@@ -167,8 +163,4 @@ function Help() {
       </div>
     </div>
   );
-}
-
-function Export() {
-  return <button class="btn btn-xs btn-neutral">Export</button>;
 }
