@@ -13,7 +13,7 @@ export const MyProjects = () => {
   return (
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-xs btn-neutral">
-        <span>My Projects</span>
+        <span>Projects</span>
         <svg
           width="8px"
           height="8px"
