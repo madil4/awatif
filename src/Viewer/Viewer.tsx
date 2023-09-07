@@ -3,8 +3,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { children, createEffect, createSignal, on, onMount } from "solid-js";
 
 type ViewerProps = {
-  size: [number, number];
   children: any;
+  gridSize: number;
 };
 
 export function Viewer(props: ViewerProps) {
@@ -32,9 +32,8 @@ export function Viewer(props: ViewerProps) {
 
   // on grid size change
   createEffect(() => {
-    const gridSize = Math.abs(props.size[0]);
-    const z2fit = gridSize / 2 + gridSize / 2 / Math.tan(45 / 2);
-    camera.position.set(0, gridSize / 2, z2fit);
+    const z2fit = props.gridSize / 2 + props.gridSize / 2 / Math.tan(45 / 2);
+    camera.position.set(0, props.gridSize / 2, z2fit);
     controls.minDistance = 1;
     controls.maxDistance = z2fit * 1.5;
     controls.update();

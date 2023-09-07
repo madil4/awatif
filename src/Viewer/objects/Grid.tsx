@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { setRenderAction } from "../Viewer";
 
 type GridProps = {
-  size: [number, number];
+  size: number;
 };
 
 export function Grid(props: GridProps) {
@@ -14,7 +14,7 @@ export function Grid(props: GridProps) {
     group.clear();
     grid?.dispose();
 
-    grid = new THREE.GridHelper(props.size[0], 20, 0x666666, 0x404040);
+    grid = new THREE.GridHelper(props.size, 20, 0x666666, 0x404040);
     group.add(grid);
 
     setRenderAction((v) => v + 1);

@@ -6,6 +6,7 @@ type ElementResultProps = {
   start: any;
   end: any;
   result: any;
+  size: number;
 };
 
 export function ElementResult(props: ElementResultProps) {
@@ -84,7 +85,7 @@ export function ElementResult(props: ElementResultProps) {
       <Text
         position={[textPosition.x, textPosition.z, textPosition.y]}
         text={`${props.result}`}
-        size={0.4}
+        size={0.4 * props.size}
       ></Text>
     </>
   );

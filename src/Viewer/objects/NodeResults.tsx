@@ -1,13 +1,18 @@
 import * as THREE from "three";
 import { Text } from "./Text";
-import { Show, onCleanup } from "solid-js";
+import { Show, createEffect, createSignal, onCleanup } from "solid-js";
 
 type NodeResultProps = {
   position: any;
   result: any;
+  size: number;
 };
 
 export function NodeResult(props: NodeResultProps) {
+  const [xTextPosition, setXTextPosition] = createSignal([0, 0, 0]);
+  const [yTextPosition, setYTextPosition] = createSignal([0, 0, 0]);
+  const [zTextPosition, setZTextPosition] = createSignal([0, 0, 0]);
+
   if (
     !props.position ||
     !props.result ||
@@ -51,27 +56,29 @@ export function NodeResult(props: NodeResultProps) {
     0.3
   );
 
-  const xTextPosition = new THREE.Vector3(
-    props.result[0] >= 0 ? 1.3 : -1.3,
-    0,
-    0
-  )
-    .add(new THREE.Vector3(...props.position))
-    .toArray();
-  const yTextPosition = new THREE.Vector3(
-    0,
-    props.result[1] >= 0 ? 1.3 : -1.3,
-    0
-  )
-    .add(new THREE.Vector3(...props.position))
-    .toArray();
-  const zTextPosition = new THREE.Vector3(
-    0,
-    0,
-    props.result[2] >= 0 ? 1.3 : -1.3
-  )
-    .add(new THREE.Vector3(...props.position))
-    .toArray();
+  // on size change
+  createEffect(() => {
+    xArrow.scale.set(props.size, props.size, props.size);
+    yArrow.scale.set(props.size, props.size, props.size);
+    zArrow.scale.set(props.size, props.size, props.size);
+
+    const textOffset = 1.3 * props.size;
+    setXTextPosition(
+      new THREE.Vector3(props.result[0] >= 0 ? textOffset : -textOffset, 0, 0)
+        .add(new THREE.Vector3(...props.position))
+        .toArray()
+    );
+    setYTextPosition(
+      new THREE.Vector3(0, props.result[1] >= 0 ? textOffset : -textOffset, 0)
+        .add(new THREE.Vector3(...props.position))
+        .toArray()
+    );
+    setZTextPosition(
+      new THREE.Vector3(0, 0, props.result[2] >= 0 ? textOffset : -textOffset)
+        .add(new THREE.Vector3(...props.position))
+        .toArray()
+    );
+  });
 
   onCleanup(() => {
     xArrow.dispose();
@@ -87,8 +94,8 @@ export function NodeResult(props: NodeResultProps) {
           {
             <Text
               text={`${props.result[0]}`}
-              position={xTextPosition}
-              size={0.4}
+              position={xTextPosition()}
+              size={0.4 * props.size}
             />
           }
         </>
@@ -99,8 +106,8 @@ export function NodeResult(props: NodeResultProps) {
           {
             <Text
               text={`${props.result[1]}`}
-              position={yTextPosition}
-              size={0.4}
+              position={yTextPosition()}
+              size={0.4 * props.size}
             />
           }
         </>
@@ -111,8 +118,8 @@ export function NodeResult(props: NodeResultProps) {
           {
             <Text
               text={`${props.result[2]}`}
-              position={zTextPosition}
-              size={0.4}
+              position={zTextPosition()}
+              size={0.4 * props.size}
             />
           }
         </>

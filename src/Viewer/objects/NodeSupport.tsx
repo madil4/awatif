@@ -1,9 +1,10 @@
 import * as THREE from "three";
-import { onCleanup } from "solid-js";
+import { createEffect, onCleanup } from "solid-js";
 
 type NodeSupportProps = {
   position: any;
   support: any;
+  size: number;
 };
 
 export function NodeSupport(props: NodeSupportProps) {
@@ -31,6 +32,10 @@ export function NodeSupport(props: NodeSupportProps) {
     props.position[1],
   ];
   mesh.position.set(...swapYZ);
+
+  createEffect(() => {
+    mesh.scale.set(props.size, props.size, props.size);
+  });
 
   onCleanup(() => {
     mesh.geometry.dispose();

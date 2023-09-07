@@ -68,6 +68,7 @@ export const assignments = [
 export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
     gridSize: 25,
+    displayScale: 1,
     nodes: true,
     elements: true,
     nodesIndices: false,
@@ -95,8 +96,6 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   const [parameters, setParameters] = createSignal<ParametersType>({});
   const [awatifKey, setAwatifKey] = createSignal("");
   const [userPlan, setUserPlan] = createSignal("");
-  const nodes = () =>
-    settings.deformedShape ? deformedNodes() : undeformedNodes();
 
   onMount(async () => {
     // set User plan and Awatif key
@@ -148,6 +147,18 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     });
   });
 
+  // on setting deformedShape change: set nodes
+  const nodes = () =>
+    settings.deformedShape ? deformedNodes() : undeformedNodes();
+
+  // on settings.displayScale change: set displayScale
+  const displayScale = () =>
+    settings.displayScale === 0
+      ? 1
+      : settings.displayScale > 0
+      ? settings.displayScale
+      : -1 / settings.displayScale;
+
   // on script change: define saving status
   createEffect(
     on([currentScript, script], () =>
@@ -155,11 +166,19 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     )
   );
 
-  // on settings node/element results change: render the scene
+  // on settings change: render the scene
   createEffect(
-    on([() => settings.nodeResults, () => settings.elementResults], () => {
-      setRenderAction((c) => c + 1);
-    })
+    on(
+      [
+        () => settings.gridSize,
+        () => settings.displayScale,
+        () => settings.nodeResults,
+        () => settings.elementResults,
+      ],
+      () => {
+        setRenderAction((c) => c + 1);
+      }
+    )
   );
 
   // on undeformed node change: compute deformed nodes
@@ -243,11 +262,18 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Login />
 
-      <Viewer size={[settings.gridSize, 1]}>
-        <Grid size={[settings.gridSize, 1]} />
+      <Viewer gridSize={settings.gridSize}>
+        <Grid size={settings.gridSize} />
 
         <Show when={settings.nodes}>
-          <Index each={nodes()}>{(node) => <Node position={node()} />}</Index>
+          <Index each={nodes()}>
+            {(node) => (
+              <Node
+                position={node()}
+                size={0.025 * settings.gridSize * displayScale()}
+              />
+            )}
+          </Index>
         </Show>
 
         <Show when={settings.elements}>
@@ -264,7 +290,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
         <Show when={settings.nodesIndices}>
           <Index each={nodes()}>
             {(node, index) => (
-              <Text text={`${index}`} position={node()} size={0.4} />
+              <Text
+                text={`${index}`}
+                position={node()}
+                size={0.025 * settings.gridSize * displayScale()}
+              />
             )}
           </Index>
         </Show>
@@ -278,7 +308,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   nodes()[element()[0]],
                   nodes()[element()[1]]
                 )}
-                size={0.4}
+                size={0.025 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -290,6 +320,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
               <NodeSupport
                 position={nodes()[(support() as any).node]}
                 support={(support() as any).support}
+                size={0.04 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -301,6 +332,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
               <NodeLoad
                 position={nodes()[(pointLoad() as any).node]}
                 load={(pointLoad() as any).load}
+                size={0.04 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -318,6 +350,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   result={
                     (elementResult() as any)[settings.elementResults][0] || 0
                   }
+                  size={0.04 * settings.gridSize * displayScale()}
                 />
               </Show>
             )}
@@ -333,6 +366,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   result={
                     (nodeResult() as any)[settings.nodeResults] || [0, 0, 0]
                   }
+                  size={0.04 * settings.gridSize * displayScale()}
                 />
               </Show>
             )}
