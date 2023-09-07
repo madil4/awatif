@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
-import { createEffect, onCleanup } from "solid-js";
+import { onCleanup } from "solid-js";
 
 type ElementProps = {
   start: any;

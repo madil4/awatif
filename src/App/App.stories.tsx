@@ -147,14 +147,6 @@ export const onParameterChange = (parameters) => {
   },
 };
 
-export const Indices: StoryObj<Args> = {
-  args: {
-    script: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
-export const elements = [[0, 1], [1, 2]]`,
-    settings: { nodesIndices: true, elementsIndices: true },
-  },
-};
-
 export const OverrideSettings: StoryObj<Args> = {
   args: {
     script: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
