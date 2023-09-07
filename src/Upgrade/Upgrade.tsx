@@ -13,7 +13,7 @@ export function Upgrade() {
     <>
       {/* @ts-ignore */}
       <button class="btn btn-xs btn-primary" onclick="UpgradeModal.showModal()">
-        Upgrade to Pro
+        Upgrade
       </button>
 
       <dialog id="UpgradeModal" class="modal">
