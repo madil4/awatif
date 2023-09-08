@@ -1,5 +1,6 @@
 import { createEffect, onCleanup } from "solid-js";
 import * as THREE from "three";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type TextProps = {
   text: any;
@@ -59,7 +60,7 @@ export function Text(props: TextProps) {
 
   // on position change
   createEffect(() => {
-    text.position.set(props.position[0], props.position[2], props.position[1]);
+    text.position.set(...convertAxesToAwatif(props.position));
   });
 
   onCleanup(() => {

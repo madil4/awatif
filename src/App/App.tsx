@@ -38,7 +38,7 @@ export function App(props: AppProps) {
   });
   const defaultScript = `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -68,7 +68,7 @@ export const assignments = [
 
 export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
-    gridSize: 25,
+    gridSize: 100,
     displayScale: 1,
     nodes: true,
     elements: true,
@@ -264,18 +264,18 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       <Login />
 
       <Viewer gridSize={settings.gridSize}>
-        <Grid size={settings.gridSize} />
-        <Axes
-          position={[-settings.gridSize / 2, settings.gridSize / 2, 0]}
-          size={0.04 * settings.gridSize}
+        <Grid
+          position={[0.5 * settings.gridSize, 0.5 * settings.gridSize, 0]}
+          size={settings.gridSize}
         />
+        <Axes position={[0, 0, 0]} size={0.07 * settings.gridSize} />
 
         <Show when={settings.nodes}>
           <Index each={nodes()}>
             {(node) => (
               <Node
                 position={node()}
-                size={0.025 * settings.gridSize * displayScale()}
+                size={0.04 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -298,7 +298,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
               <Text
                 text={`${index}`}
                 position={node()}
-                size={0.025 * settings.gridSize * displayScale()}
+                size={0.04 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -313,7 +313,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   nodes()[element()[0]],
                   nodes()[element()[1]]
                 )}
-                size={0.025 * settings.gridSize * displayScale()}
+                size={0.04 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -337,7 +337,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
               <NodeLoad
                 position={nodes()[(pointLoad() as any).node]}
                 load={(pointLoad() as any).load}
-                size={0.04 * settings.gridSize * displayScale()}
+                size={0.07 * settings.gridSize * displayScale()}
               />
             )}
           </Index>
@@ -371,7 +371,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                   result={
                     (nodeResult() as any)[settings.nodeResults] || [0, 0, 0]
                   }
-                  size={0.04 * settings.gridSize * displayScale()}
+                  size={0.07 * settings.gridSize * displayScale()}
                 />
               </Show>
             )}

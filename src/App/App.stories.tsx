@@ -14,7 +14,7 @@ export const Default: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -46,11 +46,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`,
   },
 };
 
-export const UndeformedAndSize: StoryObj<Args> = {
+export const UndeformedAndGridSize: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];;
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -78,8 +78,12 @@ export const assignments = [
   }
 ]
 
-export const analysisResults = analyzing(nodes, elements, assignments);`,
-    settings: { gridSize: 10, deformedShape: false },
+export const analysisResults = analyzing(nodes, elements, assignments);
+
+export const settings = {
+    deformedShape: false,
+    gridSize: 80
+}`,
   },
 };
 
@@ -89,24 +93,24 @@ export const ParametersAndResults: StoryObj<Args> = {
 
 export const parameters = {
   xPosition: {
-    value: 5,
+    value: 80,
     min: 1,
-    max: 10,
+    max: 100,
     step: 1
   },
   zPosition: {
     value: 0,
     min: 0,
-    max: 10,
+    max: 100,
     step: 1
   }
 }
 
 export const onParameterChange = (parameters) => {
   const nodes = [
-    [0, 0, 0],
-    [parameters.xPosition.value, 0, parameters.zPosition.value],
-    [0, 0, 5]];
+    [50, 50, 0],
+    [parameters.xPosition.value, 50, parameters.zPosition.value],
+    [50, 50, 30]];
   const elements = [[0, 1], [1, 2]]
 
   const assignments = [
@@ -138,21 +142,22 @@ export const onParameterChange = (parameters) => {
 
   return { nodes, elements, assignments, analysisResults }
 }
+
+export const settings = {
+  elementResults: "normal",
+  nodeResults: "reaction",
+}
 `,
-    settings: {
-      displayScale: 2,
-      elementResults: "normal",
-      nodeResults: "reaction",
-    },
   },
 };
 
-export const OverrideSettings: StoryObj<Args> = {
+export const IndicesAndDisplayScale: StoryObj<Args> = {
   args: {
-    script: `export const nodes = [[0, 0, 0], [5, 0, 0], [0, 0, 5]];
+    script: `export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
 export const elements = [[0, 1], [1, 2]];
 
 export const settings = {
+    displayScale: 2,
     nodesIndices: true,
     elementsIndices: true
 };`,

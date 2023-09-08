@@ -11,7 +11,7 @@ export default {
   render: () => (
     <div class="w-screen h-screen">
       <Viewer gridSize={15}>
-        <Grid size={15} />
+        <Grid position={[0.5 * 15, 0.5 * 15, 0]} size={15} />
 
         <ElementResult2
           start={undefined}

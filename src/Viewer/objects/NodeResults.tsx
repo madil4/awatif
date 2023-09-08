@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Text } from "./Text";
 import { Show, createEffect, createSignal, onCleanup } from "solid-js";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type NodeResultProps = {
   position: any;
@@ -25,15 +26,10 @@ export function NodeResult(props: NodeResultProps) {
   )
     return;
 
-  const swapYZPosition: [number, number, number] = [
-    props.position[0],
-    props.position[2],
-    props.position[1],
-  ];
-
+  const position = convertAxesToAwatif(props.position);
   const xArrow = new THREE.ArrowHelper(
     new THREE.Vector3(props.result[0] >= 0 ? 1 : -1, 0, 0),
-    new THREE.Vector3(...swapYZPosition),
+    new THREE.Vector3(...position),
     1,
     props.result[0] >= 0 ? 0x005ce6 : 0xe62e00,
     0.3,
@@ -41,7 +37,7 @@ export function NodeResult(props: NodeResultProps) {
   );
   const yArrow = new THREE.ArrowHelper(
     new THREE.Vector3(0, 0, props.result[1] >= 0 ? 1 : -1),
-    new THREE.Vector3(...swapYZPosition),
+    new THREE.Vector3(...position),
     1,
     props.result[1] >= 0 ? 0x005ce6 : 0xe62e00,
     0.3,
@@ -49,7 +45,7 @@ export function NodeResult(props: NodeResultProps) {
   );
   const zArrow = new THREE.ArrowHelper(
     new THREE.Vector3(0, props.result[2] >= 0 ? 1 : -1, 0),
-    new THREE.Vector3(...swapYZPosition),
+    new THREE.Vector3(...position),
     1,
     props.result[2] >= 0 ? 0x005ce6 : 0xe62e00,
     0.3,
@@ -86,6 +82,8 @@ export function NodeResult(props: NodeResultProps) {
     zArrow.dispose();
   });
 
+  const textScale = 0.04 / 0.07;
+
   return (
     <>
       <Show when={props.result[0] != 0}>
@@ -95,7 +93,7 @@ export function NodeResult(props: NodeResultProps) {
             <Text
               text={`${props.result[0]}`}
               position={xTextPosition()}
-              size={0.4 * props.size}
+              size={props.size * textScale}
             />
           }
         </>
@@ -107,7 +105,7 @@ export function NodeResult(props: NodeResultProps) {
             <Text
               text={`${props.result[1]}`}
               position={yTextPosition()}
-              size={0.4 * props.size}
+              size={props.size * textScale}
             />
           }
         </>
@@ -119,7 +117,7 @@ export function NodeResult(props: NodeResultProps) {
             <Text
               text={`${props.result[2]}`}
               position={zTextPosition()}
-              size={0.4 * props.size}
+              size={props.size * textScale}
             />
           }
         </>

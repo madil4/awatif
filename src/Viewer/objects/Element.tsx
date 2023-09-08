@@ -3,6 +3,7 @@ import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { onCleanup } from "solid-js";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type ElementProps = {
   start: any;
@@ -31,10 +32,11 @@ export function Element(props: ElementProps) {
       resolution: new THREE.Vector2(window.innerWidth, window.innerHeight), // should be updated on resize with correct values
     })
   );
-  const swapYZStart = [props.start[0], props.start[2], props.start[1]];
-  const swapYZEnd = [props.end[0], props.end[2], props.end[1]];
 
-  line.geometry.setPositions([...swapYZStart, ...swapYZEnd]);
+  line.geometry.setPositions([
+    ...convertAxesToAwatif(props.start),
+    ...convertAxesToAwatif(props.end),
+  ]);
   line.geometry.setColors([...Array(6).fill(1)]);
 
   onCleanup(() => {
