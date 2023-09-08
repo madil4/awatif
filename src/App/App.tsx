@@ -38,7 +38,7 @@ export function App(props: AppProps) {
   });
   const defaultScript = `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
+export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
