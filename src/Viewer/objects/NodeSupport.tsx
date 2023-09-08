@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { createEffect, onCleanup } from "solid-js";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type NodeSupportProps = {
   position: any;
@@ -22,16 +23,11 @@ export function NodeSupport(props: NodeSupportProps) {
     return;
 
   const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.3, 0.3, 0.3),
+    new THREE.BoxGeometry(0.5, 0.5, 0.5),
     new THREE.MeshBasicMaterial({ color: 0xb30000 })
   );
 
-  const swapYZ: [number, number, number] = [
-    props.position[0],
-    props.position[2],
-    props.position[1],
-  ];
-  mesh.position.set(...swapYZ);
+  mesh.position.set(...convertAxesToAwatif(props.position));
 
   createEffect(() => {
     mesh.scale.set(props.size, props.size, props.size);

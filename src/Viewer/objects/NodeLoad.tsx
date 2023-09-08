@@ -1,5 +1,6 @@
 import { createEffect, onCleanup } from "solid-js";
 import * as THREE from "three";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type PointLoadProps = {
   position: any;
@@ -20,20 +21,9 @@ export function NodeLoad(props: PointLoadProps) {
   )
     return;
 
-  const swapYZPosition: [number, number, number] = [
-    props.position[0],
-    props.position[2],
-    props.position[1],
-  ];
-  const swapYZLoads: [number, number, number] = [
-    props.load[0],
-    props.load[2],
-    props.load[1],
-  ];
-
   const arrow = new THREE.ArrowHelper(
-    new THREE.Vector3(...swapYZLoads).normalize(),
-    new THREE.Vector3(...swapYZPosition),
+    new THREE.Vector3(...convertAxesToAwatif(props.load)).normalize(),
+    new THREE.Vector3(...convertAxesToAwatif(props.position)),
     1,
     0xe6b800,
     0.3,

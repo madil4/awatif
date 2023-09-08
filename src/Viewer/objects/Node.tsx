@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { createEffect, onCleanup } from "solid-js";
+import { convertAxesToAwatif } from "./utils/convertAxes";
 
 type NodeProps = {
   position: any;
@@ -22,11 +23,12 @@ export function Node(props: NodeProps) {
   points.geometry.setAttribute(
     "position",
     new THREE.Float32BufferAttribute(
-      [props.position[0], props.position[2], props.position[1]],
+      [...convertAxesToAwatif(props.position)],
       3
     )
   );
 
+  // on size change
   createEffect(() => {
     points.material.size = props.size;
   });

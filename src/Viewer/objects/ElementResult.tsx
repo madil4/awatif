@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Text } from "./Text";
 import { onCleanup } from "solid-js";
+import { convertAxesToAwatif, convertAxesToThreeJS } from "./utils/convertAxes";
 
 type ElementResultProps = {
   start: any;
@@ -24,14 +25,10 @@ export function ElementResult(props: ElementResultProps) {
   )
     return;
 
-  const start = new THREE.Vector3(
-    props.start[0],
-    props.start[2],
-    props.start[1]
-  );
-  const end = new THREE.Vector3(props.end[0], props.end[2], props.end[1]);
+  const start = new THREE.Vector3(...convertAxesToAwatif(props.start));
+  const end = new THREE.Vector3(...convertAxesToAwatif(props.end));
 
-  const size = 0.5;
+  const size = 4;
   const geometry = new THREE.PlaneGeometry(start.distanceTo(end), size);
   const material = new THREE.MeshBasicMaterial({
     color: props.result > 0 ? 0x005ce6 : 0xe62e00, // second 0xe62e00
@@ -72,7 +69,7 @@ export function ElementResult(props: ElementResultProps) {
   plane.translateY(size / 2 + 0.05 * size);
 
   // text
-  const textPosition = start.clone().add(end).multiplyScalar(0.5);
+  const textPosition = start.clone().add(end).multiplyScalar(0.5).toArray();
 
   onCleanup(() => {
     plane.geometry.dispose();
@@ -83,9 +80,9 @@ export function ElementResult(props: ElementResultProps) {
     <>
       {plane}
       <Text
-        position={[textPosition.x, textPosition.z, textPosition.y]}
+        position={convertAxesToThreeJS(textPosition)}
         text={`${props.result}`}
-        size={0.4 * props.size}
+        size={props.size}
       ></Text>
     </>
   );

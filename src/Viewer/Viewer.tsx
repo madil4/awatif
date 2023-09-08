@@ -15,6 +15,7 @@ export function Viewer(props: ViewerProps) {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
 
+  // after dom rendered
   onMount(() => {
     container.appendChild(renderer.domElement);
 
@@ -32,8 +33,10 @@ export function Viewer(props: ViewerProps) {
 
   // on grid size change
   createEffect(() => {
-    const z2fit = props.gridSize / 2 + props.gridSize / 2 / Math.tan(45 / 2);
-    camera.position.set(0, props.gridSize / 2, z2fit);
+    const z2fit =
+      props.gridSize * 0.5 + (props.gridSize * 0.5) / Math.tan(45 * 0.5);
+    camera.position.set(0.5 * props.gridSize, 0.75 * props.gridSize, z2fit);
+    controls.target.set(0.5 * props.gridSize, 0, -0.5 * props.gridSize);
     controls.minDistance = 1;
     controls.maxDistance = z2fit * 1.5;
     controls.update();
