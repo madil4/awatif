@@ -23,6 +23,7 @@ import { NodeResult } from "../Viewer/objects/NodeResults";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
+import { Axes } from "../Viewer/objects/Axes";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -264,6 +265,10 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Viewer gridSize={settings.gridSize}>
         <Grid size={settings.gridSize} />
+        <Axes
+          position={[-settings.gridSize / 2, settings.gridSize / 2, 0]}
+          size={0.04 * settings.gridSize}
+        />
 
         <Show when={settings.nodes}>
           <Index each={nodes()}>
