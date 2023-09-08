@@ -5,6 +5,8 @@ type TextProps = {
   text: any;
   position: any;
   size: number;
+  color?: string;
+  background?: string;
 };
 
 export function Text(props: TextProps) {
@@ -21,7 +23,13 @@ export function Text(props: TextProps) {
 
   const resolution = 100;
   const material = new THREE.SpriteMaterial();
-  material.map = createTexture(props.text, props.size, resolution);
+  material.map = createTexture(
+    props.text,
+    props.size,
+    resolution,
+    props.color,
+    props.background
+  );
   material.depthTest = false;
 
   const text = new THREE.Sprite(material);
@@ -35,7 +43,13 @@ export function Text(props: TextProps) {
   // on text change or size change
   createEffect(() => {
     material.map?.dispose();
-    material.map = createTexture(props.text, props.size, resolution);
+    material.map = createTexture(
+      props.text,
+      props.size,
+      resolution,
+      props.color,
+      props.background
+    );
     text.scale.set(
       material.map.image.width / resolution / devicePixelRatio,
       props.size,
@@ -57,7 +71,13 @@ export function Text(props: TextProps) {
   return <>{text}</>;
 }
 
-function createTexture(text: string, size: number, resolution: number) {
+function createTexture(
+  text: string,
+  size: number,
+  resolution: number,
+  color: string | undefined,
+  background: string | undefined
+) {
   const fontHeightPx = resolution * size * devicePixelRatio;
 
   const canvas = document.createElement("canvas");
@@ -68,12 +88,12 @@ function createTexture(text: string, size: number, resolution: number) {
     canvas.width = ctx.measureText(text).width;
     canvas.height = fontHeightPx;
 
-    ctx.fillStyle = "#0d0d0d";
+    if (background != "transparent") ctx.fillStyle = background || "#0d0d0d";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = color || "#ffffff";
     const toMargin = 0.9;
     ctx.font = `${fontHeightPx * toMargin}px Arial`;
     const toCenterTextV = 0.08 * canvas.height;

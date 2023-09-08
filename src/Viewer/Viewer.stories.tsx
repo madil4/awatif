@@ -8,6 +8,7 @@ import { NodeLoad } from "./objects/NodeLoad";
 import { ElementResult } from "./objects/ElementResult";
 import { Text } from "./objects/Text";
 import { NodeResult } from "./objects/NodeResults";
+import { Axes } from "./objects/Axes";
 
 export const Default: StoryObj = {};
 
@@ -17,6 +18,8 @@ export default {
     <div class="w-screen h-screen">
       <Viewer gridSize={10}>
         <Grid size={10} />
+
+        <Axes position={[-5, 5, 0]} size={0.4} />
 
         <Node position={undefined} size={0.4} />
         <Node position={[5, 0]} size={0.4} />
