@@ -28,7 +28,7 @@ export function ElementResult(props: ElementResultProps) {
   const start = new THREE.Vector3(...convertAxesToAwatif(props.start));
   const end = new THREE.Vector3(...convertAxesToAwatif(props.end));
 
-  const size = 4;
+  const size = 0.5;
   const geometry = new THREE.PlaneGeometry(start.distanceTo(end), size);
   const material = new THREE.MeshBasicMaterial({
     color: props.result > 0 ? 0x005ce6 : 0xe62e00, // second 0xe62e00
@@ -66,7 +66,7 @@ export function ElementResult(props: ElementResultProps) {
   plane.position.set(...start.toArray());
   const lineLength = start.clone().sub(end).length();
   plane.translateX(-lineLength / 2);
-  plane.translateY(size / 2 + 0.05 * size);
+  plane.translateY(size / 2);
 
   // text
   const textPosition = start.clone().add(end).multiplyScalar(0.5).toArray();

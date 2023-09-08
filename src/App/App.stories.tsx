@@ -14,7 +14,7 @@ export const Default: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
+export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -50,7 +50,7 @@ export const UndeformedAndGridSize: StoryObj<Args> = {
   args: {
     script: `import { analyzing } from 'https://unpkg.com/awatif';
 
-export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];;
+export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;;
 export const elements = [[0, 1], [1, 2]]
 
 export const assignments = [
@@ -82,7 +82,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);
 
 export const settings = {
     deformedShape: false,
-    gridSize: 80
+    gridSize: 40
 }`,
   },
 };
@@ -93,24 +93,24 @@ export const ParametersAndResults: StoryObj<Args> = {
 
 export const parameters = {
   xPosition: {
-    value: 80,
+    value: 15,
     min: 1,
-    max: 100,
+    max: 20,
     step: 1
   },
   zPosition: {
     value: 0,
     min: 0,
-    max: 100,
+    max: 10,
     step: 1
   }
 }
 
 export const onParameterChange = (parameters) => {
   const nodes = [
-    [50, 50, 0],
-    [parameters.xPosition.value, 50, parameters.zPosition.value],
-    [50, 50, 30]];
+    [8, 12.5, 0],
+    [parameters.xPosition.value, 12.5, parameters.zPosition.value],
+    [8, 12.5, 8]];
   const elements = [[0, 1], [1, 2]]
 
   const assignments = [
@@ -153,7 +153,7 @@ export const settings = {
 
 export const IndicesAndDisplayScale: StoryObj<Args> = {
   args: {
-    script: `export const nodes = [[50, 50, 0], [80, 50, 0], [50, 50, 30]];
+    script: `export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
 export const elements = [[0, 1], [1, 2]];
 
 export const settings = {
