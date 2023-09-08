@@ -68,7 +68,7 @@ export const assignments = [
 
 export const analysisResults = analyzing(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
-    gridSize: 100,
+    gridSize: 25,
     displayScale: 1,
     nodes: true,
     elements: true,
