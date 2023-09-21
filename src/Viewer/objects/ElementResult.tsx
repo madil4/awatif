@@ -70,6 +70,7 @@ export function ElementResult(props: ElementResultProps) {
 
   // text
   const textPosition = start.clone().add(end).multiplyScalar(0.5).toArray();
+  const textValue = `${Math.round(props.result * 10000) / 10000}`;
 
   onCleanup(() => {
     plane.geometry.dispose();
@@ -81,7 +82,7 @@ export function ElementResult(props: ElementResultProps) {
       {plane}
       <Text
         position={convertAxesToThreeJS(textPosition)}
-        text={`${props.result}`}
+        text={textValue}
         size={props.size}
       ></Text>
     </>

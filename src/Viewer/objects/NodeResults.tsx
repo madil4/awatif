@@ -82,6 +82,9 @@ export function NodeResult(props: NodeResultProps) {
     zArrow.dispose();
   });
 
+  const roundTo5 = (number: number): number =>
+    Math.round(number * 10000) / 10000;
+
   const textScale = 0.04 / 0.07;
 
   return (
@@ -91,7 +94,7 @@ export function NodeResult(props: NodeResultProps) {
           {xArrow}
           {
             <Text
-              text={`${props.result[0]}`}
+              text={`${roundTo5(props.result[0])}`}
               position={xTextPosition()}
               size={props.size * textScale}
             />
@@ -103,7 +106,7 @@ export function NodeResult(props: NodeResultProps) {
           {yArrow}
           {
             <Text
-              text={`${props.result[1]}`}
+              text={`${roundTo5(props.result[1])}`}
               position={yTextPosition()}
               size={props.size * textScale}
             />
@@ -115,7 +118,7 @@ export function NodeResult(props: NodeResultProps) {
           {zArrow}
           {
             <Text
-              text={`${props.result[2]}`}
+              text={`${roundTo5(props.result[2])}`}
               position={zTextPosition()}
               size={props.size * textScale}
             />
