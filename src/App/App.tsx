@@ -29,7 +29,6 @@ export const staging = localStorage.getItem("staging") ? true : false;
 
 type AppProps = {
   script?: string;
-  settings?: Partial<SettingsType>;
 };
 
 export function App(props: AppProps) {
@@ -79,12 +78,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
-    ...props.settings,
   };
-  const [currentScript, setCurrentScript] = createSignal("");
-  const [script, setScript] = createSignal("");
-  const [showSave, setShowSave] = createSignal(false);
   const settings = createMutable<SettingsType>(defaultSettings);
+  const [script, setScript] = createSignal("");
+  const [currentScript, setCurrentScript] = createSignal("");
+  const [showSave, setShowSave] = createSignal(false);
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
@@ -99,7 +97,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   const [userPlan, setUserPlan] = createSignal("");
 
   onMount(async () => {
-    // set User plan and Awatif key
+    // set user plan
     const urlParams = new URL(window.location.href).searchParams;
     setUserPlan(
       (await supabase.auth.getSession()).data.session?.user?.phone
@@ -107,6 +105,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
         : "free"
     );
 
+    // set Awatif key
     if (
       userPlan() === "pro" ||
       (urlParams.get("user_id") === "1e9e6f54-bc8d-4dd7-8554-ffa7124f8d81" &&
@@ -122,7 +121,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     // set script
     let scriptFromURL = "";
     if (urlParams.get("user_id") && urlParams.get("slug")) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("projects")
         .select("script,id")
         .eq("user_id", urlParams.get("user_id"))
@@ -134,6 +133,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     const script = props.script || scriptFromURL || defaultScript;
     setScript(script);
     setCurrentScript(script);
+
     solveModel({ script: script });
 
     // add save shortcut
@@ -200,11 +200,6 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       );
     })
   );
-
-  // on parameter change: solve model by running onParameterChange function
-  function onParameterChange(e: any) {
-    solveModel({ key: e.presetKey, value: e.value });
-  }
 
   // on save: solve model from the script, then sync the script
   async function onSave() {
@@ -383,7 +378,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Parameters
         parameters={parameters()}
-        onChange={(e) => onParameterChange(e)}
+        onChange={(e) => solveModel({ key: e.presetKey || "", value: e.value })}
       />
     </Layouter>
   );
