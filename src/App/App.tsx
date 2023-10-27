@@ -78,7 +78,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
-    hideEditor: true,
+    hideEditor: false,
   };
   const settings = createMutable<SettingsType>(defaultSettings);
   const [script, setScript] = createSignal("");
