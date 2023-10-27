@@ -6,7 +6,7 @@ export const Default: StoryObj = {};
 export default {
   title: "Layouter",
   render: () => (
-    <Layouter>
+    <Layouter hideEditor={false}>
       <div>EditorBar</div>
       <div>Editor</div>
       <div>Login</div>

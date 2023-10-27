@@ -19,6 +19,7 @@ export default {
         deformedShape: true,
         elementResults: "none",
         nodeResults: "none",
+        hideEditor: false,
       }}
     />
   ),
