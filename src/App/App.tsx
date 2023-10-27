@@ -78,6 +78,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
+    hideEditor: false,
   };
   const settings = createMutable<SettingsType>(defaultSettings);
   const [script, setScript] = createSignal("");
@@ -182,6 +183,19 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     )
   );
 
+  // on settings.hideEditor change: hide the editor based on both settings and project-user ownership
+  createEffect(
+    on([() => settings.hideEditor], async () => {
+      const projectUserID = new URL(window.location.href).searchParams.get(
+        "user_id"
+      );
+      const currentUserID = (await supabase.auth.getSession()).data.session
+        ?.user?.id;
+      settings.hideEditor =
+        settings.hideEditor && projectUserID != currentUserID;
+    })
+  );
+
   // on undeformed node change: compute deformed nodes
   createEffect(
     on(undeformedNodes, () => {
@@ -246,7 +260,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   }
 
   return (
-    <Layouter>
+    <Layouter hideEditor={settings.hideEditor}>
       <EditorBar
         error={error()}
         userPlan={userPlan()}
