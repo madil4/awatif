@@ -13,8 +13,6 @@ export function Layouter(props: LayouterProps) {
   const c = children(() => props.children).toArray();
 
   onMount(() => {
-    container.style.height = `${window.innerHeight}px`;
-
     if (!props.hideEditor) {
       let x = 0;
       let dx = 0;
@@ -53,7 +51,7 @@ export function Layouter(props: LayouterProps) {
   });
 
   return (
-    <div class="flex flex-col-reverse md:flex-row" ref={container!}>
+    <div class="flex flex-col-reverse md:flex-row h-screen" ref={container!}>
       <Show
         when={props.hideEditor}
         fallback={
