@@ -392,7 +392,9 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Parameters
         parameters={parameters()}
-        onChange={(e) => solveModel({ key: e.presetKey || "", value: e.value })}
+        onChange={(e) =>
+          solveModel({ key: (e.target as any).tag, value: e.value })
+        }
       />
     </Layouter>
   );

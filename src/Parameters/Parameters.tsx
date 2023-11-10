@@ -1,8 +1,8 @@
 import { createEffect } from "solid-js";
-import { Pane, TpChangeEvent } from "tweakpane";
+import { FolderApi, Pane, TpChangeEvent } from "tweakpane";
 
 type Parameter = {
-  value: unknown;
+  value: number;
   min?: number;
   max?: number;
   step?: number;
@@ -10,37 +10,62 @@ type Parameter = {
 };
 export type ParametersType = Record<string, Parameter>;
 
-export type SettingsProps = {
+type ParametersProps = {
   parameters: ParametersType;
-  onChange?: (ev: TpChangeEvent<unknown>) => void;
+  onChange?: (e: TpChangeEvent<unknown>) => void;
 };
 
-export function Parameters(props: SettingsProps) {
+export function Parameters(props: ParametersProps) {
   let pane = new Pane({ title: "Parameters" });
-  let inputs: any[] = [];
+  const folders = new Map<string, FolderApi>();
 
   createEffect(() => {
-    pane.hidden = Object.keys(props.parameters).length == 0 ? true : false;
+    const parameters = props.parameters;
 
-    inputs.forEach((i) => pane.remove(i));
+    pane.hidden = Object.keys(parameters).length === 0;
 
-    Object.keys(props.parameters).forEach((key) => {
-      const parameter = props.parameters[key];
-      inputs.push(
-        pane.addInput(parameter, "value", {
-          min: parameter.min,
-          max: parameter.max,
-          step: parameter.step,
-          label: parameter.label || key,
-          presetKey: key,
-        })
-      );
+    pane.children.forEach((c) => pane.remove(c));
+    folders.clear();
+
+    const tweakParams = convertToTweakParams(parameters);
+    Object.entries(parameters).forEach(([key, parameter]) => {
+      const bindingOptions = {
+        min: parameter.min,
+        max: parameter.max,
+        step: parameter.step,
+        label: parameter.label || key,
+        tag: key,
+      };
+
+      const folderKey = getFolderKey(key);
+      if (folderKey) {
+        if (!folders.get(folderKey))
+          folders.set(folderKey, pane.addFolder({ title: folderKey }));
+
+        folders.get(folderKey)?.addBinding(tweakParams, key, bindingOptions);
+      } else {
+        pane.addBinding(tweakParams, key, bindingOptions);
+      }
     });
   });
 
-  pane.on("change", (ev) => {
-    if (props.onChange) props.onChange(ev);
+  pane.on("change", (e) => {
+    if (props.onChange) props.onChange(e);
   });
 
   return <div class="absolute bottom-0 right-5 w-[19rem]">{pane.element}</div>;
 }
+
+const convertToTweakParams = (parameters: ParametersType) =>
+  Object.entries(parameters).reduce(
+    (tweakParams: Record<string, number>, [key, parameter]) => {
+      tweakParams[key] = parameter.value;
+      return tweakParams;
+    },
+    {}
+  );
+
+const getFolderKey = (key: string) => {
+  const splitList = key.split("/");
+  return splitList.length === 1 ? undefined : splitList[0];
+};

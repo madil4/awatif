@@ -24,30 +24,30 @@ export type SettingsProps = {
 export function Settings(props: SettingsProps) {
   let pane = new Pane({ title: "Settings", expanded: false });
 
-  pane.addInput(props.settings, "gridSize", { label: "grid size", min: 1 });
-  pane.addInput(props.settings, "displayScale", {
+  pane.addBinding(props.settings, "gridSize", { label: "grid size", min: 1 });
+  pane.addBinding(props.settings, "displayScale", {
     label: "display scale",
     min: -10,
     max: 10,
     step: 1,
   });
-  pane.addInput(props.settings, "nodes");
-  pane.addInput(props.settings, "elements");
-  pane.addInput(props.settings, "nodesIndices", { label: "nodes indices" });
-  pane.addInput(props.settings, "elementsIndices", {
+  pane.addBinding(props.settings, "nodes");
+  pane.addBinding(props.settings, "elements");
+  pane.addBinding(props.settings, "nodesIndices", { label: "nodes indices" });
+  pane.addBinding(props.settings, "elementsIndices", {
     label: "elements indices",
   });
-  pane.addInput(props.settings, "supports");
-  pane.addInput(props.settings, "loads");
-  pane.addInput(props.settings, "deformedShape", { label: "deformed shape" });
-  pane.addInput(props.settings, "elementResults", {
+  pane.addBinding(props.settings, "supports");
+  pane.addBinding(props.settings, "loads");
+  pane.addBinding(props.settings, "deformedShape", { label: "deformed shape" });
+  pane.addBinding(props.settings, "elementResults", {
     options: {
       none: "none",
       normal: "normal",
     },
     label: "element results",
   });
-  pane.addInput(props.settings, "nodeResults", {
+  pane.addBinding(props.settings, "nodeResults", {
     options: {
       none: "none",
       deformation: "deformation",
@@ -56,8 +56,8 @@ export function Settings(props: SettingsProps) {
     label: "node results",
   });
 
-  pane.on("change", (ev) => {
-    if (props.onChange) props.onChange(ev);
+  pane.on("change", (e) => {
+    if (props.onChange) props.onChange(e);
   });
 
   createEffect(() => {
