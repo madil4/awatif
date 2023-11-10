@@ -42,7 +42,10 @@ export function Parameters(props: ParametersProps) {
         if (!folders.get(folderKey))
           folders.set(folderKey, pane.addFolder({ title: folderKey }));
 
-        folders.get(folderKey)?.addBinding(tweakParams, key, bindingOptions);
+        folders.get(folderKey)?.addBinding(tweakParams, key, {
+          ...bindingOptions,
+          label: parameter.label || key.split("/")[1],
+        });
       } else {
         pane.addBinding(tweakParams, key, bindingOptions);
       }
