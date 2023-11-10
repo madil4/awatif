@@ -11,7 +11,9 @@ Awatif is the first online parametric structural engineering software
 - 🔧 Automate boring repetitive design processes
 - 📊 Open-source, under MIT license
 
-Wanna dig deeper? Read the article [The Benefits of Parametric Modeling in Structural Engineering](https://www.linkedin.com/pulse/benefits-parametric-modeling-structural-engineering-mohamed-adil)
+Would you like to dig deeper? Read the article: [The Benefits of Parametric Modeling in Structural Engineering](https://www.linkedin.com/pulse/benefits-parametric-modeling-structural-engineering-mohamed-adil)
+
+Examples: https://awatif.co/examples
 
 ## Getting started
 
@@ -32,3 +34,7 @@ The local development server will start, and the app will open in the browser. M
 ## Want to contribute?
 
 I have a long list of features with different levels of complexity. If you are brand new and want to learn, don't hesitate to join. I'm more approachable through LinkedIn at https://www.linkedin.com/in/madil4/.
+
+## Stay Updated
+
+Follow me on [Linkedin](https://www.linkedin.com/in/madil4/recent-activity/all/)
