@@ -69,9 +69,8 @@ export function Layouter(props: LayouterProps) {
               ref={resizerHorizontal!}
             ></div>
             <div class="relative flex-1 min-w-[350px]">
-              {c[3]}
-              {c[4]}
-              {c[5]}
+             {c.slice(2)}
+         
             </div>
           </>
         }

@@ -24,6 +24,8 @@ import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
+import { Upgrade } from "../Upgrade/Upgrade";
+import { Export } from "../Export/Export";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -87,6 +89,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
+  const [assignments, setAssignments] = createSignal([]);
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
@@ -244,6 +247,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           setError(undefined);
           setUndeformedNodes(e.data.nodes);
           setElements(e.data.elements);
+          setAssignments(e.data.assignments);
           setNodeSupports(e.data.nodeSupports);
           setNodeLoads(e.data.nodeLoads);
           setNodeResults(e.data.nodeResults);
@@ -389,6 +393,15 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
       </Viewer>
 
       <Settings settings={settings} />
+
+      <Show when={staging}>
+        <Export
+          elements={elements()}
+          assignments={assignments()}
+          nodes={undeformedNodes()}
+          analysisResults={elementResults()}
+        />
+      </Show>
 
       <Parameters
         parameters={parameters()}

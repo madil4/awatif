@@ -1,11 +1,4 @@
-export type ExportOptions = {
-  nodes: boolean;
-  elements: boolean;
-  supports: boolean;
-  loads: boolean;
-  properties: boolean;
-  analysisResults: boolean;
-};
+import { ExportOptions } from "./export.types";
 
 export function exportToJSON(
   nodes: any,
