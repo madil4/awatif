@@ -24,6 +24,8 @@ import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
+import { Upgrade } from "../Upgrade/Upgrade";
+import { Export } from "../Export/Export";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -272,21 +274,23 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
 
       <Login />
 
+
+      
       <Viewer gridSize={settings.gridSize}>
         <Grid
           position={[0.5 * settings.gridSize, 0.5 * settings.gridSize, 0]}
           size={settings.gridSize}
-        />
+          />
         <Axes position={[0, 0, 0]} size={0.07 * settings.gridSize} />
 
         <Show when={settings.nodes}>
           <Index each={nodes()}>
             {(node) => (
               <Node
-                position={node()}
-                size={0.04 * settings.gridSize * displayScale()}
+              position={node()}
+              size={0.04 * settings.gridSize * displayScale()}
               />
-            )}
+              )}
           </Index>
         </Show>
 
@@ -294,10 +298,10 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           <Index each={elements()}>
             {(element) => (
               <Element
-                start={nodes()[element()[0]]}
-                end={nodes()[element()[1]]}
+              start={nodes()[element()[0]]}
+              end={nodes()[element()[1]]}
               />
-            )}
+              )}
           </Index>
         </Show>
 
@@ -305,11 +309,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           <Index each={nodes()}>
             {(node, index) => (
               <Text
-                text={`${index}`}
-                position={node()}
-                size={0.04 * settings.gridSize * displayScale()}
+              text={`${index}`}
+              position={node()}
+              size={0.04 * settings.gridSize * displayScale()}
               />
-            )}
+              )}
           </Index>
         </Show>
 
@@ -317,14 +321,14 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           <Index each={elements()}>
             {(element, index) => (
               <Text
-                text={`${index}`}
-                position={computeCenter(
-                  nodes()[element()[0]],
-                  nodes()[element()[1]]
+              text={`${index}`}
+              position={computeCenter(
+                nodes()[element()[0]],
+                nodes()[element()[1]]
                 )}
                 size={0.04 * settings.gridSize * displayScale()}
-              />
-            )}
+                />
+                )}
           </Index>
         </Show>
 
@@ -332,11 +336,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           <Index each={nodeSupports()}>
             {(support) => (
               <NodeSupport
-                position={nodes()[(support() as any).node]}
-                support={(support() as any).support}
-                size={0.04 * settings.gridSize * displayScale()}
+              position={nodes()[(support() as any).node]}
+              support={(support() as any).support}
+              size={0.04 * settings.gridSize * displayScale()}
               />
-            )}
+              )}
           </Index>
         </Show>
 
@@ -344,11 +348,11 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           <Index each={nodeLoads()}>
             {(pointLoad) => (
               <NodeLoad
-                position={nodes()[(pointLoad() as any).node]}
-                load={(pointLoad() as any).load}
-                size={0.07 * settings.gridSize * displayScale()}
+              position={nodes()[(pointLoad() as any).node]}
+              load={(pointLoad() as any).load}
+              size={0.07 * settings.gridSize * displayScale()}
               />
-            )}
+              )}
           </Index>
         </Show>
 
@@ -365,7 +369,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                     (elementResult() as any)[settings.elementResults][0] || 0
                   }
                   size={0.04 * settings.gridSize * displayScale()}
-                />
+                  />
               </Show>
             )}
           </Index>
@@ -381,21 +385,25 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
                     (nodeResult() as any)[settings.nodeResults] || [0, 0, 0]
                   }
                   size={0.07 * settings.gridSize * displayScale()}
-                />
+                  />
               </Show>
             )}
           </Index>
         </Show>
       </Viewer>
-
+     
+    
       <Settings settings={settings} />
-
+      <Export/>
+      
+    
+      
       <Parameters
         parameters={parameters()}
         onChange={(e) =>
           solveModel({ key: (e.target as any).tag, value: e.value })
         }
-      />
+        />
     </Layouter>
   );
 }
