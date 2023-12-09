@@ -1,4 +1,5 @@
-import { exportToJSON, ExportOptions } from "./exportToJSON";
+import { exportToJSON } from "./exportToJSON";
+import { ExportOptions } from "./export.types";
 
 describe("exportToJson", () => {
   const nodes = [

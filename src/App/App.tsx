@@ -24,6 +24,7 @@ import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
+import { Export } from "../Export/Export";
 
 export const staging = localStorage.getItem("staging") ? true : false;
 
@@ -78,7 +79,6 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     deformedShape: true,
     elementResults: "none",
     nodeResults: "none",
-    hideEditor: false,
   };
   const settings = createMutable<SettingsType>(defaultSettings);
   const [script, setScript] = createSignal("");
@@ -87,6 +87,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
   const [elements, setElements] = createSignal([]);
+  const [assignments, setAssignments] = createSignal([]);
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
@@ -183,19 +184,6 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
     )
   );
 
-  // on settings.hideEditor change: hide the editor based on both settings and project-user ownership
-  createEffect(
-    on([() => settings.hideEditor], async () => {
-      const projectUserID = new URL(window.location.href).searchParams.get(
-        "user_id"
-      );
-      const currentUserID = (await supabase.auth.getSession()).data.session
-        ?.user?.id;
-      settings.hideEditor =
-        settings.hideEditor && projectUserID != currentUserID;
-    })
-  );
-
   // on undeformed node change: compute deformed nodes
   createEffect(
     on(undeformedNodes, () => {
@@ -244,6 +232,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
           setError(undefined);
           setUndeformedNodes(e.data.nodes);
           setElements(e.data.elements);
+          setAssignments(e.data.assignments);
           setNodeSupports(e.data.nodeSupports);
           setNodeLoads(e.data.nodeLoads);
           setNodeResults(e.data.nodeResults);
@@ -260,7 +249,7 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
   }
 
   return (
-    <Layouter hideEditor={settings.hideEditor}>
+    <Layouter>
       <EditorBar
         error={error()}
         userPlan={userPlan()}
@@ -395,6 +384,13 @@ export const analysisResults = analyzing(nodes, elements, assignments);`;
         onChange={(e) =>
           solveModel({ key: (e.target as any).tag, value: e.value })
         }
+      />
+
+      <Export
+        elements={elements()}
+        assignments={assignments()}
+        nodes={undeformedNodes()}
+        analysisResults={elementResults()}
       />
     </Layouter>
   );

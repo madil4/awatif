@@ -13,7 +13,6 @@ export type SettingsType = {
   deformedShape: boolean;
   elementResults: string;
   nodeResults: string;
-  hideEditor: boolean;
 };
 
 export type SettingsProps = {

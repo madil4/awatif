@@ -6,13 +6,15 @@ export const Default: StoryObj = {};
 export default {
   title: "Layouter",
   render: () => (
-    <Layouter hideEditor={false}>
+    <Layouter>
       <div>EditorBar</div>
       <div>Editor</div>
       <div>Login</div>
+
       <div>Viewer</div>
       <div>Setting</div>
       <div>Parameters</div>
+      <div>Export</div>
     </Layouter>
   ),
 } as Meta;
