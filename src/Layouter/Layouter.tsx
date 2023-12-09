@@ -50,7 +50,7 @@ export function Layouter(props: LayouterProps) {
         class="flex flex-col w-full md:w-1/2 min-w-[350px] min-h-[200px]"
         ref={leftView!}
       >
-        {c.slice(0, 2)}
+        {c.slice(0, 3)}
       </div>
       <div
         class="bg-primary w-[2px] cursor-ew-resize"
