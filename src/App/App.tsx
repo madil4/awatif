@@ -36,7 +36,7 @@ export function App(props: AppProps) {
   const solveWorker = new Worker(new URL("./solveWorker.ts", import.meta.url), {
     type: "module",
   });
-  const defaultScript = `import { analyzing } from 'https://unpkg.com/awatif';
+  const defaultScript = `import { analyze } from 'https://unpkg.com/awatif';
 
 export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
 export const elements = [[0, 1], [1, 2]]
@@ -66,7 +66,7 @@ export const assignments = [
   }
 ]
 
-export const analysisResults = analyzing(nodes, elements, assignments);`;
+export const analysisResults = analyze(nodes, elements, assignments);`;
   const defaultSettings: SettingsType = {
     gridSize: 25,
     displayScale: 1,

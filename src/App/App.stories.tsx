@@ -12,7 +12,7 @@ export const Invalid: StoryObj<Args> = {
 
 export const Default: StoryObj<Args> = {
   args: {
-    script: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyze } from 'https://unpkg.com/awatif';
 
 export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
 export const elements = [[0, 1], [1, 2]]
@@ -42,13 +42,13 @@ export const assignments = [
   }
 ]
 
-export const analysisResults = analyzing(nodes, elements, assignments);`,
+export const analysisResults = analyze(nodes, elements, assignments);`,
   },
 };
 
 export const UndeformedAndGridSize: StoryObj<Args> = {
   args: {
-    script: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyze } from 'https://unpkg.com/awatif';
 
 export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;;
 export const elements = [[0, 1], [1, 2]]
@@ -78,7 +78,7 @@ export const assignments = [
   }
 ]
 
-export const analysisResults = analyzing(nodes, elements, assignments);
+export const analysisResults = analyze(nodes, elements, assignments);
 
 export const settings = {
     deformedShape: false,
@@ -89,7 +89,7 @@ export const settings = {
 
 export const ParametersAndResults: StoryObj<Args> = {
   args: {
-    script: `import { analyzing } from 'https://unpkg.com/awatif';
+    script: `import { analyze } from 'https://unpkg.com/awatif';
 
 export const parameters = {
   xPosition: {
@@ -138,7 +138,7 @@ export const onParameterChange = (parameters) => {
     }
   ]
 
-  const analysisResults = analyzing(nodes, elements, assignments);
+  const analysisResults = analyze(nodes, elements, assignments);
 
   return { nodes, elements, assignments, analysisResults }
 }
