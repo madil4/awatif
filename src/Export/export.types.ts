@@ -1,6 +1,5 @@
 export enum FileType {
   JSON = "JSON",
-  DXF = "DXF",
 }
 export type exportProps = {
   nodes: any;

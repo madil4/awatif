@@ -1,4 +1,4 @@
-import { For, Ref, Show, createEffect, createSignal, onMount } from "solid-js";
+import { For, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { exportToJSON } from "./exportToJSON";
 import FileSaver from "file-saver";
@@ -11,7 +11,6 @@ import {
 import { CheckBoxWithLabel } from "./CheckBoxWithLabel";
 
 export function Export(props: exportProps) {
-  const [fileName, setFileName] = createSignal("awatif-file");
   const [fileType, setFileType] = createSignal<FileType>(FileType.JSON);
   const [exportOptions, SetExportOptions] = createStore<ExportOptions>({
     nodes: true,
@@ -32,7 +31,7 @@ export function Export(props: exportProps) {
     );
 
     var blob = new Blob([jsonObject], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, `${fileName()}.${fileType()}`);
+    FileSaver.saveAs(blob, `awatif-model.${fileType()}`);
 
     document?.getElementById("ExportModal_closeButton")?.click();
   }
@@ -74,13 +73,13 @@ export function Export(props: exportProps) {
       <button
         /* @ts-ignore */
         onclick="ExportModal.showModal()"
-        class="flex align-baseline  items-center justify-center gap-1   absolute top-1 right-5 "
+        class="flex align-baseline  items-center justify-center gap-1 absolute top-1 right-3"
       >
-        <span class="text-sm uppercase  ">Export</span>
+        <span class="text-sm">Export</span>
       </button>
 
       <dialog id="ExportModal" class="modal ">
-        <form method="dialog" class="w-8/12 modal-box  max-w-2xl">
+        <form method="dialog" class="w-8/12 modal-box max-w-2xl">
           <button
             id="ExportModal_closeButton"
             class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -88,18 +87,6 @@ export function Export(props: exportProps) {
             ✕
           </button>
 
-          <label class="form-control w-full max-w-xs">
-            <div class="label">
-              <span class="label-text">File Name:</span>
-            </div>
-            <input
-              type="text"
-              value={fileName()}
-              oninput={(e) => setFileName(e.target.value)}
-              placeholder="awatif-file-1"
-              class="input input-bordered w-full max-w-xs"
-            />
-          </label>
           <div class="orm-control w-full max-w-xs">
             <div class="label">
               <span class="label-text">File Type:</span>
@@ -121,7 +108,7 @@ export function Export(props: exportProps) {
               <span class="label-text">Include:</span>
             </div>
 
-            <div class="grid  grid-cols-2">
+            <div class="grid grid-cols-2">
               <CheckBoxWithLabel
                 Label={ExportOptionsEnum.Nodes}
                 Property={exportOptions.nodes}
@@ -172,6 +159,7 @@ export function Export(props: exportProps) {
             </label>
           </div>
         </form>
+
         <form method="dialog" class="modal-backdrop">
           <button />
         </form>
