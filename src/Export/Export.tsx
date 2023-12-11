@@ -1,72 +1,78 @@
-import { For, createSignal } from "solid-js";
-import { createStore } from "solid-js/store";
+import { For, createEffect, createSignal, on } from "solid-js";
 import { exportToJSON } from "./exportToJSON";
 import FileSaver from "file-saver";
-import {
-  ExportOptions,
-  ExportOptionsEnum,
-  FileType,
-  exportProps,
-} from "./export.types";
-import { CheckBoxWithLabel } from "./CheckBoxWithLabel";
+import { ExportOptions, FileType, ExportProps } from "./export.types";
+import { createStore } from "solid-js/store";
+import { exportToDXF } from "./exportToDXF";
 
-export function Export(props: exportProps) {
+export function Export(props: ExportProps) {
+  const [disabled, setDisabled] = createSignal(false);
   const [fileType, setFileType] = createSignal<FileType>(FileType.JSON);
   const [exportOptions, SetExportOptions] = createStore<ExportOptions>({
     nodes: true,
     elements: true,
     supports: true,
-    loads: false,
-    properties: false,
-    analysisResults: false,
+    loads: true,
+    properties: true,
+    analysisResults: true,
   });
 
-  async function onExport(event: any) {
-    let jsonObject = exportToJSON(
+  function onFileTypeChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    setFileType(target.value as FileType);
+  }
+
+  function onExportOptionsChange(key: string, event: Event) {
+    const target = event.target as HTMLInputElement;
+    /* @ts-ignore */
+    SetExportOptions(key, target.checked);
+  }
+
+  function onExportClick() {
+    const exporters = {
+      [FileType.JSON]: exportToJSON,
+      [FileType.DXF]: exportToDXF,
+    };
+
+    const string = exporters[fileType()](
       props.nodes,
       props.elements,
       props.assignments,
       props.analysisResults,
       exportOptions
     );
-
-    var blob = new Blob([jsonObject], { type: "text/plain;charset=utf-8" });
+    var blob = new Blob([string], { type: "text/plain;charset=utf-8" });
     FileSaver.saveAs(blob, `awatif-model.${fileType()}`);
 
     document?.getElementById("ExportModal_closeButton")?.click();
   }
 
-  function fileTypeChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    setFileType(target.value as FileType);
-  }
-
-  function setOptions(event: Event, option: ExportOptionsEnum) {
-    const target = event.target as HTMLInputElement;
-
-    switch (option) {
-      case ExportOptionsEnum.Loads:
-        SetExportOptions("loads", target.checked);
-        break;
-      case ExportOptionsEnum.Nodes:
-        SetExportOptions("nodes", target.checked);
-        break;
-      case ExportOptionsEnum.AnalysisResults:
-        SetExportOptions("analysisResults", target.checked);
-        break;
-      case ExportOptionsEnum.Elements:
-        SetExportOptions("elements", target.checked);
-        break;
-      case ExportOptionsEnum.Properties:
-        SetExportOptions("properties", target.checked);
-        break;
-      case ExportOptionsEnum.Supports:
-        SetExportOptions("supports", target.checked);
-        break;
-      default:
-        break;
-    }
-  }
+  // on fileType change: disable and reset export options according to type
+  createEffect(
+    on(fileType, () => {
+      if (fileType() === FileType.DXF) {
+        setDisabled(true);
+        SetExportOptions({
+          nodes: true,
+          elements: true,
+          supports: false,
+          loads: false,
+          properties: false,
+          analysisResults: false,
+        });
+      } else {
+        setDisabled(false);
+        SetExportOptions({
+          nodes: true,
+          elements: true,
+          supports: true,
+          loads: true,
+          properties: true,
+          analysisResults: true,
+        });
+      }
+    })
+  );
 
   return (
     <>
@@ -94,7 +100,7 @@ export function Export(props: exportProps) {
 
             <select
               value={fileType()}
-              onChange={fileTypeChange}
+              onChange={onFileTypeChange}
               class="select select-bordered w-full max-w-xs"
             >
               <For each={Object.values(FileType)}>
@@ -107,54 +113,27 @@ export function Export(props: exportProps) {
             <div class="label">
               <span class="label-text">Include:</span>
             </div>
-
             <div class="grid grid-cols-2">
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.Nodes}
-                Property={exportOptions.nodes}
-                OnChange={(e: Event) => setOptions(e, ExportOptionsEnum.Nodes)}
-              />
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.Elements}
-                Property={exportOptions.elements}
-                OnChange={(e: Event) =>
-                  setOptions(e, ExportOptionsEnum.Elements)
-                }
-              />
+              <For each={Object.entries(exportOptions)}>
+                {([key, value]) => (
+                  <label class="label cursor-pointer justify-start m-2">
+                    <input
+                      type="checkbox"
+                      checked={value}
+                      class="checkbox"
+                      onchange={(e) => onExportOptionsChange(key, e)}
+                      disabled={disabled()}
+                    />
 
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.Supports}
-                Property={exportOptions.supports}
-                OnChange={(e: Event) =>
-                  setOptions(e, ExportOptionsEnum.Supports)
-                }
-              />
-
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.Loads}
-                Property={exportOptions.loads}
-                OnChange={(e: Event) => setOptions(e, ExportOptionsEnum.Loads)}
-              />
-
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.Properties}
-                Property={exportOptions.properties}
-                OnChange={(e: Event) =>
-                  setOptions(e, ExportOptionsEnum.Properties)
-                }
-              />
-
-              <CheckBoxWithLabel
-                Label={ExportOptionsEnum.AnalysisResults}
-                Property={exportOptions.analysisResults}
-                OnChange={(e: Event) =>
-                  setOptions(e, ExportOptionsEnum.AnalysisResults)
-                }
-              />
+                    <span class="label-text ml-2">{key}</span>
+                  </label>
+                )}
+              </For>
             </div>
           </div>
+
           <div class="flex justify-end">
-            <label onClick={(e) => onExport(e)} class="btn btn-sm btn-primary ">
+            <label onClick={onExportClick} class="btn btn-sm btn-primary ">
               Export
             </label>
           </div>

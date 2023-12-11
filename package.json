@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.31.0",
+    "@tarikjabiri/dxf": "^2.8.9",
     "file-saver": "^2.0.5",
     "mathjs": "^11.9.1",
     "monaco-editor": "^0.40.0",
