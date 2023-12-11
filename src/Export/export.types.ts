@@ -1,20 +1,14 @@
 export enum FileType {
   JSON = "JSON",
+  DXF = "DXF",
 }
-export type exportProps = {
+
+export type ExportProps = {
   nodes: any;
   elements: any;
   assignments: any[];
   analysisResults: any;
 };
-export enum ExportOptionsEnum {
-  Nodes = "Nodes",
-  Elements = "Elements",
-  Supports = "Supports",
-  Loads = "Loads",
-  Properties = "Properties",
-  AnalysisResults = "Analysis Results",
-}
 
 export type ExportOptions = {
   nodes: boolean;
