@@ -1,13 +1,33 @@
 import { For, createEffect, createSignal, on } from "solid-js";
 import { exportToJSON } from "./exportToJSON";
 import FileSaver from "file-saver";
-import { ExportOptions, FileType, ExportProps } from "./export.types";
 import { createStore } from "solid-js/store";
 import { exportToDXF } from "./exportToDXF";
 
+type ExportProps = {
+  nodes: any;
+  elements: any;
+  assignments: any[];
+  analysisResults: any;
+};
+
+enum ExportType {
+  JSON = "JSON",
+  DXF = "DXF",
+}
+
+type ExportOptions = {
+  nodes: boolean;
+  elements: boolean;
+  supports: boolean;
+  loads: boolean;
+  properties: boolean;
+  analysisResults: boolean;
+};
+
 export function Export(props: ExportProps) {
   const [disabled, setDisabled] = createSignal(false);
-  const [fileType, setFileType] = createSignal<FileType>(FileType.JSON);
+  const [exportType, setExportType] = createSignal<ExportType>(ExportType.JSON);
   const [exportOptions, SetExportOptions] = createStore<ExportOptions>({
     nodes: true,
     elements: true,
@@ -17,9 +37,9 @@ export function Export(props: ExportProps) {
     analysisResults: true,
   });
 
-  function onFileTypeChange(event: Event) {
+  function onExportTypeChange(event: Event) {
     const target = event.target as HTMLSelectElement;
-    setFileType(target.value as FileType);
+    setExportType(target.value as ExportType);
   }
 
   function onExportOptionsChange(key: string, event: Event) {
@@ -30,11 +50,11 @@ export function Export(props: ExportProps) {
 
   function onExportClick() {
     const exporters = {
-      [FileType.JSON]: exportToJSON,
-      [FileType.DXF]: exportToDXF,
+      [ExportType.JSON]: exportToJSON,
+      [ExportType.DXF]: exportToDXF,
     };
 
-    const string = exporters[fileType()](
+    const string = exporters[exportType()](
       props.nodes,
       props.elements,
       props.assignments,
@@ -42,15 +62,15 @@ export function Export(props: ExportProps) {
       exportOptions
     );
     var blob = new Blob([string], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, `awatif-model.${fileType()}`);
+    FileSaver.saveAs(blob, `awatif-model.${exportType()}`);
 
     document?.getElementById("ExportModal_closeButton")?.click();
   }
 
-  // on fileType change: disable and reset export options according to type
+  // on exportType change: disable and reset export options according to type
   createEffect(
-    on(fileType, () => {
-      if (fileType() === FileType.DXF) {
+    on(exportType, () => {
+      if (exportType() === ExportType.DXF) {
         setDisabled(true);
         SetExportOptions({
           nodes: true,
@@ -95,15 +115,15 @@ export function Export(props: ExportProps) {
 
           <div class="orm-control w-full max-w-xs">
             <div class="label">
-              <span class="label-text">File Type:</span>
+              <span class="label-text">Export to:</span>
             </div>
 
             <select
-              value={fileType()}
-              onChange={onFileTypeChange}
+              value={exportType()}
+              onChange={onExportTypeChange}
               class="select select-bordered w-full max-w-xs"
             >
-              <For each={Object.values(FileType)}>
+              <For each={Object.values(ExportType)}>
                 {(filetype) => <option>{filetype}</option>}
               </For>
             </select>
