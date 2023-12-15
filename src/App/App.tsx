@@ -26,8 +26,6 @@ import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
 import { Export } from "../Export/Export";
 
-export const staging = localStorage.getItem("staging") ? true : false;
-
 type AppProps = {
   script?: string;
 };
@@ -392,6 +390,13 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         nodes={undeformedNodes()}
         analysisResults={elementResults()}
       />
+      {/*       
+      <Report
+        elements={elements()}
+        assignments={assignments()}
+        nodes={undeformedNodes()}
+        analysisResults={elementResults()}
+      /> */}
     </Layouter>
   );
 }
