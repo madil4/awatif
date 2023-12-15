@@ -7,7 +7,7 @@ import {
   on,
   onMount,
 } from "solid-js";
-import { createMutable } from "solid-js/store";
+import { createMutable, createStore } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer, setRenderAction } from "../Viewer/Viewer";
@@ -25,12 +25,13 @@ import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
 import { Export } from "../Export/Export";
+import { Model } from "./App.types";
 import { Report } from "../Report/Report";
 
-// todo: refactor to use model store
-// todo: split analysis result in convert to 3d object
+// todo: parse assignments and results outside solver
 // todo: then isolate dynamic script loading from static
 // todo: then refactor editor to be toggled through source-code menu
+// refactor app to accept model and onchange
 type AppProps = {
   script?: string;
 };
@@ -84,17 +85,20 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
     nodeResults: "none",
   };
   const settings = createMutable<SettingsType>(defaultSettings);
+  const [model, setModel] = createStore<Model>({
+    nodes: [],
+    elements: [],
+    assignments: [],
+    analysisResults: {},
+    designResults: [],
+  });
   const [script, setScript] = createSignal("");
   const [currentScript, setCurrentScript] = createSignal("");
   const [showSave, setShowSave] = createSignal(false);
-  const [undeformedNodes, setUndeformedNodes] = createSignal([]);
   const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
-  const [elements, setElements] = createSignal([]);
-  const [assignments, setAssignments] = createSignal([]);
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
-  const [designResults, setDesignResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
   const [error, setError] = createSignal(undefined);
   const [projectId, setProjectId] = createSignal(undefined);
@@ -155,8 +159,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
   });
 
   // on setting deformedShape change: set nodes
-  const nodes = () =>
-    settings.deformedShape ? deformedNodes() : undeformedNodes();
+  const nodes = () => (settings.deformedShape ? deformedNodes() : model.nodes);
 
   // on settings.displayScale change: set displayScale
   const displayScale = () =>
@@ -190,21 +193,25 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
 
   // on undeformed node change: compute deformed nodes
   createEffect(
-    on(undeformedNodes, () => {
-      const deformation = new Map<number, number[]>();
-      if (nodeResults().length) {
-        nodeResults().forEach((nodeResult: any) => {
-          if ("deformation" in nodeResult)
-            deformation.set(nodeResult.node, nodeResult.deformation);
-        });
+    on(
+      () => model.nodes,
+      () => {
+        const deformation = new Map<number, number[]>();
+        if (nodeResults().length) {
+          nodeResults().forEach((nodeResult: any) => {
+            if ("deformation" in nodeResult)
+              deformation.set(nodeResult.node, nodeResult.deformation);
+          });
+        }
+
+        setDeformedNodes(
+          model.nodes.map((v, i) => {
+            const dis = deformation.get(i) || [0, 0, 0];
+            return v.map((vv: any, ii: any) => vv + dis[ii]);
+          })
+        );
       }
-      setDeformedNodes(
-        undeformedNodes().map((v: any, i) => {
-          const dis = deformation.get(i) || [0, 0, 0];
-          return v.map((vv: any, ii: any) => vv + dis[ii]);
-        })
-      );
-    })
+    )
   );
 
   // on save: solve model from the script, then sync the script
@@ -234,23 +241,25 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
           if (e.data.parameters) setParameters(e.data.parameters);
 
           setError(undefined);
-          setUndeformedNodes(e.data.nodes);
-          setElements(e.data.elements);
-          setAssignments(e.data.assignments);
+
+          setModel({
+            nodes: e.data.nodes,
+            elements: e.data.elements,
+            assignments: e.data.assignments,
+            analysisResults: e.data.analysisResults,
+            designResults: e.data.designResults,
+          });
+
           setNodeSupports(e.data.nodeSupports);
           setNodeLoads(e.data.nodeLoads);
+
           setNodeResults(e.data.nodeResults);
           setElementResults(e.data.elementResults);
-          setDesignResults(e.data.designResults);
 
           Object.assign(settings, e.data.settings);
         });
       }
     };
-  }
-
-  function computeCenter(point1: number[], point2: number[]): number[] {
-    return point1?.map((v, i) => (v + point2[i]) * 0.5);
   }
 
   return (
@@ -285,7 +294,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         </Show>
 
         <Show when={settings.elements}>
-          <Index each={elements()}>
+          <Index each={model.elements}>
             {(element) => (
               <Element
                 start={nodes()[element()[0]]}
@@ -308,7 +317,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         </Show>
 
         <Show when={settings.elementsIndices}>
-          <Index each={elements()}>
+          <Index each={model.elements}>
             {(element, index) => (
               <Text
                 text={`${index}`}
@@ -349,12 +358,14 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         <Show when={settings.elementResults !== "none"}>
           <Index each={elementResults()}>
             {(elementResult) => (
-              <Show when={elements()[(elementResult() as any).element]}>
+              <Show when={model.elements[(elementResult() as any).element]}>
                 <ElementResult
                   start={
-                    nodes()[elements()[(elementResult() as any).element][0]]
+                    nodes()[model.elements[(elementResult() as any).element][0]]
                   }
-                  end={nodes()[elements()[(elementResult() as any).element][1]]}
+                  end={
+                    nodes()[model.elements[(elementResult() as any).element][1]]
+                  }
                   result={
                     (elementResult() as any)[settings.elementResults][0] || 0
                   }
@@ -391,19 +402,13 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         }
       />
 
-      <Export
-        elements={elements()}
-        assignments={assignments()}
-        nodes={undeformedNodes()}
-        analysisResults={elementResults()}
-      />
-      {/* <Report
-        elements={elements()}
-        assignments={assignments()}
-        nodes={undeformedNodes()}
-        analysisResults={elementResults()}
-        designResults={designResults()}
-      /> */}
+      <Export model={model} />
+
+      {/* <Report model={model} /> */}
     </Layouter>
   );
+}
+
+function computeCenter(point1: number[], point2: number[]): number[] {
+  return point1?.map((v, i) => (v + point2[i]) * 0.5);
 }

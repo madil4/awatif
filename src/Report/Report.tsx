@@ -1,12 +1,9 @@
 import { createEffect, createSignal } from "solid-js";
 import "./Report.css";
+import { Model } from "../App/App.types";
 
 type ReportProps = {
-  nodes: any;
-  elements: any;
-  assignments: any[];
-  analysisResults: any[];
-  designResults: any[];
+  model: Model;
 };
 
 // TODO: refactor modal into own Component store in common/Modal.tsx
@@ -47,12 +44,15 @@ export function Report(props: ReportProps) {
                 «
               </button>
               <span class="mt-3 px-2">
-                Element {elementIndex()} fo {props.analysisResults.length - 1}
+                Element {elementIndex()} of{" "}
+                {props.model.designResults.length - 1}
               </span>
               <button
                 class="btn btn-sm"
                 onclick={() => setElementIndex((c) => c + 1)}
-                disabled={elementIndex() === props.analysisResults.length - 1}
+                disabled={
+                  elementIndex() === props.model.designResults.length - 1
+                }
               >
                 »
               </button>
@@ -69,12 +69,16 @@ export function Report(props: ReportProps) {
             <p>The report goes here:</p>
             <ul>
               <li>
-                Utilization factor:
-                {props.designResults[elementIndex()]?.utilizationFactor}
+                {`Utilization factor: 
+                ${
+                  props.model.designResults[elementIndex()]?.utilizationFactor
+                }`}
               </li>
               <li>
+                {`
                 Effective Length:
-                {props.designResults[elementIndex()]?.effectiveLength}
+                ${props.model.designResults[elementIndex()]?.effectiveLength}
+              `}
               </li>
             </ul>
           </div>
