@@ -64,12 +64,13 @@ self.onmessage = async (e) => {
     parameters: e.data.key ? undefined : parameters,
     nodes,
     elements,
+    assignments,
     nodeSupports,
     nodeLoads,
+    analysisResults,
     nodeResults,
     elementResults,
     designResults,
-    assignments,
     settings: module?.settings || {},
   });
 };

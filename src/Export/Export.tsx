@@ -3,12 +3,10 @@ import { exportToJSON } from "./exportToJSON";
 import FileSaver from "file-saver";
 import { createStore } from "solid-js/store";
 import { exportToDXF } from "./exportToDXF";
+import { Model } from "../App/App.types";
 
 type ExportProps = {
-  nodes: any;
-  elements: any;
-  assignments: any[];
-  analysisResults: any;
+  model: Model;
 };
 
 enum ExportType {
@@ -16,7 +14,7 @@ enum ExportType {
   DXF = "DXF",
 }
 
-type ExportOptions = {
+export type ExportOptions = {
   nodes: boolean;
   elements: boolean;
   supports: boolean;
@@ -54,13 +52,7 @@ export function Export(props: ExportProps) {
       [ExportType.DXF]: exportToDXF,
     };
 
-    const string = exporters[exportType()](
-      props.nodes,
-      props.elements,
-      props.assignments,
-      props.analysisResults,
-      exportOptions
-    );
+    const string = exporters[exportType()](props.model, exportOptions);
     var blob = new Blob([string], { type: "text/plain;charset=utf-8" });
     FileSaver.saveAs(blob, `awatif-model.${exportType()}`);
 
