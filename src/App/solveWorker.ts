@@ -43,6 +43,8 @@ self.onmessage = async (e) => {
   const assignments = onChangeResults?.assignments || module?.assignments || [];
   const analysisResults = onChangeResults?.analysisResults ||
     module?.analysisResults || { default: [] };
+  const designResults =
+    onChangeResults?.designResults || module?.designResults || [];
 
   const nodeSupports: any[] = [];
   const nodeLoads: any[] = [];
@@ -66,6 +68,7 @@ self.onmessage = async (e) => {
     nodeLoads,
     nodeResults,
     elementResults,
+    designResults,
     assignments,
     settings: module?.settings || {},
   });
