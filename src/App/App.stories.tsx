@@ -164,6 +164,58 @@ export const settings = {
   },
 };
 
+export const TimberDesign: StoryObj<Args> = {
+  args: {
+    script: `import { analyze } from 'https://unpkg.com/awatif';
+
+    export const nodes = [[8, 12.5, 0], [15, 12.5, 0], [8, 12.5, 8]];;
+    export const elements = [[0, 1], [1, 2]]
+    
+    export const assignments = [
+        {
+            node: 0,
+            support: [true, true, true]
+        },
+        {
+            node: 2,
+            support: [true, true, true]
+        },
+        {
+            node: 1,
+            load: [0, 0, -10]
+        },
+        {
+            element: 0,
+            area: 1.2,
+            elasticity: 200
+        },
+        {
+            element: 1,
+            area: 1.2,
+            elasticity: 200
+        }
+    ]
+    
+    export const analysisResults = analyze(nodes, elements, assignments);
+    export const designResults = timberDesign(nodes, elements, assignments, analysisResults)
+    
+    function timberDesign(nodes, elements, assignments, analysisResults) {
+        return [
+          {
+              elements: 0,
+              utilizationFactor: 0.5,
+              effectiveLength: 10
+          },
+          {
+              elements: 1,
+              utilizationFactor: 0.9,
+              effectiveLength: 5
+          }
+        ]
+    }`,
+  },
+};
+
 export default {
   title: "App",
   render: (props) => <App {...props} />,

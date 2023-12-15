@@ -1,14 +1,18 @@
+import { createEffect, createSignal } from "solid-js";
 import "./Report.css";
 
 type ReportProps = {
   nodes: any;
   elements: any;
   assignments: any[];
-  analysisResults: any;
+  analysisResults: any[];
+  designResults: any[];
 };
 
 // TODO: refactor modal into own Component store in common/Modal.tsx
 export function Report(props: ReportProps) {
+  const [elementIndex, setElementIndex] = createSignal(0);
+
   return (
     <>
       <button
@@ -35,9 +39,23 @@ export function Report(props: ReportProps) {
           {/* code begin */}
           <div class="flex mt-4">
             <div class="flex-grow">
-              <a class="btn btn-sm">«</a>
-              <span class="mt-3 px-2">Element 22 fo 100</span>
-              <a class="btn btn-sm">»</a>
+              <button
+                class="btn btn-sm"
+                onclick={() => setElementIndex((c) => c - 1)}
+                disabled={elementIndex() === 0}
+              >
+                «
+              </button>
+              <span class="mt-3 px-2">
+                Element {elementIndex()} fo {props.analysisResults.length - 1}
+              </span>
+              <button
+                class="btn btn-sm"
+                onclick={() => setElementIndex((c) => c + 1)}
+                disabled={elementIndex() === props.analysisResults.length - 1}
+              >
+                »
+              </button>
             </div>
 
             <a class="btn btn-sm btn-primary" onclick={() => window.print()}>
@@ -48,7 +66,17 @@ export function Report(props: ReportProps) {
             id="printArea"
             class="flex-grow mt-5 p-4 bg-white text-slate-500"
           >
-            The report goes here
+            <p>The report goes here:</p>
+            <ul>
+              <li>
+                Utilization factor:
+                {props.designResults[elementIndex()]?.utilizationFactor}
+              </li>
+              <li>
+                Effective Length:
+                {props.designResults[elementIndex()]?.effectiveLength}
+              </li>
+            </ul>
           </div>
         </form>
 

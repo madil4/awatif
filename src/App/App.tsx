@@ -25,7 +25,12 @@ import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
 import { Export } from "../Export/Export";
+import { Report } from "../Report/Report";
 
+// todo: refactor to use model store
+// todo: split analysis result in convert to 3d object
+// todo: then isolate dynamic script loading from static
+// todo: then refactor editor to be toggled through source-code menu
 type AppProps = {
   script?: string;
 };
@@ -89,6 +94,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
   const [nodeSupports, setNodeSupports] = createSignal([]);
   const [nodeLoads, setNodeLoads] = createSignal([]);
   const [elementResults, setElementResults] = createSignal([]);
+  const [designResults, setDesignResults] = createSignal([]);
   const [nodeResults, setNodeResults] = createSignal([]);
   const [error, setError] = createSignal(undefined);
   const [projectId, setProjectId] = createSignal(undefined);
@@ -235,6 +241,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
           setNodeLoads(e.data.nodeLoads);
           setNodeResults(e.data.nodeResults);
           setElementResults(e.data.elementResults);
+          setDesignResults(e.data.designResults);
 
           Object.assign(settings, e.data.settings);
         });
@@ -390,12 +397,12 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         nodes={undeformedNodes()}
         analysisResults={elementResults()}
       />
-      {/*       
-      <Report
+      {/* <Report
         elements={elements()}
         assignments={assignments()}
         nodes={undeformedNodes()}
         analysisResults={elementResults()}
+        designResults={designResults()}
       /> */}
     </Layouter>
   );
