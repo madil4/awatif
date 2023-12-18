@@ -6,34 +6,40 @@ export type Model = {
   designResults: DesignResults;
 };
 
-// nodes and elements
 export type Node = [number, number, number];
 export type Element = [number, number];
 
 // assignments
 export type Assignment =
-  | supportAssignment
-  | loadAssignment
-  | propertyAssignment;
-type supportAssignment = { node: number; support: [boolean, boolean, boolean] };
-type loadAssignment = { node: number; load: [number, number, number] };
-type propertyAssignment = { element: number; elasticity: number; area: number };
+  | SupportAssignment
+  | LoadAssignment
+  | PropertyAssignment;
+export type SupportAssignment = {
+  node: number;
+  support: [boolean, boolean, boolean];
+};
+export type LoadAssignment = { node: number; load: [number, number, number] };
+export type PropertyAssignment = {
+  element: number;
+  elasticity: number;
+  area: number;
+};
 
 // analysis results
 export type AnalysisResults = Record<
   string,
-  (deformationResult | reactionResult | normalResult)[]
+  (DeformationResult | ReactionResult | NormalResult)[]
 >;
 
-type deformationResult = {
+export type DeformationResult = {
   node: number;
   deformation: [number, number, number];
 };
-type reactionResult = {
+export type ReactionResult = {
   node: number;
   reaction: [number, number, number];
 };
-type normalResult = {
+export type NormalResult = {
   element: number;
   normal: [number, number];
 };

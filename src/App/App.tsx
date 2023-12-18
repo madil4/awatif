@@ -1,42 +1,48 @@
-import {
-  Index,
-  Show,
-  batch,
-  createEffect,
-  createSignal,
-  on,
-  onMount,
-} from "solid-js";
+import { batch, createEffect, createSignal, on, onMount } from "solid-js";
 import { createMutable, createStore } from "solid-js/store";
 import { Layouter } from "../Layouter/Layouter";
 import { Editor } from "../Editor/Editor";
 import { Viewer, setRenderAction } from "../Viewer/Viewer";
-import { Node } from "../Viewer/objects/Node";
-import { Text } from "../Viewer/objects/Text";
 import { Grid } from "../Viewer/objects/Grid";
-import { Element } from "../Viewer/objects/Element";
-import { NodeSupport } from "../Viewer/objects/NodeSupport";
-import { NodeLoad } from "../Viewer/objects/NodeLoad";
 import { Settings, SettingsType } from "../Settings/Settings";
-import { ElementResult } from "../Viewer/objects/ElementResult";
-import { NodeResult } from "../Viewer/objects/NodeResults";
 import { EditorBar } from "../EditorBar/EditorBar";
 import { Parameters, ParametersType } from "../Parameters/Parameters";
 import { Login, supabase } from "../Login/Login";
 import { Axes } from "../Viewer/objects/Axes";
 import { Export } from "../Export/Export";
 import { Model } from "./App.types";
-import { Report } from "../Report/Report";
+import { ModelToViewer } from "./utils/ModelToViewer";
 
-// todo: parse assignments and results outside solver
-// todo: then isolate dynamic script loading from static
-// todo: then refactor editor to be toggled through source-code menu
-// refactor app to accept model and onchange
+// todo: refactor App to take model, parameter, onParameterChange, settings
+// todo: isolate dynamic script loading from static
+// todo: refactor editor to be toggled through source-code menu
 type AppProps = {
   script?: string;
 };
 
 export function App(props: AppProps) {
+  const settings = createMutable<SettingsType>({
+    gridSize: 25,
+    displayScale: 1,
+    nodes: true,
+    elements: true,
+    nodesIndices: false,
+    elementsIndices: false,
+    supports: true,
+    loads: true,
+    deformedShape: true,
+    elementResults: "none",
+    nodeResults: "none",
+  });
+  const [parameters, setParameters] = createSignal<ParametersType>({});
+  const [model, setModel] = createStore<Model>({
+    nodes: [],
+    elements: [],
+    assignments: [],
+    analysisResults: {},
+    designResults: [],
+  });
+
   const solveWorker = new Worker(new URL("./solveWorker.ts", import.meta.url), {
     type: "module",
   });
@@ -71,38 +77,13 @@ export const assignments = [
 ]
 
 export const analysisResults = analyze(nodes, elements, assignments);`;
-  const defaultSettings: SettingsType = {
-    gridSize: 25,
-    displayScale: 1,
-    nodes: true,
-    elements: true,
-    nodesIndices: false,
-    elementsIndices: false,
-    supports: true,
-    loads: true,
-    deformedShape: true,
-    elementResults: "none",
-    nodeResults: "none",
-  };
-  const settings = createMutable<SettingsType>(defaultSettings);
-  const [model, setModel] = createStore<Model>({
-    nodes: [],
-    elements: [],
-    assignments: [],
-    analysisResults: {},
-    designResults: [],
-  });
+
   const [script, setScript] = createSignal("");
   const [currentScript, setCurrentScript] = createSignal("");
   const [showSave, setShowSave] = createSignal(false);
-  const [deformedNodes, setDeformedNodes] = createSignal<any>([]);
-  const [nodeSupports, setNodeSupports] = createSignal([]);
-  const [nodeLoads, setNodeLoads] = createSignal([]);
-  const [elementResults, setElementResults] = createSignal([]);
-  const [nodeResults, setNodeResults] = createSignal([]);
   const [error, setError] = createSignal(undefined);
+
   const [projectId, setProjectId] = createSignal(undefined);
-  const [parameters, setParameters] = createSignal<ParametersType>({});
   const [awatifKey, setAwatifKey] = createSignal("");
   const [userPlan, setUserPlan] = createSignal("");
 
@@ -158,24 +139,6 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
     });
   });
 
-  // on setting deformedShape change: set nodes
-  const nodes = () => (settings.deformedShape ? deformedNodes() : model.nodes);
-
-  // on settings.displayScale change: set displayScale
-  const displayScale = () =>
-    settings.displayScale === 0
-      ? 1
-      : settings.displayScale > 0
-      ? settings.displayScale
-      : -1 / settings.displayScale;
-
-  // on script change: define saving status
-  createEffect(
-    on([currentScript, script], () =>
-      setShowSave(currentScript() === script() ? false : true)
-    )
-  );
-
   // on settings change: render the scene
   createEffect(
     on(
@@ -191,26 +154,10 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
     )
   );
 
-  // on undeformed node change: compute deformed nodes
+  // on script change: define saving status
   createEffect(
-    on(
-      () => model.nodes,
-      () => {
-        const deformation = new Map<number, number[]>();
-        if (nodeResults().length) {
-          nodeResults().forEach((nodeResult: any) => {
-            if ("deformation" in nodeResult)
-              deformation.set(nodeResult.node, nodeResult.deformation);
-          });
-        }
-
-        setDeformedNodes(
-          model.nodes.map((v, i) => {
-            const dis = deformation.get(i) || [0, 0, 0];
-            return v.map((vv: any, ii: any) => vv + dis[ii]);
-          })
-        );
-      }
+    on([currentScript, script], () =>
+      setShowSave(currentScript() === script() ? false : true)
     )
   );
 
@@ -250,12 +197,6 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
             designResults: e.data.designResults,
           });
 
-          setNodeSupports(e.data.nodeSupports);
-          setNodeLoads(e.data.nodeLoads);
-
-          setNodeResults(e.data.nodeResults);
-          setElementResults(e.data.elementResults);
-
           Object.assign(settings, e.data.settings);
         });
       }
@@ -282,115 +223,7 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
         />
         <Axes position={[0, 0, 0]} size={0.07 * settings.gridSize} />
 
-        <Show when={settings.nodes}>
-          <Index each={nodes()}>
-            {(node) => (
-              <Node
-                position={node()}
-                size={0.04 * settings.gridSize * displayScale()}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elements}>
-          <Index each={model.elements}>
-            {(element) => (
-              <Element
-                start={nodes()[element()[0]]}
-                end={nodes()[element()[1]]}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.nodesIndices}>
-          <Index each={nodes()}>
-            {(node, index) => (
-              <Text
-                text={`${index}`}
-                position={node()}
-                size={0.04 * settings.gridSize * displayScale()}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elementsIndices}>
-          <Index each={model.elements}>
-            {(element, index) => (
-              <Text
-                text={`${index}`}
-                position={computeCenter(
-                  nodes()[element()[0]],
-                  nodes()[element()[1]]
-                )}
-                size={0.04 * settings.gridSize * displayScale()}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.supports}>
-          <Index each={nodeSupports()}>
-            {(support) => (
-              <NodeSupport
-                position={nodes()[(support() as any).node]}
-                support={(support() as any).support}
-                size={0.04 * settings.gridSize * displayScale()}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.loads}>
-          <Index each={nodeLoads()}>
-            {(pointLoad) => (
-              <NodeLoad
-                position={nodes()[(pointLoad() as any).node]}
-                load={(pointLoad() as any).load}
-                size={0.07 * settings.gridSize * displayScale()}
-              />
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.elementResults !== "none"}>
-          <Index each={elementResults()}>
-            {(elementResult) => (
-              <Show when={model.elements[(elementResult() as any).element]}>
-                <ElementResult
-                  start={
-                    nodes()[model.elements[(elementResult() as any).element][0]]
-                  }
-                  end={
-                    nodes()[model.elements[(elementResult() as any).element][1]]
-                  }
-                  result={
-                    (elementResult() as any)[settings.elementResults][0] || 0
-                  }
-                  size={0.04 * settings.gridSize * displayScale()}
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
-
-        <Show when={settings.nodeResults !== "none"}>
-          <Index each={nodeResults()}>
-            {(nodeResult) => (
-              <Show when={nodes()[(nodeResult() as any).node]}>
-                <NodeResult
-                  position={nodes()[(nodeResult() as any).node]}
-                  result={
-                    (nodeResult() as any)[settings.nodeResults] || [0, 0, 0]
-                  }
-                  size={0.07 * settings.gridSize * displayScale()}
-                />
-              </Show>
-            )}
-          </Index>
-        </Show>
+        <ModelToViewer model={model} settings={settings} />
       </Viewer>
 
       <Settings settings={settings} />
@@ -403,12 +236,6 @@ export const analysisResults = analyze(nodes, elements, assignments);`;
       />
 
       <Export model={model} />
-
-      {/* <Report model={model} /> */}
     </Layouter>
   );
-}
-
-function computeCenter(point1: number[], point2: number[]): number[] {
-  return point1?.map((v, i) => (v + point2[i]) * 0.5);
 }

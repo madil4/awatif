@@ -38,39 +38,15 @@ self.onmessage = async (e) => {
     }
   }
 
-  const nodes = onChangeResults?.nodes || module?.nodes || [];
-  const elements = onChangeResults?.elements || module?.elements || [];
-  const assignments = onChangeResults?.assignments || module?.assignments || [];
-  const analysisResults = onChangeResults?.analysisResults ||
-    module?.analysisResults || { default: [] };
-  const designResults =
-    onChangeResults?.designResults || module?.designResults || [];
-
-  const nodeSupports: any[] = [];
-  const nodeLoads: any[] = [];
-  assignments?.forEach((a: any) => {
-    if ("support" in a) nodeSupports.push(a);
-    if ("load" in a) nodeLoads.push(a);
-  });
-
-  const nodeResults: any[] = [];
-  const elementResults: any[] = [];
-  analysisResults["default"]?.forEach((a: any) => {
-    if ("node" in a) nodeResults.push(a);
-    if ("element" in a) elementResults.push(a);
-  });
-
   self.postMessage({
     parameters: e.data.key ? undefined : parameters,
-    nodes,
-    elements,
-    assignments,
-    nodeSupports,
-    nodeLoads,
-    analysisResults,
-    nodeResults,
-    elementResults,
-    designResults,
+    nodes: onChangeResults?.nodes || module?.nodes || [],
+    elements: onChangeResults?.elements || module?.elements || [],
+    assignments: onChangeResults?.assignments || module?.assignments || [],
+    analysisResults: onChangeResults?.analysisResults ||
+      module?.analysisResults || { default: [] },
+    designResults:
+      onChangeResults?.designResults || module?.designResults || [],
     settings: module?.settings || {},
   });
 };
