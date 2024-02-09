@@ -1,0 +1,23 @@
+{
+  "name": "awatif-ui",
+  "version": "2.1.4",
+  "type": "module",
+  "main": "src/App.ts",
+  "types": "src/types.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "@tweakpane/core": "^2.0.3",
+    "@types/three": "^0.160.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "awatif-fem": "^2.0.7",
+    "three": "^0.160.0",
+    "tweakpane": "^4.0.3",
+    "vanjs-core": "^1.2.7"
+  }
+}
