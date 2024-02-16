@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { Node } from "../../types";
-import { roundTo5 } from "../../utils/roundTo5";
 import { Text } from "../Text";
 import { getCenter } from "../../utils/getCenter";
 import { IResultObject } from "./IResultObject";
@@ -60,7 +59,7 @@ export class ConstantResult extends THREE.Group implements IResultObject {
     this.add(this.mesh);
 
     // text
-    this.text = new Text(`${roundTo5(result[0])}`);
+    this.text = new Text(`${result[0].toFixed(4)}`);
 
     this.normalizedResult = normalizedResult;
     this.textPosition = getCenter(node1, node2);

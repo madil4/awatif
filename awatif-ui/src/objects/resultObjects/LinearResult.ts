@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { Node } from "../../types";
-import { roundTo5 } from "../../utils/roundTo5";
 import { Text } from "../Text";
 import { get10thFromFirstPoint } from "../../utils/get5thFromFirstPoint";
 import { IResultObject } from "./IResultObject";
@@ -31,8 +30,8 @@ export class LinearResult extends THREE.Group implements IResultObject {
     const twoSegments = result[0] * result[1] > 0;
 
     // text
-    this.text = new Text(`${roundTo5(result[0])}`);
-    this.text2 = new Text(`${roundTo5(-result[1])}`);
+    this.text = new Text(`${result[0].toFixed(4)}`);
+    this.text2 = new Text(`${-result[1].toFixed(4)}`);
 
     this.normalizedResult = normalizedResult;
     this.textPosition = get10thFromFirstPoint(node1, node2);
