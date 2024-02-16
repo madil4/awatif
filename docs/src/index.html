@@ -43,8 +43,8 @@
       <div class="px-6">
         <a class="flex items-cente gap-x-2 py-2 px-2 text-xl font-semibold text-white" href="#">
           <svg class="flex-shrink-0 size-7" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 -3 35 35" fill="#ffffff">
-              <path d="M2,29.14l9.86-16.87c1.86,3.34,4.56,7.62,3.34,11.57a7.61,7.61,0,0,1-2.61,3.68,7.78,7.78,0,0,1-5,1.61c-1.48,0-3,0-4.47,0A4.5,4.5,0,0,0,2,29.14Z"></path>
-              <path d="M12.86,10.43l5.71-10L35.12,29.14H31a13.92,13.92,0,0,1-8.44-3.54,18.23,18.23,0,0,1-3.44-4.5c-.55-.92-1.08-1.85-1.61-2.79-1.25-2.21-2.56-4.39-3.85-6.58Z"></path>
+            <path d="M2,29.14l9.86-16.87c1.86,3.34,4.56,7.62,3.34,11.57a7.61,7.61,0,0,1-2.61,3.68,7.78,7.78,0,0,1-5,1.61c-1.48,0-3,0-4.47,0A4.5,4.5,0,0,0,2,29.14Z"></path>
+            <path d="M12.86,10.43l5.71-10L35.12,29.14H31a13.92,13.92,0,0,1-8.44-3.54,18.23,18.23,0,0,1-3.44-4.5c-.55-.92-1.08-1.85-1.61-2.79-1.25-2.21-2.56-4.39-3.85-6.58Z"></path>
           </svg>
           awatif
         </a>
@@ -55,9 +55,11 @@
           <li>
             <a class="flex items-center gap-x-3 py-2 px-2.5 bg-primary-light text-sm text-white rounded-lg" href="#"> Home </a>
           </li>
-
           <li>
             <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> Getting Started </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> Examples </a>
           </li>
           <li>
             <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> More Contents </a>
@@ -70,12 +72,24 @@
 
         <ul class="space-y-1.5">
           <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> Awatif-FEM </a>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> awatif-data-structure </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> awatif-ui </a>
+          </li>
+
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> awatif-fem </a>
+          </li>
+
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> awatif-design </a>
           </li>
 
           <li>
             <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light" href="#"> Marketplace </a>
           </li>
+        </ul>
       </nav>
     </div>
     <!-- End Sidebar -->
@@ -84,7 +98,106 @@
     <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-72">
       <!-- Page Heading -->
       <header>
-        <p class="mt-2 text-lg text-black">The magic starts here</p>
+        <!-- Icon Blocks -->
+        <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+          <div class="max-w-3xl mx-auto">
+            <!-- Grid -->
+            <div class="grid gap-12">
+              <div>
+                <h2 class="text-3xl text-gray-800 font-bold">The First Web-based Parametric Structural Engineering Platform</h2>
+              </div>
+
+              <div>
+                <h2 class="text-lg text-gray-800 font-bold">What is Awatif?</h2>
+                <p class="text-gray-800">Awatif is a platform designed to assist you in building web-based structural engineering apps, like the ones shown in the <a href="./examples/" class="text-primary-light hover:underline">Examples</a>.</p>
+              </div>
+
+              <div>
+                <h2 class="text-lg text-gray-800 font-bold">Why use Awatif?</h2>
+                <p class="text-gray-800">Automate tedious engineering processes through parametric modeling, facilitate collaboration with web user interfaces, and optimize designs using optimization techniques.</p>
+              </div>
+
+              <div>
+                <h2 class="text-lg text-gray-800 font-bold">Why it is different?</h2>
+                <p class="text-gray-800">
+                  Awatif sets itself apart from other platforms, such as Grasshopper or Python, by employing a unique, simple data structure that seamlessly connects the modeling, analysis, design, report, and drawing phases in a parametric manner.
+                  While this parametric workflow may sound familiar if you've used Grasshopper with Karamba3D or Python with ETABS APIs, Awatif simplifies the process by consolidating everything into a single, interactive, scalable, and
+                  easy-to-develop platform. Moreover, Awatif is built for the web using TypeScript, allowing you to share your app with just a link. Additionally, Awatif offers the benefits of web platforms, such as offloading heavy calculations to
+                  servers and facilitating communication with different platforms like Python or C# through API calls.
+                </p>
+              </div>
+
+              <div class="space-y-4">
+                <h2 class="text-lg text-gray-800 font-bold">In summary, Awatif provides:</h2>
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">🔄</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">A unique and simple <a href="./awatif-ui/" class="text-primary-light hover:underline">data structure</a> for seamlessly linking various design algorithms and parametric scripts.</p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">🌐</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">
+                      An open-source <a href="./awatif-ui/" class="text-primary-light hover:underline">visualization tool </a>that enables you to build your app in a 3D space, rendering bending moment diagrams and structural engineering reports—all
+                      within the browser.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">💸</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">
+                      An affordable <a href="./awatif-fem/" class="text-primary-light hover:underline">FEM library</a> that offers real-time simulation for any structure, priced at only $25/month, easily integrable into your app.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">📚</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">
+                      Open-source <a href="./awatif-design/" class="text-primary-light hover:underline">design libraries</a>, allowing you to select the local-standard design code of your choice, complete with well-validated scripts and reports.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">🛒</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">A <a href="https://marketplace.awatif.co" class="text-primary-light hover:underline">Marketplace</a> for those who prefer a non-programming approach, providing a variety of free and paid apps.</p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+
+                <!-- Icon Block -->
+                <div class="flex">
+                  <span class="flex-shrink-0 mt-1.5 text-xl">👥</span>
+                  <div class="ms-3 sm:ms-6">
+                    <p class="mt-1 text-gray-600">
+                      A robust community of passionate structural engineers and developers ready to assist you in achieving your vision. Feel free to PM
+                      <a href="https://www.linkedin.com/in/madil4/" class="text-primary-light hover:underline">here</a> me for an introduction to the community.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Block -->
+              </div>
+            </div>
+            <!-- End Grid -->
+          </div>
+        </div>
+        <!-- End Icon Blocks -->
       </header>
       <!-- End Page Heading -->
     </div>
