@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/style.css --watch\" \"eleventy --serve\"",
-    "build": "eleventy",
+    "build": "rm -rf dist && eleventy",
     "deploy-staging": "netlify deploy",
     "deploy": "netlify deploy --prod --dir=dist"
   },
