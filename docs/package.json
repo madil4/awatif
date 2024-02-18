@@ -4,15 +4,19 @@
   "description": "",
   "scripts": {
     "dev": "concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/style.css --watch\" \"eleventy --serve\"",
-    "build": "eleventy"
+    "build": "eleventy",
+    "deploy-staging": "netlify deploy",
+    "deploy": "netlify deploy --prod"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-server-browsersync": "^1.0.2",
     "concurrently": "^8.2.2",
-    "tailwindcss": "^3.4.1",
-    "preline": "^2.0.3"
+    "netlify-cli": "^17.16.2",
+    "preline": "^2.0.3",
+    "tailwindcss": "^3.4.1"
   }
 }
