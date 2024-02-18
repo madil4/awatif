@@ -1,8 +1,9 @@
-import { app, Node, Element, Parameters, Assignment } from "../../awatif-ui/";
+import { app, Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import { analyze } from "awatif-fem";
 
 const parameters: Parameters = {
   span: {
-    value: 10,
+    value: 15,
     min: 5,
     max: 20,
     step: 1,
@@ -11,7 +12,7 @@ const parameters: Parameters = {
   divisions: {
     value: 5,
     min: 2,
-    max: 10,
+    max: 5,
     step: 1,
   },
   height: {
@@ -29,14 +30,14 @@ const parameters: Parameters = {
     label: "Elasticity (gpa)",
   },
   area: {
-    value: 25,
+    value: 10,
     min: 1,
     max: 300,
     step: 1,
     label: "area (cm2)",
   },
   load: {
-    value: 500,
+    value: 250,
     min: 1,
     max: 500,
     step: 1,
@@ -58,13 +59,13 @@ function onParameterChange(parameters: Parameters) {
 
   const bottomChordNodes: Node[] = [];
   for (let i = 0; i <= divisions; i++) {
-    const node: Node = [0 + dx * i, 0, 0]; // bottom chord
+    const node: Node = [dx * i, 0, 0]; // bottom chord
     nodes.push(node);
     bottomChordNodes.push(node);
   }
 
   for (let i = 0; i <= divisions; i++) {
-    nodes.push([0 + dx * i, 0, height]); // top chord
+    nodes.push([dx * i, 0, height]); // top chord
   }
 
   // bottom chord
@@ -73,11 +74,11 @@ function onParameterChange(parameters: Parameters) {
   }
 
   // top chord
-  for (let i = 1; i < divisions - 1; i++) {
+  for (let i = 0; i < divisions; i++) {
     elements.push([divisions + 1 + i, divisions + 1 + i + 1]);
   }
 
-  for (let i = 1; i < divisions; i++) {
+  for (let i = 0; i <= divisions; i++) {
     elements.push([i, divisions + 1 + i]); // vertical post
   }
 
@@ -113,7 +114,16 @@ function onParameterChange(parameters: Parameters) {
     ),
   ];
 
-  return { nodes, elements, assignments };
+  // Todo: there is a bug when parsing supports to check if it bar or beam element
+  const analysisResults = analyze(nodes, elements, assignments);
+
+  return { nodes, elements, assignments, analysisResults };
 }
 
-app({ parameters, onParameterChange });
+app({
+  parameters,
+  onParameterChange,
+  settings: {
+    deformedShape: true,
+  },
+});
