@@ -1,22 +1,24 @@
-## What is Awatif?
+### What is Awatif?
 
-Awatif is the first online parametric structural engineering software
+Awatif is a platform designed to assist you in building web-based structural engineering apps, like the ones shown in the [Examples](https://awatif.co/examples/).
 
-- 🚀 Battle-tested FEM solver for only $10 per month
-- 🌐 Design and simulate from any browser
-- 🏓 Interactive realtime simulations
-- 🧱 Parametric modeling powered by JavaScript
-- 🔧 Automate boring repetitive design processes
-- 📊 Open-source, under MIT license
+### Why use Awatif?
 
-Would you like to dig deeper? Read the article: [The Benefits of Parametric Modeling in Structural Engineering](https://www.linkedin.com/pulse/benefits-parametric-modeling-structural-engineering-mohamed-adil)
+Automate tedious engineering processes through parametric modeling, facilitate collaboration with web user interfaces, and optimize designs using optimization techniques.
 
-Examples: https://awatif.co/examples
+### Why it is different?
 
-## Want to contribute?
+Awatif sets itself apart from other platforms, such as Grasshopper or Python, by employing a unique, simple data structure that seamlessly connects the modeling, analysis, design, report, and drawing phases in a parametric manner. While this parametric workflow may sound familiar if you've used Grasshopper with Karamba3D or Python with ETABS APIs, Awatif simplifies the process by consolidating everything into a single, interactive, scalable, and easy-to-develop platform. Moreover, Awatif is built for the web using TypeScript, allowing you to share your app with just a link. Additionally, Awatif offers the benefits of web platforms, such as offloading heavy calculations to servers and facilitating communication with different platforms like Python or C# through API calls.
 
-I have a long list of features with different levels of complexity. If you are brand new and want to learn, don't hesitate to join. I'm more approachable through LinkedIn at https://www.linkedin.com/in/madil4/.
+### In summary, Awatif provides:
 
-## Contribution Guideline
+- 🔄 A unique and simple data structure for seamlessly linking various design algorithms and parametric scripts.
+- 🌐 An open-source visualization tool that enables you to build your app in a 3D space, rendering bending moment diagrams and structural engineering reports—all within the browser.
+- 💸 An affordable FEM library that offers real-time simulation for any structure, priced at only $25/month, easily integrable into your app.
+- 📚 Open-source design libraries, allowing you to select the local-standard design code of your choice, complete with well-validated scripts and reports.
+- 🛒 A Marketplace for those who prefer a non-programming approach, providing a variety of free and paid apps.
+- 👥 A robust community of passionate structural engineers and developers ready to assist you in achieving your vision. Feel free to PM here me for an introduction to the community.
 
-- Only complete features with documentations and examples are allowed to be merged to the main branch. However, you can develop your feature in a feature branch.
+### Want to contribute?
+
+I have a long list of features with different levels of complexity. If you are brand new and want to learn, don't hesitate to join. I'm more approachable through LinkedIn at [https://www.linkedin.com/in/madil4/](https://www.linkedin.com/in/madil4/).

@@ -28,13 +28,13 @@ export const parameters: Parameters = {
     max: 10,
     step: 1,
   },
-  load: {
-    value: 30,
-    min: 1,
-    max: 50,
-    step: 0.5,
-    label: "load (kN)",
-  },
+  // load: {
+  //   value: 30,
+  //   min: 1,
+  //   max: 50,
+  //   step: 0.5,
+  //   label: "load (kN)",
+  // },
 };
 
 export function onParameterChange(parameters: Parameters) {
@@ -97,10 +97,10 @@ export function onParameterChange(parameters: Parameters) {
       node: 3,
       support: [true, true, true],
     },
-    {
-      node: nodes.length - 2,
-      load: [parameters.load.value, 0, 0],
-    },
+    // {
+    //   node: nodes.length - 2,
+    //   load: [parameters.load.value, 0, 0],
+    // },
   ];
 
   // I need to think how I'm gonna deal with the license
