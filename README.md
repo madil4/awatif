@@ -17,7 +17,7 @@ Awatif sets itself apart from other platforms, such as Grasshopper or Python, by
 - 💸 An affordable FEM library that offers real-time simulation for any structure, priced at only $25/month, easily integrable into your app.
 - 📚 Open-source design libraries, allowing you to select the local-standard design code of your choice, complete with well-validated scripts and reports.
 - 🛒 A Marketplace for those who prefer a non-programming approach, providing a variety of free and paid apps.
-- 👥 A robust community of passionate structural engineers and developers ready to assist you in achieving your vision. Feel free to PM here me for an introduction to the community.
+- 👥 A robust community of passionate structural engineers and developers ready to assist you in achieving your vision. Feel free to PM here to introduce you to the community.
 
 ### Want to contribute?
 
