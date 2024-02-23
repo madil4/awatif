@@ -1,9 +1,13 @@
 {
   "name": "awatif-ui",
   "version": "2.1.4",
+  "description": "Awatif User Interface",
   "type": "module",
   "main": "src/App.ts",
   "types": "src/types.d.ts",
+  "keywords": [],
+  "author": "Mohamed Adil",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build"
@@ -15,6 +19,7 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
+    "awatif-data-structure": "^0.0.3",
     "awatif-fem": "^2.0.7",
     "three": "^0.160.0",
     "tweakpane": "^4.0.3",

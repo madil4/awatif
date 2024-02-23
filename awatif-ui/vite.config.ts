@@ -8,8 +8,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        landing: "index.html",
-        docs: "docs/index.html",
         basic: "examples/basic/index.html",
         parametric: "examples/parametric/index.html",
       },

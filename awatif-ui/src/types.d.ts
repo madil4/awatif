@@ -1,13 +1,31 @@
+export * from "awatif-data-structure/src";
+
 import { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  PropertyAssignment,
+  LoadAssignment,
+  DistributedLoadAssignment,
+  BeamResult,
+  DeformationResult,
+  ReactionResult,
+} from "awatif-data-structure";
 
 export function app({}: App): void;
 
-// app
 export type App = {
   model?: Model;
   parameters?: Parameters;
   onParameterChange?: (p: Parameters) => Model;
   settings?: Settings;
+};
+
+export type Model = {
+  nodes?: Node[];
+  elements?: Element[];
+  assignments?: Assignment[];
+  analysisResults?: AnalysisResults;
 };
 
 export type Parameters = Record<
@@ -64,22 +82,14 @@ export type ProcessedAssignments = {
 };
 
 export type ProcessedAnalysisResults = {
-  normal: Map<number, ElementResult["normal"]>;
-  shearY: Map<number, ElementResult["shearY"]>;
-  shearZ: Map<number, ElementResult["shearZ"]>;
-  torsion: Map<number, ElementResult["torsion"]>;
-  bendingY: Map<number, ElementResult["bendingY"]>;
-  bendingZ: Map<number, ElementResult["bendingZ"]>;
+  normal: Map<number, BeamResult["normal"]>;
+  shearY: Map<number, BeamResult["shearY"]>;
+  shearZ: Map<number, BeamResult["shearZ"]>;
+  torsion: Map<number, BeamResult["torsion"]>;
+  bendingY: Map<number, BeamResult["bendingY"]>;
+  bendingZ: Map<number, BeamResult["bendingZ"]>;
   deformation: Map<number, DeformationResult["deformation"]>;
   reaction: Map<number, ReactionResult["reaction"]>;
-};
-
-// model
-export type Model = {
-  nodes?: Node[];
-  elements?: Element[];
-  assignments?: Assignment[];
-  analysisResults?: AnalysisResults;
 };
 
 export type ModelState = State<{
@@ -88,66 +98,3 @@ export type ModelState = State<{
   assignments: ProcessedAssignments;
   analysisResults: ProcessedAnalysisResults;
 }>;
-
-export type Node = [number, number, number];
-export type Element = [number, number];
-
-// assignments
-export type Assignment =
-  | SupportAssignment
-  | LoadAssignment
-  | PropertyAssignment
-  | DistributedLoadAssignment;
-
-export type SupportAssignment = {
-  node: number;
-  support:
-    | [boolean, boolean, boolean]
-    | [boolean, boolean, boolean, boolean, boolean, boolean];
-};
-export type LoadAssignment = {
-  node: number;
-  load:
-    | [number, number, number]
-    | [number, number, number, number, number, number];
-};
-export type PropertyAssignment = {
-  element: number;
-  elasticity: number;
-  shearModulus?: number;
-  area?: number;
-  momentOfInertiaZ?: number;
-  momentOfInertiaY?: number;
-  torsionalConstant?: number;
-};
-export type DistributedLoadAssignment = {
-  element: number;
-  distributedLoad: [number, number];
-};
-
-// results
-export type AnalysisResults = Record<
-  string,
-  (DeformationResult | ReactionResult | ElementResult)[]
->;
-export type DeformationResult = {
-  node: number;
-  deformation:
-    | [number, number, number]
-    | [number, number, number, number, number, number];
-};
-export type ReactionResult = {
-  node: number;
-  reaction:
-    | [number, number, number]
-    | [number, number, number, number, number, number];
-};
-export type ElementResult = {
-  element: number;
-  normal?: [number, number];
-  shearY?: [number, number];
-  shearZ?: [number, number];
-  torsion?: [number, number];
-  bendingY?: [number, number];
-  bendingZ?: [number, number];
-};

@@ -1,7 +1,7 @@
 import { DeformationResult } from "awatif-fem";
 import {
   AnalysisResults,
-  ElementResult,
+  BeamResult,
   ProcessedAnalysisResults,
   ReactionResult,
 } from "../types";
@@ -10,12 +10,12 @@ export function processAnalysisResults(
   analysisResults: AnalysisResults
 ): ProcessedAnalysisResults {
   const par: ProcessedAnalysisResults = {
-    normal: new Map<number, ElementResult["normal"]>(),
-    shearY: new Map<number, ElementResult["shearY"]>(),
-    shearZ: new Map<number, ElementResult["shearZ"]>(),
-    torsion: new Map<number, ElementResult["torsion"]>(),
-    bendingY: new Map<number, ElementResult["bendingY"]>(),
-    bendingZ: new Map<number, ElementResult["bendingZ"]>(),
+    normal: new Map<number, BeamResult["normal"]>(),
+    shearY: new Map<number, BeamResult["shearY"]>(),
+    shearZ: new Map<number, BeamResult["shearZ"]>(),
+    torsion: new Map<number, BeamResult["torsion"]>(),
+    bendingY: new Map<number, BeamResult["bendingY"]>(),
+    bendingZ: new Map<number, BeamResult["bendingZ"]>(),
     deformation: new Map<number, DeformationResult["deformation"]>(),
     reaction: new Map<number, ReactionResult["reaction"]>(),
   };
