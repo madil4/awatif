@@ -19,18 +19,21 @@ export type PropertyAssignment = {
   momentOfInertiaY?: number;
   torsionalConstant?: number;
 };
+
 export type SupportAssignment = {
   node: number;
   support:
     | [boolean, boolean, boolean]
     | [boolean, boolean, boolean, boolean, boolean, boolean];
 };
+
 export type LoadAssignment = {
   node: number;
   load:
     | [number, number, number]
     | [number, number, number, number, number, number];
 };
+
 export type DistributedLoadAssignment = {
   element: number;
   distributedLoad: [number, number]; //
@@ -41,18 +44,21 @@ export type AnalysisResults = Record<
   string,
   (DeformationResult | ReactionResult | BeamResult)[]
 >;
+
 export type DeformationResult = {
   node: number;
   deformation:
     | [number, number, number]
     | [number, number, number, number, number, number];
 };
+
 export type ReactionResult = {
   node: number;
   reaction:
     | [number, number, number]
     | [number, number, number, number, number, number];
 };
+
 export type BeamResult = {
   element: number;
   normal?: [number, number];
