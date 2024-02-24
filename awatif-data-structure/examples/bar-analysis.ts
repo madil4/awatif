@@ -1,4 +1,4 @@
-// An example of three beams loaded with a point load.
+// An example of three bars loaded with a point load.
 
 import { Node, Element, Assignment, AnalysisResults } from "../src";
 

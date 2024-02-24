@@ -1,5 +1,6 @@
 ---
 layout: layout.html
+title: Awatif Data Structure
 ---
 
 <!-- Content -->
@@ -12,8 +13,124 @@ layout: layout.html
         <!-- Grid -->
         <div class="grid gap-12">
           <div>
-            <h2 class="text-3xl text-gray-800 font-bold">Work in progress</h2>
+            <h1 class="text-3xl text-gray-800 font-bold">Awatif Data Structure</h1>
           </div>
+
+          <!-- Introduction -->
+          <div>
+            <p>
+              What sets Awatif apart is the significant challenge in our industry: the reliance on different apps for designing structures. Unfortunately, we still lack a unified data structure to interpolate between them. Awatif addresses this
+              challenge by decomposing model complexity into its core primitives, which are geometry-based. Any structure geometry can be represented by a list of nodes and elements. All additional data required for analysis, design, or reporting is
+              simply assigned to these nodes or elements.
+            </p>
+          </div>
+          <!-- End Introduction -->
+
+          <!-- Installation -->
+          <div>
+            <h2 id="install" class="mb-3 text-lg text-gray-800 font-bold">Installation</h2>
+
+            <p class="mb-3">
+              The data structure is platform-agnostic; you can follow the same structure in Python or C#. Here, the types are defined in TypeScript, allowing you to import them into your algorithm. This enables smooth interpolation with other
+              algorithms that adhere to the same data structure.
+            </p>
+
+            <pre><code class="language-ts">npm install awatif-data-structure</code></pre>
+          </div>
+          <!-- End Installation -->
+
+          <!-- Usage -->
+          <div>
+            <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
+
+            <pre class="mb-3"><code class="language-ts">import { Element, Node, Assignment } from "awatif-data-structure";
+
+const nodes: Node[] = [
+  [0, 0, 0],
+  [0, 5, 0],
+  [5, 5, 0],
+  [5, 0, 0],
+];
+const elements: Element[] = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+];
+const assignments: Assignment[] = [
+  {
+    node: 0,
+    load: [0, -50, 0],
+  },
+  {
+    element: 1,
+    area: 10,
+    elasticity: 200,
+  },
+];</code></pre>
+          </div>
+          <!-- End Installation -->
+
+          <!-- Examples -->
+          <div>
+            <h3 class="mb-3 text-lg text-gray-800 font-bold">Examples</h3>
+
+            <p class="mb-3">Below are examples of a complete Finite Element Method (FEM) analysis using this data structure:</p>
+
+            <ul role="list" class="marker:text-primary list-disc ps-5 space-y-2">
+              <li><a href="https://github.com/madil4/awatif/blob/main/awatif-data-structure/examples/bar-analysis.ts" class="text-primary-light hover:underline">Three beams loaded with a point load</a></li>
+              <li><a href="https://github.com/madil4/awatif/blob/main/awatif-data-structure/examples/beam-analysis.ts" class="text-primary-light hover:underline">Two beams loaded with a uniformly distributed load</a></li>
+            </ul>
+          </div>
+          <!-- End Examples -->
+
+          <!-- API Reference -->
+          <div>
+            <h3 id="api" class="mb-3 text-lg text-gray-800 font-bold scroll-mt-24">API Reference</h3>
+
+            <!-- For Geometry-->
+            <p class="text-sm font-semibold">For Geometry</p>
+            <div class="mb-5 hs-accordion-group" data-hs-accordion-always-open>
+              <div class="hs-accordion active" id="geometry-heading-one">
+                <button
+                  class="hs-accordion-toggle hs-accordion-active:text-primary py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
+                  aria-controls="geometry-collapse-one"
+                >
+                  <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                  <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  Node
+                </button>
+                <div id="geometry-collapse-one" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-heading-one">
+                  <p class="text-gray-800">Represent the position coordinates [x,y,z]</p>
+                  <pre><code class="language-ts">type Node = [number, number, number];</code></pre>
+                </div>
+              </div>
+
+              <div class="hs-accordion" id="geometry-heading-two">
+                <button
+                  class="hs-accordion-toggle hs-accordion-active:text-primary py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                  aria-controls="hs-basic-with-arrow-collapse-two"
+                >
+                  <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                  <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  Element
+                </button>
+                <div id="hs-basic-with-arrow-collapse-two" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-heading-two">
+                  <p class="text-gray-800">Represents the indices of the first and second node in the list of nodes.</p>
+                  <pre><code class="language-ts">type Element = [number, number];</code></pre>
+                </div>
+              </div>
+            </div>
+            <!-- End For Geometry-->
+          </div>
+          <!-- End API Reference -->
         </div>
         <!-- End Grid -->
       </div>
@@ -23,3 +140,5 @@ layout: layout.html
   <!-- End Page Heading -->
 </div>
 <!-- End Content -->
+
+<script src="/js/prism.js"></script>

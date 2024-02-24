@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/style.css --watch\" \"eleventy --serve\"",
+    "dev": "rm -rf dist && concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/css/style.css --watch\" \"eleventy --serve\"",
     "build": "rm -rf dist && eleventy",
     "deploy-staging": "npm run build && netlify deploy",
     "deploy": "npm run build && netlify deploy --prod --dir=dist"
