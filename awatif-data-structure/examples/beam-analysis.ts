@@ -1,4 +1,4 @@
-// An example of two beams loaded with uniformly distributed loads.
+// An example of two beams loaded with a uniformly distributed load.
 
 import { Node, Element, Assignment, AnalysisResults } from "../src";
 

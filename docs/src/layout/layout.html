@@ -5,8 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Awatif - {{ title }}</title>
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
-    <link href="/style.css" rel="stylesheet" />
-    <script src="/js/preline.js"></script>
+    <link href="/css/style.css" rel="stylesheet" />
+    <link  href="/css/prism.css" rel="stylesheet"/>
+
+    <!-- styles fro prism -->
+    <style>
+      code[class*="language-"],
+      pre[class*="language-"] {
+        font-size: 0.9rem;
+        line-height: 1.5*0.9;
+      }
+    </style>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1X49GCVEK9"></script>
@@ -116,5 +125,7 @@
     <!-- Content -->
     {{ content }}
     <!-- End Content -->
+
+    <script src="/js/preline.js"></script>
   </body>
 </html>
