@@ -1,12 +1,17 @@
 {
   "name": "awatif-fem",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Awatif Finite Element Method (FEM) Solver",
   "type": "module",
   "main": "./dist/A6KC6G5S.js",
   "types": "./src/types.d.ts",
   "keywords": [],
   "author": "Mohamed Adil",
+  "homepage": "https://awatif.co/awatif-fem",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madil4/awatif"
+  },
   "scripts": {
     "test": "jest --watch",
     "build": "node build.mjs"
