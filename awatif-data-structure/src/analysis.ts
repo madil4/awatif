@@ -36,7 +36,7 @@ export type LoadAssignment = {
 
 export type DistributedLoadAssignment = {
   element: number;
-  distributedLoad: [number, number]; //
+  distributedLoad: [number, number];
 };
 
 // results (or outputs)

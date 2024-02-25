@@ -691,6 +691,10 @@ video {
   margin-bottom: 1.25rem;
 }
 
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
 .ms-3 {
   margin-inline-start: 0.75rem;
 }
@@ -713,6 +717,10 @@ video {
 
 .mt-auto {
   margin-top: auto;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
 }
 
 .block {
@@ -755,6 +763,11 @@ video {
 .size-2\.5 {
   width: 0.625rem;
   height: 0.625rem;
+}
+
+.size-3 {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .size-4 {
@@ -833,8 +846,16 @@ video {
   scroll-margin-top: 6rem;
 }
 
+.list-inside {
+  list-style-position: inside;
+}
+
 .list-disc {
   list-style-type: disc;
+}
+
+.list-decimal {
+  list-style-type: decimal;
 }
 
 .flex-col {
@@ -933,16 +954,8 @@ video {
   overflow: visible;
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
-}
-
 .overflow-y-auto {
   overflow-y: auto;
-}
-
-.overflow-x-scroll {
-  overflow-x: scroll;
 }
 
 .truncate {
@@ -1142,6 +1155,10 @@ video {
   padding-inline-start: 1.25rem;
 }
 
+.ps-6 {
+  padding-inline-start: 1.5rem;
+}
+
 .pt-0 {
   padding-top: 0px;
 }
@@ -1169,6 +1186,10 @@ video {
 
 .text-\[\.6125rem\] {
   font-size: .6125rem;
+}
+
+.text-\[0\.85rem\] {
+  font-size: 0.85rem;
 }
 
 .text-lg {
@@ -1238,6 +1259,11 @@ video {
 .text-primary-light {
   --tw-text-opacity: 1;
   color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .text-white {
@@ -1436,6 +1462,11 @@ video {
   color: rgb(0 95 115 / var(--tw-text-opacity));
 }
 
+.hs-accordion.active.hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
 .hs-accordion.active > .hs-accordion-toggle .hs-accordion-active\:block {
   display: block;
 }
@@ -1449,6 +1480,11 @@ video {
   color: rgb(0 95 115 / var(--tw-text-opacity));
 }
 
+.hs-accordion.active > .hs-accordion-toggle .hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:block {
   display: block;
 }
@@ -1460,6 +1496,11 @@ video {
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:text-primary {
   --tw-text-opacity: 1;
   color: rgb(0 95 115 / var(--tw-text-opacity));
+}
+
+.hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
 }
 
 .open.hs-overlay-open\:translate-x-0 {
