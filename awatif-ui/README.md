@@ -1,19 +1,79 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/e1e48f9a-e14f-4a35-b3ed-729a0c4b2ec1/deploy-status)](https://app.netlify.com/sites/awatif-ui/deploys)
+# Awatif User Interface
 
-## Getting started
+Building an interaction web app from scratch is a challenging task. awatif-ui takes care of all the boilerplate and infrastructure, allowing you to focus on the logic of your app. It is based on a simple concept: exposing parameters that you want the user to interact with, and at each parameter change, rerunning the script or algorithm for modeling, analysis, design, and reporting of your structure.
 
-You can run the app locally by following these steps:
+- **For Structural Engineers**: Components for visualizing engineering results & reports.
+- **Open source**: Full control of behavior and looks
+- **Extensible**: Built on Three.js library for drawing complex geometry
 
-1.  Make sure you have downloaded and installed [Node.js](https://nodejs.org/en)
-2.  Run the following commands in the terminal:
-
-```terminal
-npm install
-npm run dev
+## Installation
+Install awatif-ui via npm
+```
+npm install awatif-ui
 ```
 
-The local development server will start, and the app will open in the browser. Make sure you read the documentation at [https://awatif.co/docs](https://mohamedadil.notion.site/Getting-Started-a8565ccbdea641b7b4793a6f42d983af) to understand the app.
+## Usage
+```Typescript
+import { app, Node, Element, Assignment, Parameters } from "awatif-ui";
+import { analyze } from "awatif-fem";
 
-## Color Palette
+const parameters: Parameters = {
+  xPosition: { value: 12, min: 1, max: 20 },
+  zPosition: { value: 0, min: 1, max: 10 },
+};
 
-https://coolors.co/palette/001219-005f73-0a9396-94d2bd-e9d8a6-ee9b00-ca6702-bb3e03-ae2012-9b2226
+function onParameterChange(parameters: Parameters) {
+  const nodes: Node[] = [
+    [5, 0, 0],
+    [parameters.xPosition.value, 0, parameters.zPosition.value],
+    [5, 0, 8],
+  ];
+  const elements: Element[] = [
+    [0, 1],
+    [1, 2],
+  ];
+  const assignments: Assignment[] = [
+    {
+      node: 0,
+      support: [true, true, true],
+    },
+    {
+      node: 2,
+      support: [true, true, true],
+    },
+    {
+      node: 1,
+      load: [0, 0, -10],
+    },
+    {
+      element: 0,
+      area: 1.2,
+      elasticity: 200,
+    },
+    {
+      element: 1,
+      area: 1.2,
+      elasticity: 200,
+    },
+  ];
+
+  const analysisResults = analyze(nodes, elements, assignments);
+
+  return { nodes, elements, assignments, analysisResults };
+}
+
+app({
+  parameters,
+  onParameterChange,
+});
+```
+
+## Examples
+1. Basic portal frame loaded laterally - [View](http://localhost:4600/awatif-ui/#:~:text=Basic%20portal%20frame%20loaded%20laterally%20%2D-,View,-%2D%20Source%20code) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/basic/main.ts)
+2. Parametric portal frame loaded laterally - [View](http://localhost:4600/awatif-ui/examples/parametric/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/parametric/main.ts)
+3. [More Examples](http://localhost:4600/examples/)
+
+When you toggle the bending moment setting located at the top-left corner, you should see this:
+portal-frame bending moment
+
+![image](https://awatif.co/img/awatif-ui/portal-frame.jpg)
