@@ -1,6 +1,6 @@
 import { app } from "../../src/App";
-import { Assignment, Element, Node } from "../../src/types";
-import { analyze, PropertyAssignment } from "awatif-fem";
+import { Assignment, Element, Node, PropertyAssignment } from "../../src/types";
+import { analyze } from "../../../awatif-fem/";
 
 const nodes: Node[] = [
   [0, 0, 0],

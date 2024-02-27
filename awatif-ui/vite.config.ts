@@ -5,7 +5,10 @@ export default defineConfig({
     port: 4600,
     open: "/examples/parametric/index.html",
   },
+  base: "./",
   build: {
+    outDir: "../docs/src/awatif-ui",
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         basic: "examples/basic/index.html",
