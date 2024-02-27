@@ -1,9 +1,9 @@
-import { DeformationResult } from "awatif-fem";
 import {
   AnalysisResults,
   BeamResult,
   ProcessedAnalysisResults,
   ReactionResult,
+  DeformationResult,
 } from "../types";
 
 export function processAnalysisResults(

@@ -691,10 +691,6 @@ video {
   margin-bottom: 1.25rem;
 }
 
-.mb-8 {
-  margin-bottom: 2rem;
-}
-
 .ms-3 {
   margin-inline-start: 0.75rem;
 }
@@ -711,16 +707,16 @@ video {
   margin-top: 0.5rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
 }
 
 .block {
@@ -850,12 +846,12 @@ video {
   list-style-position: inside;
 }
 
-.list-disc {
-  list-style-type: disc;
-}
-
 .list-decimal {
   list-style-type: decimal;
+}
+
+.list-disc {
+  list-style-type: disc;
 }
 
 .flex-col {
@@ -917,12 +913,6 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.375rem * var(--tw-space-y-reverse));
-}
-
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1151,10 +1141,6 @@ video {
   padding-inline-start: 0.5rem;
 }
 
-.ps-5 {
-  padding-inline-start: 1.25rem;
-}
-
 .ps-6 {
   padding-inline-start: 1.5rem;
 }
@@ -1333,14 +1319,6 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.marker\:text-primary *::marker {
-  color: rgb(0 95 115 );
-}
-
-.marker\:text-primary::marker {
-  color: rgb(0 95 115 );
-}
-
 .after\:absolute::after {
   content: var(--tw-content);
   position: absolute;
@@ -1457,11 +1435,6 @@ video {
   display: none;
 }
 
-.hs-accordion.active.hs-accordion-active\:text-primary {
-  --tw-text-opacity: 1;
-  color: rgb(0 95 115 / var(--tw-text-opacity));
-}
-
 .hs-accordion.active.hs-accordion-active\:text-primary-light {
   --tw-text-opacity: 1;
   color: rgb(10 147 150 / var(--tw-text-opacity));
@@ -1475,11 +1448,6 @@ video {
   display: none;
 }
 
-.hs-accordion.active > .hs-accordion-toggle .hs-accordion-active\:text-primary {
-  --tw-text-opacity: 1;
-  color: rgb(0 95 115 / var(--tw-text-opacity));
-}
-
 .hs-accordion.active > .hs-accordion-toggle .hs-accordion-active\:text-primary-light {
   --tw-text-opacity: 1;
   color: rgb(10 147 150 / var(--tw-text-opacity));
@@ -1491,11 +1459,6 @@ video {
 
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:hidden {
   display: none;
-}
-
-.hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:text-primary {
-  --tw-text-opacity: 1;
-  color: rgb(0 95 115 / var(--tw-text-opacity));
 }
 
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:text-primary-light {

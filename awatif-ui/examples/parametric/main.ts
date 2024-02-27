@@ -1,6 +1,12 @@
-import { analyze, PropertyAssignment } from "awatif-fem";
 import { app } from "../../src/App";
-import { Assignment, Element, Node, Parameters } from "../../src/types";
+import {
+  Assignment,
+  Element,
+  Node,
+  Parameters,
+  PropertyAssignment,
+} from "../../src/types";
+import { analyze } from "../../../awatif-fem";
 
 const parameters: Parameters = {
   length: { value: 10, min: 1, max: 20 },
