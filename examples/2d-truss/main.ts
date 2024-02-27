@@ -1,5 +1,5 @@
 import { app, Node, Element, Assignment, Parameters } from "../../awatif-ui/";
-import { analyze } from "awatif-fem";
+import { analyze } from "../../awatif-fem";
 
 const parameters: Parameters = {
   span: {

@@ -715,6 +715,10 @@ video {
   margin-top: 1rem;
 }
 
+.mt-5 {
+  margin-top: 1.25rem;
+}
+
 .mt-auto {
   margin-top: auto;
 }
@@ -751,6 +755,11 @@ video {
   display: none;
 }
 
+.size-12 {
+  width: 3rem;
+  height: 3rem;
+}
+
 .size-2 {
   width: 0.5rem;
   height: 0.5rem;
@@ -774,6 +783,11 @@ video {
 .size-5 {
   width: 1.25rem;
   height: 1.25rem;
+}
+
+.size-6 {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .size-7 {
@@ -803,6 +817,10 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.w-3\/4 {
+  width: 75%;
 }
 
 .max-w-3xl {
@@ -1242,6 +1260,11 @@ video {
   color: rgb(31 41 55 / var(--tw-text-opacity));
 }
 
+.text-primary {
+  --tw-text-opacity: 1;
+  color: rgb(0 95 115 / var(--tw-text-opacity));
+}
+
 .text-primary-light {
   --tw-text-opacity: 1;
   color: rgb(10 147 150 / var(--tw-text-opacity));
@@ -1317,6 +1340,49 @@ video {
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.before\:absolute::before {
+  content: var(--tw-content);
+  position: absolute;
+}
+
+.before\:-inset-px::before {
+  content: var(--tw-content);
+  inset: -1px;
+}
+
+.before\:-z-\[1\]::before {
+  content: var(--tw-content);
+  z-index: -1;
+}
+
+.before\:rounded-xl::before {
+  content: var(--tw-content);
+  border-radius: 0.75rem;
+}
+
+.before\:bg-gradient-to-br::before {
+  content: var(--tw-content);
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.before\:from-primary::before {
+  content: var(--tw-content);
+  --tw-gradient-from: #005F73 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(0 95 115 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.before\:via-transparent::before {
+  content: var(--tw-content);
+  --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), transparent var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.before\:to-primary-light::before {
+  content: var(--tw-content);
+  --tw-gradient-to: #0A9396 var(--tw-gradient-to-position);
 }
 
 .after\:absolute::after {
