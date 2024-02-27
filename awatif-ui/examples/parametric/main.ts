@@ -46,7 +46,7 @@ function onParameterChange(parameters: Parameters) {
 
   const analysisResults = analyze(nodes, elements, assignments);
 
-  return { nodes, elements, analysisResults };
+  return { nodes, elements, assignments, analysisResults };
 }
 
 app({ parameters, onParameterChange });
