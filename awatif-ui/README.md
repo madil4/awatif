@@ -1,6 +1,6 @@
 # Awatif User Interface
 
-Building an interaction web app from scratch is a challenging task. awatif-ui takes care of all the boilerplate and infrastructure, allowing you to focus on the logic of your app. It is based on a simple concept: exposing parameters that you want the user to interact with, and at each parameter change, rerunning the script or algorithm for modeling, analysis, design, and reporting of your structure.
+Building an interactive web app from scratch is a challenging task. awatif-ui takes care of all the boilerplate and infrastructure, allowing you to focus on the logic of your app. It is based on a simple concept: exposing parameters that you want the user to interact with, and at each parameter change, rerunning the script or algorithm for modeling, analysis, design, and reporting of your structure.
 
 - **For Structural Engineers**: Components for visualizing engineering results & reports.
 - **Open source**: Full control of behavior and looks
