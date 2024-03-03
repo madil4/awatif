@@ -5,7 +5,13 @@
   "type": "module",
   "main": "src/App.ts",
   "types": "src/types.d.ts",
-  "keywords": [],
+  "keywords": [
+    "awatif",
+    "parametricdesign",
+    "computationaldesign",
+    "structuralengineering",
+    "parametricmodeling"
+  ],
   "author": "Mohamed Adil",
   "license": "MIT",
   "scripts": {
