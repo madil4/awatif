@@ -13,9 +13,11 @@ breadcrumb: User Interface
       <div class="max-w-3xl mx-auto">
         <!-- Grid -->
         <div class="grid gap-12">
+          <!-- Title  -->
           <div>
             <h2 class="text-3xl text-gray-800 font-bold">Awatif User Interface</h2>
           </div>
+          <!-- End Title  -->
 
           <!-- Introduction -->
           <div>
@@ -24,7 +26,7 @@ breadcrumb: User Interface
               that you want the user to interact with, and at each parameter change, rerunning the script or algorithm for modeling, analysis, design, and reporting of your structure.
             </p>
           </div>
-          <!-- Introduction -->
+          <!-- End Introduction -->
 
           <!-- Features -->
           <div class="max-w-[85rem] mx-auto">
@@ -156,7 +158,7 @@ app({
   onParameterChange,
 });</code></pre>
           </div>
-          <!-- End Installation -->
+          <!-- End Usage -->
 
           <!-- Examples -->
           <div>
@@ -185,10 +187,10 @@ app({
 
             <div class="mb-5 hs-accordion-group" data-hs-accordion-always-open>
               <!-- App -->
-              <div class="hs-accordion" id="analysis-property-heading">
+              <div class="hs-accordion" id="app-heading">
                 <button
                   class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
-                  aria-controls="analysis-property-collapse"
+                  aria-controls="app-collapse"
                 >
                   <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -200,15 +202,16 @@ app({
                 </button>
 
                 <!-- Property Bar and Beam -->
-                <div id="analysis-property-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="analysis-property-heading">
-                  <p class="mb-3">Define material and section properties</p>
+                <div id="app-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="app-heading">
+                  <p class="mb-3">This library exposes a single function called app, which accepts the following inputs: Model, Parameters, OnParameterChange, and Settings. It then returns a 3D HTML canvas appended to the body element.</p>
 
-                  <!-- Property Bar Element -->
+                  <!-- Inputs -->
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
-                    <div class="hs-accordion" id="property-bar-heading">
+                    <!-- Model -->
+                    <div class="hs-accordion" id="model-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="property-bar-collapse"
+                        aria-controls="model-collapse"
                       >
                         <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -217,27 +220,25 @@ app({
                         <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                         </svg>
-                        Bar Element
+                        Model
                       </button>
-                      <div id="property-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="property-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type PropertyAssignment = {
-            element: number;
-            elasticity: number;
-            area?: number;
-          };</code></pre>
-                        <ul class="list-disc list-inside text-gray-800">
-                          <li><code class="text-red-500 text-[0.85rem]">`area`</code>: Cross-sectional area.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`elasticity`</code>: Modulus of elasticity.</li>
-                        </ul>
+                      <div id="model-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="model-heading">
+                        <pre class="mb-3"><code class="language-ts">type Model = {
+  nodes?: Node[];
+  elements?: Element[];
+  assignments?: Assignment[];
+  analysisResults?: AnalysisResults;
+};</code></pre>
+                        <p>The data model consists of nodes, elements, assignments, and analysis results, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.</p>
                       </div>
                     </div>
-                    <!-- End Property Bar Element -->
+                    <!-- End Model -->
 
-                    <!-- Property Beam Element -->
-                    <div class="hs-accordion" id="property-beam-heading">
+                    <!-- Parameters -->
+                    <div class="hs-accordion" id="parameters-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="property-beam-collapse"
+                        aria-controls="parameters-collapse"
                       >
                         <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -246,32 +247,108 @@ app({
                         <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                         </svg>
-                        Beam Element
+                        Parameters
                       </button>
-                      <div id="property-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="property-beam-heading">
-                        <pre class="mb-3"><code class="language-ts">type PropertyAssignment = {
-            element: number;
-            elasticity: number;
-            shearModulus?: number;
-            area?: number;
-            momentOfInertiaZ?: number;
-            momentOfInertiaY?: number;
-            torsionalConstant?: number;
-          };</code></pre>
+                      <div id="parameters-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="parameters-heading">
+                        <p class="mb-3">This is a list of parameters that your app exposes to end-users. It follows this data structure:</p>
+                        <pre class="mb-3"><code class="language-ts">type Parameters = Record<
+  string,
+  {
+    value: number;
+    min?: number;
+    max?: number;
+    step?: number;
+    label?: string;
+  }
+></code></pre>
                         <ul class="list-disc list-inside text-gray-800">
-                          <li><code class="text-red-500 text-[0.85rem]">`area`</code>: Cross-sectional area.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`elasticity`</code>: Modulus of elasticity.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`shearModules`</code>: Shear modulus or modulus of rigidity of the material.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`momentOfInertiaZ`</code>: Moment of inertia (rotational inertia) of the section around the local z-axis.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`momentOfInertiaY`</code>: Moment of inertia around the local y-axis.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`torsionalConstant`</code>: Torsion constant or torsion coefficient of the section.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`value`</code>: The initial value of the parameter, which can either be a number or boolean.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`min`</code>: In the case of a number parameter, this is the minimum value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`max`</code>: In the case of a number parameter, this is the maximum value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`step`</code>: In the case of a number parameter, this is the step value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`label`</code>: Optimally defines a different parameter label rather than the parameter key.</li>
                         </ul>
                       </div>
                     </div>
-                    <!-- End Property Beam Element -->
+                    <!-- End parameters -->
+
+                    <!-- onParameterChange -->
+                    <div class="hs-accordion" id="on-parameter-change-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="on-parameter-change-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        onParameterChange
+                      </button>
+                      <div id="on-parameter-change-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="on-parameter-change-heading">
+                        <p>Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output</p>
+                        <pre class="mb-3"><code class="language-ts">function onParameterChange(parameters) {
+    // Recompute the model according to the newly changed parameters
+    // ...
+    return model
+}</code></pre>
+                      </div>
+                    </div>
+                    <!-- End onParameterChange -->
+
+                    <!-- Settings -->
+                    <div class="hs-accordion" id="settings-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="settings-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Settings
+                      </button>
+                      <div id="settings-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="settings-heading">
+                        <p class="mb-3">A settings object is used to control the user interface.</p>
+                        <pre class="mb-3"><code class="language-ts">type Settings = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  elementResults?: string;
+  nodeResults?: string;
+};</code></pre>
+                        <ul class="list-disc list-inside text-gray-800">
+                          <li><code class="text-red-500 text-[0.85rem]">`gridSize`</code>: This determines the size of the grid and, consequently, the size of your model. The default value is 25, resulting in a grid size of 25x25 units in length</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`displayScale`</code>: Controls the scale of diagrams and labels presented in the viewer</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodes`</code>: Toggles nodes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elements`</code>: Toggles elements on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodesIndexes`</code>: Toggles nodes indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elementsIndexes`</code>: Toggles elements indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`orientations`</code>: Toggles orientations on and off, using red, green, and blue for the x-axis, y-axis, and z-axis, respectively</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`supports`</code>: Toggles supports indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`loads`</code>: Toggles loads indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`deformedShape`</code>: Shows the deformed shape after the application of loads</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elementResults`</code>: Switches between analysis results related to elements</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodeResults`</code>: Switches between analysis results related to nodes</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <!-- End Settings -->
                   </div>
                 </div>
-                <!-- Property Bar and Beam -->
+                <!-- End Inputs -->
               </div>
               <!-- End App -->
             </div>
