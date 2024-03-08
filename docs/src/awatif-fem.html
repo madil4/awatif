@@ -1,5 +1,7 @@
 ---
 layout: layout.html
+title: Awatif FEM Solver
+breadcrumb: FEM Solver
 ---
 
 <!-- Content -->
@@ -11,9 +13,407 @@ layout: layout.html
       <div class="max-w-3xl mx-auto">
         <!-- Grid -->
         <div class="grid gap-12">
+          <!-- Title  -->
           <div>
-            <h2 class="text-3xl text-gray-800 font-bold">Work in progress</h2>
+            <h2 class="text-3xl text-gray-800 font-bold">Awatif FEM Solver</h2>
           </div>
+          <!-- End Title  -->
+
+          <!-- Introduction -->
+          <div>
+            <p>Building a structural app without utilizing the finite element method would be considered a simple app. With awatif-fem solver, it becomes easy to analyze complex designs accurately, ultimately saving you materials and costs.</p>
+          </div>
+          <!-- End Introduction -->
+
+          <!-- Features -->
+          <div class="max-w-[85rem] mx-auto">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 items-center gap-12">
+              <!-- Web -->
+              <div>
+                <div
+                  class="relative flex justify-center items-center size-12 bg-white rounded-xl before:absolute before:-inset-px before:-z-[1] before:bg-gradient-to-br before:from-primary before:via-transparent before:to-primary-light before:rounded-xl"
+                >
+                  <svg class="flex-shrink-0 size-6 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M3.51211712,15 L8.17190229,15 C8.05949197,14.0523506 8,13.0444554 8,12 C8,10.9555446 8.05949197,9.94764942 8.17190229,9 L3.51211712,9 C3.18046266,9.93833678 3,10.9480937 3,12 C3,13.0519063 3.18046266,14.0616632 3.51211712,15 L3.51211712,15 Z M3.93551965,16 C5.12590433,18.3953444 7.35207678,20.1851177 10.0280093,20.783292 C9.24889451,19.7227751 8.65216136,18.0371362 8.31375067,16 L3.93551965,16 L3.93551965,16 Z M20.4878829,15 C20.8195373,14.0616632 21,13.0519063 21,12 C21,10.9480937 20.8195373,9.93833678 20.4878829,9 L15.8280977,9 C15.940508,9.94764942 16,10.9555446 16,12 C16,13.0444554 15.940508,14.0523506 15.8280977,15 L20.4878829,15 L20.4878829,15 Z M20.0644804,16 L15.6862493,16 C15.3478386,18.0371362 14.7511055,19.7227751 13.9719907,20.783292 C16.6479232,20.1851177 18.8740957,18.3953444 20.0644804,16 L20.0644804,16 Z M9.18440269,15 L14.8155973,15 C14.9340177,14.0623882 15,13.0528256 15,12 C15,10.9471744 14.9340177,9.93761183 14.8155973,9 L9.18440269,9 C9.06598229,9.93761183 9,10.9471744 9,12 C9,13.0528256 9.06598229,14.0623882 9.18440269,15 L9.18440269,15 Z M9.3349823,16 C9.85717082,18.9678295 10.9180729,21 12,21 C13.0819271,21 14.1428292,18.9678295 14.6650177,16 L9.3349823,16 L9.3349823,16 Z M3.93551965,8 L8.31375067,8 C8.65216136,5.96286383 9.24889451,4.27722486 10.0280093,3.21670804 C7.35207678,3.81488234 5.12590433,5.60465556 3.93551965,8 L3.93551965,8 Z M20.0644804,8 C18.8740957,5.60465556 16.6479232,3.81488234 13.9719907,3.21670804 C14.7511055,4.27722486 15.3478386,5.96286383 15.6862493,8 L20.0644804,8 L20.0644804,8 Z M9.3349823,8 L14.6650177,8 C14.1428292,5.03217048 13.0819271,3 12,3 C10.9180729,3 9.85717082,5.03217048 9.3349823,8 L9.3349823,8 Z M12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 C17.5228475,2 22,6.4771525 22,12 C22,17.5228475 17.5228475,22 12,22 Z"
+                    />
+                  </svg>
+                </div>
+                <div class="mt-5">
+                  <h3 class="text-lg text-gray-800">Built for the Web</h3>
+                  <p class="mt-1 text-gray-600">Runs anywhere, even in browsers without a backend.</p>
+                </div>
+              </div>
+              <!-- End Web -->
+
+              <!-- Fast -->
+              <div>
+                <div
+                  class="relative flex justify-center items-center size-12 bg-white rounded-xl before:absolute before:-inset-px before:-z-[1] before:bg-gradient-to-br before:from-primary before:via-transparent before:to-primary-light before:rounded-xl"
+                >
+                  <svg class="flex-shrink-0 size-6 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                      xmlns="http://www.w3.org/2000/svg"
+                      d="M13 16.4373C13 17.5673 13 18.1323 13.2283 18.4093C13.4266 18.65 13.7258 18.7843 14.0374 18.7727C14.3961 18.7592 14.8184 18.3839 15.663 17.6331L20.6547 13.1961C21.12 12.7825 21.3526 12.5757 21.4383 12.3315C21.5136 12.1171 21.5136 11.8834 21.4383 11.6689C21.3526 11.4247 21.12 11.2179 20.6547 10.8044L15.663 6.3673C14.8184 5.61655 14.3961 5.24118 14.0374 5.22775C13.7258 5.21609 13.4266 5.35046 13.2283 5.59111C13 5.86811 13 6.43313 13 7.56316V16.4373Z"
+                    />
+                    <path
+                      xmlns="http://www.w3.org/2000/svg"
+                      d="M2 16.4373C2 17.5673 2 18.1323 2.22827 18.4093C2.42657 18.65 2.72579 18.7843 3.0374 18.7727C3.39609 18.7592 3.81839 18.3839 4.66298 17.6331L9.65466 13.1961C10.12 12.7825 10.3526 12.5757 10.4383 12.3315C10.5136 12.1171 10.5136 11.8834 10.4383 11.6689C10.3526 11.4247 10.12 11.2179 9.65466 10.8044L4.66298 6.3673C3.81839 5.61655 3.39609 5.24118 3.0374 5.22775C2.72579 5.21609 2.42657 5.35046 2.22827 5.59111C2 5.86811 2 6.43313 2 7.56316V16.4373Z"
+                    />
+                  </svg>
+                </div>
+                <div class="mt-5">
+                  <h3 class="text-lg text-gray-800">Fast and Lightweight</h3>
+                  <p class="mt-1 text-gray-600">Built using modern programming technologies.</p>
+                </div>
+              </div>
+              <!-- End Fast -->
+
+              <!-- 3D Web -->
+              <div>
+                <div
+                  class="relative flex justify-center items-center size-12 bg-white rounded-xl before:absolute before:-inset-px before:-z-[1] before:bg-gradient-to-br before:from-primary before:via-transparent before:to-primary-light before:rounded-xl"
+                >
+                  <svg class="flex-shrink-0 size-6 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M15.5777 3.38197L17.5777 4.43152C19.7294 5.56066 20.8052 6.12523 21.4026 7.13974C22 8.15425 22 9.41667 22 11.9415V12.0585C22 14.5833 22 15.8458 21.4026 16.8603C20.8052 17.8748 19.7294 18.4393 17.5777 19.5685L15.5777 20.618C13.8221 21.5393 12.9443 22 12 22C11.0557 22 10.1779 21.5393 8.42229 20.618L6.42229 19.5685C4.27063 18.4393 3.19479 17.8748 2.5974 16.8603C2 15.8458 2 14.5833 2 12.0585V11.9415C2 9.41667 2 8.15425 2.5974 7.13974C3.19479 6.12523 4.27063 5.56066 6.42229 4.43152L8.42229 3.38197C10.1779 2.46066 11.0557 2 12 2C12.9443 2 13.8221 2.46066 15.5777 3.38197Z"
+                    />
+                    <path d="M21 7.5L12 12M12 12L3 7.5M12 12V21.5" />
+                  </svg>
+                </div>
+                <div class="mt-5">
+                  <h3 class="text-xl text-gray-800">In 3D</h3>
+                  <p class="mt-1 text-gray-600">Operates in both 2D and 3D spaces.</p>
+                </div>
+              </div>
+              <!-- End 3D -->
+
+              <!-- Validated -->
+              <div>
+                <div
+                  class="relative flex justify-center items-center size-12 bg-white rounded-xl before:absolute before:-inset-px before:-z-[1] before:bg-gradient-to-br before:from-primary before:via-transparent before:to-primary-light before:rounded-xl"
+                >
+                  <svg class="flex-shrink-0 size-6 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 192 192" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M95.958 22C121.031 42.867 149.785 42 158 42c-1.797 118.676-15 95-62.042 128C49 137 35.798 160.676 34 42c8.13 0 36.883.867 61.958-20Z" />
+                  </svg>
+                </div>
+                <div class="mt-5">
+                  <h3 class="text-lg text-gray-800">Validated and Trusted</h3>
+                  <p class="mt-1 text-gray-600">Rigorously tested and validated by clients.</p>
+                </div>
+              </div>
+              <!-- End Validated -->
+
+              <!-- Comprehensive -->
+              <div>
+                <div
+                  class="relative flex justify-center items-center size-12 bg-white rounded-xl before:absolute before:-inset-px before:-z-[1] before:bg-gradient-to-br before:from-primary before:via-transparent before:to-primary-light before:rounded-xl"
+                >
+                  <svg class="flex-shrink-0 size-6 text-primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path
+                      d="M4 4V3.5H3.5V4H4ZM11.6464 12.3536C11.8417 12.5488 12.1583 12.5488 12.3536 12.3536C12.5488 12.1583 12.5488 11.8417 12.3536 11.6464L11.6464 12.3536ZM4.5 10V4H3.5V10H4.5ZM4 4.5H10V3.5H4V4.5ZM3.64645 4.35355L11.6464 12.3536L12.3536 11.6464L4.35355 3.64645L3.64645 4.35355Z"
+                    />
+                    <path
+                      d="M4 20V20.5H3.5V20H4ZM11.6464 11.6464C11.8417 11.4512 12.1583 11.4512 12.3536 11.6464C12.5488 11.8417 12.5488 12.1583 12.3536 12.3536L11.6464 11.6464ZM4.5 14V20H3.5V14H4.5ZM4 19.5H10V20.5H4V19.5ZM3.64645 19.6464L11.6464 11.6464L12.3536 12.3536L4.35355 20.3536L3.64645 19.6464Z"
+                    />
+                    <path
+                      d="M20 4V3.5H20.5V4H20ZM12.3536 12.3536C12.1583 12.5488 11.8417 12.5488 11.6464 12.3536C11.4512 12.1583 11.4512 11.8417 11.6464 11.6464L12.3536 12.3536ZM19.5 10V4H20.5V10H19.5ZM20 4.5H14V3.5H20V4.5ZM20.3536 4.35355L12.3536 12.3536L11.6464 11.6464L19.6464 3.64645L20.3536 4.35355Z"
+                    />
+                    <path
+                      d="M20 20V20.5H20.5V20H20ZM12.3536 11.6464C12.1583 11.4512 11.8417 11.4512 11.6464 11.6464C11.4512 11.8417 11.4512 12.1583 11.6464 12.3536L12.3536 11.6464ZM19.5 14V20H20.5V14H19.5ZM20 19.5H14V20.5H20V19.5ZM20.3536 19.6464L12.3536 11.6464L11.6464 12.3536L19.6464 20.3536L20.3536 19.6464Z"
+                    />
+                  </svg>
+                </div>
+                <div class="mt-5">
+                  <h3 class="text-lg text-gray-800">Comprehensive</h3>
+                  <p class="mt-1 text-gray-600">Runs static analysis. Dynamic and non-linear on the way.</p>
+                </div>
+              </div>
+              <!-- End Comprehensive -->
+            </div>
+          </div>
+          <!-- End Features -->
+
+          <!-- Installation -->
+          <div>
+            <h2 id="install" class="mb-3 text-lg text-gray-800 font-bold">Installation</h2>
+
+            <pre><code class="language-ts">npm install awatif-fem</code></pre>
+          </div>
+          <!-- End Installation -->
+
+          <!-- Usage -->
+          <div class="overflow-auto">
+            <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
+
+            <pre><code class="language-ts">import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
+
+const nodes: Node[] = [
+  [0, 0, 3],
+  [3, 0, 3],
+  [3, 0, 0],
+];
+const elements: Element[] = [
+  [0, 1],
+  [1, 2],
+];
+const assignments: Assignment[] = [
+  {
+    node: 0,
+    support: [false, true, false, true, false, true],
+  },
+  {
+    node: 2,
+    support: [false, true, false, true, false, true],
+  },
+  ...elements.map((_, i) => ({
+    element: i,
+    elasticity: 210e9,
+    shearModulus: 84e9,
+    momentOfInertiaZ: 16.6e-5,
+    torsionalConstant: 4.6e-5,
+  })),
+  {
+    node: 1,
+    load: [0, -22e3, 0, 0, 0, 0],
+  },
+];
+
+const output = analyze(nodes, elements, assignments);
+
+const expectedOutput: AnalysisResults = {
+  default: [
+    {
+      node: 0,
+      reaction: [
+        0, 11000.000000000004, 0, -1646.4208242950122, 0, 31353.579175705014,
+      ],
+    },
+    {
+      node: 1,
+      deformation: [
+        0, -0.002627398344540233, 0, 0.0012782770374961275, 0,
+        -0.0012782770374961275,
+      ],
+    },
+    {
+      element: 0,
+      normal: [0, 0],
+      shearY: [11000.000000000004, -11000.000000000004],
+      shearZ: [0, 0],
+      torsion: [-1646.4208242950122, 1646.4208242950122],
+      bendingY: [0, 0],
+      bendingZ: [31353.579175705014, 1646.4208242950117],
+    },
+  ],
+};</code></pre>
+          </div>
+          <!-- End Usage -->
+
+          <!-- Examples -->
+          <div>
+            <h3 class="mb-3 text-lg text-gray-800 font-bold">Examples</h3>
+
+            <ol class="mb-3 list-disc list-inside text-gray-800">
+              <li>
+                Portal frame - <a href="/examples/portal-frame/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/portal-frame/main.ts" class="text-primary-light hover:underline">source code</a>
+              </li>
+              <li>
+                2D truss - <a href="/examples/2d-truss/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/2d-truss/main.ts" class="text-primary-light hover:underline">source code</a>
+              </li>
+              <li>
+                Two bars - <a href="/examples/two-bars/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/two-bars/main.ts" class="text-primary-light hover:underline">source code</a>
+              </li>
+              <li>
+                Examples from the book: A First Course in the Finite Element Method by Daryl L. Logan 6th edition -
+                <a href="https://github.com/madil4/awatif/tree/main/awatif-fem/examples" class="text-primary-light hover:underline">source code</a>
+              </li>
+            </ol>
+
+            <p class="mb-3">When you toggle the bending moment setting located at the top-left corner, you should see this:</p>
+            <img class="w-3/4" src="/img/awatif-ui/portal-frame.jpg" alt="portal-frame bending moment" />
+          </div>
+          <!-- End Examples -->
+
+          <!-- API Reference -->
+          <div>
+            <h3 id="api" class="mb-3 text-lg text-gray-800 font-bold scroll-mt-24">API Reference</h3>
+
+            <div class="mb-5 hs-accordion-group" data-hs-accordion-always-open>
+              <!-- App -->
+              <div class="hs-accordion" id="app-heading">
+                <button
+                  class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
+                  aria-controls="app-collapse"
+                >
+                  <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                  <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  app
+                </button>
+
+                <!-- Property Bar and Beam -->
+                <div id="app-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="app-heading">
+                  <p class="mb-3">This library exposes a single function called app, which accepts the following inputs: Model, Parameters, OnParameterChange, and Settings. It then returns a 3D HTML canvas appended to the body element.</p>
+
+                  <!-- Inputs -->
+                  <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
+                    <!-- Model -->
+                    <div class="hs-accordion" id="model-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="model-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Model
+                      </button>
+                      <div id="model-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="model-heading">
+                        <pre class="mb-3"><code class="language-ts">type Model = {
+  nodes?: Node[];
+  elements?: Element[];
+  assignments?: Assignment[];
+  analysisResults?: AnalysisResults;
+};</code></pre>
+                        <p>The data model consists of nodes, elements, assignments, and analysis results, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.</p>
+                      </div>
+                    </div>
+                    <!-- End Model -->
+
+                    <!-- Parameters -->
+                    <div class="hs-accordion" id="parameters-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="parameters-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Parameters
+                      </button>
+                      <div id="parameters-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="parameters-heading">
+                        <p class="mb-3">This is a list of parameters that your app exposes to end-users. It follows this data structure:</p>
+                        <pre class="mb-3"><code class="language-ts">type Parameters = Record<
+  string,
+  {
+    value: number;
+    min?: number;
+    max?: number;
+    step?: number;
+    label?: string;
+  }
+></code></pre>
+                        <ul class="list-disc list-inside text-gray-800">
+                          <li><code class="text-red-500 text-[0.85rem]">`value`</code>: The initial value of the parameter, which can either be a number or boolean.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`min`</code>: In the case of a number parameter, this is the minimum value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`max`</code>: In the case of a number parameter, this is the maximum value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`step`</code>: In the case of a number parameter, this is the step value.</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`label`</code>: Optimally defines a different parameter label rather than the parameter key.</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <!-- End parameters -->
+
+                    <!-- onParameterChange -->
+                    <div class="hs-accordion" id="on-parameter-change-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="on-parameter-change-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        onParameterChange
+                      </button>
+                      <div id="on-parameter-change-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="on-parameter-change-heading">
+                        <p>Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output</p>
+                        <pre class="mb-3"><code class="language-ts">function onParameterChange(parameters) {
+    // Recompute the model according to the newly changed parameters
+    // ...
+    return model
+}</code></pre>
+                      </div>
+                    </div>
+                    <!-- End onParameterChange -->
+
+                    <!-- Settings -->
+                    <div class="hs-accordion" id="settings-heading">
+                      <button
+                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                        aria-controls="settings-collapse"
+                      >
+                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Settings
+                      </button>
+                      <div id="settings-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="settings-heading">
+                        <p class="mb-3">A settings object is used to control the user interface.</p>
+                        <pre class="mb-3"><code class="language-ts">type Settings = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  elementResults?: string;
+  nodeResults?: string;
+};</code></pre>
+                        <ul class="list-disc list-inside text-gray-800">
+                          <li><code class="text-red-500 text-[0.85rem]">`gridSize`</code>: This determines the size of the grid and, consequently, the size of your model. The default value is 25, resulting in a grid size of 25x25 units in length</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`displayScale`</code>: Controls the scale of diagrams and labels presented in the viewer</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodes`</code>: Toggles nodes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elements`</code>: Toggles elements on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodesIndexes`</code>: Toggles nodes indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elementsIndexes`</code>: Toggles elements indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`orientations`</code>: Toggles orientations on and off, using red, green, and blue for the x-axis, y-axis, and z-axis, respectively</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`supports`</code>: Toggles supports indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`loads`</code>: Toggles loads indexes on and off</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`deformedShape`</code>: Shows the deformed shape after the application of loads</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`elementResults`</code>: Switches between analysis results related to elements</li>
+                          <li><code class="text-red-500 text-[0.85rem]">`nodeResults`</code>: Switches between analysis results related to nodes</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <!-- End Settings -->
+                  </div>
+                </div>
+                <!-- End Inputs -->
+              </div>
+              <!-- End App -->
+            </div>
+
+            <a href="https://github.com/madil4/awatif/tree/main/awatif-fem" class="text-primary-light hover:underline">source code</a> -
+            <a href="/terms-and-privacy" class="text-primary-light hover:underline">terms and privacy</a>
+          </div>
+          <!-- End API Reference -->
         </div>
         <!-- End Grid -->
       </div>
@@ -23,3 +423,5 @@ layout: layout.html
   <!-- End Page Heading -->
 </div>
 <!-- End Content -->
+
+<script src="/js/prism.js"></script>
