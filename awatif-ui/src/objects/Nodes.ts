@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { SettingsState, Node } from "../types";
+import { SettingsState } from "../types";
 import van, { State } from "vanjs-core";
+import { Node } from "awatif-data-structure";
 
 export function Nodes(
   nodes: State<Node[]>,

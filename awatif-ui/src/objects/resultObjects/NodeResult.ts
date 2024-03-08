@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { IResultObject } from "./IResultObject";
 import { Text } from "../Text";
-import { Node } from "../../types";
+import { Node } from "awatif-data-structure";
 import { ResultType } from "../NodeResults";
 
 export class NodeResult extends THREE.Group implements IResultObject {

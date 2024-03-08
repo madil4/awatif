@@ -2,10 +2,10 @@ import {
   Assignment,
   DistributedLoadAssignment,
   LoadAssignment,
-  ProcessedAssignments,
   PropertyAssignment,
   SupportAssignment,
-} from "../types";
+} from "awatif-data-structure";
+import { ProcessedAssignments } from "../types";
 
 export function processAssignments(
   assignments: Assignment[]

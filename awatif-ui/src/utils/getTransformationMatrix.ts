@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node } from "../types";
+import { Node } from "awatif-data-structure";
 
 // from global to local
 export function getTransformationMatrix(node1: Node, node2: Node) {

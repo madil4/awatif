@@ -1,10 +1,10 @@
 import {
   AnalysisResults,
   BeamResult,
-  ProcessedAnalysisResults,
   ReactionResult,
   DeformationResult,
-} from "../types";
+} from "awatif-data-structure";
+import { ProcessedAnalysisResults } from "../types";
 
 export function processAnalysisResults(
   analysisResults: AnalysisResults
