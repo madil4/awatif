@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState, Node } from "../types";
+import { ModelState, SettingsState } from "../types";
 import { IResultObject } from "./resultObjects/IResultObject";
 import { NodeResult } from "./resultObjects/NodeResult";
+import { Node } from "awatif-data-structure";
 
 export enum ResultType {
   deformation = "deformation",

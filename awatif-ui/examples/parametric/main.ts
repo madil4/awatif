@@ -1,11 +1,11 @@
-import { app } from "../../src/App";
 import {
+  app,
   Assignment,
   Element,
   Node,
   Parameters,
   PropertyAssignment,
-} from "../../src/types";
+} from "../../src";
 import { analyze } from "../../../awatif-fem";
 
 const parameters: Parameters = {

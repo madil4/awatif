@@ -1,12 +1,12 @@
 import van from "vanjs-core";
-import { App as AppType, ModelState, SettingsState } from "./types";
+import { App, ModelState, SettingsState } from "./types";
 import { Viewer } from "./Viewer";
 import { Parameters } from "./Parameters";
 import { Settings } from "./Settings";
 import { processAssignments } from "./utils/processAssignments";
 import { processAnalysisResults } from "./utils/processAnalysisResults";
 
-function App({ model, parameters, onParameterChange, settings }: AppType) {
+export function app({ model, parameters, onParameterChange, settings }: App) {
   // init
   const modelOnChange = parameters && onParameterChange?.(parameters);
   const modelState: ModelState = van.state({
@@ -59,5 +59,3 @@ function App({ model, parameters, onParameterChange, settings }: AppType) {
     });
   }
 }
-
-export const app = App;

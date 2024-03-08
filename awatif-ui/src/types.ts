@@ -1,5 +1,3 @@
-export * from "awatif-data-structure/src";
-
 import { State } from "vanjs-core";
 import {
   Node,
@@ -10,9 +8,10 @@ import {
   BeamResult,
   DeformationResult,
   ReactionResult,
+  Assignment,
+  AnalysisResults,
+  SupportAssignment,
 } from "awatif-data-structure";
-
-export function app({}: App): void;
 
 export type App = {
   model?: Model;

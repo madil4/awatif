@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import van from "vanjs-core";
+import { Node } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { ModelState, SettingsState, Node } from "./types";
+import { ModelState, SettingsState } from "./types";
 import { Nodes } from "./objects/Nodes";
 import { Elements } from "./objects/Elements";
 import { Grid } from "./objects/Grid";
