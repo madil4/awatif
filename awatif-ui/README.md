@@ -7,7 +7,6 @@ Building an interactive web app from scratch is a challenging task. awatif-ui ta
 - **Extensible**: Built on Three.js library for drawing complex geometry
 
 ## Installation
-Install awatif-ui via npm
 ```
 npm install awatif-ui
 ```
@@ -77,3 +76,7 @@ When you toggle the bending moment setting located at the top-left corner, you s
 portal-frame bending moment
 
 ![image](https://awatif.co/img/awatif-ui/portal-frame.jpg)
+
+## Documentation
+
+[Awatif Docs](https://awatif.co/awatif-ui/)
