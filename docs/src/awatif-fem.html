@@ -492,17 +492,7 @@ const expectedAnalysisResults: AnalysisResults = {
                             The solver gracefully handles errors in inputs, ensuring that no errors are thrown unless the underlying matrix is singular. A singular matrix indicates an unstable physical behavior of the structure that cannot be solved
                             statically.
                           </li>
-                          <li>
-                            By default, the solver has a limitation of 20 elements. If more than 20 elements are used, it will throw an error. To remove this limitation, ensure that you set the following global variable `€k` to the API key provided
-                            to you by email after purchasing a license:
-
-                            <pre class="mb-3 grid grid-cols-1"><code class="language-ts">self.$k = AWATIF_API_KEY; // if running in a browser or a web-worker
-// or 
-global.$k = AWATIF_API_KEY; // if running in node runtime
-                              </code></pre>
-
-                            Make sure you set this variable before running the <code class="text-red-500 text-[0.85rem]">`analyze`</code> function. You can set it in a browser, web worker, or node runtime.
-                          </li>
+                          <li>By default, the solver has a limitation of 20 elements. If more than 20 elements are used, it will throw an error. To unlock this limitation consider buying a license.</li>
                         </ul>
                       </div>
                     </div>

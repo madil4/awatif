@@ -7,9 +7,15 @@
     "dev": "vite",
     "build": "tsc && vite build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "awatif",
+    "parametricdesign",
+    "computationaldesign",
+    "structuralengineering",
+    "parametricmodeling"
+  ],
+  "author": "Mohamed Adil",
+  "license": "MIT",
   "devDependencies": {
     "@types/three": "^0.161.2",
     "typescript": "^5.3.3",
