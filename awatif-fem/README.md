@@ -88,6 +88,7 @@ const expectedAnalysisResults: AnalysisResults = {
 - Examples from the book: A First Course in the Finite Element Method by Daryl L. Logan 6th edition - [source code](https://github.com/madil4/awatif/tree/main/awatif-fem/examples)
 
 When you toggle the bending moment setting located at the top-left corner, you should see this:
+![image](https://github.com/madil4/awatif/assets/3858873/1588f4b3-c87f-426c-a1e6-62130ecfac3e)
 
 ## Pricing
 
