@@ -16,7 +16,7 @@ npm install awatif-fem
 
 ## Usage
 
-```
+```typescript
 import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
 
 const nodes: Node[] = [
