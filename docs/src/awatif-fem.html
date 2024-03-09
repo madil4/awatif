@@ -21,7 +21,7 @@ breadcrumb: FEM Solver
 
           <!-- Introduction -->
           <div>
-            <p>Building a structural app without utilizing the finite element method would be considered a simple app. With awatif-fem solver, it becomes easy to analyze complex designs accurately, ultimately saving you materials and costs.</p>
+            <p>Take your parametric app to the next level by utilizing the advanced yet simple FEM solver that Awatif provides.</p>
           </div>
           <!-- End Introduction -->
 
@@ -143,10 +143,10 @@ breadcrumb: FEM Solver
           <!-- End Installation -->
 
           <!-- Usage -->
-          <div class="overflow-auto">
+          <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre><code class="language-ts">import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
+            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
 
 const nodes: Node[] = [
   [0, 0, 3],
@@ -179,9 +179,9 @@ const assignments: Assignment[] = [
   },
 ];
 
-const output = analyze(nodes, elements, assignments);
+const analysisResults = analyze(nodes, elements, assignments);
 
-const expectedOutput: AnalysisResults = {
+const expectedAnalysisResults: AnalysisResults = {
   default: [
     {
       node: 0,
@@ -238,16 +238,193 @@ const expectedOutput: AnalysisResults = {
           </div>
           <!-- End Examples -->
 
+          <!-- Pricing -->
+          <div>
+            <!-- Title -->
+            <h3 class="mb-3 text-lg text-gray-800 font-bold">Pricing</h3>
+            <!-- End Title -->
+
+            <!-- Grid -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:items-center">
+              <!-- Card -->
+              <div class="flex flex-col border border-gray-200 text-center rounded-xl p-8">
+                <h4 class="font-medium text-lg text-gray-800">Free</h4>
+                <span class="mt-7 font-bold text-5xl text-gray-800">Free</span>
+                <p class="mt-2 text-sm text-gray-500">To experiment and validate</p>
+
+                <ul class="mt-7 space-y-2.5 text-sm">
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> 1 user </span>
+                  </li>
+
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> limit of 20 elements </span>
+                  </li>
+                </ul>
+
+                <a
+                  class="mt-5 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-light disabled:opacity-50 disabled:pointer-events-none"
+                  href="mailto:mohamed@awatif.co"
+                >
+                  Sign up
+                </a>
+              </div>
+              <!-- End Card -->
+
+              <!-- Card -->
+              <div class="flex flex-col border border-gray-200 text-center rounded-xl p-8">
+                <h4 class="font-medium text-lg text-gray-800">Individuals</h4>
+                <span class="mt-5 font-bold text-5xl text-gray-800">
+                  <span class="font-bold text-2xl -me-2">€</span>
+                  25
+                </span>
+                <p class="mt-2 text-sm text-gray-500">Monthly. For professionals and small teams</p>
+
+                <ul class="mt-7 space-y-2.5 text-sm">
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> 1 user </span>
+                  </li>
+
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> unlimited elements </span>
+                  </li>
+                </ul>
+
+                <a
+                  class="mt-5 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-light disabled:opacity-50 disabled:pointer-events-none"
+                  href="mailto:mohamed@awatif.co"
+                >
+                  Sign up
+                </a>
+              </div>
+              <!-- End Card -->
+
+              <!-- Card -->
+              <div class="flex flex-col border border-gray-200 text-center rounded-xl p-8">
+                <h4 class="font-medium text-lg text-gray-800">Unlimited users</h4>
+                <span class="mt-5 font-bold text-4xl text-gray-800">
+                  <span class="font-bold text-2xl -me-2">€</span>
+                  4k-10k
+                </span>
+                <p class="mt-2 text-sm text-gray-500">Annually. For SaaS businesses and big teams</p>
+
+                <ul class="mt-7 space-y-2.5 text-sm">
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> Unlimited users </span>
+                  </li>
+
+                  <li class="flex space-x-2">
+                    <svg
+                      class="flex-shrink-0 mt-0.5 size-4 text-primary-light"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span class="text-gray-800"> Unlimited elements </span>
+                  </li>
+                </ul>
+
+                <a
+                  class="mt-5 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-primary text-white hover:bg-primary-light disabled:opacity-50 disabled:pointer-events-none"
+                  href="mailto:mohamed@awatif.co"
+                >
+                  Sign up
+                </a>
+              </div>
+              <!-- End Card -->
+            </div>
+            <!-- End Grid -->
+          </div>
+          <!-- End Pricing -->
+
           <!-- API Reference -->
           <div>
             <h3 id="api" class="mb-3 text-lg text-gray-800 font-bold scroll-mt-24">API Reference</h3>
 
             <div class="mb-5 hs-accordion-group" data-hs-accordion-always-open>
-              <!-- App -->
-              <div class="hs-accordion" id="app-heading">
+              <!-- analyze -->
+              <div class="hs-accordion" id="analyze-heading">
                 <button
-                  class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
-                  aria-controls="app-collapse"
+                  class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
+                  aria-controls="analyze-collapse"
                 >
                   <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -255,20 +432,24 @@ const expectedOutput: AnalysisResults = {
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  app
+                  analyze
                 </button>
 
-                <!-- Property Bar and Beam -->
-                <div id="app-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="app-heading">
-                  <p class="mb-3">This library exposes a single function called app, which accepts the following inputs: Model, Parameters, OnParameterChange, and Settings. It then returns a 3D HTML canvas appended to the body element.</p>
+                <!-- Inner Lists -->
+                <div id="inner-list-collapse" class="hs-accordion-content hidden w-full overflow-auto transition-[height] duration-300" aria-labelledby="inner-list-heading">
+                  <p class="mb-3">
+                    This library exposes a single function named analyze. It takes three inputs: Nodes, Elements, and Assignments, and returns the AnalysisResults. For detailed type definitions, please refer to the awatif-data-structure
+                    <a class="text-primary-light hover:underline" href="/awatif-data-structure/#api-reference">API Reference</a>.
+                  </p>
+                  <pre class="mb-3 grid grid-cols-1"><code class="language-ts">const analysisResults = analyze(nodes, elements, assignments);</code></pre>
 
-                  <!-- Inputs -->
+                  <!-- Upper Notes -->
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
-                    <!-- Model -->
-                    <div class="hs-accordion" id="model-heading">
+                    <!-- Notes -->
+                    <div class="hs-accordion" id="notes-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="model-collapse"
+                        aria-controls="notes-collapse"
                       >
                         <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -277,137 +458,61 @@ const expectedOutput: AnalysisResults = {
                         <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                         </svg>
-                        Model
+                        Notes
                       </button>
-                      <div id="model-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="model-heading">
-                        <pre class="mb-3"><code class="language-ts">type Model = {
-  nodes?: Node[];
-  elements?: Element[];
-  assignments?: Assignment[];
-  analysisResults?: AnalysisResults;
-};</code></pre>
-                        <p>The data model consists of nodes, elements, assignments, and analysis results, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.</p>
-                      </div>
-                    </div>
-                    <!-- End Model -->
+                      <div id="notes-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="notes-heading">
+                        <ul class="list-disc list-inside text-gray-800 space-y-3">
+                          <li>
+                            The solver is unitless, so maintain consistency with your units. For example, if node locations are defined in meters (m), ensure the area is in square meters (m²), and the computed displacement will be in meters (m).
+                            Similarly, if the modulus of elasticity is in kilonewtons per square meter (kN/m²), then the load should be in kilonewtons (kN), and computed normal forces will be in kilonewtons (kN).
+                          </li>
+                          <li>
+                            It is not possible to mix bar and beam elements in the same model because each element is based on different underlying assumptions. The bar element assumes loose connections between bars, allowing for free rotation. In
+                            contrast, the beam element assumes a rigid connection between beams, preventing rotation without deforming the beam itself.
+                          </li>
+                          <li>
+                            The sign convention aligns with that adopted in the book 'A First Course in the Finite Element Method, 6th edition' by Daryl L. Logan. The right-hand rule is employed to determine the direction of the z-direction.
+                            Similarly, for rotation, the right-hand curl rule is adopted.
+                            <div class="my-3 grid sm:grid-cols-2 gap-2">
+                              <div>
+                                <img class="h-60" src="/img/awatif-fem/right-hand-rule.jpg" />
+                                <p class="text-xs text-gray-500">Right-hand rule</p>
+                              </div>
+                              <div>
+                                <img class="h-60" src="/img/awatif-fem/right-hand-curl-rule.jpg" />
+                                <p class="text-xs text-gray-500">Right-hand curl rule</p>
+                              </div>
+                            </div>
+                          </li>
+                          <li>
+                            The Awatif library relies on the open-source library <code class="text-red-500 text-[0.85rem]">`mathjs`</code> for mathematical calculations, which is licensed under the Apache 2.0 License, and the library
+                            <code class="text-red-500 text-[0.85rem]">`jwt-decode`</code> to decode the API key which is licensed under the MIT license.
+                          </li>
+                          <li>
+                            The solver gracefully handles errors in inputs, ensuring that no errors are thrown unless the underlying matrix is singular. A singular matrix indicates an unstable physical behavior of the structure that cannot be solved
+                            statically.
+                          </li>
+                          <li>
+                            By default, the solver has a limitation of 20 elements. If more than 20 elements are used, it will throw an error. To remove this limitation, ensure that you set the following global variable `€k` to the API key provided
+                            to you by email after purchasing a license:
 
-                    <!-- Parameters -->
-                    <div class="hs-accordion" id="parameters-heading">
-                      <button
-                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="parameters-collapse"
-                      >
-                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        Parameters
-                      </button>
-                      <div id="parameters-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="parameters-heading">
-                        <p class="mb-3">This is a list of parameters that your app exposes to end-users. It follows this data structure:</p>
-                        <pre class="mb-3"><code class="language-ts">type Parameters = Record<
-  string,
-  {
-    value: number;
-    min?: number;
-    max?: number;
-    step?: number;
-    label?: string;
-  }
-></code></pre>
-                        <ul class="list-disc list-inside text-gray-800">
-                          <li><code class="text-red-500 text-[0.85rem]">`value`</code>: The initial value of the parameter, which can either be a number or boolean.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`min`</code>: In the case of a number parameter, this is the minimum value.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`max`</code>: In the case of a number parameter, this is the maximum value.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`step`</code>: In the case of a number parameter, this is the step value.</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`label`</code>: Optimally defines a different parameter label rather than the parameter key.</li>
+                            <pre class="mb-3 grid grid-cols-1"><code class="language-ts">self.$k = AWATIF_API_KEY; // if running in a browser or a web-worker
+// or 
+global.$k = AWATIF_API_KEY; // if running in node runtime
+                              </code></pre>
+
+                            Make sure you set this variable before running the <code class="text-red-500 text-[0.85rem]">`analyze`</code> function. You can set it in a browser, web worker, or node runtime.
+                          </li>
                         </ul>
                       </div>
                     </div>
-                    <!-- End parameters -->
-
-                    <!-- onParameterChange -->
-                    <div class="hs-accordion" id="on-parameter-change-heading">
-                      <button
-                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="on-parameter-change-collapse"
-                      >
-                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        onParameterChange
-                      </button>
-                      <div id="on-parameter-change-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="on-parameter-change-heading">
-                        <p>Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output</p>
-                        <pre class="mb-3"><code class="language-ts">function onParameterChange(parameters) {
-    // Recompute the model according to the newly changed parameters
-    // ...
-    return model
-}</code></pre>
-                      </div>
-                    </div>
-                    <!-- End onParameterChange -->
-
-                    <!-- Settings -->
-                    <div class="hs-accordion" id="settings-heading">
-                      <button
-                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="settings-collapse"
-                      >
-                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        Settings
-                      </button>
-                      <div id="settings-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="settings-heading">
-                        <p class="mb-3">A settings object is used to control the user interface.</p>
-                        <pre class="mb-3"><code class="language-ts">type Settings = {
-  gridSize?: number;
-  displayScale?: number;
-  nodes?: boolean;
-  elements?: boolean;
-  nodesIndexes?: boolean;
-  elementsIndexes?: boolean;
-  orientations?: boolean;
-  supports?: boolean;
-  loads?: boolean;
-  deformedShape?: boolean;
-  elementResults?: string;
-  nodeResults?: string;
-};</code></pre>
-                        <ul class="list-disc list-inside text-gray-800">
-                          <li><code class="text-red-500 text-[0.85rem]">`gridSize`</code>: This determines the size of the grid and, consequently, the size of your model. The default value is 25, resulting in a grid size of 25x25 units in length</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`displayScale`</code>: Controls the scale of diagrams and labels presented in the viewer</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`nodes`</code>: Toggles nodes on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`elements`</code>: Toggles elements on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`nodesIndexes`</code>: Toggles nodes indexes on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`elementsIndexes`</code>: Toggles elements indexes on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`orientations`</code>: Toggles orientations on and off, using red, green, and blue for the x-axis, y-axis, and z-axis, respectively</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`supports`</code>: Toggles supports indexes on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`loads`</code>: Toggles loads indexes on and off</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`deformedShape`</code>: Shows the deformed shape after the application of loads</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`elementResults`</code>: Switches between analysis results related to elements</li>
-                          <li><code class="text-red-500 text-[0.85rem]">`nodeResults`</code>: Switches between analysis results related to nodes</li>
-                        </ul>
-                      </div>
-                    </div>
-                    <!-- End Settings -->
+                    <!-- End notes -->
                   </div>
+                  <!-- Upper Notes -->
                 </div>
-                <!-- End Inputs -->
+                <!-- End Inner Lists -->
               </div>
-              <!-- End App -->
+              <!-- End analyze -->
             </div>
 
             <a href="https://github.com/madil4/awatif/tree/main/awatif-fem" class="text-primary-light hover:underline">source code</a> -
