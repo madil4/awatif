@@ -47,7 +47,4 @@ function onParameterChange(parameters: Parameters) {
   return { nodes, elements, assignments, analysisResults };
 }
 
-app({
-  parameters,
-  onParameterChange,
-});
+app({ parameters, onParameterChange });
