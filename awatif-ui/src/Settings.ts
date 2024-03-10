@@ -1,7 +1,7 @@
 import { Pane } from "tweakpane";
-import { Settings, SettingsState } from "./types";
+import { SettingsState } from "./types";
 
-export function Settings(settingsState: SettingsState) {
+export function settings(settingsState: SettingsState) {
   // init
   const pane = new Pane({ title: "Settings", expanded: false });
   const container = pane.element.parentElement;

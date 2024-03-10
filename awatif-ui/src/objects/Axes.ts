@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Text } from "./Text";
 
-export function Axes(gridSize: number): THREE.Group {
+export function axes(gridSize: number): THREE.Group {
   // init
   const axes = new THREE.Group();
   const size = 0.05 * gridSize * 1; // 0.05 to convert to unit size based on grid size of 20

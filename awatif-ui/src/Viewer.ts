@@ -1,21 +1,21 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { Node } from "awatif-data-structure";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ModelState, SettingsState } from "./types";
-import { Nodes } from "./objects/Nodes";
-import { Elements } from "./objects/Elements";
-import { Grid } from "./objects/Grid";
-import { Supports } from "./objects/Supports";
-import { Loads } from "./objects/Loads";
-import { NodesIndexes } from "./objects/NodesIndexes";
-import { ElementsIndexes } from "./objects/ElementsIndexes";
-import { Axes } from "./objects/Axes";
-import { Orientations } from "./objects/Orientations";
-import { ElementResults } from "./objects/ElementResults";
-import { NodeResults } from "./objects/NodeResults";
+import { nodes } from "./objects/nodes";
+import { elements } from "./objects/elements";
+import { grid } from "./objects/grid";
+import { supports } from "./objects/supports";
+import { loads } from "./objects/loads";
+import { nodesIndexes } from "./objects/nodesIndexes";
+import { elementsIndexes } from "./objects/elementsIndexes";
+import { axes } from "./objects/axes";
+import { orientations } from "./objects/orientations";
+import { elementResults } from "./objects/elementResults";
+import { nodeResults } from "./objects/nodeResults";
 
-export function Viewer(model: ModelState, settings: SettingsState) {
+export function viewer(model: ModelState, settings: SettingsState) {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
@@ -37,7 +37,7 @@ export function Viewer(model: ModelState, settings: SettingsState) {
       ? settings.displayScale.val
       : -1 / settings.displayScale.val
   );
-  const nodes = van.derive(() => {
+  const derivedNodes = van.derive(() => {
     if (!settings.deformedShape.val) return model.val.nodes;
 
     return model.val.nodes.map((node, index) => {
@@ -48,17 +48,17 @@ export function Viewer(model: ModelState, settings: SettingsState) {
 
   // update
   scene.add(
-    Grid(gridSize),
-    Axes(gridSize),
-    Nodes(nodes, settings, displayScale),
-    Elements(nodes, model, settings),
-    NodesIndexes(nodes, settings, displayScale),
-    ElementsIndexes(nodes, model, settings, displayScale),
-    Supports(nodes, model, settings, displayScale),
-    Loads(nodes, model, settings, displayScale),
-    Orientations(nodes, model, settings, displayScale),
-    ElementResults(nodes, model, settings, displayScale),
-    NodeResults(nodes, model, settings, displayScale)
+    grid(gridSize),
+    axes(gridSize),
+    nodes(derivedNodes, settings, displayScale),
+    elements(derivedNodes, model, settings),
+    nodesIndexes(derivedNodes, settings, displayScale),
+    elementsIndexes(derivedNodes, model, settings, displayScale),
+    supports(derivedNodes, model, settings, displayScale),
+    loads(derivedNodes, model, settings, displayScale),
+    orientations(derivedNodes, model, settings, displayScale),
+    elementResults(derivedNodes, model, settings, displayScale),
+    nodeResults(derivedNodes, model, settings, displayScale)
   );
 
   renderer.setPixelRatio(window.devicePixelRatio);

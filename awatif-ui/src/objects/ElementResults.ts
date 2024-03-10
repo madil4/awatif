@@ -16,7 +16,7 @@ enum ResultType {
   bendingZ = "bendingZ",
 }
 
-export function ElementResults(
+export function elementResults(
   nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,

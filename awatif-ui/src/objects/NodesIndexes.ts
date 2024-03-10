@@ -4,7 +4,7 @@ import { SettingsState } from "../types";
 import { Text } from "./Text";
 import { Node } from "awatif-data-structure";
 
-export function NodesIndexes(
+export function nodesIndexes(
   nodes: State<Node[]>,
   settings: SettingsState,
   displayScale: State<number>
