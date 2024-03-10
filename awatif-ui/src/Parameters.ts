@@ -1,7 +1,7 @@
 import { Pane, TpChangeEvent } from "tweakpane";
 import { Parameters } from "./types";
 
-export function Parameters(
+export function parameters(
   parameters: Parameters,
   onChange: (e: TpChangeEvent<unknown>) => void
 ) {

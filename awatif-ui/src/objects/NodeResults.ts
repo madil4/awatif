@@ -10,7 +10,7 @@ export enum ResultType {
   reaction = "reaction",
 }
 
-export function NodeResults(
+export function nodeResults(
   nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,

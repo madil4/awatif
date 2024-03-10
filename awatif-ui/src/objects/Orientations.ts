@@ -5,7 +5,7 @@ import { getTransformationMatrix } from "../utils/getTransformationMatrix";
 import { get10thFromFirstPoint } from "../utils/get5thFromFirstPoint";
 import { Node } from "awatif-data-structure";
 
-export function Orientations(
+export function orientations(
   nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,

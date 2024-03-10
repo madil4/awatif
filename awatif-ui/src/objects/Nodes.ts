@@ -3,7 +3,7 @@ import { SettingsState } from "../types";
 import van, { State } from "vanjs-core";
 import { Node } from "awatif-data-structure";
 
-export function Nodes(
+export function nodes(
   nodes: State<Node[]>,
   settings: SettingsState,
   displayScale: State<number>

@@ -5,7 +5,7 @@ import { Text } from "./Text";
 import { getCenter } from "../utils/getCenter";
 import { Node } from "awatif-data-structure";
 
-export function ElementsIndexes(
+export function elementsIndexes(
   nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
