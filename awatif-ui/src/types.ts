@@ -14,9 +14,8 @@ import {
 } from "awatif-data-structure";
 
 export type App = {
-  model?: Model;
   parameters?: Parameters;
-  onParameterChange?: (p: Parameters) => Model;
+  onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
 };
 

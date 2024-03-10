@@ -207,33 +207,6 @@ app({
 
                   <!-- Inputs -->
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
-                    <!-- Model -->
-                    <div class="hs-accordion" id="model-heading">
-                      <button
-                        class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="model-collapse"
-                      >
-                        <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                          <path d="M8.12421 13.36V2.35999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        <svg class="hs-accordion-active:block hidden size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                        Model
-                      </button>
-                      <div id="model-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="model-heading">
-                        <pre class="mb-3"><code class="language-ts">type Model = {
-  nodes?: Node[];
-  elements?: Element[];
-  assignments?: Assignment[];
-  analysisResults?: AnalysisResults;
-};</code></pre>
-                        <p>The data model consists of nodes, elements, assignments, and analysis results, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.</p>
-                      </div>
-                    </div>
-                    <!-- End Model -->
-
                     <!-- Parameters -->
                     <div class="hs-accordion" id="parameters-heading">
                       <button
@@ -288,11 +261,14 @@ app({
                         onParameterChange
                       </button>
                       <div id="on-parameter-change-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="on-parameter-change-heading">
-                        <p>Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output</p>
+                        <p>
+                          Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output. The model consists of nodes, elements,
+                          assignments, and analysis results, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.
+                        </p>
                         <pre class="mb-3 grid grid-cols-1"><code class="language-ts">function onParameterChange(parameters) {
     // Recompute the model according to the newly changed parameters
     // ...
-    return model
+    return { nodes, elements, assignments, analysisResults };
 }</code></pre>
                       </div>
                     </div>
