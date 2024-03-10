@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { App, ModelState, SettingsState } from "./types";
+import { App, Model, ModelState, SettingsState } from "./types";
 import { viewer } from "./viewer";
 import { parameters } from "./parameters";
 import { settings } from "./settings";
@@ -7,24 +7,13 @@ import { processAssignments } from "./utils/processAssignments";
 import { processAnalysisResults } from "./utils/processAnalysisResults";
 
 export function app({
-  model,
   parameters: parameterObj,
   onParameterChange,
   settings: settingsObj,
 }: App) {
   // init
-  const modelOnChange = parameterObj && onParameterChange?.(parameterObj);
-  const modelState: ModelState = van.state({
-    nodes: model?.nodes ?? modelOnChange?.nodes ?? [],
-    elements: model?.elements ?? modelOnChange?.elements ?? [],
-    assignments: processAssignments(
-      model?.assignments ?? modelOnChange?.assignments ?? []
-    ),
-    analysisResults: processAnalysisResults(
-      model?.analysisResults ??
-        modelOnChange?.analysisResults ?? { default: [] }
-    ),
-  });
+  const model = onParameterChange?.(parameterObj ?? {});
+  const modelState: ModelState = van.state(getModelState(model));
   const settingsState: SettingsState = {
     gridSize: van.state(settingsObj?.gridSize ?? 20),
     displayScale: van.state(settingsObj?.displayScale ?? 1),
@@ -50,17 +39,17 @@ export function app({
       // @ts-ignore
       parameterObj[e.target.key].value = e.value;
 
-      const newModel = onParameterChange(parameterObj);
-
       // consider updating only if there a change instead of a brute change
-      modelState.val = {
-        nodes: newModel.nodes ?? [],
-        elements: newModel.elements ?? [],
-        assignments: processAssignments(newModel.assignments ?? []),
-        analysisResults: processAnalysisResults(
-          newModel.analysisResults ?? { default: [] }
-        ),
-      };
+      modelState.val = getModelState(onParameterChange(parameterObj));
     });
   }
 }
+
+const getModelState = (model?: Model): ModelState["val"] => ({
+  nodes: model?.nodes ?? [],
+  elements: model?.elements ?? [],
+  assignments: processAssignments(model?.assignments ?? []),
+  analysisResults: processAnalysisResults(
+    model?.analysisResults ?? { default: [] }
+  ),
+});
