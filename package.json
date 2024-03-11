@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "publish:awatif-data-structure": "cd awatif-data-structure; npm publish",
+    "test:awatif-fem": "cd awatif-fem; npm run test",
+    "build:awatif-fem": "cd awatif-fem; npm run build",
+    "publish:awatif-fem": "cd awatif-fem; npm publish",
+    "dev:awatif-ui": "cd awatif-ui; npm run dev",
+    "build:awatif-ui": "cd awatif-ui; npm run build",
+    "publish:awatif-ui": "cd awatif-ui; npm publish",
+    "dev:docs": "cd docs; npm run dev",
+    "build:docs": "cd docs; npm run build",
+    "deploy:docs": "cd docs; npm run deploy",
+    "dev:examples": "cd examples; npm run dev",
+    "build:examples": "cd examples; npm run build"
+  }
+}
