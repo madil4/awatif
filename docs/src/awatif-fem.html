@@ -521,9 +521,8 @@ const expectedAnalysisResults: AnalysisResults = {
                   </p>
                   <pre class="mb-3 grid grid-cols-1"><code class="language-ts">const analysisResults = analyze(nodes, elements, assignments);</code></pre>
 
-                  <!-- Upper Notes -->
+                  <!-- Notes -->
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
-                    <!-- Notes -->
                     <div class="hs-accordion" id="notes-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
@@ -567,6 +566,10 @@ const expectedAnalysisResults: AnalysisResults = {
                             <code class="text-red-500 text-[0.85rem]">`jwt-decode`</code> to decode the API key which is licensed under the MIT license.
                           </li>
                           <li>
+                            It is important to note that the <code class="text-red-500 text-[0.85rem]">`Distributed Load`</code> assignment will only work if the beam lies perfectly on the global axes without inclination. Additionally, the
+                            distributed load is only applicable to beam elements and not bar elements. These limitations will be removed in future updates soon.
+                          </li>
+                          <li>
                             The solver gracefully handles errors in inputs, ensuring that no errors are thrown unless the underlying matrix is singular. A singular matrix indicates an unstable physical behavior of the structure that cannot be solved
                             statically.
                           </li>
@@ -574,9 +577,8 @@ const expectedAnalysisResults: AnalysisResults = {
                         </ul>
                       </div>
                     </div>
-                    <!-- End notes -->
                   </div>
-                  <!-- Upper Notes -->
+                  <!-- End Notes -->
                 </div>
                 <!-- End Inner Lists -->
               </div>
