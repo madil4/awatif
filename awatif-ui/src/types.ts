@@ -26,16 +26,16 @@ export type Model = {
   analysisResults?: AnalysisResults;
 };
 
-export type Parameters = Record<
-  string,
-  {
+export type Parameters = {
+  [key: string]: {
     value: number;
     min?: number;
     max?: number;
     step?: number;
     label?: string;
-  }
->;
+    folder?: string;
+  };
+};
 
 export type Settings = {
   gridSize?: number;
