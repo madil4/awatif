@@ -1,4 +1,4 @@
-import { Pane, TpChangeEvent } from "tweakpane";
+import { FolderApi, Pane, TpChangeEvent } from "tweakpane";
 import { Parameters } from "./types";
 
 export function parameters(
@@ -9,6 +9,7 @@ export function parameters(
   const pane = new Pane({ title: "Parameters" });
   const params = convertToTweakParams(parameters);
   const container = pane.element.parentElement;
+  const folders = new Map<string, FolderApi>();
 
   // update
   if (container) {
@@ -17,14 +18,22 @@ export function parameters(
     container.style.width = "300px";
   }
 
-  Object.entries(parameters).forEach(([key, parameter]) =>
-    pane.addBinding(params, key, {
+  folders.set("root", pane);
+
+  Object.entries(parameters).forEach(([key, parameter]) => {
+    parameter.folder &&
+      folders.set(
+        parameter.folder,
+        pane.addFolder({ title: parameter.folder })
+      );
+
+    folders.get(parameter.folder ?? "root")?.addBinding(params, key, {
       min: parameter.min || 0,
       max: parameter.max || 50,
       step: parameter.step || 0.5,
       label: parameter.label || key,
-    })
-  );
+    });
+  });
 
   // on parameters change
   pane.on("change", (e) => onChange?.(e));
