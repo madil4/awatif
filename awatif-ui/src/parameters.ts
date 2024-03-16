@@ -22,6 +22,7 @@ export function parameters(
 
   Object.entries(parameters).forEach(([key, parameter]) => {
     parameter.folder &&
+      !folders.get(parameter.folder) &&
       folders.set(
         parameter.folder,
         pane.addFolder({ title: parameter.folder })
