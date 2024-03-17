@@ -12,11 +12,13 @@ import {
   AnalysisResults,
   SupportAssignment,
 } from "awatif-data-structure";
+import { DesignResults } from "../../awatif-design/src/design";
 
 export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
+  report: any;
 };
 
 export type Model = {
@@ -24,6 +26,7 @@ export type Model = {
   elements?: Element[];
   assignments?: Assignment[];
   analysisResults?: AnalysisResults;
+  designResults?: DesignResults;
 };
 
 export type Parameters = {
