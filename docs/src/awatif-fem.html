@@ -544,8 +544,7 @@ const expectedAnalysisResults: AnalysisResults = {
                             Similarly, if the modulus of elasticity is in kilonewtons per square meter (kN/m²), then the load should be in kilonewtons (kN), and computed normal forces will be in kilonewtons (kN).
                           </li>
                           <li>
-                            It is not possible to mix bar and beam elements in the same model because each element is based on different underlying assumptions. The bar element assumes loose connections between bars, allowing for free rotation. In
-                            contrast, the beam element assumes a rigid connection between beams, preventing rotation without deforming the beam itself.
+                            It is not possible to mix bar and beam elements in the same model at the moment. This limitation will be removed in future versions.
                           </li>
                           <li>
                             The sign convention aligns with that adopted in the book 'A First Course in the Finite Element Method, 6th edition' by Daryl L. Logan. The right-hand rule is employed to determine the direction of the z-direction.
