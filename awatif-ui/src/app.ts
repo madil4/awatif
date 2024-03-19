@@ -5,11 +5,15 @@ import { parameters } from "./parameters";
 import { settings } from "./settings";
 import { processAssignments } from "./utils/processAssignments";
 import { processAnalysisResults } from "./utils/processAnalysisResults";
+import { render } from "lit-html";
+
+const { div } = van.tags;
 
 export function app({
   parameters: parameterObj,
   onParameterChange,
   settings: settingsObj,
+  report,
 }: App) {
   // init
   const model = onParameterChange?.(parameterObj ?? {});
@@ -33,6 +37,17 @@ export function app({
   viewer(modelState, settingsState);
   settings(settingsState);
 
+  const reportContainer = div({
+    style: "position: absolute; color: white; top:0; right:0",
+  });
+
+  render(
+    report(model?.designResults && model?.designResults["loadCase"][0]),
+    reportContainer
+  );
+
+  van.add(document.body, reportContainer);
+
   // on parameter change
   if (parameterObj && onParameterChange) {
     parameters(parameterObj, (e) => {
@@ -41,6 +56,13 @@ export function app({
 
       // consider updating only if there a change instead of a brute change
       modelState.val = getModelState(onParameterChange(parameterObj));
+
+      const model = onParameterChange?.(parameterObj ?? {});
+
+      render(
+        report(model?.designResults && model?.designResults["loadCase"][0]),
+        reportContainer
+      );
     });
   }
 }

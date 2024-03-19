@@ -8,7 +8,9 @@ export type Assignment =
   | PropertyAssignment
   | SupportAssignment
   | LoadAssignment
-  | DistributedLoadAssignment;
+  | DistributedLoadAssignment
+  | { element: number }
+  | { node: number };
 
 export type PropertyAssignment = {
   element: number;
