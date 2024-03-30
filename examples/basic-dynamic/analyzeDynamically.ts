@@ -1,12 +1,10 @@
 import {
-  DeformationResult,
+  PositionResult,
   AnalysisResults,
-  PropertyAssignment,
-  SupportAssignment,
-  LoadAssignment,
+  MassAssignment,
 } from "../../awatif-data-structure";
 import { Node, Element, Assignment, Parameters } from "../../awatif-ui/";
-import { G, EPSILON } from "./constants.ts";
+import { EPSILON } from "./constants.ts";
 import * as math from "mathjs";
 
 export function analyzeDynamically(
@@ -20,22 +18,21 @@ export function analyzeDynamically(
       // here is the frame/step number
       {
         node: 0,
-        deformation: [0, 0, 0], // here is the new computed position
+        position: [0, 0, 0], // here is the new computed position
       },
       {
         node: 1,
-        deformation: [0, 0, 0],
+        position: [0, 0, 0],
       },
       {
         node: 2,
-        deformation: [0, 0, 0],
+        position: [0, 0, 0],
       },
     ],
   };
 
   // run the dynamic loop here
-  let x: any = [];
-  nodes.forEach((n) => (x = x.concat(n)));
+  let x = nodes.flat();
 
   analysisResults = forwardEuler(
     config["time"],
@@ -62,26 +59,14 @@ function forwardEuler(
   // define position, velocity, and mass vectors
   let x = nodes.flat();
   let v: any = Array(x.length).fill(0);
-
-  // define mass vector
-  function isLoadAssignment(obj: any): obj is LoadAssignment {
-    return "node" in obj && "load" in obj;
-  }
-
-  let m: any = [];
-
-  nodes.forEach((n, nid) => {
-    const loadAssignment: any = assignments.find(
-      (a) => isLoadAssignment(a) && a.node === nid
-    );
-
-    let load = loadAssignment?.load;
-    let mass = Array(n.length).fill(0);
-    if (load) {
-      mass = mass.map((val, i) => math.abs(load[2]) / G);
-    }
-    m = m.concat(mass);
-  });
+  let m: any = nodes
+    .map((_, nid) => {
+      const massAssignment = assignments.find(
+        (a) => "mass" in a && "node" in a && a.node === nid
+      ) as MassAssignment;
+      return massAssignment?.mass ?? [0, 0, 0];
+    })
+    .flat();
 
   // forward euler formulation
   for (let step = 0; step < numSteps; step++) {
@@ -100,13 +85,8 @@ function forwardEuler(
     v = math.chain(x).subtract(xn).divide(dt).done();
 
     // enforce constraints
-    function isSupportAssignment(obj: any): obj is SupportAssignment {
-      return 'node' in obj && 'support' in obj;
-    }
-
     assignments.forEach((a) => {
-      console.log('assignment', a, isSupportAssignment(a));
-      if (isSupportAssignment(a)) {
+      if ("node" in a && "support" in a) {
         const nid = a.node;
         a.support.forEach((s, i) => {
           if (s) x[i + nid] = 0;
@@ -115,15 +95,17 @@ function forwardEuler(
     });
 
     // store
-    let result: DeformationResult[] = [];
+    let result: PositionResult[] = [];
     const dofs = getDOFs(nodes);
 
     nodes.forEach((n, nid) => {
-      const currPosition: number[] = math.subset(x, math.index(dofs[nid]));
-      const deformation = math.subtract(currPosition, n);
+      const currPosition = math.subset(
+        x,
+        math.index(dofs[nid])
+      ) as PositionResult["position"];
       result.push({
         node: nid,
-        deformation: [deformation[0], deformation[1], deformation[2]],
+        position: currPosition,
       });
     });
 
@@ -175,13 +157,11 @@ function F(
     const d2: number =
       math.multiply(T, x_n2)[0] - math.multiply(Ti, nodes[e[1]])[0];
 
-    function isPropertyAssignment(obj: any): obj is PropertyAssignment {
-      return "element" in obj && "elasticity" in obj;
-    }
-
     const property: any = assignments.find(
       (assignment) =>
-        isPropertyAssignment(assignment) && assignment.element === eid
+        "element" in assignment &&
+        "elasticity" in assignment &&
+        assignment.element === eid
     );
 
     const k = property?.elasticity;

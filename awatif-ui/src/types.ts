@@ -11,6 +11,7 @@ import {
   Assignment,
   AnalysisResults,
   SupportAssignment,
+  PositionResult,
 } from "awatif-data-structure";
 
 export type App = {
@@ -51,6 +52,8 @@ export type Settings = {
   deformedShape?: boolean;
   elementResults?: string;
   nodeResults?: string;
+  dynamic?: boolean;
+  dynamicSettings?: Record<"time" | "timeStep", number>;
 };
 
 export type SettingsState = {
@@ -66,6 +69,8 @@ export type SettingsState = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
+  dynamic: State<boolean>;
+  dynamicSettings: State<Record<"time" | "timeStep", number>>;
 };
 
 export type ProcessedAssignments = {
@@ -88,6 +93,7 @@ export type ProcessedAnalysisResults = {
   bendingY: Map<number, BeamResult["bendingY"]>;
   bendingZ: Map<number, BeamResult["bendingZ"]>;
   deformation: Map<number, DeformationResult["deformation"]>;
+  position: Map<number, PositionResult["position"][]>;
   reaction: Map<number, ReactionResult["reaction"]>;
 };
 

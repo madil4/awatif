@@ -8,6 +8,7 @@ export type Assignment =
   | PropertyAssignment
   | SupportAssignment
   | LoadAssignment
+  | MassAssignment
   | DistributedLoadAssignment;
 
 export type PropertyAssignment = {
@@ -34,6 +35,13 @@ export type LoadAssignment = {
     | [number, number, number, number, number, number];
 };
 
+export type MassAssignment = {
+  node: number;
+  mass:
+    | [number, number, number]
+    | [number, number, number, number, number, number];
+};
+
 export type DistributedLoadAssignment = {
   element: number;
   distributedLoad: [number, number];
@@ -42,7 +50,7 @@ export type DistributedLoadAssignment = {
 // results (or outputs)
 export type AnalysisResults = Record<
   string,
-  (DeformationResult | ReactionResult | BeamResult)[]
+  (DeformationResult | PositionResult | ReactionResult | BeamResult)[]
 >;
 
 export type DeformationResult = {
@@ -50,6 +58,12 @@ export type DeformationResult = {
   deformation:
     | [number, number, number]
     | [number, number, number, number, number, number];
+};
+
+export type PositionResult = {
+  node: number;
+  position:
+    | [number, number, number];
 };
 
 export type ReactionResult = {

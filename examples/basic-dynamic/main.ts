@@ -31,6 +31,14 @@ const assignments: Assignment[] = [
     load: [0, 0, -2 * G], // gravity force computed for masses of 2 and acceleration of 9.81
   },
   {
+    node: 1,
+    mass: [2, 2, 2],
+  },
+  {
+    node: 2,
+    mass: [2, 2, 2],
+  },
+  {
     element: 0, // and 1 similarly
     elasticity: 100000,
   },
@@ -40,9 +48,22 @@ const assignments: Assignment[] = [
   },
 ];
 
-const analysisResults = analyzeDynamically(nodes, elements, assignments, {
+const dynamicSettings = {
   time: 5,
-  timeStep: 0.0001,
-});
+  timeStep: 0.001,
+};
 
-app({ model: { nodes, elements, assignments, analysisResults } });
+const analysisResults = analyzeDynamically(
+  nodes,
+  elements,
+  assignments,
+  dynamicSettings
+);
+
+app({
+  model: { nodes, elements, assignments, analysisResults },
+  settings: {
+    dynamic: true,
+    dynamicSettings: dynamicSettings,
+  },
+});

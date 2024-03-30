@@ -2,9 +2,12 @@ import van from "vanjs-core";
 import { App, ModelState, SettingsState } from "./types";
 import { Viewer } from "./Viewer";
 import { Parameters } from "./Parameters";
+import { Timeline } from "./Timeline";
 import { Settings } from "./Settings";
 import { processAssignments } from "./utils/processAssignments";
 import { processAnalysisResults } from "./utils/processAnalysisResults";
+
+import "./styles/App.css";
 
 export function app({ model, parameters, onParameterChange, settings }: App) {
   // init
@@ -33,11 +36,16 @@ export function app({ model, parameters, onParameterChange, settings }: App) {
     deformedShape: van.state(settings?.deformedShape ?? false),
     elementResults: van.state(settings?.elementResults ?? "none"),
     nodeResults: van.state(settings?.nodeResults ?? "none"),
+    dynamic: van.state(settings?.dynamic ?? false),
+    dynamicSettings: van.state(
+      settings?.dynamicSettings ?? { time: 1, timeStep: 1 }
+    ),
   };
 
   // update
   Viewer(modelState, settingsState);
   Settings(settingsState);
+  if (settings?.dynamic ?? false) Timeline(modelState, settingsState);
 
   // on parameter change
   if (parameters && onParameterChange) {
