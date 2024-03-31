@@ -19,10 +19,6 @@ const assignments: Assignment[] = [
     support: [true, true, true],
   },
   {
-    node: 0,
-    load: [0, 0, -2 * G], // gravity force computed for masses of 2 and acceleration of 9.81
-  },
-  {
     node: 1,
     load: [0, 0, -2 * G], // gravity force computed for masses of 2 and acceleration of 9.81
   },

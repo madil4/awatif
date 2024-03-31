@@ -1,9 +1,11 @@
 import {
   PositionResult,
   AnalysisResults,
-  MassAssignment,
+  LumpedMassAssignment,
+  PropertyAssignment,
 } from "../../awatif-data-structure";
 import { Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import { getTransformationMatrix } from "../../awatif-ui/src/utils/getTransformationMatrix.ts";
 import { EPSILON } from "./constants.ts";
 import * as math from "mathjs";
 
@@ -32,8 +34,7 @@ export function analyzeDynamically(
   };
 
   // run the dynamic loop here
-  let x = nodes.flat();
-
+  // console.log("T1", getTransformationMatrix(nodes[0], nodes[1]).elements);
   analysisResults = forwardEuler(
     config["time"],
     config["timeStep"],
@@ -58,12 +59,12 @@ function forwardEuler(
 
   // define position, velocity, and mass vectors
   let x = nodes.flat();
-  let v: any = Array(x.length).fill(0);
-  let m: any = nodes
+  let v = Array(x.length).fill(0) as number[];
+  let m = nodes
     .map((_, nid) => {
       const massAssignment = assignments.find(
         (a) => "mass" in a && "node" in a && a.node === nid
-      ) as MassAssignment;
+      ) as LumpedMassAssignment;
       return massAssignment?.mass ?? [0, 0, 0];
     })
     .flat();
@@ -71,7 +72,7 @@ function forwardEuler(
   // forward euler formulation
   for (let step = 0; step < numSteps; step++) {
     let xn = x;
-    let y = math.chain(x).add(math.multiply(v, dt)).done();
+    let y = math.chain(x).add(math.multiply(v, dt)).done() as number[];
 
     x = math.add(
       y,
@@ -80,9 +81,9 @@ function forwardEuler(
         .dotDivide(m)
         .multiply(dt ** 2)
         .done()
-    );
+    ) as number[];
 
-    v = math.chain(x).subtract(xn).divide(dt).done();
+    v = math.chain(x).subtract(xn).divide(dt).done() as number[];
 
     // enforce constraints
     assignments.forEach((a) => {
@@ -149,20 +150,19 @@ function F(
     const T: number[][] = findT(x_n1, x_n2);
     const Ti: number[][] = findT(nodes[e[0]], nodes[e[1]]);
 
-    const r: number =
-      math.multiply(Ti, nodes[e[1]])[0] - math.multiply(Ti, nodes[e[0]])[0];
+    const r = math.norm(math.subtract(nodes[e[1]], nodes[e[0]])) as number;
 
     const d1: number =
       math.multiply(T, x_n1)[0] - math.multiply(Ti, nodes[e[0]])[0];
     const d2: number =
       math.multiply(T, x_n2)[0] - math.multiply(Ti, nodes[e[1]])[0];
 
-    const property: any = assignments.find(
+    const property = assignments.find(
       (assignment) =>
         "element" in assignment &&
         "elasticity" in assignment &&
         assignment.element === eid
-    );
+    ) as PropertyAssignment;
 
     const k = property?.elasticity;
 
@@ -177,48 +177,29 @@ function F(
 }
 
 function findT(x1, x2): number[][] {
+  // convert global axis to local axis (i.e. x-axis for convenience)
   const d: [number, number, number] = math.subtract(x2, x1);
 
   const x_vec = [d[0], 0, 0];
-  const y_vec = [0, d[1], 0];
-
-  // around z-axis
-  const length_alpha = math.number(math.norm(math.add(x_vec, y_vec)));
-  const cos_alpha: number = d[0] / (length_alpha + EPSILON);
-  const sin_alpha: number = d[1] / (length_alpha + EPSILON);
-
-  const rot_z = [
-    [cos_alpha, sin_alpha, 0],
-    [-sin_alpha, cos_alpha, 0],
-    [0, 0, 1],
-  ];
-
-  // project d on x-axis in xz plane
-
-  const d_z = math.multiply(rot_z, d);
-
-  const x_vec_z = [d_z[0], 0, 0];
-  const z_vec_z = [0, 0, d_z[2]];
+  const z_vec = [0, 0, d[2]];
 
   // around y-axis
-  const length_beta = math.number(math.norm(math.add(z_vec_z, x_vec_z)));
-  const cos_beta: number = d_z[2] / (length_beta + EPSILON);
-  const sin_beta: number = d_z[0] / (length_beta + EPSILON);
+  const length_beta = math.number(math.norm(math.add(z_vec, x_vec)));
+  const cos_beta = d[2] / (length_beta + EPSILON);
+  const sin_beta = d[0] / (length_beta + EPSILON);
 
   const rot_y = [
-    [sin_beta, 0, -cos_beta],
+    [sin_beta, 0, cos_beta],
     [0, 1, 0],
-    [cos_beta, 0, sin_beta],
+    [-cos_beta, 0, sin_beta],
   ];
 
-  // rotation matrices to project everything on x axis ----------------------------
-
-  return math.chain(rot_z).multiply(rot_y).done();
+  return rot_y;
 }
 
 function getDOFs(nodes: Node[]): { node: [number, number, number] } {
   let dofs: any = {};
-  const base_dof: [number, number, number] = [0, 1, 2];
+  const base_dof = [0, 1, 2];
 
   nodes.forEach((_, nid) => {
     dofs[nid] = base_dof.map((d) => d + base_dof.length * nid);

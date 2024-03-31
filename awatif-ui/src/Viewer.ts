@@ -42,7 +42,6 @@ export function Viewer(model: ModelState, settings: SettingsState) {
       : -1 / settings.displayScale.val
   );
   const nodes = van.derive(() => {
-    console.log('viewer nodes', model.val.nodes);
     if (!settings.deformedShape.val) return model.val.nodes;
 
     return model.val.nodes.map((node, index) => {

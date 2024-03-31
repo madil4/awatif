@@ -23,7 +23,10 @@ export function Timeline(modelState: ModelState, settingsState: SettingsState) {
         value: "0",
         class: "slider",
         id: "playerBar",
-        oninput: (e) => (frame.val = Number(e.target.value)), // change the frame state according to slider.value
+        oninput: (e) => {
+          frame.val = Number(e.target.value); // change the frame state according to slider.value
+          isPlayed.val = false; // stop playing clicked
+        },
       })
     );
 
@@ -55,10 +58,14 @@ export function Timeline(modelState: ModelState, settingsState: SettingsState) {
   // animate slider value
   setInterval(() => {
     if (isPlayed.val) {
+      if (frame.val === numFrames) frame.val = 0; // reset to start
+
       const playBar = document.getElementById("playerBar") as HTMLInputElement;
-      playBar.value = (frame.val + frameIncrement).toString();
-      frame.val += frameIncrement;
-    } // this assumes the steps from the analysis results are incremented by 1
+      const newFrameVal = Math.min(numFrames, frame.val + frameIncrement); // cap frame value to numFrames
+      if (newFrameVal === numFrames) isPlayed.val = false;
+      playBar.value = newFrameVal.toString();
+      frame.val = newFrameVal;
+    }
   }, 1000 / fps); // 30 fps, the animation is handled by the viewer, which is triggered when changing the position
 
   van.add(document.body, player());

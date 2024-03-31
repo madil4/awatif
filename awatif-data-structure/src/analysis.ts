@@ -8,7 +8,7 @@ export type Assignment =
   | PropertyAssignment
   | SupportAssignment
   | LoadAssignment
-  | MassAssignment
+  | LumpedMassAssignment
   | DistributedLoadAssignment;
 
 export type PropertyAssignment = {
@@ -35,7 +35,7 @@ export type LoadAssignment = {
     | [number, number, number, number, number, number];
 };
 
-export type MassAssignment = {
+export type LumpedMassAssignment = {
   node: number;
   mass:
     | [number, number, number]
