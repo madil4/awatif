@@ -6,7 +6,6 @@ import {
 } from "../../awatif-data-structure";
 import { Node, Element, Assignment, Parameters } from "../../awatif-ui/";
 import { getTransformationMatrix } from "../../awatif-ui/src/utils/getTransformationMatrix.ts";
-import { EPSILON } from "./constants.ts";
 import * as math from "mathjs";
 
 export function analyzeDynamically(
@@ -34,7 +33,6 @@ export function analyzeDynamically(
   };
 
   // run the dynamic loop here
-  // console.log("T1", getTransformationMatrix(nodes[0], nodes[1]).elements);
   analysisResults = forwardEuler(
     config["time"],
     config["timeStep"],
@@ -99,7 +97,7 @@ function forwardEuler(
     let result: PositionResult[] = [];
     const dofs = getDOFs(nodes);
 
-    nodes.forEach((n, nid) => {
+    nodes.forEach((_, nid) => {
       const currPosition = math.subset(
         x,
         math.index(dofs[nid])
@@ -141,14 +139,14 @@ function F(
   elements.forEach((e, eid) => {
     const dofs = getDOFs(nodes);
 
-    const n1_dof: number[] = dofs[e[0]];
-    const n2_dof: number[] = dofs[e[1]];
+    const n1_dof = dofs[e[0]];
+    const n2_dof = dofs[e[1]];
 
-    const x_n1: [number, number, number] = math.subset(x, math.index(n1_dof));
-    const x_n2: [number, number, number] = math.subset(x, math.index(n2_dof));
+    const x_n1 = math.subset(x, math.index(n1_dof));
+    const x_n2 = math.subset(x, math.index(n2_dof));
 
-    const T: number[][] = findT(x_n1, x_n2);
-    const Ti: number[][] = findT(nodes[e[0]], nodes[e[1]]);
+    const T = findT3D(x_n1, x_n2);
+    const Ti = findT3D(nodes[e[0]], nodes[e[1]]);
 
     const r = math.norm(math.subtract(nodes[e[1]], nodes[e[0]])) as number;
 
@@ -166,8 +164,8 @@ function F(
 
     const k = property?.elasticity;
 
-    const f1: number = (k * (d2 - d1)) / r;
-    const f_element: number[] = math.multiply(math.transpose(T), [f1, 0, 0]);
+    const f1 = (k * (d2 - d1)) / r;
+    const f_element = math.multiply(math.transpose(T), [f1, 0, 0]);
 
     n1_dof.forEach((dof, j) => (f[dof] += f_element[j]));
     n2_dof.forEach((dof, j) => (f[dof] -= f_element[j]));
@@ -176,34 +174,43 @@ function F(
   return f;
 }
 
-function findT(x1, x2): number[][] {
-  // convert global axis to local axis (i.e. x-axis for convenience)
-  const d: [number, number, number] = math.subtract(x2, x1);
-
-  const x_vec = [d[0], 0, 0];
-  const z_vec = [0, 0, d[2]];
-
-  // around y-axis
-  const length_beta = math.number(math.norm(math.add(z_vec, x_vec)));
-  const cos_beta = d[2] / (length_beta + EPSILON);
-  const sin_beta = d[0] / (length_beta + EPSILON);
-
-  const rot_y = [
-    [sin_beta, 0, cos_beta],
-    [0, 1, 0],
-    [-cos_beta, 0, sin_beta],
+function findT3D(x1: Node, x2: Node): number[][] {
+  const transformVec = getTransformationMatrix(x1, x2).elements;
+  return [
+    [transformVec[0], transformVec[1], transformVec[2]],
+    [transformVec[4], transformVec[5], transformVec[6]],
+    [transformVec[8], transformVec[9], transformVec[10]],
   ];
-
-  return rot_y;
 }
 
 function getDOFs(nodes: Node[]): { node: [number, number, number] } {
   let dofs: any = {};
-  const base_dof = [0, 1, 2];
 
-  nodes.forEach((_, nid) => {
-    dofs[nid] = base_dof.map((d) => d + base_dof.length * nid);
+  nodes.forEach((node, nid) => {
+    dofs[nid] = node.map((_, i) => i + node.length * nid);
   });
 
   return dofs;
 }
+
+// old functions -----------------------------------------
+// function findT2D(x1, x2): number[][] {
+//   // convert global axis to local axis (i.e. x-axis for convenience)
+//   const d: [number, number, number] = math.subtract(x2, x1);
+
+//   const x_vec = [d[0], 0, 0];
+//   const z_vec = [0, 0, d[2]];
+
+//   // around y-axis
+//   const length_beta = math.number(math.norm(math.add(z_vec, x_vec)));
+//   const cos_beta = d[2] / (length_beta + EPSILON);
+//   const sin_beta = d[0] / (length_beta + EPSILON);
+
+//   const rot_y = [
+//     [sin_beta, 0, cos_beta],
+//     [0, 1, 0],
+//     [-cos_beta, 0, sin_beta],
+//   ];
+
+//   return rot_y;
+// }

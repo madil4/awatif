@@ -4,8 +4,8 @@ import { G } from "./constants.ts";
 
 const nodes: Node[] = [
   [0, 0, 0],
-  [2, 0, 0],
-  [4, 0, 0],
+  [5, 5, 5],
+  [10, 10, 10],
 ];
 
 const elements: Element[] = [
@@ -45,7 +45,7 @@ const assignments: Assignment[] = [
 ];
 
 const dynamicSettings = {
-  time: 5,
+  time: 10,
   timeStep: 0.001,
 };
 
