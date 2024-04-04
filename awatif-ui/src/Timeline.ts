@@ -1,7 +1,7 @@
 import van from "vanjs-core";
 import { ModelState, SettingsState } from "./types";
 
-export function Timeline(modelState: ModelState, settingsState: SettingsState) {
+export function timeline(modelState: ModelState, settingsState: SettingsState) {
   const { button, div, input } = van.tags;
 
   const frame = van.state(0); // the frame in consideration

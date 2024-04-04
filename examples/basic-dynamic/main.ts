@@ -57,7 +57,7 @@ const analysisResults = analyzeDynamically(
 );
 
 app({
-  model: { nodes, elements, assignments, analysisResults },
+  onParameterChange: () => ({ nodes, elements, assignments, analysisResults }),
   settings: {
     dynamic: true,
     dynamicSettings: dynamicSettings,

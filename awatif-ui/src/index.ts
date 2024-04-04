@@ -1,3 +1,3 @@
 export * from "../../awatif-data-structure/src";
 export type { Model, Parameters, Settings, App } from "./types";
-export { app } from "./App";
+export { app } from "./app";
