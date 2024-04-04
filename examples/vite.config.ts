@@ -18,6 +18,7 @@ export default defineConfig({
         "3d-tower": "3d-tower/index.html",
         "arched-bridge": "arched-bridge/index.html",
         "portal-frame": "portal-frame/index.html",
+        "truss-designer": "truss-designer/index.html",
       },
     },
   },

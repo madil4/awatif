@@ -1,4 +1,5 @@
 dist
 node_modules
 .DS_Store
+polyfill.*
 .netlify

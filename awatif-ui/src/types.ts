@@ -15,9 +15,8 @@ import {
 } from "awatif-data-structure";
 
 export type App = {
-  model?: Model;
   parameters?: Parameters;
-  onParameterChange?: (p: Parameters) => Model;
+  onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
 };
 
@@ -28,16 +27,16 @@ export type Model = {
   analysisResults?: AnalysisResults;
 };
 
-export type Parameters = Record<
-  string,
-  {
+export type Parameters = {
+  [key: string]: {
     value: number;
     min?: number;
     max?: number;
     step?: number;
     label?: string;
-  }
->;
+    folder?: string;
+  };
+};
 
 export type Settings = {
   gridSize?: number;

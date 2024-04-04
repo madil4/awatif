@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { IResultObject } from "./IResultObject";
 import { Text } from "../Text";
 import { Node } from "awatif-data-structure";
-import { ResultType } from "../NodeResults";
+import { ResultType } from "../nodeResults";
 
 export class NodeResult extends THREE.Group implements IResultObject {
   private xArrow?: THREE.ArrowHelper;
