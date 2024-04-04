@@ -192,25 +192,3 @@ function getDOFs(nodes: Node[]): { node: [number, number, number] } {
 
   return dofs;
 }
-
-// old functions -----------------------------------------
-// function findT2D(x1, x2): number[][] {
-//   // convert global axis to local axis (i.e. x-axis for convenience)
-//   const d: [number, number, number] = math.subtract(x2, x1);
-
-//   const x_vec = [d[0], 0, 0];
-//   const z_vec = [0, 0, d[2]];
-
-//   // around y-axis
-//   const length_beta = math.number(math.norm(math.add(z_vec, x_vec)));
-//   const cos_beta = d[2] / (length_beta + EPSILON);
-//   const sin_beta = d[0] / (length_beta + EPSILON);
-
-//   const rot_y = [
-//     [sin_beta, 0, cos_beta],
-//     [0, 1, 0],
-//     [-cos_beta, 0, sin_beta],
-//   ];
-
-//   return rot_y;
-// }

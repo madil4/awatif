@@ -16,17 +16,13 @@ import { ElementResults } from "./objects/ElementResults";
 import { NodeResults } from "./objects/NodeResults";
 
 export function Viewer(model: ModelState, settings: SettingsState) {
-  // config
-  let playerHeight = 0;
-  if (settings?.dynamic ?? false) playerHeight = 50;
-
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     45,
-    window.innerWidth / (window.innerHeight - playerHeight),
+    window.innerWidth / window.innerHeight,
     0.1,
     2 * 1e6 // supported view till 1e6
   );
@@ -67,7 +63,7 @@ export function Viewer(model: ModelState, settings: SettingsState) {
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
-  renderer.setSize(window.innerWidth, window.innerHeight-playerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
   document.body.style.margin = "0";
 
@@ -81,9 +77,9 @@ export function Viewer(model: ModelState, settings: SettingsState) {
 
   // on windows resize
   window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / (window.innerHeight-playerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight-playerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.render(scene, camera);
   });
 

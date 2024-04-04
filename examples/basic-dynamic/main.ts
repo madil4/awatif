@@ -4,8 +4,8 @@ import { G } from "./constants.ts";
 
 const nodes: Node[] = [
   [0, 0, 0],
-  [5, 5, 5],
-  [10, 10, 10],
+  [2, 0, 0],
+  [4, 0, 0],
 ];
 
 const elements: Element[] = [
@@ -24,7 +24,7 @@ const assignments: Assignment[] = [
   },
   {
     node: 2,
-    load: [0, 0, -2 * G], // gravity force computed for masses of 2 and acceleration of 9.81
+    load: [0, 0, -4 * G], // gravity force computed for masses of 2 and acceleration of 9.81
   },
   {
     node: 1,
@@ -32,7 +32,7 @@ const assignments: Assignment[] = [
   },
   {
     node: 2,
-    mass: [2, 2, 2],
+    mass: [4, 4, 4],
   },
   {
     element: 0, // and 1 similarly
