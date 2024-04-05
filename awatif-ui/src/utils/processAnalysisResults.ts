@@ -23,7 +23,7 @@ export function processAnalysisResults(
   };
   // you can also process nodes results here
 
-  analysisResults["default"].forEach((result) => {
+  analysisResults["default"]?.forEach((result) => {
     if ("normal" in result) par.normal.set(result.element, result.normal);
     if ("shearY" in result) par.shearY.set(result.element, result.shearY);
     if ("shearZ" in result) par.shearZ.set(result.element, result.shearZ);
@@ -35,6 +35,7 @@ export function processAnalysisResults(
     if ("reaction" in result) par.reaction.set(result.node, result.reaction);
   });
 
+  // todo: use one loop instead
   Object.entries(analysisResults).forEach(([key, results]) => {
     if (!isNaN(Number(key))) {
       const frame = Number(key);

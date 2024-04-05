@@ -7,8 +7,6 @@ import { settings } from "./settings";
 import { processAssignments } from "./utils/processAssignments";
 import { processAnalysisResults } from "./utils/processAnalysisResults";
 
-import "./styles/App.css";
-
 export function app({
   parameters: parameterObj,
   onParameterChange,
@@ -39,7 +37,7 @@ export function app({
   // update
   viewer(modelState, settingsState);
   settings(settingsState);
-  if (settingsObj?.dynamic ?? false) timeline(modelState, settingsState);
+  if (settingsObj?.dynamic) timeline(modelState, settingsState);
 
   // on parameter change
   if (parameterObj && onParameterChange) {

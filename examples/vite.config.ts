@@ -19,6 +19,7 @@ export default defineConfig({
         "arched-bridge": "arched-bridge/index.html",
         "portal-frame": "portal-frame/index.html",
         "truss-designer": "truss-designer/index.html",
+        dynamic: "dynamic/index.html",
       },
     },
   },
