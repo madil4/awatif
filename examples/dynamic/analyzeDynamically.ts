@@ -4,7 +4,7 @@ import {
   LumpedMassAssignment,
   PropertyAssignment,
 } from "../../awatif-data-structure";
-import { Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import { Node, Element, Assignment } from "../../awatif-ui/";
 import { getTransformationMatrix } from "../../awatif-ui/src/utils/getTransformationMatrix.ts";
 import * as math from "mathjs";
 
@@ -12,47 +12,9 @@ export function analyzeDynamically(
   nodes: Node[],
   elements: Element[],
   assignments: Assignment[],
-  config
+  { time: t, timeStep: dt }
 ) {
-  let analysisResults: AnalysisResults = {
-    default: [
-      // here is the frame/step number
-      {
-        node: 0,
-        position: [0, 0, 0], // here is the new computed position
-      },
-      {
-        node: 1,
-        position: [0, 0, 0],
-      },
-      {
-        node: 2,
-        position: [0, 0, 0],
-      },
-    ],
-  };
-
-  // run the dynamic loop here
-  analysisResults = forwardEuler(
-    config["time"],
-    config["timeStep"],
-    nodes,
-    elements,
-    assignments,
-    analysisResults
-  );
-
-  return analysisResults;
-}
-
-function forwardEuler(
-  t: number,
-  dt: number,
-  nodes: Node[],
-  elements: Element[],
-  assignments: Assignment[],
-  results: AnalysisResults
-): AnalysisResults {
+  const analysisResults: AnalysisResults = {};
   const numSteps: number = math.floor(t / dt);
 
   // define position, velocity, and mass vectors
@@ -70,7 +32,7 @@ function forwardEuler(
   // forward euler formulation
   for (let step = 0; step < numSteps; step++) {
     let xn = x;
-    let y = math.chain(x).add(math.multiply(v, dt)).done() as number[];
+    let y = math.chain(x).add(math.multiply(v, dt)).done();
 
     x = math.add(
       y,
@@ -108,13 +70,13 @@ function forwardEuler(
       });
     });
 
-    results[step] = result;
+    analysisResults[step] = result;
   }
 
-  return results;
+  return analysisResults;
 }
 
-// utility functions ----------------------------------------------------------------
+// utility functions
 function F(
   x,
   nodes: Node[],

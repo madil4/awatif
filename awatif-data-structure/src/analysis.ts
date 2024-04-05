@@ -62,8 +62,7 @@ export type DeformationResult = {
 
 export type PositionResult = {
   node: number;
-  position:
-    | [number, number, number];
+  position: [number, number, number];
 };
 
 export type ReactionResult = {

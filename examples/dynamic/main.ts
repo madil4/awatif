@@ -1,6 +1,5 @@
 import { app, Node, Element, Assignment } from "../../awatif-ui/";
 import { analyzeDynamically } from "./analyzeDynamically.ts";
-import { G } from "./constants.ts";
 
 const nodes: Node[] = [
   [0, 0, 0],
@@ -20,11 +19,11 @@ const assignments: Assignment[] = [
   },
   {
     node: 1,
-    load: [0, 0, -2 * G], // gravity force computed for masses of 2 and acceleration of 9.81
+    load: [0, 0, -2 * 9.81], // gravity force computed for masses of 2 and acceleration of 9.81 m/s^2
   },
   {
     node: 2,
-    load: [0, 0, -4 * G], // gravity force computed for masses of 2 and acceleration of 9.81
+    load: [0, 0, -4 * 9.81], // gravity force computed for masses of 2 and acceleration of 9.81 m/s^2
   },
   {
     node: 1,
@@ -35,11 +34,11 @@ const assignments: Assignment[] = [
     mass: [4, 4, 4],
   },
   {
-    element: 0, // and 1 similarly
+    element: 0,
     elasticity: 100000,
   },
   {
-    element: 1, // and 1 similarly
+    element: 1,
     elasticity: 100000,
   },
 ];
@@ -59,7 +58,9 @@ const analysisResults = analyzeDynamically(
 app({
   onParameterChange: () => ({ nodes, elements, assignments, analysisResults }),
   settings: {
+    gridSize: 10,
     dynamic: true,
+    loads: false,
     dynamicSettings: dynamicSettings,
   },
 });

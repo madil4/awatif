@@ -12,7 +12,7 @@ import {
   AnalysisResults,
   SupportAssignment,
   PositionResult,
-} from "awatif-data-structure";
+} from "../../awatif-data-structure";
 
 export type App = {
   parameters?: Parameters;

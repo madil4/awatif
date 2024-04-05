@@ -63,10 +63,8 @@
   width: 15px;
   height: 15px;
   padding: 5px;
-  border: 3px solid var(--button-color);
-  border-radius: 30%;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
   margin: 5px;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
 }
 
 button {
