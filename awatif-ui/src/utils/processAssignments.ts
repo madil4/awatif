@@ -4,7 +4,7 @@ import {
   LoadAssignment,
   PropertyAssignment,
   SupportAssignment,
-} from "awatif-data-structure";
+} from "../../../awatif-data-structure";
 import { ProcessedAssignments } from "../types";
 
 export function processAssignments(
