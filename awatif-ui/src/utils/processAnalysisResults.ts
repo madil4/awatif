@@ -4,7 +4,7 @@ import {
   ReactionResult,
   DeformationResult,
   PositionResult,
-} from "awatif-data-structure";
+} from "../../../awatif-data-structure";
 import { ProcessedAnalysisResults } from "../types";
 
 export function processAnalysisResults(

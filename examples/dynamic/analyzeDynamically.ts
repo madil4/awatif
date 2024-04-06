@@ -12,8 +12,8 @@ export function analyzeDynamically(
   nodes: Node[],
   elements: Element[],
   assignments: Assignment[],
-  { time: t, timeStep: dt }
-) {
+  { time: t, timeStep: dt }: { time: number; timeStep: number }
+): AnalysisResults {
   const analysisResults: AnalysisResults = {};
   const numSteps: number = math.floor(t / dt);
 
@@ -57,7 +57,7 @@ export function analyzeDynamically(
 
     // store
     let result: PositionResult[] = [];
-    const dofs = getDOFs(nodes);
+    const dofs: any = getDOFs(nodes);
 
     nodes.forEach((_, nid) => {
       const currPosition = math.subset(
@@ -78,7 +78,7 @@ export function analyzeDynamically(
 
 // utility functions
 function F(
-  x,
+  x: number[],
   nodes: Node[],
   elements: Element[],
   assignments: Assignment[]
@@ -99,13 +99,13 @@ function F(
 
   // elastic force
   elements.forEach((e, eid) => {
-    const dofs = getDOFs(nodes);
+    const dofs: any = getDOFs(nodes);
 
     const n1_dof = dofs[e[0]];
     const n2_dof = dofs[e[1]];
 
-    const x_n1 = math.subset(x, math.index(n1_dof));
-    const x_n2 = math.subset(x, math.index(n2_dof));
+    const x_n1 = math.subset(x, math.index(n1_dof)) as Node;
+    const x_n2 = math.subset(x, math.index(n2_dof)) as Node;
 
     const T = findT3D(x_n1, x_n2);
     const Ti = findT3D(nodes[e[0]], nodes[e[1]]);
@@ -129,8 +129,8 @@ function F(
     const f1 = (k * (d2 - d1)) / r;
     const f_element = math.multiply(math.transpose(T), [f1, 0, 0]);
 
-    n1_dof.forEach((dof, j) => (f[dof] += f_element[j]));
-    n2_dof.forEach((dof, j) => (f[dof] -= f_element[j]));
+    n1_dof.forEach((dof: any, j: number) => (f[dof] += f_element[j]));
+    n2_dof.forEach((dof: any, j: number) => (f[dof] -= f_element[j]));
   });
 
   return f;
