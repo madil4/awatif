@@ -866,6 +866,10 @@ video {
   height: 100%;
 }
 
+.w-1 {
+  width: 0.25rem;
+}
+
 .w-3\/4 {
   width: 75%;
 }
@@ -1084,6 +1088,10 @@ video {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+.rounded {
+  border-radius: 0.25rem;
 }
 
 .rounded-full {
@@ -1440,6 +1448,10 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.underline {
+  text-decoration-line: underline;
+}
+
 .opacity-0 {
   opacity: 0;
 }
@@ -1500,6 +1512,10 @@ video {
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.\[start\:end\] {
+  start: end;
 }
 
 .before\:absolute::before {
