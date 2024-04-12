@@ -12,7 +12,7 @@ export function timeline(modelState: ModelState, settingsState: SettingsState) {
   const dt = settingsState.dynamicSettings.val.timeStep;
   const frameIncrement = Math.floor(1 / dt / fps);
 
-  const numFrames = modelState.val.analysisResults.position.size - 1;
+  const numFrames = modelState.val.analysisOutputs.position.size - 1;
 
   const slider = () =>
     div(
@@ -53,7 +53,7 @@ export function timeline(modelState: ModelState, settingsState: SettingsState) {
   van.derive(() => {
     let newModel = structuredClone(modelState.val);
     newModel.nodes =
-      modelState.val.analysisResults.position.get(frame.val) ?? [];
+      modelState.val.analysisOutputs.position.get(frame.val) ?? [];
     modelState.val = newModel;
   });
 

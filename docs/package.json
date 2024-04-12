@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "rm -rf dist && concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/css/style.css --watch\" \"eleventy --serve\"",
     "build": "rm -rf dist && eleventy",
-    "deploy-staging": "npm run build && netlify deploy",
+    "deploy-staging": "npm run build && netlify deploy --dir=dist",
     "deploy": "npm run build && netlify deploy --prod --dir=dist"
   },
   "keywords": [],

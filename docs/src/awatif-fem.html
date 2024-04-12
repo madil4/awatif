@@ -146,7 +146,7 @@ breadcrumb: FEM Solver
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
+            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, AnalysisInput, AnalysisOutputs } from "awatif-fem";
 
 const nodes: Node[] = [
   [0, 0, 3],
@@ -157,7 +157,7 @@ const elements: Element[] = [
   [0, 1],
   [1, 2],
 ];
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 0,
     support: [false, true, false, true, false, true],
@@ -179,9 +179,9 @@ const assignments: Assignment[] = [
   },
 ];
 
-const analysisResults = analyze(nodes, elements, assignments);
+const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-const expectedAnalysisResults: AnalysisResults = {
+const expectedAnalysisOutputs: AnalysisOutputs = {
   default: [
     {
       node: 0,
@@ -516,10 +516,10 @@ const expectedAnalysisResults: AnalysisResults = {
                 <!-- Inner Lists -->
                 <div id="inner-list-collapse" class="hs-accordion-content hidden w-full overflow-auto transition-[height] duration-300" aria-labelledby="inner-list-heading">
                   <p class="mb-3">
-                    This library exposes a single function named analyze. It takes three inputs: Nodes, Elements, and Assignments, and returns the AnalysisResults. For detailed type definitions, please refer to the awatif-data-structure
+                    This library exposes a single function named analyze. It takes three inputs: Nodes, Elements, and AnalysisInputs, and returns the AnalysisOutputs. For detailed type definitions, please refer to the awatif-data-structure
                     <a class="text-primary-light hover:underline" href="/awatif-data-structure/#api-reference">API Reference</a>.
                   </p>
-                  <pre class="mb-3 grid grid-cols-1"><code class="language-ts">const analysisResults = analyze(nodes, elements, assignments);</code></pre>
+                  <pre class="mb-3 grid grid-cols-1"><code class="language-ts">const analysisOutputs = analyze(nodes, elements, analysisInputs);</code></pre>
 
                   <!-- Notes -->
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
@@ -543,9 +543,7 @@ const expectedAnalysisResults: AnalysisResults = {
                             The solver is unitless, so maintain consistency with your units. For example, if node locations are defined in meters (m), ensure the area is in square meters (m²), and the computed displacement will be in meters (m).
                             Similarly, if the modulus of elasticity is in kilonewtons per square meter (kN/m²), then the load should be in kilonewtons (kN), and computed normal forces will be in kilonewtons (kN).
                           </li>
-                          <li>
-                            It is not possible to mix bar and beam elements in the same model at the moment. This limitation will be removed in future versions.
-                          </li>
+                          <li>It is not possible to mix bar and beam elements in the same model at the moment. This limitation will be removed in future versions.</li>
                           <li>
                             The sign convention aligns with that adopted in the book 'A First Course in the Finite Element Method, 6th edition' by Daryl L. Logan. The right-hand rule is employed to determine the direction of the z-direction.
                             Similarly, for rotation, the right-hand curl rule is adopted.
@@ -565,7 +563,7 @@ const expectedAnalysisResults: AnalysisResults = {
                             <code class="text-red-500 text-[0.85rem]">`jwt-decode`</code> to decode the API key which is licensed under the MIT license.
                           </li>
                           <li>
-                            It is important to note that the <code class="text-red-500 text-[0.85rem]">`Distributed Load`</code> assignment will only work if the beam lies perfectly on the global axes without inclination. Additionally, the
+                            It is important to note that the <code class="text-red-500 text-[0.85rem]">`Distributed Load`</code> analysis input will only work if the beam lies perfectly on the global axes without inclination. Additionally, the
                             distributed load is only applicable to beam elements and not bar elements. These limitations will be removed in future updates soon.
                           </li>
                           <li>

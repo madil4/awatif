@@ -1,4 +1,11 @@
-import { app, Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import {
+  app,
+  Node,
+  Element,
+  AnalysisInput,
+  Parameters,
+  Model,
+} from "../../awatif-ui/";
 import { analyze } from "../../awatif-fem";
 
 const parameters: Parameters = {
@@ -45,7 +52,7 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters) {
+function onParameterChange(parameters: Parameters): Model {
   const span = parameters.span.value;
   const divisions = parameters.divisions.value;
   const height = parameters.height.value;
@@ -91,7 +98,7 @@ function onParameterChange(parameters: Parameters) {
     }
   }
 
-  const assignments: Assignment[] = [
+  const analysisInputs: AnalysisInput[] = [
     ...elements.map((_, i) => ({
       element: i,
       area: area,
@@ -110,14 +117,14 @@ function onParameterChange(parameters: Parameters) {
         ({
           node: i,
           load: [0, 0, -load],
-        } as Assignment)
+        } as AnalysisInput)
     ),
   ];
 
   // Todo: there is a bug when parsing supports to check if it bar or beam element
-  const analysisResults = analyze(nodes, elements, assignments);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, assignments, analysisResults };
+  return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
 app({

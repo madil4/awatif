@@ -4,8 +4,8 @@ import { viewer } from "./viewer";
 import { parameters } from "./parameters";
 import { timeline } from "./timeline";
 import { settings } from "./settings";
-import { processAssignments } from "./utils/processAssignments";
-import { processAnalysisResults } from "./utils/processAnalysisResults";
+import { processAnalysisInputs } from "./utils/processAnalysisInputs";
+import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
 
 export function app({
   parameters: parameterObj,
@@ -54,8 +54,8 @@ export function app({
 const getModelState = (model?: Model): ModelState["val"] => ({
   nodes: model?.nodes ?? [],
   elements: model?.elements ?? [],
-  assignments: processAssignments(model?.assignments ?? []),
-  analysisResults: processAnalysisResults(
-    model?.analysisResults ?? { default: [] }
+  analysisInputs: processAnalysisInputs(model?.analysisInputs ?? []),
+  analysisOutputs: processAnalysisOutputs(
+    model?.analysisOutputs ?? { default: [] }
   ),
 });

@@ -1,6 +1,6 @@
 // An example of three bars loaded with a point load.
 
-import { Node, Element, Assignment, AnalysisResults } from "../src";
+import { Node, Element, AnalysisInput, AnalysisOutputs } from "../src";
 
 const nodes: Node[] = [
   [0, 0, 0],
@@ -13,7 +13,7 @@ const elements: Element[] = [
   [0, 2],
   [0, 3],
 ];
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 1,
     support: [true, true, false],
@@ -38,9 +38,9 @@ const assignments: Assignment[] = [
 ];
 
 // An example of how to run an analysis. Check https://awatif.co/awatif-fem for more details
-// const results = analyze(nodes, elements, assignments);
+// const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-const results: AnalysisResults = {
+const analysisOutputs: AnalysisOutputs = {
   default: [
     {
       node: 0,

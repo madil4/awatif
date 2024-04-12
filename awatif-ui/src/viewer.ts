@@ -41,7 +41,7 @@ export function viewer(model: ModelState, settings: SettingsState) {
     if (!settings.deformedShape.val) return model.val.nodes;
 
     return model.val.nodes.map((node, index) => {
-      const d = model.val.analysisResults.deformation.get(index) ?? [0, 0, 0];
+      const d = model.val.analysisOutputs.deformation.get(index) ?? [0, 0, 0];
       return node.map((n, i) => n + d[i]) as Node;
     });
   });

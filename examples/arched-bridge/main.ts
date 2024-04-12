@@ -1,4 +1,11 @@
-import { app, Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import {
+  app,
+  Node,
+  Element,
+  AnalysisInput,
+  Parameters,
+  Model,
+} from "../../awatif-ui/";
 import * as THREE from "three";
 
 export const parameters: Parameters = {
@@ -44,7 +51,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters) {
+export function onParameterChange(parameters: Parameters): Model {
   const xSpan = parameters.xSpan.value;
   const xDivisions = parameters.xDivisions.value;
   const ySpan = parameters.ySpan.value;
@@ -92,24 +99,24 @@ export function onParameterChange(parameters: Parameters) {
     (i) => (xDivisions + 1) * i + xDivisions
   );
 
-  const assignments: Assignment[] = [
+  const analysisInputs: AnalysisInput[] = [
     ...startSupports.map(
       (i) =>
         ({
           node: i,
           support: [true, true, true],
-        } as Assignment)
+        } as AnalysisInput)
     ),
     ...endSupports.map(
       (i) =>
         ({
           node: i,
           support: [true, true, true],
-        } as Assignment)
+        } as AnalysisInput)
     ),
   ];
 
-  return { nodes, elements, assignments };
+  return { nodes, elements, analysisInputs };
 }
 
 app({

@@ -44,7 +44,7 @@ breadcrumb: Data Structure
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre class="mb-3 grid grid-cols-1"><code class="language-ts">import { Element, Node, Assignment } from "awatif-data-structure";
+            <pre class="mb-3 grid grid-cols-1"><code class="language-ts">import { Element, Node, AnalysisInput } from "awatif-data-structure";
 
 const nodes: Node[] = [
   [0, 0, 0],
@@ -57,7 +57,7 @@ const elements: Element[] = [
   [1, 2],
   [2, 3],
 ];
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 0,
     load: [0, -50, 0],
@@ -153,7 +153,7 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  PropertyAssignment
+                  FrameAnalysisInput
                 </button>
 
                 <!-- Property Bar and Beam -->
@@ -177,7 +177,7 @@ const assignments: Assignment[] = [
                         Bar Element
                       </button>
                       <div id="property-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="property-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type PropertyAssignment = {
+                        <pre class="mb-3"><code class="language-ts">type FrameAnalysisInput = {
   element: number;
   elasticity: number;
   area?: number;
@@ -206,7 +206,7 @@ const assignments: Assignment[] = [
                         Beam Element
                       </button>
                       <div id="property-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="property-beam-heading">
-                        <pre class="mb-3"><code class="language-ts">type PropertyAssignment = {
+                        <pre class="mb-3"><code class="language-ts">type FrameAnalysisInput = {
   element: number;
   elasticity: number;
   shearModulus?: number;
@@ -244,7 +244,7 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  SupportAssignment
+                  SupportAnalysisInput
                 </button>
 
                 <!-- Support Bar and Beam -->
@@ -270,7 +270,7 @@ const assignments: Assignment[] = [
                         Bar Element
                       </button>
                       <div id="support-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="support-bar-heading">
-                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type SupportAssignment = {
+                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type SupportAnalysisInput = {
   node: number;
   support: [boolean, boolean, boolean]
 };</code></pre>
@@ -297,7 +297,7 @@ const assignments: Assignment[] = [
                         Beam Element
                       </button>
                       <div id="support-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="support-beam-heading">
-                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type SupportAssignment = {
+                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type SupportAnalysisInput = {
   node: number;
   support: [boolean, boolean, boolean, boolean, boolean, boolean]
 };</code></pre>
@@ -325,7 +325,7 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  LoadAssignment
+                  LoadAnalysisInput
                 </button>
 
                 <!-- Load Bar and Beam -->
@@ -349,7 +349,7 @@ const assignments: Assignment[] = [
                         Bar Element
                       </button>
                       <div id="load-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="load-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type LoadAssignment = {
+                        <pre class="mb-3"><code class="language-ts">type LoadAnalysisInput = {
   node: number;
   load: [number, number, number]
 }</code></pre>
@@ -376,7 +376,7 @@ const assignments: Assignment[] = [
                         Beam Element
                       </button>
                       <div id="load-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="load-beam-heading">
-                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type LoadAssignment = {
+                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type LoadAnalysisInput = {
   node: number;
   load: [number, number, number, number, number, number];
 }</code></pre>
@@ -404,29 +404,29 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  DistributedLoadAssignment
+                  DistributedLoadAnalysisInput
                 </button>
 
                 <div id="geometry-distributed-load-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-distributed-load-heading">
-                  <pre class="mb-3"><code class="language-ts">type DistributedLoadAssignment = {
+                  <pre class="mb-3"><code class="language-ts">type DistributedLoadAnalysisInput = {
   element: number;
   distributedLoad: [number, number];
 }</code></pre>
                   <ul class="list-disc list-inside text-gray-800">
                     <li>
-                      <code class="text-red-500 text-[0.85rem]">`distributedLoad`</code>: A uniformly distributed force along a beam element in the global y and z directions consecutively. For example, an assignment of [3, 5] means 3 in the y
-                      direction and 5 in the z direction.
+                      <code class="text-red-500 text-[0.85rem]">`distributedLoad`</code>: A uniformly distributed force along a beam element in the global y and z directions consecutively. For example, an input of [3, 5] means 3 in the y direction
+                      and 5 in the z direction.
                     </li>
                   </ul>
                 </div>
               </div>
               <!-- End Distributed Load -->
 
-              <!-- Assignment -->
-              <div class="hs-accordion" id="geometry-assignment-heading">
+              <!-- analysis-input -->
+              <div class="hs-accordion" id="geometry-analysis-input-heading">
                 <button
                   class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
-                  aria-controls="geometry-assignment-collapse"
+                  aria-controls="geometry-analysis-input-collapse"
                 >
                   <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -434,19 +434,19 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  Assignment
+                  AnalysisInput
                 </button>
 
-                <div id="geometry-assignment-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-assignment-heading">
-                  <pre class="mt-3"><code class="language-ts">type Assignment =
-| PropertyAssignment
-| SupportAssignment
-| LoadAssignment
-| DistributedLoadAssignment;</code></pre>
-                  <p class="text-gray-800">It is a union of all the existing assignments.</p>
+                <div id="geometry-analysis-input-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-analysis-input-heading">
+                  <pre class="mt-3"><code class="language-ts">type AnalysisInput =
+| PropertyAnalysisInput
+| SupportAnalysisInput
+| LoadAnalysisInput
+| DistributedLoadAnalysisInput;</code></pre>
+                  <p class="text-gray-800">It is a union of all the existing analysis inputs.</p>
                 </div>
               </div>
-              <!-- End Assignment -->
+              <!-- End analysis-input -->
 
               <!-- Deformation  -->
               <div class="hs-accordion" id="analysis-deformation-heading">
@@ -460,7 +460,7 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  DeformationResult
+                  DeformationAnalysisOutput
                 </button>
 
                 <!-- Deformation Bar and Beam -->
@@ -484,7 +484,7 @@ const assignments: Assignment[] = [
                         Bar Element
                       </button>
                       <div id="deformation-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="deformation-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type DeformationResult = {
+                        <pre class="mb-3"><code class="language-ts">type DeformationAnalysisOutput = {
   node: number;
   deformation: [number, number, number]
 }</code></pre>
@@ -511,7 +511,7 @@ const assignments: Assignment[] = [
                         Beam Element
                       </button>
                       <div id="deformation-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="deformation-beam-heading">
-                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type DeformationResult = {
+                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type DeformationAnalysisOutput = {
   node: number;
   deformation: [number, number, number, number, number, number];
 }</code></pre>
@@ -539,7 +539,7 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  ReactionResult
+                  ReactionAnalysisOutput
                 </button>
 
                 <!-- Reaction Bar and Beam -->
@@ -563,7 +563,7 @@ const assignments: Assignment[] = [
                         Bar Element
                       </button>
                       <div id="reaction-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="reaction-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type ReactionResult = {
+                        <pre class="mb-3"><code class="language-ts">type ReactionAnalysisOutput = {
   node: number;
   reaction: [number, number, number]
 }</code></pre>
@@ -590,7 +590,7 @@ const assignments: Assignment[] = [
                         Beam Element
                       </button>
                       <div id="reaction-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="reaction-beam-heading">
-                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type ReactionResult = {
+                        <pre class="mb-3 grid grid-cols-1"><code class="language-ts">type ReactionAnalysisOutput = {
   node: number;
   reaction: [number, number, number, number, number, number];
 }</code></pre>
@@ -606,11 +606,11 @@ const assignments: Assignment[] = [
               </div>
               <!-- End Reaction  -->
 
-              <!-- Beam Result  -->
-              <div class="hs-accordion" id="analysis-beam-result-heading">
+              <!-- Beam Output  -->
+              <div class="hs-accordion" id="analysis-beam-output-heading">
                 <button
                   class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                  aria-controls="analysis-beam-result-collapse"
+                  aria-controls="analysis-beam-output-collapse"
                 >
                   <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -618,19 +618,19 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  BeamResult
+                  FrameAnalysisOutput
                 </button>
 
-                <!-- Beam Result Bar and Beam -->
-                <div id="analysis-beam-result-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="analysis-beam-result-heading">
-                  <p class="mb-3">Represents the beam results on elements</p>
+                <!-- Beam Output Bar and Beam -->
+                <div id="analysis-beam-output-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="analysis-beam-output-heading">
+                  <p class="mb-3">Represents the beam outputs on elements</p>
 
                   <div class="hs-accordion-group ps-6" data-hs-accordion-always-open>
-                    <!-- Beam Result Bar Element -->
-                    <div class="hs-accordion" id="beam-result-bar-heading">
+                    <!-- Beam Output Bar Element -->
+                    <div class="hs-accordion" id="beam-output-bar-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="beam-result-bar-collapse"
+                        aria-controls="beam-output-bar-collapse"
                       >
                         <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -641,26 +641,26 @@ const assignments: Assignment[] = [
                         </svg>
                         Bar Element
                       </button>
-                      <div id="beam-result-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="beam-result-bar-heading">
-                        <pre class="mb-3"><code class="language-ts">type BeamResult = {
+                      <div id="beam-output-bar-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="beam-output-bar-heading">
+                        <pre class="mb-3"><code class="language-ts">type FrameAnalysisOutput = {
   element: number;
   normal?: [number, number];
 }</code></pre>
                         <ul class="list-disc list-inside text-gray-800">
                           <li>
                             <code class="text-red-500 text-[0.85rem]">`normal`</code>: Normal force; positive values indicate tension, and negative values indicate compression. While the normal force is a single value, the data structure includes two
-                            numbers to accommodate beam elements, as they may yield different results at each element node. In the case of bar elements, this value is duplicated.
+                            numbers to accommodate beam elements, as they may yield different outputs at each element node. In the case of bar elements, this value is duplicated.
                           </li>
                         </ul>
                       </div>
                     </div>
-                    <!-- End Beam Result Bar Element -->
+                    <!-- End Beam Output Bar Element -->
 
-                    <!-- Beam Result Beam Element -->
-                    <div class="hs-accordion" id="beam-result-beam-heading">
+                    <!-- Beam Output Beam Element -->
+                    <div class="hs-accordion" id="beam-output-beam-heading">
                       <button
                         class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                        aria-controls="beam-result-beam-collapse"
+                        aria-controls="beam-output-beam-collapse"
                       >
                         <svg class="hs-accordion-active:hidden block size-3" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M2.62421 7.86L13.6242 7.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -671,8 +671,8 @@ const assignments: Assignment[] = [
                         </svg>
                         Beam Element
                       </button>
-                      <div id="beam-result-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="beam-result-beam-heading">
-                        <pre class="mb-3"><code class="language-ts">type BeamResult = {
+                      <div id="beam-output-beam-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="beam-output-beam-heading">
+                        <pre class="mb-3"><code class="language-ts">type FrameAnalysisOutput = {
   element: number;
   normal?: [number, number];
   shearY?: [number, number];
@@ -684,7 +684,7 @@ const assignments: Assignment[] = [
                         <ul class="list-disc list-inside text-gray-800">
                           <li>
                             <code class="text-red-500 text-[0.85rem]">`normal`</code>: Normal force; positive values indicate tension, and negative values indicate compression. While the normal force is a single value, the data structure includes two
-                            numbers to accommodate beam elements, as they may yield different results at each element node. In the case of bar elements, this value is duplicated.
+                            numbers to accommodate beam elements, as they may yield different outputs at each element node. In the case of bar elements, this value is duplicated.
                           </li>
                           <li><code class="text-red-500 text-[0.85rem]">`shearY`</code>: Shear forces in the local y-direction.</li>
                           <li><code class="text-red-500 text-[0.85rem]">`shearZ`</code>: Shear force in the local z-direction.</li>
@@ -694,18 +694,18 @@ const assignments: Assignment[] = [
                         </ul>
                       </div>
                     </div>
-                    <!-- End Beam Result Beam Element -->
+                    <!-- End Beam Output Beam Element -->
                   </div>
                 </div>
-                <!-- End Beam Result Bar and Beam -->
+                <!-- End Beam Output Bar and Beam -->
               </div>
-              <!-- End Beam Result  -->
+              <!-- End Beam Output  -->
 
-              <!-- Analysis Results -->
-              <div class="hs-accordion" id="geometry-analysis-results-heading">
+              <!-- Analysis Outputs -->
+              <div class="hs-accordion" id="geometry-analysis-outputs-heading">
                 <button
                   class="hs-accordion-toggle hs-accordion-active:text-primary-light py-3 inline-flex items-center gap-x-3 w-full font-semibold text-start text-gray-800 hover:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-primary-light"
-                  aria-controls="geometry-analysis-results-collapse"
+                  aria-controls="geometry-analysis-outputs-collapse"
                 >
                   <svg class="hs-accordion-active:hidden block size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -713,18 +713,18 @@ const assignments: Assignment[] = [
                   <svg class="hs-accordion-active:block hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m18 15-6-6-6 6" />
                   </svg>
-                  AnalysisResults
+                  AnalysisAnalysisOutputs
                 </button>
 
-                <div id="geometry-analysis-results-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-analysis-results-heading">
-                  <pre class="mt-3"><code class="language-ts">type AnalysisResults = Record<
+                <div id="geometry-analysis-outputs-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="geometry-analysis-outputs-heading">
+                  <pre class="mt-3"><code class="language-ts">type AnalysisOutputs = Record<
   string,
-  (DeformationResult | ReactionResult | BeamResult)[]
+  (DeformationAnalysisOutput | ReactionAnalysisOutput | FrameAnalysisOutput)[]
 ></code></pre>
-                  <p class="text-gray-800">It is a union of all the existing result objects, stored as a record to allow multiple load cases generation.</p>
+                  <p class="text-gray-800">It is a union of all the existing output objects, stored as a record to allow multiple load cases generation.</p>
                 </div>
               </div>
-              <!-- End analysis-results -->
+              <!-- End analysis-outputs -->
             </div>
             <!-- End For Analysis-->
             <a href="https://github.com/madil4/awatif/tree/main/awatif-data-structure" class="text-primary-light hover:underline">source code</a>

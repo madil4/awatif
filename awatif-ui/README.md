@@ -7,13 +7,15 @@ Building an interactive web app from scratch is a challenging task. awatif-ui ta
 - **Extensible**: Built on Three.js library for drawing complex geometry
 
 ## Installation
+
 ```
 npm install awatif-ui
 ```
 
 ## Usage
+
 ```Typescript
-import { app, Node, Element, Assignment, Parameters } from "awatif-ui";
+import { app, Node, Element, AnalysisInput, Parameters, Model } from "awatif-ui";
 import { analyze } from "awatif-fem";
 
 const parameters: Parameters = {
@@ -21,7 +23,7 @@ const parameters: Parameters = {
   zPosition: { value: 0, min: 1, max: 10 },
 };
 
-function onParameterChange(parameters: Parameters) {
+function onParameterChange(parameters: Parameters): Model {
   const nodes: Node[] = [
     [5, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
@@ -31,7 +33,7 @@ function onParameterChange(parameters: Parameters) {
     [0, 1],
     [1, 2],
   ];
-  const assignments: Assignment[] = [
+  const analysisInputs: AnalysisInput[] = [
     {
       node: 0,
       support: [true, true, true],
@@ -56,9 +58,9 @@ function onParameterChange(parameters: Parameters) {
     },
   ];
 
-  const analysisResults = analyze(nodes, elements, assignments);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, assignments, analysisResults };
+  return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
 app({
@@ -68,6 +70,7 @@ app({
 ```
 
 ## Examples
+
 1. Basic portal frame loaded laterally - [View](http://awatif.co/awatif-ui/examples/basic/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/basic/main.ts)
 2. Parametric portal frame loaded laterally - [View](http://awatif.co/awatif-ui/examples/parametric/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/parametric/main.ts)
 3. [More Examples](http://awatif.co/examples/)

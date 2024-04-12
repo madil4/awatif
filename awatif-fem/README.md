@@ -17,7 +17,13 @@ npm install awatif-fem
 ## Usage
 
 ```typescript
-import { analyze, Node, Element, Assignment, AnalysisResults } from "awatif-fem";
+import {
+  analyze,
+  Node,
+  Element,
+  AnalysisInput,
+  AnalysisOutputs,
+} from "awatif-fem";
 
 const nodes: Node[] = [
   [0, 0, 3],
@@ -28,7 +34,7 @@ const elements: Element[] = [
   [0, 1],
   [1, 2],
 ];
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 0,
     support: [false, true, false, true, false, true],
@@ -50,9 +56,9 @@ const assignments: Assignment[] = [
   },
 ];
 
-const analysisResults = analyze(nodes, elements, assignments);
+const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-const expectedAnalysisResults: AnalysisResults = {
+const expectedAnalysisOutputs: AnalysisOutputs = {
   default: [
     {
       node: 0,

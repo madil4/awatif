@@ -1,4 +1,4 @@
-import { app, Node, Element, Parameters } from "../../awatif-ui/";
+import { app, Node, Element, Parameters, Model } from "../../awatif-ui/";
 
 const parameters: Parameters = {
   width: {
@@ -49,7 +49,7 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters) {
+function onParameterChange(parameters: Parameters): Model {
   const nodes: Node[] = [];
   const elements: Element[] = [];
 

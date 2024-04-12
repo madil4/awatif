@@ -1,5 +1,5 @@
 import { analyze } from "../src/analyze";
-import { Node, Element, Assignment } from "../src/types";
+import { Node, Element, AnalysisInput } from "../src/types";
 
 describe("analyze bars", () => {
   test("compute deformations and forces of Logan's book example 3.1", () => {
@@ -14,7 +14,7 @@ describe("analyze bars", () => {
       [1, 2],
       [2, 3],
     ];
-    const assignments: Assignment[] = [
+    const analysisInputs: AnalysisInput[] = [
       {
         node: 0,
         support: [true, false, false],
@@ -44,9 +44,9 @@ describe("analyze bars", () => {
       },
     ];
 
-    const output = analyze(nodes, elements, assignments);
+    const analysisOutput = analyze(nodes, elements, analysisInputs);
 
-    expect(output).toEqual({
+    expect(analysisOutput).toEqual({
       default: [
         { node: 0, deformation: [0, 0, 0] },
         { node: 0, reaction: [-10000, 0, 0] },
@@ -73,7 +73,7 @@ describe("analyze bars", () => {
       [0, 2],
       [0, 3],
     ];
-    const assignments: Assignment[] = [
+    const analysisInputs: AnalysisInput[] = [
       {
         node: 1,
         support: [true, true, false],
@@ -97,9 +97,9 @@ describe("analyze bars", () => {
       })),
     ];
 
-    const output = analyze(nodes, elements, assignments);
+    const analysisOutput = analyze(nodes, elements, analysisInputs);
 
-    expect(output).toEqual({
+    expect(analysisOutput).toEqual({
       default: [
         {
           node: 0,
@@ -130,7 +130,7 @@ describe("analyze bars", () => {
       [0, 2],
       [0, 3],
     ];
-    const assignments: Assignment[] = [
+    const analysisInputs: AnalysisInput[] = [
       {
         node: 0,
         support: [false, true, false],
@@ -168,9 +168,9 @@ describe("analyze bars", () => {
       },
     ];
 
-    const output = analyze(nodes, elements, assignments);
+    const analysisOutput = analyze(nodes, elements, analysisInputs);
 
-    expect(output).toEqual({
+    expect(analysisOutput).toEqual({
       default: [
         {
           node: 0,
@@ -208,7 +208,7 @@ describe("analyze bars", () => {
       [2, 0],
       [3, 0],
     ];
-    const assignments: Assignment[] = [
+    const analysisInputs: AnalysisInput[] = [
       {
         node: 1,
         support: [true, true, true],
@@ -232,9 +232,9 @@ describe("analyze bars", () => {
       })),
     ];
 
-    const output = analyze(nodes, elements, assignments);
+    const analysisOutput = analyze(nodes, elements, analysisInputs);
 
-    expect(output).toEqual({
+    expect(analysisOutput).toEqual({
       default: [
         {
           node: 0,
