@@ -4,18 +4,21 @@ import {
   Element,
   AnalysisInput,
   Parameters,
+  Model,
 } from "../../awatif-ui/src";
 import { analyze } from "../../awatif-fem/";
 import { design } from "../../awatif-design";
-import { DesignInput } from "../../awatif-design/";
-import { frameTimberDesign } from "../../awatif-design/src/ec/timber/";
+import {
+  frameTimberDesign,
+  FrameTimberDesignInput,
+} from "../../awatif-design/src/ec/timber/";
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
   zPosition: { value: 0, min: 1, max: 10 },
 };
 
-function onParameterChange(parameters: Parameters) {
+function onParameterChange(parameters: Parameters): Model {
   const nodes: Node[] = [
     [5, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
@@ -51,7 +54,7 @@ function onParameterChange(parameters: Parameters) {
     },
   ];
 
-  const designInputs: DesignInput[] = [
+  const designInputs: FrameTimberDesignInput[] = [
     {
       element: 1,
       frameTimberDesign: {

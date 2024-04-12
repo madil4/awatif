@@ -3,32 +3,27 @@ import {
   Node,
   Element,
   AnalysisInput,
-  AnalysisOutput,
 } from "../../awatif-data-structure/src";
 import {
   FrameTimberDesignInput,
   FrameTimberDesignOutput,
 } from "./ec/timber/frameTimberDesign";
 
-export type DesignInput = FrameTimberDesignInput;
-export type DesignOutput = FrameTimberDesignOutput;
+type DesignInput = FrameTimberDesignInput;
+type DesignOutput = FrameTimberDesignOutput;
 
-export type DesignFunction = (
-  analysisInput: AnalysisInput,
-  analysisOutput: AnalysisOutput,
-  designInput: DesignInput
-) => DesignOutput;
-
+// Todo: improve the typing of designFunctions
 export function design(
-  nodes: Node[],
-  elements: Element[],
+  nodes: Node[], // needed in the design?
+  elements: Element[], // needed in the design?
   analysisInputs: AnalysisInput[],
   analysisOutputs: AnalysisOutputs,
   designInputs: DesignInput[],
-  designFunctions: DesignFunction[]
+  designFunctions: Function[]
 ): DesignOutput[] {
   const designOutputs: DesignOutput[] = [];
 
+  // Todo: optimize these loops
   designFunctions.forEach((designFunction) => {
     designInputs.forEach((designInput) => {
       if (designFunction.name in designInput) {

@@ -2,7 +2,6 @@ import {
   FrameAnalysisInput,
   FrameAnalysisOutput,
 } from "../../../../awatif-data-structure";
-import { DesignFunction } from "../../design";
 
 export type FrameTimberDesignInput = {
   element: number;
@@ -19,7 +18,7 @@ export type FrameTimberDesignOutput = {
   };
 };
 
-export const frameTimberDesign: DesignFunction = (
+export const frameTimberDesign = (
   analysisInput: FrameAnalysisInput,
   analysisOutput: FrameAnalysisOutput,
   designInput: FrameTimberDesignInput
