@@ -17,12 +17,12 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "devDependencies": {
-    "@types/three": "^0.162.0",
-    "typescript": "^5.4.2",
-    "vite": "^5.1.5"
+    "@types/three": "~0.162.0",
+    "typescript": "~5.4.2",
+    "vite": "~5.1.5"
   },
   "dependencies": {
-    "awatif-fem": "^2.0.12",
-    "three": "^0.162.0"
+    "awatif-fem": "~2.0.12",
+    "three": "~0.162.0"
   }
 }

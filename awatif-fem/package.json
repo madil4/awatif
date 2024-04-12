@@ -1,6 +1,6 @@
 {
   "name": "awatif-fem",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Awatif Finite Element Method (FEM) Solver",
   "type": "module",
   "main": "./dist/A6KC6G5S.js",
@@ -25,14 +25,14 @@
     "build": "node build.mjs"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.3",
-    "esbuild": "^0.18.6",
-    "jest": "^29.6.1",
-    "ts-jest": "^29.1.1"
+    "@types/jest": "~29.5.3",
+    "esbuild": "~0.18.6",
+    "jest": "~29.6.1",
+    "ts-jest": "~29.1.1"
   },
   "dependencies": {
-    "awatif-data-structure": "^0.0.8",
-    "jwt-decode": "^4.0.0",
-    "mathjs": "^11.8.0"
+    "awatif-data-structure": "~0.0.9",
+    "jwt-decode": "~4.0.0",
+    "mathjs": "~11.8.0"
   }
 }
