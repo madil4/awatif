@@ -2,29 +2,22 @@ import { State } from "vanjs-core";
 import {
   Node,
   Element,
-  PropertyAssignment,
-  LoadAssignment,
-  DistributedLoadAssignment,
-  BeamResult,
-  DeformationResult,
-  ReactionResult,
-  Assignment,
-  AnalysisResults,
-  SupportAssignment,
-  PositionResult,
+  AnalysisInput,
+  FrameAnalysisInput,
+  LoadAnalysisInput,
+  DistributedLoadAnalysisInput,
+  FrameAnalysisOutput,
+  SupportAnalysisInput,
+  AnalysisOutputs,
+  DeformationAnalysisOutput,
+  ReactionAnalysisOutput,
+  PositionAnalysisOutput,
 } from "../../awatif-data-structure";
 
 export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
-};
-
-export type Model = {
-  nodes?: Node[];
-  elements?: Element[];
-  assignments?: Assignment[];
-  analysisResults?: AnalysisResults;
 };
 
 export type Parameters = {
@@ -37,6 +30,20 @@ export type Parameters = {
     folder?: string;
   };
 };
+
+export type Model = {
+  nodes?: Node[];
+  elements?: Element[];
+  analysisInputs?: AnalysisInput[];
+  analysisOutputs?: AnalysisOutputs;
+};
+
+export type ModelState = State<{
+  nodes: Node[];
+  elements: Element[];
+  analysisInputs: ProcessedAnalysisInputs;
+  analysisOutputs: ProcessedAnalysisOutputs;
+}>;
 
 export type Settings = {
   gridSize?: number;
@@ -72,33 +79,30 @@ export type SettingsState = {
   dynamicSettings: State<Record<"time" | "timeStep", number>>;
 };
 
-export type ProcessedAssignments = {
-  elasticities: Map<number, PropertyAssignment["elasticity"]>;
-  areas: Map<number, PropertyAssignment["area"]>;
-  loads: Map<number, LoadAssignment["load"]>;
-  supports: Map<number, SupportAssignment["support"]>;
-  momentOfInertiaZs: Map<number, PropertyAssignment["momentOfInertiaZ"]>;
-  momentOfInertiaYs: Map<number, PropertyAssignment["momentOfInertiaY"]>;
-  shearModuluses: Map<number, PropertyAssignment["shearModulus"]>;
-  torsionalConstants: Map<number, PropertyAssignment["torsionalConstant"]>;
-  distributedLoads: Map<number, DistributedLoadAssignment["distributedLoad"]>;
+// refactor this in awatif-functions lib
+export type ProcessedAnalysisInputs = {
+  elasticities: Map<number, FrameAnalysisInput["elasticity"]>;
+  areas: Map<number, FrameAnalysisInput["area"]>;
+  loads: Map<number, LoadAnalysisInput["load"]>;
+  supports: Map<number, SupportAnalysisInput["support"]>;
+  momentOfInertiaZs: Map<number, FrameAnalysisInput["momentOfInertiaZ"]>;
+  momentOfInertiaYs: Map<number, FrameAnalysisInput["momentOfInertiaY"]>;
+  shearModuluses: Map<number, FrameAnalysisInput["shearModulus"]>;
+  torsionalConstants: Map<number, FrameAnalysisInput["torsionalConstant"]>;
+  distributedLoads: Map<
+    number,
+    DistributedLoadAnalysisInput["distributedLoad"]
+  >;
 };
 
-export type ProcessedAnalysisResults = {
-  normal: Map<number, BeamResult["normal"]>;
-  shearY: Map<number, BeamResult["shearY"]>;
-  shearZ: Map<number, BeamResult["shearZ"]>;
-  torsion: Map<number, BeamResult["torsion"]>;
-  bendingY: Map<number, BeamResult["bendingY"]>;
-  bendingZ: Map<number, BeamResult["bendingZ"]>;
-  deformation: Map<number, DeformationResult["deformation"]>;
-  position: Map<number, PositionResult["position"][]>;
-  reaction: Map<number, ReactionResult["reaction"]>;
+export type ProcessedAnalysisOutputs = {
+  normal: Map<number, FrameAnalysisOutput["normal"]>;
+  shearY: Map<number, FrameAnalysisOutput["shearY"]>;
+  shearZ: Map<number, FrameAnalysisOutput["shearZ"]>;
+  torsion: Map<number, FrameAnalysisOutput["torsion"]>;
+  bendingY: Map<number, FrameAnalysisOutput["bendingY"]>;
+  bendingZ: Map<number, FrameAnalysisOutput["bendingZ"]>;
+  deformation: Map<number, DeformationAnalysisOutput["deformation"]>;
+  position: Map<number, PositionAnalysisOutput["position"][]>;
+  reaction: Map<number, ReactionAnalysisOutput["reaction"]>;
 };
-
-export type ModelState = State<{
-  nodes: Node[];
-  elements: Element[];
-  assignments: ProcessedAssignments;
-  analysisResults: ProcessedAnalysisResults;
-}>;

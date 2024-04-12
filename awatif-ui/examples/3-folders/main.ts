@@ -1,10 +1,10 @@
 import {
   app,
-  Assignment,
-  Element,
-  Node,
   Parameters,
-  PropertyAssignment,
+  Node,
+  Element,
+  AnalysisInput,
+  FrameAnalysisInput,
 } from "../../src";
 import { analyze } from "../../../awatif-fem";
 
@@ -33,7 +33,7 @@ function onParameterChange(parameters: Parameters) {
     [2, 3],
   ];
 
-  const beamProperty: PropertyAssignment = {
+  const frameInput: FrameAnalysisInput = {
     element: 0,
     area: area,
     elasticity: 10,
@@ -42,18 +42,18 @@ function onParameterChange(parameters: Parameters) {
     shearModulus: 10,
     torsionalConstant: 10,
   };
-  const assignments: Assignment[] = [
+  const analysisInputs: AnalysisInput[] = [
     { node: 0, support: [true, true, true, true, true, true] },
     { node: 3, support: [true, true, true, true, true, true] },
     { node: 2, load: [xLoad, 0, 0, 0, 0, 0] },
-    { ...beamProperty, element: 0 },
-    { ...beamProperty, element: 1 },
-    { ...beamProperty, element: 2 },
+    { ...frameInput, element: 0 },
+    { ...frameInput, element: 1 },
+    { ...frameInput, element: 2 },
   ];
 
-  const analysisResults = analyze(nodes, elements, assignments);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, assignments, analysisResults };
+  return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
 app({ parameters, onParameterChange, settings: { deformedShape: true } });

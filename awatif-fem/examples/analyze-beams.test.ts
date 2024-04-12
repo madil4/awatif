@@ -1,5 +1,5 @@
 import { analyze } from "../src/analyze";
-import { Node, Element, Assignment } from "../src/types";
+import { Node, Element, AnalysisInput } from "../src/types";
 
 describe("analyze beams", () => {
   describe("nodal forces", () => {
@@ -18,7 +18,7 @@ describe("analyze beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 1,
           support: [false, true, false, false, false, false],
@@ -43,9 +43,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           {
             node: 0,
@@ -94,7 +94,7 @@ describe("analyze beams", () => {
         [2, 3],
         [3, 4],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [true, true, false, false, false, true],
@@ -122,9 +122,9 @@ describe("analyze beams", () => {
         })),
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           { node: 0, reaction: [0, 25000, 0, 0, 0, 37500.00000000001] },
@@ -193,7 +193,7 @@ describe("analyze beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [false, true, false, false, false, true],
@@ -218,9 +218,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           { node: 0, reaction: [0, 10000, 0, 0, 0, 12500] },
@@ -269,7 +269,7 @@ describe("analyze beams", () => {
         [L, 0, 0],
       ];
       const elements: Element[] = [[0, 1]];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [false, true, true, false, true, true],
@@ -286,9 +286,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           {
@@ -330,7 +330,7 @@ describe("analyze beams", () => {
         [L, 0, 0],
       ];
       const elements: Element[] = [[0, 1]];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [false, true, false, false, false, true],
@@ -350,9 +350,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           { node: 0, reaction: [0, 23, 0, 0, 0, 64.99999999999997] },
@@ -387,7 +387,7 @@ describe("analyze beams", () => {
         [1, 2],
         [2, 3],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [true, true, false, false, false, true],
@@ -424,9 +424,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           {
@@ -499,7 +499,7 @@ describe("analyze beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [true, true, false, false, false, true],
@@ -526,9 +526,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           {
@@ -593,7 +593,7 @@ describe("analyze beams", () => {
         [0, 2],
         [0, 3],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 1,
           support: [false, true, false, true, false, true],
@@ -619,9 +619,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           {
             node: 0,
@@ -693,7 +693,7 @@ describe("analyze beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 0,
           support: [false, true, false, true, false, true],
@@ -715,9 +715,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
           {
@@ -778,7 +778,7 @@ describe("analyze beams", () => {
         [2, 0],
         [3, 0],
       ];
-      const assignments: Assignment[] = [
+      const analysisInputs: AnalysisInput[] = [
         {
           node: 1,
           support: [true, true, true, true, true, true],
@@ -806,9 +806,9 @@ describe("analyze beams", () => {
         },
       ];
 
-      const output = analyze(nodes, elements, assignments);
+      const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-      expect(output).toEqual({
+      expect(analysisOutputs).toEqual({
         default: [
           {
             node: 0,

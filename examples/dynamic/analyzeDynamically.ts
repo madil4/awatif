@@ -1,20 +1,20 @@
 import {
-  PositionResult,
-  AnalysisResults,
-  LumpedMassAssignment,
-  PropertyAssignment,
+  PositionAnalysisOutput,
+  AnalysisOutputs,
+  MassAnalysisInput,
+  FrameAnalysisInput,
 } from "../../awatif-data-structure";
-import { Node, Element, Assignment } from "../../awatif-ui/";
+import { Node, Element, AnalysisInput } from "../../awatif-ui/";
 import { getTransformationMatrix } from "../../awatif-ui/src/utils/getTransformationMatrix.ts";
 import * as math from "mathjs";
 
 export function analyzeDynamically(
   nodes: Node[],
   elements: Element[],
-  assignments: Assignment[],
+  analysisInputs: AnalysisInput[],
   { time: t, timeStep: dt }: { time: number; timeStep: number }
-): AnalysisResults {
-  const analysisResults: AnalysisResults = {};
+): AnalysisOutputs {
+  const analysisOutputs: AnalysisOutputs = {};
   const numSteps: number = math.floor(t / dt);
 
   // define position, velocity, and mass vectors
@@ -22,10 +22,10 @@ export function analyzeDynamically(
   let v = Array(x.length).fill(0) as number[];
   let m = nodes
     .map((_, nid) => {
-      const massAssignment = assignments.find(
+      const massAnalysisInput = analysisInputs.find(
         (a) => "mass" in a && "node" in a && a.node === nid
-      ) as LumpedMassAssignment;
-      return massAssignment?.mass ?? [0, 0, 0];
+      ) as MassAnalysisInput;
+      return massAnalysisInput?.mass ?? [0, 0, 0];
     })
     .flat();
 
@@ -37,7 +37,7 @@ export function analyzeDynamically(
     x = math.add(
       y,
       math
-        .chain(F(x, nodes, elements, assignments))
+        .chain(F(x, nodes, elements, analysisInputs))
         .dotDivide(m)
         .multiply(dt ** 2)
         .done()
@@ -46,7 +46,7 @@ export function analyzeDynamically(
     v = math.chain(x).subtract(xn).divide(dt).done() as number[];
 
     // enforce constraints
-    assignments.forEach((a) => {
+    analysisInputs.forEach((a) => {
       if ("node" in a && "support" in a) {
         const nid = a.node;
         a.support.forEach((s, i) => {
@@ -56,24 +56,24 @@ export function analyzeDynamically(
     });
 
     // store
-    let result: PositionResult[] = [];
+    let output: PositionAnalysisOutput[] = [];
     const dofs: any = getDOFs(nodes);
 
     nodes.forEach((_, nid) => {
       const currPosition = math.subset(
         x,
         math.index(dofs[nid])
-      ) as PositionResult["position"];
-      result.push({
+      ) as PositionAnalysisOutput["position"];
+      output.push({
         node: nid,
         position: currPosition,
       });
     });
 
-    analysisResults[step] = result;
+    analysisOutputs[step] = output;
   }
 
-  return analysisResults;
+  return analysisOutputs;
 }
 
 // utility functions
@@ -81,13 +81,13 @@ function F(
   x: number[],
   nodes: Node[],
   elements: Element[],
-  assignments: Assignment[]
+  analysisInputs: AnalysisInput[]
 ): number[] {
   let f: number[] = Array(x.length).fill(0);
 
   // external force
   let f_ext: number[] = Array(x.length).fill(0);
-  assignments.forEach((item) => {
+  analysisInputs.forEach((item) => {
     if ("load" in item) {
       item.load.forEach((loadValue, index) => {
         const position = item.node * item.load.length + index;
@@ -117,12 +117,12 @@ function F(
     const d2: number =
       math.multiply(T, x_n2)[0] - math.multiply(Ti, nodes[e[1]])[0];
 
-    const property = assignments.find(
-      (assignment) =>
-        "element" in assignment &&
-        "elasticity" in assignment &&
-        assignment.element === eid
-    ) as PropertyAssignment;
+    const property = analysisInputs.find(
+      (analysisInput) =>
+        "element" in analysisInput &&
+        "elasticity" in analysisInput &&
+        analysisInput.element === eid
+    ) as FrameAnalysisInput;
 
     const k = property?.elasticity;
 

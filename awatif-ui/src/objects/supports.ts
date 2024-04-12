@@ -19,7 +19,7 @@ export function supports(
 
   van.derive(() => (nodesCache = nodes.val));
 
-  // on settings.support, model.assignment, and model.nodes update
+  // on settings.support, model.analysisInputs, and model.nodes update
   van.derive(() => {
     settings.deformedShape.val; // trigger update when changed
     group.visible = settings.supports.val;
@@ -27,7 +27,7 @@ export function supports(
     if (!settings.supports.val) return;
 
     group.clear();
-    model.val.assignments.supports.forEach((_, index) => {
+    model.val.analysisInputs.supports.forEach((_, index) => {
       const sphere = new THREE.Mesh(geometry, material);
 
       sphere.position.set(...nodesCache[index]);

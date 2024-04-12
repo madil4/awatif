@@ -1,7 +1,7 @@
-import { app, Parameters } from "../../awatif-ui";
+import { app, Model, Parameters } from "../../awatif-ui";
 import { createTruss } from "./createTruss";
 import { analyze } from "../../awatif-fem";
-import { Assignment, Node, Element } from "../../awatif-data-structure";
+import { AnalysisInput, Node, Element } from "../../awatif-data-structure";
 
 export const parameters: Parameters = {
   span: {
@@ -132,7 +132,7 @@ export const parameters: Parameters = {
   },
 };
 
-export const onParameterChange = (parameters: any) => {
+export const onParameterChange = (parameters: Parameters): Model => {
   let span = parameters.span.value;
   let spacing = parameters.spacing.value;
   const webType = parameters.webType.value;
@@ -152,7 +152,7 @@ export const onParameterChange = (parameters: any) => {
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
-  let assignments: Assignment[] = [];
+  let analysisInputs: AnalysisInput[] = [];
   let supportIndices: number[] = [];
   let loadIndices: number[] = [];
   let chordsIndices: number[] = [];
@@ -378,24 +378,24 @@ export const onParameterChange = (parameters: any) => {
     }
   }
 
-  // assignments - supports
-  assignments.push(
+  // analysisInputs - supports
+  analysisInputs.push(
     ...supportIndices.map((i) => ({
       node: i,
       support: [true, true, true] as [boolean, boolean, boolean],
     }))
   );
 
-  // assignments - loads
-  assignments.push(
+  // analysisInputs - loads
+  analysisInputs.push(
     ...loadIndices.map((i) => ({
       node: i,
       load: [0, 0, -uniformLoad * spacing] as [number, number, number],
     }))
   );
 
-  // assignments - properties
-  assignments.push(
+  // analysisInputs - properties
+  analysisInputs.push(
     ...chordsIndices.map((i) => ({
       element: i,
       area: chordsArea,
@@ -408,9 +408,9 @@ export const onParameterChange = (parameters: any) => {
     }))
   );
 
-  const analysisResults = analyze(nodes, elements, assignments);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, assignments, analysisResults };
+  return { nodes, elements, analysisInputs, analysisOutputs };
 };
 
 // helpers

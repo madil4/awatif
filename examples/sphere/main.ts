@@ -1,4 +1,4 @@
-import { app, Node, Element, Parameters } from "../../awatif-ui/";
+import { app, Node, Element, Parameters, Model } from "../../awatif-ui/";
 
 export const parameters: Parameters = {
   radius: {
@@ -21,7 +21,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters) {
+export function onParameterChange(parameters: Parameters): Model {
   const radius = parameters.radius.value;
   const points = parameters.points.value;
   const circumferences = parameters.circumferences.value;
@@ -72,7 +72,7 @@ export function onParameterChange(parameters: Parameters) {
 
   nodes = nodes.map((v) => [10 + v[0], 10 + v[1], v[2]]); // center model in the grid
 
-  return { nodes: nodes, elements };
+  return { nodes, elements };
 }
 
 app({

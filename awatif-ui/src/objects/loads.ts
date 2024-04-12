@@ -17,7 +17,7 @@ export function loads(
 
   van.derive(() => (nodesCache = nodes.val));
 
-  // on settings.loads, model.assignment, and model.nodes update: replace arrows
+  // on settings.loads, model.analysisInputs, and model.nodes update: replace arrows
   van.derive(() => {
     settings.deformedShape.val; // trigger update when changed
     group.visible = settings.loads.val;
@@ -26,7 +26,7 @@ export function loads(
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
-    model.val.assignments.loads.forEach((load, index) => {
+    model.val.analysisInputs.loads.forEach((load, index) => {
       const arrow = new THREE.ArrowHelper(
         new THREE.Vector3(...load).normalize(),
         new THREE.Vector3(...nodesCache[index]),

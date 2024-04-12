@@ -1,6 +1,6 @@
 {
   "name": "awatif-fem",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "description": "Awatif Finite Element Method (FEM) Solver",
   "type": "module",
   "main": "./dist/A6KC6G5S.js",
@@ -31,7 +31,7 @@
     "ts-jest": "^29.1.1"
   },
   "dependencies": {
-    "awatif-data-structure": "^0.0.4",
+    "awatif-data-structure": "^0.0.8",
     "jwt-decode": "^4.0.0",
     "mathjs": "^11.8.0"
   }

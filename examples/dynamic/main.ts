@@ -1,4 +1,4 @@
-import { app, Node, Element, Assignment } from "../../awatif-ui/";
+import { app, Node, Element, AnalysisInput, Model } from "../../awatif-ui/";
 import { analyzeDynamically } from "./analyzeDynamically.ts";
 
 const nodes: Node[] = [
@@ -12,7 +12,7 @@ const elements: Element[] = [
   [1, 2],
 ];
 
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 0,
     support: [true, true, true],
@@ -48,15 +48,20 @@ const dynamicSettings = {
   timeStep: 0.001,
 };
 
-const analysisResults = analyzeDynamically(
+const analysisOutputs = analyzeDynamically(
   nodes,
   elements,
-  assignments,
+  analysisInputs,
   dynamicSettings
 );
 
 app({
-  onParameterChange: () => ({ nodes, elements, assignments, analysisResults }),
+  onParameterChange: (): Model => ({
+    nodes,
+    elements,
+    analysisInputs,
+    analysisOutputs,
+  }),
   settings: {
     gridSize: 10,
     dynamic: true,

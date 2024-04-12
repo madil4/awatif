@@ -52,7 +52,7 @@ export function elementResults(
     group.children.forEach((c) => (c as IResultObject).dispose());
     group.clear();
 
-    model.val.analysisResults[resultType].forEach((result, index) => {
+    model.val.analysisOutputs[resultType].forEach((result, index) => {
       const element = model.val.elements[index];
       const node1 = nodesCache[element[0]];
       const node2 = nodesCache[element[1]];
@@ -60,7 +60,7 @@ export function elementResults(
         new THREE.Vector3(...node1)
       );
       const maxResult = Math.max(
-        ...[...model.val.analysisResults[resultType].values()]
+        ...[...model.val.analysisOutputs[resultType].values()]
           .flat()
           .map((n) => Math.abs(n ?? 0))
       );

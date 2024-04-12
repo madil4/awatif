@@ -1,4 +1,11 @@
-import { app, Node, Element, Assignment, Parameters } from "../../awatif-ui/";
+import {
+  app,
+  Node,
+  Element,
+  AnalysisInput,
+  Parameters,
+  Model,
+} from "../../awatif-ui/";
 import { analyze } from "./../../awatif-fem";
 
 export const parameters: Parameters = {
@@ -38,7 +45,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters) {
+export function onParameterChange(parameters: Parameters): Model {
   const dx = parameters.dx.value;
   const dy = parameters.dy.value;
   const dz = parameters.dz.value;
@@ -76,7 +83,7 @@ export function onParameterChange(parameters: Parameters) {
     elements.push([i, i + 7], [i + 1, i + 6]);
   }
 
-  const assignments: Assignment[] = [
+  const analysisInputs: AnalysisInput[] = [
     ...elements.map((_, i) => ({
       element: i,
       area: 10,
@@ -104,9 +111,9 @@ export function onParameterChange(parameters: Parameters) {
     },
   ];
 
-  const analysisResults = analyze(nodes, elements, assignments);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, assignments, analysisResults };
+  return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
 app({

@@ -13,7 +13,7 @@ npm install awatif-data-structure
 ## Usage
 
 ```typescript
-import { Element, Node, Assignment } from "awatif-data-structure";
+import { Element, Node, AnalysisInput } from "awatif-data-structure";
 
 const nodes: Node[] = [
   [0, 0, 0],
@@ -26,7 +26,7 @@ const elements: Element[] = [
   [1, 2],
   [2, 3],
 ];
-const assignments: Assignment[] = [
+const analysisInputs: AnalysisInput[] = [
   {
     node: 0,
     load: [0, -50, 0],
