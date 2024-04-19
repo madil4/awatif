@@ -66,6 +66,7 @@ function onParameterChange(parameters: Parameters): Model {
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
+  // @ts-ignore
   const designOutputs = design(
     nodes,
     elements,

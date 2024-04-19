@@ -14,7 +14,9 @@ type DesignOutput = FrameTimberDesignOutput;
 
 // Todo: improve the typing of designFunctions
 export function design(
+  // @ts-ignore
   nodes: Node[], // needed in the design?
+  // @ts-ignore
   elements: Element[], // needed in the design?
   analysisInputs: AnalysisInput[],
   analysisOutputs: AnalysisOutputs,
