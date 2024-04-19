@@ -5,7 +5,7 @@ import {
   FrameAnalysisInput,
 } from "../../awatif-data-structure";
 import { Node, Element, AnalysisInput } from "../../awatif-ui/";
-import { getTransformationMatrix } from "../../awatif-ui/src/utils/getTransformationMatrix.ts";
+import { getTransformationMatrix } from "../../awatif-ui/src/objects/utils/getTransformationMatrix.ts";
 import * as math from "mathjs";
 
 export function analyzeDynamically(

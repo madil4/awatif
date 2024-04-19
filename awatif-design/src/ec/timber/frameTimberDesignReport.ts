@@ -5,7 +5,9 @@ import {
 } from "./frameTimberDesign";
 
 export function frameTimberDesignReport(
+  // @ts-ignore
   designInput: FrameTimberDesignInput,
+  // @ts-ignore
   designOutput: FrameTimberDesignOutput
 ): TemplateResult {
   return html`<ul>

@@ -18,7 +18,7 @@ export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
-  reports: [Function];
+  reports?: [Function];
 };
 
 export type Parameters = {
