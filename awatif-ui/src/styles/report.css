@@ -1,0 +1,44 @@
+.topBar {
+  position: absolute;
+  top: 0.3rem;
+  right: 1rem;
+}
+
+.topBar a {
+  color: white;
+  text-decoration: none;
+}
+
+canvas {
+  position: absolute;
+}
+
+dialog {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+dialog .dialog-content {
+  position: relative;
+  background-color: #fff;
+  margin: auto;
+  padding: 2px 16px;
+  width: 80%;
+  height: 95%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+dialog .close {
+  color: #000;
+  float: right;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}

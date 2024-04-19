@@ -6,11 +6,13 @@ import { timeline } from "./timeline";
 import { settings } from "./settings";
 import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
+import { report } from "./report";
 
 export function app({
   parameters: parameterObj,
   onParameterChange,
   settings: settingsObj,
+  reports,
 }: App) {
   // init
   const model = onParameterChange?.(parameterObj ?? {});
@@ -38,6 +40,7 @@ export function app({
   viewer(modelState, settingsState);
   settings(settingsState);
   if (settingsObj?.dynamic) timeline(modelState, settingsState);
+  if (reports?.length) report(reports);
 
   // on parameter change
   if (parameterObj && onParameterChange) {
