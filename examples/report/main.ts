@@ -10,6 +10,7 @@ import { analyze } from "../../awatif-fem/";
 import { design } from "../../awatif-design";
 import {
   frameTimberDesign,
+  frameTimberDesignReport,
   FrameTimberDesignInput,
 } from "../../awatif-design/src/ec/timber/";
 
@@ -77,4 +78,4 @@ function onParameterChange(parameters: Parameters): Model {
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
-app({ parameters, onParameterChange });
+app({ parameters, onParameterChange, reports: [frameTimberDesignReport] });
