@@ -3,6 +3,7 @@ import { ModelState, SettingsState } from "./types";
 
 import "./styles/timeline.css";
 
+// todo: convert from vanjs templates to lit-html
 export function timeline(modelState: ModelState, settingsState: SettingsState) {
   const { button, div, input } = van.tags;
 

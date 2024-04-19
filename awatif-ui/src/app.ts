@@ -51,6 +51,7 @@ export function app({
   }
 }
 
+// utils functions
 const getModelState = (model?: Model): ModelState["val"] => ({
   nodes: model?.nodes ?? [],
   elements: model?.elements ?? [],

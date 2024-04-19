@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Node } from "../../../../awatif-data-structure";
 import { Text } from "../Text";
-import { getCenter } from "../../utils/getCenter";
+import { getCenter } from "../utils/getCenter";
 import { IResultObject } from "./IResultObject";
 
 export class ConstantResult extends THREE.Group implements IResultObject {
