@@ -13,12 +13,13 @@ import {
   ReactionAnalysisOutput,
   PositionAnalysisOutput,
 } from "../../awatif-data-structure";
+import { TemplateResult } from "lit-html";
 
 export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
-  reports?: [Function];
+  reports?: ((i: any, b: any) => TemplateResult)[];
 };
 
 export type Parameters = {
@@ -37,6 +38,8 @@ export type Model = {
   elements?: Element[];
   analysisInputs?: AnalysisInput[];
   analysisOutputs?: AnalysisOutputs;
+  designInputs: any[];
+  designOutputs: any[];
 };
 
 export type ModelState = State<{

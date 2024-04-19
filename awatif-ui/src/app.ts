@@ -40,7 +40,8 @@ export function app({
   viewer(modelState, settingsState);
   settings(settingsState);
   if (settingsObj?.dynamic) timeline(modelState, settingsState);
-  if (reports?.length) report(reports);
+  if (reports?.length)
+    report(reports, model?.designInputs ?? [], model?.designOutputs ?? []);
 
   // on parameter change
   if (parameterObj && onParameterChange) {

@@ -25,20 +25,28 @@ dialog {
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
-dialog .dialog-content {
-  position: relative;
-  background-color: #fff;
-  margin: auto;
-  padding: 2px 16px;
-  width: 80%;
-  height: 95%;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
 dialog .close {
   color: #000;
   float: right;
+  margin-top: -5px;
   font-size: 25px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.dialog-content {
+  position: relative;
+  background-color: #fff;
+  margin: auto;
+  width: 80%;
+  height: 95%;
+}
+
+.dialog-header {
+  background: lightgray;
+  padding: 15px;
+}
+
+.dialog-body {
+  padding: 0 15px;
 }

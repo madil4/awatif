@@ -57,6 +57,12 @@ function onParameterChange(parameters: Parameters): Model {
 
   const designInputs: FrameTimberDesignInput[] = [
     {
+      element: 0,
+      frameTimberDesign: {
+        strength: 10,
+      },
+    },
+    {
       element: 1,
       frameTimberDesign: {
         strength: 10,
@@ -76,7 +82,14 @@ function onParameterChange(parameters: Parameters): Model {
     [frameTimberDesign]
   );
 
-  return { nodes, elements, analysisInputs, analysisOutputs };
+  return {
+    nodes,
+    elements,
+    analysisInputs,
+    analysisOutputs,
+    designInputs,
+    designOutputs,
+  };
 }
 
 app({ parameters, onParameterChange, reports: [frameTimberDesignReport] });

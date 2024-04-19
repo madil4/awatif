@@ -5,12 +5,12 @@ import {
 } from "./frameTimberDesign";
 
 export function frameTimberDesignReport(
-  // @ts-ignore
   designInput: FrameTimberDesignInput,
-  // @ts-ignore
   designOutput: FrameTimberDesignOutput
 ): TemplateResult {
   return html`<ul>
     <li>Here are the result:</li>
+    <li>${designInput}</li>
+    <li>${designOutput}</li>
   </ul>`;
 }
