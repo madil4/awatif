@@ -38,8 +38,8 @@ export type Model = {
   elements?: Element[];
   analysisInputs?: AnalysisInput[];
   analysisOutputs?: AnalysisOutputs;
-  designInputs: any[];
-  designOutputs: any[];
+  designInputs?: any[];
+  designOutputs?: any[];
 };
 
 export type ModelState = State<{
@@ -47,6 +47,8 @@ export type ModelState = State<{
   elements: Element[];
   analysisInputs: ProcessedAnalysisInputs;
   analysisOutputs: ProcessedAnalysisOutputs;
+  designInputs: Map<number, any>;
+  designOutputs: Map<number, any>;
 }>;
 
 export type Settings = {

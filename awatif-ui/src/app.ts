@@ -7,6 +7,7 @@ import { settings } from "./settings";
 import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
 import { report } from "./report";
+import { processDesignData } from "./utils/processDesignData";
 
 export function app({
   parameters: parameterObj,
@@ -40,8 +41,7 @@ export function app({
   viewer(modelState, settingsState);
   settings(settingsState);
   if (settingsObj?.dynamic) timeline(modelState, settingsState);
-  if (reports?.length)
-    report(reports, model?.designInputs ?? [], model?.designOutputs ?? []);
+  if (reports?.length) report(reports, modelState);
 
   // on parameter change
   if (parameterObj && onParameterChange) {
@@ -63,4 +63,6 @@ const getModelState = (model?: Model): ModelState["val"] => ({
   analysisOutputs: processAnalysisOutputs(
     model?.analysisOutputs ?? { default: [] }
   ),
+  designInputs: processDesignData(model?.designInputs ?? []),
+  designOutputs: processDesignData(model?.designOutputs ?? []),
 });
