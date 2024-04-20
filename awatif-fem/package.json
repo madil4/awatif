@@ -3,7 +3,7 @@
   "version": "0.0.10",
   "description": "Awatif Finite Element Method (FEM) Solver",
   "type": "module",
-  "main": "./dist/BHUODB6U.js",
+  "main": "./build/BHUODB6U.js",
   "types": "./src/types.d.ts",
   "keywords": [
     "awatif",

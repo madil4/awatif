@@ -2,7 +2,7 @@ import * as esbuild from "esbuild";
 
 await esbuild.build({
   entryPoints: ["src/analyze.ts"],
-  outdir: "dist",
+  outdir: "build",
   entryNames: "[hash]",
   bundle: true,
   format: "esm",
