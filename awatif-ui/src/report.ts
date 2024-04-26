@@ -1,9 +1,9 @@
 import { TemplateResult, html, render } from "lit-html";
 import { ref, createRef } from "lit-html/directives/ref.js";
-
-import "./styles/report.css";
 import { ModelState } from "./types";
 import van from "vanjs-core";
+
+import "./styles/report.css";
 
 export const report = (
   reports: ((i: any, b: any) => TemplateResult)[],
@@ -36,7 +36,7 @@ export const report = (
     )}
   </select>`;
 
-  const dialogTemp = html`<dialog ref=${ref(dialogElm)}>
+  const dialogTemp = html`<dialog open ref=${ref(dialogElm)}>
     <div class="dialog-header">
       <span class="close" @click=${onDialogClose}>&times;</span>
       ${elements}

@@ -55,24 +55,27 @@ function onParameterChange(parameters: Parameters): Model {
     },
   ];
 
+  const frameTimberDesignInput: FrameTimberDesignInput["frameTimberDesign"] = {
+    tensileStrengthParallel: 20,
+    serviceClass: "1",
+    loadDuration: "permanent",
+    material: "Solid timber",
+    gammaG: 1,
+    gammaM: 1.3,
+  };
   const designInputs: FrameTimberDesignInput[] = [
     {
       element: 0,
-      frameTimberDesign: {
-        strength: 10,
-      },
+      frameTimberDesign: frameTimberDesignInput,
     },
     {
       element: 1,
-      frameTimberDesign: {
-        strength: 10,
-      },
+      frameTimberDesign: frameTimberDesignInput,
     },
   ];
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  // @ts-ignore
   const designOutputs = design(
     nodes,
     elements,
