@@ -15,6 +15,10 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "dependencies": {
+    "katex": "^0.16.10",
     "lit-html": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.16.7"
   }
 }

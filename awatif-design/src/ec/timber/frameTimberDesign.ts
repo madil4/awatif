@@ -46,7 +46,7 @@ export const frameTimberDesign = (
   const kmod = getKmod(i.serviceClass, i.loadDuration, i.material);
   const capacityStress = (i.tensileStrengthParallel * kmod) / i.gammaM;
 
-  const utilizationRatio = appliedStress / capacityStress;
+  const utilizationRatio = Math.abs(appliedStress / capacityStress);
 
   return {
     element: designInput.element,
