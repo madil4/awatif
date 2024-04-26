@@ -36,7 +36,7 @@ export const report = (
     )}
   </select>`;
 
-  const dialogTemp = html`<dialog open ref=${ref(dialogElm)}>
+  const dialogTemp = html`<dialog ref=${ref(dialogElm)}>
     <div class="dialog-header">
       <span class="close" @click=${onDialogClose}>&times;</span>
       ${elements}
