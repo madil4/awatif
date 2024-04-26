@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     outDir: "../docs/src/examples",
     emptyOutDir: true,
+    minify: false, // todo: solve the function name look up
     rollupOptions: {
       input: {
         "two-bars": "two-bars/index.html",
