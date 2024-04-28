@@ -72,7 +72,7 @@ app({
 ## Examples
 
 1. Basic portal frame loaded laterally - [View](http://awatif.co/awatif-ui/examples/1-basic/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/1-basic/main.ts)
-2. Parametric portal frame loaded laterally - [View](http://awatif.co/awatif-ui/examples/1-parametric/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/2-parametric/main.ts)
+2. Parametric portal frame loaded laterally - [View](http://awatif.co/awatif-ui/examples/2-parametric/) - [Source code](https://github.com/madil4/awatif/blob/main/awatif-ui/examples/2-parametric/main.ts)
 3. [More Examples](http://awatif.co/examples/)
 
 When you toggle the bending moment setting located at the top-left corner, you should see this:
