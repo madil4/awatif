@@ -9,7 +9,7 @@ import {
 import { analyze } from "../../awatif-fem";
 
 const parameters: Parameters = {
-  xPosition: { value: 12, min: 1, max: 20 },
+  xPosition: { value: 20, min: 1, max: 20 },
   zPosition: { value: 0, min: 1, max: 10 },
 };
 
@@ -17,7 +17,7 @@ function onParameterChange(parameters: Parameters): Model {
   const nodes: Node[] = [
     [5, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
-    [5, 0, 8],
+    [5, 0, 10],
   ];
   const elements: Element[] = [
     [0, 1],
