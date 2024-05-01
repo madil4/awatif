@@ -120,6 +120,8 @@ function onParameterChange(parameters: Parameters): Model {
     [frameTimberDesign, connectionTimberDesign]
   );
 
+  console.log(designOutputs);
+
   return {
     nodes,
     elements,

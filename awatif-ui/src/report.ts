@@ -67,6 +67,7 @@ export const report = (
 
   // on model change or current index change: render html
   van.derive(() => {
+    console.log(modelState.val.designInputs);
     if (dialogBodyElm.value)
       render(
         reportsMap.get(currentElemIndex.val)(

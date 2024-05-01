@@ -1,6 +1,7 @@
 {
   "name": "examples",
   "version": "0.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -22,8 +23,6 @@
   },
   "dependencies": {
     "awatif-fem": "~2.0.12",
-    "awatif-ui": "^0.0.10",
     "three": "~0.163.0"
-  },
-  "description": ""
+  }
 }

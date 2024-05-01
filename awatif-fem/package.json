@@ -32,10 +32,7 @@
   },
   "dependencies": {
     "awatif-data-structure": "~0.0.9",
-    "awatif-fem": "^0.0.10",
-    "awatif-ui": "^0.0.10",
     "jwt-decode": "~4.0.0",
-    "mathjs": "~12.4.1",
-    "vite": "^5.2.10"
+    "mathjs": "~12.4.1"
   }
 }
