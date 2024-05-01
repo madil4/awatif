@@ -12,12 +12,13 @@ import {
   frameTimberDesign,
   frameTimberDesignReport,
   FrameTimberDesignInput,
+  connectionTimberDesignReport,
 } from "../../awatif-design/src/ec/timber/";
-import { 
-  TimberBarNodeConnectionDesignerInput,
-  timberBarNodeConnectionDesigner 
-} from "../../awatif-design/src/timber-bar-connection-designer/timberBarNodeConnectionDesigner";
-
+import {
+  ConnectionTimberDesignerInput,
+  connectionTimberDesign,
+} from "../../awatif-design/src/ec/timber/";
+import { DesignInput } from "../../awatif-design/src/design";
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
@@ -25,7 +26,6 @@ const parameters: Parameters = {
 };
 
 function onParameterChange(parameters: Parameters): Model {
-
   // FEM ANALYSIS
   const nodes: Node[] = [
     [5, 0, 0],
@@ -62,6 +62,8 @@ function onParameterChange(parameters: Parameters): Model {
     },
   ];
 
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
+
   const frameTimberDesignInput: FrameTimberDesignInput["frameTimberDesign"] = {
     tensileStrengthParallel: 20,
     serviceClass: "1",
@@ -70,29 +72,23 @@ function onParameterChange(parameters: Parameters): Model {
     gammaG: 1,
     gammaM: 1.3,
   };
+  const timberBarNodeConnectionDesignerInput: ConnectionTimberDesignerInput["connectionTimberDesign"] =
+    {
+      serviceClass: 1,
+      loadDurationClass: "permanent",
+      beam: 2,
+      timberGrade: "GL28h",
+      width: 300,
+      height: 600,
+      axialForce: 1000,
+      fastenerGrade: "S235",
+      fastenerDiameter: 8,
+      sheetGrade: "S235",
+      sheetThickness: 5,
+      sheetNo: 2,
+    };
 
-
-  const analysisOutputs = analyze(nodes, elements, analysisInputs);
-
-
-  // CONNECTION DESIGN
-
-  const timberBarNodeConnectionDesignerInput: TimberBarNodeConnectionDesignerInput["timberBarConnectionDesignerInput"] = {
-    serviceClass: 1,
-    loadDurationClass: "permanent",
-    beam: 2,
-    timberGrade: "GL28h",
-    width: 300,
-    height: 600,
-    axialForce: 1000,
-    fastenerGrade: "S235",
-    fastenerDiameter: 8,
-    sheetGrade: "S235",
-    sheetThickness: 5,
-    sheetNo: 2
-  };
-
-    const designInputs: (FrameTimberDesignInput | TimberBarNodeConnectionDesignerInput)[] = [
+  const designInputs: DesignInput[] = [
     {
       element: 0,
       frameTimberDesign: frameTimberDesignInput,
@@ -103,7 +99,7 @@ function onParameterChange(parameters: Parameters): Model {
     },
     {
       node: 0,
-      timberBarConnectionDesignerInput: timberBarNodeConnectionDesignerInput,
+      connectionTimberDesign: timberBarNodeConnectionDesignerInput,
     },
   ];
 
@@ -113,8 +109,10 @@ function onParameterChange(parameters: Parameters): Model {
     analysisInputs,
     analysisOutputs,
     designInputs,
-    [frameTimberDesign, timberBarNodeConnectionDesigner]
+    [frameTimberDesign, connectionTimberDesign]
   );
+
+  console.log(designOutputs);
 
   return {
     nodes,
@@ -126,4 +124,8 @@ function onParameterChange(parameters: Parameters): Model {
   };
 }
 
-app({ parameters, onParameterChange, reports: [frameTimberDesignReport] });
+app({
+  parameters,
+  onParameterChange,
+  reports: [frameTimberDesignReport, connectionTimberDesignReport],
+});

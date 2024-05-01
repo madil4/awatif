@@ -5,23 +5,20 @@ import {
   AnalysisInput,
 } from "../../awatif-data-structure/src";
 import {
+  ConnectionTimberDesignerInput,
+  ConnectionTimberDesignerOutput,
+} from "./ec/timber/connectionTimberDesign/connectionTimberDesign";
+import {
   FrameTimberDesignInput,
   FrameTimberDesignOutput,
 } from "./ec/timber/frameTimberDesign";
-import { 
-  TimberBarNodeConnectionDesignerInput, 
-  TimberBarNodeConnectionDesignerOutput 
-} from "./timber-bar-connection-designer/timberBarNodeConnectionDesigner";
 
-
-type DesignInput = 
+export type DesignInput =
   | FrameTimberDesignInput
-  | TimberBarNodeConnectionDesignerInput;
-
-type DesignOutput = 
+  | ConnectionTimberDesignerInput;
+export type DesignOutput =
   | FrameTimberDesignOutput
-  | TimberBarNodeConnectionDesignerOutput;
-
+  | ConnectionTimberDesignerOutput;
 
 // Todo: improve the typing of designFunctions
 export function design(
@@ -45,24 +42,31 @@ export function design(
         // @ts-ignore
         const node = designInput.node;
 
-        // if (element) {
-        //   const analysisInput = analysisInputs.find(
-        //     (i) => (i as any).element == element
-        //   );
-        //   const analysisOutput = analysisOutputs["default"].find(
-        //     (i) => (i as any).element == element
-        //   );
-  
-        //   if (analysisInput && analysisOutput) {
-        //     designOutputs.push(
-        //       designFunction(analysisInput, analysisOutput, designInput)
-        //     );
-        //   }
-        // }
-        if (node) {
-              designOutputs.push(
-                designFunction(nodes, elements, analysisInputs, analysisOutputs, designInput)
-              );
+        if (element != undefined) {
+          const analysisInput = analysisInputs.find(
+            (i) => (i as any).element == element
+          );
+          const analysisOutput = analysisOutputs["default"].find(
+            (i) => (i as any).element == element
+          );
+
+          if (analysisInput && analysisOutput) {
+            designOutputs.push(
+              designFunction(analysisInput, analysisOutput, designInput)
+            );
+          }
+        }
+
+        if (node != undefined) {
+          designOutputs.push(
+            designFunction(
+              nodes,
+              elements,
+              analysisInputs,
+              analysisOutputs,
+              designInput
+            )
+          );
         }
       }
     });
