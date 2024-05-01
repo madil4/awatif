@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "report/index.html",
+    open: "truss-designer/index.html",
   },
   base: "./",
   build: {
