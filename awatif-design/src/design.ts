@@ -8,9 +8,20 @@ import {
   FrameTimberDesignInput,
   FrameTimberDesignOutput,
 } from "./ec/timber/frameTimberDesign";
+import { 
+  TimberBarNodeConnectionDesignerInput, 
+  TimberBarNodeConnectionDesignerOutput 
+} from "./timber-bar-connection-designer/timberBarNodeConnectionDesigner";
 
-type DesignInput = FrameTimberDesignInput;
-type DesignOutput = FrameTimberDesignOutput;
+
+type DesignInput = 
+  | FrameTimberDesignInput
+  | TimberBarNodeConnectionDesignerInput;
+
+type DesignOutput = 
+  | FrameTimberDesignOutput
+  | TimberBarNodeConnectionDesignerOutput;
+
 
 // Todo: improve the typing of designFunctions
 export function design(
@@ -29,18 +40,29 @@ export function design(
   designFunctions.forEach((designFunction) => {
     designInputs.forEach((designInput) => {
       if (designFunction.name in designInput) {
+        // @ts-ignore
         const element = designInput.element;
-        const analysisInput = analysisInputs.find(
-          (i) => (i as any).element == element
-        );
-        const analysisOutput = analysisOutputs["default"].find(
-          (i) => (i as any).element == element
-        );
+        // @ts-ignore
+        const node = designInput.node;
 
-        if (analysisInput && analysisOutput) {
-          designOutputs.push(
-            designFunction(analysisInput, analysisOutput, designInput)
-          );
+        // if (element) {
+        //   const analysisInput = analysisInputs.find(
+        //     (i) => (i as any).element == element
+        //   );
+        //   const analysisOutput = analysisOutputs["default"].find(
+        //     (i) => (i as any).element == element
+        //   );
+  
+        //   if (analysisInput && analysisOutput) {
+        //     designOutputs.push(
+        //       designFunction(analysisInput, analysisOutput, designInput)
+        //     );
+        //   }
+        // }
+        if (node) {
+              designOutputs.push(
+                designFunction(nodes, elements, analysisInputs, analysisOutputs, designInput)
+              );
         }
       }
     });

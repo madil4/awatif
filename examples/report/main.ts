@@ -13,6 +13,11 @@ import {
   frameTimberDesignReport,
   FrameTimberDesignInput,
 } from "../../awatif-design/src/ec/timber/";
+import { 
+  TimberBarNodeConnectionDesignerInput,
+  timberBarNodeConnectionDesigner 
+} from "../../awatif-design/src/timber-bar-connection-designer/timberBarNodeConnectionDesigner";
+
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
@@ -20,6 +25,8 @@ const parameters: Parameters = {
 };
 
 function onParameterChange(parameters: Parameters): Model {
+
+  // FEM ANALYSIS
   const nodes: Node[] = [
     [5, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
@@ -63,7 +70,29 @@ function onParameterChange(parameters: Parameters): Model {
     gammaG: 1,
     gammaM: 1.3,
   };
-  const designInputs: FrameTimberDesignInput[] = [
+
+
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
+
+
+  // CONNECTION DESIGN
+
+  const timberBarNodeConnectionDesignerInput: TimberBarNodeConnectionDesignerInput["timberBarConnectionDesignerInput"] = {
+    serviceClass: 1,
+    loadDurationClass: "permanent",
+    beam: 2,
+    timberGrade: "GL28h",
+    width: 300,
+    height: 600,
+    axialForce: 1000,
+    fastenerGrade: "S235",
+    fastenerDiameter: 8,
+    sheetGrade: "S235",
+    sheetThickness: 5,
+    sheetNo: 2
+  };
+
+    const designInputs: (FrameTimberDesignInput | TimberBarNodeConnectionDesignerInput)[] = [
     {
       element: 0,
       frameTimberDesign: frameTimberDesignInput,
@@ -72,9 +101,11 @@ function onParameterChange(parameters: Parameters): Model {
       element: 1,
       frameTimberDesign: frameTimberDesignInput,
     },
+    {
+      node: 0,
+      timberBarConnectionDesignerInput: timberBarNodeConnectionDesignerInput,
+    },
   ];
-
-  const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
   const designOutputs = design(
     nodes,
@@ -82,7 +113,7 @@ function onParameterChange(parameters: Parameters): Model {
     analysisInputs,
     analysisOutputs,
     designInputs,
-    [frameTimberDesign]
+    [frameTimberDesign, timberBarNodeConnectionDesigner]
   );
 
   return {
