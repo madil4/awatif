@@ -6,7 +6,7 @@ import {
   Parameters,
   Model,
 } from "../../awatif-ui/src";
-import { analyze } from "../../awatif-fem/";
+import { analyze } from "../../awatif-fem";
 import { design } from "../../awatif-design";
 import {
   frameTimberDesign,
@@ -73,13 +73,10 @@ function onParameterChange(parameters: Parameters): Model {
   };
   const timberBarNodeConnectionDesignerInput: ConnectionTimberDesignerInput["connectionTimberDesign"] =
     {
-      serviceClass: 1,
+      serviceClass: 2,
       loadDurationClass: "permanent",
-      beam: 2,
+      element: 0,
       timberGrade: "GL28h",
-      width: 300,
-      height: 600,
-      axialForce: 200,
       fastenerGrade: "S235",
       fastenerDiameter: 8,
       sheetGrade: "S235",
@@ -133,5 +130,4 @@ app({
   parameters,
   onParameterChange,
   reports: [frameTimberDesignReport, connectionTimberDesignReport],
-  settings: { supports: false },
 });

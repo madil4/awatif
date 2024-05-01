@@ -436,11 +436,8 @@ export const onParameterChange = (parameters: Parameters): Model => {
       connectionTimberDesign: {
         serviceClass: 1,
         loadDurationClass: "permanent",
-        beam: 2,
         timberGrade: "GL28h",
-        width: 300,
-        height: 600,
-        axialForce: 1000,
+        element: 2,
         fastenerGrade: "S235",
         fastenerDiameter: 8,
         sheetGrade: "S235",
@@ -480,5 +477,5 @@ app({
   parameters,
   onParameterChange,
   settings: { deformedShape: true, loads: false },
-  reports: [frameTimberDesignReport, connectionTimberDesignReport],
+  reports: [connectionTimberDesignReport],
 });

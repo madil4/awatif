@@ -53,8 +53,10 @@ export function findLoadByNode(
 ): number[] | undefined {
   // Find the input corresponding to the node number and which has a 'load' property
   const nodeLoad = inputs.find(
-    (input) => (input as any).node === nodeNumber && "load" in input
-  ) as any | undefined;
+    // @ts-ignore
+    (input) => (input as NodeWithLoad).node === nodeNumber && "load" in input
+    // @ts-ignore
+  ) as NodeWithLoad | undefined;
 
   // Return the load if found, otherwise return undefined
   return nodeLoad ? nodeLoad.load : undefined;
@@ -66,5 +68,6 @@ export function findNormalForceForElement(elementNumber: number, inputs: any) {
     // @ts-ignore
     (input) => input.element === elementNumber && input.normal !== undefined
   );
+  // @ts-ignore
   return element ? element.normal : undefined;
 }

@@ -83,4 +83,9 @@ export const report = (
       );
     }
   });
+
+  // hack: to trigger the first render of the threejs canvas
+  setTimeout(() => {
+    currentElemIndex.val = "node 1";
+  }, 100);
 };
