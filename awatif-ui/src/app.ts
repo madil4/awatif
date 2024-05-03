@@ -8,6 +8,7 @@ import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
 import { report } from "./report";
 import { processDesignData } from "./utils/processDesignData";
+import { colorMap } from "./colorMap/colorMap";
 
 export function app({
   parameters: parameterObj,
@@ -39,9 +40,10 @@ export function app({
 
   // update
   viewer(modelState, settingsState);
-  settings(settingsState);
+  settings(modelState, settingsState);
   if (settingsObj?.dynamic) timeline(modelState, settingsState);
   if (reports?.length) report(reports, modelState);
+  colorMap(settingsState);
 
   // on parameter change
   if (parameterObj && onParameterChange) {

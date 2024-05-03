@@ -4,9 +4,5 @@ import katex from "katex";
 // reference: https://katex.org/docs/supported
 
 export function renderMath(latex: string) {
-  return unsafeHTML(
-    katex.renderToString(latex, {
-      maxSize: 0.001,
-    })
-  );
+  return unsafeHTML(katex.renderToString(latex));
 }

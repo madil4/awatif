@@ -38,7 +38,7 @@ export function nodeResults(
     const resultType =
       ResultType[settings.nodeResults.val as keyof typeof ResultType];
 
-    model.val.analysisOutputs[resultType].forEach((output, index) => {
+    model.val.analysisOutputs[resultType]?.forEach((output, index) => {
       const nodeResult = new NodeResult(nodesCache[index], resultType, output);
 
       nodeResult.updateScale(size * displayScaleCache);
