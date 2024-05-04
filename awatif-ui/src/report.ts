@@ -20,8 +20,8 @@ export const report = (
     modelState.val.designInputs.forEach((designInput) => {
       const reportName = report.name.slice(0, -6);
       if (reportName in designInput) {
-        if (designInput.element != undefined)
-          reportsMap.set("element " + designInput.element, report);
+        //if (designInput.element != undefined)
+         // reportsMap.set("element " + designInput.element, report);
         if (designInput.node != undefined)
           reportsMap.set("node " + designInput.node, report);
       }

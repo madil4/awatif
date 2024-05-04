@@ -48,3 +48,20 @@ export function getNodeNumbers(elements: Element[]): number[] {
   // Sort and return the array of unique node numbers
   return nodeNumbers.sort((a, b) => a - b);
 }
+
+export function findLoadByNode(nodeNumber: number, inputs: AnalysisInput[]): number[] | undefined {
+  // Find the input corresponding to the node number and which has a 'load' property
+  // @ts-ignore
+  const nodeLoad = inputs.find(input => (input as NodeWithLoad).node === nodeNumber && 'load' in input) as NodeWithLoad | undefined;
+
+  // Return the load if found, otherwise return undefined
+  return nodeLoad ? nodeLoad.load : undefined;
+}
+
+export function findNormalForceForElement(elementNumber: number, inputs: any) {
+  // Directly find the element normal array based on element number
+  // @ts-ignore
+  const element = inputs.find(input => input.element === elementNumber && input.normal !== undefined);
+  // @ts-ignore
+  return element ? element.normal : undefined;
+}

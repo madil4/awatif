@@ -1,6 +1,6 @@
 import {
   AnalysisInput,
-  AnalysisOutput,
+  AnalysisOutputs,
   Element,
   Node,
 } from "../../../../../awatif-data-structure/src";
@@ -12,7 +12,10 @@ import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner
 import {
   getConnectedElements,
   getNodeNumbers,
+  findNormalForceForElement
 } from "./utils/mapNodesAndElements";
+
+import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";
 
 export type ConnectionTimberDesignerInput = {
   node: number;
@@ -21,6 +24,7 @@ export type ConnectionTimberDesignerInput = {
 
 export type ConnectionTimberDesignerOutput = {
   node: number;
+  elements: number[];
   connectionTimberDesign: TimberBarConnectionDesignerOutput[];
   // Add other properties from TimberBarConnectionDesignerOutput as needed
 };
@@ -30,7 +34,7 @@ export function connectionTimberDesign(
   nodes: Node[],
   elements: Element[],
   analysisInputs: AnalysisInput[],
-  analysisOutputs: AnalysisOutput[],
+  analysisOutputs: AnalysisOutputs,
   designInput: ConnectionTimberDesignerInput
 ): ConnectionTimberDesignerOutput {
   console.log("nodes: ", nodes);
@@ -47,10 +51,16 @@ export function connectionTimberDesign(
     const elementIds = getConnectedElements(nodei, elements);
     connectedElements.push(...elementIds);
   });
+  let processedAnalysisOutputs = processAnalysisOutputs(analysisOutputs);
 
   // loop through the elements and compute the outputs of each element as you did in Python and Typescript
   const designPerElements: TimberBarConnectionDesignerOutput[] = [];
   connectedElements.forEach((element, index) => {
+
+    // find load 
+    let axialForce = processedAnalysisOutputs.normal.get(element)??[0,0]
+    // console.log("axialForce: ", axialForce);
+
     // you can get the axial force by searching in the analysisOutputs using the element index
     // similarly you can get serviceClass in designInput
     const timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput = {
@@ -60,7 +70,7 @@ export function connectionTimberDesign(
       timberGrade: "GL24h",
       width: 400,
       height: 800,
-      axialForce: 100,
+      axialForce: axialForce[0],
       fastenerGrade: "S235",
       fastenerDiameter: 8,
       sheetGrade: "S235",
@@ -76,6 +86,7 @@ export function connectionTimberDesign(
 
   return {
     node: designInput.node,
+    elements: connectedElements,
     connectionTimberDesign: designPerElements,
   }; // Return only the array
 }

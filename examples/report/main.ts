@@ -48,7 +48,7 @@ function onParameterChange(parameters: Parameters): Model {
     },
     {
       node: 1,
-      load: [0, 0, -10],
+      load: [0, 0, -1000],
     },
     {
       element: 0,
@@ -101,7 +101,16 @@ function onParameterChange(parameters: Parameters): Model {
       node: 0,
       connectionTimberDesign: timberBarNodeConnectionDesignerInput,
     },
+    {
+      node: 1,
+      connectionTimberDesign: timberBarNodeConnectionDesignerInput,
+    },
+    {
+      node: 2,
+      connectionTimberDesign: timberBarNodeConnectionDesignerInput,
+    },
   ];
+  console.log(analysisOutputs)
 
   const designOutputs = design(
     nodes,
@@ -111,8 +120,6 @@ function onParameterChange(parameters: Parameters): Model {
     designInputs,
     [frameTimberDesign, connectionTimberDesign]
   );
-
-  console.log(designOutputs);
 
   return {
     nodes,
@@ -129,3 +136,4 @@ app({
   onParameterChange,
   reports: [frameTimberDesignReport, connectionTimberDesignReport],
 });
+
