@@ -4,6 +4,8 @@ import { characteristicValues, shearCapacity } from './calcFastenerCapacity';
 import { checkNoSheets, calcAxialMemberCheck, blockFailureCheckAxial } from './calcChecks';
 import { TimberBarConnectionDesignerInput, TimberBarConnectionDesignerOutput } from './types';
 import { calcPossibleFastener } from  './calcPossibleFastener';
+import { calcStability } from  './calcStability';
+
 
 // connectionDesignerOutput = timberBarConnectionDesigner( connectionDesignerInput )
 export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput): TimberBarConnectionDesignerOutput {
@@ -42,6 +44,9 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: T
     
     // 10 - block faiure 
     const [Lh, Lv, Ant, Anv, VeffRd, etaBlockFailure] = blockFailureCheckAxial(fastenerGrade, noPerpNew, noAxialNew, fastenerDiameter, sheetThickness, distancesFinal, axialForce, sheetNo);
+
+    // 11 - block faiure 
+    const [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123] = calcStability( timberGrade,length, width, height, axialForce, chi)
 
     // Define the output object
     const connectionDesignerOutput: TimberBarConnectionDesignerOutput = {

@@ -1,14 +1,13 @@
-import * as math from 'mathjs'; // Import math module for mathematical functions
 // Note: In TypeScript, we don't have direct support for streamlit like in Python.
 // You might need to find alternative ways to create web applications in TypeScript.
 
 // Function to calculate minimum distances between bolts for timber
 export function calcMinDistancesTimber(diameter: number, alpha: number): number[] {
     // Calculate minimum distances based on given formulae
-    const a1: number = (3 + 2 * Math.abs(math.cos(alpha))) * diameter;
+    const a1: number = (3 + 2 * Math.abs(Math.cos(alpha))) * diameter;
     const a2: number = 3 * diameter;
     const a3t: number = Math.max(7 * diameter, 80);
-    const a3c: number = Math.max(diameter * Math.abs(math.sin(alpha)), 3 * diameter);
+    const a3c: number = Math.max(diameter * Math.abs(Math.sin(alpha)), 3 * diameter);
     const a4t: number = Math.max((2 + 2 * Math.sin(alpha)) * diameter, 3 * diameter);
     const a4c: number = 3 * diameter;
 

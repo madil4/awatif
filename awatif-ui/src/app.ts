@@ -4,6 +4,7 @@ import { viewer } from "./viewer";
 import { parameters } from "./parameters";
 import { timeline } from "./timeline";
 import { settings } from "./settings";
+import { input } from "./input";
 import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
 import { report } from "./report";
@@ -11,6 +12,7 @@ import { processDesignData } from "./utils/processDesignData";
 
 export function app({
   parameters: parameterObj,
+  input: inputObj,
   onParameterChange,
   settings: settingsObj,
   reports,

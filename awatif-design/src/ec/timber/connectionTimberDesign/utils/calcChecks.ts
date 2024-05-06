@@ -1,6 +1,4 @@
 import { getTimberProperties, getTensileStrength } from './getMaterialProperties';  // Importing functions for material properties (assuming they are defined elsewhere)
-import { sqrt } from 'mathjs';  // Import square root function
-
 
 // Function to check shear member utilization
 export function tensionMemberCheck(thickness: number, height: number, noPerpendicular: number, diameter: number, tensionForce: number, timberGrade: string, noSheet: number, chi: number, thicknessSheet: number): [number, number, number, number, number, number, number] {

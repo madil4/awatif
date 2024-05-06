@@ -1,4 +1,3 @@
-import * as math from 'mathjs'; // Import math module for mathematical functions
 import { roundToBase, effectiveNumber } from './calcDistances';
 
 export function calcPossibleFastener(height: number, fastenerDiameter: number, axialForce: number, distances: number[], F_vrd: number, sheetNo: number): [number, number, number, number, number, number, number, number[]] {
@@ -17,10 +16,12 @@ export function calcPossibleFastener(height: number, fastenerDiameter: number, a
         additionalFastener += 1;
 
         let noTotalReq: number = roundToBase(Math.abs(axialForce) / (F_vrd * (sheetNo * 2)), 1) + additionalFastener;
-        let noPerpPos: number = Math.floor((height - 2 * a4) / a2);
+        let noPerpPos: number = Math.max(Math.floor((height - 2 * a4) / a2), 1);
 
         noPerp = noTotalReq < noPerpPos ? Math.max(3, noTotalReq) : noPerpPos;
+        // noPerp = noPerpPos
         a4 = (height - a2 * (noPerp - 1)) / 2;
+        // console.log("noTotalReq: ", noTotalReq)
 
         noAxial = Math.max(roundToBase(noTotalReq / noPerp, 1), 1);
         noAxialEffective = effectiveNumber(noAxial, a1, fastenerDiameter);

@@ -25,6 +25,7 @@ export type ConnectionTimberDesignerInput = {
 export type ConnectionTimberDesignerOutput = {
   node: number;
   elements: number[];
+  forces: number[];
   connectionTimberDesign: TimberBarConnectionDesignerOutput[];
   // Add other properties from TimberBarConnectionDesignerOutput as needed
 };
@@ -46,6 +47,7 @@ export function connectionTimberDesign(
   // from the nodes and elements list you can know which elements are connected to the connection
   const uniqueNodeNumbers = getNodeNumbers(elements);
   const connectedElements: number[] = [];
+  const axialForces: number[] = [];
 
   uniqueNodeNumbers.forEach((nodei) => {
     const elementIds = getConnectedElements(nodei, elements);
@@ -59,6 +61,8 @@ export function connectionTimberDesign(
 
     // find load 
     let axialForce = processedAnalysisOutputs.normal.get(element)??[0,0]
+    axialForces.push(axialForce[0]);
+
     // console.log("axialForce: ", axialForce);
 
     // you can get the axial force by searching in the analysisOutputs using the element index
@@ -86,7 +90,9 @@ export function connectionTimberDesign(
 
   return {
     node: designInput.node,
+    forces: axialForces,
     elements: connectedElements,
     connectionTimberDesign: designPerElements,
   }; // Return only the array
 }
+

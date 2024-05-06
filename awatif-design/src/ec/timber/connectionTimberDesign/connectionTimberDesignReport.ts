@@ -4,6 +4,7 @@ import {
   ConnectionTimberDesignerInput,
   ConnectionTimberDesignerOutput,
 } from "./connectionTimberDesign";
+import { setup2DRectangle } from "./utils/threejs";
 
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
@@ -35,7 +36,23 @@ export function connectionTimberDesignReport(
     <h2>Summary</h2>
     <p>Design of node: ${designInput.node}</p>
     <p>Connected elements: ${designOutput.elements[index]}</p>
-    <p class="caption">EN 1995-1-1 </p>
+    <div class="canvas-container" id="threejs-canvas"></div>
+    <table>
+        <tr>
+            <th>Timber</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Load</th>
+        </tr>
+        <tr>
+        <td> ${ i.timberGrade }</td>
+        <td> ${ i.width } mm</td>
+        <td> ${ i.height } mm</td>
+        <td> ${ o[index].force.toFixed(0) } kN</td>
+        </tr>
+    </table>
+    <br>
+    <p class="bolt">Checks</p>
     <table>
         <tr>
             <th>Fastener Check</th>
@@ -48,6 +65,7 @@ export function connectionTimberDesignReport(
         <td> ${ (o[index].etaBlockFailure*100).toFixed(0) } %</td>
         </tr>
     </table>
+    <br>
     <br>`;
   
   let reportLoadProperties = html`
@@ -244,9 +262,9 @@ export function connectionTimberDesignReport(
   };
 
   let reportContent = html`
-    ${reportHeader}
-    ${reportHeading}
-    ${reportSummary}
+      ${reportHeader}
+      ${reportHeading}
+      ${reportSummary}
     <h2>Input Parameters</h2>
     ${reportLoadProperties}
     ${reportFastenerProperties}
@@ -257,9 +275,6 @@ export function connectionTimberDesignReport(
     ${reportAxialBlockFailureCheck}
     <h2>Member Design</h2>
     ${reportMemberCheck}
-
-
-
     `
 
   return reportContent

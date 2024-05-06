@@ -3,6 +3,7 @@ import {
   Node,
   Element,
   AnalysisInput,
+  Input,
   Parameters,
   Model,
 } from "../../awatif-ui/src";
@@ -19,6 +20,7 @@ import {
   connectionTimberDesign,
 } from "../../awatif-design/src/ec/timber/";
 import { DesignInput } from "../../awatif-design/src/design";
+import { threejs } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs";
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
@@ -48,7 +50,7 @@ function onParameterChange(parameters: Parameters): Model {
     },
     {
       node: 1,
-      load: [0, 0, -1000],
+      load: [0, 0, -200],
     },
     {
       element: 0,
@@ -80,7 +82,7 @@ function onParameterChange(parameters: Parameters): Model {
       timberGrade: "GL28h",
       width: 300,
       height: 600,
-      axialForce: 1000,
+      axialForce: 200,
       fastenerGrade: "S235",
       fastenerDiameter: 8,
       sheetGrade: "S235",
@@ -136,4 +138,9 @@ app({
   onParameterChange,
   reports: [frameTimberDesignReport, connectionTimberDesignReport],
 });
+
+const funcThree = threejs(200, 300, 50);
+// Execute the setup function once the DOM is ready
+document.addEventListener('DOMContentLoaded', threejs(200, 300, 50));
+
 
