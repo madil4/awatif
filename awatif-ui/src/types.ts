@@ -17,7 +17,6 @@ import { TemplateResult } from "lit-html";
 
 export type App = {
   parameters?: Parameters;
-  input?: Input;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
   reports?: ((i: any, b: any) => TemplateResult)[];
@@ -67,18 +66,6 @@ export type Settings = {
   nodeResults?: string;
   dynamic?: boolean;
   dynamicSettings?: Record<"time" | "timeStep", number>;
-};
-
-export type Input = {
-  serviceClass?: number;
-  loadDurationClass?: string;
-  timberGrade?: string;
-  width?: number;
-  height?: number;
-  fastenerGrade?: string;
-  fastenerDiameter?: number;
-  sheetGrade?: string;
-  sheetThickness?: number;
 };
 
 export type SettingsState = {

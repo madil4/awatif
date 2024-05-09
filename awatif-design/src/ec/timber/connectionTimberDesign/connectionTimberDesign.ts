@@ -12,7 +12,7 @@ import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner
 import {
   getConnectedElements,
   getNodeNumbers,
-  findNormalForceForElement
+  findNormalForceForElement,
 } from "./utils/mapNodesAndElements";
 
 import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";
@@ -38,12 +38,6 @@ export function connectionTimberDesign(
   analysisOutputs: AnalysisOutputs,
   designInput: ConnectionTimberDesignerInput
 ): ConnectionTimberDesignerOutput {
-  console.log("nodes: ", nodes);
-  console.log("elements: ", elements);
-  console.log("analysisInputs: ", analysisInputs);
-  console.log("analysisOutputs: ", analysisOutputs);
-  console.log("designInput: ", designInput);
-
   // from the nodes and elements list you can know which elements are connected to the connection
   const uniqueNodeNumbers = getNodeNumbers(elements);
   const connectedElements: number[] = [];
@@ -58,9 +52,8 @@ export function connectionTimberDesign(
   // loop through the elements and compute the outputs of each element as you did in Python and Typescript
   const designPerElements: TimberBarConnectionDesignerOutput[] = [];
   connectedElements.forEach((element, index) => {
-
-    // find load 
-    let axialForce = processedAnalysisOutputs.normal.get(element)??[0,0]
+    // find load
+    let axialForce = processedAnalysisOutputs.normal.get(element) ?? [0, 0];
     axialForces.push(axialForce[0]);
 
     // console.log("axialForce: ", axialForce);
@@ -95,4 +88,3 @@ export function connectionTimberDesign(
     connectionTimberDesign: designPerElements,
   }; // Return only the array
 }
-
