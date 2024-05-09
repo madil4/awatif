@@ -10,20 +10,25 @@ export const report = (
   modelState: ModelState
 ) => {
   // init
-  let currentElemIndex = van.state(0);
+  let currentElemIndex = van.state("");
   let dialogElm = createRef<HTMLDialogElement>();
   let dialogBodyElm = createRef<HTMLDivElement>();
 
   // Todo: optimize these loops
-  const elementReports = new Map<number, any>();
+  const reportsMap = new Map<string, any>();
   reports.forEach((report) => {
     modelState.val.designInputs.forEach((designInput) => {
       const reportName = report.name.slice(0, -6);
       if (reportName in designInput) {
-        elementReports.set(designInput.element, report);
+        //if (designInput.element != undefined)
+        // reportsMap.set("element " + designInput.element, report);
+        if (designInput.node != undefined)
+          reportsMap.set("node " + designInput.node, report);
       }
     });
   });
+
+  currentElemIndex.val = reportsMap.keys().next().value;
 
   // init html
   const topBarTemp = html`<div class="topBar">
@@ -31,8 +36,8 @@ export const report = (
   </div>`;
 
   const elements = html` <select @change=${onElementChange}>
-    ${Array.from(elementReports.keys()).map(
-      (key) => html`<option value="${key}">element ${key}</option>`
+    ${Array.from(reportsMap.keys()).map(
+      (key) => html`<option value="${key}">${key}</option>`
     )}
   </select>`;
 
@@ -41,7 +46,7 @@ export const report = (
       <span class="close" @click=${onDialogClose}>&times;</span>
       ${elements}
     </div>
-    <div class="dialog-body" ref=${ref(dialogBodyElm)} />
+    <div class="dialog-body" ref=${ref(dialogBodyElm)}>
   </dialog>`;
 
   // update
@@ -57,14 +62,14 @@ export const report = (
   }
 
   function onElementChange(ev: any) {
-    currentElemIndex.val = Number(ev.target.value);
+    currentElemIndex.val = ev.target.value;
   }
 
   // on model change or current index change: render html
   van.derive(() => {
     if (dialogBodyElm.value)
       render(
-        elementReports.get(currentElemIndex.val)(
+        reportsMap.get(currentElemIndex.val)(
           modelState.val.designInputs.get(currentElemIndex.val),
           modelState.val.designOutputs.get(currentElemIndex.val)
         ),

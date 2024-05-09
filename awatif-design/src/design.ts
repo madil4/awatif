@@ -5,12 +5,20 @@ import {
   AnalysisInput,
 } from "../../awatif-data-structure/src";
 import {
+  ConnectionTimberDesignerInput,
+  ConnectionTimberDesignerOutput,
+} from "./ec/timber/connectionTimberDesign/connectionTimberDesign";
+import {
   FrameTimberDesignInput,
   FrameTimberDesignOutput,
 } from "./ec/timber/frameTimberDesign";
 
-type DesignInput = FrameTimberDesignInput;
-type DesignOutput = FrameTimberDesignOutput;
+export type DesignInput =
+  | FrameTimberDesignInput
+  | ConnectionTimberDesignerInput;
+export type DesignOutput =
+  | FrameTimberDesignOutput
+  | ConnectionTimberDesignerOutput;
 
 // Todo: improve the typing of designFunctions
 export function design(
@@ -29,17 +37,35 @@ export function design(
   designFunctions.forEach((designFunction) => {
     designInputs.forEach((designInput) => {
       if (designFunction.name in designInput) {
+        // @ts-ignore
         const element = designInput.element;
-        const analysisInput = analysisInputs.find(
-          (i) => (i as any).element == element
-        );
-        const analysisOutput = analysisOutputs["default"].find(
-          (i) => (i as any).element == element
-        );
+        // @ts-ignore
+        const node = designInput.node;
 
-        if (analysisInput && analysisOutput) {
+        if (element != undefined) {
+          const analysisInput = analysisInputs.find(
+            (i) => (i as any).element == element
+          );
+          const analysisOutput = analysisOutputs["default"].find(
+            (i) => (i as any).element == element
+          );
+
+          if (analysisInput && analysisOutput) {
+            designOutputs.push(
+              designFunction(analysisInput, analysisOutput, designInput)
+            );
+          }
+        }
+
+        if (node != undefined) {
           designOutputs.push(
-            designFunction(analysisInput, analysisOutput, designInput)
+            designFunction(
+              nodes,
+              elements,
+              analysisInputs,
+              analysisOutputs,
+              designInput
+            )
           );
         }
       }

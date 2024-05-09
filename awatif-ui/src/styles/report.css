@@ -5,8 +5,8 @@
 }
 
 .topBar a {
-  color: white;
   text-decoration: none;
+  color: white;
 }
 
 canvas {
@@ -31,7 +31,7 @@ dialog {
 }
 
 dialog .close {
-  color: #000;
+  color: #000000;
   float: right;
   margin-top: -5px;
   font-size: 25px;
