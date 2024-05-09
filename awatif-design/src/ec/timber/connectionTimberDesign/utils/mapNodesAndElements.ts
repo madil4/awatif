@@ -1,8 +1,6 @@
 import {
   AnalysisInput,
-  AnalysisOutput,
   Element,
-  Node,
 } from "../../../../../../awatif-data-structure/src";
 
 // Function to find elements connected to a node
@@ -49,10 +47,14 @@ export function getNodeNumbers(elements: Element[]): number[] {
   return nodeNumbers.sort((a, b) => a - b);
 }
 
-export function findLoadByNode(nodeNumber: number, inputs: AnalysisInput[]): number[] | undefined {
+export function findLoadByNode(
+  nodeNumber: number,
+  inputs: AnalysisInput[]
+): number[] | undefined {
   // Find the input corresponding to the node number and which has a 'load' property
-  // @ts-ignore
-  const nodeLoad = inputs.find(input => (input as NodeWithLoad).node === nodeNumber && 'load' in input) as NodeWithLoad | undefined;
+  const nodeLoad = inputs.find(
+    (input) => (input as any).node === nodeNumber && "load" in input
+  ) as any | undefined;
 
   // Return the load if found, otherwise return undefined
   return nodeLoad ? nodeLoad.load : undefined;
@@ -60,8 +62,9 @@ export function findLoadByNode(nodeNumber: number, inputs: AnalysisInput[]): num
 
 export function findNormalForceForElement(elementNumber: number, inputs: any) {
   // Directly find the element normal array based on element number
-  // @ts-ignore
-  const element = inputs.find(input => input.element === elementNumber && input.normal !== undefined);
-  // @ts-ignore
+  const element = inputs.find(
+    // @ts-ignore
+    (input) => input.element === elementNumber && input.normal !== undefined
+  );
   return element ? element.normal : undefined;
 }

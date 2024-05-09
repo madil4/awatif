@@ -12,7 +12,6 @@ import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner
 import {
   getConnectedElements,
   getNodeNumbers,
-  findNormalForceForElement,
 } from "./utils/mapNodesAndElements";
 
 import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";

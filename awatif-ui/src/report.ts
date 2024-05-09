@@ -41,7 +41,7 @@ export const report = (
     )}
   </select>`;
 
-  const dialogTemp = html`<dialog ref=${ref(dialogElm)}>
+  const dialogTemp = html`<dialog ref=${ref(dialogElm)} >
     <div class="dialog-header">
       <span class="close" @click=${onDialogClose}>&times;</span>
       ${elements}
@@ -55,6 +55,7 @@ export const report = (
   // events
   function onDialogClose() {
     dialogElm.value?.close();
+    currentElemIndex.val = ""; // to stop render when dialog is not open
   }
 
   function onTopBarReportClick() {
@@ -67,7 +68,7 @@ export const report = (
 
   // on model change or current index change: render html
   van.derive(() => {
-    if (dialogBodyElm.value)
+    if (dialogBodyElm.value && currentElemIndex.val) {
       render(
         reportsMap.get(currentElemIndex.val)(
           modelState.val.designInputs.get(currentElemIndex.val),
@@ -75,5 +76,6 @@ export const report = (
         ),
         dialogBodyElm.value
       );
+    }
   });
 };

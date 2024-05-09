@@ -50,7 +50,7 @@ export function viewer(model: ModelState, settings: SettingsState) {
   scene.add(
     grid(gridSize),
     axes(gridSize),
-    nodes(derivedNodes, settings, displayScale),
+    nodes(derivedNodes, model, settings, displayScale),
     elements(derivedNodes, model, settings),
     nodesIndexes(derivedNodes, settings, displayScale),
     elementsIndexes(derivedNodes, model, settings, displayScale),

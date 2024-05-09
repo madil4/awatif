@@ -26,7 +26,6 @@ const parameters: Parameters = {
 };
 
 function onParameterChange(parameters: Parameters): Model {
-  // FEM ANALYSIS
   const nodes: Node[] = [
     [5, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
@@ -134,4 +133,5 @@ app({
   parameters,
   onParameterChange,
   reports: [frameTimberDesignReport, connectionTimberDesignReport],
+  settings: { supports: false },
 });
