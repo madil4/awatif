@@ -71,35 +71,28 @@ export function setup3DCube(
         sheetGroup.add(sheet);
 
         fastenerPositionX.forEach((coordinateX, dowelIndex) => {
-            // Create the beams, sheets, and dowels
-            const [beams, sheets, dowels] = createBeamsAndDowelsWithEndPivot(
-                sheetLength, sheetThickness, "red",
-                beamLength, heights[beamIndex], widths[beamIndex], 'yellow', angle, 0.2,
-                8, widths[0], 32, 'black', THREE.MathUtils.degToRad(90), 1, coordinateX, fastenerPositionZ[dowelIndex]
-            );
-            console.log("heights", heights[beamIndex]);
-            console.log("beamIndex", beamIndex);
 
+            // Create the beams, sheets, and dowels
+            const [dowel] = createDowel(
+                widths[beamIndex], 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
+            );
 
             // Set the position of the dowels based on provided coordinates
-            // dowels.position.set(coordinateX, 0, fastenerPositionZ[dowelIndex]);
+            // dowel.position.set(coordinateX, 0, fastenerPositionZ[dowelIndex]);
 
             // Add beams, sheets, and dowels to the main group
-            beamGroup.add(dowels);
+            geometryGroup.add(dowel);
         });
     });
 
     // const mergedSheets = BufferGeometryUtils.mergeGeometries(sheetGroup)
     // geometryGroup.add(beamGroup);
-    // geometryGroup.add(sheetGroup);
+    geometryGroup.add(sheetGroup);
 
     // Assuming `scene` and `group` are already created and populated with meshes:
-    const material = new THREE.MeshStandardMaterial({ color: 'blue', metalness: 0.5, roughness: 0.5 });
-    const mergedMesh = mergeGroupMeshes(sheetGroup, material);
-    geometryGroup.add(mergedMesh);
-
-
-
+    // const material = new THREE.MeshStandardMaterial({ color: 'blue', metalness: 0.5, roughness: 0.5 });
+    // const mergedMesh = mergeGroupMeshes(sheetGroup, material);
+    // geometryGroup.add(mergedMesh);
     
     // Calculate the centroid of the group for camera positioning
     const box = new THREE.Box3().setFromObject(geometryGroup);
@@ -188,7 +181,7 @@ function createRectangular(
     opacity: number,
 ): [mesh: THREE.Mesh] {
 
-    const group = new THREE.Group();
+    // material
     const material = new THREE.MeshStandardMaterial({
         color: color,
         transparent: true,
@@ -199,6 +192,8 @@ function createRectangular(
     const mesh = new THREE.Mesh(box, material);
     const angle: any = THREE.MathUtils.degToRad(angles);
     mesh.castShadow = true;
+
+    // position
     if (angles == "block") { 
         mesh.position.set(0, 0, 0); 
     } else if (angles == 0) {
@@ -206,53 +201,52 @@ function createRectangular(
     } else if (angles == 90) {
         mesh.rotation.y = angle;
         mesh.position.set(0, 0, z0 / 2 + (length / 2)); 
-        console.log("angle", angle)
     } else {
         mesh.rotation.y = angle;
         mesh.position.set( -x0 / 2 - (length / 2) * Math.cos(angle), 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
     };
-    // group.add(mesh);
+
     return [mesh]
 }
 
-function createBeamsAndDowelsWithEndPivot(
-    sheetLength: number,
-    sheetThickness: number,
-    sheetColor: string,
-    beamLength: number,
-    beamHeight: number,
-    beamWidth: number,
-    beamColor: string,
-    beamRotationAngle: number,
-    beamOpacity: number,
-    dowelRadius: number,
-    dowelHeight: number,
-    dowelSegments: number,
-    dowelColor: string,
-    dowelRotationAngle: number,
-    dowelOpacity: number,
+function createDowel(
+    length: number,
+    radius: number,
+    height: number,
+    segments: number,
+    x0: number,
+    z0: number,
+    angles: any,
+    color: string,
+    opacity: number,
     coordinateX: number,
-    coordinateY: number
-): [dowels: THREE.Group] {
+    coordinateZ: number
+): [dowel: THREE.Mesh] {
     
-    // Create the dowels group
-    const dowels = new THREE.Group();
-    const dowelMaterial = new THREE.MeshStandardMaterial({
-        color: dowelColor,
+    // material
+    const material = new THREE.MeshStandardMaterial({
+        color: color,
         transparent: true,
-        opacity: dowelOpacity
+        opacity: opacity
     });
-    const dowelGeometry = new THREE.CylinderGeometry(dowelRadius, dowelRadius, dowelHeight, dowelSegments);
-    const dowel = new THREE.Mesh(dowelGeometry, dowelMaterial);
-    dowel.castShadow = true;
-    dowel.rotation.y = -dowelRotationAngle;
-    // dowel.position.set(dowelHeight / 2, 0, 0); // Center the dowel
-    dowel.position.set(-(beamLength) * Math.cos(beamRotationAngle) , 0, -(beamHeight) * Math.sin(beamRotationAngle)); // Align the midpoint of the beam end
-    // dowel.position.set( coordinateX , 0, coordinateY ); // Align the midpoint of the beam end
-    dowels.add(dowel);
 
-    // Return all groups
-    return [dowels];
+    const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
+    const mesh = new THREE.Mesh(dowel, material);
+    const angle: any = THREE.MathUtils.degToRad(angles);
+    mesh.castShadow = true;
+
+    // position
+    if (angles == 0) {
+        mesh.position.set(-x0 / 2 - length / 2 + coordinateX, 0, -coordinateZ); 
+    } else if (angles == 90) {
+        mesh.rotation.y = angle;
+        mesh.position.set(0, 0, z0 / 2 + (length / 2) - coordinateZ); 
+    } else {
+        mesh.rotation.y = angle;
+        mesh.position.set( -x0 / 2 - (length / 2 - coordinateX) * Math.cos(angle), 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
+    };
+    
+    return [mesh]
 }
 
 

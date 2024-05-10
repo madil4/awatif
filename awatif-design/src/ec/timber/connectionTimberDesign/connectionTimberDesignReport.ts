@@ -11,10 +11,12 @@ export function connectionTimberDesignReport(
 ): TemplateResult {
   const i = designInput.connectionTimberDesign;
   const o = designOutput.connectionTimberDesign;
-  const index = 0;
+  const index = 0;  // node index
   console.log("i: ", i);
   console.log("o: ", o);
+  console.log("node: ", designInput.node);
 
+  designInput.node
 
   let reportHeader = html`
     <br>

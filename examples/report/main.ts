@@ -131,9 +131,28 @@ function onParameterChange(parameters: Parameters): Model {
     [frameTimberDesign, connectionTimberDesign]
   );
   console.log("designOutputs", designOutputs)
+
+
+
+
+
+  function processDesignData(data: any[]): Map<string, any> {
+    const map = new Map<string, any>();
+  
+    data.forEach((i) => {
+      if (i.element != undefined) return map.set("element " + i.element, i);
+      if (i.node != undefined) return map.set("node " + i.node, i);
+    });
+  
+    return map;
+  }
+  const processedData = processDesignData(designOutputs);
+
+
+  
   let node = 1;
   let elementss = [1, 2, 3];
-  let angles = [0, 45, 90]
+  let angles = [0, 60, 180]
   let heights = [300, 300, 300]
   let widths = [200, 200, 200]
   let sheetNumber = 1
