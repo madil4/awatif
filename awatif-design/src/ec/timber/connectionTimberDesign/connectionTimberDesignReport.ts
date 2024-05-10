@@ -4,7 +4,6 @@ import {
   ConnectionTimberDesignerInput,
   ConnectionTimberDesignerOutput,
 } from "./connectionTimberDesign";
-import { threejs } from "./utils/threejs";
 
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
@@ -13,8 +12,6 @@ export function connectionTimberDesignReport(
   const i = designInput.connectionTimberDesign;
   const o = designOutput.connectionTimberDesign;
   const index = 2;
-
-  threejs(200, 300, 50);
 
   let reportHeader = html` <br />
     <header class="header">
