@@ -5,14 +5,11 @@ import { AnalysisInput, Node, Element } from "../../awatif-data-structure";
 import { design } from "../../awatif-design/src";
 import {
   connectionTimberDesign,
-  ConnectionTimberDesignerInput,
   connectionTimberDesignReport,
   frameTimberDesign,
-  FrameTimberDesignInput,
   frameTimberDesignReport,
 } from "../../awatif-design/src/ec/timber";
 import { DesignInput } from "../../awatif-design/src/design";
-import { element } from "three/examples/jsm/nodes/Nodes.js";
 
 export const parameters: Parameters = {
   span: {

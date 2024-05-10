@@ -18,5 +18,10 @@
   "devDependencies": {
     "typescript": "~5.4.5",
     "vite": "~5.2.10"
+  },
+  "dependencies": {
+    "@types/three": "^0.164.0",
+    "mathjs": "^12.4.2",
+    "three": "^0.164.1"
   }
 }
