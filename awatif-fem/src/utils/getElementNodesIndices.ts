@@ -1,4 +1,4 @@
-import { Element } from "../types";
+import { Element } from "..";
 import { AnalysisType } from "./processAnalysisInputs";
 
 function bar(element: Element) {

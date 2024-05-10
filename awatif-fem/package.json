@@ -1,10 +1,10 @@
 {
   "name": "awatif-fem",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Awatif Finite Element Method (FEM) Solver",
   "type": "module",
-  "main": "./build/BHUODB6U.js",
-  "types": "./src/types.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "keywords": [
     "awatif",
     "parametricdesign",
@@ -21,18 +21,14 @@
     "url": "https://github.com/madil4/awatif"
   },
   "scripts": {
-    "test": "jest --watch",
-    "build": "node build.mjs"
+    "test": "jest --watch"
   },
   "devDependencies": {
     "@types/jest": "~29.5.3",
-    "esbuild": "~0.20.2",
     "jest": "~29.6.1",
     "ts-jest": "~29.1.1"
   },
   "dependencies": {
-    "awatif-data-structure": "~0.0.9",
-    "jwt-decode": "~4.0.0",
     "mathjs": "~12.4.1"
   }
 }
