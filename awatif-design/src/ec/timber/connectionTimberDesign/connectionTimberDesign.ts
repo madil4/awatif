@@ -28,6 +28,7 @@ export type ConnectionTimberDesignerOutput = {
   elements: number[];
   connectedElements: number[][];
   forces: number[][];
+  beamAngles: number[];
   connectionTimberDesign: TimberBarConnectionDesignerOutput[][];
   // Add other properties from TimberBarConnectionDesignerOutput as needed
 };
@@ -50,8 +51,6 @@ export function connectionTimberDesign(
   const nestedDesignPerElements: TimberBarConnectionDesignerOutput[][] = [];
   const nestedAxialForces: number[][] = [];
   const beamAngles = calculateElementAngles(nodes, elements);
-
-
 
   const uniqueNodeNumbers = getNodeNumbers(elements);
   const uniqueElements : number[] = [];
@@ -95,7 +94,7 @@ export function connectionTimberDesign(
         beam: element,
         timberGrade: "GL24h",
         width: 400,
-        height: 800,
+        height: 500,
         axialForce: axialForce[0],
         fastenerGrade: "S235",
         fastenerDiameter: 8,
@@ -105,11 +104,11 @@ export function connectionTimberDesign(
         beamAngle: beamAngles[index],
       };
 
-        // Call the design function and store the output
-        const timberBarConnectionDesignerOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput);
+      // Call the design function and store the output
+      const timberBarConnectionDesignerOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput);
 
-        // Push the result into the node's output array
-        nodeOutputs.push(timberBarConnectionDesignerOutput);
+      // Push the result into the node's output array
+      nodeOutputs.push(timberBarConnectionDesignerOutput);
 
     });
 
@@ -119,14 +118,15 @@ export function connectionTimberDesign(
 
 });
 
-  console.log("beamAngles: ", beamAngles)
+console.log("beamAngles: ", beamAngles)
 
-  return {
-    node: designInput.node,
-    forces: nestedAxialForces,
-    elements: uniqueElementNumbers,
-    connectedElements: connectedElements,
-    connectionTimberDesign: nestedDesignPerElements,
-  }; // Return only the array
+return {
+  node: designInput.node,
+  forces: nestedAxialForces,
+  elements: uniqueElementNumbers,
+  connectedElements: connectedElements,
+  beamAngles: beamAngles,
+  connectionTimberDesign: nestedDesignPerElements,
+}; // Return only the array
 }
 

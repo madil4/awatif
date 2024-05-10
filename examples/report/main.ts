@@ -87,7 +87,7 @@ function onParameterChange(parameters: Parameters): Model {
       beam: 2,
       timberGrade: "GL28h",
       width: 300,
-      height: 600,
+      height: 300,
       axialForce: 200,
       fastenerGrade: "S235",
       fastenerDiameter: 8,
@@ -130,38 +130,11 @@ function onParameterChange(parameters: Parameters): Model {
     designInputs,
     [frameTimberDesign, connectionTimberDesign]
   );
-  console.log("designOutputs", designOutputs)
-
-
-
-
-
-  function processDesignData(data: any[]): Map<string, any> {
-    const map = new Map<string, any>();
-  
-    data.forEach((i) => {
-      if (i.element != undefined) return map.set("element " + i.element, i);
-      if (i.node != undefined) return map.set("node " + i.node, i);
-    });
-  
-    return map;
-  }
-  const processedData = processDesignData(designOutputs);
-
-
-  
-  let node = 1;
-  let elementss = [1, 2, 3];
-  let angles = [0, 60, 180]
-  let heights = [300, 300, 300]
-  let widths = [200, 200, 200]
-  let sheetNumber = 1
-  let sheetThickness = 5
-  let fastenerPositionX = [320, 320, 320, 320, 320, 320, 320, 320, 360, 360 ]
-  let fastenerPositionZ = [24, 50, 76, 102, 128, 154, 180, 206, 24, 50]
-  document.addEventListener('DOMContentLoaded', () => setup3DCube(node, elementss, angles, heights, widths, sheetNumber, sheetThickness, fastenerPositionX, fastenerPositionZ));
-  // document.addEventListener('DOMContentLoaded', initialize3DCanvas);
-
+ 
+  //const processedOutput = processDesignData(designOutputs);
+  //const element = processedOutput.get("element 0").frameTimberDesign;
+  //const node = processedOutput.get("node 0").connectedElements
+  //console.log(element) 
 
   return {
     nodes,

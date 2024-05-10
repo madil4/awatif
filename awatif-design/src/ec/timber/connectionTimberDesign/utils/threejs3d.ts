@@ -9,8 +9,8 @@ export function setup3DCube(
     node: number,
     elements: number[],
     angles: number[],
-    heights: number[],
-    widths: number[],
+    height: number,
+    width: number,
     sheetThickness: number,
     sheetNumber: number,
     fastenerPositionX: number[],
@@ -24,8 +24,10 @@ export function setup3DCube(
     }
 
     // input 
-    const beamLength = 400;
-    const sheetLength = 200;
+    const beamLength = height;
+    const sheetLength = height - 100;
+
+    // console.log("3node: ", node)
 
     // Ensure a default size if the container has no explicit size
     const canvasWidth = container.clientWidth || 800;
@@ -48,45 +50,64 @@ export function setup3DCube(
     const beamGroup = new THREE.Group();
     const sheetGroup = new THREE.Group();
     const geometryGroup = new THREE.Group();
+    let x0 = 0;
+    let z0 = 0;
 
+    if (angles.length > 1) {
 
-    let x0 = Math.max( ...heights);
-    let z0 = Math.max( ...heights);
-    x0 = 300;
-    z0 = 300;
+        let x0 = height;
+        let z0 = height;
 
-    const [beamBlock] = createRectangular(x0, widths[0], z0, 0, 0, "block", "yellow", 0.2)
-    beamGroup.add(beamBlock);
+        const [beamBlock] = createRectangular(x0, width, z0, 0, 0, "block", "yellow", 0.2)
+        beamGroup.add(beamBlock);
+    
+        const [sheetBlock] = createRectangular(x0, sheetThickness, z0, 0, 0, "block", "blue", 0.5)
+        sheetGroup.add(sheetBlock);
 
-    const [sheetBlock] = createRectangular(x0, sheetThickness, z0, 0, 0, "block", "blue", 0.5)
-    sheetGroup.add(sheetBlock);
+        angles.forEach((angle) => {
 
-    // Add beams, dowels, and sheets at specific angles and positions
-    angles.forEach((angle, beamIndex) => {
+            const [beam] = createRectangular(beamLength, width, height, x0, z0, angle, "yellow", 0.2)
+            beamGroup.add(beam);
+    
+            const [sheet] = createRectangular(sheetLength, sheetThickness, height, x0, z0, angle, "blue", 0.5)
+            sheetGroup.add(sheet);
+    
+            fastenerPositionX.forEach((coordinateX, dowelIndex) => {
+    
+                // Create the beams, sheets, and dowels
+                const [dowel] = createDowel(
+                    width, 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
+                );
+                geometryGroup.add(dowel);
+            });
+        });
+    } else {
 
-        const [beam] = createRectangular(beamLength, widths[beamIndex], heights[beamIndex], x0, z0, angle, "yellow", 0.2)
-        beamGroup.add(beam);
+        console.log("test angles: ", angles.length)
+        // Add beams, dowels, and sheets at specific angles and positions
+        angles.forEach((angle) => {
 
-        const [sheet] = createRectangular(sheetLength, sheetThickness, heights[beamIndex], x0, z0, angle, "blue", 0.5)
-        sheetGroup.add(sheet);
+            const [beam] = createRectangularOne(beamLength, width, height, x0, z0, angle, "yellow", 0.2)
+            beamGroup.add(beam);
 
-        fastenerPositionX.forEach((coordinateX, dowelIndex) => {
+            const [sheet] = createRectangularOne(sheetLength, sheetThickness, height, x0, z0, angle, "blue", 0.5)
+            sheetGroup.add(sheet);
 
-            // Create the beams, sheets, and dowels
-            const [dowel] = createDowel(
-                widths[beamIndex], 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
-            );
+            fastenerPositionX.forEach((coordinateX, dowelIndex) => {
 
-            // Set the position of the dowels based on provided coordinates
-            // dowel.position.set(coordinateX, 0, fastenerPositionZ[dowelIndex]);
-
-            // Add beams, sheets, and dowels to the main group
-            geometryGroup.add(dowel);
+                // Create the beams, sheets, and dowels
+                const [dowel] = createDowel(
+                    width, 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
+                );
+                geometryGroup.add(dowel);
         });
     });
+    }
+
+    
 
     // const mergedSheets = BufferGeometryUtils.mergeGeometries(sheetGroup)
-    // geometryGroup.add(beamGroup);
+    geometryGroup.add(beamGroup);
     geometryGroup.add(sheetGroup);
 
     // Assuming `scene` and `group` are already created and populated with meshes:
@@ -216,7 +237,7 @@ function createDowel(
     segments: number,
     x0: number,
     z0: number,
-    angles: any,
+    angle: number,
     color: string,
     opacity: number,
     coordinateX: number,
@@ -232,18 +253,20 @@ function createDowel(
 
     const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
     const mesh = new THREE.Mesh(dowel, material);
-    const angle: any = THREE.MathUtils.degToRad(angles);
+    const angleRad: any = THREE.MathUtils.degToRad(angle);
     mesh.castShadow = true;
 
+    console.log("angleee", angle)
+
     // position
-    if (angles == 0) {
-        mesh.position.set(-x0 / 2 - length / 2 + coordinateX, 0, -coordinateZ); 
-    } else if (angles == 90) {
+    if (angle == 0) {
+        mesh.position.set(x0 / 2 - length / 2 + coordinateX, 0, -coordinateZ); 
+    } else if (angle == 90) {
         mesh.rotation.y = angle;
         mesh.position.set(0, 0, z0 / 2 + (length / 2) - coordinateZ); 
     } else {
         mesh.rotation.y = angle;
-        mesh.position.set( -x0 / 2 - (length / 2 - coordinateX) * Math.cos(angle), 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
+        mesh.position.set( -x0 / 2 - (length / 2 - coordinateX) * Math.cos(angleRad), 0, z0 / 2 + (length / 2) * Math.sin(angleRad)); 
     };
     
     return [mesh]
@@ -306,4 +329,83 @@ function mergeGroupMeshes(group: THREE.Group, material: THREE.Material): THREE.M
     mergedMesh.castShadow = group.children.some(child => (child as THREE.Mesh).castShadow);
 
     return mergedMesh;
+}
+
+function createRectangularOne(
+    length: number,
+    width: number,
+    height: number,
+    x0: number,
+    z0: number,
+    angles: any,
+    color: string,
+    opacity: number,
+): [mesh: THREE.Mesh] {
+
+    // material
+    const material = new THREE.MeshStandardMaterial({
+        color: color,
+        transparent: true,
+        opacity: opacity
+    });
+
+    const box = new THREE.BoxGeometry(length, width, height);
+    const mesh = new THREE.Mesh(box, material);
+    const angle: any = THREE.MathUtils.degToRad(angles);
+    mesh.castShadow = true;
+
+
+    if (angles == 0) {
+        mesh.position.set(0, 0, 0); 
+    } else if (angles == 90) {
+        mesh.rotation.y = angle;
+        mesh.position.set(0, 0, z0 / 2 + (length / 2)); 
+    } else {
+        mesh.rotation.y = angle;
+        mesh.position.set( 0, 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
+    };
+
+    return [mesh]
+}
+
+function createDowelOne(
+    length: number,
+    radius: number,
+    height: number,
+    segments: number,
+    x0: number,
+    z0: number,
+    angle: number,
+    color: string,
+    opacity: number,
+    coordinateX: number,
+    coordinateZ: number
+): [dowel: THREE.Mesh] {
+    
+    // material
+    const material = new THREE.MeshStandardMaterial({
+        color: color,
+        transparent: true,
+        opacity: opacity
+    });
+
+    const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
+    const mesh = new THREE.Mesh(dowel, material);
+    const angleRad: any = THREE.MathUtils.degToRad(angle);
+    mesh.castShadow = true;
+
+    console.log("angleee", angle)
+
+    // position
+    if (angle == 0) {
+        mesh.position.set(coordinateX, 0, -coordinateZ); 
+    } else if (angle == 90) {
+        mesh.rotation.y = angle;
+        mesh.position.set(0, 0, z0 / 2 + (length / 2) - coordinateZ); 
+    } else {
+        mesh.rotation.y = angle;
+        mesh.position.set( coordinateX * Math.cos(angleRad), 0, z0 / 2 + (length / 2) * Math.sin(angleRad)); 
+    };
+    
+    return [mesh]
 }

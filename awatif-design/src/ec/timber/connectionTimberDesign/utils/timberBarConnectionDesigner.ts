@@ -16,6 +16,8 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: T
 
     // 0 - General
     const thickness: number = width / 2;
+
+    console.log("height444", height)
     
     // 1 - Function to get modification factor
     const [kMod, gamma, chi] = getKmod(serviceClass, loadDurationClass);

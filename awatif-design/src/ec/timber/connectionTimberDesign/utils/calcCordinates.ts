@@ -20,6 +20,8 @@ export function calcFastenerCoordinates(
 
     let angle = beamAngle * 180 / Math.PI;
 
+    console.log("ttt" , beamHeight)
+
     // Calculate the x and y gaps based on beam angle
     const gapX = (beamHeight / 2) * Math.sin((angle));
     const gapY = (beamHeight / 2) - (beamHeight / 2);
@@ -41,7 +43,7 @@ export function calcFastenerCoordinates(
     const yCoords = combinedLists.map(([_, y]) => y);
     const [rotatedX, rotatedY] = rotateAroundPoint(xCoords, yCoords, -beamAngle, [0, beamHeight / 2]);
 
-    console.log("xCoords:", xCoords)
+    // console.log("xCoords:", xCoords)
 
 
     // Return the coordinates as an object

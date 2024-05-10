@@ -4,6 +4,7 @@ import {
   ConnectionTimberDesignerInput,
   ConnectionTimberDesignerOutput,
 } from "./connectionTimberDesign";
+import { setup3DCube } from "./utils/threejs3d";
 
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
@@ -11,12 +12,27 @@ export function connectionTimberDesignReport(
 ): TemplateResult {
   const i = designInput.connectionTimberDesign;
   const o = designOutput.connectionTimberDesign;
-  const index = 0;  // node index
-  console.log("i: ", i);
-  console.log("o: ", o);
-  console.log("node: ", designInput.node);
+  const index = designInput.node;  // node index
 
-  designInput.node
+  let angles: number[] = [];
+  let node = index;
+  let elements = designOutput.connectedElements[node];
+  
+  elements.forEach(indexx => {
+    angles.push(designOutput.beamAngles[indexx])
+  });
+  
+  let height = designInput.connectionTimberDesign.height;
+  let width = designInput.connectionTimberDesign.width;
+  let sheetNumber = designOutput.connectionTimberDesign[node][0].sheetNo;
+  let sheetThickness = designInput.connectionTimberDesign.sheetThickness;
+  let fastenerPositionX = designOutput.connectionTimberDesign[node][0].coordinatesX;
+  let fastenerPositionZ = designOutput.connectionTimberDesign[node][0].coordinatesY;
+  document.addEventListener('DOMContentLoaded', () => setup3DCube(node, elements, angles, height, width, sheetNumber, sheetThickness, fastenerPositionX, fastenerPositionZ));
+
+  console.log("elements", elements);
+  console.log("height", height);
+  console.log("fastenerPositionY", fastenerPositionZ);
 
   let reportHeader = html`
     <br>
@@ -39,7 +55,7 @@ export function connectionTimberDesignReport(
   let reportSummary = html`
     <h2>Summary</h2>
     <p>Design of node: ${designInput.node}</p>
-    <p>Connected elements: ${designOutput.elements[index]}</p>
+    <p>Connected elements: ${designOutput.elements}</p>
     <div class="canvas-container" id="threejs-connection"></div>
     <table>
         <tr>
