@@ -1,5 +1,5 @@
 import { analyze } from "../src/analyze";
-import { Node, Element, AnalysisInput } from "../src/types";
+import { Node, Element, AnalysisInput } from "../src";
 
 describe("analyze beams", () => {
   describe("nodal forces", () => {

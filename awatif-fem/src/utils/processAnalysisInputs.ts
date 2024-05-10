@@ -4,7 +4,7 @@ import {
   SupportAnalysisInput,
   DistributedLoadAnalysisInput,
   LoadAnalysisInput,
-} from "../types";
+} from "..";
 
 // don't refactor these types, they miss up with type.d.ts
 export enum AnalysisType {

@@ -1,4 +1,4 @@
-import { Node, Element } from "./types";
+import { Node, Element } from ".";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
 import { getEquivalentDistributedLoad } from "./utils/getEquivalentDistributedLoad";
 import { getFreeIndices } from "./utils/getFreeIndices";
@@ -13,8 +13,7 @@ import * as mathjs from "mathjs";
 export function deform(
   nodes: Node[],
   elements: Element[],
-  pa: ProcessedAnalysisInputs,
-  code: number[]
+  pa: ProcessedAnalysisInputs
 ) {
   // stiffness matrix
   const dof = nodes.length * (pa.analysisType === AnalysisType.Bar ? 3 : 6);
@@ -25,8 +24,8 @@ export function deform(
     const node1 = nodes[element[1]];
     const L = mathjs.norm(mathjs.subtract(node1, node0)) as number;
 
-    const kLocal = getStiffnessMatrix[pa.analysisType](pa, index, L, code);
-    const T = getTransformationMatrix[pa.analysisType](node0, node1, code);
+    const kLocal = getStiffnessMatrix[pa.analysisType](pa, index, L);
+    const T = getTransformationMatrix[pa.analysisType](node0, node1);
     const kGlobal = mathjs.multiply(
       mathjs.transpose(T),
       mathjs.multiply(kLocal, T)

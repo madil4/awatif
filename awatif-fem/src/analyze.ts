@@ -8,23 +8,20 @@ import {
   DeformationAnalysisOutput,
   ReactionAnalysisOutput,
   FrameAnalysisOutput,
-} from "./types";
+} from ".";
 import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
 import { getStiffnessMatrix } from "./utils/getStiffnessMatrix";
 import { getEquivalentDistributedLoad } from "./utils/getEquivalentDistributedLoad";
-import { checkApi } from "./utils/checkApi";
 
 export function analyze(
   nodes: Node[],
   elements: Element[],
   analysisInputs: AnalysisInput[]
 ): AnalysisOutputs {
-  const code = checkApi(elements.length) as number[];
-
   const pai = processAnalysisInputs(analysisInputs);
-  const { deformations, forces } = deform(nodes, elements, pai, code);
+  const { deformations, forces } = deform(nodes, elements, pai);
 
   const analysisOutputs: AnalysisOutputs[keyof AnalysisOutputs] = [];
   nodes.forEach((_, index) => {
@@ -80,9 +77,9 @@ export function analyze(
       deformations,
       mathjs.index(getElementNodesIndices[pai.analysisType](element))
     );
-    const T = getTransformationMatrix[pai.analysisType](node0, node1, code);
+    const T = getTransformationMatrix[pai.analysisType](node0, node1);
     const dxLocal = mathjs.multiply(T, dxGlobal);
-    const kLocal = getStiffnessMatrix[pai.analysisType](pai, index, L, code);
+    const kLocal = getStiffnessMatrix[pai.analysisType](pai, index, L);
     let fLocal = mathjs.multiply(kLocal, dxLocal).toArray() as number[];
 
     // correct forces or reactions due to distributed load

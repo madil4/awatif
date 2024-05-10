@@ -96,24 +96,6 @@ const expectedAnalysisOutputs: AnalysisOutputs = {
 When you toggle the bending moment setting located at the top-left corner, you should see this:
 ![image](https://github.com/madil4/awatif/assets/3858873/1588f4b3-c87f-426c-a1e6-62130ecfac3e)
 
-## Pricing
-
-- Free. To experiment and validate
-
-  - 1 user
-  - limit of 20 elements
-
-- €25 Monthly. For professionals and small teams
-
-  - 1 user
-  - unlimited elements
-
-- €4k-10k Annually. For SaaS businesses and big teams
-  - Unlimited users
-  - Unlimited elements
-
-To purchase a license contact mohamed@awatif.co
-
 ## Documentation
 
 [Awatif FEM Docs](https://awatif.co/awatif-fem/)
