@@ -7,7 +7,7 @@ import {
   Parameters,
   Model,
 } from "../../awatif-ui/src";
-import { analyze } from "../../awatif-fem/";
+import { analyze } from "../../awatif-fem";
 import { design } from "../../awatif-design";
 import {
   frameTimberDesign,
@@ -20,7 +20,11 @@ import {
   connectionTimberDesign,
 } from "../../awatif-design/src/ec/timber/";
 import { DesignInput } from "../../awatif-design/src/design";
-import { threejs } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs";
+import { setup3DCube } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs3d";
+// import { setup2DBeams } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs2d";
+import { setupNodesAndElements  } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejsModel";
+import { drawSpacings  } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejsSpacing";
+
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
@@ -38,6 +42,8 @@ function onParameterChange(parameters: Parameters): Model {
     [0, 1],
     [1, 2],
   ];
+
+  document.addEventListener('DOMContentLoaded', () => setupNodesAndElements(nodes, elements));
 
   const analysisInputs: AnalysisInput[] = [
     {
@@ -88,6 +94,7 @@ function onParameterChange(parameters: Parameters): Model {
       sheetGrade: "S235",
       sheetThickness: 5,
       sheetNo: 2,
+      beamAngle: 45,
     };
 
   const designInputs: DesignInput[] = [
@@ -112,7 +119,8 @@ function onParameterChange(parameters: Parameters): Model {
       connectionTimberDesign: timberBarNodeConnectionDesignerInput,
     },
   ];
-  console.log(analysisOutputs)
+
+  // document.addEventListener('DOMContentLoaded', () => drawSpacings(nodes, elements, timberBarNodeConnectionDesignerInput, designOutputs));
 
   const designOutputs = design(
     nodes,
@@ -122,6 +130,19 @@ function onParameterChange(parameters: Parameters): Model {
     designInputs,
     [frameTimberDesign, connectionTimberDesign]
   );
+  console.log("designOutputs", designOutputs)
+  let node = 1;
+  let elementss = [1, 2, 3];
+  let angles = [0, 45, 90]
+  let heights = [300, 300, 300]
+  let widths = [200, 200, 200]
+  let sheetNumber = 1
+  let sheetThickness = 5
+  let fastenerPositionX = [320, 320, 320, 320, 320, 320, 320, 320, 360, 360 ]
+  let fastenerPositionZ = [24, 50, 76, 102, 128, 154, 180, 206, 24, 50]
+  document.addEventListener('DOMContentLoaded', () => setup3DCube(node, elementss, angles, heights, widths, sheetNumber, sheetThickness, fastenerPositionX, fastenerPositionZ));
+  // document.addEventListener('DOMContentLoaded', initialize3DCanvas);
+
 
   return {
     nodes,
@@ -138,9 +159,5 @@ app({
   onParameterChange,
   reports: [frameTimberDesignReport, connectionTimberDesignReport],
 });
-
-const funcThree = threejs(200, 300, 50);
-// Execute the setup function once the DOM is ready
-document.addEventListener('DOMContentLoaded', threejs(200, 300, 50));
 
 

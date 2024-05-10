@@ -12,6 +12,7 @@ export type TimberBarConnectionDesignerInput = {
     sheetGrade: string;
     sheetThickness: number;
     sheetNo: number;
+    beamAngle: number
 };
 
 export type TimberBarConnectionDesignerOutput = {
@@ -21,6 +22,8 @@ export type TimberBarConnectionDesignerOutput = {
     minDistancesListTimber: number[];
     minDistancesListSteel: number[];
     distancesListRequired: number[];
+    coordinatesX: number[],
+    coordinatesY: number[],
     fub: number;
     Myrk: number;
     fh0k: number;

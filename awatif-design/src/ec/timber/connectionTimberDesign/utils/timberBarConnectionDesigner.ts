@@ -5,12 +5,14 @@ import { checkNoSheets, calcAxialMemberCheck, blockFailureCheckAxial } from './c
 import { TimberBarConnectionDesignerInput, TimberBarConnectionDesignerOutput } from './types';
 import { calcPossibleFastener } from  './calcPossibleFastener';
 import { calcStability } from  './calcStability';
+import { calcFastenerCoordinates } from  './calcCordinates';
+
 
 
 // connectionDesignerOutput = timberBarConnectionDesigner( connectionDesignerInput )
 export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput): TimberBarConnectionDesignerOutput {
     // Extract input properties from connectionDesignerInput
-    let { serviceClass, loadDurationClass, beam, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo } = timberBarConnectionDesignerInput;
+    let { serviceClass, loadDurationClass, beam, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerInput;
 
     // 0 - General
     const thickness: number = width / 2;
@@ -37,7 +39,9 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: T
     const [F_vrdNew, F_vrd1New, F_vrd2New, F_vrk1New, F_vrk2New, F_vrkfNew, F_vrkgNew, F_vrkhNew, F_vrklNew, F_vrkmNew] = shearCapacity(fastenerDiameter, thickness, timberGrade, fastenerGrade, 0, chi);
 
     // 8 - recalc possible fastener
-    const [noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew,noPerpNew, F_vrdTotalNew, fastenerCheckNew, distancesFinal] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrdNew, sheetNo);
+    const [noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew, noPerpNew, F_vrdTotalNew, fastenerCheckNew, distancesFinal] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrdNew, sheetNo);
+
+    const [coordinatesX, coordinatesY] = calcFastenerCoordinates(distancesListRequired, beamAngle, height, noAxial, noPerp);
 
     // 9 - axial member check
     const [A_net, f_ct0k, f_ctd, force, sigma_ct0d, befct, etaAxialCheck] = calcAxialMemberCheck(width, height, noPerpNew, fastenerDiameter, axialForce, timberGrade, sheetNo, chi, sheetThickness);
@@ -56,6 +60,8 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerInput: T
         minDistancesListTimber: minDistancesListTimber,
         minDistancesListSteel: minDistancesListSteel,
         distancesListRequired: distancesListRequired,
+        coordinatesX: coordinatesX,
+        coordinatesY: coordinatesY,
         fub: f_ub,
         Myrk: M_yrk,
         fh0k: f_h0k,
