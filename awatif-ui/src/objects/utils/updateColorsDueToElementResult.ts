@@ -1,13 +1,11 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { ModelState, SettingsState } from "../../types";
-import { Element } from "../../../../awatif-data-structure/src";
 import { Lut } from "three/examples/jsm/math/Lut.js";
 import { divideNodesElements } from "./divideNodesElements";
 import { getKeys } from "./getKeys";
 
 export function updateColorsDueToElementResult(
-  elements: Element[],
   model: ModelState,
   settings: SettingsState,
   lines: THREE.LineSegments
@@ -28,7 +26,7 @@ export function updateColorsDueToElementResult(
       const curOutputs = outputs.get(settings.elementResults.val);
 
       const colors: any[] = [];
-      elements.forEach((_, i) => {
+      model.val.elements.forEach((_, i) => {
         const outputPerNode = curOutputs.get(i) ?? { utilizationRatio: 0 };
         const utilizationRatio = outputPerNode.utilizationRatio || 0;
         const color = lut.getColor(utilizationRatio);
