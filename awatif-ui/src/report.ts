@@ -21,7 +21,7 @@ export const report = (
       const reportName = report.name.slice(0, -6);
       if (reportName in designInput) {
         //if (designInput.element != undefined)
-         // reportsMap.set("element " + designInput.element, report);
+        // reportsMap.set("element " + designInput.element, report);
         if (designInput.node != undefined)
           reportsMap.set("node " + designInput.node, report);
       }
@@ -67,7 +67,6 @@ export const report = (
 
   // on model change or current index change: render html
   van.derive(() => {
-    console.log(modelState.val.designInputs);
     if (dialogBodyElm.value)
       render(
         reportsMap.get(currentElemIndex.val)(
@@ -77,4 +76,9 @@ export const report = (
         dialogBodyElm.value
       );
   });
+
+  // hack: to trigger the first render of the threejs canvas
+  setTimeout(() => {
+    currentElemIndex.val = "node 1";
+  }, 100);
 };

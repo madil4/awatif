@@ -17,7 +17,6 @@ import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/proce
 import { arrayToSet } from "./utils/sortData";
 import { calculateElementAngles } from "./utils/calcBeamAngle";
 
-
 export type ConnectionTimberDesignerInput = {
   node: number;
   connectionTimberDesign: TimberBarConnectionDesignerInput;
@@ -51,17 +50,15 @@ export function connectionTimberDesign(
   const nestedAxialForces: number[][] = [];
   const beamAngles = calculateElementAngles(nodes, elements);
 
-
-
   const uniqueNodeNumbers = getNodeNumbers(elements);
-  const uniqueElements : number[] = [];
+  const uniqueElements: number[] = [];
   const connectedElements: number[][] = [];
-
 
   uniqueNodeNumbers.forEach((nodei) => {
     const elementIds = getConnectedElements(nodei, elements);
     connectedElements.push(elementIds);
-    uniqueElements.push(...elementIds)});
+    uniqueElements.push(...elementIds);
+  });
   const uniqueElementNumbers = arrayToSet(uniqueElements);
 
   // console.log("uniqueNodeNumbers: ", uniqueNodeNumbers); // array of node ids
@@ -77,49 +74,49 @@ export function connectionTimberDesign(
     const nodeOutputs: TimberBarConnectionDesignerOutput[] = [];
     const nodeAxialForces: number[] = [];
 
-
-    elementss.forEach(element => {
+    elementss.forEach((element) => {
       // console.log("index: ", index)
 
-      // find load 
-      let axialForce = processedAnalysisOutputs.normal.get(element)??[0,0]
+      // find load
+      let axialForce = processedAnalysisOutputs.normal.get(element) ?? [0, 0];
       nodeAxialForces.push(axialForce[0]);
 
       // console.log("axialForce: ", axialForce);
 
       // you can get the axial force by searching in the analysisOutputs using the element index
       // similarly you can get serviceClass in designInput
-      const timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput = {
-        serviceClass: 1,
-        loadDurationClass: "permanent",
-        beam: element,
-        timberGrade: "GL24h",
-        width: 400,
-        height: 800,
-        axialForce: axialForce[0],
-        fastenerGrade: "S235",
-        fastenerDiameter: 8,
-        sheetGrade: "S235",
-        sheetThickness: 5,
-        sheetNo: 2,
-        beamAngle: beamAngles[index],
-      };
+      const timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput =
+        {
+          serviceClass: 1,
+          loadDurationClass: "permanent",
+          beam: element,
+          timberGrade: "GL24h",
+          width: 400,
+          height: 800,
+          axialForce: axialForce[0],
+          fastenerGrade: "S235",
+          fastenerDiameter: 8,
+          sheetGrade: "S235",
+          sheetThickness: 5,
+          sheetNo: 2,
+          beamAngle: beamAngles[index],
+        };
 
-        // Call the design function and store the output
-        const timberBarConnectionDesignerOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput);
+      // Call the design function and store the output
+      const timberBarConnectionDesignerOutput = timberBarConnectionDesigner(
+        timberBarConnectionDesignerInput
+      );
 
-        // Push the result into the node's output array
-        nodeOutputs.push(timberBarConnectionDesignerOutput);
-
+      // Push the result into the node's output array
+      nodeOutputs.push(timberBarConnectionDesignerOutput);
     });
 
     // Add the array of outputs for this node to the nested array
     nestedDesignPerElements.push(nodeOutputs);
     nestedAxialForces.push(nodeAxialForces);
+  });
 
-});
-
-  console.log("beamAngles: ", beamAngles)
+  // console.log("beamAngles: ", beamAngles)
 
   return {
     node: designInput.node,
@@ -129,4 +126,3 @@ export function connectionTimberDesign(
     connectionTimberDesign: nestedDesignPerElements,
   }; // Return only the array
 }
-
