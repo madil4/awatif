@@ -31,7 +31,7 @@ export function elements(
     )
   );
 
-  updateColorsDueToElementResult(model.val.elements, model, settings, lines);
+  updateColorsDueToElementResult(model, settings, lines);
 
   van.derive(() => (nodesCache = nodes.val));
 
