@@ -13,44 +13,7 @@ export const report = (
   let currentElemIndex = van.state("");
   let dialogElm = createRef<HTMLDialogElement>();
   let dialogBodyElm = createRef<HTMLDivElement>();
-
-  // Todo: optimize these loops
-  const reportsMap = new Map<string, any>();
-  reports.forEach((report) => {
-    modelState.val.designInputs.forEach((designInput) => {
-      const reportName = report.name.slice(0, -6);
-      if (reportName in designInput) {
-        //if (designInput.element != undefined)
-        // reportsMap.set("element " + designInput.element, report);
-        if (designInput.node != undefined)
-          reportsMap.set("node " + designInput.node, report);
-      }
-    });
-  });
-
-  currentElemIndex.val = reportsMap.keys().next().value;
-
-  // init html
-  const topBarTemp = html`<div class="topBar">
-    <a @click=${onTopBarReportClick} href="#report">Report</a>
-  </div>`;
-
-  const elements = html` <select @change=${onElementChange}>
-    ${Array.from(reportsMap.keys()).map(
-      (key) => html`<option value="${key}">${key}</option>`
-    )}
-  </select>`;
-
-  const dialogTemp = html`<dialog ref=${ref(dialogElm)} >
-    <div class="dialog-header">
-      <span class="close" @click=${onDialogClose}>&times;</span>
-      ${elements}
-    </div>
-    <div class="dialog-body" ref=${ref(dialogBodyElm)}>
-  </dialog>`;
-
-  // update
-  render(html`${topBarTemp}${dialogTemp}`, document.body);
+  let reportsMap = new Map<string, any>();
 
   // events
   function onDialogClose() {
@@ -65,6 +28,48 @@ export const report = (
   function onElementChange(ev: any) {
     currentElemIndex.val = ev.target.value;
   }
+
+  // todo: a better approach is to leave this filtering to the user, you just gonna provide all data
+  // on model model change: render dialog
+  van.derive(() => {
+    reportsMap.clear();
+
+    // Todo: optimize these loops
+    reports.forEach((report) => {
+      modelState.val.designInputs.forEach((designInput) => {
+        const reportName = report.name.slice(0, -6);
+        if (reportName in designInput) {
+          if (designInput.element != undefined)
+            reportsMap.set("element " + designInput.element, report);
+          if (designInput.node != undefined)
+            reportsMap.set("node " + designInput.node, report);
+        }
+      });
+    });
+
+    currentElemIndex.val = reportsMap.keys().next().value;
+
+    // init html
+    const topBarTemp = html`<div class="topBar">
+      <a @click=${onTopBarReportClick} href="#report">Report</a>
+    </div>`;
+
+    const elements = html` <select @change=${onElementChange}>
+      ${Array.from(reportsMap.keys()).map(
+        (key) => html`<option value="${key}">${key}</option>`
+      )}
+    </select>`;
+
+    const dialogTemp = html`<dialog ref=${ref(dialogElm)} >
+    <div class="dialog-header">
+      <span class="close" @click=${onDialogClose}>&times;</span>
+      ${elements}
+    </div>
+    <div class="dialog-body" ref=${ref(dialogBodyElm)}>
+  </dialog>`;
+
+    render(html`${topBarTemp}${dialogTemp}`, document.body);
+  });
 
   // on model change or current index change: render html
   van.derive(() => {
