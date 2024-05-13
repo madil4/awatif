@@ -14,10 +14,9 @@ export function connectionTimberDesignReport(
   designOutput: ConnectionTimberDesignerOutput
 ): TemplateResult {
   const i = designInput.connectionTimberDesign;
-  const o = designOutput.connectionTimberDesign[0];
   let index = 0
 
-  console.log("designOutput.designInput.coordinatesX", designOutput.connectionTimberDesign[0].coordinatesX)
+  // console.log("designOutput.designInput.coordinatesX", designOutput.connectionTimberDesign[0].coordinatesX)
 
   let node = designInput.node;
   let elements = designOutput.designInput.map( (v) => [v.element] ).flat()
@@ -32,10 +31,7 @@ export function connectionTimberDesignReport(
   let fastenerPositionX = designOutput.connectionTimberDesign.map( (v) => [v.coordinatesX] ).flat()
   let fastenerPositionZ = designOutput.connectionTimberDesign.map( (v) => [v.coordinatesY] ).flat()
 
-  
-  console.log( "fastenerPositionX", fastenerPositionX )
-
-  // document.addEventListener('DOMContentLoaded', () => setup3DCube(
+  const o = designOutput.connectionTimberDesign[0];
 
   setup3DCube(
     container.value,
@@ -50,13 +46,44 @@ export function connectionTimberDesignReport(
     fastenerPositionX,
     fastenerPositionZ
   )
-  // function createTabs() {
-   // elements.forEach((element, index) => {
-   //   const tabElement = document.createElement("div")
-   //   tabElement.textContent = element.toString()
-   //   tabElement.classList.add("tab")
 
+  function updateTable(elements: number[]): void {
+    const table = document.getElementById('data-table') as HTMLTableElement; // Safely assert the element as HTMLTableElement
+  
+    elements.forEach((element, index) => {
+        const row = table.insertRow(); // Insert a new row at the end of the table
+  
+        // Create a cell for each item and append text nodes with the data
+        const cellNode = row.insertCell();
+        const cellBeams = row.insertCell();
+        const cellTimber = row.insertCell();
+        const cellWidths = row.insertCell();
+        const cellHeights = row.insertCell();
+        const cellAngles = row.insertCell();
+        const cellAxialLoads = row.insertCell();
+        const cellFastenerCheck = row.insertCell();
+        const cellBlockCheck = row.insertCell();
+        const cellAxialCheck = row.insertCell();
+        const cellStability = row.insertCell();
+  
+        // Assigning the text content for each cell based on the element's properties
+        cellNode.textContent = node.toString();
+        cellBeams.textContent = element.toString();
+        cellTimber.textContent =  i.timberGrade ;
+        cellWidths.textContent = `${widths[index]}mm`;
+        cellHeights.textContent = `${heights[index]}mm`;
+        cellAngles.textContent = `${beamAngles[index]}°`;
+        cellAxialLoads.textContent = `${axialForces[index]}kN`;
+        cellFastenerCheck.textContent = `${(designOutput.connectionTimberDesign[index].fastenerCheck*100).toFixed(0)}%`;
+        cellBlockCheck.textContent = `${(designOutput.connectionTimberDesign[index].etaBlockFailure*100).toFixed(0) }%`;
+        cellAxialCheck.textContent = `${(designOutput.connectionTimberDesign[index].etaAxialCheck*100).toFixed(0)}%`;
+        cellStability.textContent = `${(designOutput.connectionTimberDesign[index].etaStability*100).toFixed(0)}%`;
+    });
+  }
 
+  document.addEventListener('DOMContentLoaded', () => {
+    updateTable(elements);
+});
 
   let reportHeader = html` <br />
     <br>
@@ -78,45 +105,24 @@ export function connectionTimberDesignReport(
 
   let reportSummary = html`
     <h2>Summary</h2>
-    <p>Design of node: ${designInput.node}</p>
-    <p>Connected elements: ${i.element}</p>
     <div class="canvas-container" ref=${ref(container)}></div>
-    <table>
-        <tr>
-            <th>Node</th>
-            <th>Beams</th>
-            <th>Timber</th>
-            <th>Widths</th>
-            <th>Heights</th>
-            <th>Angles</th>
-            <th>Axial Loads</th>
-        </tr>
-        <tr>
-        <td> ${ node }</td>
-        <td> ${ elements }</td>
-        <td> ${ i.timberGrade }</td>
-        <td> ${ widths } mm</td>
-        <td> ${ heights } mm</td>
-        <td> ${ beamAngles }</td>
-        <td> ${ axialForces } kN</td>
-        </tr>
-    </table>
     <br>
-
-    <p class="bolt">Checks</p>
-    <table>
-        <tr>
-            <th>Fastener Check</th>
-            <th>Member Check</th>
-            <th>Block Failure</th>
-        </tr>
-        <tr>
-        <td> ${ (o.fastenerCheck*100).toFixed(0) } %</td>
-        <td> ${ (o.etaAxialCheck*100).toFixed(0) } %</td>
-        <td> ${ (o.etaBlockFailure*100).toFixed(0) } %</td>
-        </tr>
-    </table>
-    <br>
+    <table id="data-table">
+    <tr>
+        <th>Node</th>
+        <th>Beams</th>
+        <th>Timber</th>
+        <th>Width</th>
+        <th>Height</th>
+        <th>Angle</th>
+        <th>Axial Load</th>
+        <th>Fastener Check</th>
+        <th>Block Failure</th>
+        <th>Axial Member</th>
+        <th>Stability Check</th>
+    </tr>
+    <!-- Rows will be added dynamically here -->
+</table>
     <br>`;
   
   let reportLoadProperties = html`
@@ -331,3 +337,5 @@ export function connectionTimberDesignReport(
 
   return reportContent
 }
+
+

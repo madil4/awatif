@@ -14,6 +14,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // let { serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerInput;
     let { serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerLocalInput;
     // console.log("serviceClass, loadDurationClass, beam, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle", serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle)
+    console.log("beamAngle", beamAngle)
 
     // 0 - General
     const thickness: number = width / 2;
@@ -52,7 +53,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // console.log("sheetLengthNew", sheetLengthNew)
 
     const [coordinatesX, coordinatesY] = calcFastenerCoordinates(distancesFinal, beamAngle, height, noAxialNew, noPerpNew);
-    console.log("element:", element ,"coordinatesX, coordinatesY: ", coordinatesX, coordinatesY)
+    // console.log("element:", element ,"coordinatesX, coordinatesY: ", coordinatesX, coordinatesY)
 
     // 9 - axial member check
     const [A_net, f_ct0k, f_ctd, force, sigma_ct0d, befct, etaAxialCheck] = calcAxialMemberCheck(width, height, noPerpNew, fastenerDiameter, axialForce, timberGrade, sheetNo, chi, sheetThickness);
@@ -63,7 +64,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // console.log("Lh, Lv, Ant, Anv, VeffRd, etaBlockFailure: ", Lh, Lv, Ant, Anv, VeffRd, etaBlockFailure)
 
     // 11 - stability
-    const [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123] = calcStability( timberGrade,length, width, height, axialForce, chi)
+    const [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123, etaStability] = calcStability( timberGrade,length, width, height, axialForce, chi)
     // console.log("L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123: ", L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123)
 
     // Define the output object
@@ -114,7 +115,8 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
         Ant: Ant,
         Anv: Anv,
         VeffRd: VeffRd,
-        etaBlockFailure: etaBlockFailure
+        etaBlockFailure: etaBlockFailure,
+        etaStability: etaStability
     };
 
     return connectionDesignerOutput;

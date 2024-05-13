@@ -8,7 +8,7 @@ export function calcStability(
     height: number,
     axialForce: number,
     chi: number,
-): [number[], number[], number, number[], number[], number, number[], number[], string, number[]] {
+): [number[], number[], number, number[], number[], number, number[], number[], string, number[], number] {
     
     // Material parameters
     const [grade, rho_k, f_myzk, f_c0k, f_t0k, f_t90k, f_c90k, f_vk, E_0mean, E_05, G_05] = getTimberProperties(timberGrade);
@@ -105,6 +105,7 @@ export function calcStability(
 
     const L_eta123: number[] = [];
     let nw = '';
+    let etaMax = 0;
 
     for (let n = 0; n < L_Md.length; n++) {
         const M = L_Md[n];
@@ -131,7 +132,8 @@ export function calcStability(
         const eta3 = (axialForce) / (f_c0d * L_kc[n]) + (L_sigma_md[0] / (f_myd * L_k_crit[0])) ** L_pot[n][0] + (L_sigma_md[1] / (f_mzd * L_k_crit[1])) ** L_pot[n][1];
 
         L_eta123.push(eta1, eta2, eta3);
+        etaMax = Math.max(...L_eta123)
     }
 
-    return [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123];
+    return [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123, etaMax];
 }

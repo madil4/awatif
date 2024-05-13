@@ -27,8 +27,8 @@ export function calcFastenerCoordinates(
     //console.log("c_perp" , noPerp)
 
     // Calculate the x and y gaps based on beam angle
-    const gapX = (beamHeight / 2) * Math.sin((angle));
-    const gapY = (beamHeight / 2) - (beamHeight / 2);
+    const gapX = 0
+    const gapY = 0
 
     // Generate x and y coordinates for fasteners
     const xCoordsFastener = Array.from({ length: noAxial }, (_, i) => 2 * a3 + a1 * i + gapX);

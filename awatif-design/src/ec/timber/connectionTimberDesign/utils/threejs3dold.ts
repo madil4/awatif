@@ -54,59 +54,91 @@ export function setup3DCube(
     let beamLength: number;  // Declare `beamLength` outside the if-else blocks
 
 
-    // loop through angles
     angles.forEach((angle, index) => {
 
-        console.log("node: ", node, "element: ", elements[index], "angle: ", angle)
+        const element = elements[index]
 
-        // parameter
+        console.log("element", element, "angle", angle)
         const width = widths[index]
         const height = heights[index]
-        sheetLength = sheetLengths[index] * 1.5
-        beamLength = sheetLength + 200
+        let angleRad: number = THREE.MathUtils.degToRad(angle );
+
+        const gapx = sheetLength / 2
+        const gapy = 0
+        
+        const rotatedXCoord = gapx * Math.cos(angleRad) - gapy * Math.sin(angleRad)
+        const rotatedYCoord = gapx * Math.sin(angleRad) + gapy * Math.cos(angleRad)
+        
+        const x = -(rotatedXCoord + gapx)
+        const y = rotatedYCoord + gapy
+
+        if (index == 0) {
+
+            beamLength = sheetLengths[index] + 100
+            sheetLength = sheetLengths[index] * 1.5
+
+        } else {
+
+            beamLength = sheetLengths[index] + 100
+            sheetLength = sheetLengths[index]* 1.5
+
+        };
 
         // const [beam] = createRectangular(beamLength, widths[index], heights[index], angle, "yellow", 0.2)
-        const [beam] = createRectangular(beamLength, width, height, "#B99B80", 0.1, false)
-        const [sheet] = createRectangular(sheetLength, sheetThickness, height, "#3E8CA3", 0.99, true)
+        const [sheet] = createRectangular(sheetLength, sheetThickness, height, angle, "blue", 0.5)
+        
+        if (index == 0) {
 
-        // calculate sheet rotation and offset
-        let angleRad: number = THREE.MathUtils.degToRad( -angle );
-        const setX = sheetLength / 2 * Math.cos(angleRad)
-        const setZ = -sheetLength / 2 * Math.sin(angleRad) 
+            // beam.position.set(0, 0, 0)
+            sheet.position.set(0, 0, 0)
 
-        beam.rotation.y = angleRad;
-        sheet.rotation.y = angleRad;
-        beam.position.set(setX, 0, setZ)
-        sheet.position.set(setX, 0, setZ)
-    
-        beamGroup.add(beam);
+        } else {
+
+            // beam.position.set(-x, 0, y)
+            sheet.position.set(x, 0, y)
+            // sheet.position.set(0, 0, 0)
+        }
+
+        // beamGroup.add(beam);
         sheetGroup.add(sheet);
 
-        // fastener
         const dowels = new THREE.Group();
-        // loop through coordinates
-        fastenerPositionX[index].forEach((coordinateX, dowelIndex) => {
+        const xMin = Math.min(...fastenerPositionX[index])
+        const xMax = Math.max(...fastenerPositionX[index])
+        const xCentroid = (xMax - xMin) / 2 + xMin
 
-            // parameter
+
+        fastenerPositionX[index].forEach((coordinateXX, dowelIndex) => {
+
             let coordinateZ = fastenerPositionZ[index][dowelIndex]
+            let coordinateX = coordinateXX - xCentroid
 
             // Create the beams, sheets, and dowels
-            const [dowel] = createDowel(8, width, 10, "#00FF00", 1);
+            const [dowel] = createDowel(
+                8, width, 10, "red", 0.2
+            );
 
-            const angleRad: any = THREE.MathUtils.degToRad( angle );
-            const rotatedXCoord = coordinateX * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad)
-            const rotatedYCoord = coordinateX * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad)
-            dowel.position.set(  rotatedXCoord, 0, rotatedYCoord)
-            dowels.add(dowel);
+            if (angle > 0) {
 
+                const angleRad: any = THREE.MathUtils.degToRad( 180 - angle );
+                const rotatedXCoord = coordinateX * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad)
+                const rotatedYCoord = coordinateX * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad)
+                dowel.position.set(  rotatedXCoord , 0, rotatedYCoord + gapy)
+                dowels.add(dowel);
+
+            } else {
+                dowel.position.set( coordinateX, 0, coordinateZ )
+                dowels.add(dowel);
+            }
         });
-        geometryGroup.add(dowels);
 
+
+        //geometryGroup.add(dowels);
+        
     });
     
     // const mergedSheets = BufferGeometryUtils.mergeGeometries(sheetGroup)
     geometryGroup.add(sheetGroup);
-    geometryGroup.add(beamGroup);
     geometryGroup.add(axesHelper);
 
     // Calculate the centroid of the group for camera positioning
@@ -119,14 +151,14 @@ export function setup3DCube(
 
     // CAMERA
     // Create a perspective camera for 3D projection
-    const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.1, 4000);
-    const distance = 1100; // Adjust this value to control how far away the camera is
-    camera.position.set(0, -distance, 0);
+    const camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 0.1, 4000);
+    const distance = 1000; // Adjust this value to control how far away the camera is
+    camera.position.set(centroid.x, centroid.y + distance, centroid.z + distance);
     camera.lookAt(centroid);
 
     // LIGHT
-    const light = new THREE.DirectionalLight(0xffffff, 2);
-    light.position.set(5, -10, 5);
+    const light = new THREE.DirectionalLight(0xffffff, 0.8);
+    light.position.set(5, 10, 5);
     light.castShadow = true;
 
     // Adjust the shadow properties for the light
@@ -151,11 +183,6 @@ export function setup3DCube(
         previousMousePosition = { x: event.clientX, y: event.clientY };
     });
 
-    const updateRotation = (dx: number, dz: number): void => {
-    geometryGroup.rotation.x += dz * 0.005; // Adjust multiplier for smoother rotation
-    geometryGroup.rotation.z += dx * 0.005; // Ensure rotation axis is handled correctly
-};
-
     renderer.domElement.addEventListener('mousemove', function (event) {
         if (!isDragging) return;
 
@@ -164,8 +191,8 @@ export function setup3DCube(
         const deltaY = event.clientY - previousMousePosition.y;
 
         // Update the group's rotation based on mouse movement
-        updateRotation(deltaX, deltaY); // Centralize rotation logic for reusability
-
+        geometryGroup.rotation.y += -deltaX * 0.01;
+        geometryGroup.rotation.x += -deltaY * 0.01;
 
         // Update the previous mouse position
         previousMousePosition = { x: event.clientX, y: event.clientY };
@@ -189,57 +216,81 @@ export function setup3DCube(
     animate();
 }
 
+// Function to initialize the scene and renderer
+function initializeScene(container: HTMLDivElement): { scene: THREE.Scene, renderer: THREE.WebGLRenderer } {
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('white');
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.shadowMap.enabled = true;
+    renderer.setSize(container.clientWidth || 800, container.clientHeight || 500);
+    container.appendChild(renderer.domElement);
+    
+    return { scene, renderer };
+  }
 
+  
+// Function to set up the camera
+function setupCamera(scene: THREE.Scene, container: HTMLDivElement): THREE.PerspectiveCamera {
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 4000);
+    scene.add(camera);
+    return camera;
+  }
+
+// Function to create and add lights to the scene
+function addLights(scene: THREE.Scene): void {
+    const light = new THREE.DirectionalLight(0xffffff, 0.8);
+    light.position.set(5, 10, 5);
+    light.castShadow = true;
+    light.shadow.mapSize.width = 1024;
+    light.shadow.mapSize.height = 1024;
+    scene.add(light);
+  }
 
 function createRectangular(
     length: number,
     width: number,
     height: number,
+    angle: number,
     color: string,
     opacity: number,
-    depthWrite: boolean
 ): [mesh: THREE.Mesh] {
-    // Define the material with color and transparency properties
+
+    // material
     const material = new THREE.MeshStandardMaterial({
-        color: color, // Set the material color
-        transparent: true, // Enable transparency of the material
-        opacity: opacity, // Define the opacity level
-        side: THREE.DoubleSide,
-        depthWrite: depthWrite,
+        color: color,
+        transparent: true,
+        opacity: opacity
     });
 
-    // Create the geometry for the rectangular prism
-    const boxGeometry = new THREE.BoxGeometry(length, width, height);
+    const box = new THREE.BoxGeometry(length, width, height);
+    const mesh = new THREE.Mesh(box, material);
+    const angleRad: any = THREE.MathUtils.degToRad(angle);
+    mesh.castShadow = true;
+    mesh.rotation.y = angleRad;
 
-    // Create the mesh using the defined geometry and material
-    const rectangularMesh = new THREE.Mesh(boxGeometry, material);
-    rectangularMesh.castShadow = true; // Allow the mesh to cast shadows
-
-    // Return the mesh in a tuple, allowing for easy destructuring elsewhere in the code
-    return [rectangularMesh];
+    return [mesh]
 }
+
 
 function createDowel(
     radius: number,
-    length: number,
+    height: number,
     segments: number,
     color: string,
-    opacity: number
+    opacity: number,
 ): [dowel: THREE.Mesh] {
-    // Define the material of the dowel with color and opacity properties
+    
+    // material
     const material = new THREE.MeshStandardMaterial({
-        color: color, // Color in hexadecimal
-        transparent: true, // Enable transparency
-        opacity: opacity // Set opacity level
+        color: color,
+        transparent: true,
+        opacity: opacity
     });
 
-    // Create the geometry for the dowel as a cylinder
-    const dowelGeometry = new THREE.CylinderGeometry(radius, radius, length, segments);
+    const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
+    const mesh = new THREE.Mesh(dowel, material);
+    mesh.castShadow = true;
 
-    // Create the mesh object using the geometry and material defined above
-    const dowelMesh = new THREE.Mesh(dowelGeometry, material);
-    dowelMesh.castShadow = true; // Enable casting shadows for this mesh
-
-    // Return the mesh in a tuple, allowing for destructuring on receipt
-    return [dowelMesh];
+    return [mesh]
 }

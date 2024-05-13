@@ -42,12 +42,16 @@ export function connectionTimberDesign(
       connectedElements.push(index);
     } 
   });
-  // console.log("designInput.node", designInput.node)
+  // console.log("node", nodes[designInput.node])
   // console.log("connectedElements", connectedElements)
+
 
   // loop through the elements
   // process analysis output
   const processedOutput = processAnalysisOutputs(analysisOutputs);
+
+
+  
 
   // empty list for the results
   const designInputs: TimberBarConnectionDesignerLocalInput[] = [];
@@ -64,12 +68,12 @@ export function connectionTimberDesign(
     const axialForce = axialForces[0];
 
     // get the angle
-    const angle = calculateElementAngle(nodes[elements[element][0]], nodes[elements[element][1]]);
+    const [angleDeg, angleDeg2] = calculateElementAngle(nodes[designInput.node], nodes[elements[element][0]], nodes[elements[element][1]]);
     // console.log("element", element)
     // console.log("angle", angle)
 
     // combining global and local input parameters
-    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: element, axialForce: axialForce, beamAngle: angle, width: width, height: height}
+    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: element, axialForce: axialForce, beamAngle: angleDeg2, width: width, height: height}
     // console.log("timberBarConnectionDesignerInput", timberBarConnectionDesignerInput)
 
     // pass input to connectionTimberDesign

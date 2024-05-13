@@ -69,4 +69,5 @@ export type TimberBarConnectionDesignerOutput = {
     Anv: number;
     VeffRd: number;
     etaBlockFailure: number;
+    etaStability: number
 };
