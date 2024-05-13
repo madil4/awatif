@@ -7,10 +7,10 @@ import {
 // const elementAngles = calculateElementAngles(nodes, elements);
 
 
-export function calculateElementAngles(nodes: Node[], elements: Element[]): number[] {
-    return elements.map(([startIdx, endIdx]) => {
-        const [x1, , z1] = nodes[startIdx]; // Ignore the y-coordinate if not required
-        const [x2, , z2] = nodes[endIdx];
+export function calculateElementAngle(node1: Node, node2: Node): number {
+
+        const [x1, , z1] = node1; // Ignore the y-coordinate if not required
+        const [x2, , z2] = node2;
 
         // Calculate differences between the two nodes
         const dx = x2 - x1;
@@ -21,9 +21,4 @@ export function calculateElementAngles(nodes: Node[], elements: Element[]): numb
         const angleDeg = (angleRad * 180) / Math.PI; // Convert to degrees
 
         return angleDeg;
-    });
 }
-
-
-// Calculate angles for each element
-// const elementAngles = calculateElementAngles(nodes, elements);

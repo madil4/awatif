@@ -20,7 +20,11 @@ export function calcFastenerCoordinates(
 
     let angle = beamAngle * 180 / Math.PI;
 
-    console.log("ttt" , beamHeight)
+    //console.log("c_height" , beamHeight)
+    //console.log("c_distances" , a1, a2, a3, a4, e1)
+    //console.log("c_angle" , beamAngle)
+    //console.log("c_axial" , noAxial)
+    //console.log("c_perp" , noPerp)
 
     // Calculate the x and y gaps based on beam angle
     const gapX = (beamHeight / 2) * Math.sin((angle));
@@ -28,7 +32,7 @@ export function calcFastenerCoordinates(
 
     // Generate x and y coordinates for fasteners
     const xCoordsFastener = Array.from({ length: noAxial }, (_, i) => 2 * a3 + a1 * i + gapX);
-    const yCoordsFastener = Array.from({ length: noPerp }, (_, i) => a4 + a2 * i + gapY);
+    const yCoordsFastener = Array.from({ length: noPerp }, (_, i) => a4 + a2 * i + gapY - beamHeight / 2);
 
     // Combine the x and y coordinates into pairs
     const combinedLists: [number, number][] = [];
@@ -41,13 +45,13 @@ export function calcFastenerCoordinates(
     // Separate back into x and y lists and rotate them
     const xCoords = combinedLists.map(([x, _]) => x);
     const yCoords = combinedLists.map(([_, y]) => y);
-    const [rotatedX, rotatedY] = rotateAroundPoint(xCoords, yCoords, -beamAngle, [0, beamHeight / 2]);
+    const [rotatedX, rotatedY] = rotateAroundPoint(xCoords, yCoords, beamAngle, [0, 0]);
 
     // console.log("xCoords:", xCoords)
 
 
     // Return the coordinates as an object
-    return [rotatedX,rotatedY];
+    return [xCoords, yCoords];
 }
 
 /**
@@ -60,7 +64,7 @@ export function calcFastenerCoordinates(
  */
 
 function rotateAroundPoint(xCoords: number[], yCoords: number[], angle: number, origin: [number, number]): [number[], number[]] {
-    const angleRad = (angle * Math.PI) / 180;
+    const angleRad = ((angle) * Math.PI) / 180;
     const [originX, originY] = origin;
     const rotatedX: number[] = [];
     const rotatedY: number[] = [];

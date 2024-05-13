@@ -2,20 +2,28 @@
 export type TimberBarConnectionDesignerInput = {
     serviceClass: number;
     loadDurationClass: string;
-    beam: number;
+    element: number;
     timberGrade: string;
-    width: number;
-    height: number;
-    axialForce: number;
     fastenerGrade: string;
     fastenerDiameter: number;
     sheetGrade: string;
     sheetThickness: number;
     sheetNo: number;
-    beamAngle: number
 };
 
+export type TimberBarConnectionDesignerLocalInput = {
+
+    width: number;
+    height: number;
+    axialForce: number;
+    beamAngle: number;
+
+} & TimberBarConnectionDesignerInput
+
+
 export type TimberBarConnectionDesignerOutput = {
+    element: number;
+    beamAngle: number;
     kMod: number;
     gamma: number;
     chi: number;
@@ -40,6 +48,7 @@ export type TimberBarConnectionDesignerOutput = {
     Fvrk_m: number;
     sheetNo: number;
     noTotal: number;
+    sheetLength: number;
     noTotalEffective: number;
     noAxial: number;
     noAxialEffective: number;

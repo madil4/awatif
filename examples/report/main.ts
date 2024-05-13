@@ -20,11 +20,6 @@ import {
   connectionTimberDesign,
 } from "../../awatif-design/src/ec/timber/";
 import { DesignInput } from "../../awatif-design/src/design";
-import { setup3DCube } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs3d";
-// import { setup2DBeams } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejs2d";
-import { setupNodesAndElements  } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejsModel";
-import { drawSpacings  } from "../../awatif-design/src/ec/timber/connectionTimberDesign/utils/threejsSpacing";
-
 
 const parameters: Parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
@@ -43,7 +38,7 @@ function onParameterChange(parameters: Parameters): Model {
     [1, 2],
   ];
 
-  document.addEventListener('DOMContentLoaded', () => setupNodesAndElements(nodes, elements));
+  // document.addEventListener('DOMContentLoaded', () => setupNodesAndElements(nodes, elements));
 
   const analysisInputs: AnalysisInput[] = [
     {
@@ -80,22 +75,25 @@ function onParameterChange(parameters: Parameters): Model {
     gammaG: 1,
     gammaM: 1.3,
   };
+
+  // global 
   const timberBarNodeConnectionDesignerInput: ConnectionTimberDesignerInput["connectionTimberDesign"] =
     {
-      serviceClass: 1,
+      serviceClass: 2,
       loadDurationClass: "permanent",
-      beam: 2,
+      element: 0,
+      // axialForce: 0,
+      // width: 0,
+      // height: 0,
+      // beamAngle: 0,
       timberGrade: "GL28h",
-      width: 300,
-      height: 300,
-      axialForce: 200,
       fastenerGrade: "S235",
       fastenerDiameter: 8,
       sheetGrade: "S235",
       sheetThickness: 5,
       sheetNo: 2,
-      beamAngle: 45,
     };
+
 
   const designInputs: DesignInput[] = [
     {
@@ -119,8 +117,6 @@ function onParameterChange(parameters: Parameters): Model {
       connectionTimberDesign: timberBarNodeConnectionDesignerInput,
     },
   ];
-
-  // document.addEventListener('DOMContentLoaded', () => drawSpacings(nodes, elements, timberBarNodeConnectionDesignerInput, designOutputs));
 
   const designOutputs = design(
     nodes,

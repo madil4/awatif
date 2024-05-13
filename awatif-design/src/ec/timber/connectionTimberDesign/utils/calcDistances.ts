@@ -46,7 +46,7 @@ export function calcMaxDistances(minDistancesListTimber: number[], minDistancesL
     const a2: number = roundToBase(Math.max(minDistancesListTimber[1], minDistancesListSteel[3]), base);
     const a3t: number = roundToBase(minDistancesListTimber[2], base);
     const a3c: number = roundToBase(minDistancesListTimber[3], base);
-    const a3: number = Math.max(a3t, a3c) * 2;
+    const a3: number = Math.max(a3t, a3c, minDistancesListSteel[0]) * 2;
     const a4t: number = roundToBase(Math.max(minDistancesListTimber[4], minDistancesListSteel[1]), base);
     const a4c: number = roundToBase(Math.max(minDistancesListTimber[5], minDistancesListSteel[1]), base);
     const a4: number = Math.max(a4t, a4c);

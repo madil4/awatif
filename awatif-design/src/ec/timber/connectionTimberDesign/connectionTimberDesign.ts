@@ -6,31 +6,24 @@ import {
 } from "../../../../../awatif-data-structure/src";
 import {
   TimberBarConnectionDesignerInput,
+  TimberBarConnectionDesignerLocalInput,
   TimberBarConnectionDesignerOutput,
 } from "./utils/types";
 import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";
-import {
-  getConnectedElements,
-  getNodeNumbers,
-} from "./utils/mapNodesAndElements";
-import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";
-import { arrayToSet } from "./utils/sortData";
-import { calculateElementAngles } from "./utils/calcBeamAngle";
-
+import { calculateElementAngle } from "./utils/calcBeamAngle";
+import { processAnalysisOutputs } from "awatif-ui/src/utils/processAnalysisOutputs";
 
 export type ConnectionTimberDesignerInput = {
   node: number;
   connectionTimberDesign: TimberBarConnectionDesignerInput;
 };
 
+// per node
 export type ConnectionTimberDesignerOutput = {
   node: number;
-  elements: number[];
-  connectedElements: number[][];
-  forces: number[][];
-  beamAngles: number[];
-  connectionTimberDesign: TimberBarConnectionDesignerOutput[][];
-  // Add other properties from TimberBarConnectionDesignerOutput as needed
+  designInput: TimberBarConnectionDesignerLocalInput[];
+  utilizationRatio: number;
+  connectionTimberDesign: TimberBarConnectionDesignerOutput[];
 };
 
 // function that loops through a node with several timber bars
@@ -41,92 +34,63 @@ export function connectionTimberDesign(
   analysisOutputs: AnalysisOutputs,
   designInput: ConnectionTimberDesignerInput
 ): ConnectionTimberDesignerOutput {
-  // console.log("nodes: ", nodes);
-  // console.log("elements: ", elements);
-  // console.log("analysisInputs: ", analysisInputs);
-  // console.log("analysisOutputs: ", analysisOutputs);
-  // console.log("designInput: ", designInput);
 
-  // from the nodes and elements list you can know which elements are connected to the connection
-  const nestedDesignPerElements: TimberBarConnectionDesignerOutput[][] = [];
-  const nestedAxialForces: number[][] = [];
-  const beamAngles = calculateElementAngles(nodes, elements);
+  // get elements inside the node
+  let connectedElements: number[] = [];
+  elements.forEach((element, index) => {
+    if (element.includes(designInput.node)) {
+      connectedElements.push(index);
+    } 
+  });
+  // console.log("designInput.node", designInput.node)
+  // console.log("connectedElements", connectedElements)
 
-  const uniqueNodeNumbers = getNodeNumbers(elements);
-  const uniqueElements : number[] = [];
-  const connectedElements: number[][] = [];
+  // loop through the elements
+  // process analysis output
+  const processedOutput = processAnalysisOutputs(analysisOutputs);
 
+  // empty list for the results
+  const designInputs: TimberBarConnectionDesignerLocalInput[] = [];
+  const designOutputs: TimberBarConnectionDesignerOutput[] = [];
 
-  uniqueNodeNumbers.forEach((nodei) => {
-    const elementIds = getConnectedElements(nodei, elements);
-    connectedElements.push(elementIds);
-    uniqueElements.push(...elementIds)});
-  const uniqueElementNumbers = arrayToSet(uniqueElements);
+  connectedElements.forEach((element, index) => {
+    
+    // get area and dimensions
+    const width = 300;
+    const height = 400;
 
-  // console.log("uniqueNodeNumbers: ", uniqueNodeNumbers); // array of node ids
-  // console.log("uniqueElementNumbers: ", uniqueElementNumbers);  // array of element ids
-  // console.log("connectedElements: ", connectedElements);  // array of element ids per node
+    // get forces
+    const axialForces = processedOutput.normal.get(element)??[0, 0]
+    const axialForce = axialForces[0];
 
-  let processedAnalysisOutputs = processAnalysisOutputs(analysisOutputs);
+    // get the angle
+    const angle = calculateElementAngle(nodes[elements[element][0]], nodes[elements[element][1]]);
+    // console.log("element", element)
+    // console.log("angle", angle)
 
-  // loop through the elements and compute the outputs of each element as you did in Python and Typescript
-  // connectedElements.forEach((element, index) => {
+    // combining global and local input parameters
+    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: element, axialForce: axialForce, beamAngle: angle, width: width, height: height}
+    // console.log("timberBarConnectionDesignerInput", timberBarConnectionDesignerInput)
 
-  connectedElements.forEach((elementss, index) => {
-    const nodeOutputs: TimberBarConnectionDesignerOutput[] = [];
-    const nodeAxialForces: number[] = [];
+    // pass input to connectionTimberDesign
+    const timberBarOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput)
+    // console.log("timberBarOutput: ", timberBarOutput)
+    designOutputs.push(timberBarOutput)
+    designInputs.push(timberBarConnectionDesignerInput)
 
+  });
 
-    elementss.forEach(element => {
-      // console.log("index: ", index)
+  // calc max utilization
+  const utilizationRatios = designOutputs.map( (v) => [v.etaBlockFailure, v.etaAxialCheck, v.fastenerCheck] )
+  const maxUtilization = Math.max(...utilizationRatios.flat())
+  // console.log("maxUtilization", maxUtilization)
 
-      // find load 
-      let axialForce = processedAnalysisOutputs.normal.get(element)??[0,0]
-      nodeAxialForces.push(axialForce[0]);
-
-      // console.log("axialForce: ", axialForce);
-
-      // you can get the axial force by searching in the analysisOutputs using the element index
-      // similarly you can get serviceClass in designInput
-      const timberBarConnectionDesignerInput: TimberBarConnectionDesignerInput = {
-        serviceClass: 1,
-        loadDurationClass: "permanent",
-        beam: element,
-        timberGrade: "GL24h",
-        width: 400,
-        height: 500,
-        axialForce: axialForce[0],
-        fastenerGrade: "S235",
-        fastenerDiameter: 8,
-        sheetGrade: "S235",
-        sheetThickness: 5,
-        sheetNo: 2,
-        beamAngle: beamAngles[index],
-      };
-
-      // Call the design function and store the output
-      const timberBarConnectionDesignerOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput);
-
-      // Push the result into the node's output array
-      nodeOutputs.push(timberBarConnectionDesignerOutput);
-
-    });
-
-    // Add the array of outputs for this node to the nested array
-    nestedDesignPerElements.push(nodeOutputs);
-    nestedAxialForces.push(nodeAxialForces);
-
-});
-
-console.log("beamAngles: ", beamAngles)
 
 return {
   node: designInput.node,
-  forces: nestedAxialForces,
-  elements: uniqueElementNumbers,
-  connectedElements: connectedElements,
-  beamAngles: beamAngles,
-  connectionTimberDesign: nestedDesignPerElements,
-}; // Return only the array
+  utilizationRatio: maxUtilization,
+  designInput: designInputs,
+  connectionTimberDesign: designOutputs,
+}; 
 }
 

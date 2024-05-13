@@ -1,41 +1,43 @@
 // Import necessary modules from Three.js
 import * as THREE from 'three';
-import { BufferGeometryUtils } from 'three/examples/jsm/Addons.js';
+import { GeometryCompressionUtils } from 'three/examples/jsm/Addons.js';
+import { Group } from 'three/examples/jsm/libs/tween.module.js';
 
-/**
- * Function to set up a 3D scene with beams, dowels, and sheets
- */
+// Create the scene and set the background color
+const scene = new THREE.Scene();
+scene.background = new THREE.Color("white");
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.shadowMap.enabled = true; // Enable shadow mapping
+
 export function setup3DCube(
-    node: number,
-    elements: number[],
-    angles: number[],
-    height: number,
-    width: number,
-    sheetThickness: number,
-    sheetNumber: number,
-    fastenerPositionX: number[],
-    fastenerPositionZ: number[]
+  container: HTMLDivElement | undefined,
+  node: number,
+  elements: number[],
+  angles: number[],
+  heights: number[],
+  widths: number[],
+  sheetNumber: number,
+  sheetLengths: number[],
+  sheetThickness: number,
+  fastenerPositionX: number[][],
+  fastenerPositionZ: number[][]
 ): void {
+
+
+    scene.clear();
     // Get the container where the 3D cube will be rendered
-    const container = document.getElementById('threejs-connection');
     if (!container) {
         console.error("Canvas container not found!");
         return;
     }
 
-    // input 
-    const beamLength = height;
-    const sheetLength = height - 100;
-
-    // console.log("3node: ", node)
-
     // Ensure a default size if the container has no explicit size
     const canvasWidth = container.clientWidth || 800;
     const canvasHeight = container.clientHeight || 500;
 
-    // Create the scene and set the background color
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("white");
+    var axesHelper = new
+    THREE.AxesHelper(500);
+    scene.add(axesHelper);
 
     // Create a perspective camera for 3D projection
     const camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 0.1, 4000);
@@ -49,79 +51,100 @@ export function setup3DCube(
     // Create a group to hold all beams
     const beamGroup = new THREE.Group();
     const sheetGroup = new THREE.Group();
+    const beamSheetDowelGroup = new THREE.Group();
     const geometryGroup = new THREE.Group();
-    let x0 = 0;
-    let z0 = 0;
+    let sheetLength: number;
+    let beamLength: number;  // Declare `beamLength` outside the if-else blocks
 
-    if (angles.length > 1) {
 
-        let x0 = height;
-        let z0 = height;
+    angles.forEach((angle, index) => {
 
-        const [beamBlock] = createRectangular(x0, width, z0, 0, 0, "block", "yellow", 0.2)
-        beamGroup.add(beamBlock);
-    
-        const [sheetBlock] = createRectangular(x0, sheetThickness, z0, 0, 0, "block", "blue", 0.5)
-        sheetGroup.add(sheetBlock);
+        console.log("angle", angle)
+        const width = widths[index]
+        const height = heights[index]
+        const angleRad: any = THREE.MathUtils.degToRad(angle);
 
-        angles.forEach((angle) => {
+        const gapx = sheetLength / 2
+        const gapy = heights[index] / 2
+        
+        const rotatedXCoord = gapx * Math.cos(angleRad) - gapy * Math.sin(angleRad)
+        const rotatedYCoord = gapx * Math.sin(angleRad) + gapy * Math.cos(angleRad)
+        
+        const x = gapx + rotatedXCoord
+        const y = gapy + rotatedYCoord
 
-            const [beam] = createRectangular(beamLength, width, height, x0, z0, angle, "yellow", 0.2)
-            beamGroup.add(beam);
-    
-            const [sheet] = createRectangular(sheetLength, sheetThickness, height, x0, z0, angle, "blue", 0.5)
-            sheetGroup.add(sheet);
-    
-            fastenerPositionX.forEach((coordinateX, dowelIndex) => {
-    
-                // Create the beams, sheets, and dowels
-                const [dowel] = createDowel(
-                    width, 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
-                );
-                geometryGroup.add(dowel);
-            });
+        if (index == 0) {
+
+            beamLength = sheetLengths[index] + 100
+            sheetLength = sheetLengths[index] * 1.5
+
+        } else {
+
+            beamLength = sheetLengths[index] + 100
+            sheetLength = sheetLengths[index]* 1.5
+
+        };
+
+        const [beam] = createRectangular(beamLength, widths[index], heights[index], angle, "yellow", 0.2)
+        const [sheet] = createRectangular(sheetLength, sheetThickness, heights[index], angle, "blue", 0.5)
+        
+        if (index == 0) {
+
+            beam.position.set(0, 0, 0)
+            sheet.position.set(0, 0, 0)
+
+        } else {
+
+            beam.position.set(-x, 0, y)
+            sheet.position.set(-x, 0, y)
+        }
+
+        beamGroup.add(beam);
+        sheetGroup.add(sheet);
+
+        const dowels = new THREE.Group();
+        const xMin = Math.min(...fastenerPositionX[index])
+        const xMax = Math.max(...fastenerPositionX[index])
+        const xCentroid = (xMax - xMin) / 2 + xMin
+
+
+        fastenerPositionX[index].forEach((coordinateXX, dowelIndex) => {
+
+            let coordinateZ = fastenerPositionZ[index][dowelIndex]
+            let coordinateX = coordinateXX - xCentroid
+
+            // Create the beams, sheets, and dowels
+            const [dowel] = createDowel(
+                sheetLength, 8, width, 10, angle, "red", 1, coordinateX, coordinateZ, beamLength, height
+            );
+
+            if (angle > 0) {
+
+                const angleRad: any = THREE.MathUtils.degToRad( 180 - angle );
+                const rotatedXCoord = coordinateX * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad)
+                const rotatedYCoord = coordinateX * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad)
+                dowel.position.set(  rotatedXCoord , 0, rotatedYCoord + gapy)
+                dowels.add(dowel);
+
+            } else {
+                dowel.position.set( coordinateX, 0, coordinateZ )
+                dowels.add(dowel);
+            }
         });
-    } else {
 
-        console.log("test angles: ", angles.length)
-        // Add beams, dowels, and sheets at specific angles and positions
-        angles.forEach((angle) => {
 
-            const [beam] = createRectangularOne(beamLength, width, height, x0, z0, angle, "yellow", 0.2)
-            beamGroup.add(beam);
-
-            const [sheet] = createRectangularOne(sheetLength, sheetThickness, height, x0, z0, angle, "blue", 0.5)
-            sheetGroup.add(sheet);
-
-            fastenerPositionX.forEach((coordinateX, dowelIndex) => {
-
-                // Create the beams, sheets, and dowels
-                const [dowel] = createDowel(
-                    width, 8, 100, 10, x0, z0, angle, "red", 1, coordinateX, fastenerPositionZ[dowelIndex]
-                );
-                geometryGroup.add(dowel);
-        });
+        geometryGroup.add(dowels);
+        
     });
-    }
-
     
-
     // const mergedSheets = BufferGeometryUtils.mergeGeometries(sheetGroup)
-    geometryGroup.add(beamGroup);
     geometryGroup.add(sheetGroup);
+    geometryGroup.add(axesHelper);
 
-    // Assuming `scene` and `group` are already created and populated with meshes:
-    // const material = new THREE.MeshStandardMaterial({ color: 'blue', metalness: 0.5, roughness: 0.5 });
-    // const mergedMesh = mergeGroupMeshes(sheetGroup, material);
-    // geometryGroup.add(mergedMesh);
-    
     // Calculate the centroid of the group for camera positioning
     const box = new THREE.Box3().setFromObject(geometryGroup);
     const centroid = new THREE.Vector3();
     box.getCenter(centroid);
-
-    // Align the group's centroid to the origin
-    geometryGroup.position.sub(centroid);
 
     // Add the group to the scene
     scene.add(geometryGroup);
@@ -195,9 +218,7 @@ function createRectangular(
     length: number,
     width: number,
     height: number,
-    x0: number,
-    z0: number,
-    angles: any,
+    angle: number,
     color: string,
     opacity: number,
 ): [mesh: THREE.Mesh] {
@@ -211,23 +232,23 @@ function createRectangular(
 
     const box = new THREE.BoxGeometry(length, width, height);
     const mesh = new THREE.Mesh(box, material);
-    const angle: any = THREE.MathUtils.degToRad(angles);
+    const angleRad: any = THREE.MathUtils.degToRad(angle);
     mesh.castShadow = true;
-
-    // position
-    if (angles == "block") { 
-        mesh.position.set(0, 0, 0); 
-    } else if (angles == 0) {
-        mesh.position.set(-x0 / 2 - length / 2, 0, 0); 
-    } else if (angles == 90) {
-        mesh.rotation.y = angle;
-        mesh.position.set(0, 0, z0 / 2 + (length / 2)); 
-    } else {
-        mesh.rotation.y = angle;
-        mesh.position.set( -x0 / 2 - (length / 2) * Math.cos(angle), 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
-    };
+    mesh.rotation.y = angleRad;
 
     return [mesh]
+}
+
+function rotateAroundWorld(
+    group: THREE.Object3D, axis: THREE.Vector3, radians: number
+) {
+
+    const rotWorldMatrix = new THREE.Matrix4();
+    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians)
+    rotWorldMatrix.multiply(group.matrix)
+    group.matrix = rotWorldMatrix
+    group.rotation.setFromRotationMatrix(group.matrix)
+
 }
 
 function createDowel(
@@ -235,13 +256,13 @@ function createDowel(
     radius: number,
     height: number,
     segments: number,
-    x0: number,
-    z0: number,
     angle: number,
     color: string,
     opacity: number,
     coordinateX: number,
-    coordinateZ: number
+    coordinateZ: number,
+    beamLength: number,
+    beamHeight: number,
 ): [dowel: THREE.Mesh] {
     
     // material
@@ -253,159 +274,9 @@ function createDowel(
 
     const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
     const mesh = new THREE.Mesh(dowel, material);
-    const angleRad: any = THREE.MathUtils.degToRad(angle);
     mesh.castShadow = true;
 
-    console.log("angleee", angle)
-
-    // position
-    if (angle == 0) {
-        mesh.position.set(x0 / 2 - length / 2 + coordinateX, 0, -coordinateZ); 
-    } else if (angle == 90) {
-        mesh.rotation.y = angle;
-        mesh.position.set(0, 0, z0 / 2 + (length / 2) - coordinateZ); 
-    } else {
-        mesh.rotation.y = angle;
-        mesh.position.set( -x0 / 2 - (length / 2 - coordinateX) * Math.cos(angleRad), 0, z0 / 2 + (length / 2) * Math.sin(angleRad)); 
-    };
-    
-    return [mesh]
-}
-
-
-function mergeGroupMeshesold(group: THREE.Group, material: THREE.Material): THREE.Mesh {
-    const geometries: THREE.BufferGeometry[] = [];
-
-    // Iterate through all children in the group
-    group.children.forEach(child => {
-        // Check if the child is a mesh
-        if (child instanceof THREE.Mesh) {
-            // Clone and apply the mesh's transformation to its geometry
-            const geometry = child.geometry.clone();
-            geometry.applyMatrix4(child.matrixWorld);
-            geometries.push(geometry);
-        }
-    });
-
-    // Merge all geometries into a single buffer geometry
-    const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
-
-    // Create a single mesh from the merged geometry
-    const mergedMesh = new THREE.Mesh(mergedGeometry, material);
-
-    // Enable casting shadows if any mesh in the group does so
-    mergedMesh.castShadow = group.children.some(child => (child as THREE.Mesh).castShadow);
-
-    return mergedMesh;
-}
-
-function mergeGroupMeshes(group: THREE.Group, material: THREE.Material): THREE.Mesh {
-    const geometries: THREE.BufferGeometry[] = [];
-
-    // Iterate through all children in the group
-    group.children.forEach(child => {
-        // Check if the child is a mesh and has a valid geometry
-        if (child instanceof THREE.Mesh && child.geometry) {
-            // Clone and apply the mesh's transformation to its geometry
-            const geometry = child.geometry.clone();
-            geometry.applyMatrix4(child.matrixWorld); // Apply the mesh's transformation
-            geometries.push(geometry);
-        }
-    });
-
-    // Verify that geometries have been correctly collected
-    if (geometries.length === 0) {
-        console.warn("No valid geometries found for merging.");
-        return new THREE.Mesh(); // Return an empty mesh as a fallback
-    }
-
-    // Merge all geometries into a single buffer geometry
-    const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
-
-    // Create a single mesh from the merged geometry
-    const mergedMesh = new THREE.Mesh(mergedGeometry, material);
-
-    // Enable casting shadows if any mesh in the group does so
-    mergedMesh.castShadow = group.children.some(child => (child as THREE.Mesh).castShadow);
-
-    return mergedMesh;
-}
-
-function createRectangularOne(
-    length: number,
-    width: number,
-    height: number,
-    x0: number,
-    z0: number,
-    angles: any,
-    color: string,
-    opacity: number,
-): [mesh: THREE.Mesh] {
-
-    // material
-    const material = new THREE.MeshStandardMaterial({
-        color: color,
-        transparent: true,
-        opacity: opacity
-    });
-
-    const box = new THREE.BoxGeometry(length, width, height);
-    const mesh = new THREE.Mesh(box, material);
-    const angle: any = THREE.MathUtils.degToRad(angles);
-    mesh.castShadow = true;
-
-
-    if (angles == 0) {
-        mesh.position.set(0, 0, 0); 
-    } else if (angles == 90) {
-        mesh.rotation.y = angle;
-        mesh.position.set(0, 0, z0 / 2 + (length / 2)); 
-    } else {
-        mesh.rotation.y = angle;
-        mesh.position.set( 0, 0, z0 / 2 + (length / 2) * Math.sin(angle)); 
-    };
-
-    return [mesh]
-}
-
-function createDowelOne(
-    length: number,
-    radius: number,
-    height: number,
-    segments: number,
-    x0: number,
-    z0: number,
-    angle: number,
-    color: string,
-    opacity: number,
-    coordinateX: number,
-    coordinateZ: number
-): [dowel: THREE.Mesh] {
-    
-    // material
-    const material = new THREE.MeshStandardMaterial({
-        color: color,
-        transparent: true,
-        opacity: opacity
-    });
-
-    const dowel = new THREE.CylinderGeometry(radius, radius, height, segments);
-    const mesh = new THREE.Mesh(dowel, material);
-    const angleRad: any = THREE.MathUtils.degToRad(angle);
-    mesh.castShadow = true;
-
-    console.log("angleee", angle)
-
-    // position
-    if (angle == 0) {
-        mesh.position.set(coordinateX, 0, -coordinateZ); 
-    } else if (angle == 90) {
-        mesh.rotation.y = angle;
-        mesh.position.set(0, 0, z0 / 2 + (length / 2) - coordinateZ); 
-    } else {
-        mesh.rotation.y = angle;
-        mesh.position.set( coordinateX * Math.cos(angleRad), 0, z0 / 2 + (length / 2) * Math.sin(angleRad)); 
-    };
-    
+    // mesh.position.set( coordinateX - (beamLength / 2), 0, -(beamLength / 2) * Math.sin(angleRad) - coordinateZ); 
+    // mesh.position.set( coordinateX , 0, coordinateZ ); 
     return [mesh]
 }
