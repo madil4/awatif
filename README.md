@@ -13,8 +13,8 @@ Awatif sets itself apart from other platforms, such as Grasshopper or Python, by
 ### In summary, Awatif provides:
 
 - 🔄 A unique and simple [data structure](https://awatif.co/awatif-data-structure/) for seamlessly linking various design algorithms and parametric scripts.
-- 🌐 An open-source[ visualization tool](https://awatif.co/awatif-ui/) that enables you to build your app in a 3D space, rendering bending moment diagrams and structural engineering reports—all within the browser.
-- 💸 An affordable FEM library that offers real-time simulation for any structure, priced at only $25/month, easily integrable into your app.
+- 🌐 A [ visualization tool](https://awatif.co/awatif-ui/) that enables you to build your app in a 3D space, rendering bending moment diagrams and structural engineering reports—all within the browser.
+- 💸 An FEM library that offers real-time simulation for any structure, easily integrable into your app.
 - 📚 Open-source design libraries, allowing you to select the local-standard design code of your choice, complete with well-validated scripts and reports.
 - 🛒 A Marketplace for those who prefer a non-programming approach, providing a variety of free and paid apps.
 - 👥 A robust community of passionate structural engineers and developers ready to assist you in achieving your vision. Feel free to PM [here](https://www.linkedin.com/in/madil4/) to introduce you to the community.
