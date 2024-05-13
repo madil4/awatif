@@ -11,7 +11,7 @@ import {
 } from "./utils/types";
 import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";
 import { calculateElementAngle } from "./utils/calcBeamAngle";
-import { processAnalysisOutputs } from "awatif-ui/src/utils/processAnalysisOutputs";
+import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";
 
 export type ConnectionTimberDesignerInput = {
   node: number;

@@ -2,6 +2,16 @@ import { app, Model, Parameters } from "../../awatif-ui";
 import { createTruss } from "./createTruss";
 import { analyze } from "../../awatif-fem";
 import { AnalysisInput, Node, Element } from "../../awatif-data-structure";
+import { design } from "../../awatif-design/src";
+import {
+  connectionTimberDesign,
+  ConnectionTimberDesignerInput,
+  connectionTimberDesignReport,
+  frameTimberDesign,
+  FrameTimberDesignInput,
+  frameTimberDesignReport,
+} from "../../awatif-design/src/ec/timber";
+import { DesignInput } from "../../awatif-design/src/design";
 
 export const parameters: Parameters = {
   span: {
@@ -410,7 +420,55 @@ export const onParameterChange = (parameters: Parameters): Model => {
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, analysisInputs, analysisOutputs };
+  const designInputs: DesignInput[] = [
+    ...elements.map((_, i) => ({
+      element: i,
+      frameTimberDesign: {
+        tensileStrengthParallel: 20e4,
+        serviceClass: "1",
+        loadDuration: "permanent",
+        material: "Solid timber",
+        gammaG: 1,
+        gammaM: 1.3,
+      },
+    })),
+    ...nodes.map((_, i) => ({
+      node: i,
+      connectionTimberDesign: {
+        serviceClass: 1,
+        loadDurationClass: "permanent",
+        timberGrade: "GL28h",
+        element: 2,
+        // width: 300,
+        // height: 600,
+        // axialForce: 1000,
+        fastenerGrade: "S235",
+        fastenerDiameter: 8,
+        sheetGrade: "S235",
+        sheetThickness: 5,
+        sheetNo: 2,
+      },
+    })),
+  ];
+  
+
+  const designOutputs = design(
+    nodes,
+    elements,
+    analysisInputs,
+    analysisOutputs,
+    designInputs,
+    [frameTimberDesign, connectionTimberDesign]
+  );
+
+  return {
+    nodes,
+    elements,
+    analysisInputs,
+    analysisOutputs,
+    designInputs,
+    designOutputs,
+  };
 };
 
 // helpers
@@ -424,4 +482,5 @@ app({
   parameters,
   onParameterChange,
   settings: { deformedShape: true, loads: false },
+  reports: [frameTimberDesignReport, connectionTimberDesignReport],
 });

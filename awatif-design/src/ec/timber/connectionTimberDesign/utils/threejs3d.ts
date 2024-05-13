@@ -1,7 +1,5 @@
 // Import necessary modules from Three.js
 import * as THREE from 'three';
-import { GeometryCompressionUtils } from 'three/examples/jsm/Addons.js';
-import { Group } from 'three/examples/jsm/libs/tween.module.js';
 
 // Create the scene and set the background color
 const scene = new THREE.Scene();
@@ -59,7 +57,7 @@ export function setup3DCube(
 
     angles.forEach((angle, index) => {
 
-        console.log("angle", angle)
+        console.log("element", index, "angle", angle)
         const width = widths[index]
         const height = heights[index]
         const angleRad: any = THREE.MathUtils.degToRad(angle);

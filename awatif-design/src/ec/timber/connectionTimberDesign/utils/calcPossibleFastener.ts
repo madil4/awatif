@@ -10,22 +10,22 @@ export function calcPossibleFastener(height: number, fastenerDiameter: number, a
 
     while (true) {
         additionalFastener += 1;
-        noTotalReq = roundToBase(Math.abs(axialForce) / (F_vrd * (sheetNo * 2)), 1) + additionalFastener;
+        noTotalReq = roundToBase(Math.abs(axialForce) / (F_vrd * (sheetNo * 2)), 1);
         noPerpPos = Math.floor((height - 2 * a4) / a2);
         // noPerp = noTotalReq < noPerpPos ? Math.max(3, noTotalReq) : noPerpPos;
         a4 = (height - a2 * (noPerpPos - 1)) / 2;
-        noAxial = Math.max(roundToBase(noTotalReq / noPerpPos, 1), 3);
+        noAxial = roundToBase(noTotalReq / noPerpPos, 1) + additionalFastener;
         noAxialEffective = effectiveNumber(noAxial, a1, fastenerDiameter);
         noTotal = noPerpPos * noAxial;
         noTotalEffective = noAxialEffective * noPerpPos;
         F_vrdTotal = F_vrd * noTotalEffective * (sheetNo * 2);
         fastenerCheck = Math.abs(axialForce) / F_vrdTotal;
         sheetLength = a1 * noAxial + a3 * 2;
-        console.log("noPerpPos", noPerpPos, "fastenerCheck", fastenerCheck)
+        console.log("noTotalReq", noTotalReq, "noPerpPos", noPerpPos, "noAxial", noAxial, "fastenerCheck", fastenerCheck)
 
         // console.log("sheetLength", sheetLength)
 
-        if (fastenerCheck < 0.95) {
+        if (fastenerCheck > 0.95) {
             // Calculate sheet length when condition is met
             // sheetLength = e1 + a1 * noAxial + a3 * 2;
             break; // Exit loop when condition is met
