@@ -101,7 +101,7 @@ export const parameters: Parameters = {
     folder: "Supports",
   },
   uniformLoad: {
-    value: 200,
+    value: 50,
     min: 0,
     max: 1000,
     step: 1,
@@ -324,7 +324,7 @@ export const onParameterChange = (parameters: Parameters): Model => {
         );
     }
   } else {
-    // not pair of trusses
+    // not pair of trusses 200
     const trimDivisions = Math.round((span - 2 * spacing) / spacing);
     const trim = trimType >= 2 && trimDivisions >= 1;
     const heightSlope = (leftHeight - rightHeight) / span;

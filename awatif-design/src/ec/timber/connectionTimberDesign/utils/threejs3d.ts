@@ -1,5 +1,7 @@
 // Import necessary modules from Three.js
 import * as THREE from 'three';
+import { BufferGeometryUtils, FontLoader, TextGeometry } from 'three/examples/jsm/Addons.js';
+
 
 // Create the scene and set the background color
 const scene = new THREE.Scene();
@@ -45,6 +47,7 @@ export function setup3DCube(
     renderer.shadowMap.enabled = true; // Enable shadow mapping
     container.appendChild(renderer.domElement);
 
+
     // Create a group to hold all beams
     const beamGroup = new THREE.Group();
     const sheetGroup = new THREE.Group();
@@ -57,7 +60,7 @@ export function setup3DCube(
     // loop through angles
     angles.forEach((angle, index) => {
 
-        console.log("node: ", node, "element: ", elements[index], "angle: ", angle)
+        // console.log("node: ", node, "element: ", elements[index], "angle: ", angle)
 
         // parameter
         const width = widths[index]
@@ -65,22 +68,38 @@ export function setup3DCube(
         sheetLength = sheetLengths[index] * 1.5
         beamLength = sheetLength + 200
 
-        // const [beam] = createRectangular(beamLength, widths[index], heights[index], angle, "yellow", 0.2)
-        const [beam] = createRectangular(beamLength, width, height, "#B99B80", 0.1, false)
-        const [sheet] = createRectangular(sheetLength, sheetThickness, height, "#3E8CA3", 0.99, true)
+        // textures
+        const loader = new THREE.TextureLoader();
+        const woodTexture = loader.load('./timber-texture.PNG');
+        const metaTexture = loader.load('./metal-texture.PNG');
 
         // calculate sheet rotation and offset
         let angleRad: number = THREE.MathUtils.degToRad( -angle );
         const setX = sheetLength / 2 * Math.cos(angleRad)
         const setZ = -sheetLength / 2 * Math.sin(angleRad) 
 
-        beam.rotation.y = angleRad;
+        // create geometry
+        // loop over sheet number
+        let setY: number
+        for (let i = 0; i < sheetNumber; i++) {
+            const [sheet] = createRectangular(sheetLength, sheetThickness, height, "#3E8CA3", 0.99, true, metaTexture)
+            if (i == 0) {
+                setY = width / 4
+
+            } else {
+                setY = -width / 4
+            }
+
         sheet.rotation.y = angleRad;
-        beam.position.set(setX, 0, setZ)
-        sheet.position.set(setX, 0, setZ)
-    
-        beamGroup.add(beam);
+        sheet.position.set(setX, setY, setZ)
         sheetGroup.add(sheet);
+
+        }
+
+        const [beam] = createRectangular(beamLength, width, height, "#B99B80", 0.3, false, woodTexture)
+        beam.rotation.y = angleRad;
+        beam.position.set(setX, 0, setZ)
+        beamGroup.add(beam);
 
         // fastener
         const dowels = new THREE.Group();
@@ -96,18 +115,21 @@ export function setup3DCube(
             const angleRad: any = THREE.MathUtils.degToRad( angle );
             const rotatedXCoord = coordinateX * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad)
             const rotatedYCoord = coordinateX * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad)
-            dowel.position.set(  rotatedXCoord, 0, rotatedYCoord)
+            dowel.position.set( rotatedXCoord, 0, rotatedYCoord )
             dowels.add(dowel);
 
         });
         geometryGroup.add(dowels);
 
     });
-    
-    // const mergedSheets = BufferGeometryUtils.mergeGeometries(sheetGroup)
-    geometryGroup.add(sheetGroup);
+
     geometryGroup.add(beamGroup);
+    geometryGroup.add(sheetGroup);
     geometryGroup.add(axesHelper);
+
+    // text
+    const text = createText("Hello World!", "aqua");
+    
 
     // Calculate the centroid of the group for camera positioning
     const box = new THREE.Box3().setFromObject(geometryGroup);
@@ -120,7 +142,7 @@ export function setup3DCube(
     // CAMERA
     // Create a perspective camera for 3D projection
     const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.1, 4000);
-    const distance = 1100; // Adjust this value to control how far away the camera is
+    const distance = 1200; // Adjust this value to control how far away the camera is
     camera.position.set(0, -distance, 0);
     camera.lookAt(centroid);
 
@@ -190,14 +212,15 @@ export function setup3DCube(
 }
 
 
-
+// FUNCTIONS
 function createRectangular(
     length: number,
     width: number,
     height: number,
     color: string,
     opacity: number,
-    depthWrite: boolean
+    depthWrite: boolean,
+    texture: any
 ): [mesh: THREE.Mesh] {
     // Define the material with color and transparency properties
     const material = new THREE.MeshStandardMaterial({
@@ -206,6 +229,7 @@ function createRectangular(
         opacity: opacity, // Define the opacity level
         side: THREE.DoubleSide,
         depthWrite: depthWrite,
+        map: texture,
     });
 
     // Create the geometry for the rectangular prism
@@ -225,7 +249,7 @@ function createDowel(
     segments: number,
     color: string,
     opacity: number
-): [dowel: THREE.Mesh] {
+): [THREE.Mesh] {
     // Define the material of the dowel with color and opacity properties
     const material = new THREE.MeshStandardMaterial({
         color: color, // Color in hexadecimal
@@ -242,4 +266,55 @@ function createDowel(
 
     // Return the mesh in a tuple, allowing for destructuring on receipt
     return [dowelMesh];
+}
+
+function mergeGroupMeshes(group: THREE.Group): THREE.Mesh {
+    const geometries: THREE.BufferGeometry[] = [];
+
+    // Extract geometries and apply transformation matrices
+    group.children.forEach(child => {
+        if (child instanceof THREE.Mesh && child.geometry instanceof THREE.BufferGeometry) {
+            const geometry = child.geometry.clone();
+            geometry.applyMatrix4(child.matrixWorld); // Apply world matrix to account for position, rotation, scale
+            geometries.push(geometry);
+        }
+    });
+
+    // Merge geometries
+    const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries, true);
+
+    // Assume the first child's material is used for the resulting mesh
+    const material = group.children[0] instanceof THREE.Mesh ? group.children[0].material : new THREE.MeshStandardMaterial();
+    
+    // Create a new mesh with the merged geometry and material
+    const mergedMesh = new THREE.Mesh(mergedGeometry, material);
+    return mergedMesh;
+}
+
+function createText(
+    text: string,
+    color: THREE.ColorRepresentation
+): Promise<THREE.Mesh> {
+    return new Promise((resolve, reject) => {
+        const loader = new FontLoader();
+        loader.load('fonts/helvetiker_regular.typeface.json', function(font) {
+            const geometry = new TextGeometry(text, {
+                font: font,
+                size: 0.5,
+                height: 0.2,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.03,
+                bevelSize: 0.02,
+                bevelOffset: 0,
+                bevelSegments: 5
+            });
+
+            const material = new THREE.MeshPhongMaterial({ color: color, specular: 0xffffff });
+            const mesh = new THREE.Mesh(geometry, material);
+            resolve(mesh);
+        }, undefined, function(error) {
+            reject(error);
+        });
+    });
 }
