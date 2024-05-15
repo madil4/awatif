@@ -68,11 +68,6 @@ export function setup3DCube(
         sheetLength = sheetLengths[index] * 1.5
         beamLength = sheetLength + 200
 
-        // textures
-        const loader = new THREE.TextureLoader();
-        const woodTexture = loader.load('./timber-texture.PNG');
-        const metaTexture = loader.load('./metal-texture.PNG');
-
         // calculate sheet rotation and offset
         let angleRad: number = THREE.MathUtils.degToRad( -angle );
         const setX = sheetLength / 2 * Math.cos(angleRad)
@@ -82,7 +77,7 @@ export function setup3DCube(
         // loop over sheet number
         let setY: number
         for (let i = 0; i < sheetNumber; i++) {
-            const [sheet] = createRectangular(sheetLength, sheetThickness, height, "#3E8CA3", 0.99, true, metaTexture)
+            const [sheet] = createRectangular(sheetLength, sheetThickness, height, "#3E8CA3", 0.99, true)
             if (i == 0) {
                 setY = width / 4
 
@@ -96,7 +91,7 @@ export function setup3DCube(
 
         }
 
-        const [beam] = createRectangular(beamLength, width, height, "#B99B80", 0.3, false, woodTexture)
+        const [beam] = createRectangular(beamLength, width, height, "#B99B80", 0.3, false)
         beam.rotation.y = angleRad;
         beam.position.set(setX, 0, setZ)
         beamGroup.add(beam);
@@ -130,7 +125,6 @@ export function setup3DCube(
     // text
     const text = createText("Hello World!", "aqua");
     
-
     // Calculate the centroid of the group for camera positioning
     const box = new THREE.Box3().setFromObject(geometryGroup);
     const centroid = new THREE.Vector3();
@@ -142,7 +136,7 @@ export function setup3DCube(
     // CAMERA
     // Create a perspective camera for 3D projection
     const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.1, 4000);
-    const distance = 1200; // Adjust this value to control how far away the camera is
+    const distance = 1300; // Adjust this value to control how far away the camera is
     camera.position.set(0, -distance, 0);
     camera.lookAt(centroid);
 
@@ -220,7 +214,6 @@ function createRectangular(
     color: string,
     opacity: number,
     depthWrite: boolean,
-    texture: any
 ): [mesh: THREE.Mesh] {
     // Define the material with color and transparency properties
     const material = new THREE.MeshStandardMaterial({
@@ -229,7 +222,6 @@ function createRectangular(
         opacity: opacity, // Define the opacity level
         side: THREE.DoubleSide,
         depthWrite: depthWrite,
-        map: texture,
     });
 
     // Create the geometry for the rectangular prism
