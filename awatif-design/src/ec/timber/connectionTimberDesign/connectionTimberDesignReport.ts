@@ -4,19 +4,15 @@ import {
   ConnectionTimberDesignerInput,
   ConnectionTimberDesignerOutput,
 } from "./connectionTimberDesign";
-import { setup3DCube } from "./utils/threejs3d";
-import { createRef, ref } from "lit-html/directives/ref.js";
-
-const container = createRef<HTMLDivElement>();
+import { container, setup3DCube } from "./utils/threejs3d";
+import { ref } from "lit-html/directives/ref.js";
 
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
   designOutput: ConnectionTimberDesignerOutput
 ): TemplateResult {
   const i = designInput.connectionTimberDesign;
-  let index = 0;
-
-  // console.log("designOutput.designInput.coordinatesX", designOutput.connectionTimberDesign[0].coordinatesX)
+  let elementIndex = 0;
 
   let node = designInput.node;
   let elements = designOutput.designInput.map((v) => [v.element]).flat();
@@ -44,9 +40,6 @@ export function connectionTimberDesignReport(
   const o = designOutput.connectionTimberDesign[0];
 
   setup3DCube(
-    container.value,
-    node,
-    elements,
     angles,
     heights,
     widths,
@@ -310,7 +303,9 @@ export function connectionTimberDesignReport(
       <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
       <p>Member Compression Check</p>
       <p>Design load</p>
-      <p>${renderMath("N_{cd} = " + axialForces[index] + " \\text{ kN}")}</p>
+      <p>
+        ${renderMath("N_{cd} = " + axialForces[elementIndex] + " \\text{ kN}")}
+      </p>
       <p>Characteristic compressive strength</p>
       <p>${renderMath("f_{c0k} = " + o.fct0k + " \\frac{N}{mm^2}")}</p>
       <p>Design compressive strength</p>
@@ -361,7 +356,9 @@ export function connectionTimberDesignReport(
       <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
       <p>Member Tension Check</p>
       <p>Design load</p>
-      <p>${renderMath("N_{td} = " + axialForces[index] + " \\text{ kN}")}</p>
+      <p>
+        ${renderMath("N_{td} = " + axialForces[elementIndex] + " \\text{ kN}")}
+      </p>
       <p>Characteristic tensile strength</p>
       <p>${renderMath("f_{t0k} = " + o.fct0k + " \\frac{N}{mm^2}")}</p>
       <p>Design tensile strength</p>
@@ -441,7 +438,7 @@ export function connectionTimberDesignReport(
         )}
       </p>
       <p>Design axial load</p>
-      <p>${renderMath(` N_{ed} = ${axialForces[index]} `)} kN</p>
+      <p>${renderMath(` N_{ed} = ${axialForces[elementIndex]} `)} kN</p>
       <p>Utilization</p>
       <p>
         ${renderMath(
@@ -486,7 +483,7 @@ export function connectionTimberDesignReport(
         )}
       </p>
       <p>Design axial load</p>
-      <p>${renderMath(` N_{ed} = ${axialForces[index]} `)} kN</p>
+      <p>${renderMath(` N_{ed} = ${axialForces[elementIndex]} `)} kN</p>
       <p>Utilization</p>
       <p>
         ${renderMath(

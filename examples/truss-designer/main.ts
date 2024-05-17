@@ -99,7 +99,7 @@ export const parameters: Parameters = {
     folder: "Supports",
   },
   uniformLoad: {
-    value: 200,
+    value: 50,
     min: 0,
     max: 1000,
     step: 1,
