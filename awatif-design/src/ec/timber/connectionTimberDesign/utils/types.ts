@@ -17,6 +17,7 @@ export type TimberBarConnectionDesignerLocalInput = {
     height: number;
     axialForce: number;
     beamAngle: number;
+    elementLength: number;
 
 } & TimberBarConnectionDesignerInput
 
@@ -54,7 +55,7 @@ export type TimberBarConnectionDesignerOutput = {
     noAxialEffective: number;
     noPerp: number;
     FvrdTotal: number;
-    fastenerCheck: number;
+    etaFastenerCheck: number;
     distancesFinal: number[];
     Anet: number;
     fct0k: number;
@@ -69,5 +70,15 @@ export type TimberBarConnectionDesignerOutput = {
     Anv: number;
     VeffRd: number;
     etaBlockFailure: number;
+    L_lamb: number[];
+    L_lamb_rel: number[];
+    lamb_relm: number;
+    L_ky: number[];
+    L_kc: number[];
+    k_crit: number;
+    L_sigma_md: number[]; 
+    L_eta: number[];
+    nw: string;
+    L_eta123: number[];
     etaStability: number
 };

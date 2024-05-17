@@ -16,7 +16,7 @@ export function calcStability(
     const f_mzk = f_myzk * 1.2;
 
     // Prepare lists
-    const L_bh: [number, number][] = [[width, height], [height, width]];
+    const L_bh: [number, number][] = [[width / 1000, height / 1000], [height / 1000, width / 1000]];
     const L_fmk = [f_myk, f_mzk];
     const L_k_crit = [1, 1];
     const L_lamb: number[] = [];
@@ -36,14 +36,17 @@ export function calcStability(
     const e_0 = 0.0025 * l_ef;
 
     // Moment
+    axialForce = Math.abs(axialForce) 
     const M_yd = axialForce * e_0;
     const M_zd = axialForce * e_0;
     const L_M = [M_yd, M_zd];
-
+    // console.log("length", length)
+    
     // Strength values
     const f_c0d = f_c0k * chi * 1000;
     const f_myd = f_myk * chi * 1000;
     const f_mzd = f_mzk * chi * 1000;
+    // console.log("f_c0d", f_c0d)
 
     // Calculate results for moments around y and z axes
     for (let n = 0; n < L_M.length; n++) {
@@ -79,6 +82,8 @@ export function calcStability(
     width = L_bh[index][0];
     height = L_bh[index][1];
     const f_mk = L_fmk[index];
+
+    // console.log(L_sigma_md)
 
     const lamb_relm = Math.sqrt(l_ef / (Math.PI * width ** 2)) * Math.sqrt(f_mk / Math.sqrt(E_05 * G_05));
 
@@ -126,7 +131,6 @@ export function calcStability(
         }
 
         L_eta.push(eta);
-
         const eta1 = (axialForce / f_c0d) ** 2 + L_km[n][0] * L_sigma_md[0] / f_myd + L_km[n][1] * L_sigma_md[1] / f_mzd;
         const eta2 = (axialForce) / (f_c0d * L_kc[n]) + L_km[n][0] * L_sigma_md[0] / f_myd + L_km[n][1] * L_sigma_md[1] / f_mzd;
         const eta3 = (axialForce) / (f_c0d * L_kc[n]) + (L_sigma_md[0] / (f_myd * L_k_crit[0])) ** L_pot[n][0] + (L_sigma_md[1] / (f_mzd * L_k_crit[1])) ** L_pot[n][1];

@@ -12,6 +12,17 @@ import {
 import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";
 import { calculateElementAngle } from "./utils/calcBeamAngle";
 import { processAnalysisOutputs } from "../../../../../awatif-ui/src/utils/processAnalysisOutputs";
+import { ProcessedAnalysisOutputs } from "../../../../../awatif-ui/src/types";
+import { calculateElementLength, calculateElementLengthSingle } from "./utils/calcElementLengths";
+
+export type ConnectionTimberDesignerGlobalOutput = {
+  nodes: Node[];
+  elements: Element[];
+  analysisInputs: AnalysisInput[];
+  processedOutput: ProcessedAnalysisOutputs;
+  designGlobalInputs: TimberBarConnectionDesignerLocalInput[];
+  designGlobalOutputs: TimberBarConnectionDesignerOutput[]
+};
 
 export type ConnectionTimberDesignerInput = {
   node: number;
@@ -24,6 +35,7 @@ export type ConnectionTimberDesignerOutput = {
   designInput: TimberBarConnectionDesignerLocalInput[];
   utilizationRatio: number;
   connectionTimberDesign: TimberBarConnectionDesignerOutput[];
+  ConnectionTimberDesignerGlobalOutput: ConnectionTimberDesignerGlobalOutput
 };
 
 // function that loops through a node with several timber bars
@@ -50,13 +62,15 @@ export function connectionTimberDesign(
   // process analysis output
   const processedOutput = processAnalysisOutputs(analysisOutputs);
 
-
-  
-
   // empty list for the results
   const designInputs: TimberBarConnectionDesignerLocalInput[] = [];
   const designOutputs: TimberBarConnectionDesignerOutput[] = [];
 
+  const designGlobalInputs: any[] = [];
+  const designGlobalOutputs: TimberBarConnectionDesignerOutput[] = [];
+
+
+  // local per node
   connectedElements.forEach((element, index) => {
     
     // get area and dimensions
@@ -69,11 +83,13 @@ export function connectionTimberDesign(
 
     // get the angle
     const [angleDeg, angleDeg2] = calculateElementAngle(nodes[designInput.node], nodes[elements[element][0]], nodes[elements[element][1]]);
-    // console.log("element", element)
-    // console.log("angle", angle)
+
+    // calc element length 
+    const elementLength = calculateElementLengthSingle(elements[element], nodes)
+    // console.log("elementLength", elementLength)
 
     // combining global and local input parameters
-    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: element, axialForce: axialForce, beamAngle: angleDeg2, width: width, height: height}
+    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: element, elementLength: elementLength, axialForce: axialForce, beamAngle: angleDeg2, width: width, height: height}
     // console.log("timberBarConnectionDesignerInput", timberBarConnectionDesignerInput)
 
     // pass input to connectionTimberDesign
@@ -84,17 +100,54 @@ export function connectionTimberDesign(
 
   });
 
-  // calc max utilization
-  const utilizationRatios = designOutputs.map( (v) => [v.etaBlockFailure, v.etaAxialCheck, v.fastenerCheck] )
-  const maxUtilization = Math.max(...utilizationRatios.flat())
-  // console.log("maxUtilization", maxUtilization)
+  // global all elements
+  elements.forEach((element, index) => {
+    
+    // get area and dimensions
+    const width = 300;
+    const height = 400;
 
+    // get forces
+    const axialForces = processedOutput.normal.get(index)??[0, 0]
+    const axialForce = axialForces[0];
+
+    // get the angle
+    const [angleDeg, angleDeg2] = calculateElementAngle(nodes[designInput.node], nodes[elements[index][0]], nodes[elements[index][1]]);
+
+    // calc element length 
+    const elementLength = calculateElementLengthSingle(element, nodes)
+
+    // combining global and local input parameters
+    const timberBarConnectionDesignerInput = {...designInput.connectionTimberDesign, element: index, elementLength: elementLength, axialForce: axialForce, beamAngle: angleDeg2, width: width, height: height}
+    // console.log("timberBarConnectionDesignerInput", timberBarConnectionDesignerInput)
+
+    // pass input to connectionTimberDesign
+    const timberBarOutput = timberBarConnectionDesigner(timberBarConnectionDesignerInput)
+    // console.log("timberBarOutput: ", timberBarOutput)
+
+    designGlobalInputs.push(timberBarConnectionDesignerInput)
+    designGlobalOutputs.push(timberBarOutput)
+
+  });
+
+  // calc max utilization
+  const utilizationRatios = designOutputs.map( (v) => [v.etaBlockFailure, v.etaAxialCheck, v.etaFastenerCheck] )
+  const maxUtilization = Math.max(...utilizationRatios.flat())
+  
+  const output: ConnectionTimberDesignerGlobalOutput = {
+    nodes,
+    elements,
+    analysisInputs,
+    processedOutput,
+    designGlobalInputs,
+    designGlobalOutputs
+};
 
 return {
   node: designInput.node,
   utilizationRatio: maxUtilization,
   designInput: designInputs,
   connectionTimberDesign: designOutputs,
+  ConnectionTimberDesignerGlobalOutput: output
 }; 
 }
-

@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
+      integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww"
+      crossorigin="anonymous"
+    />
     <style>
       .katex {
-        font-size: 1.1em;
+        font-size: 14px;
       }
       p, li, td, th {
           font-family: "Arial";
@@ -18,7 +24,8 @@
       .bolt {
         font-family: "Arial";
         font-weight: bold;
-        color: #28292e; /* Dark gray color */
+        font-size: 14px;
+        color: #4c5d68; /* Dark gray color */
         margin-top: 2px;
         margin-bottom: 2px
       }
@@ -42,7 +49,7 @@
       h2 {
           font-family: "Arial";
           color: #2e5368; /* Dark gray color */
-          font-size: 20px; /* Font size */
+          font-size: 20px; /* Font size */  
           margin-top: 2px;
           margin-bottom: 2px;
           margin-left: 10px
@@ -50,9 +57,11 @@
 
       h3 {
           font-family: "Arial";
-          color: #2e5368; /* Dark gray color */
-          font-size: 18px; /* Font size */
-          margin-left: 10px
+          color: #4c5d68; /* Dark gray color */
+          font-size: 14px; /* Font size */
+          margin-left: 5px;
+          margin-top: 2px;
+          margin-bottom: 2px;
       }
 
       h4 {
@@ -111,6 +120,7 @@
       /* Define font size and color for captions */
       .caption {
           font-family: "Arial";
+          font-size: 14px;
           color: #999; /* Light gray color */
           font-size: 12px; /* Font size for captions */
           margin-left: 10px
@@ -120,14 +130,14 @@
           border-collapse: collapse;
           border: 1px solid rgb(0, 0, 0); /* Specify border color here */
           font-size: 12px; /* Font size for paragraphs, list items, and table cells */
-          margin-left: 10px
+          margin-left: 0px
       }
 
       td {
           border: 1px solid rgb(0, 0, 0); /* Specify border color here */
           padding: 8px; /* Adjust padding as needed */
           font-size: 12px; /* Font size for paragraphs, list items, and table cells */
-          margin-left: 10px
+          margin-left: 5px
       }
 
       th {
@@ -135,7 +145,7 @@
           padding: 8px; /* Adjust padding as needed */
           background-color: rgb(225, 225, 225);
           font-size: 12px; /* Font size for paragraphs, list items, and table cells */
-          margin-left: 10px
+          margin-left: 5px
       }
 
       .header {
@@ -180,15 +190,6 @@
             margin-top: 10px
         }
 
-        .a4-frame {
-            width: 210mm; /* 210 mm wide (A4 width) */
-            height: 297mm; /* 297 mm tall (A4 height) */
-            border: 1px solid black; /* Black frame of 5px width */
-            background-color: white; /* White paper color inside */
-            box-sizing: border-box; /* Ensure border is included in size calculations */
-            margin-top: 10px
-        }
-
         .canvas-container {
             width: 800px;
             height: 500px; /* Adjust as needed */
@@ -197,6 +198,63 @@
             overflow: visible;
         }
 
+        
+        .collapsible {
+            background-color: #ffffff;
+            font-family: "Arial";
+            color: #2e5368;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 12px 20px;
+            width: 100%;
+            border: 1px solid #c4c4c4;
+            text-align: left;
+            outline: none;
+            border-radius: 5px;
+            transition: background-color 0.4s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+    .collapsible:hover {
+      background-color: #ffffff;
+    }
+
+    .collapsible:after {
+      content: '\25bc';
+      font-size: 12px;
+      color: #e0e0e0;
+      transition: transform 0.2s;
+    }
+
+    .active:after {
+      transform: rotate(180deg); /* Rotates the arrow */
+    }
+
+    .active {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .content {
+      padding: 20px;
+      display: none;
+      overflow: hidden;
+      background-color: #ffffff;
+      border-left: 1px solid #c4c4c4;
+      border-right: 1px solid #c4c4c4;
+      border-bottom: 1px solid #c4c4c4;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    tr:hover {
+      background-color: #dfdfdf;
+    }
+    
     </style>
     <title>Awatif Examples - Truss Designer</title>
   </head>

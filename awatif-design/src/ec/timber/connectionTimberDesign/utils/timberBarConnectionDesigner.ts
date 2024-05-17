@@ -12,9 +12,8 @@ import { calcFastenerCoordinates } from  './calcCordinates';
 export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInput: TimberBarConnectionDesignerLocalInput): TimberBarConnectionDesignerOutput {
     // Extract input properties from connectionDesignerInput
     // let { serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerInput;
-    let { serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerLocalInput;
+    let { serviceClass, loadDurationClass, element, elementLength, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle } = timberBarConnectionDesignerLocalInput;
     // console.log("serviceClass, loadDurationClass, beam, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle", serviceClass, loadDurationClass, element, timberGrade, width, height, axialForce, fastenerGrade, fastenerDiameter, sheetGrade, sheetThickness, sheetNo, beamAngle)
-    console.log("beamAngle", beamAngle)
 
     // 0 - General
     const thickness: number = width / 2;
@@ -36,7 +35,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // console.log("F_vrd, F_vrd1, F_vrd2, F_vrk1, F_vrk2, F_vrkf, F_vrkg, F_vrkh, F_vrkl, F_vrkm: ", F_vrd, F_vrd1, F_vrd2, F_vrk1, F_vrk2, F_vrkf, F_vrkg, F_vrkh, F_vrkl, F_vrkm)
 
     // 5 - calc possible fastener
-    const [noTotal, noTotalEffective, noAxial, noAxialEffective, noPerp, F_vrdTotal, fastenerCheck, distances, sheetLength] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrd, sheetNo);
+    const [noTotal, noTotalEffective, noAxial, noAxialEffective, noPerp, F_vrdTotal, etaFastenerCheck, distances, sheetLength] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrd, sheetNo);
     // console.log("noTotal, noTotalEffective, noAxial, noAxialEffective, noPerp, F_vrdTotal, fastenerCheck, distances: ", noTotal, noTotalEffective, noAxial, noAxialEffective, noPerp, F_vrdTotal, fastenerCheck, distances)
 
     // 6 - number of sheets
@@ -48,7 +47,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // console.log("F_vrdNew, F_vrd1New, F_vrd2New, F_vrk1New, F_vrk2New, F_vrkfNew, F_vrkgNew, F_vrkhNew, F_vrklNew, F_vrkmNew: ", F_vrdNew, F_vrd1New, F_vrd2New, F_vrk1New, F_vrk2New, F_vrkfNew, F_vrkgNew, F_vrkhNew, F_vrklNew, F_vrkmNew)
 
     // 8 - recalc possible fastener
-    const [noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew, noPerpNew, F_vrdTotalNew, fastenerCheckNew, distancesFinal, sheetLengthNew] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrdNew, sheetNo);
+    const [noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew, noPerpNew, F_vrdTotalNew, etaFastenerCheckNew, distancesFinal, sheetLengthNew] = calcPossibleFastener(height, fastenerDiameter, axialForce, distancesListRequired, F_vrdNew, sheetNo);
     // console.log("noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew, noPerpNew, F_vrdTotalNew, fastenerCheckNew, distancesFinal: ", noTotalNew, noTotalEffectiveNew, noAxialNew, noAxialEffectiveNew, noPerpNew, F_vrdTotalNew, fastenerCheckNew, distancesFinal)
     // console.log("sheetLengthNew", sheetLengthNew)
 
@@ -64,7 +63,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
     // console.log("Lh, Lv, Ant, Anv, VeffRd, etaBlockFailure: ", Lh, Lv, Ant, Anv, VeffRd, etaBlockFailure)
 
     // 11 - stability
-    const [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123, etaStability] = calcStability( timberGrade,length, width, height, axialForce, chi)
+    const [L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123, etaStability] = calcStability( timberGrade, elementLength, width, height, axialForce, chi)
     // console.log("L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123: ", L_lamb, L_lamb_rel, lamb_relm, L_ky, L_kc, k_crit, L_sigma_md, L_eta, nw, L_eta123)
 
     // Define the output object
@@ -101,7 +100,7 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
         noAxialEffective: noAxialEffective,
         noPerp: noPerp,
         FvrdTotal: F_vrdTotal,
-        fastenerCheck: fastenerCheck,
+        etaFastenerCheck: etaFastenerCheckNew,
         distancesFinal: distancesFinal,
         Anet: A_net,
         fct0k: f_ct0k,
@@ -116,6 +115,16 @@ export function timberBarConnectionDesigner( timberBarConnectionDesignerLocalInp
         Anv: Anv,
         VeffRd: VeffRd,
         etaBlockFailure: etaBlockFailure,
+        L_lamb: L_lamb,
+        L_lamb_rel: L_lamb_rel,
+        lamb_relm: lamb_relm,
+        L_ky: L_ky,
+        L_kc: L_kc,
+        k_crit: k_crit,
+        L_sigma_md: L_sigma_md, 
+        L_eta: L_eta,
+        nw: nw,
+        L_eta123: L_eta123,
         etaStability: etaStability
     };
 

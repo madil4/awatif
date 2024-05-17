@@ -74,7 +74,7 @@ export function connectionTimberDesignReport(
         cellHeights.textContent = `${heights[index]}mm`;
         cellAngles.textContent = `${beamAngles[index]}°`;
         cellAxialLoads.textContent = `${axialForces[index]}kN`;
-        cellFastenerCheck.textContent = `${(designOutput.connectionTimberDesign[index].fastenerCheck*100).toFixed(0)}%`;
+        cellFastenerCheck.textContent = `${(designOutput.connectionTimberDesign[index].etaFastenerCheck*100).toFixed(0)}%`;
         cellBlockCheck.textContent = `${(designOutput.connectionTimberDesign[index].etaBlockFailure*100).toFixed(0) }%`;
         cellAxialCheck.textContent = `${(designOutput.connectionTimberDesign[index].etaAxialCheck*100).toFixed(0)}%`;
         cellStability.textContent = `${(designOutput.connectionTimberDesign[index].etaStability*100).toFixed(0)}%`;
@@ -104,8 +104,12 @@ export function connectionTimberDesignReport(
     <h1>Structural Report</h2>`;
 
   let reportSummary = html`
-    <h2>Summary</h2>
+  <button class="collapsible"><h3>Connection Detail</h3></button>
+  <div class="content" style="display: none;">
+  <div class="bolt"> Connection Detail of Node ${node} </div>
     <div class="canvas-container" ref=${ref(container)}></div>
+    <br>
+    <div class="bolt"> Summary Table </div>
     <br>
     <table id="data-table">
     <tr>
@@ -126,27 +130,30 @@ export function connectionTimberDesignReport(
     <br>`;
   
   let reportLoadProperties = html`
-    <h3>Load Properties</h3>
+    <button class="collapsible"><h3>Load Properties</h3></button>
+    <div class="content" style="display: none;">
+    <p class="caption">EN 1995-1-1 Ch. 2.4</p>
     <p>Service class ${renderMath(`${i.serviceClass}`)} and Load duration: ${renderMath(`${i.loadDurationClass}`)} result in a modification factor of ${renderMath(`k_{mod} = ${o.kMod}`)}</p>
     <p>${renderMath(` \\gamma = 1.3`)}</p>
     <p>Resistance reduction factor</p>
     <p>${renderMath(` \\chi = \\frac{k_{mod}}{\\gamma} = ${o.chi}`)}</p>
-    <br>`;
+    </div>`;
 
   let reportFastenerProperties = html`
-    <h3>Fastener Properties</h3>
+    <button class="collapsible"><h3>Fastener Properties</h3></button>
+    <div class="content" style="display: none;">
     <p class="caption">EN 1995-1-1 Ch. 8.5.1.1</p>
     <p>Characteristic value for the yield moment</p>
     <p>${renderMath(` M_{yRk} = f_{ub} \\cdot d^{2.6} = ${o.Myrk} Nmm`)}</p>
     <p>Characteristic tensile strength parallel to the grain</p>
     <p>${renderMath(` f_{h0k} = 0.082 \\cdot (1 - 0.01 \\cdot d) \\cdot \\rho_{k} = ${o.fh0k} \\frac{N}{mm^2}`)}</p>
-    <br>`;
+    `;
 
   let reportSpacings = html`
-    <h3>Spacings</h3>
+  <button class="collapsible"><h3>Spacings</h3></button>
+  <div class="content" style="display: none;">
     <p><b>Timber Spacings</b></p>
     <p class="caption">EN 1995-1-1 Ch. 8.6 Tab.8.5</p>
-
     <table>
         <tr>
             <th>a<sub>1</sub></th>
@@ -203,10 +210,11 @@ export function connectionTimberDesignReport(
         <td> ${o.distancesFinal[4]} mm</td>
         </tr>
     </table>
-    <br>`;
+    `;
 
   let reportFastenerCapacity = html`
-    <h3>Fastener Capacity</h3>
+    <button class="collapsible"><h3>Fastener Capacity</h3></button>
+    <div class="content" style="display: none;">
     <p class="caption">EN 1995-1-1 Ch. 8.2.3-8.11</p>
     <p>Characteristic fastener capacities</p>
     <p class="caption">Equation f</p>
@@ -219,10 +227,11 @@ export function connectionTimberDesignReport(
     <p>${renderMath(` F_{vRk} = ${Math.max(o.Fvrk_1, o.Fvrk_2)} kN`)}</p>
     <p>Design fastener capacity</p>
     <p>${renderMath(` F_{vRd} = ${ o.Fvrd } kN`)}</p>
-    <br>`;
+    `;
 
     let reportFastenerCapacityCheck = html`
-      <h3>Fastener Check</h3>
+      <button class="collapsible"><h3>Fastener Check</h3></button>
+      <div class="content" style="display: none;">
       <table>
           <tr>
               <th>diameter</th>
@@ -245,11 +254,12 @@ export function connectionTimberDesignReport(
       </table>
 
       <p>Fastener Capacity Check</p>
-      <p>${renderMath(` \\eta = \\frac{N_{ed}}{F_{Rd.total}} = ${ (o.fastenerCheck * 100).toFixed(0) }`)} %</p>
-      <br>`;
+      <p>${renderMath(` \\eta = \\frac{N_{ed}}{F_{Rd.total}} = ${ (o.etaFastenerCheck * 100).toFixed(0) }`)} %</p>
+      `;
 
   let reportCompressionCheck = html`
-    <h3>Compression Check</h3>
+    <button class="collapsible"><h3>Compression Check</h3></button>
+    <div class="content" style="display: none;">
     <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
     <p>Member Compression Check</p>
     <p>Design load</p>
@@ -267,10 +277,11 @@ export function connectionTimberDesignReport(
     <p>Utilization</p>
     <p class="caption">EN 1995-1-1 Eq. 6.2</p>
     <p>${renderMath('\\eta = \\frac{\\sigma_{c0d}}{f_{c0d}} = ' + (o.etaAxialCheck * 100).toFixed(0) + ' \\%')}</p>
-    <br>`;
+    `;
 
   let reportTensionCheck = html`
-    <h3>Tension Check</h3>
+    <button class="collapsible"><h3>Tension Check</h3></button>
+    <div class="content" style="display: none;">
     <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
     <p>Member Tension Check</p>
     <p>Design load</p>
@@ -288,10 +299,11 @@ export function connectionTimberDesignReport(
     <p>Utilization</p>
     <p class="caption">EN 1995-1-1 Eq. 6.1</p>
     <p>${renderMath('\\eta = \\frac{\\sigma_{t0d}}{f_{t0d}} = ' + (o.etaAxialCheck * 100).toFixed(0) + ' \\%')}</p>
-    <br>`;
+    `;
 
   let reportAxialBlockFailureCheck = html`
-    <h3>Axial Block Failure Check</h3>
+    <button class="collapsible"><h3>Axial Block Failure Check</h3></button>
+    <div class="content" style="display: none;">
     <p class="caption">EN 1995-1-1 Abs. 6.1.8</p>
     <p>Tensile strength</p>
     <p>${renderMath(`f_{u} = ${o.fub} \\frac{N}{mm^2}`)}</p>
@@ -308,7 +320,34 @@ export function connectionTimberDesignReport(
     <p>${renderMath(` N_{ed} = ${axialForces[index]} `)} kN</p>
     <p>Utilization</p>
     <p>${renderMath(` \\eta = \\frac{ N_{ed} }{ V_{eff.Rd}} = ${(o.etaBlockFailure*100).toFixed(0)} %`)}</p>
-    <br>`;
+    `;
+  
+  let reportStabilityCheck = html`
+    <button class="collapsible"><h3>Axial Block Failure Check</h3></button>
+    <div class="content" style="display: none;">
+    <p class="caption">EN 1995-1-1 Abs. 6.1.8</p>
+    <p>Tensile strength</p>
+    <p>${renderMath(`f_{u} = ${o.fub} \\frac{N}{mm^2}`)}</p>
+    <p>${renderMath(`f_{y} = 435 \\frac{N}{mm^2}`)}</p>
+    <p>${renderMath(`d_{0} = d + 0.6 mm = ${i.fastenerDiameter} + 6 `)} mm</p>
+    <p>Effective areas</p>
+    <p>${renderMath(` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh} `)} mm</p>
+    <p>${renderMath(` L_{v} = a_{1} \\cdot (n_{axial} - 1) + e_{1} = ${o.Lv} `)} mm</p>
+    <p>${renderMath(` A_{nt} = (L_{h} - (n_{axial} - 1) \\cdot d_{0}) \\cdot t = ${o.Ant} cm^2`)}</p>
+    <p>${renderMath(` A_{nv} = 2 \\cdot (L_{v} - (n_{perp} - 0.5) \\cdot d_{0}) \\cdot t = ${o.Anv} cm^2`)}</p>
+    <p>Resistance</p>
+    <p>${renderMath(` V_{eff.Rd} = \\frac{f_{u} \\cdot A_{nt}}{1.25} + \\frac{f_{y} \\cdot A_{nv}}{ \\sqrt{3} + 1 } = ${o.VeffRd} cm^2`)}</p>
+    <p>Design axial load</p>
+    <p>${renderMath(` N_{ed} = ${axialForces[index]} `)} kN</p>
+    <p>Utilization</p>
+    <p>${renderMath(` \\eta = \\frac{ N_{ed} }{ V_{eff.Rd}} = ${(o.etaBlockFailure*100).toFixed(0)} %`)}</p>
+    `;
+
+  let reportNoStabilityCheck = html`
+  <button class="collapsible"><h3>Stability Check</h3></button>
+  <div class="content" style="display: none;">
+    <p>No stability check required.</p>
+    `;
 
   let reportMemberCheck; 
 
@@ -318,24 +357,60 @@ export function connectionTimberDesignReport(
     reportMemberCheck = reportCompressionCheck; 
   };
 
+  if (o.force > 0) {
+    reportStabilityCheck = reportNoStabilityCheck; 
+  } else {
+    reportStabilityCheck = reportStabilityCheck; 
+  };
+
 
   let reportContent = html`
     ${reportHeader}
     ${reportHeading}
+    <h2>Summary</h2>
+    <br>
     ${reportSummary}
+    <br>
     <h2>Input Parameters</h2>
+    <br>
     ${reportLoadProperties}
+    <br>
     ${reportFastenerProperties}
+    <br>
     ${reportSpacings}
+    <br>
     ${reportFastenerCapacity}
+    <br>
     <h2>Connection Design</h2>
+    <br>
     ${reportFastenerCapacityCheck}
+    <br>
     ${reportAxialBlockFailureCheck}
+    <br>
     <h2>Member Design</h2>
+    <br>
     ${reportMemberCheck}
+    <br>
+    ${reportStabilityCheck}
+    <br>
+    <br>
     `
 
   return reportContent
 }
 
-
+// JavaScript for collapsible
+document.addEventListener('DOMContentLoaded', () => {
+  const coll = document.getElementsByClassName("collapsible");
+  for (let i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      const content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+});
