@@ -7,7 +7,6 @@ import {
   connectionTimberDesign,
   connectionTimberDesignReport,
   frameTimberDesign,
-  frameTimberDesignReport,
 } from "../../awatif-design/src/ec/timber";
 import { DesignInput } from "../../awatif-design/src/design";
 

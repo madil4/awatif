@@ -14,14 +14,17 @@ export const report = (
   let dialogElm = createRef<HTMLDialogElement>();
   let dialogBodyElm = createRef<HTMLDivElement>();
   let reportsMap = new Map<string, any>();
+  let active = false;
+  let renderCount = 0;
 
   // events
   function onDialogClose() {
+    active = false;
     dialogElm.value?.close();
-    currentElemIndex.val = ""; // to stop render when dialog is not open
   }
 
   function onTopBarReportClick() {
+    active = true;
     dialogElm.value?.show();
   }
 
@@ -47,7 +50,11 @@ export const report = (
       });
     });
 
-    currentElemIndex.val = reportsMap.keys().next().value;
+    if (!currentElemIndex.val) {
+      const k = reportsMap?.keys();
+      k.next();
+      currentElemIndex.val = k.next().value;
+    }
 
     // init html
     const topBarTemp = html`<div class="topBar">
@@ -73,7 +80,13 @@ export const report = (
 
   // on model change or current index change: render html
   van.derive(() => {
-    if (dialogBodyElm.value && currentElemIndex.val) {
+    currentElemIndex.val; // to trigger when changed
+    modelState.val; // to trigger when changed
+
+    if (
+      (dialogBodyElm.value && active) ||
+      (dialogBodyElm.value && renderCount < 2)
+    ) {
       render(
         reportsMap.get(currentElemIndex.val)(
           modelState.val.designInputs.get(currentElemIndex.val),
@@ -81,11 +94,12 @@ export const report = (
         ),
         dialogBodyElm.value
       );
+
+      renderCount++;
     }
   });
 
-  // hack: to trigger the first render of the threejs canvas
   setTimeout(() => {
-    currentElemIndex.val = "node 1";
+    currentElemIndex.val = reportsMap?.keys().next().value;
   }, 100);
 };
