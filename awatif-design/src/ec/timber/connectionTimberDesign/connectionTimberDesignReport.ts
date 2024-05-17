@@ -12,7 +12,7 @@ export function connectionTimberDesignReport(
   designOutput: ConnectionTimberDesignerOutput
 ): TemplateResult {
   const i = designInput.connectionTimberDesign;
-  let elementIndex = 0;
+  const elementIndex = 0;
 
   let node = designInput.node;
   let elements = designOutput.designInput.map((v) => [v.element]).flat();
@@ -49,52 +49,6 @@ export function connectionTimberDesignReport(
     fastenerPositionX,
     fastenerPositionZ
   );
-
-  function updateTable(elements: number[]): void {
-    const table = document.getElementById("data-table") as HTMLTableElement; // Safely assert the element as HTMLTableElement
-
-    elements.forEach((element, index) => {
-      const row = table.insertRow(); // Insert a new row at the end of the table
-
-      // Create a cell for each item and append text nodes with the data
-      const cellNode = row.insertCell();
-      const cellBeams = row.insertCell();
-      const cellTimber = row.insertCell();
-      const cellWidths = row.insertCell();
-      const cellHeights = row.insertCell();
-      const cellAngles = row.insertCell();
-      const cellAxialLoads = row.insertCell();
-      const cellFastenerCheck = row.insertCell();
-      const cellBlockCheck = row.insertCell();
-      const cellAxialCheck = row.insertCell();
-      const cellStability = row.insertCell();
-
-      // Assigning the text content for each cell based on the element's properties
-      cellNode.textContent = node.toString();
-      cellBeams.textContent = element.toString();
-      cellTimber.textContent = i.timberGrade;
-      cellWidths.textContent = `${widths[index]}mm`;
-      cellHeights.textContent = `${heights[index]}mm`;
-      cellAngles.textContent = `${beamAngles[index]}°`;
-      cellAxialLoads.textContent = `${axialForces[index]}kN`;
-      cellFastenerCheck.textContent = `${(
-        designOutput.connectionTimberDesign[index].etaFastenerCheck * 100
-      ).toFixed(0)}%`;
-      cellBlockCheck.textContent = `${(
-        designOutput.connectionTimberDesign[index].etaBlockFailure * 100
-      ).toFixed(0)}%`;
-      cellAxialCheck.textContent = `${(
-        designOutput.connectionTimberDesign[index].etaAxialCheck * 100
-      ).toFixed(0)}%`;
-      cellStability.textContent = `${(
-        designOutput.connectionTimberDesign[index].etaStability * 100
-      ).toFixed(0)}%`;
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateTable(elements);
-  });
 
   let reportHeader = html` <br />
     <br />
@@ -136,7 +90,38 @@ export function connectionTimberDesignReport(
           <th>Axial Member</th>
           <th>Stability Check</th>
         </tr>
-        <!-- Rows will be added dynamically here -->
+        ${elements.map(
+          (element, index) => html`<tr>
+            <td>${node}</td>
+            <td>${element}</td>
+            <td>${i.timberGrade}</td>
+            <td>${widths[index]}mm</td>
+            <td>${heights[index]}mm</td>
+            <td>${beamAngles[index]}°</td>
+            <td>${axialForces[index]}kN</td>
+            <td>
+              ${(
+                designOutput.connectionTimberDesign[index].etaFastenerCheck *
+                100
+              ).toFixed(0)}%
+            </td>
+            <td>
+              ${(
+                designOutput.connectionTimberDesign[index].etaBlockFailure * 100
+              ).toFixed(0)}%
+            </td>
+            <td>
+              ${(
+                designOutput.connectionTimberDesign[index].etaAxialCheck * 100
+              ).toFixed(0)}%
+            </td>
+            <td>
+              ${(
+                designOutput.connectionTimberDesign[index].etaStability * 100
+              ).toFixed(0)}%
+            </td>
+          </tr>`
+        )}
       </table>
       <br />
     </div>`;

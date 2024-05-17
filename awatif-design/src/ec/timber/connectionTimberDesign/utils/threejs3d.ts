@@ -127,17 +127,6 @@ export function setup3DCube(
   // LIGHT
   const light = new THREE.DirectionalLight(0xffffff, 2);
   light.position.set(5, -10, 5);
-  light.castShadow = true;
-
-  // Adjust the shadow properties for the light
-  light.shadow.mapSize.width = 1024;
-  light.shadow.mapSize.height = 1024;
-  light.shadow.camera.near = 1;
-  light.shadow.camera.far = 20;
-  light.shadow.camera.left = -10;
-  light.shadow.camera.right = 10;
-  light.shadow.camera.top = 10;
-  light.shadow.camera.bottom = -10;
 
   scene.add(light);
 
