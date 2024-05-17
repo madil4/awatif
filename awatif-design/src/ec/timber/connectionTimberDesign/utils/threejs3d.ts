@@ -1,17 +1,24 @@
-// Import necessary modules from Three.js
 import * as THREE from "three";
-import { BufferGeometryUtils } from "three/examples/jsm/Addons.js";
+import { createRef } from "lit-html/directives/ref.js";
 
-// Create the scene and set the background color
+export const container = createRef<HTMLDivElement>();
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("white");
+
+let camera: THREE.PerspectiveCamera | undefined;
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.shadowMap.enabled = true; // Enable shadow mapping
+renderer.setSize(800, 500);
+
+document.addEventListener("DOMContentLoaded", () => {
+  camera = new THREE.PerspectiveCamera(75, 800 / 500, 0.1, 4000);
+  camera.position.set(0, -1300, 0);
+
+  container.value?.appendChild(renderer.domElement);
+});
 
 export function setup3DCube(
-  container: HTMLDivElement | undefined,
-  node: number,
-  elements: number[],
   angles: number[],
   heights: number[],
   widths: number[],
@@ -23,37 +30,18 @@ export function setup3DCube(
 ): void {
   scene.clear();
 
-  // Get the container where the 3D cube will be rendered
-  if (!container) {
-    console.error("Canvas container not found!");
-    return;
-  }
-
-  // Ensure a default size if the container has no explicit size
-  const canvasWidth = container.clientWidth || 800;
-  const canvasHeight = container.clientHeight || 500;
-
   var axesHelper = new THREE.AxesHelper(500);
   scene.add(axesHelper);
-
-  // Create the renderer and add it to the specified container
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(canvasWidth, canvasHeight);
-  renderer.shadowMap.enabled = true; // Enable shadow mapping
-  container.appendChild(renderer.domElement);
 
   // Create a group to hold all beams
   const beamGroup = new THREE.Group();
   const sheetGroup = new THREE.Group();
-  const beamSheetDowelGroup = new THREE.Group();
   const geometryGroup = new THREE.Group();
   let sheetLength: number;
   let beamLength: number; // Declare `beamLength` outside the if-else blocks
 
   // loop through angles
   angles.forEach((angle, index) => {
-    // console.log("node: ", node, "element: ", elements[index], "angle: ", angle)
-
     // parameter
     const width = widths[index];
     const height = heights[index];
@@ -134,16 +122,7 @@ export function setup3DCube(
   scene.add(geometryGroup);
 
   // CAMERA
-  // Create a perspective camera for 3D projection
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    canvasWidth / canvasHeight,
-    0.1,
-    4000
-  );
-  const distance = 1300; // Adjust this value to control how far away the camera is
-  camera.position.set(0, -distance, 0);
-  camera.lookAt(centroid);
+  camera?.lookAt(centroid);
 
   // LIGHT
   const light = new THREE.DirectionalLight(0xffffff, 2);
@@ -161,6 +140,8 @@ export function setup3DCube(
   light.shadow.camera.bottom = -10;
 
   scene.add(light);
+
+  if (camera) renderer.render(scene, camera);
 
   // Variables to track the mouse movement and rotation
   let isDragging = false;
@@ -189,6 +170,8 @@ export function setup3DCube(
 
     // Update the previous mouse position
     previousMousePosition = { x: event.clientX, y: event.clientY };
+
+    if (camera) renderer.render(scene, camera);
   });
 
   renderer.domElement.addEventListener("mouseup", function () {
@@ -198,15 +181,6 @@ export function setup3DCube(
   renderer.domElement.addEventListener("mouseleave", function () {
     isDragging = false;
   });
-
-  // Animation loop
-  function animate(): void {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-
-  // Start the animation
-  animate();
 }
 
 // FUNCTIONS
@@ -266,33 +240,4 @@ function createDowel(
 
   // Return the mesh in a tuple, allowing for destructuring on receipt
   return [dowelMesh];
-}
-
-function mergeGroupMeshes(group: THREE.Group): THREE.Mesh {
-  const geometries: THREE.BufferGeometry[] = [];
-
-  // Extract geometries and apply transformation matrices
-  group.children.forEach((child) => {
-    if (
-      child instanceof THREE.Mesh &&
-      child.geometry instanceof THREE.BufferGeometry
-    ) {
-      const geometry = child.geometry.clone();
-      geometry.applyMatrix4(child.matrixWorld); // Apply world matrix to account for position, rotation, scale
-      geometries.push(geometry);
-    }
-  });
-
-  // Merge geometries
-  const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries, true);
-
-  // Assume the first child's material is used for the resulting mesh
-  const material =
-    group.children[0] instanceof THREE.Mesh
-      ? group.children[0].material
-      : new THREE.MeshStandardMaterial();
-
-  // Create a new mesh with the merged geometry and material
-  const mergedMesh = new THREE.Mesh(mergedGeometry, material);
-  return mergedMesh;
 }
