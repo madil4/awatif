@@ -66,7 +66,7 @@ export function connectionTimberDesign(
   const designGlobalOutputs: TimberBarConnectionDesignerOutput[] = [];
 
   // local per node
-  connectedElements.forEach((element, index) => {
+  connectedElements.forEach((element) => {
     // get area and dimensions
     const width = 300;
     const height = 400;
@@ -76,7 +76,7 @@ export function connectionTimberDesign(
     const axialForce = axialForces[0];
 
     // get the angle
-    const [angleDeg, angleDeg2] = calculateElementAngle(
+    const [angleDeg2] = calculateElementAngle(
       nodes[designInput.node],
       nodes[elements[element][0]],
       nodes[elements[element][1]]
@@ -119,7 +119,7 @@ export function connectionTimberDesign(
     const axialForce = axialForces[0];
 
     // get the angle
-    const [angleDeg, angleDeg2] = calculateElementAngle(
+    const [angleDeg2] = calculateElementAngle(
       nodes[designInput.node],
       nodes[elements[index][0]],
       nodes[elements[index][1]]

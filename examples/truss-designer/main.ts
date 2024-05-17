@@ -7,13 +7,12 @@ import {
   connectionTimberDesign,
   connectionTimberDesignReport,
   frameTimberDesign,
-  frameTimberDesignReport,
 } from "../../awatif-design/src/ec/timber";
 import { DesignInput } from "../../awatif-design/src/design";
 
 export const parameters: Parameters = {
   span: {
-    value: 25,
+    value: 20,
     min: 1,
     max: 25,
     label: "Span (m)",
