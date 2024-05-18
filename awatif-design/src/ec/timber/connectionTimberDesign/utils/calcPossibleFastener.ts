@@ -9,7 +9,6 @@ export function calcPossibleFastener(
   sheetNo: number
 ): [number, number, number, number, number, number, number, number[], number] {
   let [a1, a2, a3, a4, e1] = distances;
-  // console.log("distances", distances)
 
   let additionalFastener = 0;
   let fastenerCheck = 1; // Initially high to enter the loop
@@ -38,17 +37,6 @@ export function calcPossibleFastener(
   F_vrdTotal = F_vrd * noTotalEffective * (sheetNo * 2);
   fastenerCheck = Math.abs(axialForce) / F_vrdTotal;
   sheetLength = a1 * noAxial + a3 * 2;
-  // console.log("noTotalReq", noTotalReq, "noPerpPos", noPerpPos, "noAxial", noAxial, "fastenerCheck", fastenerCheck)
-
-  // console.log("sheetLength", sheetLength)
-
-  //    if (fastenerCheck < 0.95) {
-  // Calculate sheet length when condition is met
-  // sheetLength = e1 + a1 * noAxial + a3 * 2;
-  //      break; // Exit loop when condition is met
-  // }
-  //}
-  // console.log("sheetLength2", sheetLength)
 
   return [
     noTotal,

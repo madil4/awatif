@@ -4,7 +4,7 @@ export function calculateElementAngle(
   node: Node,
   node1: Node,
   node2: Node
-): number[] {
+): number {
   let angleDeg2: number;
 
   const [x1, , z1] = node1; // Ignore the y-coordinate if not required
@@ -20,12 +20,10 @@ export function calculateElementAngle(
   const angleDeg = (angleRad * 180) / Math.PI; // Convert to degrees
 
   if (node == node2) {
-    angleDeg2 = 180 + angleDeg ;
+    angleDeg2 = 180 + angleDeg;
   } else {
-    angleDeg2 = angleDeg ;
+    angleDeg2 = angleDeg;
   }
 
-  // console.log("node: ", node, "node1: ", node1, "node2: ", node2)
-
-  return [angleDeg2];
+  return angleDeg2;
 }
