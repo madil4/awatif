@@ -52,8 +52,6 @@ export function connectionTimberDesign(
       connectedElements.push(index);
     }
   });
-  console.log("designInput.node: ", designInput.node, "connectedElements: ", connectedElements)
-
   // process analysis output
   const processedOutput = processAnalysisOutputs(analysisOutputs);
 
@@ -72,7 +70,7 @@ export function connectionTimberDesign(
     const axialForce = axialForces[0];
 
     // get the angle
-    const [angleDeg2] = calculateElementAngle(
+    const beamAngle = calculateElementAngle(
       nodes[designInput.node],
       nodes[elements[element][0]],
       nodes[elements[element][1]]
@@ -90,7 +88,7 @@ export function connectionTimberDesign(
       element: element,
       elementLength: elementLength,
       axialForce: axialForce,
-      beamAngle: angleDeg2,
+      beamAngle: beamAngle,
       width: width,
       height: height,
     };
