@@ -42,7 +42,6 @@ export function setup3DCube(
 
   // loop through angles
   angles.forEach((angle, index) => {
-    console.log("element", index, "angle", angle);
     // parameter
     const width = widths[index];
     const height = heights[index];

@@ -68,13 +68,11 @@ export function calcStability(
   const M_yd = axialForce * e_0;
   const M_zd = axialForce * e_0;
   const L_M = [M_yd, M_zd];
-  // console.log("length", length)
 
   // Strength values
   const f_c0d = f_c0k * chi * 1000;
   const f_myd = f_myk * chi * 1000;
   const f_mzd = f_mzk * chi * 1000;
-  // console.log("f_c0d", f_c0d)
 
   // Calculate results for moments around y and z axes
   for (let n = 0; n < L_M.length; n++) {
@@ -110,8 +108,6 @@ export function calcStability(
   width = L_bh[index][0];
   height = L_bh[index][1];
   const f_mk = L_fmk[index];
-
-  // console.log(L_sigma_md)
 
   const lamb_relm =
     Math.sqrt(l_ef / (Math.PI * width ** 2)) *
