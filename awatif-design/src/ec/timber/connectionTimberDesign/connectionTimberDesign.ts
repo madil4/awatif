@@ -52,6 +52,7 @@ export function connectionTimberDesign(
       connectedElements.push(index);
     }
   });
+  console.log("designInput.node: ", designInput.node, "connectedElements: ", connectedElements)
 
   // process analysis output
   const processedOutput = processAnalysisOutputs(analysisOutputs);

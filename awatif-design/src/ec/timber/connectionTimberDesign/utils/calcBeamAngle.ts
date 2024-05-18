@@ -20,12 +20,12 @@ export function calculateElementAngle(
   const angleDeg = (angleRad * 180) / Math.PI; // Convert to degrees
 
   if (node == node2) {
-    angleDeg2 = 180 + angleDeg;
+    angleDeg2 = 180 + angleDeg ;
   } else {
-    angleDeg2 = angleDeg;
+    angleDeg2 = angleDeg ;
   }
 
   // console.log("node: ", node, "node1: ", node1, "node2: ", node2)
 
-  return [angleDeg, angleDeg2];
+  return [angleDeg2];
 }

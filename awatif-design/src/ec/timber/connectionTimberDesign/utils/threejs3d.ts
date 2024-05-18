@@ -42,6 +42,8 @@ export function setup3DCube(
 
   // loop through angles
   angles.forEach((angle, index) => {
+
+    console.log("element", index, "angle", angle)
     // parameter
     const width = widths[index];
     const height = heights[index];
@@ -49,7 +51,7 @@ export function setup3DCube(
     beamLength = sheetLength + 200;
 
     // calculate sheet rotation and offset
-    let angleRad: number = THREE.MathUtils.degToRad(-angle);
+    let angleRad: number = THREE.MathUtils.degToRad( -angle );
     const setX = (sheetLength / 2) * Math.cos(angleRad);
     const setZ = (-sheetLength / 2) * Math.sin(angleRad);
 
