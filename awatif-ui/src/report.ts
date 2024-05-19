@@ -14,7 +14,7 @@ export const report = (
   let dialogElm = createRef<HTMLDialogElement>();
   let dialogBodyElm = createRef<HTMLDivElement>();
   let reportsMap = new Map<string, any>();
-  let active = true;
+  let active = false;
   let renderCount = 0;
 
   // events
@@ -49,8 +49,7 @@ export const report = (
         }
       });
 
-      if (report.name === "summaryReport")
-        reportsMap.set("summaryReport", report);
+      if (report.name === "summaryReport") reportsMap.set("summary", report);
     });
 
     if (!currentElemIndex.val) {
@@ -70,7 +69,7 @@ export const report = (
       )}
     </select>`;
 
-    const dialogTemp = html`<dialog open ref=${ref(dialogElm)} >
+    const dialogTemp = html`<dialog ref=${ref(dialogElm)} >
     <div class="dialog-header">
       <span class="close" @click=${onDialogClose}>&times;</span>
       ${elements}
@@ -90,7 +89,7 @@ export const report = (
       (dialogBodyElm.value && active) ||
       (dialogBodyElm.value && renderCount < 2)
     ) {
-      if (currentElemIndex.val === "summaryReport") {
+      if (currentElemIndex.val === "summary") {
         render(
           reportsMap.get(currentElemIndex.val)(modelState.val),
           dialogBodyElm.value

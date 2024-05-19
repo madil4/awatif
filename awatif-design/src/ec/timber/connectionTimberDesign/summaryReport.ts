@@ -4,25 +4,26 @@ import { ModelState } from "../../../../../awatif-ui/src/types";
 import { TemplateResult, html } from "lit-html";
 import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";
 import { calculateElementAngle } from "./utils/calcBeamAngle";
-import { TimberBarConnectionDesignerOutput } from "./utils/types";
-
-function calculateElementLength(elements: Element[], nodes: Node[]): number[] {
-  let listLength: number[] = [];
-  elements.forEach((element) => {
-    const [nodeid1, nodeid2] = element;
-    const node1 = nodes[nodeid1];
-    const node2 = nodes[nodeid2];
-    const [x1, , z1]: number[] = node1;
-    const [x2, , z2]: number[] = node2;
-    const dx: number = x2 - x1;
-    const dz: number = z2 - z1;
-    const length: number = Math.sqrt(dx * dx + dz * dz);
-    listLength.push(length);
-  });
-  return listLength;
-}
+import {
+  TimberBarConnectionDesignerLocalInput,
+  TimberBarConnectionDesignerOutput,
+} from "./utils/types";
 
 export function summaryReport(model: ModelState["val"]): TemplateResult {
+  const designInput = {
+    node: 2,
+    connectionTimberDesign: {
+      serviceClass: 1,
+      loadDurationClass: "permanent",
+      timberGrade: "GL28h",
+      element: 2,
+      fastenerGrade: "S235",
+      fastenerDiameter: 8,
+      sheetGrade: "S235",
+      sheetThickness: 5,
+      sheetNo: 2,
+    },
+  };
   const processedOutput = model.analysisOutputs;
   const designGlobalInputs: any[] = [];
   const designGlobalOutputs: TimberBarConnectionDesignerOutput[] = [];
@@ -39,20 +40,22 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
 
     // get the angle
     const angleDeg2 = calculateElementAngle(
-      nodes[designInput.node],
-      nodes[elements[index][0]],
-      nodes[elements[index][1]]
+      model.nodes[designInput.node],
+      model.nodes[model.elements[index][0]],
+      model.nodes[model.elements[index][1]]
     );
 
     // combining global and local input parameters
-    const timberBarConnectionDesignerInput = {
-      ...designInput.connectionTimberDesign,
-      element: index,
-      axialForce: axialForce,
-      beamAngle: angleDeg2,
-      width: width,
-      height: height,
-    };
+    const timberBarConnectionDesignerInput: TimberBarConnectionDesignerLocalInput =
+      {
+        ...designInput.connectionTimberDesign,
+        element: index,
+        axialForce: axialForce,
+        beamAngle: angleDeg2,
+        width: width,
+        height: height,
+        elementLength: 0,
+      };
     const timberBarOutput = timberBarConnectionDesigner(
       timberBarConnectionDesignerInput
     );
@@ -63,28 +66,18 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
 
   let nodes = model.nodes;
   let elements = model.elements;
-  let widths = model.designInputs
-    .values()
-    .map((v) => [v.width])
+  let widths = designGlobalInputs.map((v) => [v.width]).flat();
+  let heights = designGlobalInputs.map((v) => [v.height]).flat();
+  let axialForces = processedOutput.normal;
+  let fastenerNumber = designGlobalOutputs.map((v) => [v.noTotal]).flat();
+  let etafastenerCheck = designGlobalOutputs
+    .map((v) => [v.etaFastenerCheck])
     .flat();
-  let heights = model.designInputs
-    .values()
-    .map((v) => [v.height])
-    .flat();
-  let axialForces = model.designInputs.normal;
-  let fastenerNumber = model.designGlobalOutputs.map((v) => [v.noTotal]).flat();
-  let etafastenerCheck = model.designGlobalOutputs
-    .map((v) => [v.fastenerCheck])
-    .flat();
-  let etaBlockFailure = model.designGlobalOutputs
+  let etaBlockFailure = designGlobalOutputs
     .map((v) => [v.etaBlockFailure])
     .flat();
-  let etaAxialCheck = model.designGlobalOutputs
-    .map((v) => [v.etaAxialCheck])
-    .flat();
-  let etaStability = model.designGlobalOutputs
-    .map((v) => [v.etaStability])
-    .flat();
+  let etaAxialCheck = designGlobalOutputs.map((v) => [v.etaAxialCheck]).flat();
+  let etaStability = designGlobalOutputs.map((v) => [v.etaStability]).flat();
   let fastenerDiameter = designInput.connectionTimberDesign.fastenerDiameter;
   // calculate lengths of elements
   const listLengths = calculateElementLength(elements, nodes);
@@ -95,66 +88,20 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
   let volumeTimber: number = 0;
   let numberFastener: number = 0;
   let lengthsElement: number = 0;
-  elements.forEach((element, index) => {
+  elements.forEach((_, index) => {
     volumeTimber +=
       (widths[index] * heights[index] * listLengths[index]) / 1000 ** 2;
     numberFastener += fastenerNumber[index];
     lengthsElement += listLengths[index];
   });
 
-  let weightTimber = embodiedCarbonTimberFactor * 385;
+  let weightTimber = volumeTimber * 385;
   let embodiedCarbonTimber = embodiedCarbonTimberFactor * weightTimber;
   let volumeFastener =
     ((numberFastener * (fastenerDiameter / 10) ** 2 * Math.PI) / 4) *
     (widths[0] / 10);
   let weightSteel = (volumeFastener * 7850) / 1000 ** 3;
   let embodiedCarbonSteel = embodiedCarbonSteelFactor * weightSteel; //CO2/kg
-
-  function updateTable(elements: any[]): void {
-    const table = document.getElementById("data-table") as HTMLTableElement; // Safely assert the element as HTMLTableElement
-
-    elements.forEach((element, index) => {
-      const row = table.insertRow(); // Insert a new row at the end of the table
-      const axialForce = axialForces.get(index) ?? [0, 0];
-
-      // Create a cell for each item and append text nodes with the data
-      const cellBeams = row.insertCell();
-      const cellNodes = row.insertCell();
-      const cellLengths = row.insertCell();
-      const cellWidths = row.insertCell();
-      const cellHeights = row.insertCell();
-      const cellAxialForce = row.insertCell();
-      const cellFastenerNumber = row.insertCell();
-
-      const cellFastenerCheck = row.insertCell();
-      const cellBlockFailure = row.insertCell();
-      const cellAxialCheck = row.insertCell();
-      const cellStability = row.insertCell();
-
-      // Assigning the text content for each cell based on the element's properties
-      cellBeams.textContent = index.toString();
-      cellNodes.textContent = element.toString();
-      cellLengths.textContent = listLengths[index].toFixed(1).toString();
-      cellWidths.textContent = widths[index].toString();
-      cellHeights.textContent = heights[index].toString();
-      cellAxialForce.textContent = axialForce[0].toFixed(0).toString();
-      cellFastenerNumber.textContent = fastenerNumber[index].toString();
-      cellFastenerCheck.textContent = `${(
-        etafastenerCheck[index] * 100
-      ).toFixed(0)}%`;
-      cellBlockFailure.textContent = `${(etaBlockFailure[index] * 100).toFixed(
-        0
-      )}%`;
-      cellAxialCheck.textContent = `${(etaAxialCheck[index] * 100).toFixed(
-        0
-      )}%`;
-      cellStability.textContent = `${(etaStability[index] * 100).toFixed(0)}%`;
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateTable(elements);
-  });
 
   let reportHeader = html` <br />
     <br />
@@ -175,7 +122,7 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
   let globalTable = html`
     <h2>Quantities</h2> 
      <br>
-    <button class="collapsible"><h7>Quantities</h7></button>
+    <button class="collapsible" @click=${toggleView}><h7>Quantities</h7></button>
     <div class="content" style="display: none;">
     <br>
       <table id="quantities">
@@ -206,7 +153,7 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
     </div>
     <br>
     <br>
-    <button class="collapsible"><h7>Table</h7></button>
+    <button class="collapsible" @click=${toggleView}><h7>Table</h7></button>
     <div class="content" style="display: none;">
     <br>
       <table id="data-table">
@@ -228,7 +175,23 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
             <th>Member</th>
             <th>Stability</th>
         </tr>   
-        <!-- Rows will be added dynamically here -->
+        
+          ${elements.map(
+            (element, index) =>
+              html`<tr>
+                <td>${index}</td>
+                <td>${element.toString()}</td>
+                <td>${listLengths[index].toFixed(1)}</td>
+                <td>${widths[index]}</td>
+                <td>${heights[index]}</td>
+                <td>${axialForces.get(index)?.[0].toFixed(0)}</td>
+                <td>${fastenerNumber[index]}</td>
+                <td>${(etafastenerCheck[index] * 100).toFixed(0)}%</td>
+                <td>${(etaBlockFailure[index] * 100).toFixed(0)}%</td>
+                <td>${(etaAxialCheck[index] * 100).toFixed(0)}%</td>
+                <td>${(etaStability[index] * 100).toFixed(0)}%</td>
+              </tr>`
+          )}
       </table>
     </div>
     <br>`;
@@ -238,18 +201,30 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
   return reportContent;
 }
 
-// JavaScript for collapsible
-document.addEventListener("DOMContentLoaded", () => {
-  const coll = document.getElementsByClassName("collapsible");
-  for (let i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function () {
-      this.classList.toggle("active");
-      const content = this.nextElementSibling;
-      if (content.style.display === "block") {
-        content.style.display = "none";
-      } else {
-        content.style.display = "block";
-      }
-    });
+function calculateElementLength(elements: Element[], nodes: Node[]): number[] {
+  let listLength: number[] = [];
+  elements.forEach((element) => {
+    const [nodeid1, nodeid2] = element;
+    const node1 = nodes[nodeid1];
+    const node2 = nodes[nodeid2];
+    const [x1, , z1]: number[] = node1;
+    const [x2, , z2]: number[] = node2;
+    const dx: number = x2 - x1;
+    const dz: number = z2 - z1;
+    const length: number = Math.sqrt(dx * dx + dz * dz);
+    listLength.push(length);
+  });
+  return listLength;
+}
+
+function toggleView() {
+  // @ts-ignore
+  this.classList.toggle("active");
+  // @ts-ignore
+  const content = this.nextElementSibling;
+  if (content.style.display === "block") {
+    content.style.display = "none";
+  } else {
+    content.style.display = "block";
   }
-});
+}

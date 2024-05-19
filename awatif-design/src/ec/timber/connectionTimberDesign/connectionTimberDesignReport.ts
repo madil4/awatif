@@ -39,6 +39,41 @@ export function connectionTimberDesignReport(
 
   const o = designOutput.connectionTimberDesign[0];
 
+  function toggleView() {
+    // @ts-ignore
+    this.classList.toggle("active");
+    // @ts-ignore
+    const content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  }
+
+  function toggleViewAndSetup3D() {
+    // @ts-ignore
+    this.classList.toggle("active");
+    // @ts-ignore
+    const content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+
+    setup3DCube(
+      angles,
+      heights,
+      widths,
+      sheetNumber,
+      sheetLength,
+      sheetThickness,
+      fastenerPositionX,
+      fastenerPositionZ
+    );
+  }
+
   setup3DCube(
     angles,
     heights,
@@ -67,7 +102,10 @@ export function connectionTimberDesignReport(
     <br>
     <h1>Structural Report</h2>`;
 
-  let reportSummary = html` <button class="collapsible">
+  let reportSummary = html` <button
+      class="collapsible"
+      @click=${toggleViewAndSetup3D}
+    >
       <h3>Connection Detail</h3>
     </button>
     <div class="content" style="display: none;">
@@ -126,7 +164,10 @@ export function connectionTimberDesignReport(
       <br />
     </div>`;
 
-  let reportLoadProperties = html` <button class="collapsible">
+  let reportLoadProperties = html` <button
+      class="collapsible"
+      @click=${toggleView}
+    >
       <h3>Load Properties</h3>
     </button>
     <div class="content" style="display: none;">
@@ -142,7 +183,9 @@ export function connectionTimberDesignReport(
     </div>`;
 
   let reportFastenerProperties = html`
-    <button class="collapsible"><h3>Fastener Properties</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Fastener Properties</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Ch. 8.5.1.1</p>
       <p>Characteristic value for the yield moment</p>
@@ -157,7 +200,7 @@ export function connectionTimberDesignReport(
   `;
 
   let reportSpacings = html`
-    <button class="collapsible"><h3>Spacings</h3></button>
+    <button class="collapsible" @click=${toggleView}><h3>Spacings</h3></button>
     <div class="content" style="display: none;">
       <p><b>Timber Spacings</b></p>
       <p class="caption">EN 1995-1-1 Ch. 8.6 Tab.8.5</p>
@@ -221,7 +264,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportFastenerCapacity = html`
-    <button class="collapsible"><h3>Fastener Capacity</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Fastener Capacity</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Ch. 8.2.3-8.11</p>
       <p>Characteristic fastener capacities</p>
@@ -247,7 +292,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportFastenerCapacityCheck = html`
-    <button class="collapsible"><h3>Fastener Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Fastener Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <table>
         <tr>
@@ -283,7 +330,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportCompressionCheck = html`
-    <button class="collapsible"><h3>Compression Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Compression Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
       <p>Member Compression Check</p>
@@ -336,7 +385,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportTensionCheck = html`
-    <button class="collapsible"><h3>Tension Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Tension Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Abs. 6.1.7</p>
       <p>Member Tension Check</p>
@@ -391,7 +442,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportAxialBlockFailureCheck = html`
-    <button class="collapsible"><h3>Axial Block Failure Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Axial Block Failure Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Abs. 6.1.8</p>
       <p>Tensile strength</p>
@@ -436,7 +489,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportStabilityCheck = html`
-    <button class="collapsible"><h3>Axial Block Failure Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Axial Block Failure Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Abs. 6.1.8</p>
       <p>Tensile strength</p>
@@ -481,7 +536,9 @@ export function connectionTimberDesignReport(
   `;
 
   let reportNoStabilityCheck = html`
-    <button class="collapsible"><h3>Stability Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Stability Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p>No stability check required.</p>
     </div>
@@ -534,21 +591,3 @@ export function connectionTimberDesignReport(
 
   return reportContent;
 }
-
-// JavaScript for collapsible
-document.addEventListener("DOMContentLoaded", () => {
-  const coll = document.getElementsByClassName("collapsible");
-  for (let i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function () {
-      // @ts-ignore
-      this.classList.toggle("active");
-      // @ts-ignore
-      const content = this.nextElementSibling;
-      if (content.style.display === "block") {
-        content.style.display = "none";
-      } else {
-        content.style.display = "block";
-      }
-    });
-  }
-});
