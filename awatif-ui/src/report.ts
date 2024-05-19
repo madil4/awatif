@@ -48,6 +48,8 @@ export const report = (
             reportsMap.set("node " + designInput.node, report);
         }
       });
+
+      if (report.name === "summaryReport") reportsMap.set("summary", report);
     });
 
     if (!currentElemIndex.val) {
@@ -87,13 +89,20 @@ export const report = (
       (dialogBodyElm.value && active) ||
       (dialogBodyElm.value && renderCount < 2)
     ) {
-      render(
-        reportsMap.get(currentElemIndex.val)(
-          modelState.val.designInputs.get(currentElemIndex.val),
-          modelState.val.designOutputs.get(currentElemIndex.val)
-        ),
-        dialogBodyElm.value
-      );
+      if (currentElemIndex.val === "summary") {
+        render(
+          reportsMap.get(currentElemIndex.val)(modelState.val),
+          dialogBodyElm.value
+        );
+      } else {
+        render(
+          reportsMap.get(currentElemIndex.val)(
+            modelState.val.designInputs.get(currentElemIndex.val),
+            modelState.val.designOutputs.get(currentElemIndex.val)
+          ),
+          dialogBodyElm.value
+        );
+      }
 
       renderCount++;
     }

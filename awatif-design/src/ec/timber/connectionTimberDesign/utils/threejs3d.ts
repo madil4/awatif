@@ -28,6 +28,9 @@ export function setup3DCube(
   fastenerPositionX: number[][],
   fastenerPositionZ: number[][]
 ): void {
+  if (container.value?.children.length === 0)
+    container.value?.appendChild(renderer.domElement);
+
   scene.clear();
 
   var axesHelper = new THREE.AxesHelper(500);
