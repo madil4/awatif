@@ -7,6 +7,7 @@ import {
   connectionTimberDesign,
   connectionTimberDesignReport,
   frameTimberDesign,
+  summaryReport,
 } from "../../awatif-design/src/ec/timber";
 import { DesignInput } from "../../awatif-design/src/design";
 
@@ -476,5 +477,5 @@ app({
   parameters,
   onParameterChange,
   settings: { deformedShape: true, loads: false },
-  reports: [connectionTimberDesignReport],
+  reports: [summaryReport, connectionTimberDesignReport],
 });
