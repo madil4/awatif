@@ -1,5 +1,6 @@
-import { a as app } from "./app-Bgqhnn-W.js";
-import { a as ab } from "./BHUODB6U-CCAgV7pX.js";
+import { a as app } from "./app-CVhM8A18.js";
+import { a as analyze } from "./analyze-DkU8KasY.js";
+import "./_commonjsHelpers-Dm6U3U_N.js";
 const parameters = {
   xPosition: { value: 12, min: 1, max: 20 },
   zPosition: { value: 0, min: 1, max: 10 }
@@ -38,7 +39,7 @@ function onParameterChange(parameters2) {
       elasticity: 200
     }
   ];
-  const analysisOutputs = ab(nodes, elements, analysisInputs);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 app({ parameters, onParameterChange });

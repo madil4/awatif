@@ -9,6 +9,9 @@ import {
   TimberBarConnectionDesignerOutput,
 } from "./utils/types";
 
+// @ts-ignore
+import logo from "./utils/awatif-logo.jpg";
+
 export function summaryReport(model: ModelState["val"]): TemplateResult {
   const designInput = {
     node: 2,
@@ -112,7 +115,7 @@ export function summaryReport(model: ModelState["val"]): TemplateResult {
         <p class="normal">20.05.2024</p>
       </div>
       <div class="header-right">
-        <img src="./awatif-logo.png" id="headerLogo" height="60px" />
+        <img src=${logo} id="headerLogo" height="60px" />
       </div>
     </header>`;
 

@@ -7,6 +7,9 @@ import {
 import { container, setup3DCube } from "./utils/threejs3d";
 import { ref } from "lit-html/directives/ref.js";
 
+// @ts-ignore
+import logo from "./utils/awatif-logo.jpg";
+
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
   designOutput: ConnectionTimberDesignerOutput
@@ -94,7 +97,7 @@ export function connectionTimberDesignReport(
         <p class="normal">20.05.2024</p>
       </div>
       <div class="header-right">
-        <img src="./awatif-logo.png" id="headerLogo" height="60px" />
+        <img src=${logo} id="headerLogo" height="60px" />
       </div>
     </header>`;
 

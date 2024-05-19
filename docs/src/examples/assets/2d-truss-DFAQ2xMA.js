@@ -1,5 +1,6 @@
-import { a as app } from "./app-Bgqhnn-W.js";
-import { a as ab } from "./BHUODB6U-CCAgV7pX.js";
+import { a as app } from "./app-CVhM8A18.js";
+import { a as analyze } from "./analyze-DkU8KasY.js";
+import "./_commonjsHelpers-Dm6U3U_N.js";
 const parameters = {
   span: {
     value: 15,
@@ -99,7 +100,7 @@ function onParameterChange(parameters2) {
       })
     )
   ];
-  const analysisOutputs = ab(nodes, elements, analysisInputs);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 app({

@@ -21738,13 +21738,185 @@ class OrbitControls extends EventDispatcher {
     this.update();
   }
 }
-function nodes(nodes2, settings2, displayScale) {
+class Lut {
+  constructor(colormap, count = 32) {
+    this.isLut = true;
+    this.lut = [];
+    this.map = [];
+    this.n = 0;
+    this.minV = 0;
+    this.maxV = 1;
+    this.setColorMap(colormap, count);
+  }
+  set(value) {
+    if (value.isLut === true) {
+      this.copy(value);
+    }
+    return this;
+  }
+  setMin(min) {
+    this.minV = min;
+    return this;
+  }
+  setMax(max) {
+    this.maxV = max;
+    return this;
+  }
+  setColorMap(colormap, count = 32) {
+    this.map = ColorMapKeywords[colormap] || ColorMapKeywords.rainbow;
+    this.n = count;
+    const step = 1 / this.n;
+    const minColor = new Color();
+    const maxColor = new Color();
+    this.lut.length = 0;
+    this.lut.push(new Color(this.map[0][1]));
+    for (let i2 = 1; i2 < count; i2++) {
+      const alpha = i2 * step;
+      for (let j2 = 0; j2 < this.map.length - 1; j2++) {
+        if (alpha > this.map[j2][0] && alpha <= this.map[j2 + 1][0]) {
+          const min = this.map[j2][0];
+          const max = this.map[j2 + 1][0];
+          minColor.setHex(this.map[j2][1], LinearSRGBColorSpace);
+          maxColor.setHex(this.map[j2 + 1][1], LinearSRGBColorSpace);
+          const color = new Color().lerpColors(minColor, maxColor, (alpha - min) / (max - min));
+          this.lut.push(color);
+        }
+      }
+    }
+    this.lut.push(new Color(this.map[this.map.length - 1][1]));
+    return this;
+  }
+  copy(lut) {
+    this.lut = lut.lut;
+    this.map = lut.map;
+    this.n = lut.n;
+    this.minV = lut.minV;
+    this.maxV = lut.maxV;
+    return this;
+  }
+  getColor(alpha) {
+    alpha = MathUtils.clamp(alpha, this.minV, this.maxV);
+    alpha = (alpha - this.minV) / (this.maxV - this.minV);
+    const colorPosition = Math.round(alpha * this.n);
+    return this.lut[colorPosition];
+  }
+  addColorMap(name, arrayOfColors) {
+    ColorMapKeywords[name] = arrayOfColors;
+    return this;
+  }
+  createCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = this.n;
+    this.updateCanvas(canvas);
+    return canvas;
+  }
+  updateCanvas(canvas) {
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const imageData = ctx.getImageData(0, 0, 1, this.n);
+    const data = imageData.data;
+    let k2 = 0;
+    const step = 1 / this.n;
+    const minColor = new Color();
+    const maxColor = new Color();
+    const finalColor = new Color();
+    for (let i2 = 1; i2 >= 0; i2 -= step) {
+      for (let j2 = this.map.length - 1; j2 >= 0; j2--) {
+        if (i2 < this.map[j2][0] && i2 >= this.map[j2 - 1][0]) {
+          const min = this.map[j2 - 1][0];
+          const max = this.map[j2][0];
+          minColor.setHex(this.map[j2 - 1][1], LinearSRGBColorSpace);
+          maxColor.setHex(this.map[j2][1], LinearSRGBColorSpace);
+          finalColor.lerpColors(minColor, maxColor, (i2 - min) / (max - min));
+          data[k2 * 4] = Math.round(finalColor.r * 255);
+          data[k2 * 4 + 1] = Math.round(finalColor.g * 255);
+          data[k2 * 4 + 2] = Math.round(finalColor.b * 255);
+          data[k2 * 4 + 3] = 255;
+          k2 += 1;
+        }
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+    return canvas;
+  }
+}
+const ColorMapKeywords = {
+  "rainbow": [[0, 255], [0.2, 65535], [0.5, 65280], [0.8, 16776960], [1, 16711680]],
+  "cooltowarm": [[0, 3952322], [0.2, 10206463], [0.5, 14474460], [0.8, 16163717], [1, 11797542]],
+  "blackbody": [[0, 0], [0.2, 7864320], [0.5, 15086080], [0.8, 16776960], [1, 16777215]],
+  "grayscale": [[0, 0], [0.2, 4210752], [0.5, 8355712], [0.8, 12566463], [1, 16777215]]
+};
+function divideNodesElements(outputs) {
+  const nodeOutputs = [];
+  const elementOutputs = [];
+  outputs.forEach((o2, key) => {
+    if (key.includes("node"))
+      nodeOutputs.push(o2);
+    if (key.includes("element"))
+      elementOutputs.push(o2);
+  });
+  return { nodeOutputs, elementOutputs };
+}
+function getKeys(outputs) {
+  const keys = [];
+  outputs.forEach((output) => {
+    keys.push(...Object.getOwnPropertyNames(output));
+  });
+  return [...new Set(keys.filter((v2) => v2 !== "node" && v2 !== "element"))];
+}
+function updateColorsDueToNodeResult(nodes2, model, settings2, points) {
+  const lut = new Lut();
+  lut.setColorMap("rainbow");
+  lut.setMin(0);
+  lut.setMax(1);
+  van.derive(() => {
+    const { nodeOutputs } = divideNodesElements(model.val.designOutputs);
+    const keys = getKeys(nodeOutputs);
+    if (keys.includes(settings2.nodeResults.val)) {
+      const outputs = processOutputs$1(nodeOutputs, keys);
+      const curOutputs = outputs.get("utilizationRatio");
+      const colors = [];
+      nodes2.val.forEach((_2, i2) => {
+        const outputPerNode = curOutputs.get(i2) ?? 0;
+        const color = lut.getColor(outputPerNode);
+        colors.push(color.r, color.g, color.b);
+      });
+      points.geometry.setAttribute(
+        "color",
+        new Float32BufferAttribute(colors, 3)
+      );
+    } else {
+      points.geometry.setAttribute(
+        "color",
+        new Float32BufferAttribute(nodes2.val.flat().fill(1), 3)
+      );
+    }
+  });
+}
+function processOutputs$1(outputs, keys) {
+  const outputsM = /* @__PURE__ */ new Map();
+  keys.forEach((key) => {
+    const keyValue = /* @__PURE__ */ new Map();
+    outputs.forEach((output) => {
+      if (key in output)
+        keyValue.set(output.node, output[key]);
+    });
+    outputsM.set(key, keyValue);
+  });
+  return outputsM;
+}
+function nodes(nodes2, model, settings2, displayScale) {
   const points = new Points(
     new BufferGeometry(),
-    new PointsMaterial()
+    new PointsMaterial({ vertexColors: true })
   );
   const size = 0.05 * settings2.gridSize.val * 0.5;
   points.frustumCulled = false;
+  points.geometry.setAttribute(
+    "color",
+    new Float32BufferAttribute(nodes2.val.flat().fill(1), 3)
+  );
+  updateColorsDueToNodeResult(nodes2, model, settings2, points);
   van.derive(() => {
     points.visible = settings2.nodes.val;
     if (!settings2.nodes.val)
@@ -21761,14 +21933,67 @@ function nodes(nodes2, settings2, displayScale) {
   });
   return points;
 }
+function updateColorsDueToElementResult(model, settings2, lines) {
+  const lut = new Lut();
+  lut.setColorMap("rainbow");
+  lut.setMin(0);
+  lut.setMax(1);
+  van.derive(() => {
+    const { elementOutputs } = divideNodesElements(model.val.designOutputs);
+    const keys = getKeys(elementOutputs);
+    if (keys.includes(settings2.elementResults.val)) {
+      const outputs = processOutputs(elementOutputs, keys);
+      const curOutputs = outputs.get(settings2.elementResults.val);
+      const colors = [];
+      model.val.elements.forEach((_2, i2) => {
+        const outputPerNode = curOutputs.get(i2) ?? { utilizationRatio: 0 };
+        const utilizationRatio = outputPerNode.utilizationRatio || 0;
+        const color = lut.getColor(utilizationRatio);
+        colors.push(color.r, color.g, color.b, color.r, color.g, color.b);
+      });
+      lines.geometry.setAttribute(
+        "color",
+        new Float32BufferAttribute(colors, 3)
+      );
+    } else {
+      lines.geometry.setAttribute(
+        "color",
+        new Float32BufferAttribute(
+          model.val.elements.map(() => [...Array(6)]).flat().fill(1),
+          3
+        )
+      );
+    }
+  });
+}
+function processOutputs(outputs, keys) {
+  const outputsM = /* @__PURE__ */ new Map();
+  keys.forEach((key) => {
+    const keyValue = /* @__PURE__ */ new Map();
+    outputs.forEach((output) => {
+      if (key in output)
+        keyValue.set(output.element, output[key]);
+    });
+    outputsM.set(key, keyValue);
+  });
+  return outputsM;
+}
 function elements(nodes2, model, settings2) {
   const lines = new LineSegments(
     new BufferGeometry(),
-    new LineBasicMaterial()
+    new LineBasicMaterial({ vertexColors: true })
   );
   let nodesCache = nodes2.val;
   lines.frustumCulled = false;
   lines.material.depthTest = false;
+  lines.geometry.setAttribute(
+    "color",
+    new Float32BufferAttribute(
+      model.val.elements.map(() => [...Array(6)]).flat().fill(1),
+      3
+    )
+  );
+  updateColorsDueToElementResult(model, settings2, lines);
   van.derive(() => nodesCache = nodes2.val);
   van.derive(() => {
     settings2.deformedShape.val;
@@ -22318,6 +22543,7 @@ function elementResults(nodes2, model, settings2, displayScale) {
   let nodesCache = nodes2.val;
   van.derive(() => nodesCache = nodes2.val);
   van.derive(() => {
+    var _a;
     settings2.deformedShape.val;
     group.visible = settings2.elementResults.val != "none";
     if (settings2.elementResults.val == "none")
@@ -22325,7 +22551,8 @@ function elementResults(nodes2, model, settings2, displayScale) {
     const resultType = ResultType$1[settings2.elementResults.val];
     group.children.forEach((c2) => c2.dispose());
     group.clear();
-    model.val.analysisOutputs[resultType].forEach((result, index) => {
+    (_a = model.val.analysisOutputs[resultType]) == null ? void 0 : _a.forEach((result, index) => {
+      var _a2;
       const element = model.val.elements[index];
       const node1 = nodesCache[element[0]];
       const node2 = nodesCache[element[1]];
@@ -22333,7 +22560,7 @@ function elementResults(nodes2, model, settings2, displayScale) {
         new Vector3(...node1)
       );
       const maxResult = Math.max(
-        ...[...model.val.analysisOutputs[resultType].values()].flat().map((n2) => Math.abs(n2 ?? 0))
+        ...[...(_a2 = model.val.analysisOutputs[resultType]) == null ? void 0 : _a2.values()].flat().map((n2) => Math.abs(n2 ?? 0))
       );
       const normalizedResult = result == null ? void 0 : result.map(
         (n2) => n2 / (maxResult === 0 ? 1 : maxResult)
@@ -22483,6 +22710,7 @@ function nodeResults(nodes2, model, settings2, displayScale) {
   let nodesCache = nodes2.val;
   van.derive(() => nodesCache = nodes2.val);
   van.derive(() => {
+    var _a;
     settings2.deformedShape.val;
     group.visible = settings2.nodeResults.val != "none";
     if (settings2.nodeResults.val == "none")
@@ -22490,7 +22718,7 @@ function nodeResults(nodes2, model, settings2, displayScale) {
     group.children.forEach((c2) => c2.dispose());
     group.clear();
     const resultType = ResultType[settings2.nodeResults.val];
-    model.val.analysisOutputs[resultType].forEach((output, index) => {
+    (_a = model.val.analysisOutputs[resultType]) == null ? void 0 : _a.forEach((output, index) => {
       const nodeResult = new NodeResult(nodesCache[index], resultType, output);
       nodeResult.updateScale(size * displayScaleCache);
       group.add(nodeResult);
@@ -22533,7 +22761,7 @@ function viewer(model, settings2) {
   scene.add(
     grid(gridSize),
     axes(gridSize),
-    nodes(derivedNodes, settings2, displayScale),
+    nodes(derivedNodes, model, settings2, displayScale),
     elements(derivedNodes, model, settings2),
     nodesIndexes(derivedNodes, settings2, displayScale),
     elementsIndexes(derivedNodes, model, settings2, displayScale),
@@ -30158,14 +30386,16 @@ function timeline(modelState, settingsState) {
     }
   }, 1e3 / fps);
 }
-function settings(settingsState) {
+function settings(modelState, settingsState) {
   const pane = new Pane({ title: "Settings", expanded: false });
   const container = pane.element.parentElement;
+  const { nodeKeys, elementKeys } = getKeysBoth(modelState.val.designOutputs);
   if (container) {
     container.style.top = "0px";
     container.style.bottom = "inherit";
     container.style.left = "8px";
     container.style.width = "300px";
+    container.style.zIndex = "3";
   }
   pane.addBinding(settingsState.displayScale, "val", {
     label: "Display scale",
@@ -30195,7 +30425,8 @@ function settings(settingsState) {
       shearZ: "shearZ",
       torsion: "torsion",
       bendingY: "bendingY",
-      bendingZ: "bendingZ"
+      bendingZ: "bendingZ",
+      ...elementKeys
     },
     label: "Element results"
   });
@@ -30203,10 +30434,21 @@ function settings(settingsState) {
     options: {
       none: "none",
       deformation: "deformation",
-      reaction: "reaction"
+      reaction: "reaction",
+      ...nodeKeys
     },
     label: "Node results"
   });
+}
+function getKeysBoth(designOutputs) {
+  const { nodeOutputs, elementOutputs } = divideNodesElements(designOutputs);
+  const nodesKeysList = getKeys(nodeOutputs);
+  const elementKeysList = getKeys(elementOutputs);
+  const nodeKeys = {};
+  nodesKeysList.forEach((key) => nodeKeys[key] = key);
+  const elementKeys = {};
+  elementKeysList.forEach((key) => elementKeys[key] = key);
+  return { nodeKeys, elementKeys };
 }
 function processAnalysisInputs(analysisInputs) {
   const pai = {
@@ -30690,60 +30932,125 @@ const o = /* @__PURE__ */ new WeakMap(), n = e$1(class extends f {
   }
 });
 const report = (reports, modelState) => {
-  let currentElemIndex = van.state(0);
+  let currentElemIndex = van.state("");
   let dialogElm = e();
   let dialogBodyElm = e();
-  const elementReports = /* @__PURE__ */ new Map();
-  reports.forEach((report2) => {
-    modelState.val.designInputs.forEach((designInput) => {
-      const reportName = report2.name.slice(0, -6);
-      if (reportName in designInput) {
-        elementReports.set(designInput.element, report2);
-      }
-    });
-  });
-  const topBarTemp = x`<div class="topBar">
-    <a @click=${onTopBarReportClick} href="#report">Report</a>
-  </div>`;
-  const elements2 = x` <select @change=${onElementChange}>
-    ${Array.from(elementReports.keys()).map(
-    (key) => x`<option value="${key}">element ${key}</option>`
-  )}
-  </select>`;
-  const dialogTemp = x`<dialog open ref=${n(dialogElm)}>
-    <div class="dialog-header">
-      <span class="close" @click=${onDialogClose}>&times;</span>
-      ${elements2}
-    </div>
-    <div class="dialog-body" ref=${n(dialogBodyElm)} />
-  </dialog>`;
-  j(x`${topBarTemp}${dialogTemp}`, document.body);
+  let reportsMap = /* @__PURE__ */ new Map();
+  let active = false;
+  let renderCount = 0;
   function onDialogClose() {
     var _a;
+    active = false;
     (_a = dialogElm.value) == null ? void 0 : _a.close();
   }
   function onTopBarReportClick() {
     var _a;
+    active = true;
     (_a = dialogElm.value) == null ? void 0 : _a.show();
   }
   function onElementChange(ev) {
-    currentElemIndex.val = Number(ev.target.value);
+    currentElemIndex.val = ev.target.value;
   }
   van.derive(() => {
-    if (dialogBodyElm.value)
-      j(
-        elementReports.get(currentElemIndex.val)(
-          modelState.val.designInputs.get(currentElemIndex.val),
-          modelState.val.designOutputs.get(currentElemIndex.val)
-        ),
-        dialogBodyElm.value
-      );
+    reportsMap.clear();
+    reports.forEach((report2) => {
+      modelState.val.designInputs.forEach((designInput) => {
+        const reportName = report2.name.slice(0, -6);
+        if (reportName in designInput) {
+          if (designInput.element != void 0)
+            reportsMap.set("element " + designInput.element, report2);
+          if (designInput.node != void 0)
+            reportsMap.set("node " + designInput.node, report2);
+        }
+      });
+      if (report2.name === "summaryReport")
+        reportsMap.set("summary", report2);
+    });
+    if (!currentElemIndex.val) {
+      const k2 = reportsMap == null ? void 0 : reportsMap.keys();
+      k2.next();
+      currentElemIndex.val = k2.next().value;
+    }
+    const topBarTemp = x`<div class="topBar">
+      <a @click=${onTopBarReportClick} href="#report">Report</a>
+    </div>`;
+    const elements2 = x` <select @change=${onElementChange}>
+      ${Array.from(reportsMap.keys()).map(
+      (key) => x`<option value="${key}">${key}</option>`
+    )}
+    </select>`;
+    const dialogTemp = x`<dialog ref=${n(dialogElm)} >
+    <div class="dialog-header">
+      <span class="close" @click=${onDialogClose}>&times;</span>
+      ${elements2}
+    </div>
+    <div class="dialog-body" ref=${n(dialogBodyElm)}>
+  </dialog>`;
+    j(x`${topBarTemp}${dialogTemp}`, document.body);
   });
+  van.derive(() => {
+    currentElemIndex.val;
+    modelState.val;
+    if (dialogBodyElm.value && active || dialogBodyElm.value && renderCount < 2) {
+      if (currentElemIndex.val === "summary") {
+        j(
+          reportsMap.get(currentElemIndex.val)(modelState.val),
+          dialogBodyElm.value
+        );
+      } else {
+        j(
+          reportsMap.get(currentElemIndex.val)(
+            modelState.val.designInputs.get(currentElemIndex.val),
+            modelState.val.designOutputs.get(currentElemIndex.val)
+          ),
+          dialogBodyElm.value
+        );
+      }
+      renderCount++;
+    }
+  });
+  setTimeout(() => {
+    currentElemIndex.val = reportsMap == null ? void 0 : reportsMap.keys().next().value;
+  }, 100);
 };
 function processDesignData(data) {
   const map = /* @__PURE__ */ new Map();
-  data.forEach((i2) => map.set(i2.element, i2));
+  data.forEach((i2) => {
+    if (i2.element != void 0)
+      return map.set("element " + i2.element, i2);
+    if (i2.node != void 0)
+      return map.set("node " + i2.node, i2);
+  });
   return map;
+}
+const colorMapURL = "data:image/jpeg;base64,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";
+function colorMap(settingsState) {
+  const img = document.createElement("img");
+  img.width = 10;
+  img.height = 300;
+  img.src = colorMapURL;
+  const div = document.createElement("div");
+  div.style.position = "absolute";
+  div.style.left = "20px";
+  div.style.top = "150px";
+  div.style.zIndex = "1";
+  div.hidden = true;
+  div.setAttribute("id", "colorMap");
+  const pTop = document.createElement("p");
+  pTop.textContent = "max: 1";
+  pTop.style.margin = "0 0 5px 0";
+  pTop.style.color = "white";
+  const pBottom = document.createElement("p");
+  pBottom.textContent = "min: 0";
+  pBottom.style.margin = "0";
+  pBottom.style.color = "white";
+  div.appendChild(pTop);
+  div.appendChild(img);
+  div.appendChild(pBottom);
+  document.body.appendChild(div);
+  van.derive(() => {
+    settingsState.elementResults.val.endsWith("Design") || settingsState.nodeResults.val.endsWith("Design") ? div.hidden = false : div.hidden = true;
+  });
 }
 function app({
   parameters: parameterObj,
@@ -30772,11 +31079,12 @@ function app({
     )
   };
   viewer(modelState, settingsState);
-  settings(settingsState);
+  settings(modelState, settingsState);
   if (settingsObj == null ? void 0 : settingsObj.dynamic)
     timeline(modelState, settingsState);
   if (reports == null ? void 0 : reports.length)
     report(reports, modelState);
+  colorMap(settingsState);
   if (parameterObj && onParameterChange) {
     parameters(parameterObj, (e2) => {
       parameterObj[e2.target.key].value = e2.value;
@@ -30796,5 +31104,6 @@ const getModelState = (model) => ({
 });
 export {
   app as a,
-  getTransformationMatrix as g
+  getTransformationMatrix as g,
+  processAnalysisOutputs as p
 };
