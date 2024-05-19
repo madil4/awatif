@@ -18,19 +18,19 @@ export function updateColorsDueToNodeResult(
   lut.setMin(0);
   lut.setMax(1);
 
-  // change color according to design result
+  // on model change: color according to design result
   van.derive(() => {
     const { nodeOutputs } = divideNodesElements(model.val.designOutputs);
     const keys = getKeys(nodeOutputs);
 
     if (keys.includes(settings.nodeResults.val)) {
       const outputs = processOutputs(nodeOutputs, keys);
-      const curOutputs = outputs.get(settings.nodeResults.val);
+      const curOutputs = outputs.get("utilizationRatio");
 
       const colors: any[] = [];
       nodes.val.forEach((_, i) => {
-        const outputPerNode = curOutputs.get(i) ?? { utilizationRatio: 0 };
-        const color = lut.getColor(outputPerNode.utilizationRatio);
+        const outputPerNode = curOutputs.get(i) ?? 0;
+        const color = lut.getColor(outputPerNode);
 
         colors.push(color.r, color.g, color.b);
       });
