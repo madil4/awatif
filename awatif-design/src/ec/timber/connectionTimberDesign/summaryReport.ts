@@ -2,10 +2,13 @@ import { renderMath } from "../utils/renderMath";
 import { Element, Node } from "../../../../../awatif-data-structure/src";
 import { ModelState } from "../../../../../awatif-ui/src/types";
 import { TemplateResult, html } from "lit-html";
+import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";
+import { calculateElementAngle } from "./utils/calcBeamAngle";
+import { TimberBarConnectionDesignerOutput } from "./utils/types";
 
 function calculateElementLength(elements: Element[], nodes: Node[]): number[] {
   let listLength: number[] = [];
-  elements.forEach((element, index) => {
+  elements.forEach((element) => {
     const [nodeid1, nodeid2] = element;
     const node1 = nodes[nodeid1];
     const node2 = nodes[nodeid2];
@@ -20,6 +23,44 @@ function calculateElementLength(elements: Element[], nodes: Node[]): number[] {
 }
 
 export function summaryReport(model: ModelState["val"]): TemplateResult {
+  const processedOutput = model.analysisOutputs;
+  const designGlobalInputs: any[] = [];
+  const designGlobalOutputs: TimberBarConnectionDesignerOutput[] = [];
+
+  // global all elements
+  model.elements.forEach((_, index) => {
+    // get area and dimensions
+    const width = 300;
+    const height = 400;
+
+    // get forces
+    const axialForces = processedOutput.normal.get(index) ?? [0, 0];
+    const axialForce = axialForces[0];
+
+    // get the angle
+    const angleDeg2 = calculateElementAngle(
+      nodes[designInput.node],
+      nodes[elements[index][0]],
+      nodes[elements[index][1]]
+    );
+
+    // combining global and local input parameters
+    const timberBarConnectionDesignerInput = {
+      ...designInput.connectionTimberDesign,
+      element: index,
+      axialForce: axialForce,
+      beamAngle: angleDeg2,
+      width: width,
+      height: height,
+    };
+    const timberBarOutput = timberBarConnectionDesigner(
+      timberBarConnectionDesignerInput
+    );
+
+    designGlobalInputs.push(timberBarConnectionDesignerInput);
+    designGlobalOutputs.push(timberBarOutput);
+  });
+
   let nodes = model.nodes;
   let elements = model.elements;
   let widths = model.designInputs
