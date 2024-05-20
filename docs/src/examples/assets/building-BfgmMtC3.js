@@ -1,4 +1,4 @@
-import { a as app } from "./app-Bgqhnn-W.js";
+import { a as app } from "./app-CVhM8A18.js";
 const parameters = {
   width: {
     value: 18,

@@ -1,6 +1,6 @@
-import { a as app } from "./app-Bgqhnn-W.js";
-import { a as ab } from "./BHUODB6U-CCAgV7pX.js";
-self.$k = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RlMSI6IjU4QWJKNihGJ0F0bCIsImNvZGUyIjoiMjJ1cj1fcCgwSkNOIiwiY29kZTMiOiJlPjhUejklM3IyTz4iLCJjb2RlNCI6IjB4NjY2YyY2N2IyISIsImlhdCI6MTcwMzk2NjE5OCwiZXhwIjoxNzQyMTQwNDY2fQ.mXod3jFvkJLjIQTfOUGNdOPGVEhrqJmz6lDtltxqQcc";
+import { a as app } from "./app-CVhM8A18.js";
+import { a as analyze } from "./analyze-DkU8KasY.js";
+import "./_commonjsHelpers-Dm6U3U_N.js";
 const parameters = {
   dx: {
     value: 2,
@@ -92,7 +92,7 @@ function onParameterChange(parameters2) {
       load: [parameters2.load.value, 0, 0]
     }
   ];
-  const analysisOutputs = ab(nodes, elements, analysisInputs);
+  const analysisOutputs = analyze(nodes, elements, analysisInputs);
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 app({

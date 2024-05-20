@@ -1,10 +1,10 @@
-import { a as app } from "./app-Bgqhnn-W.js";
+import { a as app } from "./app-CVhM8A18.js";
 /**
  * @license
- * Copyright 2010-2023 Three.js Authors
+ * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
  */
-const REVISION = "163";
+const REVISION = "164";
 const UVMapping = 300;
 const RepeatWrapping = 1e3;
 const ClampToEdgeWrapping = 1001;

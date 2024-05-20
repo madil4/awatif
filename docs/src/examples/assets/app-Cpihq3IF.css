@@ -117,8 +117,20 @@ button {
 }
 
 .topBar a {
-  color: white;
   text-decoration: none;
+  font-family: Arial;
+  background-color: #2e5368; /* Green background */
+  color: white;                       /* White text */
+  border: none;                       /* No border */
+  padding: 10px 20px;                 /* Top and bottom padding of 10px, left and right padding of 20px */
+  text-align: center;                 /* Center text alignment */
+  text-decoration: none;              /* No underline */
+  display: inline-block;              /* Allow it to sit alongside other inline elements */
+  font-size: 12px;                    /* Larger text size */
+  font-family: Arial;                 /* Font style Arial */
+  cursor: pointer;                    /* Pointer cursor on hover */
+  border-radius: 12px;                /* Rounded edges */
+  transition: background-color 0.3s;
 }
 
 canvas {
@@ -127,7 +139,7 @@ canvas {
 
 dialog {
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   overflow: auto;
   width: calc(100% - 292px - 3rem);
   height: calc(100% - 3rem);
@@ -143,7 +155,7 @@ dialog {
 }
 
 dialog .close {
-  color: #000;
+  color: #000000;
   float: right;
   margin-top: -5px;
   font-size: 25px;
