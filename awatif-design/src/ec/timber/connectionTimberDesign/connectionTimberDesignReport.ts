@@ -551,10 +551,11 @@ export function connectionTimberDesignReport(
       <p>Stability Check</p>
       <p>
         ${renderMath(
-          `\\eta_{z} = \\frac{\\sigma_{cd}}{k_{cz} * f_{c0d}}\\right = ${etaStability[
-            elementIndex
-          ].toFixed(2)}`
+          `\\eta_{z} = \\frac{\\sigma_{cd}}{k_{cz} * f_{c0d}} = ${(
+            etaStability[elementIndex] * 100
+          ).toFixed(0)}`
         )}
+        %
       </p>
     </div>
   `;
