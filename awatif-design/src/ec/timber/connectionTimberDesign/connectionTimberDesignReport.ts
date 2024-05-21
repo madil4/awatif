@@ -474,7 +474,7 @@ export function connectionTimberDesignReport(
       <p>Buckling Coefficient</p>
       <p>${renderMath(`k_{cz} = \\frac{1}{k_{zz}+\\sqrt{k_{zz}^2-\\lambda_{relz}^2}} = ${L_kc[elementIndex][1].toFixed(2)}`)}</p>
       <p>Stability Check</p>
-      <p>${renderMath(`\\eta_{z} = \\frac{\\sigma_{cd}}{k_{cz} * f_{c0d}}\\right = ${etaStability[elementIndex].toFixed(2)}`)}</p>
+      <p>${renderMath(`\\eta_{z} = \\frac{\\sigma_{cd}}{k_{cz} * f_{c0d}} = ${(etaStability[elementIndex] * 100).toFixed(0)}`)} %</p>
     </div>
   `;
 
