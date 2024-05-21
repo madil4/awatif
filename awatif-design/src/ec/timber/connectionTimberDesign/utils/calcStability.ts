@@ -8,6 +8,7 @@ export function calcStability(
   axialForce: number,
   chi: number
 ): [
+  number,
   number[],
   number[],
   number,
@@ -187,6 +188,7 @@ export function calcStability(
   }
 
   return [
+    E_05,
     L_lamb,
     L_lamb_rel,
     lamb_relm,
