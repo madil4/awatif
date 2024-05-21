@@ -514,7 +514,9 @@ export function connectionTimberDesignReport(
     .flat();
 
   let reportYesStabilityCheck = html`
-    <button class="collapsible"><h3>Stability Check</h3></button>
+    <button class="collapsible" @click=${toggleView}>
+      <h3>Stability Check</h3>
+    </button>
     <div class="content" style="display: none;">
       <p class="caption">EN 1995-1-1 Abs. 6.3</p>
       <p>Slenderness Ratio</p>
