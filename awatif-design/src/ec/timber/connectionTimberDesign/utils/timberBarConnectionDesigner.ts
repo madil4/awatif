@@ -177,6 +177,7 @@ export function timberBarConnectionDesigner(
 
   // 11 - stability
   const [
+    E005,
     L_lamb,
     L_lamb_rel,
     lamb_relm,
@@ -239,6 +240,7 @@ export function timberBarConnectionDesigner(
     Anv: Anv,
     VeffRd: VeffRd,
     etaBlockFailure: etaBlockFailure,
+    E005: E005,
     L_lamb: L_lamb,
     L_lamb_rel: L_lamb_rel,
     lamb_relm: lamb_relm,
