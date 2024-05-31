@@ -25,11 +25,11 @@ export function calcPossibleFastener(
   // while (true) {
   // additionalFastener += 1;
   noTotalReq = roundToBase(Math.abs(axialForce) / (F_vrd * (sheetNo * 2)), 1);
-  noPerpPos = Math.floor(((height - 2 * a4) / a2) * 0.8);
+  noPerpPos = Math.floor(((height - 2 * a4) / a2));
   // noPerpPos = 5
   // noPerp = noTotalReq < noPerpPos ? Math.max(3, noTotalReq) : noPerpPos;
   a4 = (height - a2 * (noPerpPos - 1)) / 2;
-  noAxial = roundToBase(noTotalReq / noPerpPos + 2, 1);
+  noAxial = roundToBase(noTotalReq / noPerpPos + 3, 1);
   // noAxial = 5;
   noAxialEffective = effectiveNumber(noAxial, a1, fastenerDiameter);
   noTotal = noPerpPos * noAxial;
