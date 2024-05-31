@@ -48,8 +48,8 @@ export function setup3DCube(
     // parameter
     const width = widths[index];
     const height = heights[index];
-    sheetLength = sheetLengths[index] * 1.5;
-    beamLength = sheetLength + 200;
+    sheetLength = sheetLengths[index];
+    beamLength = sheetLength;
 
     // calculate sheet rotation and offset
     let angleRad: number = THREE.MathUtils.degToRad(-angle);
@@ -59,11 +59,18 @@ export function setup3DCube(
     // create geometry
     // loop over sheet number
     let setY: number;
+    let additionGap: number
+    if (index % 2 !== 0) {
+      additionGap = 200
+    } else {
+      additionGap = 200
+    }
+
     for (let i = 0; i < sheetNumber; i++) {
       const [sheet] = createRectangular(
         sheetLength,
         sheetThickness,
-        height,
+        height - 40,
         "#3E8CA3",
         0.99,
         true
@@ -78,6 +85,7 @@ export function setup3DCube(
       sheet.position.set(setX, setY, setZ);
       sheetGroup.add(sheet);
     }
+
 
     const [beam] = createRectangular(
       beamLength,
@@ -99,13 +107,13 @@ export function setup3DCube(
       let coordinateZ = fastenerPositionZ[index][dowelIndex];
 
       // Create the beams, sheets, and dowels
-      const [dowel] = createDowel(8, width, 10, "#00FF00", 1);
+      const [dowel] = createDowel(6, width, 10, "#00FF00", 1);
 
       const angleRad: any = THREE.MathUtils.degToRad(angle);
       const rotatedXCoord =
-        coordinateX * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad);
+        (coordinateX) * Math.cos(angleRad) - coordinateZ * Math.sin(angleRad);
       const rotatedYCoord =
-        coordinateX * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad);
+        (coordinateX) * Math.sin(angleRad) + coordinateZ * Math.cos(angleRad);
       dowel.position.set(rotatedXCoord, 0, rotatedYCoord);
       dowels.add(dowel);
     });

@@ -10,6 +10,22 @@ import { ref } from "lit-html/directives/ref.js";
 // @ts-ignore
 import logo from "./utils/awatif-logo.jpg";
 
+function sortMultipleListsByPattern(values: number[], ...lists: any[][]): void {
+  const indices = values.map((value, index) => index);
+
+  // Sort indices based on values
+  indices.sort((a, b) => values[a] - values[b]);
+
+  // Apply the sorted indices to all lists
+  values.sort((a, b) => a - b); // Sort values itself
+  lists.forEach(list => {
+    const sortedList = indices.map(index => list[index]);
+    list.length = 0; // Clear the list
+    list.push(...sortedList); // Push sorted items back to the list
+  });
+}
+
+
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
   designOutput: ConnectionTimberDesignerOutput
@@ -39,6 +55,8 @@ export function connectionTimberDesignReport(
   let fastenerPositionZ = designOutput.connectionTimberDesign
     .map((v) => [v.coordinatesY])
     .flat();
+
+  sortMultipleListsByPattern(angles, elements, heights, widths, axialForces, beamAngles, sheetLength, fastenerPositionX, fastenerPositionZ);
 
   const o = designOutput.connectionTimberDesign[0];
 
@@ -87,6 +105,8 @@ export function connectionTimberDesignReport(
     fastenerPositionX,
     fastenerPositionZ
   );
+
+
 
   let reportHeader = html` <br />
     <br />
@@ -256,11 +276,11 @@ export function connectionTimberDesignReport(
           <th>e<sub>1</sub></th>
         </tr>
         <tr>
-          <td>${o.distancesFinal[0]} mm</td>
-          <td>${o.distancesFinal[1]} mm</td>
-          <td>${o.distancesFinal[2]} mm</td>
-          <td>${o.distancesFinal[3]} mm</td>
-          <td>${o.distancesFinal[4]} mm</td>
+          <td>${o.distancesFinal[0].toFixed(0)} mm</td>
+          <td>${o.distancesFinal[1].toFixed(0)} mm</td>
+          <td>${o.distancesFinal[2].toFixed(0)} mm</td>
+          <td>${o.distancesFinal[3].toFixed(0)} mm</td>
+          <td>${o.distancesFinal[4].toFixed(0)} mm</td>
         </tr>
       </table>
     </div>
@@ -299,6 +319,7 @@ export function connectionTimberDesignReport(
       <h3>Fastener Check</h3>
     </button>
     <div class="content" style="display: none;">
+      <p class="caption">EN 1995-1-1 Abs. 8.2.3</p>
       <table>
         <tr>
           <th>diameter</th>
@@ -319,7 +340,8 @@ export function connectionTimberDesignReport(
           <td>${o.FvrdTotal.toFixed(2)} kN</td>
         </tr>
       </table>
-
+      <p>Design axial load</p>
+      <p>${renderMath(` N_{ed} = ${axialForces[elementIndex]} `)} kN</p>
       <p>Fastener Capacity Check</p>
       <p>
         ${renderMath(
@@ -453,18 +475,20 @@ export function connectionTimberDesignReport(
       <p>Tensile strength</p>
       <p>${renderMath(`f_{u} = ${o.fub} \\frac{N}{mm^2}`)}</p>
       <p>${renderMath(`f_{y} = 435 \\frac{N}{mm^2}`)}</p>
-      <p>${renderMath(`d_{0} = d + 0.6 mm = ${i.fastenerDiameter} + 6 `)} mm</p>
+      <p>${renderMath(`d_{0} = d + 0.6 mm = ${i.fastenerDiameter}.6 mm`)}</p>
       <p>Effective areas</p>
-      <p>${renderMath(` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh} `)} mm</p>
+      <p>${renderMath(` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh.toFixed(0)} mm`)}</p>
       <p>
         ${renderMath(
-          ` L_{v} = a_{1} \\cdot (n_{axial} - 1) + e_{1} = ${o.Lv} `
+          ` L_{v} = a_{1} \\cdot (n_{axial} - 1) + e_{1} = ${o.Lv.toFixed(0)} `
         )}
         mm
       </p>
       <p>
         ${renderMath(
-          ` A_{nt} = (L_{h} - (n_{axial} - 1) \\cdot d_{0}) \\cdot t = ${o.Ant} cm^2`
+          ` A_{nt} = (L_{h} - (n_{axial} - 1) \\cdot d_{0}) \\cdot t = ${o.Ant.toFixed(
+            0
+          )} cm^2`
         )}
       </p>
       <p>
@@ -485,55 +509,75 @@ export function connectionTimberDesignReport(
         ${renderMath(
           ` \\eta = \\frac{ N_{ed} }{ V_{eff.Rd}} = ${(
             o.etaBlockFailure * 100
-          ).toFixed(0)} %`
+          ).toFixed(0)}`
         )}
+        %
       </p>
     </div>
   `;
 
-  let reportStabilityCheck = html`
+  let E005 = designOutput.connectionTimberDesign.map((v) => [v.E005]).flat();
+  let lamb = designOutput.connectionTimberDesign.map((v) => [v.L_lamb]).flat();
+  let lamb_rel = designOutput.connectionTimberDesign
+    .map((v) => [v.L_lamb_rel])
+    .flat();
+  let L_ky = designOutput.connectionTimberDesign.map((v) => [v.L_ky]).flat();
+  let L_kc = designOutput.connectionTimberDesign.map((v) => [v.L_kc]).flat();
+  let k_crit = designOutput.connectionTimberDesign
+    .map((v) => [v.k_crit])
+    .flat();
+  let lamb_relm = designOutput.connectionTimberDesign
+    .map((v) => [v.lamb_relm])
+    .flat();
+  let etaStability = designOutput.connectionTimberDesign
+    .map((v) => [v.etaStability])
+    .flat();
+
+  let reportYesStabilityCheck = html`
     <button class="collapsible" @click=${toggleView}>
-      <h3>Axial Block Failure Check</h3>
+      <h3>Stability Check</h3>
     </button>
     <div class="content" style="display: none;">
-      <p class="caption">EN 1995-1-1 Abs. 6.1.8</p>
-      <p>Tensile strength</p>
-      <p>${renderMath(`f_{u} = ${o.fub} \\frac{N}{mm^2}`)}</p>
-      <p>${renderMath(`f_{y} = 435 \\frac{N}{mm^2}`)}</p>
-      <p>${renderMath(`d_{0} = d + 0.6 mm = ${i.fastenerDiameter} + 6 `)} mm</p>
-      <p>Effective areas</p>
-      <p>${renderMath(` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh} `)} mm</p>
+      <p class="caption">EN 1995-1-1 Abs. 6.3</p>
+      <p>Slenderness Ratio</p>
       <p>
         ${renderMath(
-          ` L_{v} = a_{1} \\cdot (n_{axial} - 1) + e_{1} = ${o.Lv} `
+          `\\lambda = \\frac{\\beta*L}{i_{z}} = ${lamb[elementIndex][1].toFixed(
+            2
+          )}`
         )}
-        mm
+      </p>
+      <p>Relative Slenderness</p>
+      <p>
+        ${renderMath(
+          `\\lambda_{rel} = \\frac{\\lambda}{\\pi}*\\sqrt{\\frac{f_{c0k}}{E_{05}}} = ${lamb_rel[
+            elementIndex
+          ][1].toFixed(2)}`
+        )}
       </p>
       <p>
         ${renderMath(
-          ` A_{nt} = (L_{h} - (n_{axial} - 1) \\cdot d_{0}) \\cdot t = ${o.Ant} cm^2`
+          `k_{zz} = 0.5*(1+0.1*(\\lambda_{relz}-0.3)+\\lambda_{relz}^2) = ${L_ky[
+            elementIndex
+          ][1].toFixed(2)}`
         )}
       </p>
+      <p>Buckling Coefficient</p>
       <p>
         ${renderMath(
-          ` A_{nv} = 2 \\cdot (L_{v} - (n_{perp} - 0.5) \\cdot d_{0}) \\cdot t = ${o.Anv} cm^2`
+          `k_{cz} = \\frac{1}{k_{zz}+\\sqrt{k_{zz}^2-\\lambda_{relz}^2}} = ${L_kc[
+            elementIndex
+          ][1].toFixed(2)}`
         )}
       </p>
-      <p>Resistance</p>
+      <p>Stability Check</p>
       <p>
         ${renderMath(
-          ` V_{eff.Rd} = \\frac{f_{u} \\cdot A_{nt}}{1.25} + \\frac{f_{y} \\cdot A_{nv}}{ \\sqrt{3} + 1 } = ${o.VeffRd} cm^2`
+          `\\eta_{z} = \\frac{\\sigma_{cd}}{k_{cz} * f_{c0d}} = ${(
+            etaStability[elementIndex] * 100
+          ).toFixed(0)}`
         )}
-      </p>
-      <p>Design axial load</p>
-      <p>${renderMath(` N_{ed} = ${axialForces[elementIndex]} `)} kN</p>
-      <p>Utilization</p>
-      <p>
-        ${renderMath(
-          ` \\eta = \\frac{ N_{ed} }{ V_{eff.Rd}} = ${(
-            o.etaBlockFailure * 100
-          ).toFixed(0)} %`
-        )}
+        %
       </p>
     </div>
   `;
@@ -548,17 +592,20 @@ export function connectionTimberDesignReport(
   `;
 
   let reportMemberCheck;
+  let reportStabilityCheck;
 
-  if (o.force > 0) {
+  let axialForce = designOutput.designInput.map((v) => [v.axialForce]).flat();
+
+  if (axialForce[elementIndex] > 0) {
     reportMemberCheck = reportTensionCheck;
   } else {
     reportMemberCheck = reportCompressionCheck;
   }
 
-  if (o.force > 0) {
+  if (axialForce[elementIndex] > 0) {
     reportStabilityCheck = reportNoStabilityCheck;
   } else {
-    reportStabilityCheck = reportStabilityCheck;
+    reportStabilityCheck = reportYesStabilityCheck;
   }
 
   let reportContent = html`
