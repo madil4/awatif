@@ -9,6 +9,7 @@ import { processAnalysisOutputs } from "./utils/processAnalysisOutputs";
 import { report } from "./report";
 import { processDesignData } from "./utils/processDesignData";
 import { colorMap } from "./colorMap/colorMap";
+import { exportIfc } from "./exportIfc";
 
 export function app({
   parameters: parameterObj,
@@ -43,6 +44,7 @@ export function app({
   settings(modelState, settingsState);
   if (settingsObj?.dynamic) timeline(modelState, settingsState);
   if (reports?.length) report(reports, modelState);
+  exportIfc(modelState);  
   colorMap(settingsState);
 
   // on parameter change
