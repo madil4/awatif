@@ -1,5 +1,6 @@
 //TODO:: - Add drop down menue to pick what IFC schema to use (now by default it's set to IFC4).
-//TODO:: - What about levels?
+//TODO:: - What about levels? by default we are creating only one level and all elements are on it.
+
 import {IfcAPI, IFC4, Schemas} from "web-ifc";
 import { html, render } from "lit-html";
 import { ModelState } from "./types";
@@ -20,10 +21,34 @@ export const exportIfc = (model: ModelState): void => {
 
     // Events
     async function onTopBarExportIfcClick() {
+
+        //TEMPORARY DATA
+        const material: Material = {  
+            name: 'Concrete', 
+            propertySets: [{ 
+                setName: 'Pset_MaterialCommon',
+                properties: [{
+                    name: 'MassDensity',
+                    value: 0.284
+                }]
+            }]
+        };
+        const shape: recShape = {type: 'recShape', name: '', xDim: 300, yDim: 300};
+        
         const binData: Uint8Array | undefined = await runExport(
             model.val.nodes,
-            model.val.elements
+            model.val.elements,
+            material,
+            shape
         );
+
+        if (binData) {
+            let blob = new Blob([binData], {type: 'application/x-step'});
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = "structural_model.ifc";
+            a.click();
+        }
         console.log('[IFC Exporter]: ', binData?.byteLength);
     }
 
@@ -138,16 +163,18 @@ const runExport = async (
     
     try {
         await setupIfcBasis();
-        createIfcSpatialStructure();
-    
+        
         const structuralModel = createStructuralModel(name);
         createPointConnections(nodes);
         createCurveMembers(elements);
+        createIfcSpatialStructure();
         assignObjectsToModel(structuralModel); 
 
-        //* Materials
-        // const ifcMaterial = createMaterial(material);
-        // createMaterialProfileForMembers(shape, ifcMaterial);
+        //* Material and prfile creation
+        if (material && shape){
+            const ifcMaterial = createMaterial(material);
+            createMaterialProfileForMembers(shape, ifcMaterial);
+        }
     
         return IFCAPI.SaveModel(modelId);
     } catch (error) {
@@ -171,8 +198,8 @@ const createStructuralModel = (name?: string): IFC4.IfcStructuralAnalysisModel =
 
 //* Core Data
 const setupIfcBasis = async (): Promise<void> => {
-    await IFCAPI.Init();
     IFCAPI.SetWasmPath("https://unpkg.com/web-ifc@0.0.54/", true); 
+    await IFCAPI.Init();
 
     const newIfcModel = {
         schema: Schemas.IFC4,
@@ -204,7 +231,7 @@ const setupIfcBasis = async (): Promise<void> => {
     //* Units 
     const unit_1 = new IFC4.IfcSIUnit(
         IFC4.IfcUnitEnum.LENGTHUNIT,
-        IFC4.IfcSIPrefix.MILLI,
+        null,
         IFC4.IfcSIUnitName.METRE
     );
 
@@ -317,11 +344,21 @@ const createIfcSpatialStructure = (): void => {
     relAggr.RelatingObject = building;
 
     IFCAPI.WriteLine( modelId, relAggr );
+
+    //Attach members to building story
+    IFCAPI.WriteLine( modelId, new IFC4.IfcRelContainedInSpatialStructure(
+        generateIfcGUID(),
+        null, null, null,
+        Array.from(membersMapByIndex.values()).map((id) => {
+            console.log(id)
+            return IFCAPI.GetLine(modelId, id);
+        }),
+        buildingStorey
+    ))
 }
 
 //* Structural model
 const createPointConnections = (nodes: Array<number>[]): void => {
-
     for (let i = 0; i < nodes.length; i++) {
         let connection = generateConnection(nodes[i]);
         connectionsMapByIndex.set(i, connection.expressID);
@@ -339,11 +376,7 @@ const generateConnection = (position: number[]): IFC4.IfcStructuralPointConnecti
     ])
 
     //* IFCVERTEXPOINT
-    const vertex = new IFC4.IfcVertexPoint(
-        point
-    )
-
-    // vertex = vertex;
+    const vertex = new IFC4.IfcVertexPoint(point);
 
     //* IFCTOPOLOGYREPRESENTATION
     const topoRep = new IFC4.IfcTopologyRepresentation(
@@ -376,8 +409,7 @@ const generateConnection = (position: number[]): IFC4.IfcStructuralPointConnecti
         boundCondition,
         null
     )
-
-    // IFCAPI.WriteLine( modelId, connection );
+    IFCAPI.WriteLine( modelId, connection );
     connectionsMapByVertex.set(connection.expressID, vertex.expressID);
     return connection;
 }
