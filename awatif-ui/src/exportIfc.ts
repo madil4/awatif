@@ -46,10 +46,9 @@ export const exportIfc = (model: ModelState): void => {
             let blob = new Blob([binData], {type: 'application/x-step'});
             let a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "structural_model.ifc";
+            a.download = "model.ifc";
             a.click();
         }
-        console.log('[IFC Exporter]: ', binData?.byteLength);
     }
 
     van.derive( () => {
@@ -283,7 +282,7 @@ const createIfcSpatialStructure = (): void => {
         generateIfcGUID(),
         null,
         new IFC4.IfcLabel('project'),
-        new IFC4.IfcText('project desc'),
+        new IFC4.IfcText(''),
         null,null,null,
         [geomContext],
         unitAssign
@@ -350,7 +349,6 @@ const createIfcSpatialStructure = (): void => {
         generateIfcGUID(),
         null, null, null,
         Array.from(membersMapByIndex.values()).map((id) => {
-            console.log(id)
             return IFCAPI.GetLine(modelId, id);
         }),
         buildingStorey
