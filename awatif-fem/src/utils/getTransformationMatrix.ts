@@ -1,5 +1,5 @@
 import * as mathjs from "mathjs";
-import { Node } from "..";
+import { Node } from "awatif-data-structure";
 import { AnalysisType } from "./processAnalysisInputs";
 
 // from global to local

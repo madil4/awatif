@@ -15,6 +15,7 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "dependencies": {
+    "awatif-data-structure": "^0.0.11",
     "katex": "^0.16.10",
     "lit-html": "^3.1.2",
     "mathjs": "^12.4.2",

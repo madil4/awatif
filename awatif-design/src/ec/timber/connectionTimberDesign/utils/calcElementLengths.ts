@@ -1,4 +1,4 @@
-import { Element, Node } from "../../../../../../awatif-data-structure/src";
+import { Element, Node } from "awatif-data-structure";
 
 export function calculateElementLength(
   elements: Element[],

@@ -1,4 +1,4 @@
-import { Element } from "..";
+import { Element } from "awatif-data-structure";
 import { AnalysisType } from "./processAnalysisInputs";
 
 function bar(element: Element) {

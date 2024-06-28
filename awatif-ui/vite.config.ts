@@ -5,9 +5,9 @@ export default defineConfig({
     port: 4600,
     open: "/examples/3-folders/index.html",
   },
-  base: "./",
+  base: "./", // needed to resolve assets
   build: {
-    outDir: "../docs/src/awatif-ui",
+    outDir: "../website/src/awatif-ui",
     emptyOutDir: true,
     rollupOptions: {
       input: {

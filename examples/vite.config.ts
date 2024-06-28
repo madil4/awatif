@@ -5,23 +5,24 @@ export default defineConfig({
     port: 4600,
     open: "truss-designer/index.html",
   },
-  base: "./",
+  base: "./", // needed to resolve assets
+  root: "./src",
   build: {
-    outDir: "../docs/src/examples",
+    outDir: "../../website/src/examples",
     emptyOutDir: true,
-    minify: false, // todo: solve the function name look up
+    minify: false, // todo: solve the function name look up by re-architecture reports
     rollupOptions: {
       input: {
-        "two-bars": "two-bars/index.html",
-        building: "building/index.html",
-        sphere: "sphere/index.html",
-        "2d-truss": "2d-truss/index.html",
-        "3d-tower": "3d-tower/index.html",
-        "arched-bridge": "arched-bridge/index.html",
-        "portal-frame": "portal-frame/index.html",
-        "truss-designer": "truss-designer/index.html",
-        dynamic: "dynamic/index.html",
-        report: "report/index.html",
+        "two-bars": "src/two-bars/index.html",
+        building: "src/building/index.html",
+        sphere: "src/sphere/index.html",
+        "2d-truss": "src/2d-truss/index.html",
+        "3d-tower": "src/3d-tower/index.html",
+        "arched-bridge": "src/arched-bridge/index.html",
+        "portal-frame": "src/portal-frame/index.html",
+        "truss-designer": "src/truss-designer/index.html",
+        dynamic: "src/dynamic/index.html",
+        report: "src/report/index.html",
       },
     },
   },

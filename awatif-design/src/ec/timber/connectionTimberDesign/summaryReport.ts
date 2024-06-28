@@ -1,5 +1,5 @@
 import { renderMath } from "../utils/renderMath";
-import { Element, Node } from "../../../../../awatif-data-structure/src";
+import { Element, Node } from "awatif-data-structure";
 import { ModelState } from "../../../../../awatif-ui/src/types";
 import { TemplateResult, html } from "lit-html";
 import { timberBarConnectionDesigner } from "./utils/timberBarConnectionDesigner";

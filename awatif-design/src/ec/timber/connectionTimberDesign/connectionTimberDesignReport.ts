@@ -18,13 +18,12 @@ function sortMultipleListsByPattern(values: number[], ...lists: any[][]): void {
 
   // Apply the sorted indices to all lists
   values.sort((a, b) => a - b); // Sort values itself
-  lists.forEach(list => {
-    const sortedList = indices.map(index => list[index]);
+  lists.forEach((list) => {
+    const sortedList = indices.map((index) => list[index]);
     list.length = 0; // Clear the list
     list.push(...sortedList); // Push sorted items back to the list
   });
 }
-
 
 export function connectionTimberDesignReport(
   designInput: ConnectionTimberDesignerInput,
@@ -56,7 +55,17 @@ export function connectionTimberDesignReport(
     .map((v) => [v.coordinatesY])
     .flat();
 
-  sortMultipleListsByPattern(angles, elements, heights, widths, axialForces, beamAngles, sheetLength, fastenerPositionX, fastenerPositionZ);
+  sortMultipleListsByPattern(
+    angles,
+    elements,
+    heights,
+    widths,
+    axialForces,
+    beamAngles,
+    sheetLength,
+    fastenerPositionX,
+    fastenerPositionZ
+  );
 
   const o = designOutput.connectionTimberDesign[0];
 
@@ -105,8 +114,6 @@ export function connectionTimberDesignReport(
     fastenerPositionX,
     fastenerPositionZ
   );
-
-
 
   let reportHeader = html` <br />
     <br />
@@ -477,7 +484,11 @@ export function connectionTimberDesignReport(
       <p>${renderMath(`f_{y} = 435 \\frac{N}{mm^2}`)}</p>
       <p>${renderMath(`d_{0} = d + 0.6 mm = ${i.fastenerDiameter}.6 mm`)}</p>
       <p>Effective areas</p>
-      <p>${renderMath(` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh.toFixed(0)} mm`)}</p>
+      <p>
+        ${renderMath(
+          ` L_{h} = a_{2} \\cdot (n_{perp} - 1) = ${o.Lh.toFixed(0)} mm`
+        )}
+      </p>
       <p>
         ${renderMath(
           ` L_{v} = a_{1} \\cdot (n_{axial} - 1) + e_{1} = ${o.Lv.toFixed(0)} `
@@ -516,7 +527,6 @@ export function connectionTimberDesignReport(
     </div>
   `;
 
-  let E005 = designOutput.connectionTimberDesign.map((v) => [v.E005]).flat();
   let lamb = designOutput.connectionTimberDesign.map((v) => [v.L_lamb]).flat();
   let lamb_rel = designOutput.connectionTimberDesign
     .map((v) => [v.L_lamb_rel])
