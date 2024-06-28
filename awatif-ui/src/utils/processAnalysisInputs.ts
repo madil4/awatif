@@ -4,7 +4,7 @@ import {
   LoadAnalysisInput,
   FrameAnalysisInput,
   SupportAnalysisInput,
-} from "../../../awatif-data-structure/src";
+} from "awatif-data-structure";
 import { ProcessedAnalysisInputs } from "../types";
 
 export function processAnalysisInputs(

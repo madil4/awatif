@@ -12,7 +12,7 @@ import {
   DeformationAnalysisOutput,
   ReactionAnalysisOutput,
   PositionAnalysisOutput,
-} from "../../awatif-data-structure";
+} from "awatif-data-structure";
 import { TemplateResult } from "lit-html";
 
 export type App = {

@@ -1,7 +1,4 @@
-import {
-  FrameAnalysisInput,
-  FrameAnalysisOutput,
-} from "../../../../awatif-data-structure";
+import { FrameAnalysisInput, FrameAnalysisOutput } from "awatif-data-structure";
 import { getKmod } from "./utils/getKmod";
 
 export type FrameTimberDesignInput = {

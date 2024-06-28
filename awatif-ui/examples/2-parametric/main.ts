@@ -1,12 +1,10 @@
 import {
-  app,
-  Parameters,
-  Node,
-  Element,
   AnalysisInput,
+  Element,
+  Node,
   FrameAnalysisInput,
-  Model,
-} from "../../src";
+} from "awatif-data-structure";
+import { app, Model, Parameters } from "../../src/";
 import { analyze } from "../../../awatif-fem";
 
 const parameters: Parameters = {

@@ -1,4 +1,4 @@
-import { Node } from "../../../../../../awatif-data-structure/src";
+import { Node } from "awatif-data-structure";
 
 export function calculateElementAngle(
   node: Node,

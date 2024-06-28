@@ -3,7 +3,7 @@ import {
   Node,
   Element,
   AnalysisInput,
-} from "../../awatif-data-structure/src";
+} from "awatif-data-structure";
 import {
   ConnectionTimberDesignerInput,
   ConnectionTimberDesignerOutput,

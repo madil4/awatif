@@ -1,4 +1,4 @@
-import { Node, Element } from ".";
+import { Node, Element } from "awatif-data-structure";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
 import { getEquivalentDistributedLoad } from "./utils/getEquivalentDistributedLoad";
 import { getFreeIndices } from "./utils/getFreeIndices";

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { ModelState, SettingsState } from "../types";
 import van, { State } from "vanjs-core";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 import { updateColorsDueToNodeResult } from "./utils/updateColorsDueToNodeResult";
 
 export function nodes(

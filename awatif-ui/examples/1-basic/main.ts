@@ -1,11 +1,10 @@
 import {
-  app,
   AnalysisInput,
   Element,
   Node,
   FrameAnalysisInput,
-  Model,
-} from "../../src/";
+} from "awatif-data-structure";
+import { app, Model } from "../../src/";
 import { analyze } from "../../../awatif-fem/";
 
 function onParameterChange(): Model {

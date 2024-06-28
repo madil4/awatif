@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van from "vanjs-core";
-import { Node } from "../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ModelState, SettingsState } from "./types";
 import { nodes } from "./objects/nodes";

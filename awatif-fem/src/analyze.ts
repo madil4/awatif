@@ -8,7 +8,7 @@ import {
   DeformationAnalysisOutput,
   ReactionAnalysisOutput,
   FrameAnalysisOutput,
-} from ".";
+} from "awatif-data-structure";
 import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";

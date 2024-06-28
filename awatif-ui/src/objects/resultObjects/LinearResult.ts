@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node } from "../../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 import { Text } from "../Text";
 import { get10thFromFirstPoint } from "../utils/get5thFromFirstPoint";
 import { IResultObject } from "./IResultObject";

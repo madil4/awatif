@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../../types";
-import { Node } from "../../../../awatif-data-structure/src";
+import { Node } from "awatif-data-structure";
 import { Lut } from "three/examples/jsm/math/Lut.js";
 import { divideNodesElements } from "./divideNodesElements";
 import { getKeys } from "./getKeys";

@@ -1,7 +1,4 @@
-import {
-  AnalysisInput,
-  Element,
-} from "../../../../../../awatif-data-structure/src";
+import { AnalysisInput, Element } from "awatif-data-structure";
 
 // Function to find elements connected to a node
 export function getConnectedElements(
