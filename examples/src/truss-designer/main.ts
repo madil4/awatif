@@ -2,7 +2,7 @@ import { app, Model, Parameters } from "awatif-ui";
 import { analyze } from "awatif-fem";
 import { AnalysisInput, Node, Element } from "awatif-data-structure";
 import { createTruss } from "./createTruss";
-import { design, DesignInput } from "awatif-design/src";
+import { design, DesignInput } from "awatif-design";
 import {
   connectionTimberDesign,
   connectionTimberDesignReport,
