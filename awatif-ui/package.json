@@ -14,10 +14,6 @@
   ],
   "author": "Mohamed Adil",
   "license": "MIT",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build"
-  },
   "devDependencies": {
     "@tweakpane/core": "~2.0.3",
     "@types/three": "~0.163.0",

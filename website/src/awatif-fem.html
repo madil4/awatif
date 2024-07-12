@@ -146,7 +146,7 @@ breadcrumb: FEM Solver
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, AnalysisInput, AnalysisOutputs } from "awatif-fem";
+            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, AnalysisInputs, AnalysisOutputs } from "awatif-fem";
 
 const nodes: Node[] = [
   [0, 0, 3],
@@ -157,27 +157,26 @@ const elements: Element[] = [
   [0, 1],
   [1, 2],
 ];
-const analysisInputs: AnalysisInput[] = [
-  {
-    node: 0,
-    support: [false, true, false, true, false, true],
-  },
-  {
-    node: 2,
-    support: [false, true, false, true, false, true],
-  },
-  ...elements.map((_, i) => ({
-    element: i,
+const analysisInputs: AnalysisInputs = {
+  materials: new Map(),
+  sections: new Map(),
+  pointSupports: new Map(),
+  pointLoads: new Map(),
+};
+
+analysisInputs.pointSupports?.set(0, [false, true, false, true, false, true]);
+analysisInputs.pointSupports?.set(2, [false, true, false, true, false, true]);
+analysisInputs.pointLoads?.set(1, [0, -22e3, 0, 0, 0, 0]);
+elements.forEach((_, i) => {
+  analysisInputs.materials?.set(i, {
     elasticity: 210e9,
     shearModulus: 84e9,
+  });
+  analysisInputs.sections?.set(i, {
     momentOfInertiaZ: 16.6e-5,
     torsionalConstant: 4.6e-5,
-  })),
-  {
-    node: 1,
-    load: [0, -22e3, 0, 0, 0, 0],
-  },
-];
+  });
+});
 
 const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -216,20 +215,20 @@ const expectedAnalysisOutputs: AnalysisOutputs = {
 
             <ol class="mb-3 list-disc list-inside text-gray-800">
               <li>
-                Portal frame - <a href="/examples/portal-frame/" class="text-primary-light hover:underline">view</a> -
-                <a href="https://github.com/madil4/awatif/blob/main/examples/portal-frame/main.ts" class="text-primary-light hover:underline">source code</a>
+                Bars - <a href="/examples/bars/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/src/bars/main.ts" class="text-primary-light hover:underline">source code</a>
               </li>
               <li>
-                2D truss - <a href="/examples/2d-truss/" class="text-primary-light hover:underline">view</a> -
-                <a href="https://github.com/madil4/awatif/blob/main/examples/2d-truss/main.ts" class="text-primary-light hover:underline">source code</a>
+                Beams - <a href="/examples/beams/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/src/beams/main.ts" class="text-primary-light hover:underline">source code</a>
               </li>
               <li>
-                Two bars - <a href="/examples/two-bars/" class="text-primary-light hover:underline">view</a> -
-                <a href="https://github.com/madil4/awatif/blob/main/examples/two-bars/main.ts" class="text-primary-light hover:underline">source code</a>
+                Truss - <a href="/examples/truss/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/src/truss/main.ts" class="text-primary-light hover:underline">source code</a>
               </li>
               <li>
                 Examples from the book: A First Course in the Finite Element Method by Daryl L. Logan 6th edition -
-                <a href="https://github.com/madil4/awatif/tree/main/awatif-fem/examples" class="text-primary-light hover:underline">source code</a>
+                <a href="https://github.com/madil4/awatif/tree/main/awatif-fem/src/analyze.test.ts" class="text-primary-light hover:underline">source code</a>
               </li>
             </ol>
 

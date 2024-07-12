@@ -3,15 +3,11 @@ import {
   Node,
   Element,
   AnalysisInputs,
-  FrameAnalysisInput,
-  LoadAnalysisInput,
-  DistributedLoadAnalysisInput,
-  FrameAnalysisOutput,
-  SupportAnalysisInput,
   AnalysisOutputs,
   DeformationAnalysisOutput,
   ReactionAnalysisOutput,
   PositionAnalysisOutput,
+  FrameAnalysisOutput,
 } from "awatif-data-structure";
 import { TemplateResult } from "lit-html";
 
@@ -79,22 +75,6 @@ export type SettingsState = {
   nodeResults: State<string>;
   dynamic: State<boolean>;
   dynamicSettings: State<Record<"time" | "timeStep", number>>;
-};
-
-// refactor this in awatif-functions lib
-export type ProcessedAnalysisInputs = {
-  elasticities: Map<number, FrameAnalysisInput["elasticity"]>;
-  areas: Map<number, FrameAnalysisInput["area"]>;
-  loads: Map<number, LoadAnalysisInput["load"]>;
-  supports: Map<number, SupportAnalysisInput["support"]>;
-  momentOfInertiaZs: Map<number, FrameAnalysisInput["momentOfInertiaZ"]>;
-  momentOfInertiaYs: Map<number, FrameAnalysisInput["momentOfInertiaY"]>;
-  shearModuluses: Map<number, FrameAnalysisInput["shearModulus"]>;
-  torsionalConstants: Map<number, FrameAnalysisInput["torsionalConstant"]>;
-  distributedLoads: Map<
-    number,
-    DistributedLoadAnalysisInput["distributedLoad"]
-  >;
 };
 
 export type ProcessedAnalysisOutputs = {

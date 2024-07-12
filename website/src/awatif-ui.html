@@ -123,30 +123,21 @@ function onParameterChange(parameters: Parameters) {
     [0, 1],
     [1, 2],
   ];
-  const analysisInputs: AnalysisInput[] = [
-    {
-      node: 0,
-      support: [true, true, true],
-    },
-    {
-      node: 2,
-      support: [true, true, true],
-    },
-    {
-      node: 1,
-      load: [0, 0, -10],
-    },
-    {
-      element: 0,
-      area: 1.2,
-      elasticity: 200,
-    },
-    {
-      element: 1,
-      area: 1.2,
-      elasticity: 200,
-    },
-  ];
+
+  const analysisInputs: AnalysisInputs = {
+    materials: new Map(),
+    sections: new Map(),
+    pointSupports: new Map(),
+    pointLoads: new Map(),
+  };
+
+  analysisInputs.materials?.set(0, { elasticity: 200 });
+  analysisInputs.sections?.set(0, { area: 1.2 });
+  analysisInputs.materials?.set(1, { elasticity: 200 });
+  analysisInputs.sections?.set(1, { area: 1.2 });
+  analysisInputs.pointSupports?.set(0, [true, true, true, true, true, true]);
+  analysisInputs.pointSupports?.set(2, [true, true, true, true, true, true]);
+  analysisInputs.pointLoads?.set(1, [0, 0, -10, 0, 0, 0]);
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -164,14 +155,14 @@ app({
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Examples</h3>
 
-            <ol class="mb-3 list-disc list-inside text-gray-800">
+            <ol class="mb-3 list-decimal list-inside text-gray-800">
               <li>
-                Basic portal frame loaded laterally - <a href="/awatif-ui/examples/1-basic/" class="text-primary-light hover:underline">view</a> -
-                <a href="https://github.com/madil4/awatif/blob/main/awatif-ui/examples/1-basic/main.ts" class="text-primary-light hover:underline">source code</a>
+                Bars - <a href="/examples/bars/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/src/bars/main.ts" class="text-primary-light hover:underline">source code</a>
               </li>
               <li>
-                Parametric portal frame loaded laterally - <a href="/awatif-ui/examples/2-parametric/" class="text-primary-light hover:underline">view</a> -
-                <a href="https://github.com/madil4/awatif/blob/main/awatif-ui/examples/2-parametric/main.ts" class="text-primary-light hover:underline">source code</a>
+                Beams - <a href="/examples/beams/" class="text-primary-light hover:underline">view</a> -
+                <a href="https://github.com/madil4/awatif/blob/main/examples/src/beams/main.ts" class="text-primary-light hover:underline">source code</a>
               </li>
               <li><a href="/examples/" class="text-primary-light hover:underline">More Examples</a></li>
             </ol>
