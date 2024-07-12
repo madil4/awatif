@@ -26,9 +26,9 @@ export function loads(
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
-    model.val.analysisInputs.loads.forEach((load, index) => {
+    model.val.analysisInputs.pointLoads?.forEach((load, index) => {
       const arrow = new THREE.ArrowHelper(
-        new THREE.Vector3(...load).normalize(),
+        new THREE.Vector3(...load.slice(0, 3)).normalize(),
         new THREE.Vector3(...nodesCache[index]),
         1,
         0xee9b00,

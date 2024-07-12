@@ -1,5 +1,10 @@
 import { Element } from "awatif-data-structure";
-import { AnalysisType } from "./processAnalysisInputs";
+
+// to be removed after refactoring the solver
+enum AnalysisType {
+  Bar,
+  Beam,
+}
 
 function bar(element: Element) {
   const node0Range = [element[0] * 3, element[0] * 3 + 1, element[0] * 3 + 2];

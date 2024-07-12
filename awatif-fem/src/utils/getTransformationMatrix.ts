@@ -1,6 +1,11 @@
 import * as mathjs from "mathjs";
 import { Node } from "awatif-data-structure";
-import { AnalysisType } from "./processAnalysisInputs";
+
+// to be removed after refactoring the solver
+enum AnalysisType {
+  Bar,
+  Beam,
+}
 
 // from global to local
 function bar(node0: Node, node1: Node) {

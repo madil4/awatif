@@ -27,7 +27,8 @@ export function supports(
     if (!settings.supports.val) return;
 
     group.clear();
-    model.val.analysisInputs.supports.forEach((_, index) => {
+
+    model.val.analysisInputs.pointSupports?.forEach((_, index) => {
       const sphere = new THREE.Mesh(geometry, material);
 
       sphere.position.set(...nodesCache[index]);

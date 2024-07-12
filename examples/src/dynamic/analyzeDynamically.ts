@@ -1,11 +1,9 @@
 import {
   PositionAnalysisOutput,
   AnalysisOutputs,
-  MassAnalysisInput,
-  FrameAnalysisInput,
   Node,
   Element,
-  AnalysisInput,
+  AnalysisInputs,
 } from "awatif-data-structure";
 import { getTransformationMatrix } from "awatif-ui/src/objects/utils/getTransformationMatrix.ts";
 import * as math from "mathjs";
@@ -13,7 +11,7 @@ import * as math from "mathjs";
 export function analyzeDynamically(
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInput[],
+  analysisInputs: AnalysisInputs,
   { time: t, timeStep: dt }: { time: number; timeStep: number }
 ): AnalysisOutputs {
   const analysisOutputs: AnalysisOutputs = {};
@@ -22,14 +20,7 @@ export function analyzeDynamically(
   // define position, velocity, and mass vectors
   let x = nodes.flat();
   let v = Array(x.length).fill(0) as number[];
-  let m = nodes
-    .map((_, nid) => {
-      const massAnalysisInput = analysisInputs.find(
-        (a) => "mass" in a && "node" in a && a.node === nid
-      ) as MassAnalysisInput;
-      return massAnalysisInput?.mass ?? [0, 0, 0];
-    })
-    .flat();
+  let m = Array(x.length).fill(4); // to be computed
 
   // forward euler formulation
   for (let step = 0; step < numSteps; step++) {
@@ -83,7 +74,7 @@ function F(
   x: number[],
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInput[]
+  analysisInputs: AnalysisInputs[]
 ): number[] {
   let f: number[] = Array(x.length).fill(0);
 
@@ -124,7 +115,7 @@ function F(
         "element" in analysisInput &&
         "elasticity" in analysisInput &&
         analysisInput.element === eid
-    ) as FrameAnalysisInput;
+    );
 
     const k = property?.elasticity;
 
