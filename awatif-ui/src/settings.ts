@@ -1,13 +1,10 @@
 import { Pane } from "tweakpane";
-import { ModelState, SettingsState } from "./types";
-import { divideNodesElements } from "./objects/utils/divideNodesElements";
-import { getKeys } from "./objects/utils/getKeys";
+import { SettingsState } from "./types";
 
-export function settings(modelState: ModelState, settingsState: SettingsState) {
+export function settings(settingsState: SettingsState) {
   // init
   const pane = new Pane({ title: "Settings", expanded: false });
   const container = pane.element.parentElement;
-  const { nodeKeys, elementKeys } = getKeysBoth(modelState.val.designOutputs);
 
   // update
   if (container) {
@@ -47,7 +44,6 @@ export function settings(modelState: ModelState, settingsState: SettingsState) {
       torsion: "torsion",
       bendingY: "bendingY",
       bendingZ: "bendingZ",
-      ...elementKeys,
     },
     label: "Element results",
   });
@@ -56,25 +52,7 @@ export function settings(modelState: ModelState, settingsState: SettingsState) {
       none: "none",
       deformation: "deformation",
       reaction: "reaction",
-      ...nodeKeys,
     },
     label: "Node results",
   });
-}
-function getKeysBoth(designOutputs: Map<string, any>): {
-  nodeKeys: object;
-  elementKeys: object;
-} {
-  const { nodeOutputs, elementOutputs } = divideNodesElements(designOutputs);
-
-  const nodesKeysList = getKeys(nodeOutputs);
-  const elementKeysList = getKeys(elementOutputs);
-
-  const nodeKeys: any = {};
-  nodesKeysList.forEach((key) => (nodeKeys[key] = key));
-
-  const elementKeys: any = {};
-  elementKeysList.forEach((key) => (elementKeys[key] = key));
-
-  return { nodeKeys, elementKeys };
 }

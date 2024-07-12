@@ -39,7 +39,7 @@ const analysisInputs: AnalysisInput[] = [
 ];
 ```
 
-## Examples
+## Examples (not update, refer to examples)
 
 Below are examples of a complete Finite Element Method (FEM) analysis using this data structure:
 

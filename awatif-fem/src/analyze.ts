@@ -3,25 +3,39 @@ import { deform as deform } from "./deform";
 import {
   Node,
   Element,
-  AnalysisInput,
+  AnalysisInputs,
   AnalysisOutputs,
   DeformationAnalysisOutput,
   ReactionAnalysisOutput,
   FrameAnalysisOutput,
 } from "awatif-data-structure";
-import { processAnalysisInputs } from "./utils/processAnalysisInputs";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
 import { getStiffnessMatrix } from "./utils/getStiffnessMatrix";
-import { getEquivalentDistributedLoad } from "./utils/getEquivalentDistributedLoad";
+
+// to be removed after refactoring the solver
+enum AnalysisType {
+  Bar,
+  Beam,
+}
 
 export function analyze(
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInput[]
+  analysisInputs: AnalysisInputs
 ): AnalysisOutputs {
-  const pai = processAnalysisInputs(analysisInputs);
-  const { deformations, forces } = deform(nodes, elements, pai);
+  let analysisType = AnalysisType.Bar;
+
+  const anySection = analysisInputs.sections?.values().next().value;
+  if ("momentOfInertiaZ" in anySection || "momentOfInertiaZ" in anySection)
+    analysisType = AnalysisType.Beam;
+
+  const { deformations, forces } = deform(
+    nodes,
+    elements,
+    analysisInputs,
+    analysisType
+  );
 
   const analysisOutputs: AnalysisOutputs[keyof AnalysisOutputs] = [];
   nodes.forEach((_, index) => {
@@ -42,7 +56,7 @@ export function analyze(
     };
     analysisOutputs.push({
       node: index,
-      deformation: deformation[pai.analysisType],
+      deformation: deformation[analysisType],
     });
 
     const reaction = {
@@ -60,10 +74,10 @@ export function analyze(
         forces[index * 6 + 5] as number,
       ] as ReactionAnalysisOutput["reaction"],
     };
-    if (pai.supports.get(index)) {
+    if (analysisInputs.pointSupports?.get(index)) {
       analysisOutputs.push({
         node: index,
-        reaction: reaction[pai.analysisType],
+        reaction: reaction[analysisType],
       });
     }
   });
@@ -75,19 +89,12 @@ export function analyze(
 
     const dxGlobal = mathjs.subset(
       deformations,
-      mathjs.index(getElementNodesIndices[pai.analysisType](element))
+      mathjs.index(getElementNodesIndices[analysisType](element))
     );
-    const T = getTransformationMatrix[pai.analysisType](node0, node1);
+    const T = getTransformationMatrix[analysisType](node0, node1);
     const dxLocal = mathjs.multiply(T, dxGlobal);
-    const kLocal = getStiffnessMatrix[pai.analysisType](pai, index, L);
+    const kLocal = getStiffnessMatrix[analysisType](analysisInputs, index, L);
     let fLocal = mathjs.multiply(kLocal, dxLocal).toArray() as number[];
-
-    // correct forces or reactions due to distributed load
-    if (pai.distributedLoads.get(index)) {
-      const [wY, wZ] = pai.distributedLoads.get(index) || [0, 0];
-      const load = getEquivalentDistributedLoad(wY, wZ, L);
-      fLocal = mathjs.subtract(fLocal, load);
-    }
 
     const analysisOutput = {
       0: {
@@ -104,7 +111,7 @@ export function analyze(
         bendingZ: [fLocal[5], fLocal[11]],
       } as FrameAnalysisOutput,
     };
-    analysisOutputs.push(analysisOutput[pai.analysisType]);
+    analysisOutputs.push(analysisOutput[analysisType]);
   });
 
   return { default: analysisOutputs };

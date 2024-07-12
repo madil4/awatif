@@ -2,7 +2,7 @@ import { State } from "vanjs-core";
 import {
   Node,
   Element,
-  AnalysisInput,
+  AnalysisInputs,
   FrameAnalysisInput,
   LoadAnalysisInput,
   DistributedLoadAnalysisInput,
@@ -36,19 +36,15 @@ export type Parameters = {
 export type Model = {
   nodes?: Node[];
   elements?: Element[];
-  analysisInputs?: AnalysisInput[];
+  analysisInputs?: AnalysisInputs;
   analysisOutputs?: AnalysisOutputs;
-  designInputs?: any[];
-  designOutputs?: any[];
 };
 
 export type ModelState = State<{
   nodes: Node[];
   elements: Element[];
-  analysisInputs: ProcessedAnalysisInputs;
+  analysisInputs: AnalysisInputs;
   analysisOutputs: ProcessedAnalysisOutputs;
-  designInputs: Map<string, any>;
-  designOutputs: Map<string, any>;
 }>;
 
 export type Settings = {

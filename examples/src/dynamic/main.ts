@@ -1,5 +1,5 @@
 import { app, Model } from "awatif-ui";
-import { Node, Element, AnalysisInput } from "awatif-data-structure";
+import { Node, Element, AnalysisInputs } from "awatif-data-structure";
 import { analyzeDynamically } from "./analyzeDynamically.ts";
 
 const nodes: Node[] = [
@@ -13,36 +13,18 @@ const elements: Element[] = [
   [1, 2],
 ];
 
-const analysisInputs: AnalysisInput[] = [
-  {
-    node: 0,
-    support: [true, true, true],
-  },
-  {
-    node: 1,
-    load: [0, 0, -2 * 9.81], // gravity force computed for masses of 2 and acceleration of 9.81 m/s^2
-  },
-  {
-    node: 2,
-    load: [0, 0, -4 * 9.81], // gravity force computed for masses of 2 and acceleration of 9.81 m/s^2
-  },
-  {
-    node: 1,
-    mass: [2, 2, 2],
-  },
-  {
-    node: 2,
-    mass: [4, 4, 4],
-  },
-  {
-    element: 0,
-    elasticity: 100000,
-  },
-  {
-    element: 1,
-    elasticity: 100000,
-  },
-];
+const analysisInputs: AnalysisInputs = {
+  materials: new Map(),
+  sections: new Map(),
+  pointSupports: new Map(),
+  pointLoads: new Map(),
+};
+
+analysisInputs.pointSupports?.set(0, [true, true, true, true, true, true]);
+analysisInputs.pointLoads?.set(1, [0, 0, -2 * 9.81, 0, 0, 0]);
+analysisInputs.pointLoads?.set(2, [0, 0, -2 * 9.81, 0, 0, 0]);
+analysisInputs.materials?.set(0, { elasticity: 100000, mass: 2 });
+analysisInputs.materials?.set(1, { elasticity: 100000, mass: 4 });
 
 const dynamicSettings = {
   time: 10,

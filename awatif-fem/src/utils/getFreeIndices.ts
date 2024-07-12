@@ -1,10 +1,16 @@
 import * as mathjs from "mathjs";
-import { AnalysisType, ProcessedAnalysisInputs } from "./processAnalysisInputs";
+import { AnalysisInputs } from "awatif-data-structure";
 
-function bar(supports: ProcessedAnalysisInputs["supports"], dof: number) {
+// to be removed after refactoring the solver
+enum AnalysisType {
+  Bar,
+  Beam,
+}
+
+function bar(supports: AnalysisInputs["pointSupports"], dof: number) {
   let supportsInd: number[] = [];
 
-  supports.forEach((support, index) => {
+  supports?.forEach((support, index) => {
     if (support[0]) supportsInd.push(index * 3);
     if (support[1]) supportsInd.push(index * 3 + 1);
     if (support[2]) supportsInd.push(index * 3 + 2);
@@ -13,10 +19,10 @@ function bar(supports: ProcessedAnalysisInputs["supports"], dof: number) {
   return mathjs.setDifference(mathjs.range(0, dof), supportsInd);
 }
 
-function beam(supports: ProcessedAnalysisInputs["supports"], dof: number) {
+function beam(supports: AnalysisInputs["pointSupports"], dof: number) {
   let supportsInd: number[] = [];
 
-  supports.forEach((support, index) => {
+  supports?.forEach((support, index) => {
     if (support[0]) supportsInd.push(index * 6);
     if (support[1]) supportsInd.push(index * 6 + 1);
     if (support[2]) supportsInd.push(index * 6 + 2);
