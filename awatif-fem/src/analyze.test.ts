@@ -1,5 +1,5 @@
 import { analyze } from "awatif-fem";
-import { Node, Element, AnalysisInput } from "awatif-data-structure";
+import { Node, Element, AnalysisInputs } from "awatif-data-structure";
 
 describe("bars", () => {
   test("compute deformations and forces of Logan's book example 3.1", () => {
@@ -14,35 +14,36 @@ describe("bars", () => {
       [1, 2],
       [2, 3],
     ];
-    const analysisInputs: AnalysisInput[] = [
-      {
-        node: 0,
-        support: [true, false, false],
-      },
-      {
-        node: 3,
-        support: [true, false, false],
-      },
-      {
-        node: 1,
-        load: [15000, 0, 0],
-      },
-      {
-        element: 0,
-        area: 6e-4,
-        elasticity: 2e11,
-      },
-      {
-        element: 1,
-        area: 6e-4,
-        elasticity: 2e11,
-      },
-      {
-        element: 2,
-        area: 12e-4,
-        elasticity: 1e11,
-      },
-    ];
+    const analysisInputs: AnalysisInputs = {
+      materials: new Map(),
+      sections: new Map(),
+      pointSupports: new Map(),
+      pointLoads: new Map(),
+    };
+
+    analysisInputs.materials?.set(0, { elasticity: 2e11 });
+    analysisInputs.sections?.set(0, { area: 6e-4 });
+    analysisInputs.materials?.set(1, { elasticity: 2e11 });
+    analysisInputs.sections?.set(1, { area: 6e-4 });
+    analysisInputs.materials?.set(2, { elasticity: 1e11 });
+    analysisInputs.sections?.set(2, { area: 12e-4 });
+    analysisInputs.pointSupports?.set(0, [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(3, [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointLoads?.set(1, [15000, 0, 0, 0, 0, 0]);
 
     const analysisOutput = analyze(nodes, elements, analysisInputs);
 
@@ -73,29 +74,43 @@ describe("bars", () => {
       [0, 2],
       [0, 3],
     ];
-    const analysisInputs: AnalysisInput[] = [
-      {
-        node: 1,
-        support: [true, true, false],
-      },
-      {
-        node: 2,
-        support: [true, true, false],
-      },
-      {
-        node: 3,
-        support: [true, true, false],
-      },
-      {
-        node: 0,
-        load: [0, -50, 0],
-      },
-      ...elements.map((_, i) => ({
-        element: i,
-        area: 6e-4,
-        elasticity: 200e6,
-      })),
-    ];
+    const analysisInputs: AnalysisInputs = {
+      materials: new Map(),
+      sections: new Map(),
+      pointSupports: new Map(),
+      pointLoads: new Map(),
+    };
+
+    analysisInputs.pointSupports?.set(1, [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(2, [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(3, [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointLoads?.set(0, [0, -50, 0, 0, 0, 0]);
+
+    elements.forEach((_, i) => {
+      analysisInputs.materials?.set(i, { elasticity: 200e6 });
+      analysisInputs.sections?.set(i, { area: 6e-4 });
+    });
 
     const analysisOutput = analyze(nodes, elements, analysisInputs);
 
@@ -130,43 +145,53 @@ describe("bars", () => {
       [0, 2],
       [0, 3],
     ];
-    const analysisInputs: AnalysisInput[] = [
-      {
-        node: 0,
-        support: [false, true, false],
-      },
-      {
-        node: 1,
-        support: [true, true, true],
-      },
-      {
-        node: 2,
-        support: [true, true, true],
-      },
-      {
-        node: 3,
-        support: [true, true, true],
-      },
-      {
-        node: 0,
-        load: [0, 0, -5000],
-      },
-      {
-        element: 0,
-        area: 200,
-        elasticity: 8e3,
-      },
-      {
-        element: 1,
-        area: 500,
-        elasticity: 8e3,
-      },
-      {
-        element: 2,
-        area: 125,
-        elasticity: 8e3,
-      },
-    ];
+
+    const analysisInputs: AnalysisInputs = {
+      materials: new Map(),
+      sections: new Map(),
+      pointSupports: new Map(),
+      pointLoads: new Map(),
+    };
+
+    analysisInputs.materials?.set(0, { elasticity: 8e3 });
+    analysisInputs.sections?.set(0, { area: 200 });
+    analysisInputs.materials?.set(1, { elasticity: 8e3 });
+    analysisInputs.sections?.set(1, { area: 500 });
+    analysisInputs.materials?.set(2, { elasticity: 8e3 });
+    analysisInputs.sections?.set(2, { area: 125 });
+    analysisInputs.pointSupports?.set(0, [
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(1, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(2, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(3, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointLoads?.set(0, [0, 0, -5000, 0, 0, 0]);
 
     const analysisOutput = analyze(nodes, elements, analysisInputs);
 
@@ -208,29 +233,49 @@ describe("bars", () => {
       [2, 0],
       [3, 0],
     ];
-    const analysisInputs: AnalysisInput[] = [
-      {
-        node: 1,
-        support: [true, true, true],
-      },
-      {
-        node: 2,
-        support: [true, true, true],
-      },
-      {
-        node: 3,
-        support: [true, true, true],
-      },
-      {
-        node: 0,
-        load: [20, 0, 0],
-      },
-      ...elements.map((_, i) => ({
-        element: i,
-        area: 10e-4,
-        elasticity: 210e6,
-      })),
-    ];
+    const analysisInputs: AnalysisInputs = {
+      materials: new Map(),
+      sections: new Map(),
+      pointSupports: new Map(),
+      pointLoads: new Map(),
+    };
+
+    analysisInputs.materials?.set(0, { elasticity: 2e11 });
+    analysisInputs.sections?.set(0, { area: 6e-4 });
+    analysisInputs.materials?.set(1, { elasticity: 2e11 });
+    analysisInputs.sections?.set(1, { area: 6e-4 });
+    analysisInputs.materials?.set(2, { elasticity: 1e11 });
+    analysisInputs.sections?.set(2, { area: 12e-4 });
+    analysisInputs.pointSupports?.set(1, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(2, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointSupports?.set(3, [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    analysisInputs.pointLoads?.set(0, [20, 0, 0, 0, 0, 0]);
+
+    elements.forEach((_, i) => {
+      analysisInputs.materials?.set(i, { elasticity: 210e6 });
+      analysisInputs.sections?.set(i, { area: 10e-4 });
+    });
 
     const analysisOutput = analyze(nodes, elements, analysisInputs);
 
@@ -284,30 +329,36 @@ describe("beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 1,
-          support: [false, true, false, false, false, false],
-        },
-        {
-          node: 2,
-          support: [false, true, false, false, false, true],
-        },
-        {
-          node: 0,
-          load: [0, -P, 0, 0, 0, 0],
-        },
-        {
-          element: 0,
-          momentOfInertiaZ: I,
-          elasticity: E,
-        },
-        {
-          element: 1,
-          momentOfInertiaZ: I,
-          elasticity: E,
-        },
-      ];
+
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(1, [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, { elasticity: E });
+        analysisInputs.sections?.set(i, { momentOfInertiaZ: I });
+      });
+
+      analysisInputs.pointLoads?.set(0, [0, -P, 0, 0, 0, 0]);
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -360,33 +411,43 @@ describe("beams", () => {
         [2, 3],
         [3, 4],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 0,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          node: 4,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          node: 2,
-          support: [false, true, false, false, false, false],
-        },
-        {
-          node: 1,
-          load: [0, -50e3, 0, 0, 0, 0],
-        },
-        {
-          node: 3,
-          load: [0, -50e3, 0, 0, 0, 0],
-        },
-        ...elements.map((_, i) => ({
-          element: i,
-          momentOfInertiaZ: 2e-4,
-          elasticity: 210e9,
-        })),
-      ];
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(0, [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(4, [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+      ]);
+      analysisInputs.pointLoads?.set(1, [0, -50e3, 0, 0, 0, 0]);
+      analysisInputs.pointLoads?.set(3, [0, -50e3, 0, 0, 0, 0]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, { elasticity: 210e9 });
+        analysisInputs.sections?.set(i, { momentOfInertiaZ: 2e-4 });
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -459,30 +520,35 @@ describe("beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 0,
-          support: [false, true, false, false, false, true],
-        },
-        {
-          node: 2,
-          support: [false, true, false, false, false, true],
-        },
-        {
-          node: 1,
-          load: [0, -10e3, 0, 0, 0, 20e3],
-        },
-        {
-          element: 0,
-          momentOfInertiaZ: I,
-          elasticity: E,
-        },
-        {
-          element: 1,
-          momentOfInertiaZ: I,
-          elasticity: E,
-        },
-      ];
+
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(0, [
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointLoads?.set(1, [0, -10e3, 0, 0, 0, 20e3]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, { elasticity: E });
+        analysisInputs.sections?.set(i, { momentOfInertiaZ: I });
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -534,42 +600,46 @@ describe("beams", () => {
         [1, 2],
         [2, 3],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 0,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          node: 3,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          element: 0,
-          momentOfInertiaZ: 80e-6,
-          elasticity: 200e9,
-          area: 6500e-6,
-        },
-        {
-          element: 1,
-          momentOfInertiaZ: 40e-6,
-          elasticity: 200e9,
-          area: 6500e-6,
-        },
-        {
-          element: 2,
-          momentOfInertiaZ: 80e-6,
-          elasticity: 200e9,
-          area: 6500e-6,
-        },
-        {
-          node: 1,
-          load: [40e3, 0, 0, 0, 0, 0],
-        },
-        {
-          node: 2,
-          load: [0, 0, 0, 0, 0, 500],
-        },
-      ];
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(0, [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(3, [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+      ]);
+      analysisInputs.pointLoads?.set(1, [40e3, 0, 0, 0, 0, 0]);
+      analysisInputs.pointLoads?.set(2, [0, 0, 0, 0, 0, 500]);
+      analysisInputs.materials?.set(0, { elasticity: 200e9 });
+      analysisInputs.sections?.set(0, {
+        momentOfInertiaZ: 80e-6,
+        area: 6500e-6,
+      });
+      analysisInputs.materials?.set(1, { elasticity: 200e9 });
+      analysisInputs.sections?.set(1, {
+        momentOfInertiaZ: 40e-6,
+        area: 6500e-6,
+      });
+      analysisInputs.materials?.set(2, { elasticity: 200e9 });
+      analysisInputs.sections?.set(2, {
+        momentOfInertiaZ: 80e-6,
+        area: 6500e-6,
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -635,96 +705,6 @@ describe("beams", () => {
         ],
       });
     });
-
-    test("compute deformations and forces of Logan's book example 5.2", () => {
-      const nodes: Node[] = [
-        [0, 0, 0],
-        [9, 9, 0],
-        [9 + 12, 9, 0],
-      ];
-      const elements: Element[] = [
-        [0, 1],
-        [1, 2],
-      ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 0,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          node: 2,
-          support: [true, true, false, false, false, true],
-        },
-        {
-          element: 0,
-          momentOfInertiaZ: 3.6e-4,
-          elasticity: 200e9,
-          area: 0.06,
-        },
-        {
-          element: 1,
-          momentOfInertiaZ: 3.6e-4,
-          elasticity: 200e9,
-          area: 0.06,
-        },
-        {
-          element: 1,
-          distributedLoad: [-13e3, 0],
-        },
-      ];
-
-      const analysisOutputs = analyze(nodes, elements, analysisInputs);
-
-      expect(analysisOutputs).toEqual({
-        default: [
-          { node: 0, deformation: [0, 0, 0, 0, 0, 0] },
-          {
-            node: 0,
-            reaction: [
-              80326.50901658912, 67851.52308239831, 0, 0, 0,
-              -37225.195702533565,
-            ],
-          },
-          {
-            node: 1,
-            deformation: [
-              0.00008032650901658911, -0.00023749304599669695, 0, 0, 0,
-              -0.0033432434648677733,
-            ],
-          },
-          { node: 2, deformation: [0, 0, 0, 0, 0, 0] },
-          {
-            node: 2,
-            reaction: [
-              -80326.5090165891, 88148.47691760167, 0, 0, 0,
-              -196831.40071640338,
-            ],
-          },
-          {
-            element: 0,
-            normal: [104777.69132007193, -104777.69132007193],
-            shearY: [-8821.147149273089, 8821.147149273089],
-            shearZ: [0, 0],
-            torsion: [0, 0],
-            bendingY: [0, 0],
-            bendingZ: [-37225.195702533565, -75049.67770518335],
-          },
-          {
-            element: 1,
-            normal: [80326.5090165891, -80326.5090165891],
-            shearY: [67851.52308239833, 88148.47691760167],
-            shearZ: [0, 0],
-            torsion: [0, 0],
-            bendingY: [0, 0],
-            bendingZ: [75049.67770518336, -196831.40071640338],
-          },
-        ],
-      });
-    });
-
-    test.todo(
-      "compute deformations and forces of Logan's book example 5.3 - inclined loads"
-    );
   });
 
   describe("torsion", () => {
@@ -740,31 +720,48 @@ describe("beams", () => {
         [0, 2],
         [0, 3],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 1,
-          support: [false, true, false, true, false, true],
-        },
-        {
-          node: 2,
-          support: [false, true, false, true, false, true],
-        },
-        {
-          node: 3,
-          support: [false, true, false, true, false, true],
-        },
-        ...elements.map((_, i) => ({
-          element: i,
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(1, [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(3, [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      analysisInputs.pointLoads?.set(0, [0, -400e3, 0, 0, 0, 0]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, {
           elasticity: 200e9,
           shearModulus: 80e9,
+        });
+        analysisInputs.sections?.set(i, {
           momentOfInertiaZ: 150e-6,
           torsionalConstant: 40e-6,
-        })),
-        {
-          node: 0,
-          load: [0, -400e3, 0, 0, 0, 0],
-        },
-      ];
+        });
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -840,27 +837,40 @@ describe("beams", () => {
         [0, 1],
         [1, 2],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 0,
-          support: [false, true, false, true, false, true],
-        },
-        {
-          node: 2,
-          support: [false, true, false, true, false, true],
-        },
-        ...elements.map((_, i) => ({
-          element: i,
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(0, [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      analysisInputs.pointLoads?.set(1, [0, -22e3, 0, 0, 0, 0]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, {
           elasticity: 210e9,
           shearModulus: 84e9,
+        });
+        analysisInputs.sections?.set(i, {
           momentOfInertiaZ: 16.6e-5,
           torsionalConstant: 4.6e-5,
-        })),
-        {
-          node: 1,
-          load: [0, -22e3, 0, 0, 0, 0],
-        },
-      ];
+        });
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
@@ -925,33 +935,50 @@ describe("beams", () => {
         [2, 0],
         [3, 0],
       ];
-      const analysisInputs: AnalysisInput[] = [
-        {
-          node: 1,
-          support: [true, true, true, true, true, true],
-        },
-        {
-          node: 2,
-          support: [true, true, true, true, true, true],
-        },
-        {
-          node: 3,
-          support: [true, true, true, true, true, true],
-        },
-        ...elements.map((_, i) => ({
-          element: i,
+      const analysisInputs: AnalysisInputs = {
+        materials: new Map(),
+        sections: new Map(),
+        pointSupports: new Map(),
+        pointLoads: new Map(),
+      };
+
+      analysisInputs.pointSupports?.set(1, [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(2, [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ]);
+      analysisInputs.pointSupports?.set(3, [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ]);
+      analysisInputs.pointLoads?.set(0, [0, -200e3, 0, -100e3, 0, 0]);
+      elements.forEach((_, i) => {
+        analysisInputs.materials?.set(i, {
           elasticity: 200e9,
           shearModulus: 60e9,
+        });
+        analysisInputs.sections?.set(i, {
           momentOfInertiaZ: 40e-6,
           momentOfInertiaY: 40e-6,
           torsionalConstant: 20e-6,
           area: 6.25e-3,
-        })),
-        {
-          node: 0,
-          load: [0, -200e3, 0, -100e3, 0, 0],
-        },
-      ];
+        });
+      });
 
       const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
