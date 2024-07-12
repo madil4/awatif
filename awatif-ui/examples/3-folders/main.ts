@@ -4,8 +4,8 @@ import {
   Node,
   FrameAnalysisInput,
 } from "awatif-data-structure";
-import { app, Model, Parameters } from "../../src/";
-import { analyze } from "../../../awatif-fem";
+import { analyze } from "awatif-fem";
+import { app, Parameters } from "awatif-ui";
 
 const parameters: Parameters = {
   length: { value: 10, min: 1, max: 20 },

@@ -4,8 +4,8 @@ import {
   Node,
   FrameAnalysisInput,
 } from "awatif-data-structure";
-import { app, Model } from "../../src/";
-import { analyze } from "../../../awatif-fem/";
+import { app, Model } from "awatif-ui";
+import { analyze } from "awatif-fem";
 
 function onParameterChange(): Model {
   const nodes: Node[] = [

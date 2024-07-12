@@ -1,5 +1,5 @@
-import { analyze } from "../src/analyze";
-import { Node, Element, AnalysisInput } from "../src";
+import { analyze } from "awatif-fem";
+import { Node, Element, AnalysisInput } from "awatif-data-structure";
 
 describe("analyze beams", () => {
   describe("nodal forces", () => {

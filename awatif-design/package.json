@@ -14,6 +14,11 @@
   ],
   "author": "Mohamed Adil",
   "license": "MIT",
+  "homepage": "https://awatif.co/awatif-design",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madil4/awatif"
+  },
   "dependencies": {
     "awatif-data-structure": "^0.0.12",
     "katex": "^0.16.10",

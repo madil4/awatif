@@ -3,8 +3,8 @@ import { analyze } from "awatif-fem";
 import { Node, Element, AnalysisInput } from "awatif-data-structure";
 
 const parameters: Parameters = {
-  xPosition: { value: 12, min: 1, max: 20 },
-  zPosition: { value: 0, min: 1, max: 10 },
+  xPosition: { value: 12, min: 0, max: 20 },
+  zPosition: { value: 0, min: 0, max: 10 },
 };
 
 function onParameterChange(parameters: Parameters): Model {

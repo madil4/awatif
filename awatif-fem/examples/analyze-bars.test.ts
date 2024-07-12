@@ -1,5 +1,5 @@
-import { analyze } from "../src/analyze";
-import { Node, Element, AnalysisInput } from "../src";
+import { analyze } from "awatif-fem";
+import { Node, Element, AnalysisInput } from "awatif-data-structure";
 
 describe("analyze bars", () => {
   test("compute deformations and forces of Logan's book example 3.1", () => {
