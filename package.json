@@ -16,11 +16,9 @@
     "url": "https://github.com/madil4/awatif"
   },
   "scripts": {
-    "dev:ui": "npm run dev -w awatif-ui",
     "dev:examples": "npm run dev -w examples",
-    "dev:website": "npm run dev -w website",
-    "build:ui": "npm run build -w awatif-ui",
     "build:examples": "npm run build -w examples",
+    "dev:website": "npm run dev -w website",
     "build:website": "npm run build -w website"
   },
   "workspaces": [

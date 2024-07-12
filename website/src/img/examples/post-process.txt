@@ -1,1 +1,1 @@
-To produce good images, use sharpen edges filter with oil paint
+To produce good images, use sharpen edges filter then oil paint then level (800x600)
