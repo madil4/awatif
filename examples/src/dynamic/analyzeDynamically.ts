@@ -20,7 +20,7 @@ export function analyzeDynamically(
   // define position, velocity, and mass vectors
   let x = nodes.flat();
   let v = Array(x.length).fill(0) as number[];
-  let m = Array(x.length).fill(4); // to be computed
+  let m = Array(x.length).fill(2); // to be computed
 
   // forward euler formulation
   for (let step = 0; step < numSteps; step++) {
@@ -39,14 +39,9 @@ export function analyzeDynamically(
     v = math.chain(x).subtract(xn).divide(dt).done() as number[];
 
     // enforce constraints
-    analysisInputs.forEach((a) => {
-      if ("node" in a && "support" in a) {
-        const nid = a.node;
-        a.support.forEach((s, i) => {
-          if (s) x[i + nid] = 0;
-        });
-      }
-    });
+    x[0] = 0;
+    x[1] = 0;
+    x[2] = 0;
 
     // store
     let output: PositionAnalysisOutput[] = [];
@@ -74,20 +69,23 @@ function F(
   x: number[],
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInputs[]
+  analysisInputs: AnalysisInputs
 ): number[] {
   let f: number[] = Array(x.length).fill(0);
 
-  // external force
+  // External loads
   let f_ext: number[] = Array(x.length).fill(0);
-  analysisInputs.forEach((item) => {
-    if ("load" in item) {
-      item.load.forEach((loadValue, index) => {
-        const position = item.node * item.load.length + index;
-        f_ext[position] += (f_ext[position] || 0) + loadValue;
-      });
-    }
-  }); // assign gravity
+
+  analysisInputs.pointLoads?.forEach((force, index) => {
+    const nodeInd = [index * 3, index * 3 + 1, index * 3 + 2];
+    const current = math.subset(f, math.index(nodeInd));
+    f_ext = math.subset(
+      f_ext,
+      math.index(nodeInd),
+      math.add(current, force.slice(0, 3))
+    );
+  });
+
   f = math.add(f, f_ext);
 
   // elastic force
@@ -110,14 +108,7 @@ function F(
     const d2: number =
       math.multiply(T, x_n2)[0] - math.multiply(Ti, nodes[e[1]])[0];
 
-    const property = analysisInputs.find(
-      (analysisInput) =>
-        "element" in analysisInput &&
-        "elasticity" in analysisInput &&
-        analysisInput.element === eid
-    );
-
-    const k = property?.elasticity;
+    const k = analysisInputs.materials?.get(eid)?.elasticity || 0;
 
     const f1 = (k * (d2 - d1)) / r;
     const f_element = math.multiply(math.transpose(T), [f1, 0, 0]);
