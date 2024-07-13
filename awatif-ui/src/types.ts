@@ -5,13 +5,11 @@ import {
   AnalysisInputs,
   AnalysisOutputs,
 } from "awatif-data-structure";
-import { TemplateResult } from "lit-html";
 
 export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
-  reports?: ((i: any, b: any) => TemplateResult)[];
 };
 
 export type Parameters = {
