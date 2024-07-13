@@ -5,9 +5,6 @@ import {
   Element,
   AnalysisInputs,
   AnalysisOutputs,
-  DeformationAnalysisOutput,
-  ReactionAnalysisOutput,
-  FrameAnalysisOutput,
 } from "awatif-data-structure";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
@@ -30,56 +27,62 @@ export function analyze(
   if ("momentOfInertiaZ" in anySection || "momentOfInertiaZ" in anySection)
     analysisType = AnalysisType.Beam;
 
-  const { deformations, forces } = deform(
+  const { deformations, reactions } = deform(
     nodes,
     elements,
     analysisInputs,
     analysisType
   );
+  const analysisOutputs: AnalysisOutputs = {
+    nodes: new Map(),
+    elements: new Map(),
+  };
 
-  const analysisOutputs: AnalysisOutputs[keyof AnalysisOutputs] = [];
   nodes.forEach((_, index) => {
     const deformation = {
-      0: [
+      [AnalysisType.Bar]: [
         deformations[index * 3],
         deformations[index * 3 + 1],
         deformations[index * 3 + 2],
-      ] as DeformationAnalysisOutput["deformation"],
-      1: [
+        0,
+        0,
+        0,
+      ] as [number, number, number, number, number, number],
+      [AnalysisType.Beam]: [
         deformations[index * 6],
         deformations[index * 6 + 1],
         deformations[index * 6 + 2],
         deformations[index * 6 + 3],
         deformations[index * 6 + 4],
         deformations[index * 6 + 5],
-      ] as DeformationAnalysisOutput["deformation"],
+      ] as [number, number, number, number, number, number],
     };
-    analysisOutputs.push({
-      node: index,
-      deformation: deformation[analysisType],
-    });
 
     const reaction = {
-      0: [
-        forces[index * 3],
-        forces[index * 3 + 1],
-        forces[index * 3 + 2],
-      ] as ReactionAnalysisOutput["reaction"],
-      1: [
-        forces[index * 6] as number,
-        forces[index * 6 + 1] as number,
-        forces[index * 6 + 2] as number,
-        forces[index * 6 + 3] as number,
-        forces[index * 6 + 4] as number,
-        forces[index * 6 + 5] as number,
-      ] as ReactionAnalysisOutput["reaction"],
+      [AnalysisType.Bar]: [
+        reactions[index * 3],
+        reactions[index * 3 + 1],
+        reactions[index * 3 + 2],
+        0,
+        0,
+        0,
+      ] as [number, number, number, number, number, number],
+      [AnalysisType.Beam]: [
+        reactions[index * 6] as number,
+        reactions[index * 6 + 1] as number,
+        reactions[index * 6 + 2] as number,
+        reactions[index * 6 + 3] as number,
+        reactions[index * 6 + 4] as number,
+        reactions[index * 6 + 5] as number,
+      ] as [number, number, number, number, number, number],
     };
-    if (analysisInputs.pointSupports?.get(index)) {
-      analysisOutputs.push({
-        node: index,
-        reaction: reaction[analysisType],
-      });
-    }
+
+    const hasReaction = analysisInputs.pointSupports?.get(index);
+
+    analysisOutputs.nodes?.set(index, {
+      deformation: deformation[analysisType],
+      ...(hasReaction && { reaction: reaction[analysisType] }),
+    });
   });
 
   elements.forEach((element, index) => {
@@ -97,22 +100,20 @@ export function analyze(
     let fLocal = mathjs.multiply(kLocal, dxLocal).toArray() as number[];
 
     const analysisOutput = {
-      0: {
-        element: index,
-        normal: [-fLocal[0], -fLocal[0]],
-      } as FrameAnalysisOutput, // sign flips according to Logan's book,
-      1: {
-        element: index,
-        normal: [fLocal[0], fLocal[6]],
-        shearY: [fLocal[1], fLocal[7]],
-        shearZ: [fLocal[2], fLocal[8]],
-        torsion: [fLocal[3], fLocal[9]],
-        bendingY: [fLocal[4], fLocal[10]],
-        bendingZ: [fLocal[5], fLocal[11]],
-      } as FrameAnalysisOutput,
+      [AnalysisType.Bar]: {
+        normal: [-fLocal[0], -fLocal[0]] as [number, number],
+      },
+      [AnalysisType.Beam]: {
+        normal: [fLocal[0], fLocal[6]] as [number, number],
+        shearY: [fLocal[1], fLocal[7]] as [number, number],
+        shearZ: [fLocal[2], fLocal[8]] as [number, number],
+        torsion: [fLocal[3], fLocal[9]] as [number, number],
+        bendingY: [fLocal[4], fLocal[10]] as [number, number],
+        bendingZ: [fLocal[5], fLocal[11]] as [number, number],
+      },
     };
-    analysisOutputs.push(analysisOutput[analysisType]);
+    analysisOutputs.elements?.set(index, analysisOutput[analysisType]);
   });
 
-  return { default: analysisOutputs };
+  return analysisOutputs;
 }

@@ -18,7 +18,6 @@ export default defineConfig({
         beams: "src/beams/index.html",
         building: "src/building/index.html",
         curves: "src/curves/index.html",
-        dynamic: "src/dynamic/index.html",
         "mesh-refinement": "src/mesh-refinement/index.html",
         sphere: "src/sphere/index.html",
         truss: "src/truss/index.html",
