@@ -10,7 +10,7 @@ export function app({
   settings: settingsObj,
 }: App) {
   // init
-  const model = onParameterChange?.(parameterObj ?? {});
+  const model = onParameterChange?.(parameterObj ?? {}) ?? {};
   const modelState: ModelState = van.state(getModelState(model));
   const settingsState: SettingsState = {
     gridSize: van.state(settingsObj?.gridSize ?? 20),
@@ -29,7 +29,7 @@ export function app({
 
   // update
   viewer(modelState, settingsState);
-  settings(settingsState);
+  settings(model, settingsState);
 
   // on parameter change
   if (parameterObj && onParameterChange) {
@@ -37,7 +37,6 @@ export function app({
       // @ts-ignore
       parameterObj[e.target.key].value = e.value;
 
-      // consider updating only if there a change instead of a brute change
       modelState.val = getModelState(onParameterChange(parameterObj));
     });
   }
