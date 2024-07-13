@@ -7,7 +7,7 @@ export const parameters: Parameters = {
   span: {
     value: 20,
     min: 1,
-    max: 25,
+    max: 20,
     label: "Span (m)",
     folder: "Geometry",
   },
