@@ -18,9 +18,7 @@ export class NodeResult extends THREE.Group implements IResultObject {
   constructor(
     node: Node,
     resultType: ResultType,
-    result:
-      | [number, number, number]
-      | [number, number, number, number, number, number]
+    result: [number, number, number, number, number, number]
   ) {
     super();
     // init

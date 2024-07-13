@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
-import { Node } from "awatif-data-structure";
+import { AnalysisOutputs, Node } from "awatif-data-structure";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { ConstantResult } from "./resultObjects/ConstantResult";
 import { LinearResult } from "./resultObjects/LinearResult";
@@ -52,19 +52,15 @@ export function elementResults(
     group.children.forEach((c) => (c as IResultObject).dispose());
     group.clear();
 
-    model.val.analysisOutputs[resultType]?.forEach((result, index) => {
+    model.val.analysisOutputs.elements?.forEach((result, index) => {
       const element = model.val.elements[index];
       const node1 = nodesCache[element[0]];
       const node2 = nodesCache[element[1]];
       const length = new THREE.Vector3(...node2).distanceTo(
         new THREE.Vector3(...node1)
       );
-      const maxResult = Math.max(
-        ...[...model.val.analysisOutputs[resultType]?.values()]
-          .flat()
-          .map((n) => Math.abs(n ?? 0))
-      );
-      const normalizedResult = result?.map(
+      const maxResult = findMax(model.val.analysisOutputs.elements, resultType);
+      const normalizedResult = result[resultType]?.map(
         (n) => n / (maxResult === 0 ? 1 : maxResult)
       );
       const rotation = getTransformationMatrix(node1, node2);
@@ -73,7 +69,7 @@ export function elementResults(
         node2,
         length,
         rotation,
-        result ?? [0, 0],
+        result[resultType] ?? [0, 0],
         normalizedResult ?? [0, 0],
         [
           ResultType.normal,
@@ -103,4 +99,18 @@ export function elementResults(
   });
 
   return group;
+}
+
+function findMax(
+  nodeOutputs: AnalysisOutputs["elements"],
+  resultType: ResultType
+): number {
+  let maxDeformation: number = 0;
+
+  nodeOutputs?.forEach((node) => {
+    const maxInNode = Math.max(...(node[resultType] ?? [0, 0]));
+    if (maxInNode > maxDeformation) maxDeformation = maxInNode;
+  });
+
+  return maxDeformation;
 }

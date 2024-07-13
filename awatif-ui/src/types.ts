@@ -4,10 +4,6 @@ import {
   Element,
   AnalysisInputs,
   AnalysisOutputs,
-  DeformationAnalysisOutput,
-  ReactionAnalysisOutput,
-  PositionAnalysisOutput,
-  FrameAnalysisOutput,
 } from "awatif-data-structure";
 import { TemplateResult } from "lit-html";
 
@@ -36,11 +32,12 @@ export type Model = {
   analysisOutputs?: AnalysisOutputs;
 };
 
+// refactor to Model
 export type ModelState = State<{
   nodes: Node[];
   elements: Element[];
   analysisInputs: AnalysisInputs;
-  analysisOutputs: ProcessedAnalysisOutputs;
+  analysisOutputs: AnalysisOutputs;
 }>;
 
 export type Settings = {
@@ -56,8 +53,6 @@ export type Settings = {
   deformedShape?: boolean;
   elementResults?: string;
   nodeResults?: string;
-  dynamic?: boolean;
-  dynamicSettings?: Record<"time" | "timeStep", number>;
 };
 
 export type SettingsState = {
@@ -73,18 +68,4 @@ export type SettingsState = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
-  dynamic: State<boolean>;
-  dynamicSettings: State<Record<"time" | "timeStep", number>>;
-};
-
-export type ProcessedAnalysisOutputs = {
-  normal: Map<number, FrameAnalysisOutput["normal"]>;
-  shearY: Map<number, FrameAnalysisOutput["shearY"]>;
-  shearZ: Map<number, FrameAnalysisOutput["shearZ"]>;
-  torsion: Map<number, FrameAnalysisOutput["torsion"]>;
-  bendingY: Map<number, FrameAnalysisOutput["bendingY"]>;
-  bendingZ: Map<number, FrameAnalysisOutput["bendingZ"]>;
-  deformation: Map<number, DeformationAnalysisOutput["deformation"]>;
-  position: Map<number, PositionAnalysisOutput["position"][]>;
-  reaction: Map<number, ReactionAnalysisOutput["reaction"]>;
 };

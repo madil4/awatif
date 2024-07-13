@@ -77,16 +77,16 @@ export function deform(
   const fFree = mathjs.subset(f, mathjs.index(freeInd));
   const kFree = mathjs.subset(kGlobalAssembly, mathjs.index(freeInd, freeInd));
   const dxFree = mathjs.lusolve(kFree as any, fFree);
-  const dx = mathjs.subset(
+  const deformations = mathjs.subset(
     mathjs.zeros(dof),
     mathjs.index(freeInd),
     mathjs.flatten(dxFree)
   ) as mathjs.Matrix;
 
-  let forces = mathjs.multiply(kGlobalAssembly, dx);
+  let reactions = mathjs.multiply(kGlobalAssembly, deformations);
 
   return {
-    deformations: dx.toArray() as number[],
-    forces: forces.toArray() as number[],
+    deformations: deformations.toArray() as number[],
+    reactions: reactions.toArray() as number[],
   };
 }

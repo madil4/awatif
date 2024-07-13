@@ -27,42 +27,22 @@ type SectionInput = {
 };
 
 // Analysis Outputs
-export type AnalysisOutputs = Record<
-  string, // load case
-  AnalysisOutput[]
->;
+export type AnalysisOutputs = {
+  nodes?: Map<number, NodeAnalysisOutputs>;
+  elements?: Map<number, ElementAnalysisOutputs>;
+};
 
-export type AnalysisOutput =
-  | FrameAnalysisOutput
-  | DeformationAnalysisOutput
-  | ReactionAnalysisOutput
-  | PositionAnalysisOutput;
+type NodeAnalysisOutputs = {
+  deformation?: [number, number, number, number, number, number];
+  reaction?: [number, number, number, number, number, number];
+  position?: [number, number, number, number, number, number];
+};
 
-export type FrameAnalysisOutput = {
-  element: number;
+type ElementAnalysisOutputs = {
   normal?: [number, number];
   shearY?: [number, number];
   shearZ?: [number, number];
   torsion?: [number, number];
   bendingY?: [number, number];
   bendingZ?: [number, number];
-};
-
-export type DeformationAnalysisOutput = {
-  node: number;
-  deformation:
-    | [number, number, number]
-    | [number, number, number, number, number, number];
-};
-
-export type ReactionAnalysisOutput = {
-  node: number;
-  reaction:
-    | [number, number, number]
-    | [number, number, number, number, number, number];
-};
-
-export type PositionAnalysisOutput = {
-  node: number;
-  position: [number, number, number];
 };
