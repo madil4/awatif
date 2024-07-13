@@ -4,6 +4,10 @@ import { viewer } from "./viewer";
 import { parameters } from "./parameters";
 import { settings } from "./settings";
 
+import "./styles/viewer.css";
+import "./styles/settings.css";
+import "./styles/parameters.css";
+
 export function app({
   parameters: parameterObj,
   onParameterChange,
@@ -28,17 +32,22 @@ export function app({
   };
 
   // update
-  viewer(modelState, settingsState);
-  settings(model, settingsState);
+  const viewerElement = viewer(modelState, settingsState);
+  const settingElement = settings(model, settingsState);
+
+  document.body.appendChild(viewerElement);
+  document.body.appendChild(settingElement);
 
   // on parameter change
   if (parameterObj && onParameterChange) {
-    parameters(parameterObj, (e) => {
+    const parametersElement = parameters(parameterObj, (e) => {
       // @ts-ignore
       parameterObj[e.target.key].value = e.value;
 
       modelState.val = getModelState(onParameterChange(parameterObj));
     });
+
+    document.body.appendChild(parametersElement);
   }
 }
 

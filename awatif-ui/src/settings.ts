@@ -1,19 +1,20 @@
 import { Pane } from "tweakpane";
 import { Model, SettingsState } from "./types";
 
-export function settings(model: Model, settingsState: SettingsState) {
+export function settings(
+  model: Model,
+  settingsState: SettingsState
+): HTMLElement {
   // init
-  const pane = new Pane({ title: "Settings", expanded: false });
-  const container = pane.element.parentElement;
+  const element = document.createElement("div");
+  const pane = new Pane({
+    title: "Settings",
+    expanded: false,
+    container: element,
+  });
 
   // update
-  if (container) {
-    container.style.top = "0px";
-    container.style.bottom = "inherit";
-    container.style.left = "8px";
-    container.style.width = "300px";
-    container.style.zIndex = "3";
-  }
+  element.setAttribute("id", "settings");
 
   pane.addBinding(settingsState.displayScale, "val", {
     label: "Display scale",
@@ -72,4 +73,6 @@ export function settings(model: Model, settingsState: SettingsState) {
       label: "Deformed shape",
     });
   }
+
+  return element;
 }

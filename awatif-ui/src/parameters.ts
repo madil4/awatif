@@ -4,19 +4,15 @@ import { Parameters } from "./types";
 export function parameters(
   parameters: Parameters,
   onChange: (e: TpChangeEvent<unknown>) => void
-) {
+): HTMLDivElement {
   // init
-  const pane = new Pane({ title: "Parameters" });
+  const element = document.createElement("div");
+  const pane = new Pane({ title: "Parameters", container: element });
   const params = convertToTweakParams(parameters);
-  const container = pane.element.parentElement;
   const folders = new Map<string, FolderApi>();
 
   // update
-  if (container) {
-    container.style.top = "inherit";
-    container.style.bottom = "0px";
-    container.style.width = "300px";
-  }
+  element.setAttribute("id", "parameters");
 
   folders.set("root", pane);
 
@@ -38,6 +34,8 @@ export function parameters(
 
   // on parameters change
   pane.on("change", (e) => onChange?.(e));
+
+  return element;
 }
 
 const convertToTweakParams = (
