@@ -1,7 +1,6 @@
 {
   "name": "website",
-  "version": "1.0.0",
-  "description": "",
+  "description": "Awatif Website https://awatif.co",
   "scripts": {
     "dev": "rm -rf dist && concurrently --kill-others \"tailwindcss -i ./tailwind.css -o ./src/css/style.css --watch\" \"eleventy --serve\"",
     "build": "rm -rf dist && eleventy"

@@ -1,6 +1,5 @@
 {
   "name": "examples",
-  "version": "0.0.12",
   "description": "Awatif Examples",
   "scripts": {
     "dev": "vite",
