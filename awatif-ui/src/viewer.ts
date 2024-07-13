@@ -15,7 +15,10 @@ import { orientations } from "./objects/orientations";
 import { elementResults } from "./objects/elementResults";
 import { nodeResults } from "./objects/nodeResults";
 
-export function viewer(model: ModelState, settings: SettingsState) {
+export function viewer(
+  model: ModelState,
+  settings: SettingsState
+): HTMLCanvasElement {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
@@ -66,8 +69,6 @@ export function viewer(model: ModelState, settings: SettingsState) {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-  document.body.style.margin = "0";
 
   const z2fit = gridSize * 0.5 + (gridSize * 0.5) / Math.tan(45 * 0.5);
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
@@ -108,4 +109,6 @@ export function viewer(model: ModelState, settings: SettingsState) {
 
     setTimeout(() => renderer.render(scene, camera)); // to ensure render is called after all updates are done in that event tick
   });
+
+  return renderer.domElement;
 }
