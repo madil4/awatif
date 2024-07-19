@@ -1,3 +1,3 @@
 ## Documentation
 
-[Awatif Docs](https://awatif.co/awatif-data-structure/)
+[Awatif Data Structure Docs](https://awatif.co/awatif-data-structure/)

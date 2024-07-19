@@ -1,3 +1,3 @@
 ## Documentation
 
-[Awatif Docs](https://awatif.co/awatif-ui/)
+[Awatif UI Docs](https://awatif.co/awatif-ui/)
