@@ -15,7 +15,7 @@ export function nodes(
   const size = 0.05 * settings.gridSize.rawVal * 0.5;
   points.frustumCulled = false;
 
-  // on settings.nodes, and derivedNodes update visual
+  // on settings.nodes, and derivedNodes update visuals
   van.derive(() => {
     if (!settings.nodes.val) return;
 
