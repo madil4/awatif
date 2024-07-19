@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.4 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.6 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -673,10 +673,6 @@ video {
   z-index: 60;
 }
 
-.m-1 {
-  margin: 0.25rem;
-}
-
 .mx-3 {
   margin-left: 0.75rem;
   margin-right: 0.75rem;
@@ -728,10 +724,6 @@ video {
 
 .ms-3 {
   margin-inline-start: 0.75rem;
-}
-
-.mt-0 {
-  margin-top: 0px;
 }
 
 .mt-0\.5 {
@@ -885,10 +877,6 @@ video {
   height: 100%;
 }
 
-.w-1 {
-  width: 0.25rem;
-}
-
 .w-3\/4 {
   width: 75%;
 }
@@ -1014,11 +1002,6 @@ video {
   gap: 2.25rem;
 }
 
-.gap-x-1 {
-  -moz-column-gap: 0.25rem;
-       column-gap: 0.25rem;
-}
-
 .gap-x-1\.5 {
   -moz-column-gap: 0.375rem;
        column-gap: 0.375rem;
@@ -1054,22 +1037,10 @@ video {
   margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
-.space-x-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .space-x-2\.5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.625rem * var(--tw-space-x-reverse));
   margin-left: calc(0.625rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
-.space-y-1 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
 }
 
 .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
@@ -1250,10 +1221,6 @@ video {
      object-fit: cover;
 }
 
-.p-1 {
-  padding: 0.25rem;
-}
-
 .p-2 {
   padding: 0.5rem;
 }
@@ -1289,11 +1256,6 @@ video {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-}
-
-.py-0 {
-  padding-top: 0px;
-  padding-bottom: 0px;
 }
 
 .py-0\.5 {
@@ -1347,10 +1309,6 @@ video {
 
 .ps-6 {
   padding-inline-start: 1.5rem;
-}
-
-.pt-0 {
-  padding-top: 0px;
 }
 
 .pt-0\.5 {
@@ -1666,11 +1624,6 @@ video {
   bottom: 0px;
 }
 
-.after\:start-3::after {
-  content: var(--tw-content);
-  inset-inline-start: 0.75rem;
-}
-
 .after\:start-3\.5::after {
   content: var(--tw-content);
   inset-inline-start: 0.875rem;
@@ -1802,6 +1755,19 @@ video {
   color: rgb(10 147 150 / var(--tw-text-opacity));
 }
 
+.hs-accordion.active > .hs-accordion-active\:block {
+  display: block;
+}
+
+.hs-accordion.active > .hs-accordion-active\:hidden {
+  display: none;
+}
+
+.hs-accordion.active > .hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
 .hs-accordion.active > .hs-accordion-toggle .hs-accordion-active\:block {
   display: block;
 }
@@ -1815,6 +1781,19 @@ video {
   color: rgb(10 147 150 / var(--tw-text-opacity));
 }
 
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle .hs-accordion-active\:block {
+  display: block;
+}
+
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle .hs-accordion-active\:hidden {
+  display: none;
+}
+
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle .hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:block {
   display: block;
 }
@@ -1824,6 +1803,19 @@ video {
 }
 
 .hs-accordion.active > .hs-accordion-toggle.hs-accordion-active\:text-primary-light {
+  --tw-text-opacity: 1;
+  color: rgb(10 147 150 / var(--tw-text-opacity));
+}
+
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle.hs-accordion-active\:block {
+  display: block;
+}
+
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle.hs-accordion-active\:hidden {
+  display: none;
+}
+
+.hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle.hs-accordion-active\:text-primary-light {
   --tw-text-opacity: 1;
   color: rgb(10 147 150 / var(--tw-text-opacity));
 }
@@ -1989,12 +1981,27 @@ video {
     color: rgb(10 147 150 / var(--tw-text-opacity));
   }
 
+  .hs-accordion.active > .dark\:hs-accordion-active\:text-primary-light {
+    --tw-text-opacity: 1;
+    color: rgb(10 147 150 / var(--tw-text-opacity));
+  }
+
   .hs-accordion.active > .hs-accordion-toggle .dark\:hs-accordion-active\:text-primary-light {
     --tw-text-opacity: 1;
     color: rgb(10 147 150 / var(--tw-text-opacity));
   }
 
+  .hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle .dark\:hs-accordion-active\:text-primary-light {
+    --tw-text-opacity: 1;
+    color: rgb(10 147 150 / var(--tw-text-opacity));
+  }
+
   .hs-accordion.active > .hs-accordion-toggle.dark\:hs-accordion-active\:text-primary-light {
+    --tw-text-opacity: 1;
+    color: rgb(10 147 150 / var(--tw-text-opacity));
+  }
+
+  .hs-accordion.active > .hs-accordion-heading > .hs-accordion-toggle.dark\:hs-accordion-active\:text-primary-light {
     --tw-text-opacity: 1;
     color: rgb(10 147 150 / var(--tw-text-opacity));
   }

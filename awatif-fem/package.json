@@ -24,12 +24,12 @@
     "test": "jest --watch"
   },
   "devDependencies": {
-    "@types/jest": "~29.5.3",
-    "jest": "~29.6.1",
-    "ts-jest": "~29.1.1"
+    "@types/jest": "~29.5.12",
+    "jest": "~29.7.0",
+    "ts-jest": "~29.2.3"
   },
   "dependencies": {
     "awatif-data-structure": "^0.0.13",
-    "mathjs": "~12.4.1"
+    "mathjs": "~13.0.3"
   }
 }
