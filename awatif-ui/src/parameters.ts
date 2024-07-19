@@ -33,7 +33,9 @@ export function parameters(
   });
 
   // on parameters change
-  pane.on("change", (e) => onChange?.(e));
+  pane.on("change", (e) => {
+    if (!e.last) onChange(e);
+  });
 
   return element;
 }

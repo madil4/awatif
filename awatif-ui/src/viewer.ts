@@ -31,9 +31,7 @@ export function viewer(
   );
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
-
-  const gridSize = settings.gridSize.val;
-  const displayScale = van.derive(() =>
+  const derivedDisplayScale = van.derive(() =>
     settings.displayScale.val === 0
       ? 1
       : settings.displayScale.val > 0
@@ -53,23 +51,24 @@ export function viewer(
 
   // update
   scene.add(
-    grid(gridSize),
-    axes(gridSize),
-    nodes(derivedNodes, settings, displayScale),
-    elements(derivedNodes, model, settings),
-    nodesIndexes(derivedNodes, settings, displayScale),
-    elementsIndexes(derivedNodes, model, settings, displayScale),
-    supports(derivedNodes, model, settings, displayScale),
-    loads(derivedNodes, model, settings, displayScale),
-    orientations(derivedNodes, model, settings, displayScale),
-    elementResults(derivedNodes, model, settings, displayScale),
-    nodeResults(derivedNodes, model, settings, displayScale)
+    grid(settings.gridSize.rawVal),
+    axes(settings.gridSize.rawVal),
+    nodes(settings, derivedNodes, derivedDisplayScale),
+    elements(model, settings, derivedNodes),
+    nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+    elementsIndexes(model, settings, derivedNodes, derivedDisplayScale),
+    supports(model, settings, derivedNodes, derivedDisplayScale),
+    loads(model, settings, derivedNodes, derivedDisplayScale),
+    orientations(model, settings, derivedNodes, derivedDisplayScale),
+    elementResults(model, settings, derivedNodes, derivedDisplayScale),
+    nodeResults(model, settings, derivedNodes, derivedDisplayScale)
   );
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  const gridSize = settings.gridSize.rawVal;
   const z2fit = gridSize * 0.5 + (gridSize * 0.5) / Math.tan(45 * 0.5);
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
   controls.target.set(0.5 * gridSize, 0.5 * gridSize, 0);

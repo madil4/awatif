@@ -11,24 +11,18 @@ export enum ResultType {
 }
 
 export function nodeResults(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   // init
   const group = new THREE.Group();
-  const size = 0.05 * settings.gridSize.val;
+  const size = 0.05 * settings.gridSize.rawVal;
 
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.nodeResults, model.elements, and model.nodes update
+  // on settings.nodeResults & deformedShape, and model clear and update visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.nodeResults.val != "none";
+    settings.deformedShape.val; // triggers update
 
     if (settings.nodeResults.val == "none") return;
 
@@ -36,30 +30,35 @@ export function nodeResults(
     group.clear();
 
     const resultType =
-      ResultType[settings.nodeResults.val as keyof typeof ResultType];
+      ResultType[settings.nodeResults.rawVal as keyof typeof ResultType];
 
     model.val.analysisOutputs.nodes?.forEach((output, index) => {
       const nodeResult = new NodeResult(
-        nodesCache[index],
+        derivedNodes.rawVal[index],
         resultType,
         output[resultType] ?? [0, 0, 0, 0, 0, 0]
       );
 
-      nodeResult.updateScale(size * displayScaleCache);
+      nodeResult.updateScale(size * derivedDisplayScale.rawVal);
 
       group.add(nodeResult);
     });
   });
 
-  // on settings.nodeResults and setting.displayScale change
+  // on derivedDisplayScale update scale
   van.derive(() => {
-    if (settings.nodeResults.val == "none") return;
+    derivedDisplayScale.val;
+
+    if (settings.nodeResults.rawVal == "none") return;
 
     group.children.forEach((c) =>
-      (c as IResultObject).updateScale(size * displayScale.val)
+      (c as IResultObject).updateScale(size * derivedDisplayScale.rawVal)
     );
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.nodeResults update visibility
+  van.derive(() => {
+    group.visible = settings.nodeResults.val != "none";
   });
 
   return group;

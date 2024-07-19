@@ -17,14 +17,14 @@ enum ResultType {
 }
 
 export function elementResults(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  deridedDisplayScale: State<number>
 ): THREE.Group {
   // init
   const group = new THREE.Group();
-  const size = 0.05 * settings.gridSize.val;
+  const size = 0.05 * settings.gridSize.rawVal;
   const resultObjects = {
     [ResultType.normal]: ConstantResult,
     [ResultType.shearY]: ConstantResult,
@@ -34,32 +34,29 @@ export function elementResults(
     [ResultType.bendingZ]: LinearResult,
   };
 
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.elementResults, model.elements, and model.nodes update
+  // on settings.elementResults & deformedShape, model clear and create visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.elementResults.val != "none";
+    settings.deformedShape.val; // triggers update
 
     if (settings.elementResults.val == "none") return;
-
-    const resultType =
-      ResultType[settings.elementResults.val as keyof typeof ResultType];
 
     group.children.forEach((c) => (c as IResultObject).dispose());
     group.clear();
 
+    const resultType =
+      ResultType[settings.elementResults.rawVal as keyof typeof ResultType];
+
     model.val.analysisOutputs.elements?.forEach((result, index) => {
-      const element = model.val.elements[index];
-      const node1 = nodesCache[element[0]];
-      const node2 = nodesCache[element[1]];
+      const element = model.rawVal.elements[index];
+      const node1 = derivedNodes.rawVal[element[0]];
+      const node2 = derivedNodes.rawVal[element[1]];
       const length = new THREE.Vector3(...node2).distanceTo(
         new THREE.Vector3(...node1)
       );
-      const maxResult = findMax(model.val.analysisOutputs.elements, resultType);
+      const maxResult = findMax(
+        model.rawVal.analysisOutputs.elements,
+        resultType
+      );
       const normalizedResult = result[resultType]?.map(
         (n) => n / (maxResult === 0 ? 1 : maxResult)
       );
@@ -81,21 +78,26 @@ export function elementResults(
           : false
       );
 
-      resultObject.updateScale(size * displayScaleCache);
+      resultObject.updateScale(size * deridedDisplayScale.rawVal);
 
       group.add(resultObject);
     });
   });
 
-  // on settings.support and setting.displayScale change
+  // on deridedDisplayScale update scale
   van.derive(() => {
-    if (settings.elementResults.val == "none") return;
+    deridedDisplayScale.val; // trigger updates
+
+    if (settings.elementResults.rawVal == "none") return;
 
     group.children.forEach((c) =>
-      (c as IResultObject).updateScale(size * displayScale.val)
+      (c as IResultObject).updateScale(size * deridedDisplayScale.rawVal)
     );
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.elementResults update viability
+  van.derive(() => {
+    group.visible = settings.elementResults.val != "none";
   });
 
   return group;
