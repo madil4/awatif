@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "@types/three": "^0.166.0",
-    "awatif-data-structure": "^0.0.13",
-    "awatif-fem": "^0.0.13",
-    "awatif-ui": "^0.0.13",
+    "awatif-data-structure": "^1.0.0",
+    "awatif-fem": "^1.0.0",
+    "awatif-ui": "^1.0.0",
     "three": "^0.166.1"
   }
 }
