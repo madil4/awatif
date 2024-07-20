@@ -35,7 +35,6 @@ export type AnalysisOutputs = {
 type NodeAnalysisOutputs = {
   deformation?: [number, number, number, number, number, number];
   reaction?: [number, number, number, number, number, number];
-  position?: [number, number, number, number, number, number];
 };
 
 type ElementAnalysisOutputs = {
