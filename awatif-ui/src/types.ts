@@ -2,24 +2,14 @@ import { State } from "vanjs-core";
 import {
   Node,
   Element,
-  AnalysisInput,
-  FrameAnalysisInput,
-  LoadAnalysisInput,
-  DistributedLoadAnalysisInput,
-  FrameAnalysisOutput,
-  SupportAnalysisInput,
+  AnalysisInputs,
   AnalysisOutputs,
-  DeformationAnalysisOutput,
-  ReactionAnalysisOutput,
-  PositionAnalysisOutput,
-} from "../../awatif-data-structure";
-import { TemplateResult } from "lit-html";
+} from "awatif-data-structure";
 
 export type App = {
   parameters?: Parameters;
   onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
   settings?: Settings;
-  reports?: ((i: any, b: any) => TemplateResult)[];
 };
 
 export type Parameters = {
@@ -36,19 +26,16 @@ export type Parameters = {
 export type Model = {
   nodes?: Node[];
   elements?: Element[];
-  analysisInputs?: AnalysisInput[];
+  analysisInputs?: AnalysisInputs;
   analysisOutputs?: AnalysisOutputs;
-  designInputs?: any[];
-  designOutputs?: any[];
 };
 
+// refactor to Model
 export type ModelState = State<{
   nodes: Node[];
   elements: Element[];
-  analysisInputs: ProcessedAnalysisInputs;
-  analysisOutputs: ProcessedAnalysisOutputs;
-  designInputs: Map<string, any>;
-  designOutputs: Map<string, any>;
+  analysisInputs: AnalysisInputs;
+  analysisOutputs: AnalysisOutputs;
 }>;
 
 export type Settings = {
@@ -64,8 +51,6 @@ export type Settings = {
   deformedShape?: boolean;
   elementResults?: string;
   nodeResults?: string;
-  dynamic?: boolean;
-  dynamicSettings?: Record<"time" | "timeStep", number>;
 };
 
 export type SettingsState = {
@@ -81,34 +66,4 @@ export type SettingsState = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
-  dynamic: State<boolean>;
-  dynamicSettings: State<Record<"time" | "timeStep", number>>;
-};
-
-// refactor this in awatif-functions lib
-export type ProcessedAnalysisInputs = {
-  elasticities: Map<number, FrameAnalysisInput["elasticity"]>;
-  areas: Map<number, FrameAnalysisInput["area"]>;
-  loads: Map<number, LoadAnalysisInput["load"]>;
-  supports: Map<number, SupportAnalysisInput["support"]>;
-  momentOfInertiaZs: Map<number, FrameAnalysisInput["momentOfInertiaZ"]>;
-  momentOfInertiaYs: Map<number, FrameAnalysisInput["momentOfInertiaY"]>;
-  shearModuluses: Map<number, FrameAnalysisInput["shearModulus"]>;
-  torsionalConstants: Map<number, FrameAnalysisInput["torsionalConstant"]>;
-  distributedLoads: Map<
-    number,
-    DistributedLoadAnalysisInput["distributedLoad"]
-  >;
-};
-
-export type ProcessedAnalysisOutputs = {
-  normal: Map<number, FrameAnalysisOutput["normal"]>;
-  shearY: Map<number, FrameAnalysisOutput["shearY"]>;
-  shearZ: Map<number, FrameAnalysisOutput["shearZ"]>;
-  torsion: Map<number, FrameAnalysisOutput["torsion"]>;
-  bendingY: Map<number, FrameAnalysisOutput["bendingY"]>;
-  bendingZ: Map<number, FrameAnalysisOutput["bendingZ"]>;
-  deformation: Map<number, DeformationAnalysisOutput["deformation"]>;
-  position: Map<number, PositionAnalysisOutput["position"][]>;
-  reaction: Map<number, ReactionAnalysisOutput["reaction"]>;
 };

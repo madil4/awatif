@@ -1,56 +1,55 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 
 export function loads(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   const group = new THREE.Group();
-  const size = 0.05 * settings.gridSize.val;
+  const size = 0.05 * settings.gridSize.rawVal;
 
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.loads, model.analysisInputs, and model.nodes update: replace arrows
+  // on settings.loads & deformedShape, and model clear and create visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.loads.val;
+    settings.deformedShape.val; // trigger update
 
     if (!settings.loads.val) return;
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
-    model.val.analysisInputs.loads.forEach((load, index) => {
+    model.val.analysisInputs.pointLoads?.forEach((load, index) => {
       const arrow = new THREE.ArrowHelper(
-        new THREE.Vector3(...load).normalize(),
-        new THREE.Vector3(...nodesCache[index]),
+        new THREE.Vector3(...load.slice(0, 3)).normalize(),
+        new THREE.Vector3(...derivedNodes.rawVal[index]),
         1,
         0xee9b00,
         0.3,
         0.3
       );
 
-      const scale = size * displayScaleCache;
+      const scale = size * derivedDisplayScale.rawVal;
       arrow.scale.set(scale, scale, scale);
 
       group.add(arrow);
     });
   });
 
-  // on settings.loads and setting.displayScale change: change scale
+  // on derivedDisplayScale update scale
   van.derive(() => {
-    if (!settings.loads.val) return;
+    derivedDisplayScale.val; // triggers update
 
-    const scale = size * displayScale.val;
+    if (!settings.loads.rawVal) return;
+
+    const scale = size * derivedDisplayScale.rawVal;
     group.children.forEach((c) => c.scale.set(scale, scale, scale));
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.loads update update visibility
+  van.derive(() => {
+    group.visible = settings.loads.val;
   });
 
   return group;

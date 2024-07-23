@@ -1,0 +1,33 @@
+{
+  "name": "awatif",
+  "description": "The First Web-based Parametric Structural Engineering Platform",
+  "keywords": [
+    "awatif",
+    "parametricdesign",
+    "computationaldesign",
+    "structuralengineering",
+    "parametricmodeling"
+  ],
+  "author": "Mohamed Adil",
+  "license": "MIT",
+  "homepage": "https://awatif.co/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madil4/awatif"
+  },
+  "scripts": {
+    "test:fem": "npm run test -w awatif-fem",
+    "dev:examples": "npm run dev -w examples",
+    "build:examples": "npm run build -w examples",
+    "dev:website": "npm run dev -w website",
+    "build:website": "npm run build -w website"
+  },
+  "workspaces": [
+    "awatif-data-structure",
+    "awatif-design",
+    "awatif-fem",
+    "awatif-ui",
+    "examples",
+    "website"
+  ]
+}

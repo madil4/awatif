@@ -3,52 +3,55 @@ import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
 import { Text } from "./Text";
 import { getCenter } from "./utils/getCenter";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 
 export function elementsIndexes(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   const group = new THREE.Group();
-  const size = 0.05 * settings.gridSize.val * 0.6;
+  const size = 0.05 * settings.gridSize.rawVal * 0.6;
 
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.elementsIndexes, model.elements, and model.nodes update: replace texts
+  // on settings.elementsIndexes & deformedShape, and model clear and create visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.elementsIndexes.val;
+    settings.deformedShape.val; // triggers update
 
     if (!settings.elementsIndexes.val) return;
 
     group.children.forEach((c) => (c as Text).dispose());
     group.clear();
+
     model.val.elements.forEach((element, index) => {
       const text = new Text(`${index}`, undefined, "#001219");
 
       text.position.set(
-        ...getCenter(nodesCache[element[0]], nodesCache[element[1]])
+        ...getCenter(
+          derivedNodes.rawVal[element[0]],
+          derivedNodes.rawVal[element[1]]
+        )
       );
-      text.updateScale(size * displayScaleCache);
+      text.updateScale(size * derivedDisplayScale.rawVal);
 
       group.add(text);
     });
   });
 
-  // on settings.elementsIndexes and setting.displayScale change
+  // on derivedDisplayScale update scale
   van.derive(() => {
-    if (!settings.elementsIndexes.val) return;
+    derivedDisplayScale.val; // trigger updates
+
+    if (!settings.elementsIndexes.rawVal) return;
 
     group.children.forEach((c) =>
-      (c as Text).updateScale(size * displayScale.val)
+      (c as Text).updateScale(size * derivedDisplayScale.rawVal)
     );
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.elementsIndexes update visibility
+  van.derive(() => {
+    group.visible = settings.elementsIndexes.val;
   });
 
   return group;

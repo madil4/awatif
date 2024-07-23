@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { IResultObject } from "./IResultObject";
 import { Text } from "../Text";
-import { Node } from "../../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 import { ResultType } from "../nodeResults";
 
 export class NodeResult extends THREE.Group implements IResultObject {
@@ -18,9 +18,7 @@ export class NodeResult extends THREE.Group implements IResultObject {
   constructor(
     node: Node,
     resultType: ResultType,
-    result:
-      | [number, number, number]
-      | [number, number, number, number, number, number]
+    result: [number, number, number, number, number, number]
   ) {
     super();
     // init

@@ -3,24 +3,19 @@ import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { get10thFromFirstPoint } from "./utils/get5thFromFirstPoint";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 
 export function orientations(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   // init
   const group = new THREE.Group();
   const geometry = new THREE.BufferGeometry();
   const material = new THREE.LineBasicMaterial({ vertexColors: true });
-  const size = 0.05 * settings.gridSize.val * 0.75;
-
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
+  const size = 0.05 * settings.gridSize.rawVal * 0.75;
 
   // update
   const o = [0, 0, 0];
@@ -43,39 +38,44 @@ export function orientations(
     )
   );
 
-  // on settings.orientations, model.elements, and model.nodes update
+  // on settings.orientations * deformedShape, and model clear and create visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.orientations.val;
+    settings.deformedShape.val; // triggers update
 
     if (!settings.orientations.val) return;
 
     group.clear();
+
     model.val.elements.forEach((element) => {
       const axes = new THREE.LineSegments(geometry, material);
-      const node1 = nodesCache[element[0]];
-      const node2 = nodesCache[element[1]];
+      const node1 = derivedNodes.rawVal[element[0]];
+      const node2 = derivedNodes.rawVal[element[1]];
 
       axes.position.set(...get10thFromFirstPoint(node1, node2));
       axes.rotation.setFromRotationMatrix(
         getTransformationMatrix(node1, node2)
       );
 
-      const scale = size * displayScaleCache;
+      const scale = size * derivedDisplayScale.rawVal;
       axes.scale.set(scale, scale, scale);
 
       group.add(axes);
     });
   });
 
-  // on settings.orientations and setting.displayScale change
+  // on derivedDisplayScale update scale
   van.derive(() => {
-    if (!settings.orientations.val) return;
+    derivedDisplayScale.val;
 
-    const scale = size * displayScale.val;
+    if (!settings.orientations.rawVal) return;
+
+    const scale = size * derivedDisplayScale.rawVal;
     group.children.forEach((c) => c.scale.set(scale, scale, scale));
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.orientations update scale
+  van.derive(() => {
+    group.visible = settings.orientations.val;
   });
 
   return group;

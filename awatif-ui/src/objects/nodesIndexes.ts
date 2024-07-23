@@ -2,31 +2,28 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { SettingsState } from "../types";
 import { Text } from "./Text";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 
 export function nodesIndexes(
-  nodes: State<Node[]>,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   const group = new THREE.Group();
-  const size = 0.05 * settings.gridSize.val * 0.6;
+  const size = 0.05 * settings.gridSize.rawVal * 0.6;
 
-  let displayScaleCache = displayScale.val;
-
-  // on settings.nodesIndexes, and model.nodes update: replace texts
+  // on settings.nodesIndexes, and derivedNodes clear and create visuals
   van.derive(() => {
-    group.visible = settings.nodesIndexes.val;
-
     if (!settings.nodesIndexes.val) return;
 
     group.children.forEach((c) => (c as Text).dispose());
     group.clear();
-    nodes.val.forEach((node, index) => {
+
+    derivedNodes.val.forEach((node, index) => {
       const text = new Text(`${index}`);
 
       text.position.set(...node);
-      text.updateScale(size * displayScaleCache);
+      text.updateScale(size * derivedDisplayScale.rawVal);
 
       group.add(text);
     });
@@ -34,13 +31,18 @@ export function nodesIndexes(
 
   // on settings.nodesIndexes and setting.displayScale change
   van.derive(() => {
-    if (!settings.nodesIndexes.val) return;
+    derivedDisplayScale.val; // triggers update
+
+    if (!settings.nodesIndexes.rawVal) return;
 
     group.children.forEach((c) =>
-      (c as Text).updateScale(size * displayScale.val)
+      (c as Text).updateScale(size * derivedDisplayScale.rawVal)
     );
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.nodesIndexes update visibility
+  van.derive(() => {
+    group.visible = settings.nodesIndexes.val;
   });
 
   return group;

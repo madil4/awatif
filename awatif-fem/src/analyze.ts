@@ -3,69 +3,86 @@ import { deform as deform } from "./deform";
 import {
   Node,
   Element,
-  AnalysisInput,
+  AnalysisInputs,
   AnalysisOutputs,
-  DeformationAnalysisOutput,
-  ReactionAnalysisOutput,
-  FrameAnalysisOutput,
-} from ".";
-import { processAnalysisInputs } from "./utils/processAnalysisInputs";
+} from "awatif-data-structure";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
 import { getStiffnessMatrix } from "./utils/getStiffnessMatrix";
-import { getEquivalentDistributedLoad } from "./utils/getEquivalentDistributedLoad";
+
+// to be removed after refactoring the solver
+enum AnalysisType {
+  Bar,
+  Beam,
+}
 
 export function analyze(
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInput[]
+  analysisInputs: AnalysisInputs
 ): AnalysisOutputs {
-  const pai = processAnalysisInputs(analysisInputs);
-  const { deformations, forces } = deform(nodes, elements, pai);
+  let analysisType = AnalysisType.Bar;
 
-  const analysisOutputs: AnalysisOutputs[keyof AnalysisOutputs] = [];
+  const anySection = analysisInputs.sections?.values().next().value;
+  if ("momentOfInertiaZ" in anySection || "momentOfInertiaZ" in anySection)
+    analysisType = AnalysisType.Beam;
+
+  const { deformations, reactions } = deform(
+    nodes,
+    elements,
+    analysisInputs,
+    analysisType
+  );
+  const analysisOutputs: AnalysisOutputs = {
+    nodes: new Map(),
+    elements: new Map(),
+  };
+
   nodes.forEach((_, index) => {
     const deformation = {
-      0: [
+      [AnalysisType.Bar]: [
         deformations[index * 3],
         deformations[index * 3 + 1],
         deformations[index * 3 + 2],
-      ] as DeformationAnalysisOutput["deformation"],
-      1: [
+        0,
+        0,
+        0,
+      ] as [number, number, number, number, number, number],
+      [AnalysisType.Beam]: [
         deformations[index * 6],
         deformations[index * 6 + 1],
         deformations[index * 6 + 2],
         deformations[index * 6 + 3],
         deformations[index * 6 + 4],
         deformations[index * 6 + 5],
-      ] as DeformationAnalysisOutput["deformation"],
+      ] as [number, number, number, number, number, number],
     };
-    analysisOutputs.push({
-      node: index,
-      deformation: deformation[pai.analysisType],
-    });
 
     const reaction = {
-      0: [
-        forces[index * 3],
-        forces[index * 3 + 1],
-        forces[index * 3 + 2],
-      ] as ReactionAnalysisOutput["reaction"],
-      1: [
-        forces[index * 6] as number,
-        forces[index * 6 + 1] as number,
-        forces[index * 6 + 2] as number,
-        forces[index * 6 + 3] as number,
-        forces[index * 6 + 4] as number,
-        forces[index * 6 + 5] as number,
-      ] as ReactionAnalysisOutput["reaction"],
+      [AnalysisType.Bar]: [
+        reactions[index * 3],
+        reactions[index * 3 + 1],
+        reactions[index * 3 + 2],
+        0,
+        0,
+        0,
+      ] as [number, number, number, number, number, number],
+      [AnalysisType.Beam]: [
+        reactions[index * 6] as number,
+        reactions[index * 6 + 1] as number,
+        reactions[index * 6 + 2] as number,
+        reactions[index * 6 + 3] as number,
+        reactions[index * 6 + 4] as number,
+        reactions[index * 6 + 5] as number,
+      ] as [number, number, number, number, number, number],
     };
-    if (pai.supports.get(index)) {
-      analysisOutputs.push({
-        node: index,
-        reaction: reaction[pai.analysisType],
-      });
-    }
+
+    const hasReaction = analysisInputs.pointSupports?.get(index);
+
+    analysisOutputs.nodes?.set(index, {
+      deformation: deformation[analysisType],
+      ...(hasReaction && { reaction: reaction[analysisType] }),
+    });
   });
 
   elements.forEach((element, index) => {
@@ -75,37 +92,28 @@ export function analyze(
 
     const dxGlobal = mathjs.subset(
       deformations,
-      mathjs.index(getElementNodesIndices[pai.analysisType](element))
+      mathjs.index(getElementNodesIndices[analysisType](element))
     );
-    const T = getTransformationMatrix[pai.analysisType](node0, node1);
+    const T = getTransformationMatrix[analysisType](node0, node1);
     const dxLocal = mathjs.multiply(T, dxGlobal);
-    const kLocal = getStiffnessMatrix[pai.analysisType](pai, index, L);
+    const kLocal = getStiffnessMatrix[analysisType](analysisInputs, index, L);
     let fLocal = mathjs.multiply(kLocal, dxLocal).toArray() as number[];
 
-    // correct forces or reactions due to distributed load
-    if (pai.distributedLoads.get(index)) {
-      const [wY, wZ] = pai.distributedLoads.get(index) || [0, 0];
-      const load = getEquivalentDistributedLoad(wY, wZ, L);
-      fLocal = mathjs.subtract(fLocal, load);
-    }
-
     const analysisOutput = {
-      0: {
-        element: index,
-        normal: [-fLocal[0], -fLocal[0]],
-      } as FrameAnalysisOutput, // sign flips according to Logan's book,
-      1: {
-        element: index,
-        normal: [fLocal[0], fLocal[6]],
-        shearY: [fLocal[1], fLocal[7]],
-        shearZ: [fLocal[2], fLocal[8]],
-        torsion: [fLocal[3], fLocal[9]],
-        bendingY: [fLocal[4], fLocal[10]],
-        bendingZ: [fLocal[5], fLocal[11]],
-      } as FrameAnalysisOutput,
+      [AnalysisType.Bar]: {
+        normal: [-fLocal[0], -fLocal[0]] as [number, number],
+      },
+      [AnalysisType.Beam]: {
+        normal: [fLocal[0], fLocal[6]] as [number, number],
+        shearY: [fLocal[1], fLocal[7]] as [number, number],
+        shearZ: [fLocal[2], fLocal[8]] as [number, number],
+        torsion: [fLocal[3], fLocal[9]] as [number, number],
+        bendingY: [fLocal[4], fLocal[10]] as [number, number],
+        bendingZ: [fLocal[5], fLocal[11]] as [number, number],
+      },
     };
-    analysisOutputs.push(analysisOutput[pai.analysisType]);
+    analysisOutputs.elements?.set(index, analysisOutput[analysisType]);
   });
 
-  return { default: analysisOutputs };
+  return analysisOutputs;
 }

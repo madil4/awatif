@@ -1,51 +1,51 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
-import { Node } from "../../../awatif-data-structure";
+import { Node } from "awatif-data-structure";
 
 export function supports(
-  nodes: State<Node[]>,
   model: ModelState,
   settings: SettingsState,
-  displayScale: State<number>
+  derivedNodes: State<Node[]>,
+  derivedDisplayScale: State<number>
 ): THREE.Group {
   const group = new THREE.Group();
   const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
   const material = new THREE.MeshBasicMaterial({ color: 0x9b2226 });
-  const size = 0.05 * settings.gridSize.val * 0.6;
+  const size = 0.05 * settings.gridSize.rawVal * 0.6;
 
-  let displayScaleCache = displayScale.val;
-  let nodesCache = nodes.val;
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.support, model.analysisInputs, and model.nodes update
+  // on settings.support & deformedShape, and model clear and create visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    group.visible = settings.supports.val;
+    settings.deformedShape.val; // triggers update
 
     if (!settings.supports.val) return;
 
     group.clear();
-    model.val.analysisInputs.supports.forEach((_, index) => {
+
+    model.val.analysisInputs.pointSupports?.forEach((_, index) => {
       const sphere = new THREE.Mesh(geometry, material);
 
-      sphere.position.set(...nodesCache[index]);
-      const scale = size * displayScaleCache;
+      sphere.position.set(...derivedNodes.rawVal[index]);
+      const scale = size * derivedDisplayScale.rawVal;
       sphere.scale.set(scale, scale, scale);
 
       group.add(sphere);
     });
   });
 
-  // on settings.support and setting.displayScale change
+  // on derivedDisplayScale update scale
   van.derive(() => {
-    if (!settings.supports.val) return;
+    derivedDisplayScale.val; // triggers update
 
-    const scale = size * displayScale.val;
+    if (!settings.supports.rawVal) return;
+
+    const scale = size * derivedDisplayScale.rawVal;
     group.children.forEach((c) => c.scale.set(scale, scale, scale));
+  });
 
-    displayScaleCache = displayScale.val;
+  // on settings.supports update visibility
+  van.derive(() => {
+    group.visible = settings.supports.val;
   });
 
   return group;

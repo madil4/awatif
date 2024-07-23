@@ -1,55 +1,39 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { ModelState, SettingsState } from "../types";
-import { Node } from "../../../awatif-data-structure";
-import { updateColorsDueToElementResult } from "./utils/updateColorsDueToElementResult";
+import { Node } from "awatif-data-structure";
 
 export function elements(
-  nodes: State<Node[]>,
   model: ModelState,
-  settings: SettingsState
+  settings: SettingsState,
+  derivedNodes: State<Node[]>
 ): THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial> {
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ vertexColors: true })
+    new THREE.LineBasicMaterial()
   );
-
-  let nodesCache = nodes.val;
-
   lines.frustumCulled = false;
   lines.material.depthTest = false; // don't know why but is solves the rendering order issue
 
-  // update
-  lines.geometry.setAttribute(
-    "color",
-    new THREE.Float32BufferAttribute(
-      model.val.elements
-        .map(() => [...Array(6)])
-        .flat()
-        .fill(1),
-      3
-    )
-  );
-
-  updateColorsDueToElementResult(model, settings, lines);
-
-  van.derive(() => (nodesCache = nodes.val));
-
-  // on settings.elements, model.elements, and model.nodes update
+  // on model.elements & deformedShape, and model update visuals
   van.derive(() => {
-    settings.deformedShape.val; // trigger update when changed
-    lines.visible = settings.elements.val;
+    settings.deformedShape.val; // triggers update
 
     if (!settings.elements.val) return;
 
     const buffer = model.val.elements
-      .map((e) => [...nodesCache[e[0]], ...nodesCache[e[1]]])
+      .map((e) => [...derivedNodes.rawVal[e[0]], ...derivedNodes.rawVal[e[1]]])
       .flat();
 
     lines.geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(buffer, 3)
     );
+  });
+
+  // on settings.elements update visibility
+  van.derive(() => {
+    lines.visible = settings.elements.val;
   });
 
   return lines;

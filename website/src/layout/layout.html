@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif - {{ title }}</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link  href="/css/prism.css" rel="stylesheet"/>
+
+    <!-- styles fro prism -->
+    <style>
+      code[class*="language-"],
+      pre[class*="language-"] {
+        font-size: 0.9rem;
+        line-height: 1.5*0.9;
+      }
+    </style>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1X49GCVEK9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1X49GCVEK9');
+    </script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Sidebar Toggle -->
+    <div class="sticky top-0 inset-x-0 z-20 bg-white border-y px-4 sm:px-6 md:px-8 lg:hidden">
+      <div class="flex items-center py-4">
+        <!-- Navigation Toggle -->
+        <button type="button" class="text-gray-500 hover:text-gray-600" data-hs-overlay="#application-sidebar-brand" aria-controls="application-sidebar-brand" aria-label="Toggle navigation">
+          <span class="sr-only">Toggle Navigation</span>
+          <svg class="size-5" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+          </svg>
+        </button>
+        <!-- End Navigation Toggle -->
+
+        <!-- Breadcrumb -->
+        <ol class="ms-3 flex items-center whitespace-nowrap" aria-label="Breadcrumb">
+          <li class="flex items-center text-sm text-gray-800">
+            Awatif
+            <svg class="flex-shrink-0 mx-3 overflow-visible size-2.5 text-gray-400" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 1L10.6869 7.16086C10.8637 7.35239 10.8637 7.64761 10.6869 7.83914L5 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </li>
+          <li class="text-sm font-semibold text-gray-800 truncate" aria-current="page">{{ breadcrumb }}</li>
+        </ol>
+        <!-- End Breadcrumb -->
+      </div>
+    </div>
+    <!-- End Sidebar Toggle -->
+
+    <!-- Sidebar -->
+    <div
+      id="application-sidebar-brand"
+      class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-primary pt-7 pb-10 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+    >
+      <div class="px-6">
+        <a class="flex items-cente gap-x-2 py-2 px-2 text-xl font-semibold text-white" href="/">
+          <svg class="flex-shrink-0 size-7" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 -3 35 35" fill="#ffffff">
+            <path d="M2,29.14l9.86-16.87c1.86,3.34,4.56,7.62,3.34,11.57a7.61,7.61,0,0,1-2.61,3.68,7.78,7.78,0,0,1-5,1.61c-1.48,0-3,0-4.47,0A4.5,4.5,0,0,0,2,29.14Z"></path>
+            <path d="M12.86,10.43l5.71-10L35.12,29.14H31a13.92,13.92,0,0,1-8.44-3.54,18.23,18.23,0,0,1-3.44-4.5c-.55-.92-1.08-1.85-1.61-2.79-1.25-2.21-2.56-4.39-3.85-6.58Z"></path>
+          </svg>
+          awatif
+        </a>
+      </div>
+
+      <nav class="p-6 w-full flex flex-col flex-wrap">
+        <ul class="space-y-1.5">
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/" %}bg-primary-light{% endif %}" href="/"> Home </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/docs/" %}bg-primary-light{% endif %}" href="/docs"> Documentation </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/examples/" %}bg-primary-light{% endif %}" href="/examples"> Examples </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/blog/" %}bg-primary-light{% endif %}" href="/blog"> Blog </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/automate/" %}bg-primary-light{% endif %}" href="/automate"> Automation Services </a>
+          </li>
+        </ul>
+      </nav>
+
+      <nav class="p-6 w-full flex flex-col flex-wrap">
+        <h2 class="mb-3 text-sm font-semibold space-y-1.5 text-white">Products</h2>
+
+        <ul class="space-y-1.5">
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/awatif-data-structure/" %}bg-primary-light{% endif %}" href="/awatif-data-structure/">
+              awatif-data-structure
+            </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/awatif-ui/" %}bg-primary-light{% endif %}" href="/awatif-ui/"> awatif-ui </a>
+          </li>
+
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/awatif-fem/" %}bg-primary-light{% endif %}" href="/awatif-fem/"> awatif-fem </a>
+          </li>
+
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/awatif-design/" %}bg-primary-light{% endif %}" href="/awatif-design/">
+               awatif-design 
+               <span class="inline bg-gray-50 border border-gray-300 text-gray-600 text-[.6125rem] leading-4 rounded-full py-0.5 px-2">soon</span>
+              </a>
+          </li>
+
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white hover:text-white rounded-lg hover:bg-primary-light {% if page.url == "/marketplace/" %}bg-primary-light{% endif %}" href="/marketplace/">
+               Marketplace 
+               <span class="inline bg-gray-50 border border-gray-300 text-gray-600 text-[.6125rem] leading-4 rounded-full py-0.5 px-2">soon</span>
+              </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <!-- End Sidebar -->
+
+    <!-- Content -->
+    {{ content }}
+    <!-- End Content -->
+
+    <script src="/js/preline.js"></script>
+  </body>
+</html>

@@ -3,25 +3,24 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "truss-designer/index.html",
+    open: "bars/index.html",
   },
-  base: "./",
+  base: "./", // to resolve assets
+  root: "./src",
   build: {
-    outDir: "../docs/src/examples",
+    outDir: "../../website/src/examples",
     emptyOutDir: true,
-    minify: false, // todo: solve the function name look up
     rollupOptions: {
       input: {
-        "two-bars": "two-bars/index.html",
-        building: "building/index.html",
-        sphere: "sphere/index.html",
-        "2d-truss": "2d-truss/index.html",
-        "3d-tower": "3d-tower/index.html",
-        "arched-bridge": "arched-bridge/index.html",
-        "portal-frame": "portal-frame/index.html",
-        "truss-designer": "truss-designer/index.html",
-        dynamic: "dynamic/index.html",
-        report: "report/index.html",
+        "3d-structure": "src/3d-structure/index.html",
+        "advanced-truss": "src/advanced-truss/index.html",
+        bars: "src/bars/index.html",
+        beams: "src/beams/index.html",
+        building: "src/building/index.html",
+        curves: "src/curves/index.html",
+        "mesh-refinement": "src/mesh-refinement/index.html",
+        sphere: "src/sphere/index.html",
+        truss: "src/truss/index.html",
       },
     },
   },

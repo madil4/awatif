@@ -1,1 +1,0 @@
-To produce good images, use sharpen edges filter with oil paint

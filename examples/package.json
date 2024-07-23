@@ -1,6 +1,5 @@
 {
   "name": "examples",
-  "version": "0.0.11",
   "description": "Awatif Examples",
   "scripts": {
     "dev": "vite",
@@ -16,12 +15,14 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "~5.4.5",
-    "vite": "~5.2.10"
+    "typescript": "~5.5.3",
+    "vite": "~5.3.4"
   },
   "dependencies": {
-    "@types/three": "^0.164.0",
-    "mathjs": "^12.4.2",
-    "three": "^0.164.1"
+    "@types/three": "^0.166.0",
+    "awatif-data-structure": "^1.0.0",
+    "awatif-fem": "^1.0.0",
+    "awatif-ui": "^1.0.0",
+    "three": "^0.166.1"
   }
 }
