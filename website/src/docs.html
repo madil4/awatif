@@ -58,12 +58,13 @@ breadcrumb: Documentation
                 </div>
                 <p class="mb-3 text-gray-600">Install the required dependencies:</p>
 
-                <pre class="grid grid-cols-1"><code class="language-ts">npm install vite awatif-ui awatif-fem</code></pre>
+                <pre class="grid grid-cols-1"><code class="language-ts">npm install vite awatif-ui awatif-fem awatif-data-structure</code></pre>
 
                 <ul class="mt-3 list-inside list-disc text-gray-800 space-y-2">
                   <li><a class="text-primary-light hover:underline" href="https://vitejs.dev/">vite</a>: Used to serve and build web apps locally.</li>
                   <li><a class="text-primary-light hover:underline" href="/awatif-ui/">awatif-ui</a>: Enables visualization and interaction with parametric scripts.</li>
                   <li><a class="text-primary-light hover:underline" href="/awatif-fem/">awatif-fem</a>: Facilitates structural analysis.</li>
+                  <li><a class="text-primary-light hover:underline" href="/awatif-awatif-data-structure/">awatif-data-structure</a>: Defines the model data structure.</li>
                 </ul>
               </li>
               <!-- End Step 1: Dependencies -->
@@ -90,7 +91,8 @@ breadcrumb: Documentation
 
                 <p class="my-3 text-gray-600">Write your script in the main.ts file:</p>
 
-                <pre class="grid grid-cols-1"><code class="language-ts">import { app, Parameters, Model, Node, Element, AnalysisInput } from "awatif-ui";
+                <pre class="grid grid-cols-1"><code class="language-ts">import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import { app, Parameters, Model } from "awatif-ui";
 import { analyze } from "awatif-fem";
 
 const parameters: Parameters = {
@@ -103,46 +105,36 @@ function onParameterChange(parameters: Parameters): Model {
   // Your script logic here to recompute the model based on parameter changes
 
   const nodes: Node[] = [
-    [5, 0, 0],
+    [250, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],
-    [5, 0, 8],
+    [250, 0, 400],
   ];
   const elements: Element[] = [
     [0, 1],
     [1, 2],
   ];
 
-  const analysisInputs: AnalysisInput[] = [
-    {
-      node: 0,
-      support: [true, true, true],
-    },
-    {
-      node: 2,
-      support: [true, true, true],
-    },
-    {
-      node: 1,
-      load: [0, 0, -10],
-    },
-    {
-      element: 0,
-      area: 1.2,
-      elasticity: 200,
-    },
-    {
-      element: 1,
-      area: 1.2,
-      elasticity: 200,
-    },
-  ];
+  const analysisInputs: AnalysisInputs = {
+    materials: new Map(),
+    sections: new Map(),
+    pointSupports: new Map(),
+    pointLoads: new Map(),
+  };
+
+  analysisInputs.materials?.set(0, { elasticity: 200 });
+  analysisInputs.materials?.set(1, { elasticity: 200 });
+  analysisInputs.sections?.set(0, { area: 100 });
+  analysisInputs.sections?.set(1, { area: 100 });
+  analysisInputs.pointSupports?.set(0, [true, true, true, true, true, true]);
+  analysisInputs.pointSupports?.set(2, [true, true, true, true, true, true]);
+  analysisInputs.pointLoads?.set(1, [0, 0, -1e3, 0, 0, 0]);
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
-app({ parameters, onParameterChange });</code></pre>
+app({ parameters, onParameterChange, settings: { gridSize: 1000 } });</code></pre>
 
                 <p class="my-3 text-gray-600">To run your app locally, execute the following command. It will provide you with a URL that you can open in your browser:</p>
 

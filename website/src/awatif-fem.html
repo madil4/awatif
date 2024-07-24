@@ -146,7 +146,8 @@ breadcrumb: FEM Solver
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre class="grid grid-cols-1"><code class="language-ts">import { analyze, Node, Element, AnalysisInputs, AnalysisOutputs } from "awatif-fem";
+            <pre class="grid grid-cols-1"><code class="language-ts">import { Node, Element, AnalysisInputs, AnalysisOutputs } from "awatif-data-structure";
+import { analyze } from "awatif-fem";
 
 const nodes: Node[] = [
   [0, 0, 3],
