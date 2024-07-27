@@ -20,7 +20,7 @@ export function bar(
     .fill(0)
     .map(() => Array(dof).fill(0));
 
-  elements.forEach((element, elmIndex) => {
+  elements.forEach((element, index) => {
     const [e0, e1] = element;
 
     const xi0 = nodes[e0];
@@ -28,8 +28,8 @@ export function bar(
     const L = norm(subtract(xi1, xi0)) as number;
 
     const kLocal = getStiffness[AnalysisType.Bar](
-      sections?.get(elmIndex),
-      materials?.get(elmIndex),
+      sections?.get(index),
+      materials?.get(index),
       L
     );
     const T = getTransformationMatrix[AnalysisType.Bar](xi0, xi1);
@@ -52,7 +52,7 @@ export function beam(
     .fill(0)
     .map(() => Array(dof).fill(0));
 
-  elements.forEach((element, elmIndex) => {
+  elements.forEach((element, index) => {
     const [e0, e1] = element;
 
     const xi0 = nodes[e0];
@@ -60,8 +60,8 @@ export function beam(
     const L = norm(subtract(xi1, xi0)) as number;
 
     const kLocal = getStiffness[AnalysisType.Beam](
-      sections?.get(elmIndex),
-      materials?.get(elmIndex),
+      sections?.get(index),
+      materials?.get(index),
       L
     );
     const T = getTransformationMatrix[AnalysisType.Beam](xi0, xi1);
