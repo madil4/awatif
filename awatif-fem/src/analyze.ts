@@ -1,14 +1,14 @@
 import * as mathjs from "mathjs";
-import { deform as deform } from "./deform";
 import {
   Node,
   Element,
   AnalysisInputs,
   AnalysisOutputs,
 } from "awatif-data-structure";
+import { deform } from "./deform";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getElementNodesIndices } from "./utils/getElementNodesIndices";
-import { getStiffnessMatrix } from "./utils/getStiffnessMatrix";
+import { getStiffness } from "./utils/getStiffness";
 
 // to be removed after refactoring the solver
 enum AnalysisType {
@@ -33,6 +33,7 @@ export function analyze(
     analysisInputs,
     analysisType
   );
+
   const analysisOutputs: AnalysisOutputs = {
     nodes: new Map(),
     elements: new Map(),
@@ -96,8 +97,12 @@ export function analyze(
     );
     const T = getTransformationMatrix[analysisType](node0, node1);
     const dxLocal = mathjs.multiply(T, dxGlobal);
-    const kLocal = getStiffnessMatrix[analysisType](analysisInputs, index, L);
-    let fLocal = mathjs.multiply(kLocal, dxLocal).toArray() as number[];
+    const kLocal = getStiffness[analysisType](
+      analysisInputs.sections?.get(index),
+      analysisInputs.materials?.get(index),
+      L
+    );
+    let fLocal = mathjs.multiply(kLocal, dxLocal) as number[];
 
     const analysisOutput = {
       [AnalysisType.Bar]: {

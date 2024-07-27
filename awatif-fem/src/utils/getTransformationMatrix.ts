@@ -8,20 +8,23 @@ enum AnalysisType {
 }
 
 // from global to local
-function bar(node0: Node, node1: Node) {
+function bar(node0: Node, node1: Node): number[][] {
   const vector = mathjs.subtract(node1, node0);
   const length = mathjs.norm(vector) as number;
   const cosX = mathjs.dot(vector, mathjs.matrix([1, 0, 0])) / length;
   const cosY = mathjs.dot(vector, mathjs.matrix([0, 1, 0])) / length;
   const cosZ = mathjs.dot(vector, mathjs.matrix([0, 0, 1])) / length;
-  return mathjs.matrix([
-    [cosX, cosY, cosZ, 0, 0, 0],
-    [0, 0, 0, cosX, cosY, cosZ],
-  ]);
+
+  return mathjs
+    .matrix([
+      [cosX, cosY, cosZ, 0, 0, 0],
+      [0, 0, 0, cosX, cosY, cosZ],
+    ])
+    .toArray() as number[][];
 }
 
 // from global to local
-function beam(node0: Node, node1: Node) {
+function beam(node0: Node, node1: Node): number[][] {
   const vector = mathjs.subtract(node1, node0);
   const length = mathjs.norm(vector) as number;
   const l = mathjs.dot(vector, mathjs.matrix([1, 0, 0])) / length;
@@ -50,7 +53,9 @@ function beam(node0: Node, node1: Node) {
     ]);
   }
 
-  return mathjs.kron(mathjs.identity(4) as mathjs.MathCollection, lambda);
+  return mathjs
+    .kron(mathjs.identity(4) as mathjs.MathCollection, lambda)
+    .toArray() as number[][];
 }
 
 export const getTransformationMatrix = {

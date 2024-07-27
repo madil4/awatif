@@ -1,4 +1,3 @@
-import * as mathjs from "mathjs";
 import { AnalysisInputs } from "awatif-data-structure";
 
 // to be removed after refactoring the solver
@@ -7,31 +6,43 @@ enum AnalysisType {
   Beam,
 }
 
-function bar(supports: AnalysisInputs["pointSupports"], dof: number) {
-  let supportsInd: number[] = [];
+function bar(
+  supportsInputs: AnalysisInputs["pointSupports"],
+  dof: number
+): number[] {
+  const supports: number[] = [];
 
-  supports?.forEach((support, index) => {
-    if (support[0]) supportsInd.push(index * 3);
-    if (support[1]) supportsInd.push(index * 3 + 1);
-    if (support[2]) supportsInd.push(index * 3 + 2);
+  supportsInputs?.forEach((support, index) => {
+    if (support[0]) supports.push(index * 3);
+    if (support[1]) supports.push(index * 3 + 1);
+    if (support[2]) supports.push(index * 3 + 2);
   });
 
-  return mathjs.setDifference(mathjs.range(0, dof), supportsInd);
+  return Array(dof)
+    .fill(0)
+    .map((_, i) => i)
+    .filter((v) => !supports.includes(v));
 }
 
-function beam(supports: AnalysisInputs["pointSupports"], dof: number) {
-  let supportsInd: number[] = [];
+function beam(
+  supportsInputs: AnalysisInputs["pointSupports"],
+  dof: number
+): number[] {
+  const supports: number[] = [];
 
-  supports?.forEach((support, index) => {
-    if (support[0]) supportsInd.push(index * 6);
-    if (support[1]) supportsInd.push(index * 6 + 1);
-    if (support[2]) supportsInd.push(index * 6 + 2);
-    if (support[3]) supportsInd.push(index * 6 + 3);
-    if (support[4]) supportsInd.push(index * 6 + 4);
-    if (support[5]) supportsInd.push(index * 6 + 5);
+  supportsInputs?.forEach((support, index) => {
+    if (support[0]) supports.push(index * 6);
+    if (support[1]) supports.push(index * 6 + 1);
+    if (support[2]) supports.push(index * 6 + 2);
+    if (support[3]) supports.push(index * 6 + 3);
+    if (support[4]) supports.push(index * 6 + 4);
+    if (support[5]) supports.push(index * 6 + 5);
   });
 
-  return mathjs.setDifference(mathjs.range(0, dof), supportsInd);
+  return Array(dof)
+    .fill(0)
+    .map((_, i) => i)
+    .filter((v) => !supports.includes(v));
 }
 
 export const getFreeIndices = {
