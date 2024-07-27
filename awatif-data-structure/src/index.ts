@@ -13,13 +13,13 @@ export type AnalysisInputs = {
   pointLoads?: Map<number, [number, number, number, number, number, number]>;
 };
 
-type MaterialInput = {
+export type MaterialInput = {
   elasticity: number;
   shearModulus?: number;
   mass?: number;
 };
 
-type SectionInput = {
+export type SectionInput = {
   area?: number;
   momentOfInertiaZ?: number;
   momentOfInertiaY?: number;
