@@ -7,6 +7,7 @@ import { settings } from "./settings";
 import "./styles/viewer.css";
 import "./styles/settings.css";
 import "./styles/parameters.css";
+import { exportIfc } from "./exportIfc";
 
 export function app({
   parameters: parameterObj,
@@ -34,6 +35,8 @@ export function app({
   // update
   const viewerElement = viewer(modelState, settingsState);
   const settingElement = settings(model, settingsState);
+  
+  exportIfc(modelState);
 
   document.body.appendChild(viewerElement);
   document.body.appendChild(settingElement);

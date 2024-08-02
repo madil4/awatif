@@ -24,6 +24,7 @@
     "awatif-data-structure": "^1.0.0",
     "three": "~0.166.1",
     "tweakpane": "~4.0.4",
-    "vanjs-core": "^1.5.1"
+    "vanjs-core": "^1.5.1",
+    "web-ifc": "0.0.54"
   }
 }
