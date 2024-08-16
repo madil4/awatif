@@ -1,54 +1,43 @@
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
-import {
-  flatten,
-  lusolve,
-  Matrix,
-  multiply,
-  subset,
-  zeros,
-  index,
-} from "mathjs";
+import { flatten, lusolve, multiply, subset, index } from "mathjs";
 import { getStiffnesses } from "./utils/getStiffnesses";
 import { getFreeIndices } from "./utils/getFreeIndices";
 import { getAppliedForces } from "./utils/getAppliedForces";
 
-// to be removed after refactoring the solver
-enum AnalysisType {
-  Bar,
-  Beam,
-}
-
 export function deform(
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInputs,
-  analysisType: AnalysisType
+  analysisInputs: AnalysisInputs
 ): { deformations: number[]; reactions: number[] } {
-  const dof = nodes.length * (analysisType === AnalysisType.Bar ? 3 : 6);
+  const dof = nodes.length * 6;
 
-  const freeInd = getFreeIndices[analysisType](
+  const freeInd = getFreeIndices(
     analysisInputs.pointSupports,
+    analysisInputs.sections,
+    elements,
     dof
   );
-  const stiffnesses = getStiffnesses[analysisType](
+
+  const appliedForces = getAppliedForces(analysisInputs.pointLoads, dof);
+
+  const stiffnesses = getStiffnesses(
     nodes,
     elements,
     analysisInputs.materials,
     analysisInputs.sections,
     dof
   );
-  const appliedForces = getAppliedForces[analysisType](
-    analysisInputs.pointLoads,
-    dof
+
+  const f = subset(appliedForces, index(freeInd));
+  const K = subset(stiffnesses, index(freeInd, freeInd));
+  const d = lusolve(K, f) as number[];
+
+  const deformations: number[] = subset(
+    Array(dof).fill(0),
+    index(freeInd),
+    flatten(d)
   );
 
-  const K = subset(stiffnesses, index(freeInd, freeInd));
-  const F = subset(appliedForces, index(freeInd));
-  const dxFree = lusolve(K, F);
-
-  const deformations = (
-    subset(zeros(dof), index(freeInd), flatten(dxFree)) as Matrix
-  ).toArray() as number[];
   const reactions = multiply(stiffnesses, deformations);
 
   return {

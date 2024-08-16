@@ -24,8 +24,8 @@ export class ConstantResult extends THREE.Group implements IResultObject {
 
     const shape = new THREE.Shape()
       .moveTo(0, 0)
-      .lineTo(0, normalizedResult[0])
-      .lineTo(length, normalizedResult[0])
+      .lineTo(0, normalizedResult[1])
+      .lineTo(length, normalizedResult[1])
       .lineTo(length, 0)
       .lineTo(0, 0);
 
@@ -46,7 +46,7 @@ export class ConstantResult extends THREE.Group implements IResultObject {
     // mesh
     const geometry = new THREE.ShapeGeometry(shape);
     const material = new THREE.MeshBasicMaterial({
-      color: normalizedResult[0] > 0 ? 0x005f73 : 0xae2012,
+      color: normalizedResult[1] > 0 ? 0x005f73 : 0xae2012,
       side: THREE.DoubleSide,
     });
 
@@ -59,7 +59,7 @@ export class ConstantResult extends THREE.Group implements IResultObject {
     this.add(this.mesh);
 
     // text
-    this.text = new Text(`${result[0].toFixed(4)}`);
+    this.text = new Text(`${result[1].toFixed(4)}`);
 
     this.normalizedResult = normalizedResult;
     this.textPosition = getCenter(node1, node2);
@@ -76,7 +76,7 @@ export class ConstantResult extends THREE.Group implements IResultObject {
 
     // adjust text position when scaling
     this.text.position.set(...this.textPosition);
-    this.text.translateZ(this.normalizedResult[0] * 2.5 * scale);
+    this.text.translateZ(this.normalizedResult[1] * 2.5 * scale);
   }
 
   dispose() {

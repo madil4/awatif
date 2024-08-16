@@ -1,27 +1,6 @@
 import { AnalysisInputs } from "awatif-data-structure";
 
-// to be removed after refactoring the solver
-enum AnalysisType {
-  Bar,
-  Beam,
-}
-
-export function bar(
-  forcesInputs: AnalysisInputs["pointLoads"],
-  dof: number
-): number[] {
-  const forces: number[] = Array(dof).fill(0);
-
-  forcesInputs?.forEach((force, index) => {
-    forces[index * 3] = force[0];
-    forces[index * 3 + 1] = force[1];
-    forces[index * 3 + 2] = force[2];
-  });
-
-  return forces;
-}
-
-export function beam(
+export function getAppliedForces(
   forcesInputs: AnalysisInputs["pointLoads"],
   dof: number
 ): number[] {
@@ -38,8 +17,3 @@ export function beam(
 
   return forces;
 }
-
-export const getAppliedForces = {
-  [AnalysisType.Bar]: bar,
-  [AnalysisType.Beam]: beam,
-};
