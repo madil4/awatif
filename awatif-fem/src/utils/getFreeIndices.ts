@@ -1,51 +1,41 @@
-import { AnalysisInputs } from "awatif-data-structure";
+import { AnalysisInputs, Element } from "awatif-data-structure";
 
-// to be removed after refactoring the solver
-enum AnalysisType {
-  Bar,
-  Beam,
-}
-
-function bar(
+export function getFreeIndices(
   supportsInputs: AnalysisInputs["pointSupports"],
+  sectionInputs: AnalysisInputs["sections"],
+  elements: Element[],
   dof: number
 ): number[] {
-  const supports: number[] = [];
-
+  const supportsIndexes: number[] = [];
   supportsInputs?.forEach((support, index) => {
-    if (support[0]) supports.push(index * 3);
-    if (support[1]) supports.push(index * 3 + 1);
-    if (support[2]) supports.push(index * 3 + 2);
+    if (support[0]) supportsIndexes.push(index * 6);
+    if (support[1]) supportsIndexes.push(index * 6 + 1);
+    if (support[2]) supportsIndexes.push(index * 6 + 2);
+    if (support[3]) supportsIndexes.push(index * 6 + 3);
+    if (support[4]) supportsIndexes.push(index * 6 + 4);
+    if (support[5]) supportsIndexes.push(index * 6 + 5);
+  });
+
+  const barNodes = new Set<number>();
+  sectionInputs?.forEach((section, index) => {
+    if (!section.momentOfInertiaY && !section.momentOfInertiaZ) {
+      const element = elements[index];
+      barNodes.add(element[0]);
+      barNodes.add(element[1]);
+    }
+  });
+
+  const rotationIndexes: number[] = [];
+  barNodes.forEach((index) => {
+    rotationIndexes.push(index * 6 + 3);
+    rotationIndexes.push(index * 6 + 4);
+    rotationIndexes.push(index * 6 + 5);
   });
 
   return Array(dof)
     .fill(0)
     .map((_, i) => i)
-    .filter((v) => !supports.includes(v));
+    .filter(
+      (v) => !supportsIndexes.includes(v) && !rotationIndexes.includes(v)
+    );
 }
-
-function beam(
-  supportsInputs: AnalysisInputs["pointSupports"],
-  dof: number
-): number[] {
-  const supports: number[] = [];
-
-  supportsInputs?.forEach((support, index) => {
-    if (support[0]) supports.push(index * 6);
-    if (support[1]) supports.push(index * 6 + 1);
-    if (support[2]) supports.push(index * 6 + 2);
-    if (support[3]) supports.push(index * 6 + 3);
-    if (support[4]) supports.push(index * 6 + 4);
-    if (support[5]) supports.push(index * 6 + 5);
-  });
-
-  return Array(dof)
-    .fill(0)
-    .map((_, i) => i)
-    .filter((v) => !supports.includes(v));
-}
-
-export const getFreeIndices = {
-  [AnalysisType.Bar]: bar,
-  [AnalysisType.Beam]: beam,
-};
