@@ -1,3 +1,1 @@
-## Documentation
-
-[Awatif Docs](https://awatif.co/)
+[Awatif Website](https://awatif.co/)
