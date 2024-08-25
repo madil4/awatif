@@ -1,44 +1,23 @@
 import van from "vanjs-core";
 
 import { Template } from "./types";
+import { viewer } from "../viewer/viewer";
+import { parameters } from "../parameters/parameters";
 
 import { Model, ModelState } from "../types";
-import { viewer } from "../viewer/viewer";
-import { SettingsState } from "../viewer/types";
-import { settings } from "../settings";
-
-import "../styles/settings.css";
-import { parameters } from "../parameters/parameters";
 
 export function template({
   parameters: parameterObj,
   onParameterChange,
-  settings: settingsObj,
+  settings,
 }: Template) {
   // init
   const model = onParameterChange?.(parameterObj ?? {}) ?? {};
   const modelState: ModelState = van.state(getModelState(model));
-  const settingsState: SettingsState = {
-    gridSize: van.state(settingsObj?.gridSize ?? 20),
-    displayScale: van.state(settingsObj?.displayScale ?? 1),
-    nodes: van.state(settingsObj?.nodes ?? true),
-    elements: van.state(settingsObj?.elements ?? true),
-    nodesIndexes: van.state(settingsObj?.nodesIndexes ?? false),
-    elementsIndexes: van.state(settingsObj?.elementsIndexes ?? false),
-    orientations: van.state(settingsObj?.orientations ?? false),
-    supports: van.state(settingsObj?.supports ?? true),
-    loads: van.state(settingsObj?.loads ?? true),
-    deformedShape: van.state(settingsObj?.deformedShape ?? false),
-    elementResults: van.state(settingsObj?.elementResults ?? "none"),
-    nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
-  };
 
   // update
-  const viewerElement = viewer(modelState, settingsState);
-  const settingElement = settings(model, settingsState);
-
+  const viewerElement = viewer(modelState, settings ?? {});
   document.body.appendChild(viewerElement);
-  document.body.appendChild(settingElement);
 
   // on parameter change
   if (parameterObj && onParameterChange) {

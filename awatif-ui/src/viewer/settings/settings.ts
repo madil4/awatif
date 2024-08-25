@@ -1,10 +1,13 @@
 import { Pane } from "tweakpane";
-import { Model } from "./types";
 
-import { SettingsState } from "./viewer/types";
+import { SettingsState } from "./types";
+
+import { ModelState } from "../../types";
+
+import "./styles.css";
 
 export function settings(
-  model: Model,
+  model: ModelState,
   settingsState: SettingsState
 ): HTMLElement {
   // init
@@ -25,7 +28,7 @@ export function settings(
     step: 1,
   });
 
-  if (model.nodes) {
+  if (model.rawVal.nodes) {
     pane.addBinding(settingsState.nodes, "val", { label: "Nodes" });
     pane.addBinding(settingsState.elements, "val", {
       label: "Elements",
@@ -41,14 +44,14 @@ export function settings(
     });
   }
 
-  if (model.analysisInputs) {
+  if (model.rawVal.analysisInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
 
     inputs.addBinding(settingsState.supports, "val", { label: "Supports" });
     inputs.addBinding(settingsState.loads, "val", { label: "Loads" });
   }
 
-  if (model.analysisOutputs) {
+  if (model.rawVal.analysisOutputs) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
 
     outputs.addBinding(settingsState.elementResults, "val", {

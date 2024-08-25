@@ -9,13 +9,13 @@ export function parameters(
   onChange: (e: TpChangeEvent<unknown>) => void
 ): HTMLDivElement {
   // init
-  const element = document.createElement("div");
-  const pane = new Pane({ title: "Parameters", container: element });
+  const container = document.createElement("div");
+  const pane = new Pane({ title: "Parameters", container });
   const params = convertToTweakParams(parameters);
   const folders = new Map<string, FolderApi>();
 
   // update
-  element.setAttribute("id", "parameters");
+  container.setAttribute("id", "parameters");
 
   folders.set("root", pane);
 
@@ -40,7 +40,7 @@ export function parameters(
     if (!e.last) onChange(e);
   });
 
-  return element;
+  return container;
 }
 
 const convertToTweakParams = (

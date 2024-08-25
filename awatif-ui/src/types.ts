@@ -20,18 +20,3 @@ export type ModelState = State<{
   analysisInputs: AnalysisInputs;
   analysisOutputs: AnalysisOutputs;
 }>;
-
-export type Settings = {
-  gridSize?: number;
-  displayScale?: number;
-  nodes?: boolean;
-  elements?: boolean;
-  nodesIndexes?: boolean;
-  elementsIndexes?: boolean;
-  orientations?: boolean;
-  supports?: boolean;
-  loads?: boolean;
-  deformedShape?: boolean;
-  elementResults?: string;
-  nodeResults?: string;
-};
