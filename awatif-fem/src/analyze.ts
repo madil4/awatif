@@ -6,7 +6,7 @@ import {
 } from "awatif-data-structure";
 import { deform } from "./deform";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
-import { getStiffness } from "./utils/getStiffnes";
+import { getStiffness } from "./utils/getStiffness";
 import { multiply, norm, subset, subtract, index } from "mathjs";
 
 export function analyze(

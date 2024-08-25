@@ -1,7 +1,7 @@
 import { AnalysisInputs, Node, Element } from "awatif-data-structure";
 import { multiply, norm, subtract, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
-import { getStiffness } from "./getStiffnes";
+import { getStiffness } from "./getStiffness";
 
 export function getStiffnesses(
   nodes: Node[],
