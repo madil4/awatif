@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
+import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
+
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { get10thFromFirstPoint } from "./utils/get5thFromFirstPoint";
-import { Node } from "awatif-data-structure";
 
 export function orientations(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {
@@ -46,7 +48,7 @@ export function orientations(
 
     group.clear();
 
-    model.val.elements.forEach((element) => {
+    structure.elements?.val.forEach((element) => {
       const axes = new THREE.LineSegments(geometry, material);
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];

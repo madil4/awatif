@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { SettingsState } from "../../types";
 import { Text } from "./Text";
 import { Node } from "awatif-data-structure";
+import { Settings } from "../settings/types";
 
 export function nodesIndexes(
-  settings: SettingsState,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {

@@ -1,9 +1,37 @@
-import { Model } from "../types";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
 import { Parameters } from "../parameters/types";
-import { Settings } from "../viewer/settings/types";
 
 export type Template = {
   parameters?: Parameters;
-  onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
+  onParameterChange?:
+    | (() => Structure)
+    | ((parameters: Parameters) => Structure);
   settings?: Settings;
+};
+
+export type Structure = {
+  nodes?: Node[];
+  elements?: Element[];
+  analysisInputs?: AnalysisInputs;
+  analysisOutputs?: AnalysisOutputs;
+};
+
+export type Settings = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  elementResults?: string;
+  nodeResults?: string;
 };

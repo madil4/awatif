@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
 import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
 
 export function supports(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {
@@ -22,7 +23,7 @@ export function supports(
 
     group.clear();
 
-    model.val.analysisInputs.pointSupports?.forEach((_, index) => {
+    structure.analysisInputs?.val.pointSupports?.forEach((_, index) => {
       const sphere = new THREE.Mesh(geometry, material);
 
       sphere.position.set(...derivedNodes.rawVal[index]);

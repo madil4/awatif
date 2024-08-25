@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 
-export type Settings = {
+export type SettingsState = {
   gridSize: State<number>;
   displayScale: State<number>;
   nodes: State<boolean>;

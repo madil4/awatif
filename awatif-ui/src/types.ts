@@ -6,17 +6,9 @@ import {
   AnalysisOutputs,
 } from "awatif-data-structure";
 
-export type Model = {
-  nodes?: Node[];
-  elements?: Element[];
-  analysisInputs?: AnalysisInputs;
-  analysisOutputs?: AnalysisOutputs;
+export type Structure = {
+  nodes?: State<Node[]>;
+  elements?: State<Element[]>;
+  analysisInputs?: State<AnalysisInputs>;
+  analysisOutputs?: State<AnalysisOutputs>;
 };
-
-// refactor to Model
-export type ModelState = State<{
-  nodes: Node[];
-  elements: Element[];
-  analysisInputs: AnalysisInputs;
-  analysisOutputs: AnalysisOutputs;
-}>;

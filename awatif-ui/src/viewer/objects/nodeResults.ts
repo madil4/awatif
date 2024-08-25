@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
+import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
+
 import { IResultObject } from "./resultObjects/IResultObject";
 import { NodeResult } from "./resultObjects/NodeResult";
-import { Node } from "awatif-data-structure";
 
 export enum ResultType {
   deformation = "deformation",
@@ -11,8 +13,8 @@ export enum ResultType {
 }
 
 export function nodeResults(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {
@@ -32,7 +34,7 @@ export function nodeResults(
     const resultType =
       ResultType[settings.nodeResults.rawVal as keyof typeof ResultType];
 
-    model.val.analysisOutputs.nodes?.forEach((output, index) => {
+    structure.analysisOutputs?.val.nodes?.forEach((output, index) => {
       const nodeResult = new NodeResult(
         derivedNodes.rawVal[index],
         resultType,

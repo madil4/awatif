@@ -1,34 +1,32 @@
 import { Pane } from "tweakpane";
+import { Structure } from "../../types";
 
-import { SettingsState } from "./types";
-
-import { ModelState } from "../../types";
+import { Settings } from "./types";
 
 import "./styles.css";
 
 export function settings(
-  model: ModelState,
-  settingsState: SettingsState
+  structure: Structure,
+  settingsState: Settings
 ): HTMLElement {
   // init
-  const element = document.createElement("div");
+  const container = document.createElement("div");
   const pane = new Pane({
     title: "Settings",
     expanded: false,
-    container: element,
+    container,
   });
 
   // update
-  element.setAttribute("id", "settings");
+  container.setAttribute("id", "settings");
 
-  pane.addBinding(settingsState.displayScale, "val", {
-    label: "Display scale",
-    min: -10,
-    max: 10,
-    step: 1,
-  });
-
-  if (model.rawVal.nodes) {
+  if (structure.nodes?.rawVal) {
+    pane.addBinding(settingsState.displayScale, "val", {
+      label: "Display scale",
+      min: -10,
+      max: 10,
+      step: 1,
+    });
     pane.addBinding(settingsState.nodes, "val", { label: "Nodes" });
     pane.addBinding(settingsState.elements, "val", {
       label: "Elements",
@@ -44,14 +42,14 @@ export function settings(
     });
   }
 
-  if (model.rawVal.analysisInputs) {
+  if (structure.analysisInputs?.rawVal) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
 
     inputs.addBinding(settingsState.supports, "val", { label: "Supports" });
     inputs.addBinding(settingsState.loads, "val", { label: "Loads" });
   }
 
-  if (model.rawVal.analysisOutputs) {
+  if (structure.analysisOutputs?.rawVal) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
 
     outputs.addBinding(settingsState.elementResults, "val", {
@@ -79,5 +77,5 @@ export function settings(
     });
   }
 
-  return element;
+  return container;
 }

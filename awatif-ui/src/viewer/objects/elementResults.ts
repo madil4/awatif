@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
 import { AnalysisOutputs, Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
+
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { ConstantResult } from "./resultObjects/ConstantResult";
 import { LinearResult } from "./resultObjects/LinearResult";
@@ -17,8 +19,8 @@ enum ResultType {
 }
 
 export function elementResults(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   deridedDisplayScale: State<number>
 ): THREE.Group {
@@ -46,15 +48,15 @@ export function elementResults(
     const resultType =
       ResultType[settings.elementResults.rawVal as keyof typeof ResultType];
 
-    model.val.analysisOutputs.elements?.forEach((result, index) => {
-      const element = model.rawVal.elements[index];
+    structure.analysisOutputs?.val.elements?.forEach((result, index) => {
+      const element = structure.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];
       const length = new THREE.Vector3(...node2).distanceTo(
         new THREE.Vector3(...node1)
       );
       const maxResult = findMax(
-        model.rawVal.analysisOutputs.elements,
+        structure.analysisOutputs?.rawVal.elements,
         resultType
       );
       const normalizedResult = result[resultType]?.map(

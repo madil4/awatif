@@ -2,9 +2,10 @@ import * as THREE from "three";
 import van from "vanjs-core";
 import { Node } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Structure } from "../types";
 
-import { Settings, SettingsState } from "./settings/types";
-import { settings } from "./settings/settings";
+import { Settings } from "./settings/types";
+import { settings as settingsElement } from "./settings/settings";
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
@@ -17,32 +18,15 @@ import { orientations } from "./objects/orientations";
 import { elementResults } from "./objects/elementResults";
 import { nodeResults } from "./objects/nodeResults";
 
-import { ModelState } from "../types";
-
 import "./styles.css";
 
 export function viewer(
-  model: ModelState,
-  settingsObj: Settings
+  structure: Structure,
+  settings: Settings
 ): HTMLDivElement {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
-  const container = document.createElement("div");
-  const settingsState: SettingsState = {
-    gridSize: van.state(settingsObj.gridSize ?? 20),
-    displayScale: van.state(settingsObj.displayScale ?? 1),
-    nodes: van.state(settingsObj.nodes ?? true),
-    elements: van.state(settingsObj.elements ?? true),
-    nodesIndexes: van.state(settingsObj.nodesIndexes ?? false),
-    elementsIndexes: van.state(settingsObj.elementsIndexes ?? false),
-    orientations: van.state(settingsObj.orientations ?? false),
-    supports: van.state(settingsObj.supports ?? true),
-    loads: van.state(settingsObj.loads ?? true),
-    deformedShape: van.state(settingsObj.deformedShape ?? false),
-    elementResults: van.state(settingsObj.elementResults ?? "none"),
-    nodeResults: van.state(settingsObj.nodeResults ?? "none"),
-  };
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     45,
@@ -53,49 +37,52 @@ export function viewer(
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
   const derivedDisplayScale = van.derive(() =>
-    settingsState.displayScale.val === 0
+    settings.displayScale.val === 0
       ? 1
-      : settingsState.displayScale.val > 0
-      ? settingsState.displayScale.val
-      : -1 / settingsState.displayScale.val
+      : settings.displayScale.val > 0
+      ? settings.displayScale.val
+      : -1 / settings.displayScale.val
   );
-  const derivedNodes = van.derive(() => {
-    if (!settingsState.deformedShape.val) return model.val.nodes;
+  const derivedNodes: Structure["nodes"] = van.derive(() => {
+    if (!settings.deformedShape.val) return structure.nodes?.val ?? [];
 
-    return model.val.nodes.map((node, index) => {
-      const d = model.val.analysisOutputs.nodes
-        ?.get(index)
-        ?.deformation?.slice(0, 3) ?? [0, 0, 0];
-      return node.map((n, i) => n + d[i]) as Node;
-    });
+    return (
+      structure.nodes?.val.map((node, index) => {
+        const d = structure.analysisOutputs?.val.nodes
+          ?.get(index)
+          ?.deformation?.slice(0, 3) ?? [0, 0, 0];
+        return node.map((n, i) => n + d[i]) as Node;
+      }) ?? []
+    );
   });
 
-  // update
-  const settingElement = settings(model, settingsState);
+  const container = document.createElement("div");
+  const settingElement = settingsElement(structure, settings);
 
+  // update
   container.setAttribute("id", "viewer");
   container.appendChild(renderer.domElement);
   container.appendChild(settingElement);
 
   scene.add(
-    grid(settingsState.gridSize.rawVal),
-    axes(settingsState.gridSize.rawVal),
-    nodes(settingsState, derivedNodes, derivedDisplayScale),
-    elements(model, settingsState, derivedNodes),
-    nodesIndexes(settingsState, derivedNodes, derivedDisplayScale),
-    elementsIndexes(model, settingsState, derivedNodes, derivedDisplayScale),
-    supports(model, settingsState, derivedNodes, derivedDisplayScale),
-    loads(model, settingsState, derivedNodes, derivedDisplayScale),
-    orientations(model, settingsState, derivedNodes, derivedDisplayScale),
-    elementResults(model, settingsState, derivedNodes, derivedDisplayScale),
-    nodeResults(model, settingsState, derivedNodes, derivedDisplayScale)
+    grid(settings.gridSize.rawVal),
+    axes(settings.gridSize.rawVal),
+    nodes(settings, derivedNodes, derivedDisplayScale),
+    elements(structure, settings, derivedNodes),
+    nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+    elementsIndexes(structure, settings, derivedNodes, derivedDisplayScale),
+    supports(structure, settings, derivedNodes, derivedDisplayScale),
+    loads(structure, settings, derivedNodes, derivedDisplayScale),
+    orientations(structure, settings, derivedNodes, derivedDisplayScale),
+    elementResults(structure, settings, derivedNodes, derivedDisplayScale),
+    nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
   );
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const gridSize = settingsState.gridSize.rawVal;
+  const gridSize = settings.gridSize.rawVal;
   const z2fit = gridSize * 0.5 + (gridSize * 0.5) / Math.tan(45 * 0.5);
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
   controls.target.set(0.5 * gridSize, 0.5 * gridSize, 0);
@@ -117,21 +104,24 @@ export function viewer(
     renderer.render(scene, camera);
   });
 
-  // on settings or model change: render
+  // on structure or settings change: render
   van.derive(() => {
-    model.val;
+    structure.nodes?.val;
+    structure.elements?.val;
+    structure.analysisInputs?.val;
+    structure.analysisInputs?.val;
 
-    settingsState.displayScale.val;
-    settingsState.nodes.val;
-    settingsState.elements.val;
-    settingsState.nodesIndexes.val;
-    settingsState.elementsIndexes.val;
-    settingsState.orientations.val;
-    settingsState.supports.val;
-    settingsState.loads.val;
-    settingsState.deformedShape.val;
-    settingsState.elementResults.val;
-    settingsState.nodeResults.val;
+    settings.displayScale.val;
+    settings.nodes.val;
+    settings.elements.val;
+    settings.nodesIndexes.val;
+    settings.elementsIndexes.val;
+    settings.orientations.val;
+    settings.supports.val;
+    settings.loads.val;
+    settings.deformedShape.val;
+    settings.elementResults.val;
+    settings.nodeResults.val;
 
     setTimeout(() => renderer.render(scene, camera)); // to ensure render is called after all updates are done in that event tick
   });

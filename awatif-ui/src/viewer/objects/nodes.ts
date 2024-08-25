@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import { SettingsState } from "../../types";
 import van, { State } from "vanjs-core";
 import { Node } from "awatif-data-structure";
+import { Settings } from "../settings/types";
 
 export function nodes(
-  settings: SettingsState,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Points<THREE.BufferGeometry, THREE.PointsMaterial> {

@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
 import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
 
 export function loads(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {
@@ -20,7 +21,7 @@ export function loads(
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
-    model.val.analysisInputs.pointLoads?.forEach((load, index) => {
+    structure.analysisInputs?.val.pointLoads?.forEach((load, index) => {
       const arrow = new THREE.ArrowHelper(
         new THREE.Vector3(...load.slice(0, 3)).normalize(),
         new THREE.Vector3(...derivedNodes.rawVal[index]),

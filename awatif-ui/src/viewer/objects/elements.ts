@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
 import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
 
 export function elements(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>
 ): THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial> {
   const lines = new THREE.LineSegments(
@@ -21,9 +22,13 @@ export function elements(
 
     if (!settings.elements.val) return;
 
-    const buffer = model.val.elements
-      .map((e) => [...derivedNodes.rawVal[e[0]], ...derivedNodes.rawVal[e[1]]])
-      .flat();
+    const buffer =
+      structure.elements?.val
+        .map((e) => [
+          ...derivedNodes.rawVal[e[0]],
+          ...derivedNodes.rawVal[e[1]],
+        ])
+        .flat() ?? [];
 
     lines.geometry.setAttribute(
       "position",

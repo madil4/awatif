@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../../types";
+import { Node } from "awatif-data-structure";
+import { Structure } from "../../types";
+import { Settings } from "../settings/types";
+
 import { Text } from "./Text";
 import { getCenter } from "./utils/getCenter";
-import { Node } from "awatif-data-structure";
 
 export function elementsIndexes(
-  model: ModelState,
-  settings: SettingsState,
+  structure: Structure,
+  settings: Settings,
   derivedNodes: State<Node[]>,
   derivedDisplayScale: State<number>
 ): THREE.Group {
@@ -23,7 +25,7 @@ export function elementsIndexes(
     group.children.forEach((c) => (c as Text).dispose());
     group.clear();
 
-    model.val.elements.forEach((element, index) => {
+    structure.elements?.val.forEach((element, index) => {
       const text = new Text(`${index}`, undefined, "#001219");
 
       text.position.set(
