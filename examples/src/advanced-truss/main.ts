@@ -1,4 +1,4 @@
-import { app, Model, Parameters } from "awatif-ui";
+import { template, Model, Parameters } from "awatif-ui";
 import { analyze } from "awatif-fem";
 import { AnalysisInputs, Node, Element } from "awatif-data-structure";
 import { createTruss } from "./createTruss";
@@ -422,7 +422,7 @@ const offset2D = (list: [number, number][], offset: number): Element[] =>
 const offset1D = (list: number[], offset: number) =>
   list.map((n) => n + offset);
 
-app({
+template({
   parameters,
   onParameterChange,
   settings: { deformedShape: true, loads: false },

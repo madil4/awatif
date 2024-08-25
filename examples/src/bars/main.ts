@@ -1,6 +1,6 @@
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { app, Parameters, Model } from "awatif-ui";
+import { template, Parameters, Model } from "awatif-ui";
 
 const parameters: Parameters = {
   xPosition: { value: 600, min: 0, max: 1000 },
@@ -38,4 +38,4 @@ function onParameterChange(parameters: Parameters): Model {
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
-app({ parameters, onParameterChange, settings: { gridSize: 1000 } });
+template({ parameters, onParameterChange, settings: { gridSize: 1000 } });

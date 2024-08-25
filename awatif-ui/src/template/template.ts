@@ -1,19 +1,21 @@
 import van from "vanjs-core";
-import { App, Model, ModelState } from "./types";
-import { viewer } from "./viewer/viewer";
-import { parameters } from "./parameters";
-import { settings } from "./settings";
 
-import { SettingsState } from "./viewer/types";
+import { Template } from "./types";
 
-import "./styles/settings.css";
-import "./styles/parameters.css";
+import { Model, ModelState } from "../types";
+import { viewer } from "../viewer/viewer";
+import { SettingsState } from "../viewer/types";
+import { parameters } from "../parameters";
+import { settings } from "../settings";
 
-export function app({
+import "../styles/settings.css";
+import "../styles/parameters.css";
+
+export function template({
   parameters: parameterObj,
   onParameterChange,
   settings: settingsObj,
-}: App) {
+}: Template) {
   // init
   const model = onParameterChange?.(parameterObj ?? {}) ?? {};
   const modelState: ModelState = van.state(getModelState(model));

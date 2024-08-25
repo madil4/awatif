@@ -1,5 +1,5 @@
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
-import { app, Parameters, Model } from "awatif-ui";
+import { template, Parameters, Model } from "awatif-ui";
 import * as THREE from "three";
 
 export const parameters: Parameters = {
@@ -108,7 +108,7 @@ export function onParameterChange(parameters: Parameters): Model {
   return { nodes, elements, analysisInputs };
 }
 
-app({
+template({
   parameters,
   onParameterChange,
 });

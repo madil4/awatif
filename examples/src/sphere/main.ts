@@ -1,4 +1,4 @@
-import { app, Parameters, Model } from "awatif-ui";
+import { template, Parameters, Model } from "awatif-ui";
 import { Node, Element } from "awatif-data-structure";
 
 export const parameters: Parameters = {
@@ -76,7 +76,7 @@ export function onParameterChange(parameters: Parameters): Model {
   return { nodes, elements };
 }
 
-app({
+template({
   parameters,
   onParameterChange,
 });
