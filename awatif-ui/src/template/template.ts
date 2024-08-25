@@ -1,19 +1,26 @@
 import van from "vanjs-core";
 import { viewer } from "../viewer/viewer";
 import { parameters } from "../parameters/parameters";
+import { Parameters } from "../parameters/types";
+import { Structure } from "../types";
 import { Settings } from "../viewer/settings/types";
-import { Structure as StructureState } from "../types";
 
-import { Template } from "./types";
+import { StructureObj, SettingsObj } from "./types";
 
 export function template({
   parameters: parameterObj,
   onParameterChange,
   settings,
-}: Template) {
+}: {
+  parameters?: Parameters;
+  onParameterChange?:
+    | (() => StructureObj)
+    | ((parameters: Parameters) => StructureObj);
+  settings?: SettingsObj;
+}) {
   // init
   const structure = onParameterChange?.(parameterObj ?? {}) ?? {};
-  const structureState: StructureState = {
+  const structureState: Structure = {
     nodes: van.state(structure.nodes ?? []),
     elements: van.state(structure?.elements ?? []),
     analysisInputs: van.state(structure?.analysisInputs ?? {}),

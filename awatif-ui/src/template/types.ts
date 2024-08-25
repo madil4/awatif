@@ -4,24 +4,15 @@ import {
   AnalysisInputs,
   AnalysisOutputs,
 } from "awatif-data-structure";
-import { Parameters } from "../parameters/types";
 
-export type Template = {
-  parameters?: Parameters;
-  onParameterChange?:
-    | (() => Structure)
-    | ((parameters: Parameters) => Structure);
-  settings?: Settings;
-};
-
-export type Structure = {
+export type StructureObj = {
   nodes?: Node[];
   elements?: Element[];
   analysisInputs?: AnalysisInputs;
   analysisOutputs?: AnalysisOutputs;
 };
 
-export type Settings = {
+export type SettingsObj = {
   gridSize?: number;
   displayScale?: number;
   nodes?: boolean;

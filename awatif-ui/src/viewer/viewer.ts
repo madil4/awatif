@@ -6,6 +6,7 @@ import { Structure } from "../types";
 
 import { Settings } from "./settings/types";
 import { settings as settingsElement } from "./settings/settings";
+
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
