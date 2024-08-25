@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../types";
+import { ModelState, SettingsState } from "../../types";
 import { Text } from "./Text";
 import { getCenter } from "./utils/getCenter";
 import { Node } from "awatif-data-structure";

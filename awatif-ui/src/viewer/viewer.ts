@@ -2,7 +2,9 @@ import * as THREE from "three";
 import van from "vanjs-core";
 import { Node } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { ModelState, SettingsState } from "./types";
+import { ModelState } from "../types";
+
+import { SettingsState } from "./types";
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
@@ -14,6 +16,8 @@ import { axes } from "./objects/axes";
 import { orientations } from "./objects/orientations";
 import { elementResults } from "./objects/elementResults";
 import { nodeResults } from "./objects/nodeResults";
+
+import "./styles.css";
 
 export function viewer(
   model: ModelState,

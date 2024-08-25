@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SettingsState } from "../types";
+import { SettingsState } from "../../types";
 import van, { State } from "vanjs-core";
 import { Node } from "awatif-data-structure";
 

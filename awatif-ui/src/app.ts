@@ -1,10 +1,11 @@
 import van from "vanjs-core";
-import { App, Model, ModelState, SettingsState } from "./types";
-import { viewer } from "./viewer";
+import { App, Model, ModelState } from "./types";
+import { viewer } from "./viewer/viewer";
 import { parameters } from "./parameters";
 import { settings } from "./settings";
 
-import "./styles/viewer.css";
+import { SettingsState } from "./viewer/types";
+
 import "./styles/settings.css";
 import "./styles/parameters.css";
 

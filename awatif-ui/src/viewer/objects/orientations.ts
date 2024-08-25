@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { ModelState, SettingsState } from "../types";
+import { ModelState, SettingsState } from "../../types";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { get10thFromFirstPoint } from "./utils/get5thFromFirstPoint";
 import { Node } from "awatif-data-structure";
