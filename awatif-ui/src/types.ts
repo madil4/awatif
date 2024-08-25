@@ -6,12 +6,6 @@ import {
   AnalysisOutputs,
 } from "awatif-data-structure";
 
-export type App = {
-  parameters?: Parameters;
-  onParameterChange?: (() => Model) | ((parameters: Parameters) => Model);
-  settings?: Settings;
-};
-
 export type Parameters = {
   [key: string]: {
     value: number;

@@ -1,5 +1,7 @@
 import { Pane } from "tweakpane";
-import { Model, SettingsState } from "./types";
+import { Model } from "./types";
+
+import { SettingsState } from "./viewer/types";
 
 export function settings(
   model: Model,

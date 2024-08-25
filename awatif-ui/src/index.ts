@@ -1,2 +1,3 @@
-export type { Model, Parameters, Settings, App } from "./types";
-export { app } from "./app";
+export type { Model, Parameters, Settings } from "./types";
+
+export { template } from "./template/template";

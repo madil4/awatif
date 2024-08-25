@@ -1,6 +1,6 @@
 import { AnalysisInputs, Element, Node } from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { app, Parameters } from "awatif-ui";
+import { template, Parameters } from "awatif-ui";
 
 const parameters: Parameters = {
   length: { value: 10, min: 1, max: 20 },
@@ -55,4 +55,4 @@ function onParameterChange(parameters: Parameters) {
   return { nodes, elements, analysisInputs, analysisOutputs };
 }
 
-app({ parameters, onParameterChange, settings: { deformedShape: true } });
+template({ parameters, onParameterChange, settings: { deformedShape: true } });
