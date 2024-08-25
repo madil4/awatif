@@ -29,5 +29,8 @@
     "awatif-ui",
     "examples",
     "website"
-  ]
+  ],
+  "engines": {
+    "node": ">=20"
+  }
 }
