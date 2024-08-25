@@ -1,8 +1,8 @@
-import { Node, Element, AnalysisInputs } from "awatif-data-structure";
-import { template, Parameters, Model } from "awatif-ui";
 import * as THREE from "three";
+import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import { template, Parameters, Structure } from "awatif-ui";
 
-export const parameters: Parameters = {
+const parameters: Parameters = {
   xSpan: {
     value: 16,
     min: 1,
@@ -45,7 +45,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const xSpan = parameters.xSpan.value;
   const xDivisions = parameters.xDivisions.value;
   const ySpan = parameters.ySpan.value;

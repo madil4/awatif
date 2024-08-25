@@ -1,8 +1,8 @@
-import { template, Parameters, Model } from "awatif-ui";
-import { analyze } from "awatif-fem";
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import { analyze } from "awatif-fem";
+import { template, Parameters, Structure } from "awatif-ui";
 
-export const parameters: Parameters = {
+const parameters: Parameters = {
   dx: {
     value: 2,
     min: 1,
@@ -39,7 +39,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const dx = parameters.dx.value;
   const dy = parameters.dy.value;
   const dz = parameters.dz.value;
@@ -57,7 +57,7 @@ export function onParameterChange(parameters: Parameters): Model {
       [0, dy, dz * i]
     );
   }
-  nodes = nodes.map((v) => [6 + v[0], 6 + v[1], v[2]]); // center model in the grid
+  nodes = nodes.map((v) => [6 + v[0], 6 + v[1], v[2]]); // center structure in the grid
 
   // beams
   for (let i = 0; i < divisions * 4; ) {

@@ -1,6 +1,6 @@
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
-import { template, Parameters, Model } from "awatif-ui";
 import { analyze } from "awatif-fem";
+import { template, Parameters, Structure } from "awatif-ui";
 
 const parameters: Parameters = {
   span: {
@@ -46,7 +46,7 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const span = parameters.span.value;
   const divisions = parameters.divisions.value;
   const height = parameters.height.value;

@@ -1,7 +1,7 @@
-import { template, Parameters, Model } from "awatif-ui";
 import { Node, Element } from "awatif-data-structure";
+import { template, Parameters, Structure } from "awatif-ui";
 
-export const parameters: Parameters = {
+const parameters: Parameters = {
   radius: {
     value: 4,
     min: 1,
@@ -22,7 +22,7 @@ export const parameters: Parameters = {
   },
 };
 
-export function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const radius = parameters.radius.value;
   const points = parameters.points.value;
   const circumferences = parameters.circumferences.value;

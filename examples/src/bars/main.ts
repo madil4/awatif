@@ -1,13 +1,13 @@
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Parameters, Model } from "awatif-ui";
+import { template, Parameters, Structure } from "awatif-ui";
 
 const parameters: Parameters = {
   xPosition: { value: 600, min: 0, max: 1000 },
   zPosition: { value: 0, min: 0, max: 500 },
 };
 
-function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const nodes: Node[] = [
     [250, 0, 0],
     [parameters.xPosition.value, 0, parameters.zPosition.value],

@@ -1,5 +1,5 @@
-import { template, Parameters, Model } from "awatif-ui";
 import { Node, Element } from "awatif-data-structure";
+import { template, Parameters, Structure } from "awatif-ui";
 
 const parameters: Parameters = {
   width: {
@@ -50,7 +50,7 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const nodes: Node[] = [];
   const elements: Element[] = [];
 

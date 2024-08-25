@@ -1,6 +1,7 @@
 {
   "name": "examples",
   "description": "Awatif Examples",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build"

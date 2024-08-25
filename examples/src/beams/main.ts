@@ -1,6 +1,6 @@
 import { AnalysisInputs, Element, Node } from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Parameters } from "awatif-ui";
+import { template, Parameters, Structure } from "awatif-ui";
 
 const parameters: Parameters = {
   length: { value: 10, min: 1, max: 20 },
@@ -9,7 +9,7 @@ const parameters: Parameters = {
   area: { value: 10, min: 1, max: 10, folder: "Sections" },
 };
 
-function onParameterChange(parameters: Parameters) {
+function onParameterChange(parameters: Parameters): Structure {
   const length = parameters.length.value;
   const height = parameters.height.value;
   const xLoad = parameters.xLoad.value;

@@ -1,6 +1,6 @@
-import { template, Parameters, Model } from "awatif-ui";
-import { analyze } from "awatif-fem";
 import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import { analyze } from "awatif-fem";
+import { template, Parameters, Structure } from "awatif-ui";
 
 const parameters: Parameters = {
   meshDensity: { value: 7, min: 1, max: 7, step: 1, label: "mesh density" },
@@ -9,7 +9,7 @@ const parameters: Parameters = {
   load: { value: 10, min: 0, max: 20 },
 };
 
-function onParameterChange(parameters: Parameters): Model {
+function onParameterChange(parameters: Parameters): Structure {
   const nodes: Node[] = [];
   const elements: Element[] = [];
   const count = parameters.meshDensity.value;

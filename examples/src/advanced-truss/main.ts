@@ -1,6 +1,7 @@
-import { template, Model, Parameters } from "awatif-ui";
-import { analyze } from "awatif-fem";
 import { AnalysisInputs, Node, Element } from "awatif-data-structure";
+import { analyze } from "awatif-fem";
+import { template, Structure, Parameters } from "awatif-ui";
+
 import { createTruss } from "./createTruss";
 
 export const parameters: Parameters = {
@@ -132,7 +133,7 @@ export const parameters: Parameters = {
   },
 };
 
-export const onParameterChange = (parameters: Parameters): Model => {
+export const onParameterChange = (parameters: Parameters): Structure => {
   let span = parameters.span.value;
   let spacing = parameters.spacing.value;
   const webType = parameters.webType.value;
