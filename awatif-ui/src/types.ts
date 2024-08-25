@@ -6,17 +6,6 @@ import {
   AnalysisOutputs,
 } from "awatif-data-structure";
 
-export type Parameters = {
-  [key: string]: {
-    value: number;
-    min?: number;
-    max?: number;
-    step?: number;
-    label?: string;
-    folder?: string;
-  };
-};
-
 export type Model = {
   nodes?: Node[];
   elements?: Element[];

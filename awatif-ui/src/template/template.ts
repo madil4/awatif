@@ -5,11 +5,10 @@ import { Template } from "./types";
 import { Model, ModelState } from "../types";
 import { viewer } from "../viewer/viewer";
 import { SettingsState } from "../viewer/types";
-import { parameters } from "../parameters";
 import { settings } from "../settings";
 
 import "../styles/settings.css";
-import "../styles/parameters.css";
+import { parameters } from "../parameters/parameters";
 
 export function template({
   parameters: parameterObj,

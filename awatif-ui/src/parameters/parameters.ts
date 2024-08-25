@@ -1,5 +1,8 @@
 import { FolderApi, Pane, TpChangeEvent } from "tweakpane";
+
 import { Parameters } from "./types";
+
+import "./styles.css";
 
 export function parameters(
   parameters: Parameters,
