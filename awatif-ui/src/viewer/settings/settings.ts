@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { Pane } from "tweakpane";
-import { Structure } from "../../types";
+import { Structure } from "awatif-data-structure";
 
 import "./styles.css";
 
@@ -34,7 +34,7 @@ export function settings(
   // update
   container.setAttribute("id", "settings");
 
-  if (structure.nodes?.rawVal) {
+  if (structure.nodes?.rawVal.length) {
     pane.addBinding(settingsState.displayScale, "val", {
       label: "Display scale",
       min: -10,
