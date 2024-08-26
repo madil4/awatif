@@ -2,7 +2,7 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { AnalysisOutputs, Node } from "awatif-data-structure";
 import { Structure } from "../../types";
-import { Settings } from "../settings/types";
+import { Settings } from "../settings/settings";
 
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { ConstantResult } from "./resultObjects/ConstantResult";

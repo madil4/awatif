@@ -1,11 +1,38 @@
 import van from "vanjs-core";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
+
+import { Structure } from "../types";
 import { viewer } from "../viewer/viewer";
 import { parameters } from "../parameters/parameters";
-import { Parameters } from "../parameters/types";
-import { Structure } from "../types";
-import { Settings } from "../viewer/settings/types";
+import { Parameters } from "../parameters/parameters";
+import { Settings } from "../viewer/settings/settings";
 
-import { StructureObj, SettingsObj } from "./types";
+export type StructureObj = {
+  nodes?: Node[];
+  elements?: Element[];
+  analysisInputs?: AnalysisInputs;
+  analysisOutputs?: AnalysisOutputs;
+};
+
+export type SettingsObj = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  elementResults?: string;
+  nodeResults?: string;
+};
 
 export function template({
   parameters: parameterObj,

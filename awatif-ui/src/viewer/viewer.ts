@@ -4,7 +4,7 @@ import { Node } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Structure } from "../types";
 
-import { Settings } from "./settings/types";
+import { Settings } from "./settings/settings";
 import { settings as settingsElement } from "./settings/settings";
 
 import { nodes } from "./objects/nodes";

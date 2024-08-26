@@ -1,9 +1,23 @@
+import { State } from "vanjs-core";
 import { Pane } from "tweakpane";
 import { Structure } from "../../types";
 
-import { Settings } from "./types";
-
 import "./styles.css";
+
+export type Settings = {
+  gridSize: State<number>;
+  displayScale: State<number>;
+  nodes: State<boolean>;
+  elements: State<boolean>;
+  nodesIndexes: State<boolean>;
+  elementsIndexes: State<boolean>;
+  orientations: State<boolean>;
+  supports: State<boolean>;
+  loads: State<boolean>;
+  deformedShape: State<boolean>;
+  elementResults: State<string>;
+  nodeResults: State<string>;
+};
 
 export function settings(
   structure: Structure,
