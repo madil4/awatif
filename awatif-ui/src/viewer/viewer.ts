@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import van from "vanjs-core";
-import { Node } from "awatif-data-structure";
+import { Node, Structure } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Structure } from "../types";
 
 import { Settings } from "./settings/settings";
 import { settings as settingsElement } from "./settings/settings";
@@ -23,9 +22,11 @@ import "./styles.css";
 
 export function viewer(
   structure: Structure,
-  settings: Settings
+  settings?: Settings
 ): HTMLDivElement {
   // init
+  if (!settings) settings = getDefaultSettings();
+
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
   const scene = new THREE.Scene();
@@ -128,4 +129,22 @@ export function viewer(
   });
 
   return container;
+}
+
+// Utils
+function getDefaultSettings(): Settings {
+  return {
+    gridSize: van.state(20),
+    displayScale: van.state(1),
+    nodes: van.state(true),
+    elements: van.state(true),
+    nodesIndexes: van.state(false),
+    elementsIndexes: van.state(false),
+    orientations: van.state(false),
+    supports: van.state(true),
+    loads: van.state(true),
+    deformedShape: van.state(false),
+    elementResults: van.state("none"),
+    nodeResults: van.state("none"),
+  };
 }

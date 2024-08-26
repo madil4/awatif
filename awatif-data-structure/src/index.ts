@@ -1,3 +1,5 @@
+import { State } from "vanjs-core";
+
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
 export type Element = [number, number]; // indices of the first and second node in the list of nodes
@@ -44,4 +46,11 @@ type ElementAnalysisOutputs = {
   torsion?: [number, number];
   bendingY?: [number, number];
   bendingZ?: [number, number];
+};
+
+export type Structure = {
+  nodes?: State<Node[]>;
+  elements?: State<Element[]>;
+  analysisInputs?: State<AnalysisInputs>;
+  analysisOutputs?: State<AnalysisOutputs>;
 };

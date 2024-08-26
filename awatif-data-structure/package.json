@@ -18,5 +18,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/madil4/awatif"
+  },
+  "dependencies": {
+    "vanjs-core": "^1.5.1"
   }
 }

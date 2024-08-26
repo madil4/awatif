@@ -4,9 +4,9 @@ import {
   Element,
   AnalysisInputs,
   AnalysisOutputs,
+  Structure,
 } from "awatif-data-structure";
 
-import { Structure } from "../types";
 import { viewer } from "../viewer/viewer";
 import { parameters } from "../parameters/parameters";
 import { Parameters } from "../parameters/parameters";

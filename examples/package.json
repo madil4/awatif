@@ -24,6 +24,7 @@
     "awatif-data-structure": "^1.0.0",
     "awatif-fem": "^1.0.0",
     "awatif-ui": "^1.0.0",
-    "three": "^0.166.1"
+    "three": "^0.166.1",
+    "vanjs-core": "^1.5.1"
   }
 }
