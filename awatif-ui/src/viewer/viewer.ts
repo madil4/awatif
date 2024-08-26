@@ -20,13 +20,26 @@ import { nodeResults } from "./objects/nodeResults";
 
 import "./styles.css";
 
+export type SettingsObj = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  elementResults?: string;
+  nodeResults?: string;
+};
+
 export function viewer(
   structure: Structure,
-  settings?: Settings
+  SettingsObj?: SettingsObj
 ): HTMLDivElement {
   // init
-  if (!settings) settings = getDefaultSettings();
-
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
   const scene = new THREE.Scene();
@@ -38,6 +51,8 @@ export function viewer(
   );
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
+
+  const settings = getDefaultSettings(SettingsObj);
   const derivedDisplayScale = van.derive(() =>
     settings.displayScale.val === 0
       ? 1
@@ -132,19 +147,19 @@ export function viewer(
 }
 
 // Utils
-function getDefaultSettings(): Settings {
+function getDefaultSettings(settings: SettingsObj): Settings {
   return {
-    gridSize: van.state(20),
-    displayScale: van.state(1),
-    nodes: van.state(true),
-    elements: van.state(true),
-    nodesIndexes: van.state(false),
-    elementsIndexes: van.state(false),
-    orientations: van.state(false),
-    supports: van.state(true),
-    loads: van.state(true),
-    deformedShape: van.state(false),
-    elementResults: van.state("none"),
-    nodeResults: van.state("none"),
+    gridSize: van.state(settings?.gridSize ?? 20),
+    displayScale: van.state(settings?.displayScale ?? 1),
+    nodes: van.state(settings?.nodes ?? true),
+    elements: van.state(settings?.elements ?? true),
+    nodesIndexes: van.state(settings?.nodesIndexes ?? false),
+    elementsIndexes: van.state(settings?.elementsIndexes ?? false),
+    orientations: van.state(settings?.orientations ?? false),
+    supports: van.state(settings?.supports ?? true),
+    loads: van.state(settings?.loads ?? true),
+    deformedShape: van.state(settings?.deformedShape ?? false),
+    elementResults: van.state(settings?.elementResults ?? "none"),
+    nodeResults: van.state(settings?.nodeResults ?? "none"),
   };
 }

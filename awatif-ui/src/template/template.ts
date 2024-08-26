@@ -7,31 +7,15 @@ import {
   Structure,
 } from "awatif-data-structure";
 
-import { viewer } from "../viewer/viewer";
+import { viewer, SettingsObj } from "../viewer/viewer";
 import { parameters } from "../parameters/parameters";
 import { Parameters } from "../parameters/parameters";
-import { Settings } from "../viewer/settings/settings";
 
 export type StructureObj = {
   nodes?: Node[];
   elements?: Element[];
   analysisInputs?: AnalysisInputs;
   analysisOutputs?: AnalysisOutputs;
-};
-
-export type SettingsObj = {
-  gridSize?: number;
-  displayScale?: number;
-  nodes?: boolean;
-  elements?: boolean;
-  nodesIndexes?: boolean;
-  elementsIndexes?: boolean;
-  orientations?: boolean;
-  supports?: boolean;
-  loads?: boolean;
-  deformedShape?: boolean;
-  elementResults?: string;
-  nodeResults?: string;
 };
 
 export function template({
@@ -54,22 +38,7 @@ export function template({
     analysisOutputs: van.state(structure?.analysisOutputs ?? {}),
   };
 
-  const settingsState: Settings = {
-    gridSize: van.state(settings?.gridSize ?? 20),
-    displayScale: van.state(settings?.displayScale ?? 1),
-    nodes: van.state(settings?.nodes ?? true),
-    elements: van.state(settings?.elements ?? true),
-    nodesIndexes: van.state(settings?.nodesIndexes ?? false),
-    elementsIndexes: van.state(settings?.elementsIndexes ?? false),
-    orientations: van.state(settings?.orientations ?? false),
-    supports: van.state(settings?.supports ?? true),
-    loads: van.state(settings?.loads ?? true),
-    deformedShape: van.state(settings?.deformedShape ?? false),
-    elementResults: van.state(settings?.elementResults ?? "none"),
-    nodeResults: van.state(settings?.nodeResults ?? "none"),
-  };
-
-  const viewerElement = viewer(structureState, settingsState);
+  const viewerElement = viewer(structureState, settings);
 
   // update
   document.body.appendChild(viewerElement);
