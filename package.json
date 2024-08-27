@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test:fem": "npm run test -w awatif-fem",
+    "dev:ui": "npm run dev -w awatif-ui",
     "dev:examples": "npm run dev -w examples",
     "build:examples": "npm run build -w examples",
     "dev:website": "npm run dev -w website",

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif UI - Sheets</title>
+    <script type="module">
+      import { sheets } from "/sheets/sheets";
+
+      const materials = new Map();
+      materials.set(0, { elasticity: 100, shearModulus: 40, mass: 10 });
+      materials.set(2, { elasticity: 200, shearModulus: 50, mass: 5 });
+      materials.set(5, { elasticity: 9, shearModulus: 7 });
+
+      const sheetsObj = new Map();
+      sheetsObj.set("Nodes", {
+        data: [
+          [0, 0, 0],
+          [1, 2, 3],
+          [3, 4, 1],
+        ],
+        columns: [
+          { field: "0", text: "X-coordinate", editable: { type: "float" } },
+          { field: "1", text: "Y-coordinate", editable: { type: "float" } },
+          { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+        ],
+      });
+      sheetsObj.set("Material", {
+        data: materials,
+        columns: [
+          {
+            field: "elasticity",
+            text: "Elasticity",
+            editable: { type: "float" },
+          },
+          { field: "shearModulus", text: "Shear Modulus" },
+          { field: "mass", text: "Mass" },
+        ],
+      });
+
+      const sheetsElm = sheets(sheetsObj);
+
+      document.body.appendChild(sheetsElm);
+    </script>
+  </head>
+  <body></body>
+</html>

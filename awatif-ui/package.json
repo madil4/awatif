@@ -5,6 +5,9 @@
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "scripts": {
+    "dev": "vite"
+  },
   "keywords": [
     "awatif",
     "parametricdesign",
@@ -24,6 +27,7 @@
     "awatif-data-structure": "^1.0.0",
     "three": "~0.166.1",
     "tweakpane": "~4.0.4",
-    "vanjs-core": "^1.5.1"
+    "vanjs-core": "^1.5.1",
+    "w2ui": "^2.0.0"
   }
 }

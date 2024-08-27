@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif UI - Grid</title>
+    <script type="module" lang="ts">
+      import { grid } from "./grid";
+
+      const name = "Nodes";
+      const data = [
+        [0, 0, 0],
+        [1, 2, 3],
+        [3, 4, 1],
+      ];
+      const columns = [
+        { field: "0", text: "X-coordinate", editable: { type: "float" } },
+        { field: "1", text: "Y-coordinate", editable: { type: "float" } },
+        { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+      ];
+
+      const gridElm = grid(name, columns, data);
+
+      document.body.appendChild(gridElm);
+    </script>
+  </head>
+  <body></body>
+</html>
