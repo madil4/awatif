@@ -22,6 +22,8 @@
     "build:examples": "npm run build -w examples",
     "dev:website": "npm run dev -w website",
     "build:website": "npm run build -w website",
+    "dev:marketplace": "npm run dev -w marketplace",
+    "build:marketplace": "npm run build -w marketplace",
     "dedupe": "npm dedupe && echo 'Optimize build size when using same package in multiple packages'"
   },
   "workspaces": [
@@ -30,7 +32,8 @@
     "awatif-fem",
     "awatif-ui",
     "examples",
-    "website"
+    "website",
+    "marketplace"
   ],
   "engines": {
     "node": ">=20"

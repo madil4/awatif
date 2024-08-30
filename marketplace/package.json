@@ -1,10 +1,10 @@
 {
-  "name": "examples",
-  "description": "Awatif Examples",
+  "name": "marketplace",
+  "description": "Awatif Marketplace",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "tsc && vite build"
   },
   "keywords": [
     "awatif",
@@ -24,7 +24,6 @@
   "dependencies": {
     "awatif-fem": "^1.0.0",
     "awatif-ui": "^1.0.0",
-    "three": "^0.166.1",
     "vanjs-core": "^1.5.1"
   }
 }
