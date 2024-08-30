@@ -8,7 +8,7 @@ export function grid(
   data: number[][] | Map<any, Record<string, any>>
 ): HTMLDivElement {
   // init
-  const container = document.createElement("div");
+  const gridElm = document.createElement("div");
 
   const baseColumn = {
     size: "120px",
@@ -31,13 +31,12 @@ export function grid(
   });
 
   // update
-  container.setAttribute("id", "grid");
-  container.style.width = "600px";
-  container.style.height = "250px";
+  gridElm.setAttribute("id", "grid");
+  gridElm.style.height = "250px";
 
-  grid.render(container);
+  grid.render(gridElm);
 
-  return container;
+  return gridElm;
 }
 
 // Utils

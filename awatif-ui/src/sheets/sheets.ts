@@ -1,4 +1,5 @@
 import { w2tabs, w2ui } from "w2ui";
+import { collapsible } from "../common/collapsible/collapsible";
 
 import { grid } from "./grid/grid";
 
@@ -9,9 +10,10 @@ export function sheets(
     string,
     { columns: object[]; data: number[][] | Map<any, Record<string, any>> }
   >
-): HTMLDivElement {
-  const container = document.createElement("div");
+): HTMLElement {
+  const sheetsElm = document.createElement("div");
   const tabsElm = document.createElement("div");
+  const collapsibleElm = collapsible("Sheets", sheetsElm);
 
   const tabsData = [];
   const grids = new Map<string, HTMLDivElement>();
@@ -21,26 +23,25 @@ export function sheets(
   });
 
   const tabs = new w2tabs({
+    box: tabsElm,
+    name: "sheets",
     active: tabsData[0].id,
     flow: "up",
     tabs: tabsData,
   });
 
   // update
-  container.id = "sheets";
-  container.style.width = "fit-content";
+  sheetsElm.id = "sheets";
   tabsElm.id = "tabs";
 
-  tabs.render(tabsElm);
-
-  container.appendChild(grids.values().next().value);
-  container.appendChild(tabsElm);
+  sheetsElm.appendChild(grids.values().next().value);
+  sheetsElm.appendChild(tabsElm);
 
   // events
   tabs.onClick = (e: { target: string }) => {
-    container.firstChild.replaceWith(grids.get(e.target));
+    sheetsElm.firstChild.replaceWith(grids.get(e.target));
     w2ui[e.target].refresh();
   };
 
-  return container;
+  return collapsibleElm;
 }
