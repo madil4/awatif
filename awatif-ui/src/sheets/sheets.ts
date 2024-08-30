@@ -34,6 +34,11 @@ export function sheets(
   sheetsElm.id = "sheets";
   tabsElm.id = "tabs";
 
+  collapsibleElm.style.position = "absolute";
+  collapsibleElm.style.left = "8px";
+  collapsibleElm.style.bottom = "0px";
+  collapsibleElm.style.width = "50%";
+
   sheetsElm.appendChild(grids.values().next().value);
   sheetsElm.appendChild(tabsElm);
 

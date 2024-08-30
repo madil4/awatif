@@ -21,7 +21,7 @@ export function grid(
     columns: [
       {
         field: "recid",
-        text: "ID",
+        text: "Index",
         ...baseColumn,
         size: "60px",
       },

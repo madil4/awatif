@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { Structure } from "awatif-data-structure";
-import { viewer } from "awatif-ui";
+import { sheets, viewer } from "awatif-ui";
 
 const structure: Structure = {
   nodes: van.state([]),
@@ -17,4 +17,25 @@ structure.elements.val = [
   [1, 2],
 ];
 
-document.body.appendChild(viewer(structure));
+const viewerElm = viewer(structure);
+
+const sheetsObj = new Map();
+sheetsObj.set("Nodes", {
+  data: structure.nodes.rawVal,
+  columns: [
+    { field: "0", text: "X-coordinate" },
+    { field: "1", text: "Y-coordinate" },
+    { field: "2", text: "Z-coordinate" },
+  ],
+});
+sheetsObj.set("Elements", {
+  data: structure.elements.rawVal,
+  columns: [
+    { field: "0", text: "Node 1" },
+    { field: "1", text: "Node 2" },
+  ],
+});
+
+const sheetsElm = sheets(sheetsObj);
+
+document.body.append(viewerElm, sheetsElm);

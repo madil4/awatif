@@ -7,7 +7,6 @@ export function collapsible(title: string, body: HTMLDivElement): HTMLElement {
 
   // update
   details.id = "collapsible";
-  details.open = true;
 
   details.append(summary, body);
 
