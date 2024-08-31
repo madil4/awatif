@@ -8,29 +8,3 @@
   cursor: pointer;
   background: rgb(235, 235, 235);
 }
-
-#collapsible summary::marker {
-  content: none;
-}
-
-#collapsible summary::before,
-#collapsible summary::after {
-  content: "";
-  transition: 200ms;
-  width: 0.75em;
-  height: 0;
-  border-bottom: 2px solid;
-  position: absolute;
-  top: calc(50% - 1px);
-  right: 1rem;
-  transform: translateY(-50%);
-}
-
-#collapsible summary::after {
-  transform: rotate(90deg);
-  transform-origin: 50% 50%;
-}
-
-#collapsible[open] summary::after {
-  transform: rotate(0deg);
-}

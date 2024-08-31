@@ -39,8 +39,7 @@ export function sheets(
   collapsibleElm.style.bottom = "0px";
   collapsibleElm.style.width = "50%";
 
-  sheetsElm.appendChild(grids.values().next().value);
-  sheetsElm.appendChild(tabsElm);
+  sheetsElm.append(grids.values().next().value, tabsElm);
 
   // events
   tabs.onClick = (e: { target: string }) => {

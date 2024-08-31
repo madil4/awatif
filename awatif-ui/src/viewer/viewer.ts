@@ -73,13 +73,13 @@ export function viewer(
     );
   });
 
-  const container = document.createElement("div");
+  const viewerElm = document.createElement("div");
   const settingElement = settingsElement(structure, settings);
 
   // update
-  container.setAttribute("id", "viewer");
-  container.appendChild(renderer.domElement);
-  container.appendChild(settingElement);
+  viewerElm.setAttribute("id", "viewer");
+  viewerElm.appendChild(renderer.domElement);
+  viewerElm.appendChild(settingElement);
 
   scene.add(
     grid(settings.gridSize.rawVal),
@@ -143,7 +143,7 @@ export function viewer(
     setTimeout(() => renderer.render(scene, camera)); // to ensure render is called after all updates are done in that event tick
   });
 
-  return container;
+  return viewerElm;
 }
 
 // Utils
