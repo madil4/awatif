@@ -16,7 +16,7 @@ export function elements(
   lines.frustumCulled = false;
   lines.material.depthTest = false; // don't know why but is solves the rendering order issue
 
-  // on model.elements & deformedShape, and model update visuals
+  // on nodes, elements, and deformedShape update visuals
   van.derive(() => {
     settings.deformedShape.val; // triggers update
 
@@ -24,10 +24,7 @@ export function elements(
 
     const buffer =
       structure.elements?.val
-        .map((e) => [
-          ...derivedNodes.rawVal[e[0]],
-          ...derivedNodes.rawVal[e[1]],
-        ])
+        .map((e) => [...derivedNodes.val[e[0]], ...derivedNodes.val[e[1]]])
         .flat() ?? [];
 
     lines.geometry.setAttribute(
