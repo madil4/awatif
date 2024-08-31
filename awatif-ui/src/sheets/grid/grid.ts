@@ -5,7 +5,8 @@ import "w2ui/w2ui-2.0.min.css";
 export function grid(
   name: string,
   columns: object[],
-  data: number[][] | Map<any, Record<string, any>>
+  data: number[][] | Map<any, Record<string, any>>,
+  onChange?: (e: any) => void
 ): HTMLDivElement {
   // init
   const gridElm = document.createElement("div");
@@ -35,6 +36,14 @@ export function grid(
   gridElm.style.height = "250px";
 
   grid.render(gridElm);
+
+  // event
+  grid.onChange = (e) => {
+    if (onChange) onChange(e);
+
+    // change record value since its stored to be saved to trigger onChange with original values
+    grid.records[e.detail.index][e.detail.column - 1] = e.detail.value.new;
+  };
 
   return gridElm;
 }

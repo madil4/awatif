@@ -20,22 +20,31 @@ structure.elements.val = [
 const viewerElm = viewer(structure);
 
 const sheetsObj = new Map();
-sheetsObj.set("Nodes", {
+sheetsObj.set("nodes", {
+  text: "Nodes",
   data: structure.nodes.rawVal,
   columns: [
-    { field: "0", text: "X-coordinate" },
-    { field: "1", text: "Y-coordinate" },
-    { field: "2", text: "Z-coordinate" },
+    { field: "0", text: "X-coordinate", editable: { type: "float" } },
+    { field: "1", text: "Y-coordinate", editable: { type: "float" } },
+    { field: "2", text: "Z-coordinate", editable: { type: "float" } },
   ],
 });
-sheetsObj.set("Elements", {
+sheetsObj.set("elements", {
+  text: "Elements",
   data: structure.elements.rawVal,
   columns: [
-    { field: "0", text: "Node 1" },
-    { field: "1", text: "Node 2" },
+    { field: "0", text: "Node 1", editable: { type: "float" } },
+    { field: "1", text: "Node 2", editable: { type: "float" } },
   ],
 });
 
-const sheetsElm = sheets(sheetsObj);
+const onSheetChange = ({ sheet, index, field, value }) => {
+  const updatedObj = [...structure[sheet].rawVal];
+  updatedObj[index][field] = value;
+
+  structure[sheet].val = updatedObj;
+};
+
+const sheetsElm = sheets(sheetsObj, onSheetChange);
 
 document.body.append(viewerElm, sheetsElm);
