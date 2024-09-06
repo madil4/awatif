@@ -27,11 +27,8 @@ sheetsObj.set("polyline", {
 });
 
 // events
-const onSheetChange = ({ index, field, value }) => {
-  const newPolyline = [...polyline.rawVal];
-  newPolyline[index][field] = value;
-
-  polyline.val = newPolyline;
+const onSheetChange = ({ data }) => {
+  polyline.val = data;
 };
 
 // on polyline: update lines buffer and render it

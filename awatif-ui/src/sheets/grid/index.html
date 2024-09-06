@@ -7,21 +7,50 @@
     <script type="module" lang="ts">
       import { grid } from "./grid";
 
-      const name = "Nodes";
-      const data = [
-        [0, 0, 0],
-        [1, 2, 3],
-        [3, 4, 1],
-      ];
-      const columns = [
-        { field: "0", text: "X-coordinate", editable: { type: "float" } },
-        { field: "1", text: "Y-coordinate", editable: { type: "float" } },
-        { field: "2", text: "Z-coordinate", editable: { type: "float" } },
-      ];
+      // List case
+      const nodeGridElm = grid(
+        "Nodes",
+        [
+          { field: "0", text: "X-coordinate", editable: { type: "float" } },
+          { field: "1", text: "Y-coordinate", editable: { type: "float" } },
+          { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+        ],
+        [
+          [0, 0, 0],
+          [1, 2, 3],
+          [3, 4, 1],
+        ]
+      );
 
-      const gridElm = grid(name, columns, data);
+      document.body.appendChild(nodeGridElm);
 
-      document.body.appendChild(gridElm);
+      // Map case
+      const materials = new Map();
+      materials.set(0, { elasticity: 100, shearModulus: 40, mass: 10 });
+      materials.set(2, { elasticity: 200, shearModulus: 50, mass: 5 });
+      materials.set(5, { elasticity: 9, shearModulus: 7 });
+
+      const materialsGridElm = grid(
+        "Materials",
+        [
+          {
+            field: "elasticity",
+            text: "Elasticity",
+            editable: { type: "float" },
+          },
+          {
+            field: "shearModulus",
+            text: "Shear Modulus",
+            editable: { type: "float" },
+          },
+          { field: "mass", text: "Mass", editable: { type: "float" } },
+        ],
+        materials
+      );
+
+      materialsGridElm.style.marginTop = "10px";
+
+      document.body.appendChild(materialsGridElm);
     </script>
   </head>
   <body></body>

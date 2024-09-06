@@ -14,19 +14,15 @@ export function sheets(
       data: number[][] | Map<any, Record<string, any>>;
     }
   >,
-  onChange?: ({ sheet, index, field, value }) => void
+  onChange?: ({ sheet, data }) => void
 ): HTMLElement {
   const sheetsElm = document.createElement("div");
   const tabsElm = document.createElement("div");
   const collapsibleElm = collapsible("Sheets", sheetsElm);
 
-  const onGridChange = (e) => {
-    const sheet = e.target;
-    const index = e.detail.recid;
-    const field = sheets.get(sheet).columns[e.detail.column - 1]["field"];
-    const value = e.detail.value.new;
-
-    if (onChange) onChange({ sheet, index, field, value });
+  const onGridChange = ({ name, data }) => {
+    if (onChange) onChange({ sheet: name, data });
+    console.log(name, data);
   };
 
   const tabsData = [];
