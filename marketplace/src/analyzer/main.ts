@@ -3,21 +3,16 @@ import { Structure } from "awatif-data-structure";
 import { sheets, viewer } from "awatif-ui";
 
 const structure: Structure = {
-  nodes: van.state([]),
-  elements: van.state([]),
+  nodes: van.state([
+    [0, 0, 0],
+    [0, 0, 10],
+    [10, 0, 0],
+  ]),
+  elements: van.state([
+    [0, 2],
+    [1, 2],
+  ]),
 };
-
-structure.nodes.val = [
-  [0, 0, 0],
-  [0, 0, 10],
-  [10, 0, 0],
-];
-structure.elements.val = [
-  [0, 2],
-  [1, 2],
-];
-
-const viewerElm = viewer({ structure });
 
 const sheetsObj = new Map();
 sheetsObj.set("nodes", {
@@ -38,13 +33,9 @@ sheetsObj.set("elements", {
   ],
 });
 
-const onSheetChange = ({ sheet, index, field, value }) => {
-  const updatedObj = [...structure[sheet].rawVal];
-  updatedObj[index][field] = value;
-
-  structure[sheet].val = updatedObj;
+const onSheetChange = ({ sheet, data }) => {
+  structure[sheet].val = data;
 };
 
-const sheetsElm = sheets(sheetsObj, onSheetChange);
-
-document.body.append(viewerElm, sheetsElm);
+document.body.append(viewer({ structure }));
+document.body.append(sheets(sheetsObj, onSheetChange));
