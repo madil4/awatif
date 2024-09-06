@@ -30,15 +30,18 @@ export function template({
   settings?: SettingsObj;
 }) {
   // init
-  const structure = onParameterChange?.(parameterObj ?? {}) ?? {};
+  const structureObj = onParameterChange?.(parameterObj ?? {}) ?? {};
   const structureState: Structure = {
-    nodes: van.state(structure.nodes ?? []),
-    elements: van.state(structure?.elements ?? []),
-    analysisInputs: van.state(structure?.analysisInputs ?? {}),
-    analysisOutputs: van.state(structure?.analysisOutputs ?? {}),
+    nodes: van.state(structureObj.nodes ?? []),
+    elements: van.state(structureObj?.elements ?? []),
+    analysisInputs: van.state(structureObj?.analysisInputs ?? {}),
+    analysisOutputs: van.state(structureObj?.analysisOutputs ?? {}),
   };
 
-  const viewerElement = viewer(structureState, settings);
+  const viewerElement = viewer({
+    structure: structureState,
+    settingsObj: settings,
+  });
 
   // update
   document.body.appendChild(viewerElement);
