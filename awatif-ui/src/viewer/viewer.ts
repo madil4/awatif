@@ -39,7 +39,7 @@ export function viewer({
   settingsObj,
   objects3D,
 }: {
-  structure: Structure;
+  structure?: Structure;
   settingsObj?: SettingsObj;
   objects3D?: State<THREE.Object3D[]>;
 }): HTMLDivElement {
@@ -65,11 +65,11 @@ export function viewer({
       : -1 / settings.displayScale.val
   );
   const derivedNodes: Structure["nodes"] = van.derive(() => {
-    if (!settings.deformedShape.val) return structure.nodes?.val ?? [];
+    if (!settings.deformedShape.val) return structure?.nodes?.val ?? [];
 
     return (
-      structure.nodes?.val.map((node, index) => {
-        const d = structure.analysisOutputs?.val.nodes
+      structure?.nodes?.val.map((node, index) => {
+        const d = structure?.analysisOutputs?.val.nodes
           ?.get(index)
           ?.deformation?.slice(0, 3) ?? [0, 0, 0];
         return node.map((n, i) => n + d[i]) as Node;
@@ -78,12 +78,12 @@ export function viewer({
   });
 
   const viewerElm = document.createElement("div");
-  const settingElement = settingsElement(structure, settings);
 
   // update
   viewerElm.setAttribute("id", "viewer");
   viewerElm.appendChild(renderer.domElement);
-  viewerElm.appendChild(settingElement);
+
+  if (structure) viewerElm.appendChild(settingsElement(structure, settings));
 
   scene.add(
     grid(settings.gridSize.rawVal),
@@ -127,10 +127,10 @@ export function viewer({
 
   // on structure or settings change: render
   van.derive(() => {
-    structure.nodes?.val;
-    structure.elements?.val;
-    structure.analysisInputs?.val;
-    structure.analysisInputs?.val;
+    structure?.nodes?.val;
+    structure?.elements?.val;
+    structure?.analysisInputs?.val;
+    structure?.analysisInputs?.val;
 
     settings.displayScale.val;
     settings.nodes.val;
