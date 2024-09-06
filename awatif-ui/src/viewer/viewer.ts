@@ -85,19 +85,20 @@ export function viewer({
 
   if (structure) viewerElm.appendChild(settingsElement(structure, settings));
 
-  scene.add(
-    grid(settings.gridSize.rawVal),
-    axes(settings.gridSize.rawVal),
-    nodes(settings, derivedNodes, derivedDisplayScale),
-    elements(structure, settings, derivedNodes),
-    nodesIndexes(settings, derivedNodes, derivedDisplayScale),
-    elementsIndexes(structure, settings, derivedNodes, derivedDisplayScale),
-    supports(structure, settings, derivedNodes, derivedDisplayScale),
-    loads(structure, settings, derivedNodes, derivedDisplayScale),
-    orientations(structure, settings, derivedNodes, derivedDisplayScale),
-    elementResults(structure, settings, derivedNodes, derivedDisplayScale),
-    nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
-  );
+  scene.add(grid(settings.gridSize.rawVal), axes(settings.gridSize.rawVal));
+
+  if (structure)
+    scene.add(
+      nodes(settings, derivedNodes, derivedDisplayScale),
+      elements(structure, settings, derivedNodes),
+      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+      elementsIndexes(structure, settings, derivedNodes, derivedDisplayScale),
+      supports(structure, settings, derivedNodes, derivedDisplayScale),
+      loads(structure, settings, derivedNodes, derivedDisplayScale),
+      orientations(structure, settings, derivedNodes, derivedDisplayScale),
+      elementResults(structure, settings, derivedNodes, derivedDisplayScale),
+      nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
+    );
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
