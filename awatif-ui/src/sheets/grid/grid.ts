@@ -21,14 +21,16 @@ export function grid(
     selectType: "cell",
     columns: [
       {
+        ...baseColumn,
         field: "recid",
         text: "Index",
-        ...baseColumn,
-        size: "60px",
+        size: "50px",
+        style: "background-color: #f4f6f9",
       },
       ...columns.map((v) => ({ ...baseColumn, ...v })),
     ],
     records: getRecords(data),
+    onDelete: (e) => (e.detail.force = true),
   });
 
   // update
@@ -43,6 +45,8 @@ export function grid(
 
     // change record value since its stored to be saved to trigger onChange with original values
     grid.records[e.detail.index][e.detail.column - 1] = e.detail.value.new;
+
+    console.log("deleted");
   };
 
   return gridElm;
