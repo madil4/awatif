@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import { Node, Structure } from "awatif-data-structure";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import { Settings } from "./settings/settings";
 import { settings as settingsElement } from "./settings/settings";
-
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
@@ -35,10 +34,15 @@ export type SettingsObj = {
   nodeResults?: string;
 };
 
-export function viewer(
-  structure: Structure,
-  SettingsObj?: SettingsObj
-): HTMLDivElement {
+export function viewer({
+  structure,
+  settingsObj,
+  objects3D,
+}: {
+  structure: Structure;
+  settingsObj?: SettingsObj;
+  objects3D?: State<THREE.Object3D[]>;
+}): HTMLDivElement {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
@@ -52,7 +56,7 @@ export function viewer(
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
 
-  const settings = getDefaultSettings(SettingsObj);
+  const settings = getDefaultSettings(settingsObj);
   const derivedDisplayScale = van.derive(() =>
     settings.displayScale.val === 0
       ? 1
@@ -140,26 +144,36 @@ export function viewer(
     settings.elementResults.val;
     settings.nodeResults.val;
 
+    objects3D?.val;
+
     setTimeout(() => renderer.render(scene, camera)); // to ensure render is called after all updates are done in that event tick
+  });
+
+  // on objects3D change add/remove objects from the scene
+  van.derive(() => {
+    if (!objects3D?.val.length) return;
+
+    scene.remove(...objects3D.oldVal);
+    scene.add(...objects3D.rawVal);
   });
 
   return viewerElm;
 }
 
 // Utils
-function getDefaultSettings(settings: SettingsObj): Settings {
+function getDefaultSettings(settingsObj: SettingsObj): Settings {
   return {
-    gridSize: van.state(settings?.gridSize ?? 20),
-    displayScale: van.state(settings?.displayScale ?? 1),
-    nodes: van.state(settings?.nodes ?? true),
-    elements: van.state(settings?.elements ?? true),
-    nodesIndexes: van.state(settings?.nodesIndexes ?? false),
-    elementsIndexes: van.state(settings?.elementsIndexes ?? false),
-    orientations: van.state(settings?.orientations ?? false),
-    supports: van.state(settings?.supports ?? true),
-    loads: van.state(settings?.loads ?? true),
-    deformedShape: van.state(settings?.deformedShape ?? false),
-    elementResults: van.state(settings?.elementResults ?? "none"),
-    nodeResults: van.state(settings?.nodeResults ?? "none"),
+    gridSize: van.state(settingsObj?.gridSize ?? 20),
+    displayScale: van.state(settingsObj?.displayScale ?? 1),
+    nodes: van.state(settingsObj?.nodes ?? true),
+    elements: van.state(settingsObj?.elements ?? true),
+    nodesIndexes: van.state(settingsObj?.nodesIndexes ?? false),
+    elementsIndexes: van.state(settingsObj?.elementsIndexes ?? false),
+    orientations: van.state(settingsObj?.orientations ?? false),
+    supports: van.state(settingsObj?.supports ?? true),
+    loads: van.state(settingsObj?.loads ?? true),
+    deformedShape: van.state(settingsObj?.deformedShape ?? false),
+    elementResults: van.state(settingsObj?.elementResults ?? "none"),
+    nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
   };
 }
