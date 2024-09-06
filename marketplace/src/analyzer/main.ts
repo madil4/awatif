@@ -17,7 +17,7 @@ structure.elements.val = [
   [1, 2],
 ];
 
-const viewerElm = viewer(structure);
+const viewerElm = viewer({ structure });
 
 const sheetsObj = new Map();
 sheetsObj.set("nodes", {
