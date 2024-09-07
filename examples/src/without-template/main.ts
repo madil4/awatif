@@ -1,13 +1,13 @@
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import * as THREE from "three";
 import { sheets, viewer } from "awatif-ui";
 
 // init
-const polyline: State<number[][]> = van.state([
+const polyline: number[][] = [
   [0, 0, 0],
   [5, 0, 5],
   [10, 0, 0],
-]);
+];
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),
   new THREE.LineBasicMaterial()
@@ -18,7 +18,7 @@ const sheetsObj = new Map();
 // update
 sheetsObj.set("polyline", {
   text: "Polyline",
-  data: polyline.rawVal,
+  data: polyline,
   columns: [
     { field: "0", text: "X-coordinate", editable: { type: "float" } },
     { field: "1", text: "Y-coordinate", editable: { type: "float" } },
@@ -28,18 +28,15 @@ sheetsObj.set("polyline", {
 
 // events
 const onSheetChange = ({ data }) => {
-  polyline.val = data;
-};
-
-// on polyline: update lines buffer and render it
-van.derive(() => {
   lines.geometry.setAttribute(
     "position",
-    new THREE.Float32BufferAttribute(polyline.val.flat(), 3)
+    new THREE.Float32BufferAttribute(data.flat(), 3)
   );
 
-  objects3D.val = [...objects3D.rawVal]; // To trigger rendering
-});
+  objects3D.val = [...objects3D.rawVal]; // trigger rendering
+};
+
+onSheetChange({ data: polyline }); // trigger the first render
 
 document.body.append(sheets(sheetsObj, onSheetChange));
 document.body.appendChild(viewer({ objects3D }));

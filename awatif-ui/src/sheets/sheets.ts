@@ -22,7 +22,6 @@ export function sheets(
 
   const onGridChange = ({ name, data }) => {
     if (onChange) onChange({ sheet: name, data });
-    console.log(name, data);
   };
 
   const tabsData = [];
