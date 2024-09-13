@@ -4,6 +4,8 @@ import "w2ui/w2ui-2.0.min.css";
 
 type Data = number[][] | Map<any, Record<string, any>>;
 
+// Todo: redesign the architecture Maps because they don't have a incremental id
+
 export function grid(
   name: string,
   columns: object[],
@@ -21,6 +23,7 @@ export function grid(
   const grid = new w2grid({
     name: getID(name),
     selectType: "cell",
+    show: { columnMenu: false },
     columns: [
       {
         ...baseColumn,
@@ -32,6 +35,10 @@ export function grid(
       ...columns.map((v) => ({ ...baseColumn, ...v })),
     ],
     records: toRecords(data),
+    contextMenu: [
+      { id: "delete", text: "Delete row", icon: "w2ui-icon-cross" },
+      { id: "Insert", text: "Insert row", icon: "w2ui-icon-plus" },
+    ],
     onDelete: (e) => e.preventDefault(),
   });
 
@@ -42,10 +49,28 @@ export function grid(
   grid.render(gridElm);
 
   // events
+  // on edit
   grid.onChange = (e) => {
-    // update records
     const field = columns[e.detail.column - 1]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;
+
+    if (onChange)
+      onChange({
+        name: grid.name,
+        data: toData(grid.records, Array.isArray(data)),
+      });
+  };
+
+  grid.onContextMenuClick = (e) => {
+    const menuItem = e.detail.menuItem.id;
+
+    if (menuItem == "delete")
+      grid.records = grid.records.filter((r) => r.recid != e.detail.recid);
+
+    if (menuItem == "Insert")
+      grid.records.push({ recid: grid.records.length + 1 });
+
+    grid.refresh();
 
     if (onChange)
       onChange({
