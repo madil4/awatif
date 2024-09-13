@@ -1,0 +1,20 @@
+/* To stretch to its container */
+#sheets {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#sheets #grid {
+  bottom: 28px;
+}
+
+#tabs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+}

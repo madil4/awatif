@@ -21,7 +21,7 @@ export default defineConfig({
         "mesh-refinement": "src/mesh-refinement/index.html",
         sphere: "src/sphere/index.html",
         truss: "src/truss/index.html",
-        "without-template": "src/without-template/index.html",
+        app: "src/app/index.html",
       },
     },
   },
