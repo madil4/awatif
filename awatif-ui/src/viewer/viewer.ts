@@ -46,10 +46,12 @@ export function viewer({
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
+  const viewerElm = document.createElement("div");
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     45,
-    window.innerWidth / window.innerHeight,
+    1,
     0.1,
     2 * 1e6 // supported view till 1e6
   );
@@ -77,8 +79,6 @@ export function viewer({
     );
   });
 
-  const viewerElm = document.createElement("div");
-
   // update
   viewerElm.setAttribute("id", "viewer");
   viewerElm.appendChild(renderer.domElement);
@@ -102,7 +102,6 @@ export function viewer({
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
-  renderer.setSize(window.innerWidth, window.innerHeight);
 
   const gridSize = settings.gridSize.rawVal;
   const z2fit = gridSize * 0.5 + (gridSize * 0.5) / Math.tan(45 * 0.5);
@@ -113,13 +112,21 @@ export function viewer({
   controls.zoomSpeed = 10;
   controls.update();
 
-  // on windows resize
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.render(scene, camera);
+  // on viewer element resize
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const width = entry.target.parentElement?.clientWidth;
+      const height = entry.target.parentElement?.clientHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+      renderer.render(scene, camera);
+    }
   });
+
+  resizeObserver.observe(viewerElm);
 
   // on controls change
   controls.addEventListener("change", () => {

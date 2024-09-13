@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { Structure } from "awatif-data-structure";
-import { sheets, viewer } from "awatif-ui";
+import { layout, sheets, viewer } from "awatif-ui";
 
 const structure: Structure = {
   nodes: van.state([
@@ -37,5 +37,9 @@ const onSheetChange = ({ sheet, data }) => {
   structure[sheet].val = data;
 };
 
-document.body.append(viewer({ structure }));
-document.body.append(sheets(sheetsObj, onSheetChange));
+document.body.append(
+  layout({
+    main: sheets(sheetsObj, onSheetChange),
+    right: viewer({ structure }),
+  })
+);
