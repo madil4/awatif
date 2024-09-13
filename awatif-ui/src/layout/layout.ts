@@ -45,7 +45,7 @@ export function layout({
       },
       {
         type: "right",
-        size: "50%",
+        size: "60%",
         resizable: true,
         style,
         html: getW2Elm(right),
