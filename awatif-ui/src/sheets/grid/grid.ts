@@ -43,6 +43,8 @@ export function grid(
     onDelete: (e) => e.preventDefault(),
   });
 
+  let recordsIndex = grid.records.length;
+
   // update
   gridElm.setAttribute("id", "grid");
   gridElm.style.height = "250px";
@@ -66,8 +68,7 @@ export function grid(
     if (menuItem == "delete")
       grid.records = grid.records.filter((r) => r.recid != e.detail.recid);
 
-    if (menuItem == "Insert")
-      grid.records.push({ recid: grid.records.length + 1 });
+    if (menuItem == "Insert") grid.records.push({ recid: recordsIndex++ });
 
     grid.refresh();
 
