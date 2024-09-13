@@ -1,7 +1,5 @@
 import { w2layout } from "w2ui";
-
 import "w2ui/w2ui-2.0.min.css";
-
 import "./styles.css";
 
 export function layout({
@@ -13,7 +11,7 @@ export function layout({
 }: {
   topLeft?: HTMLElement;
   topRight?: HTMLElement;
-  main?: HTMLElement;
+  main: HTMLElement;
   preview?: HTMLElement;
   right?: HTMLElement;
 }): HTMLElement {
@@ -25,8 +23,8 @@ export function layout({
   const topLayout = new w2layout({
     name: "topLayout",
     panels: [
-      { type: "left", html: getW2Elm(topLeft) },
-      { type: "right", html: getW2Elm(topRight) },
+      ...(topLeft ? [{ type: "left", html: getW2Elm(topLeft) }] : []),
+      ...(topRight ? [{ type: "right", html: getW2Elm(topRight) }] : []),
     ],
   });
 
@@ -34,22 +32,32 @@ export function layout({
     box: layoutElm,
     name: "layout",
     panels: [
-      { type: "top", size: 60, style, html: topLayout },
+      ...(topLeft || topRight
+        ? [{ type: "top", size: 60, style, html: topLayout }]
+        : []),
       { type: "main", style, html: getW2Elm(main) },
-      {
-        type: "preview",
-        size: "50%",
-        resizable: true,
-        style,
-        html: getW2Elm(preview),
-      },
-      {
-        type: "right",
-        size: "60%",
-        resizable: true,
-        style,
-        html: getW2Elm(right),
-      },
+      ...(preview
+        ? [
+            {
+              type: "preview",
+              size: "50%",
+              resizable: true,
+              style,
+              html: getW2Elm(preview),
+            },
+          ]
+        : []),
+      ...(right
+        ? [
+            {
+              type: "right",
+              size: "60%",
+              resizable: true,
+              style,
+              html: getW2Elm(right),
+            },
+          ]
+        : []),
     ],
   });
 
@@ -60,10 +68,10 @@ export function layout({
 }
 
 // Utils
-function getW2Elm(elm?: HTMLElement): { render: () => void } {
+function getW2Elm(elm: HTMLElement): { render: () => void } {
   return {
     render: function () {
-      if (elm) this.box.append(elm);
+      this.box.append(elm);
     },
   };
 }
