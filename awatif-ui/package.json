@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "awatif-data-structure": "^1.0.0",
+    "lit-html": "^3.2.0",
     "three": "~0.166.1",
     "tweakpane": "~4.0.4",
     "vanjs-core": "^1.5.1",

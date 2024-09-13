@@ -23,7 +23,9 @@ export function layout({
   const topLayout = new w2layout({
     name: "topLayout",
     panels: [
-      ...(topLeft ? [{ type: "left", html: getW2Elm(topLeft) }] : []),
+      ...(topLeft
+        ? [{ type: "left", size: "50%", html: getW2Elm(topLeft) }]
+        : []),
       ...(topRight ? [{ type: "right", html: getW2Elm(topRight) }] : []),
     ],
   });
@@ -51,7 +53,7 @@ export function layout({
         ? [
             {
               type: "right",
-              size: "60%",
+              size: "65%",
               resizable: true,
               style,
               html: getW2Elm(right),
