@@ -21,6 +21,7 @@ export function grid(
     resizable: false,
   };
   const grid = new w2grid({
+    box: gridElm,
     name: getID(name),
     selectType: "cell",
     show: { columnMenu: false },
@@ -45,8 +46,6 @@ export function grid(
   // update
   gridElm.setAttribute("id", "grid");
   gridElm.style.height = "250px";
-
-  grid.render(gridElm);
 
   // events
   // on edit
