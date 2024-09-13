@@ -1,0 +1,15 @@
+#title {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+#title svg {
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+#title h1 {
+  font-size: 20px;
+  font-family: sans-serif;
+}

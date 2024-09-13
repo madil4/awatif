@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { sheets, viewer, layout } from "awatif-ui";
+import { sheets, viewer, layout, title } from "awatif-ui";
 
 // init
 const polyline: number[][] = [
@@ -40,6 +40,7 @@ onSheetChange({ data: polyline }); // trigger the first render
 
 document.body.append(
   layout({
+    topLeft: title("App Example"),
     main: sheets(sheetsObj, onSheetChange),
     right: viewer({ objects3D }),
   })
