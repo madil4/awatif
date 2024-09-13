@@ -2,6 +2,8 @@ import { w2grid } from "w2ui";
 
 import "w2ui/w2ui-2.0.min.css";
 
+import "./styles.css";
+
 type Data = number[][] | Map<any, Record<string, any>>;
 
 // Todo: redesign the architecture Maps because they don't have a incremental id
@@ -47,7 +49,6 @@ export function grid(
 
   // update
   gridElm.setAttribute("id", "grid");
-  gridElm.style.height = "250px";
 
   // events
   // on edit
@@ -78,6 +79,10 @@ export function grid(
         data: toData(grid.records, Array.isArray(data)),
       });
   };
+
+  // on size change
+  const resizeObserver = new ResizeObserver(() => grid.refresh());
+  resizeObserver.observe(gridElm);
 
   return gridElm;
 }
