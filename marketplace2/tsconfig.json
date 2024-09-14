@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "ES2015", // For new programming features
-    "moduleResolution": "Bundler", // To resolve modules for browsers
-    "noEmit": true
-  }
-}
