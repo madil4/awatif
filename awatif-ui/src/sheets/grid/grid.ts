@@ -15,7 +15,6 @@ export function grid(
 
   const baseColumn = {
     size: "120px",
-    sortable: true,
     resizable: false,
   };
   const grid = new w2grid({
