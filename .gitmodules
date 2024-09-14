@@ -1,0 +1,3 @@
+[submodule "marketplace"]
+	path = marketplace
+	url = https://github.com/madil4/marketplace.git
