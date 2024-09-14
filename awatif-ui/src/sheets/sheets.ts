@@ -1,9 +1,6 @@
 import { w2tabs, w2ui } from "w2ui";
-
 import { grid } from "./grid/grid";
-
 import "w2ui/w2ui-2.0.min.css";
-
 import "./styles.css";
 
 export function sheets(

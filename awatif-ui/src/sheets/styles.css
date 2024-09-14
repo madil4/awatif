@@ -1,4 +1,4 @@
-/* To stretch to its container */
+/* Stretching to its container allow size change events */
 #sheets {
   position: absolute;
   top: 0;

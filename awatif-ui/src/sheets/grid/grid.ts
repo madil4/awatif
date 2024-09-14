@@ -1,12 +1,8 @@
 import { w2grid } from "w2ui";
-
 import "w2ui/w2ui-2.0.min.css";
-
 import "./styles.css";
 
 type Data = number[][] | Map<any, Record<string, any>>;
-
-// Todo: redesign the architecture Maps because they don't have a incremental id
 
 export function grid(
   name: string,
@@ -51,7 +47,7 @@ export function grid(
   gridElm.setAttribute("id", "grid");
 
   // events
-  // on edit
+  // on field edit
   grid.onChange = (e) => {
     const field = columns[e.detail.column - 1]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;

@@ -1,5 +1,4 @@
 import { html, render } from "lit-html";
-
 import "./styles.css";
 
 export function title(text: string): HTMLElement {

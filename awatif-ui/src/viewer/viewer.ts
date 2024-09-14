@@ -112,11 +112,11 @@ export function viewer({
   controls.zoomSpeed = 10;
   controls.update();
 
-  // on viewer element resize
+  // on size change
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      const width = entry.target.parentElement?.clientWidth;
-      const height = entry.target.parentElement?.clientHeight;
+      const width = entry.target?.clientWidth;
+      const height = entry.target?.clientHeight;
 
       camera.aspect = width / height;
       camera.updateProjectionMatrix();

@@ -19,7 +19,8 @@
           [0, 0, 0],
           [1, 2, 3],
           [3, 4, 1],
-        ]
+        ],
+        (e) => console.log(e)
       );
 
       nodeGridElm.style.height = "250px";
@@ -46,7 +47,8 @@
           },
           { field: "mass", text: "Mass", editable: { type: "float" } },
         ],
-        materials
+        materials,
+        (e) => console.log(e)
       );
 
       materialsGridElm.style.height = "250px";
