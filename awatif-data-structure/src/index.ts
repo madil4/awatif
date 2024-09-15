@@ -1,6 +1,7 @@
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
 export type Element = [number, number]; // indices of the first and second node in the list of nodes
+export type QuadrilateralElement = [number, number, number, number]; // Element connects nodes 0, 1, 2, and 3
 
 // Analysis Inputs
 export type AnalysisInputs = {
@@ -44,4 +45,12 @@ type ElementAnalysisOutputs = {
   torsion?: [number, number];
   bendingY?: [number, number];
   bendingZ?: [number, number];
+};
+
+export type PlateMaterialInput = {
+  elasticity: number;    // Young's modulus E
+  poisson: number;       // Poisson's ratio ν
+  shearModulus: number;  // Shear modulus G
+  thickness: number;     // Plate thickness t
+  density?: number;      // Material density (optional)
 };
