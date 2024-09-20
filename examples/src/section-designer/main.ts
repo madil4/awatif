@@ -59,7 +59,12 @@ sheetsObj.set("Material Properties", {
 
 
 // events
-const onSheetChange = ({ data }) => {
+const onSheetChange = ({ sheet, data }) => {
+
+  if (sheet != "Section Geometry") {
+    return;
+  };
+
   lines.geometry.setAttribute(
     "position",
     new THREE.Float32BufferAttribute(data.flat(), 2)
@@ -68,7 +73,7 @@ const onSheetChange = ({ data }) => {
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 };
 
-onSheetChange({ data: sectionGeometry }); // trigger the first render
+onSheetChange({ sheet: "Section Geometry", data: sectionGeometry }); // trigger the first render
 
 document.body.append(
   layout({
