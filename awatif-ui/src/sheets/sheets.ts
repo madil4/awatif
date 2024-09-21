@@ -3,14 +3,18 @@ import { grid } from "./grid/grid";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
+import van, { State } from "vanjs-core";
+
 export function sheets(
-  sheets: Map<
-    string,
-    {
-      text: string;
-      columns: object[];
-      data: number[][] | Map<any, Record<string, any>>;
-    }
+  sheets: State<
+    Map<
+      string,
+      {
+        text: string;
+        columns: object[];
+        data: number[][] | Map<any, Record<string, any>>;
+      }
+    >
   >,
   onChange?: ({ sheet, data }) => void
 ): HTMLElement {
@@ -23,9 +27,16 @@ export function sheets(
 
   const tabsData = [];
   const grids = new Map<string, HTMLDivElement>();
-  sheets.forEach((sheet, index) => {
+  sheets.val.forEach((sheet, index) => {
     tabsData.push({ id: index, text: sheet.text });
     grids.set(index, grid(index, sheet.columns, sheet.data, onGridChange));
+  });
+
+  van.derive(() => {
+    sheets.val.forEach((sheet, index) => {
+      tabsData.push({ id: index, text: sheet.text });
+      grids.set(index, grid(index, sheet.columns, sheet.data, onGridChange));
+    });
   });
 
   const tabs = new w2tabs({
