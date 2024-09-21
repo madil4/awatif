@@ -1,8 +1,6 @@
-import { Node, Element } from "awatif-data-structure";
 import * as THREE from "three";
-import * as math from "mathjs";
 
-const NUM_POINTS = 10000;
+const NUM_POINTS = 100000;
 
 export function getArea(vertices: number[][]): number {
   // compute box and in points
@@ -38,8 +36,10 @@ export function getSecondMomentOfArea(vertices: number[][]): [number, number] {
     ySecondMomentPoint += point[0] ** 2;
   });
 
-  const xSecondMomentArea = (xSecondMomentPoint / pointsInMesh.length) * meshArea;
-  const ySecondMomentArea = (ySecondMomentPoint / pointsInMesh.length) * meshArea;
+  const xSecondMomentArea =
+    (xSecondMomentPoint / pointsInMesh.length) * meshArea;
+  const ySecondMomentArea =
+    (ySecondMomentPoint / pointsInMesh.length) * meshArea;
 
   return [xSecondMomentArea, ySecondMomentArea];
 }
@@ -63,6 +63,23 @@ export function getCentroid(vertices: number[][]): [number, number] {
   const yCentroid = yAreaIn / pointsInMesh.length;
 
   return [xCentroid, yCentroid];
+}
+
+export function getSectionProperties(vertices: number[][]) {
+  const A: number = getArea(vertices);
+  const [Ixx, Iyy]: [number, number] = getSecondMomentOfArea(vertices);
+  const [x_bar, y_bar]: [number, number] = getCentroid(vertices);
+  const sectionProperties: number[][] = [
+    [
+      Math.round(A),
+      Math.round(Ixx),
+      Math.round(Iyy),
+      Math.round(x_bar),
+      Math.round(y_bar),
+    ],
+  ];
+
+  return sectionProperties;
 }
 
 // Helper functions ----------------------------------------------------------------
