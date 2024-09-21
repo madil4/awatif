@@ -3,9 +3,6 @@ import * as THREE from "three";
 import { sheets, viewer, layout, title } from "awatif-ui";
 
 import {
-  getArea,
-  getSecondMomentOfArea,
-  getCentroid,
   getSectionProperties,
 } from "./properties";
 

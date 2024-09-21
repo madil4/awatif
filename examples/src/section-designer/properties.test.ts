@@ -1,0 +1,1 @@
+import { getArea, getSecondMomentOfArea, getCentroid } from "./properties";
