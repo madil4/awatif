@@ -2,7 +2,12 @@ import van from "vanjs-core";
 import * as THREE from "three";
 import { sheets, viewer, layout, title } from "awatif-ui";
 
-import { getArea, getSecondMomentOfArea, getCentroid, getSectionProperties } from "./properties";
+import {
+  getArea,
+  getSecondMomentOfArea,
+  getCentroid,
+  getSectionProperties,
+} from "./properties";
 
 // init
 const bf = 165; // Flange width
@@ -28,18 +33,6 @@ const vertices: number[][] = [
 ];
 
 const materialProperties: number[][] = [[10, 1000, 100]];
-let A: number = getArea(vertices);
-let [Ixx, Iyy]: [number, number] = getSecondMomentOfArea(vertices);
-let [x_bar, y_bar]: [number, number] = getCentroid(vertices);
-let sectionProperties: number[][] = [
-  [
-    Math.round(A),
-    Math.round(Ixx),
-    Math.round(Iyy),
-    Math.round(x_bar),
-    Math.round(y_bar),
-  ],
-];
 
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),
@@ -70,7 +63,7 @@ const onSheetChange = ({ sheet, data }) => {
 
     newSheetData.set("SectionGeometry", {
       text: "Section Geometry",
-      data: data,
+      data: vertices,
       columns: [
         { field: "0", text: "X-coordinate", editable: { type: "float" } },
         { field: "1", text: "Y-coordinate", editable: { type: "float" } },
@@ -113,6 +106,11 @@ document.body.append(
   layout({
     topLeft: title("Section Designer"),
     main: sheets(sheetsObj, onSheetChange),
-    right: viewer({ objects3D }),
+    right: viewer({
+      objects3D,
+      settingsObj: {
+        gridSize: 200,
+      },
+    }),
   })
 );
