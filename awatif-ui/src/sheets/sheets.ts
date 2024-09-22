@@ -1,5 +1,6 @@
-import { w2tabs, w2ui } from "w2ui";
-import { grid } from "./grid/grid";
+import { w2tabs } from "w2ui";
+import { State } from "vanjs-core";
+import { Data, grid } from "../grid/grid";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
@@ -9,7 +10,7 @@ export function sheets(
     {
       text: string;
       columns: object[];
-      data: number[][] | Map<any, Record<string, any>>;
+      data: State<number[][] | Map<any, Record<string, any>>>;
     }
   >,
   onChange?: ({ sheet, data }) => void
@@ -17,15 +18,11 @@ export function sheets(
   const sheetsElm = document.createElement("div");
   const tabsElm = document.createElement("div");
 
-  const onGridChange = ({ name, data }) => {
-    if (onChange) onChange({ sheet: name, data });
-  };
-
   const tabsData = [];
   const grids = new Map<string, HTMLDivElement>();
   sheets.forEach((sheet, index) => {
     tabsData.push({ id: index, text: sheet.text });
-    grids.set(index, grid(index, sheet.columns, sheet.data, onGridChange));
+    grids.set(index, grid(sheet.columns, sheet.data, onGridChange));
   });
 
   const tabs = new w2tabs({
@@ -45,8 +42,11 @@ export function sheets(
   // events
   tabs.onClick = (e: { target: string }) => {
     sheetsElm.firstChild.replaceWith(grids.get(e.target));
-    w2ui[e.target].refresh();
   };
+
+  function onGridChange(data: Data) {
+    if (onChange) onChange({ sheet: tabs.active, data });
+  }
 
   return sheetsElm;
 }
