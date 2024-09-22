@@ -5,23 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Awatif UI - Grid</title>
     <script type="module" lang="ts">
+      import van from "vanjs-core";
       import { grid } from "./grid";
 
       // List case
+      const nodes = van.state([
+        [0, 0, 0],
+        [1, 2, 3],
+        [3, 4, 1],
+      ]);
       const nodeGridElm = grid(
-        "Nodes",
         [
           { field: "0", text: "X-coordinate", editable: { type: "float" } },
           { field: "1", text: "Y-coordinate", editable: { type: "float" } },
           { field: "2", text: "Z-coordinate", editable: { type: "float" } },
         ],
-        [
-          [0, 0, 0],
-          [1, 2, 3],
-          [3, 4, 1],
-        ],
-        (e) => console.log(e)
+        nodes,
+        (e) => console.log(e) // test on change
       );
+
+      setTimeout(() => (nodes.val = [[0, 0, 0]]), 3000); // test on data change
 
       nodeGridElm.style.height = "250px";
       document.body.appendChild(nodeGridElm);
@@ -33,7 +36,6 @@
       materials.set(5, { elasticity: 9, shearModulus: 7 });
 
       const materialsGridElm = grid(
-        "Materials",
         [
           {
             field: "elasticity",
@@ -47,7 +49,7 @@
           },
           { field: "mass", text: "Mass", editable: { type: "float" } },
         ],
-        materials,
+        van.state(materials),
         (e) => console.log(e)
       );
 

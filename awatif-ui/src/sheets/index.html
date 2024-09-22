@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Awatif UI - Sheets</title>
     <script type="module">
+      import van from "vanjs-core";
       import { sheets } from "./sheets/";
 
       const materials = new Map();
@@ -15,20 +16,19 @@
       const sheetsObj = new Map();
       sheetsObj.set("nodes", {
         text: "Nodes",
-        data: [
-          [0, 0, 0],
-          [1, 2, 3],
-          [3, 4, 1],
-        ],
         columns: [
           { field: "0", text: "X-coordinate", editable: { type: "float" } },
           { field: "1", text: "Y-coordinate", editable: { type: "float" } },
           { field: "2", text: "Z-coordinate", editable: { type: "float" } },
         ],
+        data: van.state([
+          [0, 0, 0],
+          [1, 2, 3],
+          [3, 4, 1],
+        ]),
       });
       sheetsObj.set("materials", {
         text: "Materials",
-        data: materials,
         columns: [
           {
             field: "elasticity",
@@ -42,6 +42,7 @@
           },
           { field: "mass", text: "Mass", editable: { type: "float" } },
         ],
+        data: van.state(materials),
       });
 
       const sheetsElm = sheets(sheetsObj, (e) => console.log(e));
