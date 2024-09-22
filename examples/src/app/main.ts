@@ -58,16 +58,19 @@ van.derive(() => {
 
 document.body.append(
   layout({
-    topLeft: title("App Example"),
-    preview: grid(
-      [
-        { field: "0", text: "Line Length" },
-        { field: "1", text: "Between" },
-      ],
-      outputLines
-    ),
-    main: sheets(sheetsObj, onSheetChange),
-    right: viewer({ objects3D }),
+    topLeft: { element: title("App Example") },
+    main: { element: sheets(sheetsObj, onSheetChange), title: "Inputs" },
+    preview: {
+      element: grid(
+        [
+          { field: "0", text: "Line Length" },
+          { field: "1", text: "Between" },
+        ],
+        outputLines
+      ),
+      title: "Outputs",
+    },
+    right: { element: viewer({ objects3D }) },
   })
 );
 

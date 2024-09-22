@@ -6,3 +6,8 @@
   left: 0;
   right: 0;
 }
+
+#layout .w2ui-panel-title {
+  height: 35px;
+  font-size: larger;
+}

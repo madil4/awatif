@@ -7,19 +7,25 @@
     <script type="module">
       import { layout } from "./layout";
 
-      const topLeft = document.createElement("span");
-      const topRight = document.createElement("span");
-      const main = document.createElement("span");
-      const preview = document.createElement("span");
-      const right = document.createElement("span");
+      const topLeftElm = document.createElement("span");
+      const topRightElm = document.createElement("span");
+      const mainElm = document.createElement("span");
+      const previewElm = document.createElement("span");
+      const rightElm = document.createElement("span");
 
-      topLeft.innerText = "Top Left";
-      topRight.innerText = "Top Right";
-      main.innerText = "Main";
-      preview.innerText = "Preview";
-      right.innerText = "Right";
+      topLeftElm.innerText = "Top Left";
+      topRightElm.innerText = "Top Right";
+      mainElm.innerText = "Main";
+      previewElm.innerText = "Preview";
+      rightElm.innerText = "Right";
 
-      const layoutElm = layout({ topLeft, topRight, main, preview, right });
+      const layoutElm = layout({
+        topLeft: { element: topLeftElm },
+        topRight: { element: topRightElm },
+        main: { element: mainElm, title: "Inputs" },
+        preview: { element: previewElm, title: "Outputs" },
+        right: { element: rightElm },
+      });
 
       document.body.appendChild(layoutElm);
     </script>
