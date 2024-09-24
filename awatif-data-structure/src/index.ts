@@ -25,6 +25,7 @@ export type MaterialInput = {
   elasticity: number;
   shearModulus?: number;
   mass?: number;
+  poisson: number; 
 };
 
 export type SectionInput = {
@@ -32,6 +33,7 @@ export type SectionInput = {
   momentOfInertiaZ?: number;
   momentOfInertiaY?: number;
   torsionalConstant?: number;
+  thickness: number;
 };
 
 // Analysis Outputs
