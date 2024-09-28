@@ -2,6 +2,11 @@ import { w2layout } from "w2ui";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
+type Panel = {
+  element: HTMLElement;
+  title?: string;
+};
+
 export function layout({
   topLeft,
   topRight,
@@ -9,12 +14,12 @@ export function layout({
   preview,
   right,
 }: {
-  topLeft?: HTMLElement;
-  topRight?: HTMLElement;
-  main: HTMLElement;
-  preview?: HTMLElement;
-  right?: HTMLElement;
-}): HTMLElement {
+  topLeft?: Panel;
+  topRight?: Panel;
+  main: Panel;
+  preview?: Panel;
+  right?: Panel;
+}): HTMLDivElement {
   // init
   const layoutElm = document.createElement("div");
 
@@ -24,9 +29,11 @@ export function layout({
     name: "topLayout",
     panels: [
       ...(topLeft
-        ? [{ type: "left", size: "50%", html: getW2Elm(topLeft) }]
+        ? [{ type: "left", size: "50%", html: getW2Elm(topLeft.element) }]
         : []),
-      ...(topRight ? [{ type: "right", html: getW2Elm(topRight) }] : []),
+      ...(topRight
+        ? [{ type: "right", html: getW2Elm(topRight.element) }]
+        : []),
     ],
   });
 
@@ -37,7 +44,12 @@ export function layout({
       ...(topLeft || topRight
         ? [{ type: "top", size: 60, style, html: topLayout }]
         : []),
-      { type: "main", style, html: getW2Elm(main) },
+      {
+        type: "main",
+        style,
+        html: getW2Elm(main.element),
+        ...(main.title ? { title: main.title } : {}),
+      },
       ...(preview
         ? [
             {
@@ -45,7 +57,8 @@ export function layout({
               size: "50%",
               resizable: true,
               style,
-              html: getW2Elm(preview),
+              html: getW2Elm(preview.element),
+              ...(preview.title ? { title: preview.title } : {}),
             },
           ]
         : []),
@@ -56,7 +69,8 @@ export function layout({
               size: "65%",
               resizable: true,
               style,
-              html: getW2Elm(right),
+              html: getW2Elm(right.element),
+              ...(right.title ? { title: right.title } : {}),
             },
           ]
         : []),

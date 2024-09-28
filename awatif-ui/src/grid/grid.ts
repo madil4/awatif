@@ -1,14 +1,14 @@
 import { w2grid } from "w2ui";
+import van, { State } from "vanjs-core";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-type Data = number[][] | Map<any, Record<string, any>>;
+export type Data = number[][] | Map<any, Record<string, any>>;
 
 export function grid(
-  name: string,
   columns: object[],
-  data: Data,
-  onChange?: ({ name, data }: { name: string; data: Data }) => void
+  data: State<Data>,
+  onChange?: (data: Data) => void
 ): HTMLDivElement {
   // init
   const gridElm = document.createElement("div");
@@ -18,8 +18,8 @@ export function grid(
     resizable: false,
   };
   const grid = new w2grid({
+    name: Math.random().toString().substring(2),
     box: gridElm,
-    name: getID(name),
     selectType: "cell",
     show: { columnMenu: false },
     columns: [
@@ -32,7 +32,7 @@ export function grid(
       },
       ...columns.map((v) => ({ ...baseColumn, ...v })),
     ],
-    records: toRecords(data),
+    records: toRecords(data.rawVal),
     contextMenu: [
       { id: "delete", text: "Delete row", icon: "w2ui-icon-cross" },
       { id: "Insert", text: "Insert row", icon: "w2ui-icon-plus" },
@@ -51,13 +51,10 @@ export function grid(
     const field = columns[e.detail.column - 1]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange)
-      onChange({
-        name: grid.name,
-        data: toData(grid.records, Array.isArray(data)),
-      });
+    if (onChange) onChange(toData(grid.records, Array.isArray(data.rawVal)));
   };
 
+  // on delete and insert
   grid.onContextMenuClick = (e) => {
     const menuItem = e.detail.menuItem.id;
 
@@ -68,12 +65,14 @@ export function grid(
 
     grid.refresh();
 
-    if (onChange)
-      onChange({
-        name: grid.name,
-        data: toData(grid.records, Array.isArray(data)),
-      });
+    if (onChange) onChange(toData(grid.records, Array.isArray(data.rawVal)));
   };
+
+  // on data change
+  van.derive(() => {
+    grid.records = toRecords(data.val);
+    grid.refresh();
+  });
 
   // on size change
   const resizeObserver = new ResizeObserver(() => grid.refresh());
@@ -107,8 +106,4 @@ function toData(
     map.set(recid, rest);
   });
   return map;
-}
-
-function getID(name: string): string {
-  return name.replace(/[^a-zA-Z0-9-_]/g, "");
 }
