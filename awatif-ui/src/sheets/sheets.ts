@@ -5,15 +5,13 @@ import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
 export function sheets(
-  sheets: State<
-    Map<
-      string,
-      {
-        text: string;
-        columns: object[];
-        data: State<number[][] | Map<any, Record<string, any>>>;
-      }
-    >
+  sheets: Map<
+    string,
+    {
+      text: string;
+      columns: object[];
+      data: State<number[][] | Map<any, Record<string, any>>>;
+    }
   >,
   onChange?: ({ sheet, data }) => void
 ): HTMLElement {
