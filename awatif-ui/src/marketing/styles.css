@@ -1,0 +1,25 @@
+#marketing ul {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  list-style-type: none;
+}
+
+#marketing li {
+  margin-right: 10px;
+}
+
+#marketing svg {
+  width: 20px;
+  height: 20px;
+}
+
+#marketing button {
+  cursor: pointer;
+}
+
+/* At each popup open, this div is copied to w2ui-popup-body element.
+So, it hidden not deleted  */
+#marketing .popup div {
+  display: none;
+}
