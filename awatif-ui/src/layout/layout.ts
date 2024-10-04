@@ -32,7 +32,7 @@ export function layout({
         ? [{ type: "left", size: "50%", html: getW2Elm(topLeft.element) }]
         : []),
       ...(topRight
-        ? [{ type: "right", html: getW2Elm(topRight.element) }]
+        ? [{ type: "right", size: "50%", html: getW2Elm(topRight.element) }]
         : []),
     ],
   });

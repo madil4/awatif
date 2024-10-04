@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { sheets, viewer, layout, title, grid } from "awatif-ui";
+import { sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
 
 // init
 const inputPolyline = van.state([
@@ -59,6 +59,7 @@ van.derive(() => {
 document.body.append(
   layout({
     topLeft: { element: title("App Example") },
+    topRight: { element: marketing() },
     main: { element: sheets(sheetsObj, onSheetChange), title: "Inputs" },
     preview: {
       element: grid(
