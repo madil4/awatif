@@ -3,10 +3,13 @@ import { w2tooltip, w2popup } from "w2ui";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-export function marketing(
-  getStarted?: TemplateResult,
-  author?: TemplateResult
-): HTMLElement {
+export function marketing({
+  getStarted,
+  author,
+}: {
+  getStarted?: TemplateResult;
+  author?: TemplateResult;
+}): HTMLElement {
   // init
   const marketingElm = document.createElement("div");
 
@@ -20,9 +23,7 @@ export function marketing(
     <li>
       <div class="popup">
         <button>Author</button>
-        <div>
-          <p>${author}</p>
-        </div>
+        <div>${author}</div>
       </div>
     </li>
     <li class="tooltip" data-tooltip="Awatif Newsletter">
@@ -70,6 +71,8 @@ export function marketing(
       w2popup.open({
         title: el.querySelector("button")?.textContent,
         body: el.querySelector("div")?.outerHTML,
+        width: 600,
+        height: 450,
       });
     });
   });
