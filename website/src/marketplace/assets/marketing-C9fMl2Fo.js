@@ -4249,7 +4249,7 @@ void main() {
       ></path>
     </svg>
 
-    <h1>${s}</h1>`;return e.id="title",cf(t,e),e}function HE(s,e){const t=document.createElement("div"),i=jr` <ul>
+    <h1>${s}</h1>`;return e.id="title",cf(t,e),e}function HE({getStarted:s,author:e}){const t=document.createElement("div"),i=jr` <ul>
     <li>
       <div class="popup">
         <button>Get started</button>
@@ -4259,9 +4259,7 @@ void main() {
     <li>
       <div class="popup">
         <button>Author</button>
-        <div>
-          <p>${e}</p>
-        </div>
+        <div>${e}</div>
       </div>
     </li>
     <li class="tooltip" data-tooltip="Awatif Newsletter">
@@ -4281,7 +4279,7 @@ void main() {
         >${RE}</a
       >
     </li>
-  </ul>`;return t.id="marketing",cf(i,t),t.querySelectorAll(".tooltip").forEach((n,r)=>{n.addEventListener("mouseenter",()=>{Be.show({html:n.getAttribute("data-tooltip"),name:"custom-"+r,anchor:n})}),n.addEventListener("mouseleave",()=>{Be.hide("custom-"+r)})}),t.querySelectorAll(".popup").forEach(n=>{n.addEventListener("click",()=>{var r,o;pE.open({title:(r=n.querySelector("button"))==null?void 0:r.textContent,body:(o=n.querySelector("div"))==null?void 0:o.outerHTML})})}),t}const AE=jr`<svg
+  </ul>`;return t.id="marketing",cf(i,t),t.querySelectorAll(".tooltip").forEach((n,r)=>{n.addEventListener("mouseenter",()=>{Be.show({html:n.getAttribute("data-tooltip"),name:"custom-"+r,anchor:n})}),n.addEventListener("mouseleave",()=>{Be.hide("custom-"+r)})}),t.querySelectorAll(".popup").forEach(n=>{n.addEventListener("click",()=>{var r,o;pE.open({title:(r=n.querySelector("button"))==null?void 0:r.textContent,body:(o=n.querySelector("div"))==null?void 0:o.outerHTML,width:600,height:450})})}),t}const AE=jr`<svg
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   fill="#000000"
