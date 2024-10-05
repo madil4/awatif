@@ -55,7 +55,7 @@ van.derive(() => {
       getLength(inputPolyline.rawVal[i], inputPolyline.rawVal[i + 1]).toFixed(
         2
       ),
-      `${i} - ${i + 1}`,
+      `${i + 1} - ${i + 2}`,
     ]);
   }
 
