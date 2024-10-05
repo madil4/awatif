@@ -12,10 +12,10 @@
 
       sheetsObj.set("nodes", {
         text: "Nodes",
-        columns: [
-          { field: "0", text: "X-coordinate", editable: { type: "float" } },
-          { field: "1", text: "Y-coordinate", editable: { type: "float" } },
-          { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+        fields: [
+          { field: "A", text: "X-coordinate", editable: { type: "float" } },
+          { field: "B", text: "Y-coordinate", editable: { type: "float" } },
+          { field: "C", text: "Z-coordinate", editable: { type: "float" } },
         ],
         data: van.state([
           [0, 0, 0],
@@ -26,9 +26,9 @@
 
       sheetsObj.set("elements", {
         text: "Elements",
-        columns: [
-          { field: "0", text: "Node 1", editable: { type: "float" } },
-          { field: "1", text: "Node 2", editable: { type: "float" } },
+        fields: [
+          { field: "A", text: "Node 1", editable: { type: "float" } },
+          { field: "B", text: "Node 2", editable: { type: "float" } },
         ],
         data: van.state([
           [0, 0],

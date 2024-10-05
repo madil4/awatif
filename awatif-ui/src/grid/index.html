@@ -8,10 +8,22 @@
       import van from "vanjs-core";
       import { grid } from "./grid";
 
-      const columns = [
-        { field: "0", text: "X-coordinate", editable: { type: "float" } },
-        { field: "1", text: "Y-coordinate", editable: { type: "float" } },
-        { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+      const fields = [
+        {
+          field: "A",
+          text: "X-coordinate",
+          editable: { type: "float" },
+        },
+        {
+          field: "B",
+          text: "Y-coordinate",
+          editable: { type: "float" },
+        },
+        {
+          field: "C",
+          text: "Z-coordinate",
+          editable: { type: "float" },
+        },
       ];
       const data = van.state([
         [0, 0, 0],
@@ -20,7 +32,7 @@
       ]);
 
       const gridElm = grid(
-        columns,
+        fields,
         data,
         (e) => console.log(e) // test on change
       );
