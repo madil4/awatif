@@ -20,10 +20,15 @@ const sheetsObj = new Map();
 // update
 sheetsObj.set("polyline", {
   text: "Polyline",
-  columns: [
-    { field: "0", text: "X-coordinate", editable: { type: "float" } },
-    { field: "1", text: "Y-coordinate", editable: { type: "float" } },
-    { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+  fields: [
+    {
+      field: "A",
+      text: "X-coordinate",
+      min: "25",
+      editable: { type: "float" },
+    },
+    { field: "B", text: "Y-coordinate", editable: { type: "float" } },
+    { field: "C", text: "Z-coordinate", editable: { type: "float" } },
   ],
   data: inputPolyline,
 });
@@ -70,8 +75,8 @@ document.body.append(
     preview: {
       element: grid(
         [
-          { field: "0", text: "Line Length" },
-          { field: "1", text: "Between" },
+          { field: "A", text: "Line Length" },
+          { field: "B", text: "Between" },
         ],
         outputLines
       ),

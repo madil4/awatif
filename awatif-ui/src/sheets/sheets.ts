@@ -9,7 +9,7 @@ export function sheets(
     string,
     {
       text: string;
-      columns: object[];
+      fields: object[];
       data: State<Data>;
     }
   >,
@@ -22,7 +22,7 @@ export function sheets(
   const grids = new Map<string, HTMLDivElement>();
   sheets.forEach((sheet, index) => {
     tabsData.push({ id: index, text: sheet.text });
-    grids.set(index, grid(sheet.columns, sheet.data, onGridChange));
+    grids.set(index, grid(sheet.fields, sheet.data, onGridChange));
   });
 
   const tabs = new w2tabs({
