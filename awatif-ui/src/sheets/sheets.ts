@@ -10,7 +10,7 @@ export function sheets(
     {
       text: string;
       columns: object[];
-      data: State<number[][] | Map<any, Record<string, any>>>;
+      data: State<Data>;
     }
   >,
   onChange?: ({ sheet, data }) => void

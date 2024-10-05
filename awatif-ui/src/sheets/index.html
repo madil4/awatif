@@ -8,12 +8,8 @@
       import van from "vanjs-core";
       import { sheets } from "./sheets/";
 
-      const materials = new Map();
-      materials.set(0, { elasticity: 100, shearModulus: 40, mass: 10 });
-      materials.set(2, { elasticity: 200, shearModulus: 50, mass: 5 });
-      materials.set(5, { elasticity: 9, shearModulus: 7 });
-
       const sheetsObj = new Map();
+
       sheetsObj.set("nodes", {
         text: "Nodes",
         columns: [
@@ -27,25 +23,21 @@
           [3, 4, 1],
         ]),
       });
-      sheetsObj.set("materials", {
-        text: "Materials",
+
+      sheetsObj.set("elements", {
+        text: "Elements",
         columns: [
-          {
-            field: "elasticity",
-            text: "Elasticity",
-            editable: { type: "float" },
-          },
-          {
-            field: "shearModulus",
-            text: "Shear Modulus",
-            editable: { type: "float" },
-          },
-          { field: "mass", text: "Mass", editable: { type: "float" } },
+          { field: "0", text: "Node 1", editable: { type: "float" } },
+          { field: "1", text: "Node 2", editable: { type: "float" } },
         ],
-        data: van.state(materials),
+        data: van.state([
+          [0, 0],
+          [1, 2],
+          [3, 4],
+        ]),
       });
 
-      const sheetsElm = sheets(sheetsObj, (e) => console.log(e));
+      const sheetsElm = sheets(sheetsObj, (e) => console.log(e)); // test on change
 
       document.body.appendChild(sheetsElm);
     </script>

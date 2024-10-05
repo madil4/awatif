@@ -8,55 +8,26 @@
       import van from "vanjs-core";
       import { grid } from "./grid";
 
-      // List case
-      const nodes = van.state([
+      const columns = [
+        { field: "0", text: "X-coordinate", editable: { type: "float" } },
+        { field: "1", text: "Y-coordinate", editable: { type: "float" } },
+        { field: "2", text: "Z-coordinate", editable: { type: "float" } },
+      ];
+      const data = van.state([
         [0, 0, 0],
         [1, 2, 3],
         [3, 4, 1],
       ]);
-      const nodeGridElm = grid(
-        [
-          { field: "0", text: "X-coordinate", editable: { type: "float" } },
-          { field: "1", text: "Y-coordinate", editable: { type: "float" } },
-          { field: "2", text: "Z-coordinate", editable: { type: "float" } },
-        ],
-        nodes,
+
+      const gridElm = grid(
+        columns,
+        data,
         (e) => console.log(e) // test on change
       );
 
-      setTimeout(() => (nodes.val = [[0, 0, 0]]), 3000); // test on data change
+      setTimeout(() => (data.val = [[0, 0, 0]]), 3000); // test on data change
 
-      nodeGridElm.style.height = "250px";
-      document.body.appendChild(nodeGridElm);
-
-      // Map case
-      const materials = new Map();
-      materials.set(0, { elasticity: 100, shearModulus: 40, mass: 10 });
-      materials.set(2, { elasticity: 200, shearModulus: 50, mass: 5 });
-      materials.set(5, { elasticity: 9, shearModulus: 7 });
-
-      const materialsGridElm = grid(
-        [
-          {
-            field: "elasticity",
-            text: "Elasticity",
-            editable: { type: "float" },
-          },
-          {
-            field: "shearModulus",
-            text: "Shear Modulus",
-            editable: { type: "float" },
-          },
-          { field: "mass", text: "Mass", editable: { type: "float" } },
-        ],
-        van.state(materials),
-        (e) => console.log(e)
-      );
-
-      materialsGridElm.style.height = "250px";
-      materialsGridElm.style.top = "260px";
-
-      document.body.appendChild(materialsGridElm);
+      document.body.appendChild(gridElm);
     </script>
   </head>
   <body></body>

@@ -3,7 +3,7 @@ import van, { State } from "vanjs-core";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-export type Data = number[][] | Map<any, Record<string, any>>;
+export type Data = number[][];
 
 export function grid(
   columns: object[],
@@ -51,7 +51,7 @@ export function grid(
     const field = columns[e.detail.column - 1]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData(grid.records, Array.isArray(data.rawVal)));
+    if (onChange) onChange(toData(grid.records));
   };
 
   // on delete and insert
@@ -65,7 +65,7 @@ export function grid(
 
     grid.refresh();
 
-    if (onChange) onChange(toData(grid.records, Array.isArray(data.rawVal)));
+    if (onChange) onChange(toData(grid.records));
   };
 
   // on data change
@@ -82,28 +82,13 @@ export function grid(
 }
 
 // Utils
-function toRecords(data: number[][] | Map<number, any>): object[] {
-  if (Array.isArray(data)) return data.map((v, i) => ({ recid: i, ...v }));
-
-  const records: object[] = [];
-  data.forEach((v, k) => records.push({ recid: k, ...v }));
-  return records;
+function toRecords(data: number[][]): object[] {
+  return data.map((v, i) => ({ recid: i, ...v }));
 }
 
-function toData(
-  records: object[],
-  isArray: boolean
-): number[][] | Map<number, any> {
-  if (isArray)
-    return records.map((rec: any) => {
-      const { recid, w2ui, ...rest } = rec;
-      return Object.values(rest);
-    });
-
-  const map = new Map<number, any>();
-  records.forEach((rec: any) => {
+function toData(records: object[]): number[][] {
+  return records.map((rec: any) => {
     const { recid, w2ui, ...rest } = rec;
-    map.set(recid, rest);
+    return Object.values(rest);
   });
-  return map;
 }
