@@ -3,7 +3,7 @@ import van, { State } from "vanjs-core";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-export type Data = number[][];
+export type Data = object | number[][];
 
 export function grid({
   fields,
@@ -23,8 +23,8 @@ export function grid({
     selectType: "cell",
     recordHeight: 26,
     show: { columnMenu: false, lineNumbers: true },
-    columns: toColumns2D(fields),
-    records: toRecords2D(data.rawVal),
+    columns: toColumns(fields),
+    records: toRecords(data.rawVal, fields),
   });
 
   // update
@@ -44,14 +44,15 @@ export function grid({
     const field = fields[e.detail.column]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData2D(grid.records, fields.length));
+    if (onChange)
+      onChange(toData(grid.records, fields, Array.isArray(data.val)));
   };
 
   grid.onDelete = (e) => {
     e.detail.force = true;
 
     e.onComplete = () => {
-      if (onChange) onChange(toData2D(grid.records, fields.length));
+      if (onChange) onChange(toData2D(grid.records, fields));
     };
   };
 
@@ -59,13 +60,13 @@ export function grid({
     e.onComplete = () => {
       grid.mergeChanges();
 
-      if (onChange) onChange(toData2D(grid.records, fields.length));
+      if (onChange) onChange(toData2D(grid.records, fields));
     };
   };
 
   // on data change
   van.derive(() => {
-    grid.records = toRecords2D(data.val);
+    grid.records = toRecords(data.val, fields);
     grid.refresh();
   });
 
@@ -75,22 +76,7 @@ export function grid({
 // Utils
 const FIELDS_INDEXES = "ABCDEFGHIJKLMNOPRST";
 
-function toRecords2D(data: number[][]): object[] {
-  const records = Array(50)
-    .fill(0)
-    .map((_, i) => ({ recid: i }));
-  const fieldsIndexes = FIELDS_INDEXES.split("");
-
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      records[i][fieldsIndexes[j]] = data[i][j];
-    }
-  }
-
-  return records;
-}
-
-function toColumns2D(fields: object[]): object[] {
+function toColumns(fields: object[]): object[] {
   const columns = FIELDS_INDEXES.split("").map((fieldIndex) => ({
     field: fieldIndex,
     text: '<div style="text-align: center">' + fieldIndex + "</div>",
@@ -116,8 +102,52 @@ function toColumns2D(fields: object[]): object[] {
   });
 }
 
-function toData2D(records: object[], columns: number): number[][] {
-  let data = [...Array(records.length)].map(() => [...Array(columns)]);
+function toRecords(data: Data, fields: object[]): object[] {
+  if (Array.isArray(data)) return toRecordsTable(data);
+
+  return toRecordsObj(data, fields);
+}
+
+function toRecordsObj(data: object, fields: object[]): object[] {
+  const records = Array(50)
+    .fill(0)
+    .map((_, i) => ({ recid: i }));
+  const fieldsIndexes = FIELDS_INDEXES.split("");
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  for (let i = 0; i < keys.length; i++) {
+    records[i][fieldsIndexes[0]] = keys[i];
+    records[i][fieldsIndexes[1]] = values[i];
+  }
+
+  // Todo: find a way to inject field data to grid
+
+  return records;
+}
+
+function toRecordsTable(data: number[][]): object[] {
+  const records = Array(50)
+    .fill(0)
+    .map((_, i) => ({ recid: i }));
+  const fieldsIndexes = FIELDS_INDEXES.split("");
+
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].length; j++) {
+      records[i][fieldsIndexes[j]] = data[i][j];
+    }
+  }
+
+  return records;
+}
+
+function toData(records: object[], fields: object[], is2D: boolean): Data {
+  if (is2D) return toData2D(records, fields);
+  return toDataObj(records, fields);
+}
+
+function toData2D(records: object[], fields: object[]): number[][] {
+  let data = [...Array(records.length)].map(() => [...Array(fields.length)]);
   const fieldsIndexes = FIELDS_INDEXES.split("");
 
   for (let i = 0; i < data.length; i++) {
@@ -134,7 +164,7 @@ function toData2D(records: object[], columns: number): number[][] {
   return data;
 
   // utils
-  function findLastNonEmptyRow(data: Data) {
+  function findLastNonEmptyRow(data: number[][]) {
     for (let i = data.length - 1; i >= 0; i--) {
       // @ts-ignore
       if (data[i].some((v) => v !== "")) {
@@ -142,4 +172,10 @@ function toData2D(records: object[], columns: number): number[][] {
       }
     }
   }
+}
+
+function toDataObj(records: object[], fields: object[]): object {
+  const obj = { try: "yes" };
+
+  return obj;
 }
