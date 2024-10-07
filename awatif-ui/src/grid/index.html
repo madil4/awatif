@@ -8,7 +8,7 @@
       import van from "vanjs-core";
       import { grid } from "./grid";
 
-      const fields = [
+      const fields2D = [
         {
           field: "A",
           text: "X-coordinate",
@@ -25,21 +25,45 @@
           editable: { type: "float" },
         },
       ];
-      const data = van.state([
+      const data2D = van.state([
         [0, 0, 0],
         [1, 2, 3],
         [3, 4, 1],
       ]);
 
-      const gridElm = grid(
-        fields,
-        data,
+      const gridElm2D = grid(
+        fields2D,
+        data2D,
         (e) => console.log(e) // test on change
       );
 
-      setTimeout(() => (data.val = [[0, 0, 0]]), 3000); // test on data change
+      setTimeout(() => (data2D.val = [[0, 0, 0]]), 3000); // test on data change
 
-      document.body.appendChild(gridElm);
+      gridElm2D.style.height = "250px";
+
+      document.body.appendChild(gridElm2D);
+
+      const fields1D = [
+        {
+          field: "xPosition",
+          text: "X-Position",
+        },
+        {
+          field: "zPosition",
+          text: "Z-Position",
+        },
+      ];
+      const data1D = van.state({
+        xPosition: 600,
+        zPosition: 0,
+      });
+
+      const gridElm1D = grid(fields1D, data1D);
+
+      gridElm1D.style.height = "250px";
+      gridElm1D.style.top = "260px";
+
+      document.body.appendChild(gridElm1D);
     </script>
   </head>
   <body></body>

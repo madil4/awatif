@@ -3,7 +3,7 @@ import van, { State } from "vanjs-core";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-export type Data = number[][];
+export type Data = object | number[][];
 
 export function grid(
   fields: object[],
@@ -19,51 +19,51 @@ export function grid(
     selectType: "cell",
     recordHeight: 26,
     show: { columnMenu: false, lineNumbers: true },
-    columns: toColumns2D(fields),
-    records: toRecords2D(data.rawVal),
+    columns: toColumns(fields),
+    records: toRecords(data.rawVal, fields),
   });
 
   // update
   gridElm.setAttribute("id", "grid");
 
-  // events
-  // on size change
-  const resizeObserver = new ResizeObserver(() => grid.refresh());
-  resizeObserver.observe(gridElm);
+  // // events
+  // // on size change
+  // const resizeObserver = new ResizeObserver(() => grid.refresh());
+  // resizeObserver.observe(gridElm);
 
-  // on field edit
-  grid.onChange = (e) => {
-    // ignore changes if outside fields
-    if (!fields[e.detail.column]) return;
+  // // on field edit
+  // grid.onChange = (e) => {
+  //   // ignore changes if outside fields
+  //   if (!fields[e.detail.column]) return;
 
-    // update records manually, mergeChanges give error, this is a breaking change to w2ui!
-    const field = fields[e.detail.column]["field"];
-    grid.records[e.detail.index][field] = e.detail.value.new;
+  //   // update records manually, mergeChanges give error, this is a breaking change to w2ui!
+  //   const field = fields[e.detail.column]["field"];
+  //   grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData2D(grid.records, fields.length));
-  };
+  //   if (onChange) onChange(toData2D(grid.records, fields.length));
+  // };
 
-  grid.onDelete = (e) => {
-    e.detail.force = true;
+  // grid.onDelete = (e) => {
+  //   e.detail.force = true;
 
-    e.onComplete = () => {
-      if (onChange) onChange(toData2D(grid.records, fields.length));
-    };
-  };
+  //   e.onComplete = () => {
+  //     if (onChange) onChange(toData2D(grid.records, fields.length));
+  //   };
+  // };
 
-  grid.onPaste = (e) => {
-    e.onComplete = () => {
-      grid.mergeChanges();
+  // grid.onPaste = (e) => {
+  //   e.onComplete = () => {
+  //     grid.mergeChanges();
 
-      if (onChange) onChange(toData2D(grid.records, fields.length));
-    };
-  };
+  //     if (onChange) onChange(toData2D(grid.records, fields.length));
+  //   };
+  // };
 
-  // on data change
-  van.derive(() => {
-    grid.records = toRecords2D(data.val);
-    grid.refresh();
-  });
+  // // on data change
+  // van.derive(() => {
+  //   grid.records = toRecords2D(data.val);
+  //   grid.refresh();
+  // });
 
   return gridElm;
 }
@@ -71,22 +71,7 @@ export function grid(
 // Utils
 const FIELDS_INDEXES = "ABCDEFGHIJKLMNOPRST";
 
-function toRecords2D(data: number[][]): object[] {
-  const records = Array(50)
-    .fill(0)
-    .map((_, i) => ({ recid: i }));
-  const fieldsIndexes = FIELDS_INDEXES.split("");
-
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      records[i][fieldsIndexes[j]] = data[i][j];
-    }
-  }
-
-  return records;
-}
-
-function toColumns2D(fields: object[]): object[] {
+function toColumns(fields: object[]): object[] {
   const columns = FIELDS_INDEXES.split("").map((fieldIndex) => ({
     field: fieldIndex,
     text: '<div style="text-align: center">' + fieldIndex + "</div>",
@@ -112,30 +97,67 @@ function toColumns2D(fields: object[]): object[] {
   });
 }
 
-function toData2D(records: object[], columns: number): number[][] {
-  let data = [...Array(records.length)].map(() => [...Array(columns)]);
+function toRecords(data: Data, fields: object[]): object[] {
+  if (Array.isArray(data)) return toRecords2D(data);
+
+  return toRecords1D(data, fields);
+}
+
+function toRecords1D(data: object, fields: object[]): object[] {
+  const records = Array(50)
+    .fill(0)
+    .map((_, i) => ({ recid: i }));
+  const fieldsIndexes = FIELDS_INDEXES.split("");
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  for (let i = 0; i < keys.length; i++) {
+    records[i][fieldsIndexes[0]] = keys[i];
+    records[i][fieldsIndexes[1]] = values[i];
+  }
+
+  return records;
+}
+
+function toRecords2D(data: number[][]): object[] {
+  const records = Array(50)
+    .fill(0)
+    .map((_, i) => ({ recid: i }));
   const fieldsIndexes = FIELDS_INDEXES.split("");
 
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
-      data[i][j] = records[i][fieldsIndexes[j]] ?? "";
+      records[i][fieldsIndexes[j]] = data[i][j];
     }
   }
 
-  data = data.slice(0, findLastNonEmptyRow(data) + 1);
-
-  // cast to numbers and leave empty fields as string
-  data = data.map((row) => row.map((col) => (col === "" ? "" : Number(col))));
-
-  return data;
-
-  // utils
-  function findLastNonEmptyRow(data: Data) {
-    for (let i = data.length - 1; i >= 0; i--) {
-      // @ts-ignore
-      if (data[i].some((v) => v !== "")) {
-        return i;
-      }
-    }
-  }
+  return records;
 }
+
+// function toData2D(records: object[], columns: number): number[][] {
+//   let data = [...Array(records.length)].map(() => [...Array(columns)]);
+//   const fieldsIndexes = FIELDS_INDEXES.split("");
+
+//   for (let i = 0; i < data.length; i++) {
+//     for (let j = 0; j < data[i].length; j++) {
+//       data[i][j] = records[i][fieldsIndexes[j]] ?? "";
+//     }
+//   }
+
+//   data = data.slice(0, findLastNonEmptyRow(data) + 1);
+
+//   // cast to numbers and leave empty fields as string
+//   data = data.map((row) => row.map((col) => (col === "" ? "" : Number(col))));
+
+//   return data;
+
+//   // utils
+//   function findLastNonEmptyRow(data: Data) {
+//     for (let i = data.length - 1; i >= 0; i--) {
+//       // @ts-ignore
+//       if (data[i].some((v) => v !== "")) {
+//         return i;
+//       }
+//     }
+//   }
+// }
