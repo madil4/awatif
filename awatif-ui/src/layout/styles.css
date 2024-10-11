@@ -9,5 +9,6 @@
 
 #layout .w2ui-panel-title {
   height: 35px;
-  font-size: larger;
+  font-size: 16px;
+  font-family: OpenSans;
 }
