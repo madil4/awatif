@@ -71,15 +71,18 @@ document.body.append(
         author: getAuthorHtml(),
       }),
     },
-    main: { element: sheets(sheetsObj, onSheetChange), title: "Inputs" },
+    main: {
+      element: sheets({ sheets: sheetsObj, onChange: onSheetChange }),
+      title: "Inputs",
+    },
     preview: {
-      element: grid(
-        [
+      element: grid({
+        fields: [
           { field: "A", text: "Line Length" },
           { field: "B", text: "Between" },
         ],
-        outputLines
-      ),
+        data: outputLines,
+      }),
       title: "Outputs",
     },
     right: { element: viewer({ objects3D }) },

@@ -37,7 +37,10 @@
         ]),
       });
 
-      const sheetsElm = sheets(sheetsObj, (e) => console.log(e)); // test on change
+      const sheetsElm = sheets({
+        sheets: sheetsObj,
+        onChange: (e) => console.log(e), // test on change
+      });
 
       document.body.appendChild(sheetsElm);
     </script>

@@ -5,11 +5,15 @@ import "./styles.css";
 
 export type Data = number[][];
 
-export function grid(
-  fields: object[],
-  data: State<Data>,
-  onChange?: (data: Data) => void
-): HTMLDivElement {
+export function grid({
+  fields,
+  data,
+  onChange,
+}: {
+  fields: object[];
+  data: State<Data>;
+  onChange?: (data: Data) => void;
+}): HTMLDivElement {
   // init
   const gridElm = document.createElement("div");
 

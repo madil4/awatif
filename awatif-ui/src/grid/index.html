@@ -31,11 +31,11 @@
         [3, 4, 1],
       ]);
 
-      const gridElm = grid(
+      const gridElm = grid({
         fields,
         data,
-        (e) => console.log(e) // test on change
-      );
+        onChange: (e) => console.log(e), // test on change
+      });
 
       setTimeout(() => (data.val = [[0, 0, 0]]), 3000); // test on data change
 
