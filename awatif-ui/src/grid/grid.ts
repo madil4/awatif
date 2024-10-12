@@ -23,8 +23,8 @@ export function grid({
     selectType: "cell",
     recordHeight: 26,
     show: { columnMenu: false, lineNumbers: true },
-    columns: toColumns2D(fields),
-    records: toRecords2D(data.rawVal),
+    columns: toColumns(fields),
+    records: toRecords(data.rawVal),
   });
 
   // update
@@ -44,14 +44,14 @@ export function grid({
     const field = fields[e.detail.column]["field"];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData2D(grid.records, fields.length));
+    if (onChange) onChange(toData(grid.records, fields.length));
   };
 
   grid.onDelete = (e) => {
     e.detail.force = true;
 
     e.onComplete = () => {
-      if (onChange) onChange(toData2D(grid.records, fields.length));
+      if (onChange) onChange(toData(grid.records, fields.length));
     };
   };
 
@@ -59,13 +59,13 @@ export function grid({
     e.onComplete = () => {
       grid.mergeChanges();
 
-      if (onChange) onChange(toData2D(grid.records, fields.length));
+      if (onChange) onChange(toData(grid.records, fields.length));
     };
   };
 
   // on data change
   van.derive(() => {
-    grid.records = toRecords2D(data.val);
+    grid.records = toRecords(data.val);
     grid.refresh();
   });
 
@@ -75,7 +75,7 @@ export function grid({
 // Utils
 const FIELDS_INDEXES = "ABCDEFGHIJKLMNOPRST";
 
-function toRecords2D(data: number[][]): object[] {
+function toRecords(data: number[][]): object[] {
   const records = Array(50)
     .fill(0)
     .map((_, i) => ({ recid: i }));
@@ -90,7 +90,7 @@ function toRecords2D(data: number[][]): object[] {
   return records;
 }
 
-function toColumns2D(fields: object[]): object[] {
+function toColumns(fields: object[]): object[] {
   const columns = FIELDS_INDEXES.split("").map((fieldIndex) => ({
     field: fieldIndex,
     text: '<div style="text-align: center">' + fieldIndex + "</div>",
@@ -116,7 +116,7 @@ function toColumns2D(fields: object[]): object[] {
   });
 }
 
-function toData2D(records: object[], columns: number): number[][] {
+function toData(records: object[], columns: number): number[][] {
   let data = [...Array(records.length)].map(() => [...Array(columns)]);
   const fieldsIndexes = FIELDS_INDEXES.split("");
 
