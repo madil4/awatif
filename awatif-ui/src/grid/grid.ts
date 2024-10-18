@@ -3,7 +3,8 @@ import van, { State } from "vanjs-core";
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
-export type Data = number[][];
+type Table = number[][];
+export type Data = object | Table;
 
 export function grid({
   fields,
@@ -24,7 +25,7 @@ export function grid({
     recordHeight: 26,
     show: { columnMenu: false, lineNumbers: true },
     columns: toColumns(fields),
-    records: toRecords(data.rawVal),
+    records: toRecords(data.rawVal, fields),
   });
 
   // update
@@ -41,17 +42,17 @@ export function grid({
     if (!fields[e.detail.column]) return;
 
     // update records manually, mergeChanges give error, this is a breaking change to w2ui!
-    const field = fields[e.detail.column]["field"];
+    const field = FIELDS_INDEXES[e.detail.column];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData(grid.records, fields.length));
+    if (onChange) onChange(toData(grid.records, fields));
   };
 
   grid.onDelete = (e) => {
     e.detail.force = true;
 
     e.onComplete = () => {
-      if (onChange) onChange(toData(grid.records, fields.length));
+      if (onChange) onChange(toData(grid.records, fields));
     };
   };
 
@@ -59,13 +60,13 @@ export function grid({
     e.onComplete = () => {
       grid.mergeChanges();
 
-      if (onChange) onChange(toData(grid.records, fields.length));
+      if (onChange) onChange(toData(grid.records, fields));
     };
   };
 
   // on data change
   van.derive(() => {
-    grid.records = toRecords(data.val);
+    grid.records = toRecords(data.val, fields);
     grid.refresh();
   });
 
@@ -74,21 +75,6 @@ export function grid({
 
 // Utils
 const FIELDS_INDEXES = "ABCDEFGHIJKLMNOPRST";
-
-function toRecords(data: number[][]): object[] {
-  const records = Array(50)
-    .fill(0)
-    .map((_, i) => ({ recid: i }));
-  const fieldsIndexes = FIELDS_INDEXES.split("");
-
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      records[i][fieldsIndexes[j]] = data[i][j];
-    }
-  }
-
-  return records;
-}
 
 function toColumns(fields: object[]): object[] {
   const columns = FIELDS_INDEXES.split("").map((fieldIndex) => ({
@@ -116,30 +102,66 @@ function toColumns(fields: object[]): object[] {
   });
 }
 
-function toData(records: object[], columns: number): number[][] {
-  let data = [...Array(records.length)].map(() => [...Array(columns)]);
+function toRecords(data: Data, fields: object[]): object[] {
+  const table = Array.isArray(data) ? data : toTable(data, fields);
+
+  const records = Array(50)
+    .fill(0)
+    .map((_, i) => ({ recid: i }));
   const fieldsIndexes = FIELDS_INDEXES.split("");
 
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      data[i][j] = records[i][fieldsIndexes[j]] ?? "";
+  for (let i = 0; i < table.length; i++) {
+    for (let j = 0; j < table[i].length; j++) {
+      records[i][fieldsIndexes[j]] = table[i][j];
     }
   }
 
-  data = data.slice(0, findLastNonEmptyRow(data) + 1);
+  return records;
 
-  // cast to numbers and leave empty fields as string
-  data = data.map((row) => row.map((col) => (col === "" ? "" : Number(col))));
+  // Utils
+  function toTable(data: object, fields: object[]) {
+    const fieldsMap = new Map();
+    fields.forEach((v: any) => fieldsMap.set(v.field, v));
 
-  return data;
+    return Object.keys(data).map((k) => [fieldsMap.get(k).text, data[k]]);
+  }
+}
 
-  // utils
-  function findLastNonEmptyRow(data: Data) {
-    for (let i = data.length - 1; i >= 0; i--) {
-      // @ts-ignore
-      if (data[i].some((v) => v !== "")) {
-        return i;
+function toData(records: object[], fields: object[]): Data {
+  // @ts-ignore
+  const isTable = FIELDS_INDEXES.includes(fields[0].field);
+
+  if (isTable) return toTable(records, fields);
+
+  return toObject(records, fields);
+
+  // Utils
+  function toTable(records: object[], fields: object[]): Table {
+    let table = [...Array(records.length)].map(() => [...Array(fields.length)]);
+    const fieldsIndexes = FIELDS_INDEXES.split("");
+
+    for (let i = 0; i < table.length; i++) {
+      for (let j = 0; j < table[i].length; j++) {
+        table[i][j] = records[i][fieldsIndexes[j]] ?? "";
       }
     }
+
+    return table.slice(0, findLastNonEmptyRow(table) + 1);
+
+    // utils
+    function findLastNonEmptyRow(table: Table) {
+      for (let i = table.length - 1; i >= 0; i--) {
+        // @ts-ignore
+        if (table[i].some((v) => v !== "")) {
+          return i;
+        }
+      }
+    }
+  }
+
+  function toObject(records: object[], fields: object[]): object {
+    return Object.fromEntries(
+      fields.map(({ field }: any, i) => [field, records[i]["B"]])
+    );
   }
 }
