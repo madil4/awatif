@@ -24,7 +24,8 @@
     "build:website": "npm run build -w website",
     "dev:marketplace": "npm run dev -w marketplace",
     "build:marketplace": "npm run build -w marketplace",
-    "dedupe": "npm dedupe && echo 'Optimize build size when using same package in multiple packages'"
+    "dedupe": "npm dedupe && echo 'Optimize build size when using same package in multiple packages'",
+    "ncu": "ncu && echo 'Update npm packages'"
   },
   "workspaces": [
     "awatif-data-structure",
