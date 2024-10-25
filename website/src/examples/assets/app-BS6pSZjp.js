@@ -1,4 +1,4 @@
-import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g as I,F as S,a as _}from"./styles-C7FFAwxf.js";function x({fields:i,data:l,onChange:e}){const a=document.createElement("div"),t=new M({name:Math.random().toString().substring(2),box:a,selectType:"cell",recordHeight:26,show:{columnMenu:!1,lineNumbers:!0},columns:H(i),records:b(l.rawVal)});return a.setAttribute("id","grid"),new ResizeObserver(()=>t.refresh()).observe(a),t.onChange=n=>{if(!i[n.detail.column])return;const r=i[n.detail.column].field;t.records[n.detail.index][r]=n.detail.value.new,e&&e(m(t.records,i.length))},t.onDelete=n=>{n.detail.force=!0,n.onComplete=()=>{e&&e(m(t.records,i.length))}},t.onPaste=n=>{n.onComplete=()=>{t.mergeChanges(),e&&e(m(t.records,i.length))}},u.derive(()=>{t.records=b(l.val),t.refresh()}),a}const w="ABCDEFGHIJKLMNOPRST";function b(i){const l=Array(50).fill(0).map((a,t)=>({recid:t})),e=w.split("");for(let a=0;a<i.length;a++)for(let t=0;t<i[a].length;t++)l[a][e[t]]=i[a][t];return l}function H(i){return w.split("").map(e=>({field:e,text:'<div style="text-align: center">'+e+"</div>",size:"90px",resizable:!0,sortable:!0,editable:{type:"text"}})).map(e=>{const a=i.find(t=>t.field===e.field);return a?{...e,...a}:e})}function m(i,l){let e=[...Array(i.length)].map(()=>[...Array(l)]);const a=w.split("");for(let o=0;o<e.length;o++)for(let n=0;n<e[o].length;n++)e[o][n]=i[o][a[n]]??"";return e=e.slice(0,t(e)+1),e=e.map(o=>o.map(n=>n===""?"":Number(n))),e;function t(o){for(let n=o.length-1;n>=0;n--)if(o[n].some(r=>r!==""))return n}}function B({sheets:i,onChange:l}){const e=document.createElement("div"),a=document.createElement("div"),t=[],o=new Map;i.forEach((s,f)=>{t.push({id:f,text:s.text}),o.set(f,x({fields:s.fields,data:s.data,onChange:r}))});const n=new L({box:a,name:"tabs",active:t[0].id,flow:"up",tabs:t});e.id="sheets",a.id="tabs",e.append(o.values().next().value,a),n.onClick=s=>{e.firstChild.replaceWith(o.get(s.target))};function r(s){l&&l({sheet:n.active,data:s})}return e}function V({topLeft:i,topRight:l,main:e,preview:a,right:t}){const o=document.createElement("div"),n="border: 1px solid #efefef",r=new g({name:"topLayout",panels:[...i?[{type:"left",size:"50%",html:h(i.element)}]:[],...l?[{type:"right",size:"50%",html:h(l.element)}]:[]]});return new g({box:o,name:"layout",panels:[...i||l?[{type:"top",size:60,style:n,html:r}]:[],{type:"main",style:n,html:h(e.element),...e.title?{title:e.title}:{}},...a?[{type:"preview",size:"50%",resizable:!0,style:n,html:h(a.element),...a.title?{title:a.title}:{}}]:[],...t?[{type:"right",size:"65%",resizable:!0,style:n,html:h(t.element),...t.title?{title:t.title}:{}}]:[]]}),o.id="layout",o}function h(i){return{render:function(){this.box.append(i)}}}function G(i){const l=document.createElement("div"),e=c`<svg
+import{w as z,v as p,b as D,c as b,B as C,x as h,d as y,e as I,L as S,f as _,g as H,F as B,a as V}from"./styles-DYiSb_R0.js";function E({fields:e,data:o,onChange:t}){const l=document.createElement("div"),i=new z({name:Math.random().toString().substring(2),box:l,selectType:"cell",recordHeight:26,show:{columnMenu:!1,lineNumbers:!0},columns:G(e),records:x(o.rawVal,e)});return l.setAttribute("id","grid"),new ResizeObserver(()=>i.refresh()).observe(l),i.onChange=n=>{if(!e[n.detail.column])return;const a=w[n.detail.column];i.records[n.detail.index][a]=n.detail.value.new,t&&t(g(i.records,e))},i.onDelete=n=>{n.detail.force=!0,n.onComplete=()=>{t&&t(g(i.records,e))}},i.onPaste=n=>{n.onComplete=()=>{i.mergeChanges(),t&&t(g(i.records,e))}},p.derive(()=>{i.records=x(o.val,e),i.refresh()}),l}const w="ABCDEFGHIJKLMNOPRST";function G(e){return w.split("").map(t=>({field:t,text:'<div style="text-align: center">'+t+"</div>",size:"90px",resizable:!0,sortable:!0,editable:{type:"text"}})).map(t=>{const l=e.find(i=>i.field===t.field);return l?{...t,...l}:t})}function x(e,o){const t=Array.isArray(e)?e:r(e,o),l=Array(50).fill(0).map((n,a)=>({recid:a})),i=w.split("");for(let n=0;n<t.length;n++)for(let a=0;a<t[n].length;a++)l[n][i[a]]=t[n][a];return l;function r(n,a){const s=new Map;return a.forEach(c=>s.set(c.field,c)),Object.keys(n).map(c=>[s.get(c).text,n[c]])}}function g(e,o){if(w.includes(o[0].field))return l(e,o);return i(e,o);function l(r,n){let a=[...Array(r.length)].map(()=>[...Array(n.length)]);const s=w.split("");for(let u=0;u<a.length;u++)for(let d=0;d<a[u].length;d++)a[u][d]=r[u][s[d]]??"";return a.slice(0,c(a)+1);function c(u){for(let d=u.length-1;d>=0;d--)if(u[d].some(L=>L!==""))return d}}function i(r,n){return Object.fromEntries(n.map(({field:a},s)=>[a,r[s].B]))}}function j({sheets:e,onChange:o}){const t=document.createElement("div"),l=document.createElement("div"),i=[],r=new Map;e.forEach((s,c)=>{i.push({id:c,text:s.text}),r.set(c,E({fields:s.fields,data:s.data,onChange:a}))});const n=new D({box:l,name:"tabs",active:i[0].id,flow:"up",tabs:i});t.id="sheets",l.id="tabs",t.append(r.values().next().value,l),n.onClick=s=>{t.firstChild.replaceWith(r.get(s.target))};function a(s){o&&o({sheet:n.active,data:s})}return t}function O({topLeft:e,topRight:o,main:t,preview:l,right:i}){const r=document.createElement("div"),n="border: 1px solid #efefef",a=new b({name:"topLayout",panels:[...e?[{type:"left",size:"50%",html:f(e.element)}]:[],...o?[{type:"right",size:"50%",html:f(o.element)}]:[]]});return new b({box:r,name:"layout",panels:[...e||o?[{type:"top",size:60,style:n,html:a}]:[],{type:"main",style:n,html:f(t.element),...t.title?{title:t.title}:{}},...l?[{type:"preview",size:"50%",resizable:!0,style:n,html:f(l.element),...l.title?{title:l.title}:{}}]:[],...i?[{type:"right",size:"65%",resizable:!0,style:n,html:f(i.element),...i.title?{title:i.title}:{}}]:[]]}),r.id="layout",r}function f(e){return{render:function(){this.box.append(e)}}}function T(e){const o=document.createElement("div"),t=h`<svg
       class="flex-shrink-0 size-7"
       xmlns="http://www.w3.org/2000/svg"
       width="40"
@@ -14,17 +14,17 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
       ></path>
     </svg>
 
-    <h1>${i}</h1>`;return l.id="title",y(e,l),l}function N({getStarted:i,author:l}){const e=document.createElement("div"),a=c` <ul>
+    <h1>${e}</h1>`;return o.id="title",C(t,o),o}function X({getStarted:e,author:o}){const t=document.createElement("div"),l=h` <ul>
     <li>
       <div class="popup">
         <button>Get started</button>
-        <div>${i}</div>
+        <div>${e}</div>
       </div>
     </li>
     <li>
       <div class="popup">
         <button>Author</button>
-        <div>${l}</div>
+        <div>${o}</div>
       </div>
     </li>
     <li class="tooltip" data-tooltip="Awatif Newsletter">
@@ -36,15 +36,15 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
     </li>
     <li class="tooltip" data-tooltip="Awatif LinkedIn Page">
       <a href="https://www.linkedin.com/company/awatifsoftware" target="_blank"
-        >${X}</a
+        >${$}</a
       >
     </li>
     <li class="tooltip" data-tooltip="Awatif GitHub Project">
       <a href="https://github.com/madil4/awatif" target="_blank"
-        >${$}</a
+        >${N}</a
       >
     </li>
-  </ul>`;return e.id="marketing",y(a,e),e.querySelectorAll(".tooltip").forEach((t,o)=>{t.addEventListener("mouseenter",()=>{v.show({html:t.getAttribute("data-tooltip"),name:"custom-"+o,anchor:t})}),t.addEventListener("mouseleave",()=>{v.hide("custom-"+o)})}),e.querySelectorAll(".popup").forEach(t=>{t.addEventListener("click",()=>{var o,n;z.open({title:(o=t.querySelector("button"))==null?void 0:o.textContent,body:(n=t.querySelector("div"))==null?void 0:n.outerHTML,width:600,height:450})})}),e}const X=c`<svg
+  </ul>`;return t.id="marketing",C(l,t),t.querySelectorAll(".tooltip").forEach((i,r)=>{i.addEventListener("mouseenter",()=>{y.show({html:i.getAttribute("data-tooltip"),name:"custom-"+r,anchor:i})}),i.addEventListener("mouseleave",()=>{y.hide("custom-"+r)})}),t.querySelectorAll(".popup").forEach(i=>{i.addEventListener("click",()=>{var r,n;I.open({title:(r=i.querySelector("button"))==null?void 0:r.textContent,body:(n=i.querySelector("div"))==null?void 0:n.outerHTML,width:600,height:450})})}),t}const $=h`<svg
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   fill="#000000"
@@ -67,7 +67,7 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
       d="M230.454,94.761c-24.995,0-43.472,10.745-54.679,22.954V104.73c0-2.761-2.238-5-5-5h-59.599   c-2.762,0-5,2.239-5,5v199.928c0,2.762,2.238,5,5,5h62.097c2.762,0,5-2.238,5-5v-98.918c0-33.333,9.054-46.319,32.29-46.319   c25.306,0,27.317,20.818,27.317,48.034v97.204c0,2.762,2.238,5,5,5H305c2.762,0,5-2.238,5-5V194.995   C310,145.43,300.549,94.761,230.454,94.761z"
     />
   </g>
-</svg>`,$=c`<svg
+</svg>`,N=h`<svg
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   viewBox="0 0 20 20"
@@ -83,7 +83,7 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
       </g>
     </g>
   </g>
-</svg>`,P=c`<svg
+</svg>`,P=h`<svg
   xmlns="http://www.w3.org/2000/svg"
   fill="#000000"
   viewBox="0 0 20 20"
@@ -91,7 +91,7 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
   <path
     d="M18 3H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM4 10h6v1H4v-1zm8 4H4v-1h8v1zm5-6h-3V5h3v3z"
   />
-</svg>`,d=u.state([[0,0,0],[5,0,5],[10,0,0]]),C=u.state([]),k=new A(new D,new I),p=u.state([k]),E=new Map;E.set("polyline",{text:"Polyline",fields:[{field:"A",text:"X-coordinate",min:"25",editable:{type:"float"}},{field:"B",text:"Y-coordinate",editable:{type:"float"}},{field:"C",text:"Z-coordinate",editable:{type:"float"}}],data:d});const j=({data:i})=>d.val=i;u.derive(()=>{k.geometry.setAttribute("position",new S(d.val.flat(),3)),p.val=[...p.rawVal]});u.derive(()=>{const i=[];for(let l=0;l<d.val.length-1;l++)i.push([q(d.rawVal[l],d.rawVal[l+1]).toFixed(2),`${l+1} - ${l+2}`]);C.val=i});document.body.append(V({topLeft:{element:G("App Example")},topRight:{element:N({getStarted:F(),author:O()})},main:{element:B({sheets:E,onChange:j}),title:"Inputs"},preview:{element:x({fields:[{field:"A",text:"Line Length"},{field:"B",text:"Between"}],data:C}),title:"Outputs"},right:{element:_({objects3D:p})}}));function q(i,l){return Math.sqrt(Math.pow(l[0]-i[0],2)+Math.pow(l[1]-i[1],2)+Math.pow(l[2]-i[2],2))}function F(){return c`<p>
+</svg>`,m=p.state([[0,0,0],[5,0,5],[10,0,0]]),M=p.state([]),k=new S(new _,new H),v=p.state([k]),A=new Map;A.set("polyline",{text:"Polyline",fields:[{field:"A",text:"X-coordinate",min:"25",editable:{type:"float"}},{field:"B",text:"Y-coordinate",editable:{type:"float"}},{field:"C",text:"Z-coordinate",editable:{type:"float"}}],data:m});const q=({data:e})=>m.val=e;p.derive(()=>{k.geometry.setAttribute("position",new B(m.val.flat(),3)),v.val=[...v.rawVal]});p.derive(()=>{const e=[];for(let o=0;o<m.val.length-1;o++)e.push([F(m.rawVal[o],m.rawVal[o+1]).toFixed(2),`${o+1} - ${o+2}`]);M.val=e});document.body.append(O({topLeft:{element:T("App Example")},topRight:{element:X({getStarted:Z(),author:R()})},main:{element:j({sheets:A,onChange:q}),title:"Inputs"},preview:{element:E({fields:[{field:"A",text:"Line Length"},{field:"B",text:"Between"}],data:M}),title:"Outputs"},right:{element:V({objects3D:v})}}));function F(e,o){return Math.sqrt(Math.pow(o[0]-e[0],2)+Math.pow(o[1]-e[1],2)+Math.pow(o[2]-e[2],2))}function Z(){return h`<p>
       In this short video you will learn why we build the app and how to use it:
     </p>
     <iframe
@@ -103,7 +103,7 @@ import{w as M,v as u,b as L,c as g,d as y,k as c,e as v,f as z,L as A,B as D,g a
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       referrerpolicy="strict-origin-when-cross-origin"
       allowfullscreen
-    ></iframe>`}function O(){return c`<p style="line-height: 1.6">
+    ></iframe>`}function R(){return h`<p style="line-height: 1.6">
       Hi, I'm Mohamed Adil, a passionate structural engineer and software
       developer based in Amsterdam, with extensive experience in both fields.
       While working on the design of high-rise buildings, I realized that the

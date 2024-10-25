@@ -20,6 +20,6 @@
     "url": "https://github.com/madil4/awatif"
   },
   "dependencies": {
-    "vanjs-core": "^1.5.1"
+    "vanjs-core": "^1.5.2"
   }
 }

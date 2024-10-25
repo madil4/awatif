@@ -19,16 +19,16 @@
   "license": "MIT",
   "devDependencies": {
     "@tweakpane/core": "~2.0.4",
-    "@types/three": "~0.166.0",
-    "typescript": "~5.5.3",
-    "vite": "~5.3.4"
+    "@types/three": "~0.169.0",
+    "typescript": "~5.6.3",
+    "vite": "~5.4.10"
   },
   "dependencies": {
     "awatif-data-structure": "^1.0.0",
-    "lit-html": "^3.2.0",
-    "three": "~0.166.1",
+    "lit-html": "^3.2.1",
+    "three": "~0.169.0",
     "tweakpane": "~4.0.4",
-    "vanjs-core": "^1.5.1",
+    "vanjs-core": "^1.5.2",
     "w2ui": "^2.0.0"
   }
 }
