@@ -22,6 +22,7 @@ export default defineConfig({
         sphere: "src/sphere/index.html",
         truss: "src/truss/index.html",
         app: "src/app/index.html",
+        "quad-mesh": "src/quad-mesh/index.html",
       },
     },
   },
