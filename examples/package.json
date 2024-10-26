@@ -16,14 +16,18 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "devDependencies": {
-    "vite": "~5.4.10",
-    "typescript": "~5.6.3",
     "@types/three": "^0.169.0",
-    "awatif-data-structure": "^1.0.0"
+    "awatif-data-structure": "^1.0.0",
+    "typescript": "~5.6.3",
+    "vite": "~5.4.10"
   },
   "dependencies": {
+    "@allmaps/triangulate": "^1.0.0-beta.22",
+    "@thi.ng/geom": "^8.1.13",
     "awatif-fem": "^1.0.0",
     "awatif-ui": "^1.0.0",
+    "irregular-voronoi": "^1.0.2",
+    "poly2tri": "^1.5.0",
     "three": "^0.169.0",
     "vanjs-core": "^1.5.2"
   }

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Node } from "awatif-data-structure";
-import { Structure } from "awatif-data-structure";
+import { Structure, Element } from "awatif-data-structure";
 import { Settings } from "../settings/settings";
 
 export function elements(
@@ -22,10 +22,16 @@ export function elements(
 
     if (!settings.elements.val) return;
 
-    const buffer =
-      structure.elements?.val
-        .map((e) => [...derivedNodes.val[e[0]], ...derivedNodes.val[e[1]]])
-        .flat() ?? [];
+    const buffer = structure.elements?.val
+      .map((e) =>
+        elementToEdges(e)
+          .map((edge) => [
+            ...derivedNodes.val[edge[0]],
+            ...derivedNodes.val[edge[1]],
+          ])
+          .flat()
+      )
+      .flat();
 
     lines.geometry.setAttribute(
       "position",
@@ -39,4 +45,17 @@ export function elements(
   });
 
   return lines;
+}
+
+// Utils
+function elementToEdges(element: Element): Element[] {
+  if (element.length === 2) return [element];
+
+  const edges: [number, number][] = [];
+
+  for (let i = 0; i < element.length; i++) {
+    edges.push([element[i], element[(i + 1) % element.length]]);
+  }
+
+  return edges;
 }
