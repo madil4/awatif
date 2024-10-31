@@ -21,7 +21,7 @@
     "url": "https://github.com/madil4/awatif"
   },
   "scripts": {
-    "test": "jest --watch"
+    "dev": "jest --watch"
   },
   "devDependencies": {
     "@types/jest": "~29.5.14",

@@ -5,11 +5,11 @@ type Edge = number[];
 export function subdivide({
   faces,
   points,
-  subdivisions,
+  subdivisions = 1,
 }: {
   points: Point[];
   faces: Face[];
-  subdivisions: number;
+  subdivisions?: number;
 }): {
   points: Point[];
   faces: Face[];
@@ -84,25 +84,6 @@ export function subdivide({
       points.push(averagePoint);
       edgeToEdgePoint.set(edgeIndex, points.length - 1);
     });
-
-    // step 3: per each point update the position: average of adjacent facePoints and edgePoints
-    // for (let pointIndex = 0; pointIndex < originalPoints.length; pointIndex++) {
-    //   const edges = pointToEdges.get(pointIndex) ?? [];
-    //   const faces = pointToFaces.get(pointIndex) ?? [];
-    //   const edgePoints = edges.map((i) => edgeToEdgePoint.get(i) ?? -1);
-    //   const facePoints = faces.map((i) => faceToFacePoint.get(i) ?? -1);
-
-    //   // based on Lecture 11: Digital Geometry Processing (CMU 15-462/662) at 31:30
-    //   const n = edges.length;
-    //   const S = points[pointIndex];
-    //   const R = average(edgePoints.map((i) => points[i]));
-    //   const Q = average(facePoints.map((i) => points[i]));
-
-    //   points[pointIndex] = [
-    //     (Q[0] + 2 * R[0] + (n - 3) * S[0]) / n,
-    //     (Q[1] + 2 * R[1] + (n - 3) * S[1]) / n,
-    //   ];
-    // }
 
     // step 4: construct the new faces
     const newFaces: Face[] = [];

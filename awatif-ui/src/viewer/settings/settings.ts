@@ -34,7 +34,7 @@ export function settings(
   // update
   container.setAttribute("id", "settings");
 
-  if (structure.nodes?.rawVal.length) {
+  if (structure.nodes) {
     pane.addBinding(settingsState.displayScale, "val", {
       label: "Display scale",
       min: -10,
@@ -56,14 +56,14 @@ export function settings(
     });
   }
 
-  if (structure.analysisInputs?.rawVal) {
+  if (structure.analysisInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
 
     inputs.addBinding(settingsState.supports, "val", { label: "Supports" });
     inputs.addBinding(settingsState.loads, "val", { label: "Loads" });
   }
 
-  if (structure.analysisOutputs?.rawVal) {
+  if (structure.analysisOutputs) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
 
     outputs.addBinding(settingsState.elementResults, "val", {
