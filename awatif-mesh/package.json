@@ -1,10 +1,12 @@
 {
-  "name": "examples",
-  "description": "Awatif Examples",
+  "name": "awatif-mesh",
+  "version": "1.0.0",
+  "description": "Awatif Mesh",
   "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build"
+    "dev": "vite"
   },
   "keywords": [
     "awatif",
@@ -16,16 +18,14 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "devDependencies": {
-    "@types/three": "^0.169.0",
-    "awatif-data-structure": "^1.0.0",
+    "@types/triangle-wasm": "^1.0.2",
+    "awatif-ui": "^1.0.0",
     "typescript": "~5.6.3",
     "vite": "~5.4.10"
   },
   "dependencies": {
-    "awatif-fem": "^1.0.0",
-    "awatif-ui": "^1.0.0",
-    "awatif-mesh": "^1.0.0",
-    "three": "^0.169.0",
+    "awatif-data-structure": "^1.0.0",
+    "triangle-wasm": "^1.0.0",
     "vanjs-core": "^1.5.2"
   }
 }

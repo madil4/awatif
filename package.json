@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test:fem": "npm run test -w awatif-fem",
+    "dev:mesh": "npm run dev -w awatif-mesh",
     "dev:ui": "npm run dev -w awatif-ui",
     "dev:examples": "npm run dev -w examples",
     "build:examples": "npm run build -w examples",
@@ -31,6 +32,7 @@
     "awatif-data-structure",
     "awatif-design",
     "awatif-fem",
+    "awatif-mesh",
     "awatif-ui",
     "examples",
     "website",
