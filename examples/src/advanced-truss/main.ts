@@ -1,26 +1,32 @@
-import { AnalysisInputs, Node, Element } from "awatif-data-structure";
+import van, { State } from "vanjs-core";
+import {
+  AnalysisInputs,
+  Node,
+  Element,
+  AnalysisOutputs,
+} from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Structure, Parameters } from "awatif-ui";
-
+import { parameters, Parameters, viewer } from "awatif-ui";
 import { createTruss } from "./createTruss";
 
-export const parameters: Parameters = {
+// Init
+export const params: Parameters = {
   span: {
-    value: 20,
+    value: van.state(20),
     min: 1,
     max: 20,
     label: "Span (m)",
     folder: "Geometry",
   },
   spacing: {
-    value: 2.5,
+    value: van.state(2.5),
     min: 1,
     max: 5,
     label: "Spacing (m)",
     folder: "Geometry",
   },
   webType: {
-    value: 1,
+    value: van.state(1),
     min: 1,
     max: 3,
     step: 1,
@@ -28,7 +34,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   trimType: {
-    value: 1,
+    value: van.state(1),
     min: 1,
     max: 3,
     step: 1,
@@ -36,7 +42,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   leftHeight: {
-    value: 2.5,
+    value: van.state(2.5),
     min: 1,
     max: 10,
     step: 0.1,
@@ -44,7 +50,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   midHeight: {
-    value: 2.5,
+    value: van.state(2.5),
     min: 1,
     max: 10,
     step: 0.1,
@@ -52,7 +58,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   rightHeight: {
-    value: 2.5,
+    value: van.state(2.5),
     min: 1,
     max: 10,
     step: 0.1,
@@ -60,7 +66,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   leftOffset: {
-    value: 0,
+    value: van.state(0),
     min: 0,
     max: 10,
     step: 0.1,
@@ -68,7 +74,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   midOffset: {
-    value: 5,
+    value: van.state(5),
     min: 0,
     max: 10,
     step: 0.1,
@@ -76,7 +82,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   rightOffset: {
-    value: 0,
+    value: van.state(0),
     min: 0,
     max: 10,
     step: 0.1,
@@ -84,7 +90,7 @@ export const parameters: Parameters = {
     folder: "Geometry",
   },
   supportType: {
-    value: 1,
+    value: van.state(1),
     min: 1,
     max: 2,
     step: 1,
@@ -92,7 +98,7 @@ export const parameters: Parameters = {
     folder: "Supports",
   },
   uniformLoad: {
-    value: 300,
+    value: van.state(300),
     min: 0,
     max: 1000,
     step: 1,
@@ -100,7 +106,7 @@ export const parameters: Parameters = {
     folder: "Loads",
   },
   chordsArea: {
-    value: 50,
+    value: van.state(50),
     min: 1,
     max: 100,
     step: 1,
@@ -108,7 +114,7 @@ export const parameters: Parameters = {
     folder: "Sections & Materials",
   },
   chordsElasticity: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 250,
     step: 1,
@@ -116,7 +122,7 @@ export const parameters: Parameters = {
     folder: "Sections & Materials",
   },
   websArea: {
-    value: 50,
+    value: van.state(50),
     min: 1,
     max: 100,
     step: 1,
@@ -124,7 +130,7 @@ export const parameters: Parameters = {
     folder: "Sections & Materials",
   },
   websElasticity: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 250,
     step: 1,
@@ -133,23 +139,29 @@ export const parameters: Parameters = {
   },
 };
 
-export const onParameterChange = (parameters: Parameters): Structure => {
-  let span = parameters.span.value;
-  let spacing = parameters.spacing.value;
-  const webType = parameters.webType.value;
-  const trimType = parameters.trimType.value;
-  const leftHeight = parameters.leftHeight.value;
-  const midHeight = parameters.midHeight.value;
-  const rightHeight = parameters.rightHeight.value;
-  const leftOffset = parameters.leftOffset.value;
-  const midOffset = parameters.midOffset.value;
-  const rightOffset = parameters.rightOffset.value;
-  const supportType = parameters.supportType.value;
-  const uniformLoad = parameters.uniformLoad.value;
-  const chordsArea = parameters.chordsArea.value * 1e-4;
-  const chordsElasticity = parameters.chordsElasticity.value * 1e6;
-  const websArea = parameters.websArea.value * 1e-4;
-  const websElasticity = parameters.websElasticity.value * 1e6;
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const analysisInputsState: State<AnalysisInputs> = van.state({});
+const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
+  let span = params.span.value.val;
+  let spacing = params.spacing.value.val;
+  const webType = params.webType.value.val;
+  const trimType = params.trimType.value.val;
+  const leftHeight = params.leftHeight.value.val;
+  const midHeight = params.midHeight.value.val;
+  const rightHeight = params.rightHeight.value.val;
+  const leftOffset = params.leftOffset.value.val;
+  const midOffset = params.midOffset.value.val;
+  const rightOffset = params.rightOffset.value.val;
+  const supportType = params.supportType.value.val;
+  const uniformLoad = params.uniformLoad.value.val;
+  const chordsArea = params.chordsArea.value.val * 1e-4;
+  const chordsElasticity = params.chordsElasticity.value.val * 1e6;
+  const websArea = params.websArea.value.val * 1e-4;
+  const websElasticity = params.websElasticity.value.val * 1e6;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -408,23 +420,34 @@ export const onParameterChange = (parameters: Parameters): Structure => {
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return {
-    nodes,
-    elements,
-    analysisInputs,
-    analysisOutputs,
-  };
-};
-
-// helpers
-const offset2D = (list: [number, number][], offset: number): Element[] =>
-  list.map(([n1, n2]) => [n1 + offset, n2 + offset]);
-
-const offset1D = (list: number[], offset: number) =>
-  list.map((n) => n + offset);
-
-template({
-  parameters,
-  onParameterChange,
-  settings: { deformedShape: true, loads: false },
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
+  analysisInputsState.val = analysisInputs;
+  analysisOutputsState.val = analysisOutputs;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+      analysisInputs: analysisInputsState,
+      analysisOutputs: analysisOutputsState,
+    },
+    settingsObj: {
+      deformedShape: true,
+      loads: false,
+    },
+  })
+);
+
+// Utils
+function offset2D(list: Element[], offset: number): Element[] {
+  return list.map(([n1, n2]) => [n1 + offset, n2 + offset]);
+}
+
+function offset1D(list: number[], offset: number) {
+  return list.map((n) => n + offset);
+}

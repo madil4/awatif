@@ -1,8 +1,7 @@
-export type { StructureObj as Structure } from "./template/template";
 export type { Parameters } from "./parameters/parameters";
 
-export { template } from "./template/template";
 export { viewer } from "./viewer/viewer";
+export { parameters } from "./parameters/parameters";
 export { sheets } from "./sheets/sheets";
 export { layout } from "./layout/layout";
 export { title } from "./title/title";

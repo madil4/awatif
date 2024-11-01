@@ -1,37 +1,44 @@
-import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import van, { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Parameters, Structure } from "awatif-ui";
+import { parameters, Parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   dx: {
-    value: 2,
+    value: van.state(2),
     min: 1,
     max: 5,
     step: 0.1,
     label: "dx (m)",
   },
   dy: {
-    value: 2,
+    value: van.state(2),
     min: 1,
     max: 5,
     step: 0.1,
     label: "dy (m)",
   },
   dz: {
-    value: 2,
+    value: van.state(2),
     min: 1,
     max: 5,
     step: 0.1,
     label: "dz (m)",
   },
   divisions: {
-    value: 4,
+    value: van.state(4),
     min: 1,
     max: 10,
     step: 1,
   },
   load: {
-    value: 30,
+    value: van.state(30),
     min: 1,
     max: 50,
     step: 0.5,
@@ -39,11 +46,17 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
-  const dx = parameters.dx.value;
-  const dy = parameters.dy.value;
-  const dz = parameters.dz.value;
-  const divisions = parameters.divisions.value;
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const analysisInputsState: State<AnalysisInputs> = van.state({});
+const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
+  const dx = params.dx.value.val;
+  const dy = params.dy.value.val;
+  const dz = params.dz.value.val;
+  const divisions = params.divisions.value.val;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -94,7 +107,7 @@ function onParameterChange(parameters: Parameters): Structure {
   analysisInputs.pointSupports?.set(2, fixed);
   analysisInputs.pointSupports?.set(3, fixed);
   analysisInputs.pointLoads?.set(nodes.length - 2, [
-    parameters.load.value,
+    params.load.value.val,
     0,
     0,
     0,
@@ -104,14 +117,25 @@ function onParameterChange(parameters: Parameters): Structure {
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, analysisInputs, analysisOutputs };
-}
-
-template({
-  parameters,
-  onParameterChange,
-  settings: {
-    deformedShape: true,
-    gridSize: 15,
-  },
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
+  analysisInputsState.val = analysisInputs;
+  analysisOutputsState.val = analysisOutputs;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+      analysisInputs: analysisInputsState,
+      analysisOutputs: analysisOutputsState,
+    },
+    settingsObj: {
+      deformedShape: true,
+      gridSize: 15,
+    },
+  })
+);

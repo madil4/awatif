@@ -1,31 +1,37 @@
+import van, { State } from "vanjs-core";
 import { Node, Element } from "awatif-data-structure";
-import { template, Parameters, Structure } from "awatif-ui";
+import { parameters, Parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   radius: {
-    value: 4,
+    value: van.state(4),
     min: 1,
     max: 20,
     step: 0.1,
   },
   points: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 20,
     step: 1,
   },
   circumferences: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 20,
     step: 1,
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
-  const radius = parameters.radius.value;
-  const points = parameters.points.value;
-  const circumferences = parameters.circumferences.value;
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+
+// Events: on parameter change
+van.derive(() => {
+  const radius = params.radius.value.val;
+  const points = params.points.value.val;
+  const circumferences = params.circumferences.value.val;
 
   let nodes: Node[] = [];
   const elements: Element[] = [];
@@ -73,10 +79,17 @@ function onParameterChange(parameters: Parameters): Structure {
 
   nodes = nodes.map((v) => [10 + v[0], 10 + v[1], v[2]]); // center model in the grid
 
-  return { nodes, elements };
-}
-
-template({
-  parameters,
-  onParameterChange,
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+    },
+  })
+);

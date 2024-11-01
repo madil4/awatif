@@ -1,67 +1,80 @@
-import { Node, Element } from "awatif-data-structure";
-import { template, Parameters, Structure } from "awatif-ui";
+import van, { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
+import { parameters, Parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   width: {
-    value: 18,
+    value: van.state(18),
     min: 10,
     max: 20,
     step: 2,
   },
   breadth: {
-    value: 12,
+    value: van.state(12),
     min: 10,
     max: 20,
     step: 2,
   },
   height: {
-    value: 12,
+    value: van.state(12),
     min: 4,
     max: 20,
     step: 2,
   },
   xSpan: {
-    value: 6,
+    value: van.state(6),
     min: 2,
     max: 20,
     step: 2,
   },
   ySpan: {
-    value: 6,
+    value: van.state(6),
     min: 2,
     max: 20,
     step: 2,
   },
   zSpan: {
-    value: 4,
+    value: van.state(4),
     min: 2,
     max: 20,
     step: 2,
   },
   spacing: {
-    value: 1,
+    value: van.state(1),
     min: 0.5,
     max: 5,
     step: 0.5,
   },
   mainDirX: {
-    value: true as any,
+    value: van.state(true as any),
     label: "toggle direction",
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const analysisInputsState: State<AnalysisInputs> = van.state({});
+const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
 
-  let xLength = parameters.width.value;
-  let yLength = parameters.breadth.value;
-  let zLength = parameters.height.value;
-  let xSpan = parameters.xSpan.value;
-  let ySpan = parameters.ySpan.value;
-  let zSpan = parameters.zSpan.value;
-  const mainDirX = parameters.mainDirX.value;
-  let spacing = parameters.spacing.value;
+  let xLength = params.width.value.val;
+  let yLength = params.breadth.value.val;
+  let zLength = params.height.value.val;
+  let xSpan = params.xSpan.value.val;
+  let ySpan = params.ySpan.value.val;
+  let zSpan = params.zSpan.value.val;
+  const mainDirX = params.mainDirX.value.val;
+  let spacing = params.spacing.value.val;
 
   if (xSpan > xLength) xSpan = xLength;
   if (ySpan > yLength) ySpan = yLength;
@@ -192,13 +205,22 @@ function onParameterChange(parameters: Parameters): Structure {
     }
   }
 
-  return { nodes, elements };
-}
-
-template({
-  parameters,
-  onParameterChange,
-  settings: {
-    nodes: false,
-  },
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+      analysisInputs: analysisInputsState,
+      analysisOutputs: analysisOutputsState,
+    },
+    settingsObj: {
+      nodes: false,
+    },
+  })
+);

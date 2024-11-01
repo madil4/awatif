@@ -1,43 +1,50 @@
+import van, { State } from "vanjs-core";
 import * as THREE from "three";
-import { Node, Element, AnalysisInputs } from "awatif-data-structure";
-import { template, Parameters, Structure } from "awatif-ui";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
+import { parameters, Parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   xSpan: {
-    value: 16,
+    value: van.state(16),
     min: 1,
     max: 20,
     step: 0.1,
     label: "xSpan (m)",
   },
   xDivisions: {
-    value: 14,
+    value: van.state(14),
     min: 5,
     max: 20,
     step: 1,
   },
   ySpan: {
-    value: 5,
+    value: van.state(5),
     min: 1,
     max: 10,
     step: 0.1,
     label: "ySpan (m)",
   },
   yDivisions: {
-    value: 3,
+    value: van.state(3),
     min: 1,
     max: 5,
     step: 1,
   },
   height: {
-    value: 9,
+    value: van.state(9),
     min: 0,
     max: 15,
     step: 0.1,
     label: "height (m)",
   },
   heightOffset: {
-    value: 0,
+    value: van.state(0),
     min: -10,
     max: 10,
     step: 0.1,
@@ -45,13 +52,19 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
-  const xSpan = parameters.xSpan.value;
-  const xDivisions = parameters.xDivisions.value;
-  const ySpan = parameters.ySpan.value;
-  const yDivisions = parameters.yDivisions.value;
-  const height = parameters.height.value;
-  const heightOffset = parameters.heightOffset.value;
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const analysisInputsState: State<AnalysisInputs> = van.state({});
+const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
+  const xSpan = params.xSpan.value.val;
+  const xDivisions = params.xDivisions.value.val;
+  const ySpan = params.ySpan.value.val;
+  const yDivisions = params.yDivisions.value.val;
+  const height = params.height.value.val;
+  const heightOffset = params.heightOffset.value.val;
 
   const curve = new THREE.QuadraticBezierCurve3(
     new THREE.Vector3(0, 0, 0),
@@ -105,10 +118,20 @@ function onParameterChange(parameters: Parameters): Structure {
     analysisInputs.pointSupports?.set(i, [true, true, true, true, true, true])
   );
 
-  return { nodes, elements, analysisInputs };
-}
-
-template({
-  parameters,
-  onParameterChange,
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
+  analysisInputsState.val = analysisInputs;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+      analysisInputs: analysisInputsState,
+      analysisOutputs: analysisOutputsState,
+    },
+  })
+);
