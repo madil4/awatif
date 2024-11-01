@@ -16,7 +16,7 @@ export function mesh({
   points: State<number[][]>;
   polygon: State<number[]>;
 }): {
-  nodes: State<Node[]>;
+  nodes: State<Node[]>; // the output are reactive just to react after wasm is loaded
   elements: State<Element[]>;
 } {
   // init
