@@ -1,10 +1,12 @@
-import { template, Parameters, Structure } from "awatif-ui";
+import van, { State } from "vanjs-core";
+import { parameters, Parameters, viewer } from "awatif-ui";
+import { Node, Element } from "awatif-data-structure";
 import { mesh } from "awatif-mesh";
-import van from "vanjs-core";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   boundary: {
-    value: 5,
+    value: van.state(5),
     min: 1,
     max: 10,
     step: 0.1,
@@ -12,11 +14,15 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+
+// Events: on parameter change
+van.derive(() => {
   const points = van.state([
     [0, 0],
     [5, 0],
-    [parameters.boundary.value, 3],
+    [params.boundary.value.val, 3],
     [8, 7],
     [15, 5],
     [15, 0],
@@ -29,15 +35,16 @@ function onParameterChange(parameters: Parameters): Structure {
 
   const { nodes, elements } = mesh({ points, polygon });
 
-  console.log(nodes.val);
-
-  return {
-    nodes: nodes.val,
-    elements: elements.val,
-  };
-}
-
-template({
-  parameters,
-  onParameterChange,
+  nodesState.val = nodes.val;
+  elementsState.val = elements.val;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+    },
+  })
+);
