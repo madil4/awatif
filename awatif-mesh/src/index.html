@@ -11,21 +11,18 @@
 
       const points = van.state([
         [0, 0],
-        [5, 0],
+        [10, 0],
+        [10, 10],
         [5, 3],
-        [8, 7],
-        [15, 5],
-        [15, 0],
-        [20, 0],
-        [20, 10],
-        [0, 10],
-        [0, 0],
       ]);
-      const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+      const polygon = van.state([0, 1, 3]);
 
       const { nodes, elements } = mesh({ points, polygon });
 
       // Mimic a second call after a parameter change
+      setTimeout(() => {
+        polygon.val = [0, 1, 2];
+      }, 1000);
 
       const viewerElm = viewer({
         structure: {
