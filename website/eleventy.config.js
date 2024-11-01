@@ -3,6 +3,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/**/*.js");
   eleventyConfig.addPassthroughCopy("src/**/*.jpg");
   eleventyConfig.addPassthroughCopy("src/**/*.ico");
+  eleventyConfig.addPassthroughCopy("src/**/*.wasm");
 
   eleventyConfig.setServerOptions({
     module: "@11ty/eleventy-server-browsersync",
