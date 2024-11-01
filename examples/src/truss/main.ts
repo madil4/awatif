@@ -1,44 +1,51 @@
-import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import van, { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Parameters, Structure } from "awatif-ui";
+import { parameters, Parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
+// Init
+const params: Parameters = {
   span: {
-    value: 15,
+    value: van.state(15),
     min: 5,
     max: 20,
     step: 1,
     label: "span (m)",
   },
   divisions: {
-    value: 5,
+    value: van.state(5),
     min: 2,
     max: 5,
     step: 1,
   },
   height: {
-    value: 2,
+    value: van.state(2),
     min: 1,
     max: 5,
     step: 0.1,
     label: "height (m)",
   },
   elasticity: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 250,
     step: 1,
     label: "Elasticity (gpa)",
   },
   area: {
-    value: 10,
+    value: van.state(10),
     min: 1,
     max: 300,
     step: 1,
     label: "area (cm2)",
   },
   load: {
-    value: 250,
+    value: van.state(250),
     min: 1,
     max: 500,
     step: 1,
@@ -46,13 +53,19 @@ const parameters: Parameters = {
   },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
-  const span = parameters.span.value;
-  const divisions = parameters.divisions.value;
-  const height = parameters.height.value;
-  const elasticity = parameters.elasticity.value * 1e6;
-  const area = parameters.area.value * 1e-4;
-  const load = parameters.load.value;
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const analysisInputsState: State<AnalysisInputs> = van.state({});
+const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
+  const span = params.span.value.val;
+  const divisions = params.divisions.value.val;
+  const height = params.height.value.val;
+  const elasticity = params.elasticity.value.val * 1e6;
+  const area = params.area.value.val * 1e-4;
+  const load = params.load.value.val;
 
   const nodes: Node[] = [];
   const elements: Element[] = [];
@@ -120,13 +133,24 @@ function onParameterChange(parameters: Parameters): Structure {
 
   const analysisOutputs = analyze(nodes, elements, analysisInputs);
 
-  return { nodes, elements, analysisInputs, analysisOutputs };
-}
-
-template({
-  parameters,
-  onParameterChange,
-  settings: {
-    deformedShape: true,
-  },
+  // update state
+  nodesState.val = nodes;
+  elementsState.val = elements;
+  analysisInputsState.val = analysisInputs;
+  analysisOutputsState.val = analysisOutputs;
 });
+
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+      analysisInputs: analysisInputsState,
+      analysisOutputs: analysisOutputsState,
+    },
+    settingsObj: {
+      deformedShape: true,
+    },
+  })
+);

@@ -1,41 +1,65 @@
-import { Node, Element, AnalysisInputs } from "awatif-data-structure";
+import van, { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  AnalysisInputs,
+  AnalysisOutputs,
+} from "awatif-data-structure";
 import { analyze } from "awatif-fem";
-import { template, Parameters, Structure } from "awatif-ui";
+import { Parameters, parameters, viewer } from "awatif-ui";
 
-const parameters: Parameters = {
-  xPosition: { value: 600, min: 0, max: 1000 },
-  zPosition: { value: 0, min: 0, max: 500 },
+// Init
+const params: Parameters = {
+  xPosition: { value: van.state(600), min: 0, max: 1000 },
+  zPosition: { value: van.state(0), min: 0, max: 500 },
 };
 
-function onParameterChange(parameters: Parameters): Structure {
-  const nodes: Node[] = [
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
+const analysisInputs: State<AnalysisInputs> = van.state({});
+const analysisOutputs: State<AnalysisOutputs> = van.state({});
+
+// Events: on parameter change
+van.derive(() => {
+  nodes.val = [
     [250, 0, 0],
-    [parameters.xPosition.value, 0, parameters.zPosition.value],
+    [params.xPosition.value.val, 0, params.zPosition.value.val],
     [250, 0, 400],
   ];
-  const elements: Element[] = [
+  elements.val = [
     [0, 1],
     [1, 2],
   ];
-
-  const analysisInputs: AnalysisInputs = {
-    materials: new Map(),
-    sections: new Map(),
-    pointSupports: new Map(),
-    pointLoads: new Map(),
+  analysisInputs.val = {
+    materials: new Map([
+      [0, { elasticity: 200 }],
+      [1, { elasticity: 200 }],
+    ]),
+    sections: new Map([
+      [0, { area: 100 }],
+      [1, { area: 100 }],
+    ]),
+    pointSupports: new Map([
+      [0, [true, true, true, true, true, true]],
+      [2, [true, true, true, true, true, true]],
+    ]),
+    pointLoads: new Map([[1, [0, 0, -1e3, 0, 0, 0]]]),
   };
 
-  analysisInputs.materials?.set(0, { elasticity: 200 });
-  analysisInputs.materials?.set(1, { elasticity: 200 });
-  analysisInputs.sections?.set(0, { area: 100 });
-  analysisInputs.sections?.set(1, { area: 100 });
-  analysisInputs.pointSupports?.set(0, [true, true, true, true, true, true]);
-  analysisInputs.pointSupports?.set(2, [true, true, true, true, true, true]);
-  analysisInputs.pointLoads?.set(1, [0, 0, -1e3, 0, 0, 0]);
+  analysisOutputs.val = analyze(nodes.val, elements.val, analysisInputs.val);
+});
 
-  const analysisOutputs = analyze(nodes, elements, analysisInputs);
-
-  return { nodes, elements, analysisInputs, analysisOutputs };
-}
-
-template({ parameters, onParameterChange, settings: { gridSize: 1000 } });
+document.body.append(
+  parameters(params),
+  viewer({
+    structure: {
+      nodes,
+      elements,
+      analysisInputs,
+      analysisOutputs,
+    },
+    settingsObj: {
+      gridSize: 1000,
+    },
+  })
+);

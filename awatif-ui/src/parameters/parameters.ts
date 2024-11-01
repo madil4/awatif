@@ -1,10 +1,11 @@
 import { FolderApi, Pane, TpChangeEvent } from "tweakpane";
+import van, { State } from "vanjs-core";
 
 import "./styles.css";
 
 export type Parameters = {
   [key: string]: {
-    value: number;
+    value: State<number>;
     min?: number;
     max?: number;
     step?: number;
@@ -13,10 +14,7 @@ export type Parameters = {
   };
 };
 
-export function parameters(
-  parameters: Parameters,
-  onChange: (e: TpChangeEvent<unknown>) => void
-): HTMLDivElement {
+export function parameters(parameters: Parameters): HTMLDivElement {
   // init
   const parametersElm = document.createElement("div");
   const pane = new Pane({ title: "Parameters", container: parametersElm });
@@ -44,9 +42,10 @@ export function parameters(
     });
   });
 
-  // on parameters change
+  // events: on parameters change
   pane.on("change", (e) => {
-    if (!e.last) onChange(e);
+    // @ts-ignore
+    parameters[e.target.key].value.val = e.value;
   });
 
   return parametersElm;
@@ -58,7 +57,7 @@ const convertToTweakParams = (
 ): Record<string, unknown> =>
   Object.entries(parameters).reduce(
     (tweakParams: Record<string, number>, [key, parameter]) => {
-      tweakParams[key] = parameter.value;
+      tweakParams[key] = parameter.value.val;
       return tweakParams;
     },
     {}
