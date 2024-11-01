@@ -5,7 +5,6 @@ import { Structure } from "awatif-data-structure";
 import { Settings } from "../settings/settings";
 
 import { Text } from "./Text";
-import { getCenter } from "./utils/getCenter";
 
 export function elementsIndexes(
   structure: Structure,
@@ -29,10 +28,7 @@ export function elementsIndexes(
       const text = new Text(`${index}`, undefined, "#001219");
 
       text.position.set(
-        ...getCenter(
-          derivedNodes.rawVal[element[0]],
-          derivedNodes.rawVal[element[1]]
-        )
+        ...getCenter(element.map((i) => derivedNodes.rawVal[i]))
       );
       text.updateScale(size * derivedDisplayScale.rawVal);
 
@@ -57,4 +53,14 @@ export function elementsIndexes(
   });
 
   return group;
+}
+
+function getCenter(points: Node[]): Node {
+  const sum = points.reduce(
+    (sum, p) => [sum[0] + p[0], sum[1] + p[1], sum[2] + p[2]],
+    [0, 0, 0]
+  );
+  const length = points.length;
+
+  return [sum[0] / length, sum[1] / length, sum[2] / length];
 }
