@@ -1,14 +1,14 @@
 import * as THREE from "three";
 import { Text } from "./Text";
 
-export function axes(gridSize: number): THREE.Group {
+export function axes(gridSize: number, flipAxes: boolean): THREE.Group {
   // init
   const axes = new THREE.Group();
   const size = 0.05 * gridSize * 1; // 0.05 to convert to unit size based on grid size of 20
 
   const xText = new Text("X", "red", "transparent");
-  const yText = new Text("Y", "green", "transparent");
-  const zText = new Text("Z", "blue", "transparent");
+  const yText = new Text(flipAxes ? "Z" : "Y", "green", "transparent");
+  const zText = new Text(flipAxes ? "Y" : "Z", "blue", "transparent");
 
   const xArrow = new THREE.ArrowHelper(
     new THREE.Vector3(1, 0, 0),

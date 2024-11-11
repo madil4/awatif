@@ -17,6 +17,7 @@ export type Settings = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
+  flipAxes: State<boolean>;
 };
 
 export function settings(

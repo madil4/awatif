@@ -32,6 +32,7 @@ export type SettingsObj = {
   deformedShape?: boolean;
   elementResults?: string;
   nodeResults?: string;
+  flipAxes?: boolean;
 };
 
 export function viewer({
@@ -85,7 +86,10 @@ export function viewer({
 
   if (structure) viewerElm.appendChild(settingsElement(structure, settings));
 
-  scene.add(grid(settings.gridSize.rawVal), axes(settings.gridSize.rawVal));
+  scene.add(
+    grid(settings.gridSize.rawVal),
+    axes(settings.gridSize.rawVal, settings.flipAxes.rawVal)
+  );
 
   if (structure)
     scene.add(
@@ -183,5 +187,6 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     deformedShape: van.state(settingsObj?.deformedShape ?? false),
     elementResults: van.state(settingsObj?.elementResults ?? "none"),
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
+    flipAxes: van.state(settingsObj?.flipAxes ?? false),
   };
 }
