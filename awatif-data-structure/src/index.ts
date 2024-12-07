@@ -2,6 +2,13 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 
 // Analytical Model
+export type Structure = {
+  nodes?: State<Node[]>;
+  elements?: State<Element[]>;
+  analysisInputs?: State<AnalysisInputs>;
+  analysisOutputs?: State<AnalysisOutputs>;
+};
+
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
 export type Element = number[]; // indices of the first and second node in the list of nodes
@@ -51,6 +58,21 @@ type ElementAnalysisOutputs = {
 };
 
 // High-order Model
+export type Building = {
+  points: State<[number, number, number][]>; // all the points used to define stories, floors, ..etc
+  stories: State<number[]>; // example [1,2,3] three stories defined by three points indices from the points list
+  columns: State<number[]>; // example [1,2,3] three columns defined by three points indices from the points list
+  slabs: State<number[][]>; // example [[1,2,3],[4,5,6,7]] two slabs defined by points indices from the points list
+  columnsByStory: State<Map<number, number[]>>; // Grouping of columns by stories,
+  // example (1) -> [2,3,4], 1 is the story index from stories list, [2,3,4] indices from columns list
+  slabsByStory: State<Map<number, number[]>>; // Grouping of slabs by stories,
+  // example (1) -> [2,3,4], 1 is the story index from stories list, [2,3,4] indices from slabs list
+  columnData: State<Map<number, ColumnData>>; // any additional data attached to columns,
+  // example (1) -> {analysisInput,designOutput,..}, 1 is column index from columns list
+  slabData: State<Map<number, unknown>>; // any additional data attached to slabs,
+  // example (1) -> {analysisInput,designOutput,..}, 1 is slab index from slabs list
+};
+
 type ColumnAnalysisInput = {
   load: unknown;
   support: unknown;
@@ -93,23 +115,4 @@ type ColumnData = {
     designOutput: ColumnDesignOutput
   ) => TemplateResult;
   visualObject?: (inputs: unknown) => unknown;
-};
-
-export type Building = {
-  points: State<[number, number, number][]>; // all the points used to define stories, floors, ..etc
-  stories: State<number[]>; // example [1,2,3] three stories defined by three points indices from the points list
-  columns: State<Map<number, number[]>>; // example 2 -> [1,2,3] the keys of this map represent the story index
-  // and the value is a list of point indices represent the column location at this story
-  slabs: State<Map<number, number[][]>>; // example 2 -> [[1,2,3],[4,5,6,7]] the keys of this map represent the story index
-  // and the value is a list of polygons at this story represented by point indices
-  columnData: State<Map<[number, number], ColumnData>>;
-  slabData: State<Map<[number, number], ColumnData>>;
-};
-
-export type Structure = {
-  building?: Building;
-  nodes?: State<Node[]>;
-  elements?: State<Element[]>;
-  analysisInputs?: State<AnalysisInputs>;
-  analysisOutputs?: State<AnalysisOutputs>;
 };
