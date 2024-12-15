@@ -5,56 +5,47 @@ import { TemplateResult } from "lit-html";
 export type Structure = {
   nodes?: State<Node[]>;
   elements?: State<Element[]>;
-  analysisInputs?: State<AnalysisInputs>;
-  analysisOutputs?: State<AnalysisOutputs>;
+  nodeInputs?: State<NodeInputs>;
+  elementInputs?: State<ElementInputs>;
+  deformOutputs?: State<DeformOutputs>;
+  analyzeOutputs?: State<AnalyzeOutputs>;
 };
 
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
-export type Element = number[]; // indices of the first and second node in the list of nodes
+export type Element = number[]; // indices of the nodes list
 
-// Analysis Inputs
-export type AnalysisInputs = {
-  materials?: Map<number, MaterialInput>;
-  sections?: Map<number, SectionInput>;
-  pointSupports?: Map<
+// Inputs
+export type NodeInputs = {
+  supports?: Map<
     number,
     [boolean, boolean, boolean, boolean, boolean, boolean]
   >;
-  pointLoads?: Map<number, [number, number, number, number, number, number]>;
+  loads?: Map<number, [number, number, number, number, number, number]>;
 };
 
-export type MaterialInput = {
-  elasticity: number;
-  shearModulus?: number;
-  mass?: number;
+export type ElementInputs = {
+  elasticity?: Map<number, number>;
+  shearModulus?: Map<number, number>;
+  area?: Map<number, number>;
+  momentOfInertiaZ?: Map<number, number>;
+  momentOfInertiaY?: Map<number, number>;
+  torsionalConstant?: Map<number, number>;
 };
 
-export type SectionInput = {
-  area?: number;
-  momentOfInertiaZ?: number;
-  momentOfInertiaY?: number;
-  torsionalConstant?: number;
+// Outputs
+export type DeformOutputs = {
+  deformation?: Map<number, [number, number, number, number, number, number]>;
+  reaction?: Map<number, [number, number, number, number, number, number]>;
 };
 
-// Analysis Outputs
-export type AnalysisOutputs = {
-  nodes?: Map<number, NodeAnalysisOutputs>;
-  elements?: Map<number, ElementAnalysisOutputs>;
-};
-
-type NodeAnalysisOutputs = {
-  deformation?: [number, number, number, number, number, number];
-  reaction?: [number, number, number, number, number, number];
-};
-
-type ElementAnalysisOutputs = {
-  normal?: [number, number];
-  shearY?: [number, number];
-  shearZ?: [number, number];
-  torsion?: [number, number];
-  bendingY?: [number, number];
-  bendingZ?: [number, number];
+export type AnalyzeOutputs = {
+  normal?: Map<number, [number, number]>;
+  shearY?: Map<number, [number, number]>;
+  shearZ?: Map<number, [number, number]>;
+  torsion?: Map<number, [number, number]>;
+  bendingY?: Map<number, [number, number]>;
+  bendingZ?: Map<number, [number, number]>;
 };
 
 // High-order Model
