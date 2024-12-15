@@ -5,56 +5,45 @@ import { TemplateResult } from "lit-html";
 export type Structure = {
   nodes?: State<Node[]>;
   elements?: State<Element[]>;
-  analysisInputs?: State<AnalysisInputs>;
-  analysisOutputs?: State<AnalysisOutputs>;
+  nodeInputs?: State<NodeInputs>;
+  elementInputs?: State<ElementInputs>;
+  nodeOutputs?: State<NodeOutputs>;
+  elementOutputs?: State<ElementOutputs>;
 };
 
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
-export type Element = number[]; // indices of the first and second node in the list of nodes
+export type Element = number[]; // indices of the nodes list
 
-// Analysis Inputs
-export type AnalysisInputs = {
-  materials?: Map<number, MaterialInput>;
-  sections?: Map<number, SectionInput>;
-  pointSupports?: Map<
+export type NodeInputs = {
+  supports?: Map<
     number,
     [boolean, boolean, boolean, boolean, boolean, boolean]
   >;
-  pointLoads?: Map<number, [number, number, number, number, number, number]>;
+  loads?: Map<number, [number, number, number, number, number, number]>;
 };
 
-export type MaterialInput = {
-  elasticity: number;
-  shearModulus?: number;
-  mass?: number;
+export type ElementInputs = {
+  elasticity?: Map<number, number>;
+  shearModulus?: Map<number, number>;
+  area?: Map<number, number>;
+  momentOfInertiaZ?: Map<number, number>;
+  momentOfInertiaY?: Map<number, number>;
+  torsionalConstant?: Map<number, number>;
 };
 
-export type SectionInput = {
-  area?: number;
-  momentOfInertiaZ?: number;
-  momentOfInertiaY?: number;
-  torsionalConstant?: number;
+export type NodeOutputs = {
+  deformation?: Map<number, [number, number, number, number, number, number]>;
+  reaction?: Map<number, [number, number, number, number, number, number]>;
 };
 
-// Analysis Outputs
-export type AnalysisOutputs = {
-  nodes?: Map<number, NodeAnalysisOutputs>;
-  elements?: Map<number, ElementAnalysisOutputs>;
-};
-
-type NodeAnalysisOutputs = {
-  deformation?: [number, number, number, number, number, number];
-  reaction?: [number, number, number, number, number, number];
-};
-
-type ElementAnalysisOutputs = {
-  normal?: [number, number];
-  shearY?: [number, number];
-  shearZ?: [number, number];
-  torsion?: [number, number];
-  bendingY?: [number, number];
-  bendingZ?: [number, number];
+export type ElementOutputs = {
+  normal?: Map<number, [number, number]>;
+  shearY?: Map<number, [number, number]>;
+  shearZ?: Map<number, [number, number]>;
+  torsion?: Map<number, [number, number]>;
+  bendingY?: Map<number, [number, number]>;
+  bendingZ?: Map<number, [number, number]>;
 };
 
 // High-order Model
@@ -72,6 +61,29 @@ export type Building = {
   slabData: State<Map<number, unknown>>; // any additional data attached to slabs,
   // example (1) -> {analysisInput,designOutput,..}, 1 is slab index from slabs list
 };
+
+// Todo: think of way to separate the generic type ColumnAnalysisInput from the remaining specific onces
+// Todo: maybe better to separate functions from data
+type ColumnData = {
+  analysisInput?: ColumnAnalysisInput;
+  analysisOutput?: ColumnAnalysisOutput;
+  designInput?: ColumnDesignInput;
+  designOutput?: ColumnDesignOutput;
+  script?: (
+    analysisInput: ColumnAnalysisInput,
+    designInput: ColumnDesignInput
+  ) => ColumnDesignOutput;
+  report?: (
+    analysisInput: ColumnAnalysisInput,
+    designInput: ColumnDesignInput,
+    analysisOutput: ColumnAnalysisOutput,
+    designOutput: ColumnDesignOutput
+  ) => TemplateResult;
+  visualObject?: (inputs: unknown) => unknown;
+};
+
+type ColumnDesignInput = EcTimberColumnDesignInput;
+type ColumnDesignOutput = EcTimberColumnDesignOutput;
 
 type ColumnAnalysisInput = {
   load: unknown;
@@ -92,27 +104,4 @@ type EcTimberColumnDesignInput = {
 type EcTimberColumnDesignOutput = {
   slendernessRatio: number;
   utilizationFactor: number;
-};
-
-type ColumnDesignInput = EcTimberColumnDesignInput;
-type ColumnDesignOutput = EcTimberColumnDesignOutput;
-
-// Todo: think of way to separate the generic type ColumnAnalysisInput from the remaining specific onces
-// Todo: maybe better to separate functions from data
-type ColumnData = {
-  analysisInput?: ColumnAnalysisInput;
-  analysisOutput?: ColumnAnalysisOutput;
-  designInput?: ColumnDesignInput;
-  designOutput?: ColumnDesignOutput;
-  script?: (
-    analysisInput: ColumnAnalysisInput,
-    designInput: ColumnDesignInput
-  ) => ColumnDesignOutput;
-  report?: (
-    analysisInput: ColumnAnalysisInput,
-    designInput: ColumnDesignInput,
-    analysisOutput: ColumnAnalysisOutput,
-    designOutput: ColumnDesignOutput
-  ) => TemplateResult;
-  visualObject?: (inputs: unknown) => unknown;
 };
