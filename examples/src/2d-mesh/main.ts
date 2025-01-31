@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import { parameters, Parameters, viewer } from "awatif-ui";
 import { Node, Element } from "awatif-data-structure";
-import { mesh } from "awatif-mesh";
+import { mesh } from "awatif-fem";
 
 // Init
 const params: Parameters = {
