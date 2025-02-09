@@ -12,7 +12,7 @@ export type Building = {
   // example (1) -> [2,3,4], 1 is the story index from stories list, [2,3,4] indices from slabs list
   columnData: State<Map<number, ColumnData>>; // any additional data attached to columns,
   // example (1) -> {analysisInput,designOutput,..}, 1 is column index from columns list
-  slabData: State<Map<number, unknown>>; // any additional data attached to slabs,
+  slabData: State<Map<number, SlabData>>; // any additional data attached to slabs,
   // example (1) -> {analysisInput,designOutput,..}, 1 is slab index from slabs list
 };
 
@@ -58,4 +58,27 @@ type EcTimberColumnDesignInput = {
 type EcTimberColumnDesignOutput = {
   slendernessRatio: number;
   utilizationFactor: number;
+};
+
+// TODO: update depending the slab design function requirements
+type SlabAnalysisInput = {
+  areaLoad: number;
+  isOpening: boolean;
+  section?: unknown;
+  material?: unknown;
+};
+
+type SlabData = {
+  analysisInput?: SlabAnalysisInput;
+  analysisOutput?: unknown;
+  designInput?: unknown;
+  designOutput?: unknown;
+  script?: (analysisInput: SlabAnalysisInput, designInput: unknown) => unknown;
+  report?: (
+    analysisInput: SlabAnalysisInput,
+    designInput: unknown,
+    analysisOutput: unknown,
+    designOutput: unknown
+  ) => TemplateResult;
+  visualObject?: (inputs: unknown) => unknown;
 };
