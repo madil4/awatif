@@ -50,8 +50,8 @@ export function viewer({
   objects3D?: State<THREE.Object3D[]>;
   drawingObj?: Drawing;
   reportObj?: {
-    template: (data: State<object>) => TemplateResult;
-    data: State<object>;
+    template: (data: any) => TemplateResult;
+    data: any;
   };
 }): HTMLDivElement {
   // init
