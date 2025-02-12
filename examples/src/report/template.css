@@ -25,11 +25,6 @@
   margin-right: 20px;
 }
 
-.dialog-body .headerLogo {
-  height: 10px;
-  width: auto;
-}
-
 .dialog-body table {
   border-collapse: collapse;
   border: 1px solid #000;

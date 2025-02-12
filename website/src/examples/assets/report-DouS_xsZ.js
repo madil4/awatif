@@ -1,16 +1,4 @@
-import { Structure } from "awatif-data-structure";
-import { html, TemplateResult } from "lit-html";
-
-import "./template.css";
-
-export function template({
-  nodes,
-  nodeInputs,
-  elementInputs,
-  deformOutputs,
-  analyzeOutputs,
-}: Structure): TemplateResult {
-  return html`
+import{x as l,v as a,a as $}from"./styles-Bcw5rJ3w.js";import{d as f,a as w}from"./deform-2KtVZVFZ.js";import{p as g}from"./parameters-TCmgcs1U.js";import"./_commonjsHelpers-IkB594pC.js";function x({nodes:h,nodeInputs:m,elementInputs:u,deformOutputs:p,analyzeOutputs:b}){return l`
     <br />
     <header class="header">
       <div class="header-left">
@@ -19,11 +7,7 @@ export function template({
           <a href="https://awatif.co" target="_blank">Awatif.co</a>
         </p>
         <p class="normal" id="reportDate">
-          ${new Date().toLocaleDateString("en-US", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          ${new Date().toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"})}
         </p>
       </div>
       <div class="header-right">
@@ -63,22 +47,20 @@ export function template({
         <th>yCoord</th>
         <th>zCoord</th>
       </tr>
-      ${nodes.val.map(
-        (node, index) => html`
+      ${h.val.map((e,t)=>l`
           <tr>
-            <td><div class="custom-cell-content">${index}</div></td>
+            <td><div class="custom-cell-content">${t}</div></td>
             <td>
-              <div class="custom-cell-content">${node[0]}</div>
+              <div class="custom-cell-content">${e[0]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${node[1]}</div>
+              <div class="custom-cell-content">${e[1]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${node[2]}</div>
+              <div class="custom-cell-content">${e[2]}</div>
             </td>
           </tr>
-        `
-      )}
+        `)}
     </table>
 
     <br />
@@ -99,31 +81,29 @@ export function template({
         <th>my</th>
         <th>mz</th>
       </tr>
-      ${[...nodeInputs.val.supports].map(
-        ([index, support]) => html`
+      ${[...m.val.supports].map(([e,t])=>l`
           <tr>
-            <td><div class="custom-cell-content">${index}</div></td>
+            <td><div class="custom-cell-content">${e}</div></td>
             <td>
-              <div class="custom-cell-content">${support[0]}</div>
+              <div class="custom-cell-content">${t[0]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${support[1]}</div>
+              <div class="custom-cell-content">${t[1]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${support[2]}</div>
+              <div class="custom-cell-content">${t[2]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${support[3]}</div>
+              <div class="custom-cell-content">${t[3]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${support[4]}</div>
+              <div class="custom-cell-content">${t[4]}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${support[5]}</div>
+              <div class="custom-cell-content">${t[5]}</div>
             </td>
           </tr>
-        `
-      )}
+        `)}
     </table>
 
     <br />
@@ -141,22 +121,20 @@ export function template({
         <th>Fy</th>
         <th>Fz</th>
       </tr>
-      ${[...deformOutputs.val.reactions].map(
-        ([index, reaction]) => html`
+      ${[...p.val.reactions].map(([e,t])=>l`
           <tr>
-            <td><div class="custom-cell-content">${index}</div></td>
+            <td><div class="custom-cell-content">${e}</div></td>
             <td>
-              <div class="custom-cell-content">${reaction[0].toFixed(0)}</div>
+              <div class="custom-cell-content">${t[0].toFixed(0)}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${reaction[1].toFixed(0)}</div>
+              <div class="custom-cell-content">${t[1].toFixed(0)}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${reaction[2].toFixed(0)}</div>
+              <div class="custom-cell-content">${t[2].toFixed(0)}</div>
             </td>
           </tr>
-        `
-      )}
+        `)}
     </table>
 
     <br />
@@ -173,22 +151,19 @@ export function template({
         <th>Area</th>
         <th>Normal</th>
       </tr>
-      ${[...analyzeOutputs.val.normals].map(
-        ([index, normal]) => html`
+      ${[...b.val.normals].map(([e,t])=>l`
           <tr>
-            <td><div class="custom-cell-content">${index}</div></td>
+            <td><div class="custom-cell-content">${e}</div></td>
             <td>
               <div class="custom-cell-content">
-                ${elementInputs.val.areas.get(index)}
+                ${u.val.areas.get(e)}
               </div>
             </td>
             <td>
-              <div class="custom-cell-content">${normal[0].toFixed(0)}</div>
+              <div class="custom-cell-content">${t[0].toFixed(0)}</div>
             </td>
           </tr>
-        `
-      )}
+        `)}
     </table>
     <br /><br /><br />
-  `;
-}
+  `}const c={xPosition:{value:a.state(600),min:0,max:1e3},zPosition:{value:a.state(0),min:0,max:500}},s=a.state([]),o=a.state([]),i=a.state({}),d=a.state({}),n=a.state({}),v=a.state({}),r={nodes:s,elements:o,nodeInputs:i,elementInputs:d,deformOutputs:n,analyzeOutputs:v};a.derive(()=>{s.val=[[250,0,0],[c.xPosition.value.val,0,c.zPosition.value.val],[250,0,400]],o.val=[[0,1],[1,2]],i.val={supports:new Map([[0,[!0,!0,!0,!0,!0,!0]],[2,[!0,!0,!0,!0,!0,!0]]]),loads:new Map([[1,[0,0,-1e3,0,0,0]]])},d.val={elasticities:new Map([[0,200],[1,200]]),areas:new Map([[0,100],[1,100]])},n.val=f(s.val,o.val,i.val,d.val),v.val=w(s.val,o.val,d.val,n.val)});document.body.append(g(c),$({structure:r,settingsObj:{gridSize:1e3},reportObj:{template:x,data:r}}));
