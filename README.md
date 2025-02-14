@@ -15,7 +15,7 @@ Awatif.co helps you build parametric structural engineering apps that run on the
 - [ ] Design: Connection checks
 - [x] UI: Tabular editing [Example](https://lnkd.in/dHfwFHRF)
 - [x] UI: Drawing [Example](https://lnkd.in/dbiG7ASX)
-- [ ] UI: Reporting (coming soon)
+- [x] UI: Reporting [Example](https://awatif.co/examples/report/)
 - [ ] UI: Element selection
 - [x] Structural Systems: Truss design [Example](https://lnkd.in/dr72G_wH)
 - [ ] Structural Systems: Building design (coming soon)
