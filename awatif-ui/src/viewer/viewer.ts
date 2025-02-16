@@ -18,6 +18,9 @@ import { elementResults } from "./objects/elementResults";
 import { nodeResults } from "./objects/nodeResults";
 
 import "./styles.css";
+import { drawing, Drawing } from "./drawing/drawing";
+import { TemplateResult } from "lit-html";
+import { report } from "./report/report";
 
 export type SettingsObj = {
   gridSize?: number;
@@ -39,16 +42,22 @@ export function viewer({
   structure,
   settingsObj,
   objects3D,
+  drawingObj,
+  reportObj,
 }: {
   structure?: Structure;
   settingsObj?: SettingsObj;
   objects3D?: State<THREE.Object3D[]>;
+  drawingObj?: Drawing;
+  reportObj?: {
+    template: (data: any) => TemplateResult;
+    data: any;
+  };
 }): HTMLDivElement {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
   const viewerElm = document.createElement("div");
-
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     45,
@@ -67,42 +76,12 @@ export function viewer({
       ? settings.displayScale.val
       : -1 / settings.displayScale.val
   );
-  const derivedNodes: Structure["nodes"] = van.derive(() => {
-    if (!settings.deformedShape.val) return structure?.nodes?.val ?? [];
-
-    return (
-      structure?.nodes?.val.map((node, index) => {
-        const d = structure?.analysisOutputs?.val.nodes
-          ?.get(index)
-          ?.deformation?.slice(0, 3) ?? [0, 0, 0];
-        return node.map((n, i) => n + d[i]) as Node;
-      }) ?? []
-    );
-  });
+  const derivedNodes = deriveNodes(structure, settings);
+  const gridObj = grid(settings.gridSize.rawVal);
 
   // update
   viewerElm.setAttribute("id", "viewer");
   viewerElm.appendChild(renderer.domElement);
-
-  if (structure) viewerElm.appendChild(settingsElement(structure, settings));
-
-  scene.add(
-    grid(settings.gridSize.rawVal),
-    axes(settings.gridSize.rawVal, settings.flipAxes.rawVal)
-  );
-
-  if (structure)
-    scene.add(
-      nodes(settings, derivedNodes, derivedDisplayScale),
-      elements(structure, settings, derivedNodes),
-      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
-      elementsIndexes(structure, settings, derivedNodes, derivedDisplayScale),
-      supports(structure, settings, derivedNodes, derivedDisplayScale),
-      loads(structure, settings, derivedNodes, derivedDisplayScale),
-      orientations(structure, settings, derivedNodes, derivedDisplayScale),
-      elementResults(structure, settings, derivedNodes, derivedDisplayScale),
-      nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
-    );
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 1);
@@ -116,6 +95,38 @@ export function viewer({
   controls.zoomSpeed = 10;
   controls.update();
 
+  scene.add(gridObj, axes(settings.gridSize.rawVal, settings.flipAxes.rawVal));
+
+  if (structure) {
+    viewerElm.appendChild(settingsElement(structure, settings));
+
+    scene.add(
+      nodes(settings, derivedNodes, derivedDisplayScale),
+      elements(structure, settings, derivedNodes),
+      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+      elementsIndexes(structure, settings, derivedNodes, derivedDisplayScale),
+      supports(structure, settings, derivedNodes, derivedDisplayScale),
+      loads(structure, settings, derivedNodes, derivedDisplayScale),
+      orientations(structure, settings, derivedNodes, derivedDisplayScale),
+      elementResults(structure, settings, derivedNodes, derivedDisplayScale),
+      nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
+    );
+  }
+
+  if (drawingObj)
+    drawing({
+      drawingObj,
+      gridObj,
+      scene,
+      camera,
+      controls,
+      gridSize,
+      derivedDisplayScale,
+      viewerRender,
+    });
+
+  if (reportObj) viewerElm.append(report(reportObj));
+
   // on size change
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -126,23 +137,23 @@ export function viewer({
       camera.updateProjectionMatrix();
 
       renderer.setSize(width, height);
-      renderer.render(scene, camera);
+      viewerRender();
     }
   });
 
   resizeObserver.observe(viewerElm);
 
   // on controls change
-  controls.addEventListener("change", () => {
-    renderer.render(scene, camera);
-  });
+  controls.addEventListener("change", viewerRender);
 
   // on structure or settings change: render
   van.derive(() => {
     structure?.nodes?.val;
     structure?.elements?.val;
-    structure?.analysisInputs?.val;
-    structure?.analysisInputs?.val;
+    structure?.nodeInputs?.val;
+    structure?.elementInputs?.val;
+    structure?.deformOutputs?.val;
+    structure?.analyzeOutputs?.val;
 
     settings.displayScale.val;
     settings.nodes.val;
@@ -156,9 +167,7 @@ export function viewer({
     settings.elementResults.val;
     settings.nodeResults.val;
 
-    objects3D?.val;
-
-    setTimeout(() => renderer.render(scene, camera)); // to ensure render is called after all updates are done in that event tick
+    setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
 
   // on objects3D change add/remove objects from the scene
@@ -167,7 +176,14 @@ export function viewer({
 
     scene.remove(...objects3D.oldVal);
     scene.add(...objects3D.rawVal);
+
+    viewerRender();
   });
+
+  // Object's functions (Actions)
+  function viewerRender() {
+    renderer.render(scene, camera);
+  }
 
   return viewerElm;
 }
@@ -189,4 +205,22 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
     flipAxes: van.state(settingsObj?.flipAxes ?? false),
   };
+}
+
+function deriveNodes(
+  structure: Structure | undefined,
+  settings: Settings
+): Structure["nodes"] {
+  return van.derive(() => {
+    if (!settings.deformedShape.val) return structure?.nodes?.val ?? [];
+
+    return (
+      structure?.nodes?.val.map((node, index) => {
+        const d = structure?.deformOutputs?.val.deformations
+          ?.get(index)
+          ?.slice(0, 3) ?? [0, 0, 0];
+        return node.map((n, i) => n + d[i]) as Node;
+      }) ?? []
+    );
+  });
 }
