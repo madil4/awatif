@@ -5,20 +5,20 @@ Awatif.co helps you build parametric structural engineering apps that run on the
 - To understand the architecture, watch this video: https://www.youtube.com/watch?v=4NdFQGouIjU
 
 ## Roadmap
-- [x] FEM: Bar & beam elements [Example](https://lnkd.in/di83wh_b)
+- [x] FEM: Bar & beam elements [Example](https://awatif.co/examples/1d-mesh/)
 - [ ] FEM: Plate & shell elements (coming soon)
-- [x] FEM: Static simulations [Example](https://lnkd.in/dAadJkTC)
+- [x] FEM: Static simulations [Example](https://awatif.co/examples/3d-structure/)
 - [ ] FEM: Dynamic simulations
 - [ ] FEM: Nonlinear analysis
-- [x] FEM: Meshing [Example](https://lnkd.in/dE5PNb-4)
+- [x] FEM: Meshing [Example](https://awatif.co/examples/2d-mesh/)
 - [ ] Design: Member checks (coming soon)
 - [ ] Design: Connection checks
-- [x] UI: Tabular editing [Example](https://lnkd.in/dHfwFHRF)
-- [x] UI: Drawing [Example](https://lnkd.in/dbiG7ASX)
+- [x] UI: Tabular editing [Example](https://awatif.co/examples/sheets/)
+- [x] UI: Drawing [Example](https://awatif.co/examples/drawing/)
 - [x] UI: Reporting [Example](https://awatif.co/examples/report/)
 - [ ] UI: Element selection
-- [x] Structural Systems: Truss design [Example](https://lnkd.in/dr72G_wH)
-- [ ] Structural Systems: Building design (coming soon)
+- [x] Structural Systems: Truss design [Example](https://awatif.co/examples/advanced-truss/)
+- [ ] Structural Systems: Building Design (coming soon)
 
 ## Stack 
 1. **VanJS**: for handling reactive state [Docs](https://vanjs.org/)
