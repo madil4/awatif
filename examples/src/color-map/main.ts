@@ -18,10 +18,15 @@ const params: Parameters = {
   },
 };
 
-const lines = new THREE.LineSegments(
+const lines = new THREE.Mesh(
   new THREE.BufferGeometry(),
-  new THREE.LineBasicMaterial({})
+  new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    wireframe: true,
+    transparent: true,
+  })
 );
+
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const objects3D = van.state([getMesh([], []), lines]);
@@ -52,17 +57,31 @@ van.derive(() => {
   const pressuredMesh = addPressureToMesh(distances, baseMesh);
   const coloredMesh = addColorToMesh(pressuredMesh);
 
+  const lines = new THREE.Mesh(
+    new THREE.BufferGeometry(),
+    new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      wireframe: true,
+      transparent: true,
+    })
+  );
+
+  lines.geometry.computeVertexNormals();
+  // itemSize = 3 because there are 3 values (components) per vertex
   lines.geometry.setAttribute(
     "position",
-    new THREE.Float32BufferAttribute(
-      elements.val.map((e) => [nodes.val[e[0]], nodes.val[e[1]]].flat()).flat(),
-      3
-    )
+    new THREE.Float32BufferAttribute(nodes.val.flat(), 3)
   );
+
+  lines.geometry.setIndex(
+    new THREE.Uint16BufferAttribute(elements.val.flat(), 1)
+  );
+
+  coloredMesh.add(lines);
 
   nodesState.val = nodes.val;
   elementsState.val = elements.val;
-  objects3D.val = [coloredMesh, lines];
+  objects3D.val = [coloredMesh];
 });
 
 document.body.append(
@@ -79,7 +98,6 @@ function getMesh(nodes: Node[], elements: Element[]): THREE.Mesh {
     new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
       vertexColors: true,
-      wireframe: true
     })
   );
   mesh.geometry.computeVertexNormals();
@@ -133,18 +151,12 @@ function addColorToMesh(mesh: THREE.Mesh): THREE.Mesh {
   lut.setMax(Math.max(...pressures.array));
   lut.setMin(Math.min(...pressures.array));
 
-  console.log("pressures", pressures.array);
-  console.log("max", Math.max(...pressures.array));
-  console.log("min", Math.min(...pressures.array));
-
   for (let i = 0; i < pressures.array.length; i++) {
     const colorValue = pressures.array[i];
 
     color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
     colors.setXYZ(i, color.r, color.g, color.b);
   }
-
-  console.log("colors", colors.array);
 
   colors.needsUpdate = true;
 
