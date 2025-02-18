@@ -10,16 +10,21 @@
       import van from "vanjs-core";
       import { sheets } from "../../sheets/sheets";
 
-
-      // data 
-      const data = [[0,1,2], [0,2,2], [0,4,2]]
+      // data
+      const data = [
+        [0, 1, 2],
+        [0, 2, 2],
+        [0, 4, 2],
+        [0, 4, 2],
+        [0, 4, 2],
+      ];
 
       // sheets
       const sheetsObj = new Map();
 
-      // sheets
+      // slab inputs
       const designInputs = van.state([
-        ["Col1", 5, 0.4, 0.3, 2000, 0, 15, 1.0, 1.0],
+        ["Col1", 15, 0.4, 0.3, 2000, 0, 15, 1.0, 1.0],
         ["Col2", 4.2, 0.5, 0.6, 3000, 20, 0, 1.0, 8.25],
         ["Col3", 4.2, 0.4, 0.4, 3000, 0, 0, 1.0, 16],
       ]);
@@ -58,23 +63,30 @@
         data: designInputs,
       });
 
+      // events
+      const onSheetChange = ({ data, sheet }) => {
+        console.log(`Data updated on sheet: ${sheet}`);
+        if (sheet == "design-Inputs") {
+          var changedData = designInputs;
+        } else {
+          changedData = slabInputs;
+        } 
+        changedData.val = data; // Update the reactive state with new sheet data
+      };
+
       const sheetsElm = sheets({
         sheets: sheetsObj,
-        onChange: (e) => console.log(e), // test on change
+        onChange: onSheetChange,
       });
 
       const template = (nodes) => {
         return html`<p>This is an interactive table in a canvas.</p>`;
       };
 
-      setTimeout(() => {
-        nodes.val = [];
-      }, 2000);
-
       const inputElm = input({
         template,
         sheetsElm,
-        data
+        data,
       });
 
       document.body.appendChild(inputElm);

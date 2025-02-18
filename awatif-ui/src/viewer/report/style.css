@@ -13,7 +13,8 @@ canvas {
   position: absolute;
 }
 
-dialog {
+/* dialog-report */
+dialog.dialog-report {
   position: fixed;
   z-index: 2;
   overflow: auto;
@@ -21,37 +22,35 @@ dialog {
   height: calc(100% - 3rem);
   margin: 2rem 1rem 0;
   padding: 0;
+  background-color: #f9f9f9; /* Light background */
+  border: 2px solid #ccc; /* Subtle border */
 }
 
-@media only screen and (max-width: 600px) {
-  dialog {
-    width: calc(100% - 2rem);
-    height: calc(70%);
-  }
-}
-
-dialog .close {
+dialog.dialog-report .close {
   color: #000000;
   float: right;
-  margin-top: -5px;
+  position: relative;
+  margin-top: -13px;
   font-size: 25px;
   font-weight: bold;
   cursor: pointer;
 }
 
-.dialog-header {
+.dialog-report .dialog-header {
   background: lightgray;
-  padding: 15px;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
-.dialog-body {
+.dialog-report .dialog-body {
   padding: 0 15px;
 }
 
 .print-button {
   position: absolute;
-  top: 140px;
-  right: 40px;
+  top: 150px;
+  right: 25px;
   width: 60px;
   height: 30px;
   color: #fefafa;

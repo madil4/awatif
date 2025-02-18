@@ -13,27 +13,23 @@ canvas {
   position: absolute;
 }
 
-dialog {
-  position: fixed;
+
+/* dialog-input */
+dialog.dialog-input {
+  position: absolute;
   bottom: 5px;
-  z-index: 2;
+  top: 400px;
   overflow: auto;
   width: 60%;
   height: 45%;
   margin: 2rem 1rem 0;
   padding: 0;
+  resize: both;
 }
 
-@media only screen and (max-width: 600px) {
-  dialog {
-    width: calc(100% - 2rem);
-    height: calc(65%);
-  }
-}
-
-dialog .close {
+dialog.dialog-input .close {
   color: #000000;
-  float:right;
+  float: right;
   position: relative;
   margin-top: -13px;
   font-size: 25px;
@@ -41,41 +37,36 @@ dialog .close {
   cursor: pointer;
 }
 
-.dialog-header {
+.dialog-input .dialog-header {
   background: lightgray;
+  color: white;
+  padding: 20px;
+  font-size: 1.2rem;
+  cursor: move; /* Indicate to the user that they can move the dialog */
+
+}
+
+.dialog-input .dialog-body {
   padding: 20px;
 }
 
-.dialog-body {
-  padding: 0 10px;
+/* Responsive Adjustments */
+@media only screen and (max-width: 600px) {
+  dialog.dialog-report,
+  dialog.dialog-input {
+    width: calc(100% - 2rem);
+    height: calc(100%);
+  }
 }
 
 .input-button {
   position: absolute;
-  bottom: 40px;
-  left: 15px;
-  width: 60px;
-  height: 30px;
-  color: #fefafa;
-  background-color: #2e5368; /* Light red background */
-  border-radius: 10px;
-  font-family: "Arial", sans-serif; /* Set font family */
-  display: flex;
-  font-size: 13px;
-  align-items: center;
-  justify-content: center; /* Center text */
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.input-button {
-  position: absolute;
-  bottom: 15px;
-  right: 25px;
+  bottom: 20px;
+  left: 20px;
   width: 80px;
   height: 40px;
   color: #fefafa;
-  background-color: #2e5368; /* Light red background */
+  background-color: #46474C; /* Dark gray */
   border-radius: 10px;
   font-family: "Arial", sans-serif; /* Set font family */
   display: flex;

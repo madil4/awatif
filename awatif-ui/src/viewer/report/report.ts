@@ -32,21 +32,22 @@ export function report({
 
   // dialog template
   const dialogTemp = html`
-    <dialog ref=${ref(dialogElm)}>
-      <div class="dialog-header">
-        <span class="close" @click=${() => dialogElm.value?.close()}>&times;</span>
+  <dialog class="dialog-report" ref=${ref(dialogElm)}>
+    <div class="dialog-header">
+      <span class="close" @click=${() => dialogElm.value?.close()}>&times;</span>
+    </div>
+    <div class="dialog-body" ref=${ref(dialogBodyElm)}>
+      <div class="report-content">
+        <!-- Content generated from the template -->
       </div>
-      <div class="dialog-body" ref=${ref(dialogBodyElm)}>
-        <div class="report-content">
-          <!-- Content generated from the template -->
-          </div>
-          <!-- Print button inside the dialog -->
-          <div class="print-container">
-           ${printButton}
-          </div>
+      <!-- Print button inside the dialog -->
+      <div class="print-container" style="margin-top: 15px; text-align: center;">
+        ${printButton}
       </div>
-    </dialog>
-  `;
+    </div>
+  </dialog>
+`;
+
 
   render(dialogTemp, container);
   container.append(button);

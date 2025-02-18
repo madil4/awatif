@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif Dropdown</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css"
+    />
+
+    <style>
+      .w2ui-field input {
+        width: 200px;
+      }
+      .w2ui-field > div > span {
+        margin-left: 20px;
+      }
+    </style>
+
+    <script type="module">
+      import {
+        w2field,
+        query,
+        w2menu,
+      } from "https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.es6.min.js";
+
+      let list = [
+        "George Washington",
+        "John Adams",
+        "Thomas Jefferson",
+        "James Buchanan",
+        "James Madison",
+      ];
+      list.sort();
+
+      new w2field("list", {
+        el: query("input[type=list]")[0],
+        items: list,
+        match: "contains",
+        markSearch: true,
+        onSelect(event) {
+          console.log("Selected:", event.detail.item);
+        },
+      });
+
+
+      // createSearchableList(list);
+    </script>
+  </head>
+  <body>
+    <div style="height: 20px"></div>
+
+    <div class="w2ui-field w2ui-span4">
+      <label>List</label>
+      <div>
+        <input type="list" placeholder="Type to search" />
+        <span class="legend"
+          >Text</span
+        >
+      </div>
+    </div>
+    <div style="height: 10px"></div>
+  </body>
+</html>

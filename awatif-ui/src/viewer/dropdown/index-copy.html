@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif Dropdown</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css"
+    />
+
+    <style>
+      .w2ui-field input {
+        width: 200px;
+      }
+      .w2ui-field > div > span {
+        margin-left: 20px;
+      }
+    </style>
+
+    <script type="module">
+
+      import { dropdown } from "./dropdown";
+
+      let list = [
+        "George Washington",
+        "John Adams",
+        "Thomas Jefferson",
+        "James Buchanan",
+        "James Madison",
+      ];
+      list.sort();
+
+      dropdown(list);
+    </script>
+  </head>
+  <body></body>
+</html>

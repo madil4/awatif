@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import { Text } from "awatif-ui/src/viewer/objects/Text";
 import * as THREE from "three";
-import { sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
+import { Parameters, parameters, sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
 import { html, TemplateResult } from "lit-html";
 import {
   timberColumnDesign,
@@ -21,6 +21,13 @@ import { Structure } from "awatif-data-structure";
 import * as reportChecks from "./reportChecks";
 
 // init
+const params: Parameters = {
+  support: { value: van.state(0), min: 0, max: 500 },
+  serviceClass: { value: van.state(0), min: 0, max: 500 },
+  loadDurationClass: { value: van.state(0), min: 0, max: 500 },
+  grade: { value: van.state(0), min: 0, max: 500 },
+};
+
 const nodes: State<Node[]> = van.state([]);
 
 const designInputs = van.state([
@@ -47,6 +54,8 @@ const globalInputs = van.state([["pinned", 2, "permanent", "GL28h"]]);
 
 const designResults = van.state([]);
 const designResultsInterface = van.state([]);
+
+
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),
   new THREE.LineBasicMaterial()
@@ -57,10 +66,15 @@ const points = new THREE.Points(
   new THREE.PointsMaterial({})
 );
 
+const column = new THREE.Mesh(
+  new THREE.BoxGeometry(5, 5, 30),
+  new THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+
 var text = new Text("Hello World");
 text.position.set(5, 5, 0);
 
-const objects3D = van.state([lines, points, text]);
+const objects3D = van.state([lines, points, text, column]);
 const sheetsObj = new Map();
 
 // global inputs
@@ -77,12 +91,13 @@ sheetsObj.set("global-Param", {
 });
 // console.log(globalInputs)
 
-// global inputs
+// slab inputs
 sheetsObj.set("slab-Inputs", {
   text: "Slab",
   fields: [
     { field: "A", text: "xCord", editable: { type: "int" } },
     { field: "B", text: "yCord", editable: { type: "int" } },
+    { field: "C", text: "zCord", editable: { type: "int" } },
   ],
   data: slabInputs,
 });
@@ -104,6 +119,8 @@ sheetsObj.set("design-Inputs", {
   data: designInputs,
 });
 
+
+
 // events
 const onSheetChange = ({ data, sheet }) => {
   console.log(`Data updated on sheet: ${sheet}`);
@@ -116,6 +133,14 @@ const onSheetChange = ({ data, sheet }) => {
   }
   changedData.val = data; // Update the reactive state with new sheet data
 };
+
+const sheetsElm = sheets({
+  sheets: sheetsObj,
+  onChange: onSheetChange
+});
+
+// sheets({ sheets: sheetsObj, onChange: onSheetChange })
+
 
 const noCols = designInputs.val.length;
 const colNames = [];
@@ -175,8 +200,6 @@ van.derive(() => {
   designResultsInterface.val = resultsInterface;
 });
 
-console.log(designResultsInterface.val);
-
 // on inputPolyline change: render lines
 var xyCoords = [];
 for (let i = 0; i < noCols; i++) {
@@ -187,7 +210,10 @@ for (let i = 0; i < noCols; i++) {
   xyCoords.push([xCord, yCord, zCord]); // Push coordinates as an array
 }
 
+
+// THREEJS
 van.derive(() => {
+
   //lines
   lines.geometry.setAttribute(
     "position",
@@ -203,6 +229,13 @@ van.derive(() => {
   );
   points.material.size = 1; // Larger points
   points.material.color.set(0xff0000); // Red points
+
+  // columns
+  // const column = createRectangularColumn(2, 5, 1, 0xff0000); // Red column with width=2, height=5, length=1
+
+
+
+  // Position the column (optional, default is at the origin)
 
   //text
   // Clear existing text objects
@@ -223,7 +256,6 @@ van.derive(() => {
         designResultsInterface.val[i].maxEtaZ
       ) * 100
     ).toFixed(0);
-    // console.log(etaMax)
 
     // Multi-line text content
     const lines = [`Col${i + 1}`, `η: ${etaMax}%`];
@@ -271,9 +303,7 @@ van.derive(() => {
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 });
 
-console.log(designResultsInterface.val[0].etaStabilityY);
-
-const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
+const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
   // var i = 0;
   var i = colNames.indexOf(selectedColumn.val);
 
@@ -716,9 +746,23 @@ const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
   `;
 };
 
-const selectedColumn = van.state(colNames[0]); // Default to the first column
+const templateInput: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
 
-const columnDropdown = () => html`
+  return html`
+  <h2>Input Table</h2>
+
+  ${sheetsElm}
+
+
+    
+  `;
+};
+
+
+
+const columnDropdown = () => {}
+  const selectedColumn = van.state(colNames[0]); // Default to the first column
+html`
   <p class="p1">Select a column to view results:</p>
 
   <select
@@ -736,76 +780,19 @@ const columnDropdown = () => html`
 `;
 
 document.body.append(
-  layout({
-    topLeft: { element: title("Timber Column Designer") },
-    topRight: {
-      element: marketing({
-        getStarted: getGetStartedHtml(),
-        author: getAuthorHtml(),
-      }),
+  parameters(params),
+  viewer({
+    objects3D,
+    reportObj: {
+      template: templateReport,
+      data: nodes,
     },
-    main: {
-      element: sheets({ sheets: sheetsObj, onChange: onSheetChange }),
-      title: "Inputs",
+    inputObj: {
+      template: templateInput,
+      data: nodes,
     },
-    preview: {
-      element: grid({
-        fields: [
-          { field: "A", text: "Column" },
-          { field: "B", text: "ηy" },
-          { field: "C", text: "ηz" },
-          { field: "D", text: "λy" },
-          { field: "E", text: "λz" },
-        ],
-        data: designResultsInterface,
-      }),
-      title: "Outputs",
-    },
-    right: {
-      element: viewer({
-        objects3D,
-        reportObj: {
-          template,
-          data: nodes,
-        },
-      }),
-    },
-  })
-);
-
-function createTimberColumnSection(width, depth, height) {
-  // Basic setup for the 3D scene
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 1000); // Top-down orthographic view
-  const renderer = new THREE.WebGLRenderer({
-    canvas: document.getElementById("threeCanvas"),
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  // Create a rectangular timber column section
-  const geometry = new THREE.BoxGeometry(width, depth, height); // Width, Depth, Height
-  const material = new THREE.MeshLambertMaterial({ color: 0x8b4513 }); // Timber color
-  const column = new THREE.Mesh(geometry, material);
-  scene.add(column);
-
-  // Lighting to make the timber look realistic
-  const light = new THREE.PointLight(0xffffff, 1, 500);
-  light.position.set(10, 10, 10);
-  scene.add(light);
-
-  // Set the camera position for top view
-  camera.position.set(0, 0, 10); // Position the camera above the object
-  camera.lookAt(0, 0, 0); // Look at the center of the column
-
-  // Render the scene
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-
-  animate();
-}
+  }),
+  )
 
 function getGetStartedHtml(): TemplateResult {
   return html`<p>In this video you will learn why we build this platform:</p>
@@ -847,6 +834,3 @@ function getAuthorHtml(): TemplateResult {
       src="https://awatif.co/img/services/mohamed.jpg"
     /> `;
 }
-
-var i = colNames.indexOf(selectedColumn.val);
-var results = designResultsInterface.val[i];

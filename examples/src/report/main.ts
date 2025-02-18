@@ -70,15 +70,10 @@ van.derive(() => {
 });
 
 const nodeIDsArray = [...nodeInputs.val.supports.keys()];
-
 const noNodes = nodes.val.length
 const indexNodes = Array.from({ length: noNodes }, (_, i) => i);
-
 const noBars = elements.val.length
 const indexBars = Array.from({ length: noBars }, (_, i) => i);
-
-
-
 
 const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
   
