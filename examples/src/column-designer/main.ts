@@ -1,7 +1,16 @@
 import van, { State } from "vanjs-core";
 import { Text } from "awatif-ui/src/viewer/objects/Text";
 import * as THREE from "three";
-import { Parameters, parameters, sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
+import {
+  Parameters,
+  parameters,
+  sheets,
+  viewer,
+  layout,
+  title,
+  grid,
+  marketing,
+} from "awatif-ui";
 import { html, TemplateResult } from "lit-html";
 import {
   timberColumnDesign,
@@ -54,7 +63,6 @@ const globalInputs = van.state([["pinned", 2, "permanent", "GL28h"]]);
 
 const designResults = van.state([]);
 const designResultsInterface = van.state([]);
-
 
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),
@@ -119,8 +127,6 @@ sheetsObj.set("design-Inputs", {
   data: designInputs,
 });
 
-
-
 // events
 const onSheetChange = ({ data, sheet }) => {
   console.log(`Data updated on sheet: ${sheet}`);
@@ -136,11 +142,10 @@ const onSheetChange = ({ data, sheet }) => {
 
 const sheetsElm = sheets({
   sheets: sheetsObj,
-  onChange: onSheetChange
+  onChange: onSheetChange,
 });
 
 // sheets({ sheets: sheetsObj, onChange: onSheetChange })
-
 
 const noCols = designInputs.val.length;
 const colNames = [];
@@ -210,10 +215,8 @@ for (let i = 0; i < noCols; i++) {
   xyCoords.push([xCord, yCord, zCord]); // Push coordinates as an array
 }
 
-
 // THREEJS
 van.derive(() => {
-
   //lines
   lines.geometry.setAttribute(
     "position",
@@ -232,8 +235,6 @@ van.derive(() => {
 
   // columns
   // const column = createRectangularColumn(2, 5, 1, 0xff0000); // Red column with width=2, height=5, length=1
-
-
 
   // Position the column (optional, default is at the origin)
 
@@ -303,12 +304,13 @@ van.derive(() => {
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 });
 
-const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
+const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
+  nodes
+) => {
   // var i = 0;
   var i = colNames.indexOf(selectedColumn.val);
 
   var input = designInputs.val[i];
-  input;
   var column = designInputs.val[i][0] as string;
   var length = designInputs.val[i][1] as number;
   var width = designInputs.val[i][2] as number;
@@ -342,10 +344,7 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (nodes) =>
     <header class="header">
       <div class="header-left">
         <p class="header-h1">Timber Column Designer</p>
-        <p class="header-h2">
-          <a href="https://awatif.co" target="_blank" rel="noopener noreferrer"
-            >Awatif.co</a>
-        </p>
+        <p class="header-h2">https://awatif.co</p>
         <p class="header-h3">20.02.2025</p>
       </div>
       <div class="header-right">
@@ -446,6 +445,57 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (nodes) =>
     <h2>Summary</h2>
     <h4>Relevant structural checks</h4>
     <p class="caption">EN 1995-1-1: 2004</p>
+
+    <table id="table-design">
+      <!-- First header row -->
+      <tr>
+        <th>Clause</th>
+        <th>Check</th>
+        <th>Utilization</th>
+      </tr>
+
+      <!-- Second header row for units -->
+      <tr>
+      <th>ULS</th>
+      <th>Ultimate Limit State</th>
+        <th>-</th>
+      </tr>
+
+      <!-- Table body -->
+      <tr>
+        <td>6.1</td>
+        <td>Stress of Members</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>6.1.4</td>
+        <td>Compression parallel to the grain</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>6.3</td>
+        <td>Stability of Members</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>6.3.2</td>
+        <td>Either compression or combined compression and bending</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+
+      <!-- Second header row for units -->
+      <tr>
+      <th>SLS</th>
+      <th>Serviceability Limit State</th>
+        <th>-</th>
+      </tr>
+
+      <tr>
+        <td>6.3.2</td>
+        <td>Deflection</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+    </table>
 
     ${M_yd === 0 && M_zd === 0
       ? html`
@@ -746,22 +796,18 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (nodes) =>
   `;
 };
 
-const templateInput: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
-
+const templateInput: (nodes: Structure["nodes"]) => TemplateResult = (
+  nodes
+) => {
   return html`
-  <h2>Input Table</h2>
+    <h2>Input Table</h2>
 
-  ${sheetsElm}
-
-
-    
+    ${sheetsElm}
   `;
 };
 
-
-
-const columnDropdown = () => {}
-  const selectedColumn = van.state(colNames[0]); // Default to the first column
+const columnDropdown = () => {};
+const selectedColumn = van.state(colNames[0]); // Default to the first column
 html`
   <p class="p1">Select a column to view results:</p>
 
@@ -791,8 +837,8 @@ document.body.append(
       template: templateInput,
       data: nodes,
     },
-  }),
-  )
+  })
+);
 
 function getGetStartedHtml(): TemplateResult {
   return html`<p>In this video you will learn why we build this platform:</p>
