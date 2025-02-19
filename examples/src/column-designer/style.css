@@ -12,9 +12,9 @@
      ========================== */
   
   h1 {
-    font-family: "Times", sans-serif;
+    font-family: "Arial", sans-serif;
     font-size: 26px;
-    font-weight:200;
+    font-weight: 900;
     color: #2e5368;
     margin-bottom: 0px;
     margin-top: 2px;
@@ -22,9 +22,9 @@
   }
   
   h2 {
-    font-family: "Times", sans-serif;
+    font-family: "Arial", sans-serif;
     font-size: 24px;
-    font-weight:200;
+    font-weight:700;
     color: #2e5368;
     margin: 0px 0;
     margin-left: 10px;

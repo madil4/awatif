@@ -1,7 +1,16 @@
 import van, { State } from "vanjs-core";
 import { Text } from "awatif-ui/src/viewer/objects/Text";
 import * as THREE from "three";
-import { sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
+import {
+  Parameters,
+  parameters,
+  sheets,
+  viewer,
+  layout,
+  title,
+  grid,
+  marketing,
+} from "awatif-ui";
 import { html, TemplateResult } from "lit-html";
 import {
   timberColumnDesign,
@@ -21,6 +30,13 @@ import { Structure } from "awatif-data-structure";
 import * as reportChecks from "./reportChecks";
 
 // init
+const params: Parameters = {
+  support: { value: van.state(0), min: 0, max: 500 },
+  serviceClass: { value: van.state(0), min: 0, max: 500 },
+  loadDurationClass: { value: van.state(0), min: 0, max: 500 },
+  grade: { value: van.state(0), min: 0, max: 500 },
+};
+
 const nodes: State<Node[]> = van.state([]);
 
 const designInputs = van.state([
@@ -47,6 +63,7 @@ const globalInputs = van.state([["pinned", 2, "permanent", "GL28h"]]);
 
 const designResults = van.state([]);
 const designResultsInterface = van.state([]);
+
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),
   new THREE.LineBasicMaterial()
@@ -57,10 +74,15 @@ const points = new THREE.Points(
   new THREE.PointsMaterial({})
 );
 
+const column = new THREE.Mesh(
+  new THREE.BoxGeometry(5, 5, 30),
+  new THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+
 var text = new Text("Hello World");
 text.position.set(5, 5, 0);
 
-const objects3D = van.state([lines, points, text]);
+const objects3D = van.state([lines, points, text, column]);
 const sheetsObj = new Map();
 
 // global inputs
@@ -77,12 +99,13 @@ sheetsObj.set("global-Param", {
 });
 // console.log(globalInputs)
 
-// global inputs
+// slab inputs
 sheetsObj.set("slab-Inputs", {
   text: "Slab",
   fields: [
     { field: "A", text: "xCord", editable: { type: "int" } },
     { field: "B", text: "yCord", editable: { type: "int" } },
+    { field: "C", text: "zCord", editable: { type: "int" } },
   ],
   data: slabInputs,
 });
@@ -116,6 +139,13 @@ const onSheetChange = ({ data, sheet }) => {
   }
   changedData.val = data; // Update the reactive state with new sheet data
 };
+
+const sheetsElm = sheets({
+  sheets: sheetsObj,
+  onChange: onSheetChange,
+});
+
+// sheets({ sheets: sheetsObj, onChange: onSheetChange })
 
 const noCols = designInputs.val.length;
 const colNames = [];
@@ -175,8 +205,6 @@ van.derive(() => {
   designResultsInterface.val = resultsInterface;
 });
 
-console.log(designResultsInterface.val);
-
 // on inputPolyline change: render lines
 var xyCoords = [];
 for (let i = 0; i < noCols; i++) {
@@ -187,6 +215,7 @@ for (let i = 0; i < noCols; i++) {
   xyCoords.push([xCord, yCord, zCord]); // Push coordinates as an array
 }
 
+// THREEJS
 van.derive(() => {
   //lines
   lines.geometry.setAttribute(
@@ -203,6 +232,11 @@ van.derive(() => {
   );
   points.material.size = 1; // Larger points
   points.material.color.set(0xff0000); // Red points
+
+  // columns
+  // const column = createRectangularColumn(2, 5, 1, 0xff0000); // Red column with width=2, height=5, length=1
+
+  // Position the column (optional, default is at the origin)
 
   //text
   // Clear existing text objects
@@ -223,7 +257,6 @@ van.derive(() => {
         designResultsInterface.val[i].maxEtaZ
       ) * 100
     ).toFixed(0);
-    // console.log(etaMax)
 
     // Multi-line text content
     const lines = [`Col${i + 1}`, `η: ${etaMax}%`];
@@ -271,14 +304,14 @@ van.derive(() => {
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 });
 
-console.log(designResultsInterface.val[0].etaStabilityY);
 
-const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
+const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
+  nodes
+) => {
   // var i = 0;
   var i = colNames.indexOf(selectedColumn.val);
 
   var input = designInputs.val[i];
-  input;
   var column = designInputs.val[i][0] as string;
   var length = designInputs.val[i][1] as number;
   var width = designInputs.val[i][2] as number;
@@ -312,10 +345,7 @@ const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
     <header class="header">
       <div class="header-left">
         <p class="header-h1">Timber Column Designer</p>
-        <p class="header-h2">
-          <a href="https://awatif.co" target="_blank" rel="noopener noreferrer"
-            >Awatif.co</a>
-        </p>
+        <p class="header-h2">https://awatif.co</p>
         <p class="header-h3">20.02.2025</p>
       </div>
       <div class="header-right">
@@ -411,11 +441,62 @@ const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
 
     ${columnDropdown()}
     <!-- Dropdown in UI -->
-    <br />
+    <br /><br />
 
     <h2>Summary</h2>
     <h4>Relevant structural checks</h4>
     <p class="caption">EN 1995-1-1: 2004</p>
+
+    <table id="table-design">
+      <!-- First header row -->
+      <tr>
+        <th>Clause</th>
+        <th>Check</th>
+        <th>Utilization</th>
+      </tr>
+
+      <!-- Second header row for units -->
+      <tr>
+      <th>ULS</th>
+      <th>Ultimate Limit State</th>
+        <th>-</th>
+      </tr>
+
+      <!-- Table body -->
+      <tr>
+        <td>6.1</td>
+        <td>Stress of Members</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>6.1.4</td>
+        <td>Compression parallel to the grain</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>6.3</td>
+        <td>Stability of Members</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>6.3.2</td>
+        <td>Either compression or combined compression and bending</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+
+      <!-- Second header row for units -->
+      <tr>
+      <th>SLS</th>
+      <th>Serviceability Limit State</th>
+        <th>-</th>
+      </tr>
+
+      <tr>
+        <td>6.3.2</td>
+        <td>Deflection</td>
+        <td>${results.maxEtaZ.toFixed(2)}</td>
+      </tr>
+    </table>
 
     ${M_yd === 0 && M_zd === 0
       ? html`
@@ -716,137 +797,39 @@ const template: (nodes: Structure["nodes"]) => TemplateResult = (nodes) => {
   `;
 };
 
+
+// Assume colNames is an array of column names (e.g., ["Column 1", "Column 2", "Column 3"])
 const selectedColumn = van.state(colNames[0]); // Default to the first column
 
-const columnDropdown = () => html`
-  <p class="p1">Select a column to view results:</p>
+// Function to create the dropdown
+const columnDropdown = () =>
+  van.tags.div(
+    van.tags.p({ class: "p1" }, "Select a column to view results:"),
+    van.tags.select(
+      {
+        id: "columnSelect",
+        onchange: (e) => (selectedColumn.val = e.target.value), // Update state when selection changes
+      },
+      colNames.map((col) =>
+        van.tags.option(
+          { value: col, selected: col === selectedColumn.val },
+          col
+        )
+      )
+    )
+  );
 
-  <select
-    id="columnSelect"
-    @change=${(e) => (selectedColumn.val = e.target.value)}
-  >
-    ${colNames.map(
-      (col) =>
-        html`<option value=${col} ?selected=${col === selectedColumn.val}>
-          ${col}
-        </option>`
-    )}
-  </select>
-  <br /><br />
-`;
+// Render the dropdown into the DOM
+document.body.appendChild(columnDropdown());
 
 document.body.append(
-  layout({
-    topLeft: { element: title("Timber Column Designer") },
-    topRight: {
-      element: marketing({
-        getStarted: getGetStartedHtml(),
-        author: getAuthorHtml(),
-      }),
-    },
-    main: {
-      element: sheets({ sheets: sheetsObj, onChange: onSheetChange }),
-      title: "Inputs",
-    },
-    preview: {
-      element: grid({
-        fields: [
-          { field: "A", text: "Column" },
-          { field: "B", text: "ηy" },
-          { field: "C", text: "ηz" },
-          { field: "D", text: "λy" },
-          { field: "E", text: "λz" },
-        ],
-        data: designResultsInterface,
-      }),
-      title: "Outputs",
-    },
-    right: {
-      element: viewer({
-        objects3D,
-        reportObj: {
-          template,
-          data: nodes,
-        },
-      }),
+  viewer({
+    objects3D,
+    reportObj: {
+      template: templateReport,
+      data: nodes,
     },
   })
 );
 
-function createTimberColumnSection(width, depth, height) {
-  // Basic setup for the 3D scene
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 1000); // Top-down orthographic view
-  const renderer = new THREE.WebGLRenderer({
-    canvas: document.getElementById("threeCanvas"),
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
 
-  // Create a rectangular timber column section
-  const geometry = new THREE.BoxGeometry(width, depth, height); // Width, Depth, Height
-  const material = new THREE.MeshLambertMaterial({ color: 0x8b4513 }); // Timber color
-  const column = new THREE.Mesh(geometry, material);
-  scene.add(column);
-
-  // Lighting to make the timber look realistic
-  const light = new THREE.PointLight(0xffffff, 1, 500);
-  light.position.set(10, 10, 10);
-  scene.add(light);
-
-  // Set the camera position for top view
-  camera.position.set(0, 0, 10); // Position the camera above the object
-  camera.lookAt(0, 0, 0); // Look at the center of the column
-
-  // Render the scene
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-
-  animate();
-}
-
-function getGetStartedHtml(): TemplateResult {
-  return html`<p>In this video you will learn why we build this platform:</p>
-    <iframe
-      width="560"
-      height="315"
-      src="https://www.youtube.com/embed/hHQiSyCfIeA?si=tD5DmVvki1uJxU4i"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      referrerpolicy="strict-origin-when-cross-origin"
-      allowfullscreen
-    ></iframe>`;
-}
-
-function getAuthorHtml(): TemplateResult {
-  return html`<p style="line-height: 1.6">
-      Hi, I'm Cal Mense, a passionate structural engineer and software developer
-      based in Amsterdam, with extensive experience in both fields. While
-      working on the design of high-rise buildings, I realized that the
-      structural design process was inefficient, leading to wasted time and
-      materials. This inspired me to focus on solving these challenges,
-      resulting in the creation of Awatif, an open-source, web-based platform
-      built with modern optimization and programming techniques to streamline
-      structural design.
-    </p>
-
-    <p>
-      If you'd like to chat about structural engineering, software development,
-      or anything else, feel free to connect with me on LinkedIn:
-      <a href="https://www.linkedin.com/in/madil4/" target="_blank"
-        >https://www.linkedin.com/in/madil4/</a
-      >
-    </p>
-
-    <img
-      width="200"
-      height="200"
-      src="https://awatif.co/img/services/mohamed.jpg"
-    /> `;
-}
-
-var i = colNames.indexOf(selectedColumn.val);
-var results = designResultsInterface.val[i];
