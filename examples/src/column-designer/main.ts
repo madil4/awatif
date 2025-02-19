@@ -303,7 +303,7 @@ van.derive(() => {
 
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 });
-
+console.log(designResultsInterface.val[0]);
 
 const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
   nodes
@@ -311,7 +311,6 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
   // var i = 0;
   var i = colNames.indexOf(selectedColumn.val);
 
-  var input = designInputs.val[i];
   var column = designInputs.val[i][0] as string;
   var length = designInputs.val[i][1] as number;
   var width = designInputs.val[i][2] as number;
@@ -447,162 +446,292 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
     <h4>Relevant structural checks</h4>
     <p class="caption">EN 1995-1-1: 2004</p>
 
-    <table id="table-design">
-      <!-- First header row -->
-      <tr>
-        <th>Clause</th>
-        <th>Check</th>
-        <th>Utilization</th>
-      </tr>
-
-      <!-- Second header row for units -->
-      <tr>
-      <th>ULS</th>
-      <th>Ultimate Limit State</th>
-        <th>-</th>
-      </tr>
-
-      <!-- Table body -->
-      <tr>
-        <td>6.1</td>
-        <td>Stress of Members</td>
-        <td>-</td>
-      </tr>
-      <tr>
-        <td>6.1.4</td>
-        <td>Compression parallel to the grain</td>
-        <td>${results.maxEtaZ.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td>6.3</td>
-        <td>Stability of Members</td>
-        <td>-</td>
-      </tr>
-      <tr>
-        <td>6.3.2</td>
-        <td>Either compression or combined compression and bending</td>
-        <td>${results.maxEtaZ.toFixed(2)}</td>
-      </tr>
-
-      <!-- Second header row for units -->
-      <tr>
-      <th>SLS</th>
-      <th>Serviceability Limit State</th>
-        <th>-</th>
-      </tr>
-
-      <tr>
-        <td>6.3.2</td>
-        <td>Deflection</td>
-        <td>${results.maxEtaZ.toFixed(2)}</td>
-      </tr>
-    </table>
-
     ${M_yd === 0 && M_zd === 0
       ? html`
-          <p class="p1">In summary, for timber column design, the relevant clauses in EN 1995-1-1: 2004 are:</p>
-          <h3>Ultimate Limit State</h3>
-          <h4>Clause 6.1 Stress of members</h4>
-          <ul>
-            <li><p1>Clause 6.1.4</p1> Compression parallel to the grain </li>
-          </ul>
-          <h4>Clause 6.3 Stability of members</h4>
-          <ul>
-            <li><p1>Clause 6.3.2</p1> Columns subjected to either compression or combined compression and bending </li>
-          </ul>
-          <h3>Serviceability Limit State</h3>
-          <ul>
-            <li><p1>Deflection </li>
-          </ul>
+          <table id="data-table">
+            <!-- First header row -->
+            <tr>
+              <th>Clause</th>
+              <th>Check</th>
+              <th>Utilization</th>
+            </tr>
 
+            <!-- Second header row for units -->
+            <!-- Intermediate row for ULS -->
+            <tr class="intermediate-row">
+              <td colspan="3">Ultimate Limit State (ULS)</td>
+            </tr>
+
+            <!-- Table body -->
+            <tr>
+              <td>6.1</td>
+              <td>Stress of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.1.4</td>
+              <td>Compression parallel to the grain</td>
+              <td>
+                ${(
+                  results.compressionCheckResult
+                    .etaCheckCompressionParallelToGrain * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+            <tr>
+              <td>6.3</td>
+              <td>Stability of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.3.2</td>
+              <td>Either compression or combined compression and bending</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.stabilityCheckResult.etaStabilityY,
+                    results.stabilityCheckResult.etaStabilityZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Second header row for units -->
+            <tr class="intermediate-row">
+              <td colspan="3">Serviceability Limit State (SLS)</td>
+            </tr>
+
+            <tr>
+              <td>6.3.2</td>
+              <td>Deflection</td>
+              <td>${(results.maxEtaZ * 100).toFixed(0)}%</td>
+            </tr>
+          </table>
         `
       : M_yd !== 0 && M_zd === 0
       ? html`
-          <p class="p1">
-            In summary, for timber column design, the relevant clauses in EN
-            1995-1-1: 2004 are:
-            <h3>Ultimate Limit State</h3>
-          </p>
-          <h4>
-          Clause 6.2 Stress of members
-          </h4>
-          <ul>
-            <li>
-              <p1>Clause 6.2.4</p1> Combined bending and axial compression
-            </li>
-          </ul>
-          <h4>Clause 6.3 Stability of members</h4>
-          <ul>
-            <li>
-              <p1>Clause 6.3.2</p1> Buckling: Columns subjected to either compression or
-              combined compression and bending
-            </li>
-            <li>
-              <p1>Clause 6.3.3</p1> Lateral torsional buckling: Columns either bending or combined bending and compression
-            </li>
-          </ul>
-          <h3>Serviceability Limit State</h3>
-          <ul>
-            <li><p1>Deflection </li>
-          </ul>
+          <table id="data-table">
+            <!-- First header row -->
+            <tr>
+              <th>Clause</th>
+              <th>Check</th>
+              <th>Utilization</th>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Intermediate row for ULS -->
+            <tr class="intermediate-row">
+              <td colspan="3">Ultimate Limit State (ULS)</td>
+            </tr>
+
+            <!-- Table body -->
+            <tr>
+              <td>6.1</td>
+              <td>Stress of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.2.4</td>
+              <td>Combined bending and axial compression</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.combinedBendingCompressionCheckResult
+                      .etaCheckCombinedBendingCompressionY,
+                    results.combinedBendingCompressionCheckResult
+                      .etaCheckCombinedBendingCompressionZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+            <tr>
+              <td>6.3</td>
+              <td>Stability of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.3.2</td>
+              <td>Either compression or combined compression and bending</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.stabilityCheckResult.etaStabilityY,
+                    results.stabilityCheckResult.etaStabilityZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+            <tr>
+              <td>6.3.3</td>
+              <td>Lateral torsional buckling</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.lTBCheckResult.etaLTBY,
+                    results.lTBCheckResult.etaLTBZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Second header row for units -->
+            <tr class="intermediate-row">
+              <td colspan="3">Serviceability Limit State (SLS)</td>
+            </tr>
+
+            <tr>
+              <td>6.3.2</td>
+              <td>Deflection</td>
+              <td>${results.maxEtaZ.toFixed(2)}</td>
+            </tr>
+          </table>
         `
       : M_yd !== 0 && M_zd !== 0
       ? html`
-            <p class="p1">
-              In summary, for timber column design, the relevant clauses in EN
-              1995-1-1: 2004 are:
-              <h3>Ultimate Limit State</h3>
-            </p>
-            <h4>
-            Clause 6.2 Stress of members
-            </h4>
-            <ul>
-              <li>
-                <p1>Clause 6.2.4</p1> Combined bending and axial compression
-              </li>
-            </ul>
-            <h4>Clause 6.3 Stability of members</h4>
-            <ul>
-              <li>
-                <p1>Clause 6.3.2</p1> Buckling: Columns subjected to either compression or
-                combined compression and bending
-              </li>
-            </ul>
-            <h3>Serviceability Limit State</h3>
-            <ul>
-              <li><p1>Deflection </li>
-            </ul>
-          `
+          <table id="data-table">
+            <!-- First header row -->
+            <tr>
+              <th>Clause</th>
+              <th>Check</th>
+              <th>Utilization</th>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Intermediate row for ULS -->
+            <tr class="intermediate-row">
+              <td colspan="3">Ultimate Limit State (ULS)</td>
+            </tr>
+
+            <!-- Table body -->
+            <tr>
+              <td>6.1</td>
+              <td>Stress of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.2.4</td>
+              <td>Combined bending and axial compression</td>
+              ${(
+                Math.max(
+                  results.combinedBendingCompressionCheckResult
+                    .etaCheckCombinedBendingCompressionY,
+                  results.combinedBendingCompressionCheckResult
+                    .etaCheckCombinedBendingCompressionZ
+                ) * 100
+              ).toFixed(0)}%
+            </tr>
+            <tr>
+              <td>6.3</td>
+              <td>Stability of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.3.2</td>
+              <td>Either compression or combined compression and bending</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.stabilityCheckResult.etaStabilityY,
+                    results.stabilityCheckResult.etaStabilityZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Second header row for units -->
+            <tr class="intermediate-row">
+              <td colspan="3">Serviceability Limit State (SLS)</td>
+            </tr>
+
+            <tr>
+              <td>6.3.2</td>
+              <td>Deflection</td>
+              <td>${results.maxEtaZ.toFixed(2)}</td>
+            </tr>
+          </table>
+        `
       : html`
-      <p class="p1">
-        In summary, for timber column design, the relevant clauses in EN
-        1995-1-1: 2004 are:
-        <h3>Ultimate Limit State</h3>
-      </p>
-      <h4>
-        Clause 6.2 Stress of members
-      </h4>
-      <ul>
-        <li>
-          <p1>Clause 6.2.4</p1> Combined bending and axial compression
-        </li>
-      </ul>
-      <h4>Clause 6.3 Stability of members</h4>
-      <ul>
-        <li>
-          <p1>Clause 6.3.2</p1> Buckling: Columns subjected to either compression or
-          combined compression and bending
-        </li>
-        <li>
-          <p1>Clause 6.3.3</p1> Lateral torsional buckling: Columns either bending or combined bending and compression
-        </li>
-      </ul>
-      <h3>Serviceability Limit State</h3>
-      <ul>
-            <li><p1>Deflection </li>
-          </ul>
+          <table id="data-table">
+            <!-- First header row -->
+            <tr>
+              <th>Clause</th>
+              <th>Check</th>
+              <th>Utilization</th>
+            </tr>
+
+            <!-- Second header row for units -->
+            <!-- Intermediate row for ULS -->
+            <tr class="intermediate-row">
+              <td colspan="3">Ultimate Limit State (ULS)</td>
+            </tr>
+
+            <!-- Table body -->
+            <tr>
+              <td>6.1</td>
+              <td><bolt>Stress of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+            <td>6.2.4</td>
+            <td>Combined bending and axial compression</td>
+            <td>
+              ${(
+                Math.max(
+                  results.combinedBendingCompressionCheckResult
+                    .etaCheckCombinedBendingCompressionY,
+                  results.combinedBendingCompressionCheckResult
+                    .etaCheckCombinedBendingCompressionZ
+                ) * 100
+              ).toFixed(0)}%
+            </td>
+            <tr>
+              <td>6.3</td>
+              <td>Stability of Members</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>6.3.2</td>
+              <td>Either compression or combined compression and bending</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.stabilityCheckResult.etaStabilityY,
+                    results.stabilityCheckResult.etaStabilityZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+            <tr>
+              <td>6.3.3</td>
+              <td>Lateral torsional buckling</td>
+              <td>
+                ${(
+                  Math.max(
+                    results.lTBCheckResult.etaLTBY,
+                    results.lTBCheckResult.etaLTBZ
+                  ) * 100
+                ).toFixed(0)}%
+              </td>
+            </tr>
+
+            <!-- Second header row for units -->
+            <tr class="intermediate-row">
+              <td colspan="3">Serviceability Limit State (SLS)</td>
+            </tr>
+
+            <tr>
+              <td>6.3.2</td>
+              <td>Deflection</td>
+              <td>${results.maxEtaZ.toFixed(2)}</td>
+            </tr>
+          </table>
         `}
 
+    <br />
+    <br />
     <br />
     <h2>Input Values</h2>
     <h4>Overview of input parameters</h4>
@@ -635,7 +764,7 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
     <h4>Stiffness properties for design</h4>
     <p class="caption">EN1995-1-1 Ch. 2.4.1</p>
 
-    <table id="table-design">
+    <table id="data-table">
       <!-- First header row -->
       <tr>
         <th>Property</th>
@@ -686,7 +815,7 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
     <br />
     <br />
 
-    <table id="table-design">
+    <table id="data-table">
       <!-- First header row -->
       <tr>
         <th>Property</th>
@@ -797,7 +926,6 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
   `;
 };
 
-
 // Assume colNames is an array of column names (e.g., ["Column 1", "Column 2", "Column 3"])
 const selectedColumn = van.state(colNames[0]); // Default to the first column
 
@@ -831,5 +959,3 @@ document.body.append(
     },
   })
 );
-
-
