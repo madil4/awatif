@@ -18,8 +18,8 @@ export function createText(designInputs, designResultsInterface, noCols, objects
 
   // Add new text objects dynamically
   for (let i = 0; i < noCols; i++) {
-    const xCord = designInputs[i][7];
-    const yCord = designInputs[i][8];
+    const xCord = designInputs[i][8];
+    const yCord = designInputs[i][9];
     const zCord = 2;
     const etaMax = (
       Math.max(
