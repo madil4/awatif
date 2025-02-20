@@ -28,6 +28,7 @@ import "./style.css";
 import logo from "./awatif-logo.jpg";
 import { Structure } from "awatif-data-structure";
 import * as reportChecks from "./reportChecks";
+import { createColumnsFromCoords, createNodes, createSurface, createText, createVerticalColumn } from "./threejsFunctions";
 
 // init
 const params: Parameters = {
@@ -207,103 +208,35 @@ van.derive(() => {
 
 // on inputPolyline change: render lines
 var xyCoords = [];
+var lengths = [];
 for (let i = 0; i < noCols; i++) {
   const xCord = designInputs.val[i][7] as number; // x-coordinate
   const yCord = designInputs.val[i][8] as number; // y-coordinate
   const zCord = 0; // z-coordinate
-
+  const length = designInputs.val[i][1] as number; // y-coordinate
   xyCoords.push([xCord, yCord, zCord]); // Push coordinates as an array
+  lengths.push(length); // Push coordinates as an array
 }
 
 // THREEJS
 van.derive(() => {
-  //lines
-  lines.geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(slabInputs.val.flat(), 3)
-  );
-  lines.material.color.set(0x132e39); // Green lines
 
   //points
-  const positions = xyCoords.flat();
-  points.geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(positions, 3)
-  );
-  points.material.size = 1; // Larger points
-  points.material.color.set(0xff0000); // Red points
+  const points = createNodes(xyCoords);
+
+  //surface
+  const surface = createSurface(objects3D, slabInputs);
 
   // columns
-  // const column = createRectangularColumn(2, 5, 1, 0xff0000); // Red column with width=2, height=5, length=1
-
-  // Position the column (optional, default is at the origin)
+  const columns = createColumnsFromCoords(xyCoords, lengths)
 
   //text
-  // Clear existing text objects
-  const currentTexts = objects3D.rawVal.filter((obj) => obj instanceof Text);
-  currentTexts.forEach((textObj) =>
-    objects3D.rawVal.splice(objects3D.rawVal.indexOf(textObj), 1)
-  );
+  createText(designInputs.val, designResultsInterface.val, noCols, objects3D);
 
-  // Add new text objects dynamically
-  for (let i = 0; i < noCols; i++) {
-    const xCord = designInputs.val[i][7] as number;
-    const yCord = designInputs.val[i][8] as number;
-    const zCord = 2;
-    // const etaMax = Math.max(designResults.val[i][1], designResults.val[i][2]);
-    const etaMax = (
-      Math.max(
-        designResultsInterface.val[i].maxEtaY,
-        designResultsInterface.val[i].maxEtaZ
-      ) * 100
-    ).toFixed(0);
-
-    // Multi-line text content
-    const lines = [`Col${i + 1}`, `η: ${etaMax}%`];
-
-    lines.forEach((line, index) => {
-      const lineText = new Text(line);
-      lineText.updateScale(0.7);
-      lineText.position.set(xCord, yCord, zCord - index * 0.7); // Adjust yCord for each line
-      objects3D.rawVal.push(lineText); // Add to objects
-    });
-  }
-
-  // surface
-  // Clear previous surfaces
-  const currentSurfaces = objects3D.rawVal.filter(
-    (obj) => obj instanceof THREE.Mesh
-  );
-  currentSurfaces.forEach((surface) => {
-    surface.geometry.dispose(); // Dispose of geometry
-    surface.material.dispose(); // Dispose of material
-    objects3D.rawVal.splice(objects3D.rawVal.indexOf(surface), 1);
-  });
-
-  // Create and add the new surface
-  const vertices = slabInputs.val.flat();
-  const indices = [0, 1, 2, 0, 2, 3]; // Indices defining triangles
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(vertices, 3)
-  );
-  geometry.setIndex(indices);
-
-  geometry.computeVertexNormals();
-
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x132e39, // The color you want to use
-    side: THREE.DoubleSide, // Make both sides of the object visible
-  });
-
-  const surface = new THREE.Mesh(geometry, material);
   //@ts-ignore
-  objects3D.rawVal.push(surface);
-
-  objects3D.val = [...objects3D.rawVal]; // trigger rendering
+  objects3D.rawVal.push(points, surface, ...columns);
 });
-console.log(designResultsInterface.val[0]);
+
 
 const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
   nodes
@@ -687,6 +620,9 @@ const templateReport: (nodes: Structure["nodes"]) => TemplateResult = (
                 ) * 100
               ).toFixed(0)}%
             </td>
+
+
+
             <tr>
               <td>6.3</td>
               <td>Stability of Members</td>
