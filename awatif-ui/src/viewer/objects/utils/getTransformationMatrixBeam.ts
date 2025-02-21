@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Node } from "awatif-data-structure";
 
 // from global to local
-export function getTransformationMatrix(node1: Node, node2: Node) {
+export function getTransformationMatrixBeam(node1: Node, node2: Node) {
   const n1 = new THREE.Vector3(...node1);
   const n2 = new THREE.Vector3(...node2);
   const vector = n2.clone().sub(n1);
