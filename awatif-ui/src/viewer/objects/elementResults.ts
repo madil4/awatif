@@ -4,7 +4,7 @@ import { AnalyzeOutputs, Node } from "awatif-data-structure";
 import { Structure } from "awatif-data-structure";
 import { Settings } from "../settings/settings";
 
-import { getTransformationMatrix } from "./utils/getTransformationMatrix";
+import { getTransformationMatrixBeam } from "./utils/getTransformationMatrixBeam";
 import { ConstantResult } from "./resultObjects/ConstantResult";
 import { LinearResult } from "./resultObjects/LinearResult";
 import { IResultObject } from "./resultObjects/IResultObject";
@@ -59,7 +59,7 @@ export function elementResults(
       const normalizedResult = result?.map(
         (n) => n / (maxResult === 0 ? 1 : maxResult)
       );
-      const rotation = getTransformationMatrix(node1, node2);
+      const rotation = getTransformationMatrixBeam(node1, node2);
       const resultObject = new resultObjects[resultType](
         node1,
         node2,

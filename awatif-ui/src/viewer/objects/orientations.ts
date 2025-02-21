@@ -4,8 +4,10 @@ import { Node } from "awatif-data-structure";
 import { Structure } from "awatif-data-structure";
 import { Settings } from "../settings/settings";
 
-import { getTransformationMatrix } from "./utils/getTransformationMatrix";
+import { getTransformationMatrixBeam } from "./utils/getTransformationMatrixBeam";
 import { get10thFromFirstPoint } from "./utils/get5thFromFirstPoint";
+import { getAverage } from "./utils/getAverage";
+import { getTransformationMatrixShell } from "./utils/getTransformationMatrixShell";
 
 export function orientations(
   structure: Structure,
@@ -53,10 +55,23 @@ export function orientations(
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];
 
-      axes.position.set(...get10thFromFirstPoint(node1, node2));
-      axes.rotation.setFromRotationMatrix(
-        getTransformationMatrix(node1, node2)
-      );
+      if (element.length === 2) {
+        // beam element
+        axes.position.set(...get10thFromFirstPoint(node1, node2));
+        axes.rotation.setFromRotationMatrix(
+          getTransformationMatrixBeam(node1, node2)
+        );
+      }
+
+      if (element.length === 3) {
+        // shell element
+        const node3 = derivedNodes.rawVal[element[2]];
+
+        axes.position.set(...getAverage([node1, node2, node3]));
+        axes.rotation.setFromRotationMatrix(
+          getTransformationMatrixShell(node1, node2, node3)
+        );
+      }
 
       const scale = size * derivedDisplayScale.rawVal;
       axes.scale.set(scale, scale, scale);
