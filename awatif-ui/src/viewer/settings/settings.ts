@@ -17,6 +17,7 @@ export type Settings = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
+  contours: State<string>;
   flipAxes: State<boolean>;
 };
 
@@ -86,6 +87,15 @@ export function settings(
         reactions: "reactions",
       },
       label: "Node results",
+    });
+    outputs.addBinding(settingsState.contours, "val", {
+      options: {
+        none: "none",
+        deformationsX: "deformationsX",
+        deformationsY: "deformationsY",
+        deformationsZ: "deformationsZ",
+      },
+      label: "Contours",
     });
     outputs.addBinding(settingsState.deformedShape, "val", {
       label: "Deformed shape",

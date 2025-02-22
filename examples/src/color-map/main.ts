@@ -18,18 +18,9 @@ const params: Parameters = {
   },
 };
 
-const lines = new THREE.Mesh(
-  new THREE.BufferGeometry(),
-  new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
-    wireframe: true,
-    transparent: true,
-  })
-);
-
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
-const objects3D = van.state([getMesh([], []), lines]);
+const objects3D = van.state([getMesh([], [])]);
 
 // Events: on parameter change
 van.derive(() => {
