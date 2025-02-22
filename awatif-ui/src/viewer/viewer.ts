@@ -95,6 +95,29 @@ export function viewer({
   controls.zoomSpeed = 10;
   controls.update();
 
+  const lightColor = 0xffffff;
+  const ambientLight = new THREE.AmbientLight(lightColor, 0.5);
+  scene.add(ambientLight);
+
+  const light1 = new THREE.DirectionalLight(0xffffff, 0.5);
+  light1.position.set(30, 25, -10);
+  light1.shadow.mapSize.width = 1024;
+  light1.shadow.mapSize.height = 1024;
+  
+  const d = 10;
+  light1.shadow.camera.left = -d;
+  light1.shadow.camera.right = d;
+  light1.shadow.camera.top = d;
+  light1.shadow.camera.bottom = -d;
+  light1.shadow.camera.far = 1000;
+  
+  const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+  light2.color.setHSL(11, 43, 96);
+  light2.position.set(-10, 0, 30);
+  
+  scene.add(light1);
+  scene.add(light2);
+
   scene.add(gridObj, axes(settings.gridSize.rawVal, settings.flipAxes.rawVal));
 
   if (structure) {
