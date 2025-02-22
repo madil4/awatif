@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif UI - Dialog</title>
+    <script type="module">
+      import { dialog } from "./dialog";
+      import { html } from "lit-html";
+      import van from "vanjs-core";
+
+      const template = (nodes) => {
+        return html`<p>This is a dialog.</p>`;
+      };
+
+      const dialogObj = dialog({
+        template,
+      });
+
+      document.body.appendChild(dialogObj);
+    </script>
+  </head>
+  <body></body>
+</html>
