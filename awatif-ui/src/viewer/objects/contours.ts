@@ -1,29 +1,28 @@
 import { Lut } from "three/addons/math/Lut.js";
 import * as THREE from "three";
-import * as math from "mathjs";
 import van, { State } from "vanjs-core";
 import { Node, Structure, Element } from "awatif-data-structure";
 import { Settings } from "../settings/settings";
 
 export function contours(
-  structure: Structure,
-  settings: Settings,
-  derivedNodes: State<Node[]>
+  nodes: State<Node[]>,
+  elements: State<Element[]>,
+  contourValues: State<number[]>,
+  contourOptions: State<string>,
 ): THREE.Mesh {
   let contourMesh = getContourBaseMesh(
-    structure.nodes.val,
-    structure.elements.val
+    nodes.val,
+    elements.val
   );
   van.derive(() => {
-    if (!settings.contours.val) return;
+    if (!contourOptions.val) return;
 
     contourMesh = getContourBaseMesh(
-      structure.nodes.val,
-      structure.elements.val
+      nodes.val,
+      elements.val
     );
 
-    const values = getContourValues(settings, structure);
-    contourMesh = addColorToMesh(contourMesh);
+    contourMesh = addColorToMesh(contourMesh, contourValues.val);
   });
 
   return contourMesh;
@@ -56,47 +55,19 @@ function getContourBaseMesh(nodes: Node[], elements: Element[]): THREE.Mesh {
   return mesh;
 }
 
-function getContourValues(settings: Settings, structure: Structure): number[] {
-  const contourOption = settings.contours.val;
-  if (contourOption.startsWith("deformations")) {
-    const deformations = structure.deformOutputs?.val.deformations;
-    const deformationAxesMap = {
-      X: 0,
-      Y: 1,
-      Z: 2,
-    };
-    const deformtionAxis = contourOption.slice(-1);
-    return structure.nodes?.val.map(
-      (node, i) => deformations.get(i)[deformationAxesMap[deformtionAxis]]
-    );
-  }
-
-  // return zeros by default
-  return structure.nodes?.val.map((node, i) => 0);
-}
-
-function addContourValues(values: number[], mesh: THREE.Mesh): THREE.Mesh {
-  mesh.geometry.setAttribute(
-    "pressure",
-    new THREE.Float32BufferAttribute(values, 1)
-  );
-  return mesh;
-}
-
-function addColorToMesh(mesh: THREE.Mesh): THREE.Mesh {
+function addColorToMesh(mesh: THREE.Mesh, contourValues: number[]): THREE.Mesh {
   const geometry = mesh.geometry;
-  const pressures = geometry.attributes.pressure;
   const colors = geometry.attributes.color;
   const color = new THREE.Color();
 
   let lut = new Lut();
   lut.setColorMap("rainbow");
 
-  lut.setMax(Math.max(...pressures.array));
-  lut.setMin(Math.min(...pressures.array));
+  lut.setMax(Math.max(...contourValues));
+  lut.setMin(Math.min(...contourValues));
 
-  for (let i = 0; i < pressures.array.length; i++) {
-    const colorValue = pressures.array[i];
+  for (let i = 0; i < contourValues.length; i++) {
+    const colorValue = contourValues[i];
 
     color.copy(lut.getColor(colorValue)).convertSRGBToLinear();
     colors.setXYZ(i, color.r, color.g, color.b);
