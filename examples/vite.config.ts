@@ -25,6 +25,7 @@ export default defineConfig({
         "2d-mesh": "src/2d-mesh/index.html",
         drawing: "src/drawing/index.html",
         report: "src/report/index.html",
+        "3d-views": "src/3d-views/index.html",
       },
     },
   },
