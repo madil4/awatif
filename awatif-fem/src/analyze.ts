@@ -42,8 +42,8 @@ export function analyze(
 
     // Todo: find a better way to incorporate bars and beams
     const isFrame =
-      elementInputs.momentsOfInertiaY?.get(elmIndex) &&
-      elementInputs.momentsOfInertiaZ?.get(elmIndex);
+      !!elementInputs.momentsOfInertiaY?.get(elmIndex) ||
+      !!elementInputs.momentsOfInertiaZ?.get(elmIndex);
 
     if (isFrame) {
       analyzeOutputs.shearsY.set(elmIndex, [fLocal[1], fLocal[7]]);
