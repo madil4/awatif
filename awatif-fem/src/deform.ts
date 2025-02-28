@@ -17,15 +17,8 @@ export function deform(
 ): DeformOutputs {
   const dof = nodes.length * 6;
 
-  const freeInd = getFreeIndices(
-    nodeInputs.supports,
-    elementInputs,
-    elements,
-    dof
-  );
-
+  const freeInd = getFreeIndices(nodeInputs.supports, dof);
   const appliedForces = getAppliedForces(nodeInputs.loads, dof);
-
   const stiffnesses = getGlobalStiffnessMatrix(
     nodes,
     elements,
