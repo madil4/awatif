@@ -1,15 +1,15 @@
 import { Node, Element, ElementInputs } from "awatif-data-structure";
 import { multiply, norm, subtract, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
-import { getStiffness } from "./getStiffness";
+import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
-export function getStiffnesses(
+export function getGlobalStiffnessMatrix(
   nodes: Node[],
   elements: Element[],
   elementInputs: ElementInputs,
   dof: number
 ): number[][] {
-  let stiffnesses = Array(dof)
+  let stiffnessMatrix = Array(dof)
     .fill(0)
     .map(() => Array(dof).fill(0));
 
@@ -20,18 +20,18 @@ export function getStiffnesses(
     const xi1 = nodes[e1];
     const L = norm(subtract(xi1, xi0)) as number;
 
-    const kLocal = getStiffness(elementInputs, index, L);
+    const kLocal = getLocalStiffnessMatrix(elementInputs, index, L);
     const T = getTransformationMatrix(xi0, xi1);
     const kGlobal = multiply(transpose(T), multiply(kLocal, T));
 
-    stiffnesses = assembleStiffnessesBeam(stiffnesses, kGlobal, e0, e1);
+    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e0, e1);
   });
 
-  return stiffnesses;
+  return stiffnessMatrix;
 }
 
-function assembleStiffnessesBeam(
-  stiffnesses: number[][],
+function assemble(
+  stiffnessMatrix: number[][],
   k: number[][],
   i0: number,
   i1: number
@@ -41,12 +41,12 @@ function assembleStiffnessesBeam(
 
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j < 6; j++) {
-      stiffnesses[offset0 + i][offset0 + j] += k[i][j];
-      stiffnesses[offset1 + i][offset0 + j] += k[i + 6][j];
-      stiffnesses[offset0 + i][offset1 + j] += k[i][j + 6];
-      stiffnesses[offset1 + i][offset1 + j] += k[i + 6][j + 6];
+      stiffnessMatrix[offset0 + i][offset0 + j] += k[i][j];
+      stiffnessMatrix[offset1 + i][offset0 + j] += k[i + 6][j];
+      stiffnessMatrix[offset0 + i][offset1 + j] += k[i][j + 6];
+      stiffnessMatrix[offset1 + i][offset1 + j] += k[i + 6][j + 6];
     }
   }
 
-  return stiffnesses;
+  return stiffnessMatrix;
 }

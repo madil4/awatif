@@ -1,7 +1,7 @@
 import { ElementInputs } from "awatif-data-structure";
 import { matrix } from "mathjs";
 
-export function getStiffness(
+export function getLocalStiffnessMatrix(
   elementInputs: ElementInputs,
   index: number,
   Length: number
