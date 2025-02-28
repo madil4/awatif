@@ -6,7 +6,7 @@ import {
   DeformOutputs,
 } from "awatif-data-structure";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
-import { getStiffness } from "./utils/getStiffness";
+import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
 import { multiply, norm, subset, subtract, index } from "mathjs";
 
 export function analyze(
@@ -35,7 +35,7 @@ export function analyze(
     ];
     const T = getTransformationMatrix(node0, node1);
     const dxLocal = multiply(T, dxGlobal);
-    const kLocal = getStiffness(elementInputs, elmIndex, L);
+    const kLocal = getLocalStiffnessMatrix(elementInputs, elmIndex, L);
     let fLocal = multiply(kLocal, dxLocal) as number[];
 
     analyzeOutputs.normals.set(elmIndex, [fLocal[0], fLocal[6]]);
