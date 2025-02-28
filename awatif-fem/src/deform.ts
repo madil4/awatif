@@ -7,7 +7,6 @@ import {
 } from "awatif-data-structure";
 import { flatten, lusolve, multiply, subset, index } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
-import { getFreeIndices } from "./utils/getFreeIndices";
 
 export function deform(
   nodes: Node[],
@@ -69,6 +68,26 @@ export function deform(
     deformations,
     reactions,
   };
+}
+
+function getFreeIndices(
+  supports: NodeInputs["supports"],
+  dof: number
+): number[] {
+  const toRemove: number[] = [];
+  supports?.forEach((support, index) => {
+    if (support[0]) toRemove.push(index * 6);
+    if (support[1]) toRemove.push(index * 6 + 1);
+    if (support[2]) toRemove.push(index * 6 + 2);
+    if (support[3]) toRemove.push(index * 6 + 3);
+    if (support[4]) toRemove.push(index * 6 + 4);
+    if (support[5]) toRemove.push(index * 6 + 5);
+  });
+
+  return Array(dof)
+    .fill(0)
+    .map((_, i) => i)
+    .filter((v) => !toRemove.includes(v));
 }
 
 function getAppliedForces(
