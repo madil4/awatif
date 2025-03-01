@@ -30,6 +30,8 @@ export type ElementInputs = {
   momentsOfInertiaZ?: Map<number, number>;
   momentsOfInertiaY?: Map<number, number>;
   torsionalConstants?: Map<number, number>;
+  thicknesses?: Map<number, number>;
+  poissonsRatios?: Map<number, number>;
 };
 
 export type DeformOutputs = {

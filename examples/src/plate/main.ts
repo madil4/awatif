@@ -1,41 +1,45 @@
-import van from "vanjs-core";
-import { Node } from "awatif-data-structure";
+import van, { State } from "vanjs-core";
+import {
+  Node,
+  Element,
+  NodeInputs,
+  ElementInputs,
+} from "awatif-data-structure";
 import { viewer } from "awatif-ui";
-import { getLocalStiffness } from "./getLocalStiffness";
-import { index, lusolve, subset } from "mathjs";
+import { deform } from "awatif-fem";
 
-// prepare stiffness matrix
-const nodes: Node[] = [
+const nodes: State<Node[]> = van.state([
   [0, 0, 0],
   [0, 5, 0],
   [5, 2.5, 0],
-];
-
-const k = getLocalStiffness(nodes, 100, 0.3, 1);
-
-// apply supports
-const freeInd = [6, 7, 8]; // free Node 2
-const stiffnessesFree = subset(k, index(freeInd, freeInd));
-
-// apply forces
-const forcesFree = [0, 0, 100]; // [N, My, Mx]
-
-// solve
-const deformationFree = lusolve(stiffnessesFree, forcesFree);
-
-// Print results
-const deformationSigns = new Map([
-  [0, "Displacement in z"],
-  [1, "Rotation around y"],
-  [2, "Rotation around x"],
 ]);
-console.table(deformationFree.map((v, i) => [v[0], deformationSigns.get(i)]));
+const elements: State<Element[]> = van.state([[0, 1, 2]]);
+
+const nodeInputs: State<NodeInputs> = van.state({
+  supports: new Map([
+    [0, [true, true, true, true, true, true]],
+    [1, [true, true, true, true, true, true]],
+  ]),
+  loads: new Map([[2, [0, 0, -100, 0, 0, 0]]]),
+});
+const elementInputs: State<ElementInputs> = van.state({
+  elasticities: new Map([[0, 200]]),
+  thicknesses: new Map([[0, 1]]),
+  poissonsRatios: new Map([[0, 0.3]]),
+});
+
+const deformOutputs = van.state(
+  deform(nodes.val, elements.val, nodeInputs.val, elementInputs.val)
+);
 
 document.body.append(
   viewer({
     structure: {
-      nodes: van.state(nodes),
-      elements: van.state([[0, 1, 2]]),
+      nodes,
+      elements,
+      nodeInputs,
+      elementInputs,
+      // deformOutputs,
     },
   })
 );
