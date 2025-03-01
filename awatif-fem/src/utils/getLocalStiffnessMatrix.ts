@@ -19,9 +19,7 @@ export function getLocalStiffnessMatrix(
     return getLocalStiffnessMatrixFrame(nodes, elementInputs, index);
 
   if (nodes.length === 3)
-    return extendMatrix9x9To18x18(
-      getLocalStiffnessMatrixPlate(nodes, elementInputs, index)
-    );
+    return getLocalStiffnessMatrixPlate(nodes, elementInputs, index);
 }
 
 function getLocalStiffnessMatrixFrame(
@@ -42,7 +40,7 @@ function getLocalStiffnessMatrixFrame(
   const EIy = (E * Iy) / L ** 3;
   const GJ = (G * J) / L;
 
-  return matrix([
+  return [
     [EA, 0, 0, 0, 0, 0, -EA, 0, 0, 0, 0, 0],
     [0, 12 * EIz, 0, 0, 0, 6 * L * EIz, 0, -12 * EIz, 0, 0, 0, 6 * L * EIz],
     [0, 0, 12 * EIy, 0, -6 * L * EIy, 0, 0, 0, -12 * EIy, 0, -6 * L * EIy, 0],
@@ -107,7 +105,7 @@ function getLocalStiffnessMatrixFrame(
       0,
       4 * EIz * L ** 2,
     ],
-  ]).toArray() as number[][];
+  ];
 }
 
 function getLocalStiffnessMatrixPlate(
@@ -157,7 +155,7 @@ function getLocalStiffnessMatrixPlate(
   }
 
   // 6) return as a 2D array
-  return K.valueOf() as number[][];
+  return mapK9x9ToK18x18(K.toArray() as number[][]);
 
   // Utils
   function buildEdgeCoeffs(
@@ -356,17 +354,32 @@ function getLocalStiffnessMatrixPlate(
     ].map((row) => row.map((val) => val * factor));
     return matrix(data);
   }
-}
 
-function extendMatrix9x9To18x18(matrix9x9: number[][]): number[][] {
-  const extendedMatrix = Array.from({ length: 18 }, () => Array(18).fill(0));
+  function mapK9x9ToK18x18(k9: number[][]): number[][] {
+    // prettier-ignore
+    const k18 = [
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9[0][0], k9[0][2], k9[0][1], 0    , 0, 0, k9[0][0+3], k9[0][2+3], k9[0][1+3], 0,     0, 0, k9[0][0+6], k9[0][2+6], k9[0][1+6], 0],
+      [0, 0, k9[2][0], k9[2][2], k9[2][1], 0    , 0, 0, k9[2][0+3], k9[2][2+3], k9[2][1+3], 0,     0, 0, k9[2][0+6], k9[2][2+6], k9[2][1+6], 0],
+      [0, 0, k9[1][0], k9[1][2], k9[1][1], 0    , 0, 0, k9[1][0+3], k9[1][2+3], k9[1][1+3], 0,     0, 0, k9[1][0+6], k9[1][2+6], k9[1][1+6], 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
 
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      extendedMatrix[i][j] = matrix9x9[i][j];
-      extendedMatrix[i + 9][j + 9] = matrix9x9[i][j];
-    }
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9[0+3][0], k9[0+3][2], k9[0+3][1], 0    , 0, 0, k9[0+3][0+3], k9[0+3][2+3], k9[0+3][1+3], 0,     0, 0, k9[0+3][0+6], k9[0+3][2+6], k9[0+3][1+6], 0],
+      [0, 0, k9[2+3][0], k9[2+3][2], k9[2+3][1], 0    , 0, 0, k9[2+3][0+3], k9[2+3][2+3], k9[2+3][1+3], 0,     0, 0, k9[2+3][0+6], k9[2+3][2+6], k9[2+3][1+6], 0],
+      [0, 0, k9[1+3][0], k9[1+3][2], k9[1+3][1], 0    , 0, 0, k9[1+3][0+3], k9[1+3][2+3], k9[1+3][1+3], 0,     0, 0, k9[1+3][0+6], k9[1+3][2+6], k9[1+3][1+6], 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9[0+6][0], k9[0+6][2], k9[0+6][1], 0    , 0, 0, k9[0+6][0+3], k9[0+6][2+3], k9[0+6][1+3], 0,     0, 0, k9[0+6][0+6], k9[0+6][2+6], k9[0+6][1+6], 0],
+      [0, 0, k9[2+6][0], k9[2+6][2], k9[2+6][1], 0    , 0, 0, k9[2+6][0+3], k9[2+6][2+3], k9[2+6][1+3], 0,     0, 0, k9[2+6][0+6], k9[2+6][2+6], k9[2+6][1+6], 0],
+      [0, 0, k9[1+6][0], k9[1+6][2], k9[1+6][1], 0    , 0, 0, k9[1+6][0+3], k9[1+6][2+3], k9[1+6][1+3], 0,     0, 0, k9[1+6][0+6], k9[1+6][2+6], k9[1+6][1+6], 0],
+      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+    ];
+
+    return k18;
   }
-
-  return extendedMatrix;
 }
