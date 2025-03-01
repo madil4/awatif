@@ -11,7 +11,9 @@ import {
   LineBasicMaterial,
   Line,
   Float32BufferAttribute,
-  Vector2
+  Vector2,
+  BufferAttribute,
+  Matrix4
 } from "three";
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { Pane } from "tweakpane";
@@ -360,10 +362,17 @@ function onChange(){
     for (let i = 0; i < firstFloorSlabPos.length; i++)
       newSlabArray.push([firstFloorSlabPos[i][0], firstFloorSlabPos[i][1], firstFloorSlabPos[i][2] + z]);
 
-    // const offsetPoints = offsetPolyline(newSlabArray, COL_A);
-    // console.log(offsetPoints, newSlabArray);
+    const contour: Vector2[] = [];
+    for (let i = 0; i < newSlabArray.length; i++) {
+      contour.push(new Vector2(newSlabArray[i][0], newSlabArray[i][1]));
+    }
+    const offsetPoints = offsetContour(COL_A/2, contour);
+    const offsetNewSlabArray = [];
+    for (let i = 0; i < offsetPoints.length; i++) {
+      offsetNewSlabArray.push( [offsetPoints[i].x, offsetPoints[i].y, newSlabArray[0][2]] );
+    }
 
-    addSlab(newSlabArray);
+    addSlab(SETTINGS.visualizeModel ? offsetNewSlabArray : newSlabArray);
 
     for (let l = 0; l < firstFloorColumnsPos.length; l++) {
       const column = firstFloorColumnsPos[l];
@@ -389,4 +398,57 @@ function onChange(){
   }
   
   objects3D.val = [...objects3D.rawVal];
+}
+
+function offsetContour(offset: any, contour: Vector2[]) {
+  const result = [];
+
+  offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
+
+  for (let i = 0; i < contour.length - 1; i++) {
+    let v1 = new Vector2().subVectors(contour[i - 1 < 0 ? contour.length - 1 : i - 1], contour[i]);
+    let v2 = new Vector2().subVectors(contour[i + 1 == contour.length ? 0 : i + 1], contour[i]);
+    let angle = v2.angle() - v1.angle();
+    let halfAngle = angle * 0.5;
+
+    let hA = halfAngle;
+    let tA = v2.angle() + Math.PI * 0.5;
+
+    let shift = Math.tan(hA - Math.PI * 0.5);
+    let shiftMatrix = new Matrix4().set(
+      1, 0, 0, 0, 
+      -shift, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    );
+
+
+    let tempAngle = tA;
+    let rotationMatrix = new Matrix4().set(
+      Math.cos(tempAngle), -Math.sin(tempAngle), 0, 0,
+      Math.sin(tempAngle),  Math.cos(tempAngle), 0, 0,
+                        0,                    0, 1, 0,
+                        0,                    0, 0, 1
+    );
+
+    let translationMatrix = new Matrix4().set(
+      1, 0, 0, contour[i].x,
+      0, 1, 0, contour[i].y,
+      0, 0, 1, 0,
+      0, 0, 0, 1,
+    );
+
+    let cloneOffset = offset.clone();
+    cloneOffset.needsUpdate = true;
+    cloneOffset.applyMatrix4(shiftMatrix);
+    cloneOffset.applyMatrix4(rotationMatrix);
+    cloneOffset.applyMatrix4(translationMatrix);
+
+
+    result.push(new Vector2(cloneOffset.getX(0), cloneOffset.getY(0)));
+  }
+
+  //added recently
+  result.push(result[0]);
+  return result;
 }
