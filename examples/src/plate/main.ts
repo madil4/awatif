@@ -39,7 +39,7 @@ document.body.append(
       elements,
       nodeInputs,
       elementInputs,
-      // deformOutputs,
+      deformOutputs,
     },
   })
 );
