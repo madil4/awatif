@@ -7,8 +7,8 @@ import {
   subtract,
   transpose,
   zeros,
+  Matrix,
 } from "mathjs";
-import { create, all, Matrix } from "mathjs";
 
 export function getLocalStiffnessMatrix(
   nodes: Node[],
@@ -19,7 +19,9 @@ export function getLocalStiffnessMatrix(
     return getLocalStiffnessMatrixFrame(nodes, elementInputs, index);
 
   if (nodes.length === 3)
-    return getLocalStiffnessMatrixPlate(nodes, elementInputs, index);
+    return extendMatrix9x9To18x18(
+      getLocalStiffnessMatrixPlate(nodes, elementInputs, index)
+    );
 }
 
 function getLocalStiffnessMatrixFrame(
@@ -354,4 +356,17 @@ function getLocalStiffnessMatrixPlate(
     ].map((row) => row.map((val) => val * factor));
     return matrix(data);
   }
+}
+
+function extendMatrix9x9To18x18(matrix9x9: number[][]): number[][] {
+  const extendedMatrix = Array.from({ length: 18 }, () => Array(18).fill(0));
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      extendedMatrix[i][j] = matrix9x9[i][j];
+      extendedMatrix[i + 9][j + 9] = matrix9x9[i][j];
+    }
+  }
+
+  return extendedMatrix;
 }
