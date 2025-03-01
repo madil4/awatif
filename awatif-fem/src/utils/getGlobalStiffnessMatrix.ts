@@ -1,5 +1,5 @@
 import { Node, Element, ElementInputs } from "awatif-data-structure";
-import { multiply, transpose } from "mathjs";
+import { e, multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
@@ -14,29 +14,13 @@ export function getGlobalStiffnessMatrix(
     .map(() => Array(dof).fill(0));
 
   elements.forEach((e, i) => {
-    const n0 = nodes[e[0]];
-    const n1 = nodes[e[1]];
+    const elmNodes = e.map((e) => nodes[e]);
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
+    console.table(kLocal);
+    const T = getTransformationMatrix(elmNodes);
 
-    // Frame element
-    if (e.length === 2) {
-      const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
-      const T = getTransformationMatrix(n0, n1);
-      const kGlobal = multiply(transpose(T), multiply(kLocal, T));
-
-      stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
-    }
-
-    // Plate element
-    if (e.length === 3) {
-      const n2 = nodes[e[2]];
-
-      const kLocal = getLocalStiffnessMatrix([n0, n1, n2], elementInputs, i);
-      console.table(kLocal);
-      // const T = getTransformationMatrix(n0, n1);
-      // const kGlobal = multiply(transpose(T), multiply(kLocal, T));
-
-      // stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
-    }
+    const kGlobal = multiply(transpose(T), multiply(kLocal, T));
+    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e);
   });
 
   return stiffnessMatrix;
@@ -44,19 +28,30 @@ export function getGlobalStiffnessMatrix(
 
 function assemble(
   stiffnessMatrix: number[][],
-  k: number[][],
-  i0: number,
-  i1: number
+  kGlobal: number[][],
+  element: number[]
 ): number[][] {
-  const offset0 = 6 * i0;
-  const offset1 = 6 * i1;
+  const isN2 = element.length === 3;
+  const offset0 = 6 * element[0];
+  const offset1 = 6 * element[1];
+  const offset2 = isN2 ? 6 * element[2] : undefined;
 
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j < 6; j++) {
-      stiffnessMatrix[offset0 + i][offset0 + j] += k[i][j];
-      stiffnessMatrix[offset1 + i][offset0 + j] += k[i + 6][j];
-      stiffnessMatrix[offset0 + i][offset1 + j] += k[i][j + 6];
-      stiffnessMatrix[offset1 + i][offset1 + j] += k[i + 6][j + 6];
+      stiffnessMatrix[offset0 + i][offset0 + j] += kGlobal[i][j];
+      stiffnessMatrix[offset1 + i][offset0 + j] += kGlobal[i + 6][j];
+      if (isN2) stiffnessMatrix[offset2 + i][offset0 + j] += kGlobal[i + 12][j];
+
+      stiffnessMatrix[offset0 + i][offset1 + j] += kGlobal[i][j + 6];
+      stiffnessMatrix[offset1 + i][offset1 + j] += kGlobal[i + 6][j + 6];
+      if (isN2)
+        stiffnessMatrix[offset2 + i][offset1 + j] += kGlobal[i + 12][j + 6];
+
+      if (isN2) {
+        stiffnessMatrix[offset0 + i][offset2 + j] += kGlobal[i][j + 12];
+        stiffnessMatrix[offset1 + i][offset2 + j] += kGlobal[i + 6][j + 12];
+        stiffnessMatrix[offset2 + i][offset2 + j] += kGlobal[i + 12][j + 12];
+      }
     }
   }
 

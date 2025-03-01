@@ -32,7 +32,7 @@ export function analyze(
       ...deformOutputs.deformations.get(e[0]),
       ...deformOutputs.deformations.get(e[1]),
     ];
-    const T = getTransformationMatrix(n0, n1);
+    const T = getTransformationMatrix([n0, n1]);
     const dxLocal = multiply(T, dxGlobal);
     const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
     let fLocal = multiply(kLocal, dxLocal) as number[];
