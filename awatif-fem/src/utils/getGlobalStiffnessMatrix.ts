@@ -1,12 +1,7 @@
 import { Node, Element, ElementInputs } from "awatif-data-structure";
-import { multiply, norm, subtract, transpose } from "mathjs";
+import { multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
-
-export enum ElementType {
-  Frame,
-  Shell,
-}
 
 export function getGlobalStiffnessMatrix(
   nodes: Node[],
@@ -22,11 +17,26 @@ export function getGlobalStiffnessMatrix(
     const n0 = nodes[e[0]];
     const n1 = nodes[e[1]];
 
-    const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
-    const T = getTransformationMatrix(n0, n1);
-    const kGlobal = multiply(transpose(T), multiply(kLocal, T));
+    // Frame element
+    if (e.length === 2) {
+      const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
+      const T = getTransformationMatrix(n0, n1);
+      const kGlobal = multiply(transpose(T), multiply(kLocal, T));
 
-    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
+      stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
+    }
+
+    // Plate element
+    if (e.length === 3) {
+      const n2 = nodes[e[2]];
+
+      const kLocal = getLocalStiffnessMatrix([n0, n1, n2], elementInputs, i);
+      console.table(kLocal);
+      // const T = getTransformationMatrix(n0, n1);
+      // const kGlobal = multiply(transpose(T), multiply(kLocal, T));
+
+      // stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
+    }
   });
 
   return stiffnessMatrix;
