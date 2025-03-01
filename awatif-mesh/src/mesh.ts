@@ -65,7 +65,7 @@ export function mesh({
       triOutputs.pointmarkerlist
     );
 
-    nodesState.val = nodes.map((p) => [p[0], 0, p[1]]);
+    nodesState.val = nodes.map((p) => [p[0], p[1], 0]);
     elementsState.val = toElements(triOutputs.trianglelist);
     boundaryIndicesState.val = boundaryIndices;
 

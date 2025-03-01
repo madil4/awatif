@@ -21,10 +21,14 @@ export function loads(
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
+
     structure.nodeInputs?.val.loads?.forEach((load, index) => {
+      const position = derivedNodes.val[index];
+      if (!position) return; // do not create if node does not exist
+
       const arrow = new THREE.ArrowHelper(
         new THREE.Vector3(...load.slice(0, 3)).normalize(),
-        new THREE.Vector3(...derivedNodes.rawVal[index]),
+        new THREE.Vector3(...position),
         1,
         0xee9b00,
         0.3,

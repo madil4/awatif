@@ -113,6 +113,9 @@ function getLocalStiffnessMatrixPlate(
   elementInputs: ElementInputs,
   index: number
 ): number[][] {
+  // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 4.4
+  // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
+
   const E = elementInputs?.elasticities?.get(index) ?? 0;
   const nu = elementInputs?.poissonsRatios?.get(index) ?? 0;
   const thickness = elementInputs?.thicknesses?.get(index) ?? 0;
