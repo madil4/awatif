@@ -20,10 +20,10 @@ const nodeInputs: State<NodeInputs> = van.state({
     [0, [true, true, true, true, true, true]],
     [1, [true, true, true, true, true, true]],
   ]),
-  loads: new Map([[2, [0, 0, -100, 0, 0, 0]]]),
+  loads: new Map([[2, [0, 0, -10, 0, 0, 0]]]),
 });
 const elementInputs: State<ElementInputs> = van.state({
-  elasticities: new Map([[0, 200]]),
+  elasticities: new Map([[0, 100]]),
   thicknesses: new Map([[0, 1]]),
   poissonsRatios: new Map([[0, 0.3]]),
 });
