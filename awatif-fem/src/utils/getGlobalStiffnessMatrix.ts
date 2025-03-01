@@ -3,6 +3,11 @@ import { multiply, norm, subtract, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
+export enum ElementType {
+  Frame,
+  Shell,
+}
+
 export function getGlobalStiffnessMatrix(
   nodes: Node[],
   elements: Element[],
@@ -13,18 +18,15 @@ export function getGlobalStiffnessMatrix(
     .fill(0)
     .map(() => Array(dof).fill(0));
 
-  elements.forEach((element, index) => {
-    const [e0, e1] = element;
+  elements.forEach((e, i) => {
+    const n0 = nodes[e[0]];
+    const n1 = nodes[e[1]];
 
-    const xi0 = nodes[e0];
-    const xi1 = nodes[e1];
-    const L = norm(subtract(xi1, xi0)) as number;
-
-    const kLocal = getLocalStiffnessMatrix(elementInputs, index, L);
-    const T = getTransformationMatrix(xi0, xi1);
+    const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
+    const T = getTransformationMatrix(n0, n1);
     const kGlobal = multiply(transpose(T), multiply(kLocal, T));
 
-    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e0, e1);
+    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e[0], e[1]);
   });
 
   return stiffnessMatrix;

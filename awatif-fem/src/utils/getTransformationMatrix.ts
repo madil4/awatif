@@ -9,6 +9,7 @@ import {
   subtract,
 } from "mathjs";
 
+// Todo: add dictionary for two types of elements
 // from global to local
 export function getTransformationMatrix(node0: Node, node1: Node): number[][] {
   const vector = subtract(node1, node0);
