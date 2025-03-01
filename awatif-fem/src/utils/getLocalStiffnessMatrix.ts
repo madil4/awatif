@@ -1,10 +1,11 @@
-import { ElementInputs } from "awatif-data-structure";
-import { matrix } from "mathjs";
+import { Node, ElementInputs } from "awatif-data-structure";
+import { matrix, norm, subtract } from "mathjs";
 
+// Todo: add dictionary for two types of elements
 export function getLocalStiffnessMatrix(
+  nodes: Node[],
   elementInputs: ElementInputs,
-  index: number,
-  Length: number
+  index: number
 ): number[][] {
   const Iz = elementInputs?.momentsOfInertiaZ?.get(index) ?? 0;
   const Iy = elementInputs?.momentsOfInertiaY?.get(index) ?? 0;
@@ -12,7 +13,7 @@ export function getLocalStiffnessMatrix(
   const A = elementInputs?.areas?.get(index) ?? 0;
   const G = elementInputs?.shearModuli?.get(index) ?? 0;
   const J = elementInputs?.torsionalConstants?.get(index) ?? 0;
-  const L = Length ?? 1;
+  const L = norm(subtract(nodes[0], nodes[1])) as number;
 
   const EA = (E * A) / L;
   const EIz = (E * Iz) / L ** 3;
