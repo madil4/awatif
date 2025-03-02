@@ -3,10 +3,7 @@ import * as THREE from "three";
 import * as math from "mathjs";
 
 import van, { State } from "vanjs-core";
-import { parameters, Parameters, viewer } from "awatif-ui";
-import { contours } from "../viewer/objects/contours";
-import { Node, Element } from "awatif-data-structure";
-import { mesh } from "awatif-mesh";
+import { parameters, Parameters, viewer, colorMap } from "awatif-ui";
 
 // Init
 const params: Parameters = {
@@ -19,9 +16,7 @@ const params: Parameters = {
   },
 };
 
-const objects3D = van.state([
-  contours(van.state([]), van.state([]), van.state([]), van.state("demo")),
-]);
+const objects3D = van.state([new THREE.Mesh()]);
 
 // Events: on parameter change
 van.derive(() => {
@@ -36,19 +31,21 @@ van.derive(() => {
     [20, 10],
     [0, 10],
     [0, 0],
+    [5, 5],
   ]);
   const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
-  const { nodes, elements } = mesh({ points, polygon });
   const distancesState = van.state(
     getDistancesFromVertex(
-      [params.boundary.value.val, 0, 3],
-      getMesh(nodes.val, elements.val)
+      [params.boundary.value.val, 3],
+      points.val as [number, number][]
     )
   );
-  objects3D.val = [
-    contours(nodes, elements, distancesState, van.state("demo")),
-  ];
+
+  const firstAxis = van.state("x");
+  const secondAxis = van.state("z");
+
+  objects3D.val = [colorMap(points, polygon, distancesState, van.state(0), firstAxis, secondAxis).val];
 });
 
 document.body.append(
@@ -59,40 +56,11 @@ document.body.append(
 );
 
 // Utils ------------------------------------------------------
-function getDistancesFromVertex(vertex: Node, mesh: THREE.Mesh): number[] {
-  const positions = mesh.geometry.attributes.position.array;
-
-  const distances: number[] = [];
-  for (let i = 0; i < mesh.geometry.attributes.position.count; i++) {
-    const node = [positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]];
-    const distance = math.norm(math.subtract(node, vertex)) as number;
-    distances.push(distance);
-  }
-  return distances;
-}
-
-function getMesh(nodes: Node[], elements: Element[]): THREE.Mesh {
-  const mesh = new THREE.Mesh(
-    new THREE.BufferGeometry(),
-    new THREE.MeshBasicMaterial({
-      side: THREE.DoubleSide,
-      vertexColors: true,
-    })
-  );
-  mesh.geometry.computeVertexNormals();
-  // itemSize = 3 because there are 3 values (components) per vertex
-  mesh.geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(nodes.flat(), 3)
-  );
-
-  mesh.geometry.setIndex(new THREE.Uint16BufferAttribute(elements.flat(), 1));
-
-  const colors = nodes.map((node) => [1, 0, 1]).flat();
-  mesh.geometry.setAttribute(
-    "color",
-    new THREE.Float32BufferAttribute(colors, 3)
-  );
-
-  return mesh;
+function getDistancesFromVertex(
+  vertex: [number, number],
+  points: [number, number][]
+): number[] {
+  return points.map((point) => {
+    return math.norm(math.subtract(point, vertex)) as number;
+  });
 }
