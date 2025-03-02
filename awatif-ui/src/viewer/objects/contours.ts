@@ -9,7 +9,7 @@ export function contours(
   elements: State<Element[]>,
   contourValues: State<number[]>,
   contourOptions: State<string>,
-): THREE.Mesh {
+): State<THREE.Mesh> {
   let contourMesh = getContourBaseMesh(
     nodes.val,
     elements.val
@@ -25,7 +25,7 @@ export function contours(
     contourMesh = addColorToMesh(contourMesh, contourValues.val);
   });
 
-  return contourMesh;
+  return van.state(contourMesh);
 }
 
 // Utils ------------------------------------------------------
