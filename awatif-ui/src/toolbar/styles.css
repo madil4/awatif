@@ -1,8 +1,8 @@
-#settings {
-    position: absolute;
-    top: 0px;
-    left: 8px;
-    width: 300px;
-    z-index: 3;
-  }
-  
+.tp-dfwv {
+  position: fixed;
+  z-index: 9999;
+  transform: translateY(-10px); /* Verschiebt die Toolbar nach unten */
+  right: 8px; /* Abstand von der rechten Seite */
+  width: 300px;
+  max-width: 100%; /* Verhindert Überlauf */
+}
