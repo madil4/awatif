@@ -16,20 +16,12 @@ import { dialog } from "awatif-ui/src/dialog/dialog";
 import { sheets } from "awatif-ui/src/sheets/sheets";
 
 import "./template.css";
-import { html } from "lit-html";
 
 // Init
 const params: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
-
-const nodesState: State<Node[]> = van.state([]);
-const elementsState: State<Element[]> = van.state([]);
-const nodeInputsState: State<NodeInputs> = van.state({});
-const elementInputsState: State<ElementInputs> = van.state({});
-const deformOutputsState: State<DeformOutputs> = van.state({});
-const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 const deformOutputs: State<DeformOutputs> = van.state({});
 const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
@@ -44,7 +36,6 @@ const elements: State<Element[]> = van.state([
   [0, 1],
   [1, 2],
 ]);
-
 
 const nodeInputs: State<NodeInputs> = van.state({
   supports: new Map([
@@ -77,7 +68,6 @@ let structure = {
 const sheetsObj = new Map();
 
 // sheets
-
 sheetsObj.set("nodes", {
   text: "Nodes",
   fields: [
@@ -123,24 +113,7 @@ const onSheetChange = ({ data, sheet }) => {
     elementInputs.val,
     deformOutputs.val
   );
-
-  nodesState.val = nodes.val;
-  elementsState.val = elements.val;
-  nodeInputsState.val = nodeInputs.val;
-  elementInputsState.val = elementInputs.val;
-  deformOutputsState.val = deformOutputs.val;
-  analyzeOutputsState.val = analyzeOutputs.val;
-
-  structure = {
-    nodes: nodesState,
-    elements: elementsState,
-    nodeInputs: nodeInputsState,
-    elementInputs: elementInputsState,
-    deformOutputs: deformOutputsState,
-    analyzeOutputs: analyzeOutputsState,
-  };
 };
-
 
 // Events: on parameter change
 const sheetsElm = sheets({
@@ -152,15 +125,17 @@ const sheetsElm = sheets({
 const toolbarElm = toolbar(["tables", "report"]);
 
 // Open Report Dialog on Toolbar Button Click
-// Open Report Dialog on Toolbar Button Click
 for (let i = 0; i < toolbarElm.length; i += 1) {
   if (toolbarElm[i].title === "report") {
     toolbarElm[i].on("click", () => {
       console.log("Report button clicked"); // Check if the button works
       // @ts-ignore
       const dialogObjReport = dialog({
-        template: () => templateReport(structure),
+        template: () => templateReport(
+          structure
+        ),
       });
+      console.log(structure)
       document.body.appendChild(dialogObjReport);
     });
   } else if (toolbarElm[i].title === "tables") {

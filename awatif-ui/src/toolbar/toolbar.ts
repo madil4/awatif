@@ -3,9 +3,9 @@ import { Pane } from "tweakpane";
 import "./styles.css";
 
 export function toolbar(buttons: string[]) {
-  const pane = new Pane({ title: "Design", expanded: false });
+  const pane = new Pane({ expanded: true });
   const f1 = pane.addFolder({
-    title: "about",
+    title: "awatif.co",
     expanded: false,
   });
 
