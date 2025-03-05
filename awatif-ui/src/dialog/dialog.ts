@@ -44,7 +44,7 @@ export function dialog({
   
     return container;
   }
-  
+
   function addResizeListeners(dialog: HTMLDialogElement | null) {
     if (!dialog) return;
   
