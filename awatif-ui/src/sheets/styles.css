@@ -1,16 +1,26 @@
-/* Stretching to its container allow size change events */
+/* Ensure the parent container has relative positioning */
+#parentContainer {
+  position: relative;  /* Add this to the parent container */
+  width: 90%; /* Make sure the width is set */
+  height: 100vh; /* Set the height or make it flexible to take up available space */
+}
+
+/* Stretching the #sheets container to fit its parent */
 #sheets {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 40px; /* Ensure you have a unit (e.g., px) */
+  bottom: 0px; /* Adjust the bottom space */
   left: 0;
   right: 0;
 }
 
+/* Optional: Styling the grid inside #sheets */
 #sheets #grid {
-  bottom: 28px;
+  bottom: 0px;
+  width: 100%;
 }
 
+/* Tabs section at the bottom */
 #tabs {
   position: absolute;
   bottom: 0;
