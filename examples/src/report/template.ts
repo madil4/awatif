@@ -1,15 +1,28 @@
-import { Structure } from "awatif-data-structure";
-import { html, TemplateResult } from "lit-html";
+import { html } from "lit-html";
 
 import "./template.css";
 
-export function template({
+// Template for the tables dialog
+export const templateTables = ({ sheetsElm }) => {
+  return html`
+    <div>
+      <h2>Tables</h2>
+      <div id="sheets-container">
+        ${sheetsElm}
+        <!-- Render the sheets here -->
+      </div>
+    </div>
+  `;
+};
+
+export const templateReport = ({
   nodes,
+  elements,
   nodeInputs,
   elementInputs,
   deformOutputs,
   analyzeOutputs,
-}: Structure): TemplateResult {
+}) => {
   return html`
     <br />
     <header class="header">
@@ -191,4 +204,4 @@ export function template({
     </table>
     <br /><br /><br />
   `;
-}
+};

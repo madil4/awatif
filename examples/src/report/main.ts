@@ -10,7 +10,11 @@ import { deform, analyze } from "awatif-fem";
 import van from "vanjs-core";
 import { State } from "vanjs-core/debug";
 import { Parameters, parameters, viewer } from "awatif-ui";
-import { template } from "./template";
+import { templateReport, templateTables } from "./template";
+import { toolbar } from "awatif-ui/src/toolbar/toolbar";
+import { dialog } from "awatif-ui/src/dialog/dialog";
+
+import "./template.css";
 
 // Init
 const params: Parameters = {
@@ -24,15 +28,6 @@ const nodeInputs: State<NodeInputs> = van.state({});
 const elementInputs: State<ElementInputs> = van.state({});
 const deformOutputs: State<DeformOutputs> = van.state({});
 const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
-
-const structure = {
-  nodes,
-  elements,
-  nodeInputs,
-  elementInputs,
-  deformOutputs,
-  analyzeOutputs,
-};
 
 // Events: on parameter change
 van.derive(() => {
@@ -53,7 +48,6 @@ van.derive(() => {
     ]),
     loads: new Map([[1, [0, 0, -1e3, 0, 0, 0]]]),
   };
-
   elementInputs.val = {
     elasticities: new Map([
       [0, 200],
@@ -80,16 +74,41 @@ van.derive(() => {
   );
 });
 
+let structure = {
+  nodes,
+  elements,
+  nodeInputs,
+  elementInputs,
+  deformOutputs,
+  analyzeOutputs,
+};
+
+// Toolbar
+const toolbarElm = toolbar(["report"]);
+
+// Open Report Dialog on Toolbar Button Click
+for (let i = 0; i < toolbarElm.length; i += 1) {
+  if (toolbarElm[i].title === "report") {
+    toolbarElm[i].on("click", () => {
+      console.log("Report button clicked"); // Check if the button works
+      // @ts-ignore
+      const dialogObjReport = dialog({
+        template: () => templateReport(
+          structure
+        ),
+      });
+      console.log(structure)
+      document.body.appendChild(dialogObjReport);
+    });
+  }
+}
+
 document.body.append(
   parameters(params),
   viewer({
     structure,
     settingsObj: {
       gridSize: 1000,
-    },
-    reportObj: {
-      template,
-      data: structure,
     },
   })
 );

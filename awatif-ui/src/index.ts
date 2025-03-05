@@ -3,7 +3,7 @@ export type { Drawing } from "./viewer/drawing/drawing";
 
 export { viewer } from "./viewer/viewer";
 export { parameters } from "./parameters/parameters";
-export { sheets } from "./sheets/sheets";
+export { table } from "./table/table";
 export { layout } from "./layout/layout";
 export { title } from "./title/title";
 export { grid } from "./grid/grid";
