@@ -39,6 +39,9 @@ const elements: State<Element[]> = van.state([
   [1, 2],
 ]);
 
+
+
+
 const nodeInputs: State<NodeInputs> = van.state({
   supports: new Map([
     [0, [true, true, true, true, true, true]],
@@ -81,8 +84,9 @@ sheetsObj.set("nodes", {
   data: nodes,
 });
 
-sheetsObj.set("sheets", {
-  text: "Sheets",
+
+sheetsObj.set("elements", {
+  text: "Elements",
   fields: [
     { field: "A", text: "Node 1", editable: { type: "float" } },
     { field: "B", text: "Node 2", editable: { type: "float" } },
@@ -90,10 +94,61 @@ sheetsObj.set("sheets", {
   data: elements,
 });
 
+// convert map to array
+const createdArraySupports = creatArrayfromMap(nodeInputs.rawVal.supports, nodes);
+
+console.log(createdArraySupports);
+
+sheetsObj.set("supports", {
+  text: "Supports",
+  fields: [
+    { field: "A", text: "ux", editable: { type: "boolean" } },
+    { field: "B", text: "uy", editable: { type: "boolean" } },
+    { field: "C", text: "uz", editable: { type: "boolean" } },
+    { field: "D", text: "mx", editable: { type: "boolean" } },
+    { field: "E", text: "my", editable: { type: "boolean" } },
+    { field: "F", text: "mz", editable: { type: "boolean" } },
+  ],
+  data: createdArraySupports
+});
+
+// convert map to array
+const createdArrayLoads = creatArrayfromMap(nodeInputs.rawVal.loads, nodes);
+
+sheetsObj.set("loads", {
+  text: "Loads",
+  fields: [
+    { field: "A", text: "Fx", editable: { type: "float" } },
+    { field: "B", text: "Fy", editable: { type: "float" } },
+    { field: "C", text: "Fz", editable: { type: "float" } },
+    { field: "D", text: "Mx", editable: { type: "float" } },
+    { field: "E", text: "My", editable: { type: "float" } },
+    { field: "F", text: "Mz", editable: { type: "float" } },
+  ],
+  data: createdArrayLoads,
+});
+
+// Define a generic onChange handler that updates the values
+const onSheetChange = (sheetKey, { data }) => {
+  // Update the corresponding state value in your structure object
+  if (sheetKey === 'nodes') {
+    nodes.val = data;
+  } else if (sheetKey === 'elements') {
+    elements.val = data;
+  } else if (sheetKey === 'supports') {
+    nodeInputs.val.supports = data;
+  } else if (sheetKey === 'loads') {
+    nodeInputs.val.loads = data;
+  }
+};
+
+
 // events
 
 // Events: on parameter change
 van.derive(() => {
+
+
   deformOutputs.val = deform(
     nodes.val,
     elements.val,
@@ -109,8 +164,11 @@ van.derive(() => {
   );
 });
 
+console.log(structure)
+
 const sheetsElm = sheets({
   sheets: sheetsObj,
+  onChange: onSheetChange
 });
 
 // Toolbar
@@ -141,6 +199,7 @@ for (let i = 0; i < toolbarElm.length; i += 1) {
   }
 }
 
+
 document.body.append(
   parameters(params),
   viewer({
@@ -150,3 +209,24 @@ document.body.append(
     },
   })
 );
+
+function creatArrayfromMap(map, nodes) {
+  const length = nodes.val.length;
+
+  // Initialize array with false values (wrapped in `van.state()`)
+  const createdArray = van.state(
+    new Array(length).fill(null).map(() => new Array(6).fill(""))
+  );
+
+  // Convert supportsMap keys to an array
+  const keys = Array.from(map.keys());
+
+  // Update supportsArray with values from supportsMap
+  for (let i of keys) {
+    if (map.get(i) !== undefined) {
+      createdArray.val[i] = map.get(i).slice(); // Ensure a new array reference
+    }
+  }
+
+  return createdArray;
+}
