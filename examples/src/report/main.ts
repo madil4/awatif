@@ -24,11 +24,15 @@ const params: Parameters = {
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
 
-
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+const nodeInputsState: State<NodeInputs> = van.state({});
+const elementInputsState: State<ElementInputs> = van.state({});
+const deformOutputsState: State<DeformOutputs> = van.state({});
+const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 const deformOutputs: State<DeformOutputs> = van.state({});
 const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
-
 
 const nodes: State<Node[]> = van.state([
   [250, 0, 0],
@@ -40,6 +44,7 @@ const elements: State<Element[]> = van.state([
   [0, 1],
   [1, 2],
 ]);
+
 
 const nodeInputs: State<NodeInputs> = van.state({
   supports: new Map([
@@ -60,7 +65,7 @@ const elementInputs: State<ElementInputs> = van.state({
   ]),
 });
 
-const structure = {
+let structure = {
   nodes,
   elements,
   nodeInputs,
@@ -68,7 +73,6 @@ const structure = {
   deformOutputs,
   analyzeOutputs,
 };
-
 
 const sheetsObj = new Map();
 
@@ -84,7 +88,6 @@ sheetsObj.set("nodes", {
   data: nodes,
 });
 
-
 sheetsObj.set("elements", {
   text: "Elements",
   fields: [
@@ -93,42 +96,6 @@ sheetsObj.set("elements", {
   ],
   data: elements,
 });
-
-// convert map to array
-const createdArraySupports = creatArrayfromMap(nodeInputs.rawVal.supports, nodes);
-
-console.log(createdArraySupports);
-
-sheetsObj.set("supports", {
-  text: "Supports",
-  fields: [
-    { field: "A", text: "ux", editable: { type: "boolean" } },
-    { field: "B", text: "uy", editable: { type: "boolean" } },
-    { field: "C", text: "uz", editable: { type: "boolean" } },
-    { field: "D", text: "mx", editable: { type: "boolean" } },
-    { field: "E", text: "my", editable: { type: "boolean" } },
-    { field: "F", text: "mz", editable: { type: "boolean" } },
-  ],
-  data: createdArraySupports
-});
-
-// convert map to array
-const createdArrayLoads = creatArrayfromMap(nodeInputs.rawVal.loads, nodes);
-
-sheetsObj.set("loads", {
-  text: "Loads",
-  fields: [
-    { field: "A", text: "Fx", editable: { type: "float" } },
-    { field: "B", text: "Fy", editable: { type: "float" } },
-    { field: "C", text: "Fz", editable: { type: "float" } },
-    { field: "D", text: "Mx", editable: { type: "float" } },
-    { field: "E", text: "My", editable: { type: "float" } },
-    { field: "F", text: "Mz", editable: { type: "float" } },
-  ],
-  data: createdArrayLoads,
-});
-
-
 
 // events
 const onSheetChange = ({ data, sheet }) => {
@@ -142,32 +109,44 @@ const onSheetChange = ({ data, sheet }) => {
   } else {
     nodeInputs.val.loads = data;
   }
+
   deformOutputs.val = deform(
     nodes.val,
     elements.val,
     nodeInputs.val,
     elementInputs.val
   );
-  
+
   analyzeOutputs.val = analyze(
     nodes.val,
     elements.val,
     elementInputs.val,
     deformOutputs.val
   );
+
+  nodesState.val = nodes.val;
+  elementsState.val = elements.val;
+  nodeInputsState.val = nodeInputs.val;
+  elementInputsState.val = elementInputs.val;
+  deformOutputsState.val = deformOutputs.val;
+  analyzeOutputsState.val = analyzeOutputs.val;
+
+  structure = {
+    nodes: nodesState,
+    elements: elementsState,
+    nodeInputs: nodeInputsState,
+    elementInputs: elementInputsState,
+    deformOutputs: deformOutputsState,
+    analyzeOutputs: analyzeOutputsState,
+  };
 };
 
 
 // Events: on parameter change
-
-
-
-
 const sheetsElm = sheets({
   sheets: sheetsObj,
-  onChange: onSheetChange
+  onChange: onSheetChange,
 });
-
 
 // Toolbar
 const toolbarElm = toolbar(["tables", "report"]);
@@ -197,7 +176,6 @@ for (let i = 0; i < toolbarElm.length; i += 1) {
   }
 }
 
-
 document.body.append(
   parameters(params),
   viewer({
@@ -207,24 +185,3 @@ document.body.append(
     },
   })
 );
-
-function creatArrayfromMap(map, nodes) {
-  const length = nodes.val.length;
-
-  // Initialize array with false values (wrapped in `van.state()`)
-  const createdArray = van.state(
-    new Array(length).fill(null).map(() => new Array(6).fill(""))
-  );
-
-  // Convert supportsMap keys to an array
-  const keys = Array.from(map.keys());
-
-  // Update supportsArray with values from supportsMap
-  for (let i of keys) {
-    if (map.get(i) !== undefined) {
-      createdArray.val[i] = map.get(i).slice(); // Ensure a new array reference
-    }
-  }
-
-  return createdArray;
-}
