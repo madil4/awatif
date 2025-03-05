@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import * as THREE from "three";
-import { Node, Element } from "awatif-data-structure";
+import { Node } from "awatif-data-structure";
 import { contours } from "awatif-ui";
 import { mesh } from "awatif-mesh";
 

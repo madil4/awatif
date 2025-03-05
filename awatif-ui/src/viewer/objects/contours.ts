@@ -1,8 +1,7 @@
 import { Lut } from "three/addons/math/Lut.js";
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Node, Structure, Element } from "awatif-data-structure";
-import { Settings } from "../settings/settings";
+import { Node, Element } from "awatif-data-structure";
 
 export function contours(
   nodes: State<Node[]>,
