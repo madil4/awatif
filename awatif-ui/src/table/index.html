@@ -6,7 +6,7 @@
     <title>Awatif UI - Sheets</title>
     <script type="module">
       import van from "vanjs-core";
-      import { sheets } from "./sheets/";
+      import { table } from "./table/";
 
       const sheetsObj = new Map();
 
@@ -37,7 +37,7 @@
         ]),
       });
 
-      const sheetsElm = sheets({
+      const sheetsElm = table({
         sheets: sheetsObj,
         onChange: (e) => console.log(e), // test on change
       });
