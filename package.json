@@ -40,8 +40,5 @@
   ],
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "vite": "^6.1.1"
   }
 }
