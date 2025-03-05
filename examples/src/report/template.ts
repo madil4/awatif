@@ -17,6 +17,7 @@ export const templateTables = ({ sheetsElm }) => {
 
 export const templateReport = ({
   nodes,
+  elements,
   nodeInputs,
   elementInputs,
   deformOutputs,
