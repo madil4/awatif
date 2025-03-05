@@ -3,13 +3,9 @@ import { html, TemplateResult } from "lit-html";
 
 import "./template.css";
 
-export function template({
-  nodes,
-  nodeInputs,
-  elementInputs,
-  deformOutputs,
-  analyzeOutputs,
-}: Structure): TemplateResult {
+
+
+export const template = ({ nodes, nodeInputs, elementInputs, deformOutputs, analyzeOutputs }) => {
   return html`
     <br />
     <header class="header">
