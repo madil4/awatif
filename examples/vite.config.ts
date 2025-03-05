@@ -17,7 +17,6 @@ export default defineConfig({
         bars: "src/bars/index.html",
         beams: "src/beams/index.html",
         building: "src/building/index.html",
-        "color-map": "src/color-map/index.html",
         curves: "src/curves/index.html",
         "1d-mesh": "src/1d-mesh/index.html",
         sphere: "src/sphere/index.html",
