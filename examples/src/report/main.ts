@@ -11,6 +11,10 @@ import van from "vanjs-core";
 import { State } from "vanjs-core/debug";
 import { Parameters, parameters, viewer } from "awatif-ui";
 import { template } from "./template";
+import { toolbar } from "awatif-ui/src/toolbar/toolbar";
+import { dialog } from "awatif-ui/src/dialog/dialog";
+import { html, render, TemplateResult } from "lit-html";
+
 
 // Init
 const params: Parameters = {
@@ -80,16 +84,25 @@ van.derive(() => {
   );
 });
 
+const toolbarElm = toolbar(["report"]);
+toolbarElm[0].element;
+
+const templates = (nodes) => {
+  return html`<p>This is a dialog.</p>`;
+};
+
+toolbarElm[0].on("click", () => {
+  const dialogObj = dialog({
+    templates,
+  });
+});
+
 document.body.append(
   parameters(params),
   viewer({
     structure,
     settingsObj: {
       gridSize: 1000,
-    },
-    reportObj: {
-      template,
-      data: structure,
     },
   })
 );
