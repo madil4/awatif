@@ -24,6 +24,8 @@ const params: Parameters = {
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
 
+
+
 const deformOutputs: State<DeformOutputs> = van.state({});
 const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 
@@ -38,9 +40,6 @@ const elements: State<Element[]> = van.state([
   [0, 1],
   [1, 2],
 ]);
-
-
-
 
 const nodeInputs: State<NodeInputs> = van.state({
   supports: new Map([
@@ -69,6 +68,7 @@ const structure = {
   deformOutputs,
   analyzeOutputs,
 };
+
 
 const sheetsObj = new Map();
 
@@ -128,48 +128,46 @@ sheetsObj.set("loads", {
   data: createdArrayLoads,
 });
 
-// Define a generic onChange handler that updates the values
-const onSheetChange = (sheetKey, { data }) => {
-  // Update the corresponding state value in your structure object
-  if (sheetKey === 'nodes') {
-    nodes.val = data;
-  } else if (sheetKey === 'elements') {
-    elements.val = data;
-  } else if (sheetKey === 'supports') {
-    nodeInputs.val.supports = data;
-  } else if (sheetKey === 'loads') {
-    nodeInputs.val.loads = data;
-  }
-};
 
 
 // events
-
-// Events: on parameter change
-van.derive(() => {
-
-
+const onSheetChange = ({ data, sheet }) => {
+  console.log(`Data updated on sheet: ${sheet}`);
+  if (sheet == "nodes") {
+    nodes.val = data;
+  } else if (sheet == "elements") {
+    elements.val = data;
+  } else if (sheet == "supports") {
+    nodeInputs.val.supports = data;
+  } else {
+    nodeInputs.val.loads = data;
+  }
   deformOutputs.val = deform(
     nodes.val,
     elements.val,
     nodeInputs.val,
     elementInputs.val
   );
-
+  
   analyzeOutputs.val = analyze(
     nodes.val,
     elements.val,
     elementInputs.val,
     deformOutputs.val
   );
-});
+};
 
-console.log(structure)
+
+// Events: on parameter change
+
+
+
 
 const sheetsElm = sheets({
   sheets: sheetsObj,
   onChange: onSheetChange
 });
+
 
 // Toolbar
 const toolbarElm = toolbar(["tables", "report"]);
