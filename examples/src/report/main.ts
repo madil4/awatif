@@ -13,8 +13,10 @@ import { Parameters, parameters, viewer } from "awatif-ui";
 import { template } from "./template";
 import { toolbar } from "awatif-ui/src/toolbar/toolbar";
 import { dialog } from "awatif-ui/src/dialog/dialog";
-import { html, render, TemplateResult } from "lit-html";
+import { sheets } from "awatif-ui/src/sheets/sheets";
+import { render, html, TemplateResult } from "lit-html";
 
+import "./template.css";
 
 // Init
 const params: Parameters = {
@@ -84,18 +86,46 @@ van.derive(() => {
   );
 });
 
-const toolbarElm = toolbar(["report"]);
-toolbarElm[0].element;
+// Toolbar
+const toolbarElm = toolbar(["tables", "report"]);
 
-const templates = (nodes) => {
-  return html`<p>This is a dialog.</p>`;
-};
-
-toolbarElm[0].on("click", () => {
-  const dialogObj = dialog({
-    templates,
-  });
+// sheets
+const sheetsObj = new Map();
+sheetsObj.set("nodes", {
+  text: "Nodes",
+  fields: [
+    { field: "A", text: "X-coordinate", editable: { type: "float" } },
+    { field: "B", text: "Y-coordinate", editable: { type: "float" } },
+    { field: "C", text: "Z-coordinate", editable: { type: "float" } },
+  ],
+  data: van.state([
+    [0, 0, 0],
+    [1, 2, 3],
+    [3, 4, 1],
+  ]),
 });
+
+const sheetsElm = sheets({
+  sheets: sheetsObj,
+  onChange: (e) => console.log(e), // test on change
+});
+
+document.body.appendChild(sheetsElm);
+
+
+// Open Report Dialog on Toolbar Button Click
+for (let i = 0; i <= toolbarElm.length; i += 1) {
+if (toolbarElm[i].title === "report") {
+  toolbarElm[i].on("click", () => {
+    // @ts-ignore
+    const dialogObj = dialog({ template: () => template(structure) });
+    document.body.appendChild(dialogObj);
+});} else if (toolbarElm[i].title === "tables") {
+  toolbarElm[i].on("click", () => {
+    // @ts-ignore
+    const dialogObj = dialog({ template: () => template(structure) });
+    document.body.appendChild(dialogObj);
+})}
 
 document.body.append(
   parameters(params),

@@ -6,18 +6,11 @@ import "./styles.css";
 export function dialog({
     template,
     data,
-    content,
   }: {
     template: (data: State<object>) => TemplateResult;
     data: State<object>;
-    content: any;
   }): HTMLElement {
     const container = document.createElement("div");
-  
-    // report button
-    const button = document.createElement("input-button");
-    button.textContent = "Dialog";
-    button.classList.add("input-button");
   
     // dialog
     let dialogElm = createRef<HTMLDialogElement>();
@@ -25,7 +18,7 @@ export function dialog({
   
     // dialog template
     const dialogTemp = html`
-      <dialog class="dialog-input" ref=${ref(dialogElm)}>
+      <dialog open class="dialog-input" ref=${ref(dialogElm)}>
         <div class="resize-handle resize-handle-right"></div>
         <div class="resize-handle resize-handle-top"></div>
         <div class="dialog-header">
@@ -36,22 +29,10 @@ export function dialog({
             <!-- Content generated from the template -->
           </div>
         </div>
-        <div class="dialog-body" style="display: flex; justify-content: center;">
-          <div class="sheets-container">
-            <!-- Include the sheetsElm here -->
-            ${content}
-          </div>
-        </div>
       </dialog>
     `;
   
     render(dialogTemp, container);
-    container.append(button);
-  
-    // Open the dialog when the Report button is clicked
-    button.addEventListener("click", () => {
-      dialogElm.value?.showModal();
-    });
   
     // Add resizing functionality
     addResizeListeners(dialogElm.value);
@@ -63,6 +44,7 @@ export function dialog({
   
     return container;
   }
+  
   function addResizeListeners(dialog: HTMLDialogElement | null) {
     if (!dialog) return;
   
