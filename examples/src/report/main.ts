@@ -13,7 +13,6 @@ import { Parameters, parameters, viewer } from "awatif-ui";
 import { templateReport, templateTables } from "./template";
 import { toolbar } from "awatif-ui/src/toolbar/toolbar";
 import { dialog } from "awatif-ui/src/dialog/dialog";
-import { table } from "awatif-ui/src/table/table";
 
 import "./template.css";
 
