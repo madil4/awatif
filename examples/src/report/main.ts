@@ -13,7 +13,7 @@ import { Parameters, parameters, viewer } from "awatif-ui";
 import { templateReport, templateTables } from "./template";
 import { toolbar } from "awatif-ui/src/toolbar/toolbar";
 import { dialog } from "awatif-ui/src/dialog/dialog";
-import { sheets } from "awatif-ui/src/sheets/sheets";
+import { table } from "awatif-ui/src/table/table";
 
 import "./template.css";
 
@@ -116,7 +116,7 @@ const onSheetChange = ({ data, sheet }) => {
 };
 
 // Events: on parameter change
-const sheetsElm = sheets({
+const sheetsElm = table({
   sheets: sheetsObj,
   onChange: onSheetChange,
 });

@@ -3,6 +3,9 @@ import * as THREE from "three";
 import { viewer, layout, title, grid, marketing } from "awatif-ui";
 import {table} from "awatif-ui/src/table/table"
 import { html, TemplateResult } from "lit-html";
+import { toolbar } from "awatif-ui/src/toolbar/toolbar";
+import { dialog } from "awatif-ui/src/dialog/dialog";
+import { templateTables } from "./template";
 
 // init
 const inputPolyline = van.state([
@@ -59,36 +62,45 @@ van.derive(() => {
       `${i + 1} - ${i + 2}`,
     ]);
   }
-
   outputLines.val = lengths;
 });
 
+sheetsObj.set("results", {
+  text: "Results",
+  fields: [
+    { field: "A", text: "Line Length", editable: { type: "float" } },
+    { field: "B", text: "Between", editable: { type: "string" } },
+  ],
+  data: outputLines,
+});
 
+// Events: on parameter change
+const sheetsElm = table({
+  sheets: sheetsObj,
+  onChange: onSheetChange,
+});
+
+// Toolbar
+const toolbarElm = toolbar(["tables"]);
+
+// Open Report Dialog on Toolbar Button Click
+for (let i = 0; i < toolbarElm.length; i += 1) {
+  if (toolbarElm[i].title === "tables") {
+    toolbarElm[i].on("click", () => {
+      console.log("Tables button clicked"); // Check if the button works
+      // @ts-ignore
+      const dialogObjTables = dialog({
+        template: () => templateTables({ sheetsElm }),
+      });
+      console.log(dialogObjTables); // Check if the button works
+      document.body.appendChild(dialogObjTables);
+    });
+  }
+}
 
 document.body.append(
-  layout({
-    topLeft: { element: title("Sheets Example") },
-    topRight: {
-      element: marketing({
-        getStarted: getGetStartedHtml(),
-        author: getAuthorHtml(),
-      }),
-    },
-    main: {
-      element: table({ sheets: sheetsObj, onChange: onSheetChange }),
-      title: "Inputs",
-    },
-    preview: {
-      element: grid({
-        fields: [
-          { field: "A", text: "Line Length" },
-          { field: "B", text: "Between" },
-        ],
-        data: outputLines,
-      }),
-      title: "Outputs",
-    },
-    right: { element: viewer({ objects3D }) },
+  viewer({
+    objects3D,
   })
 );
 
