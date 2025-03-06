@@ -23,82 +23,42 @@ const params: Parameters = {
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
 
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
+const nodeInputs: State<NodeInputs> = van.state({});
+const elementInputs: State<ElementInputs> = van.state({});
 const deformOutputs: State<DeformOutputs> = van.state({});
 const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 
-const nodes: State<Node[]> = van.state([
-  [250, 0, 0],
-  [600, 0, 0],
-  [250, 0, 400],
-]);
+// Events: on parameter change
+van.derive(() => {
+  nodes.val = [
+    [250, 0, 0],
+    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [250, 0, 400],
+  ];
+  elements.val = [
+    [0, 1],
+    [1, 2],
+  ];
 
-const elements: State<Element[]> = van.state([
-  [0, 1],
-  [1, 2],
-]);
-
-const nodeInputs: State<NodeInputs> = van.state({
-  supports: new Map([
-    [0, [true, true, true, true, true, true]],
-    [2, [true, true, true, true, true, true]],
-  ]),
-  loads: new Map([[1, [0, 0, -1e3, 0, 0, 0]]]),
-});
-
-const elementInputs: State<ElementInputs> = van.state({
-  elasticities: new Map([
-    [0, 200],
-    [1, 200],
-  ]),
-  areas: new Map([
-    [0, 100],
-    [1, 100],
-  ]),
-});
-
-let structure = {
-  nodes,
-  elements,
-  nodeInputs,
-  elementInputs,
-  deformOutputs,
-  analyzeOutputs,
-};
-
-const sheetsObj = new Map();
-
-// sheets
-sheetsObj.set("nodes", {
-  text: "Nodes",
-  fields: [
-    { field: "A", text: "X-coordinate", editable: { type: "float" } },
-    { field: "B", text: "Y-coordinate", editable: { type: "float" } },
-    { field: "C", text: "Z-coordinate", editable: { type: "float" } },
-  ],
-  data: nodes,
-});
-
-sheetsObj.set("elements", {
-  text: "Elements",
-  fields: [
-    { field: "A", text: "Node 1", editable: { type: "float" } },
-    { field: "B", text: "Node 2", editable: { type: "float" } },
-  ],
-  data: elements,
-});
-
-// events
-const onSheetChange = ({ data, sheet }) => {
-  console.log(`Data updated on sheet: ${sheet}`);
-  if (sheet == "nodes") {
-    nodes.val = data;
-  } else if (sheet == "elements") {
-    elements.val = data;
-  } else if (sheet == "supports") {
-    nodeInputs.val.supports = data;
-  } else {
-    nodeInputs.val.loads = data;
-  }
+  nodeInputs.val = {
+    supports: new Map([
+      [0, [true, true, true, true, true, true]],
+      [2, [true, true, true, true, true, true]],
+    ]),
+    loads: new Map([[1, [0, 0, -1e3, 0, 0, 0]]]),
+  };
+  elementInputs.val = {
+    elasticities: new Map([
+      [0, 200],
+      [1, 200],
+    ]),
+    areas: new Map([
+      [0, 100],
+      [1, 100],
+    ]),
+  };
 
   deformOutputs.val = deform(
     nodes.val,
@@ -113,16 +73,19 @@ const onSheetChange = ({ data, sheet }) => {
     elementInputs.val,
     deformOutputs.val
   );
-};
-
-// Events: on parameter change
-const sheetsElm = table({
-  sheets: sheetsObj,
-  onChange: onSheetChange,
 });
 
+let structure = {
+  nodes,
+  elements,
+  nodeInputs,
+  elementInputs,
+  deformOutputs,
+  analyzeOutputs,
+};
+
 // Toolbar
-const toolbarElm = toolbar(["tables", "report"]);
+const toolbarElm = toolbar(["report"]);
 
 // Open Report Dialog on Toolbar Button Click
 for (let i = 0; i < toolbarElm.length; i += 1) {
@@ -137,16 +100,6 @@ for (let i = 0; i < toolbarElm.length; i += 1) {
       });
       console.log(structure)
       document.body.appendChild(dialogObjReport);
-    });
-  } else if (toolbarElm[i].title === "tables") {
-    toolbarElm[i].on("click", () => {
-      console.log("Tables button clicked"); // Check if the button works
-      // @ts-ignore
-      const dialogObjTables = dialog({
-        template: () => templateTables({ sheetsElm }),
-      });
-      console.log(dialogObjTables); // Check if the button works
-      document.body.appendChild(dialogObjTables);
     });
   }
 }
