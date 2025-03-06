@@ -35,6 +35,7 @@ export type SettingsObj = {
   deformedShape?: boolean;
   elementResults?: string;
   nodeResults?: string;
+  contours?: string;
   flipAxes?: boolean;
 };
 
@@ -166,6 +167,7 @@ export function viewer({
     settings.deformedShape.val;
     settings.elementResults.val;
     settings.nodeResults.val;
+    settings.contours.val;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
@@ -203,6 +205,7 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     deformedShape: van.state(settingsObj?.deformedShape ?? false),
     elementResults: van.state(settingsObj?.elementResults ?? "none"),
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
+    contours: van.state(settingsObj?.contours ?? "none"),
     flipAxes: van.state(settingsObj?.flipAxes ?? false),
   };
 }
