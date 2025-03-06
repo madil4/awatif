@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Node } from "awatif-data-structure";
 import { Text } from "../Text";
-import { getCenter } from "../utils/getCenter";
+import { getAverage } from "../utils/getAverage";
 import { IResultObject } from "./IResultObject";
 
 export class ConstantResult extends THREE.Group implements IResultObject {
@@ -62,7 +62,7 @@ export class ConstantResult extends THREE.Group implements IResultObject {
     this.text = new Text(`${result[1].toFixed(4)}`);
 
     this.normalizedResult = normalizedResult;
-    this.textPosition = getCenter(node1, node2);
+    this.textPosition = getAverage([node1, node2]);
     this.text.position.set(...this.textPosition);
     this.text.rotation.setFromRotationMatrix(rotation);
 

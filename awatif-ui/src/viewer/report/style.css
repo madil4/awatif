@@ -13,8 +13,12 @@ canvas {
   position: absolute;
 }
 
+<<<<<<< HEAD
 /* dialog-report */
 dialog.dialog-report {
+=======
+dialog {
+>>>>>>> combine-dialog-report
   position: fixed;
   z-index: 2;
   overflow: auto;
@@ -22,6 +26,7 @@ dialog.dialog-report {
   height: calc(100% - 3rem);
   margin: 2rem 1rem 0;
   padding: 0;
+<<<<<<< HEAD
   background-color: #f9f9f9; /* Light background */
   border: 2px solid #ccc; /* Subtle border */
 }
@@ -31,11 +36,27 @@ dialog.dialog-report .close {
   float: right;
   position: relative;
   margin-top: -13px;
+=======
+}
+
+@media only screen and (max-width: 600px) {
+  dialog {
+    width: calc(100% - 2rem);
+    height: calc(70%);
+  }
+}
+
+dialog .close {
+  color: #000000;
+  float: right;
+  margin-top: -5px;
+>>>>>>> combine-dialog-report
   font-size: 25px;
   font-weight: bold;
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 .dialog-report .dialog-header {
   background: lightgray;
   padding: 20px;
@@ -69,6 +90,22 @@ dialog.dialog-report .close {
   position: absolute;
   top: 15px;
   right: 25px;
+=======
+.dialog-header {
+  background: lightgray;
+  padding: 10px;
+  height: 22px;
+}
+
+.dialog-body {
+  padding: 0 15px;
+}
+
+.report-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+>>>>>>> combine-dialog-report
   width: 80px;
   height: 40px;
   color: #fefafa;
@@ -91,4 +128,7 @@ dialog.dialog-report .close {
 .report-button:active {
   transform: scale(0.95);
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> combine-dialog-report

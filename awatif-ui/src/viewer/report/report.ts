@@ -1,24 +1,40 @@
 import { html, render, TemplateResult } from "lit-html";
 import { createRef, ref } from "lit-html/directives/ref.js";
+<<<<<<< HEAD
 import van, { State } from "vanjs-core";
 import { jsPDF } from "jspdf";
 import "./style.css";
 import html2canvas from "html2canvas";
+=======
+import van from "vanjs-core";
+
+import "./style.css";
+>>>>>>> combine-dialog-report
 
 export function report({
   template,
   data,
 }: {
+<<<<<<< HEAD
   template: (data: State<object>) => TemplateResult;
   data: State<object>;
 }): HTMLElement {
   const container = document.createElement("div");
 
   // report button
+=======
+  template: (data: any) => TemplateResult;
+  data: any;
+}): HTMLElement {
+  // Init
+  const container = document.createElement("div");
+
+>>>>>>> combine-dialog-report
   const button = document.createElement("report-button");
   button.textContent = "Report";
   button.classList.add("report-button");
 
+<<<<<<< HEAD
   // dialog
   let dialogElm = createRef<HTMLDialogElement>();
   let dialogBodyElm = createRef<HTMLDivElement>();
@@ -52,6 +68,29 @@ export function report({
   render(dialogTemp, container);
   container.append(button);
 
+=======
+  const dialogElm = createRef<HTMLDialogElement>();
+  const dialogBodyElm = createRef<HTMLDivElement>();
+
+  const dialogTemp = html`
+    <dialog ref=${ref(dialogElm)}>
+      <div class="dialog-header">
+        <span class="close" @click=${() =>
+          dialogElm.value?.close()}>&times;</span>
+      </div>
+      <div class="dialog-body" ref=${ref(dialogBodyElm)}>
+        <div class="report-content">
+          <!-- Content generated from the template -->
+      </div>
+    </dialog>
+  `;
+
+  // Update
+  render(dialogTemp, container);
+  container.append(button);
+
+  // Events
+>>>>>>> combine-dialog-report
   // Open the dialog when the Report button is clicked
   button.addEventListener("click", () => {
     dialogElm.value?.show();
@@ -62,6 +101,7 @@ export function report({
     render(template(data), dialogBodyElm.value);
   });
 
+<<<<<<< HEAD
   // Print report
   printButton.addEventListener("click", async () => {
     const content = dialogBodyElm.value; // The div you want to print
@@ -108,5 +148,7 @@ export function report({
     pdf.save("report.pdf");
   });
 
+=======
+>>>>>>> combine-dialog-report
   return container;
 }

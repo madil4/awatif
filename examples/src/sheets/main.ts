@@ -1,6 +1,7 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
+import { viewer, layout, title, grid, marketing } from "awatif-ui";
+import {table} from "awatif-ui/src/table/table"
 import { html, TemplateResult } from "lit-html";
 
 // init
@@ -62,6 +63,8 @@ van.derive(() => {
   outputLines.val = lengths;
 });
 
+
+
 document.body.append(
   layout({
     topLeft: { element: title("Sheets Example") },
@@ -72,7 +75,7 @@ document.body.append(
       }),
     },
     main: {
-      element: sheets({ sheets: sheetsObj, onChange: onSheetChange }),
+      element: table({ sheets: sheetsObj, onChange: onSheetChange }),
       title: "Inputs",
     },
     preview: {

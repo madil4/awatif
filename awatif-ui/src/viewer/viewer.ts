@@ -21,7 +21,10 @@ import "./styles.css";
 import { drawing, Drawing } from "./drawing/drawing";
 import { TemplateResult } from "lit-html";
 import { report } from "./report/report";
+<<<<<<< HEAD
 import { input } from "./input/input";
+=======
+>>>>>>> combine-dialog-report
 
 export type SettingsObj = {
   gridSize?: number;
@@ -45,19 +48,27 @@ export function viewer({
   objects3D,
   drawingObj,
   reportObj,
+<<<<<<< HEAD
   inputObj,
+=======
+>>>>>>> combine-dialog-report
 }: {
   structure?: Structure;
   settingsObj?: SettingsObj;
   objects3D?: State<THREE.Object3D[]>;
   drawingObj?: Drawing;
   reportObj?: {
+<<<<<<< HEAD
     template: (data: State<object>) => TemplateResult;
     data: State<object>;
   };
   inputObj?: {
     template: (data: State<object>) => TemplateResult;
     data: State<object>;
+=======
+    template: (data: any) => TemplateResult;
+    data: any;
+>>>>>>> combine-dialog-report
   };
 }): HTMLDivElement {
   // init
@@ -132,7 +143,10 @@ export function viewer({
     });
 
   if (reportObj) viewerElm.append(report(reportObj));
+<<<<<<< HEAD
   if (inputObj) viewerElm.append(input(inputObj));
+=======
+>>>>>>> combine-dialog-report
 
   // on size change
   const resizeObserver = new ResizeObserver((entries) => {
