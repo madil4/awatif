@@ -17,7 +17,7 @@ const elementInputsState: State<ElementInputs> = van.state({});
 const deformOutputsState: State<DeformOutputs> = van.state({});
 
 van.derive(() => {
-  const { nodes, elements } = mesh({
+  const { nodes, elements, boundaryIndices } = mesh({
     points: van.state([
       [0, 0],
       [10, 0],
@@ -26,13 +26,15 @@ van.derive(() => {
       [5, 2.5],
     ]),
     polygon: van.state([0, 1, 2, 3]),
+    maxMeshSize: 2,
   });
 
   const nodeInputs: NodeInputs = {
+    // use boundaryIndices to set boundary conditions
     supports: new Map(
-      [0, 1, 2, 3].map((node) => [node, [true, true, true, true, true, true]])
+      boundaryIndices.val.map((i) => [i, [true, true, true, true, true, true]])
     ),
-    loads: new Map([[4, [0, 0, -300, 0, 0, 0]]]),
+    loads: new Map(nodes.val.map((_, i) => [i, [0, 0, -50, 0, 0, 0]])),
   };
   const elementInputs: ElementInputs = {
     elasticities: new Map(elements.val.map((_, i) => [i, 100])),
@@ -66,6 +68,7 @@ document.body.append(
     },
     settingsObj: {
       deformedShape: true,
+      loads: false,
     },
   })
 );
