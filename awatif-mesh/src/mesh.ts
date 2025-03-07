@@ -3,7 +3,6 @@ import { Node, Element } from "awatif-data-structure";
 import triangle from "triangle-wasm";
 // @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";
-import { subdivide } from "./subdivide";
 
 // to make sure init is called once with multiple mesh call
 const isWsLoaded = van.state(false);
@@ -38,7 +37,7 @@ export function mesh({
   const nodes: State<Node[]> = van.state([]);
   const elements: State<Element[]> = van.state([]);
 
-  // events: mesh when points and faces change
+  // events: when points or polygon changes -> mesh
   van.derive(() => {
     if (!isWsLoaded.val) return;
 
@@ -49,6 +48,7 @@ export function mesh({
     });
     const output = triangle.makeIO();
 
+    // Todo: refactor into reactive settings object
     triangle.triangulate(
       `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
         maxMeshSize != null ? "a" : null
@@ -57,14 +57,8 @@ export function mesh({
       output
     );
 
-    const { points: subPoints, faces: subFaces } = subdivide({
-      points: triOutputToPoints(output),
-      faces: triOutputToTriangles(output),
-      subdivisions: 0,
-    });
-
-    nodes.val = subPoints.map((p) => [p[0], 0, p[1]]);
-    elements.val = subFaces;
+    nodes.val = triOutputToPoints(output).map((p) => [p[0], 0, p[1]]);
+    elements.val = triOutputToTriangles(output);
 
     triangle.freeIO(input, true);
     triangle.freeIO(output);
