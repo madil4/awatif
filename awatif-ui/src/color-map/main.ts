@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import * as math from "mathjs";
 
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import { parameters, Parameters, viewer, colorMap } from "awatif-ui";
+import { Node } from "awatif-data-structure";
 
 // Init
 const params: Parameters = {
@@ -20,31 +21,25 @@ const objects3D = van.state([new THREE.Mesh()]);
 // Events: on parameter change
 van.derive(() => {
   const points = van.state([
-    [0, 0],
-    [5, 0],
-    [params.boundary.value.val, 3],
-    [8, 7],
-    [15, 5],
-    [15, 0],
-    [20, 0],
-    [20, 10],
-    [0, 10],
-    [0, 0],
-    [5, 5],
-  ]);
+    [0, 0, 0],
+    [5, 0, 0],
+    [params.boundary.value.val, 0, 3],
+    [8, 0, 7],
+    [15, 0, 5],
+    [15, 0, 0],
+    [20, 0, 0],
+    [20, 0, 10],
+    [0, 0, 10],
+    [0, 0, 0],
+    [5, 0, 5],
+  ] as Node[]);
   const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   const distancesState = van.state(
-    getDistancesFromVertex(
-      [params.boundary.value.val, 3],
-      points.val as [number, number][]
-    )
+    getDistancesFromVertex([params.boundary.value.val, 0, 3], points.val)
   );
 
-  const firstAxis = van.state("x");
-  const secondAxis = van.state("z");
-
-  objects3D.val = [colorMap(points, polygon, distancesState, van.state(0), firstAxis, secondAxis).val];
+  objects3D.val = [colorMap(points, polygon, distancesState).val];
 });
 
 document.body.append(
@@ -56,10 +51,12 @@ document.body.append(
 
 // Utils ------------------------------------------------------
 function getDistancesFromVertex(
-  vertex: [number, number],
-  points: [number, number][]
+  vertex: [number, number, number],
+  points: Node[]
 ): number[] {
   return points.map((point) => {
-    return math.norm(math.subtract(point, vertex)) as number;
+    return math.norm(
+      math.subtract(point, vertex) as math.MathCollection
+    ) as number;
   });
 }

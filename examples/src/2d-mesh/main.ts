@@ -20,17 +20,17 @@ const elementsState: State<Element[]> = van.state([]);
 // Events: on parameter change
 van.derive(() => {
   const points = van.state([
-    [0, 0],
-    [5, 0],
-    [params.boundary.value.val, 3],
-    [8, 7],
-    [15, 5],
-    [15, 0],
-    [20, 0],
-    [20, 10],
-    [0, 10],
-    [0, 0],
-  ]);
+    [0, 0, 0],
+    [5, 0, 0],
+    [params.boundary.value.val, 0, 3],
+    [8, 0, 7],
+    [15, 0, 5],
+    [15, 0, 0],
+    [20, 0, 0],
+    [20, 0, 10],
+    [0, 0, 10],
+    [0, 0, 0],
+  ] as Node[]);
   const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   const { nodes, elements } = mesh({ points, polygon });
