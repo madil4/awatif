@@ -3,6 +3,15 @@ import { Node, Element } from "awatif-data-structure";
 import triangle from "triangle-wasm";
 // @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";
+import {
+  cross,
+  divide,
+  MathCollection,
+  multiply,
+  norm,
+  subtract,
+  transpose,
+} from "mathjs";
 
 // to make sure init is called once with multiple mesh call
 const isWsLoaded = van.state(false);
@@ -24,7 +33,7 @@ export function mesh({
   maxNumSteinerPoints = 300,
   minMeshAngleDegrees = 30,
 }: {
-  points: State<number[][]>;
+  points: State<Node[]>;
   polygon: State<number[]>;
   maxMeshSize?: number;
   maxNumSteinerPoints?: number;
@@ -44,8 +53,18 @@ export function mesh({
   van.derive(() => {
     if (!isWsLoaded.val) return;
 
+    // convert from the 3DD to 2D plane for triangulation
+    const transformationMatrix = getTransformationMatrix(
+      points.val[0],
+      points.val[1],
+      points.val[2]
+    );
+    const points2D = points.val
+      .map((p) => multiply(transpose(transformationMatrix), p))
+      .map((p) => [p[0], p[1]]);
+
     const triInputs = triangle.makeIO({
-      pointlist: points.val.flat(),
+      pointlist: points2D.flat(),
       // @ts-ignore
       segmentlist: toSegments(polygon.val),
     });
@@ -65,7 +84,9 @@ export function mesh({
       triOutputs.pointmarkerlist
     );
 
-    nodesState.val = nodes.map((p) => [p[0], p[1], 0]);
+    nodesState.val = nodes.map(
+      (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
+    );
     elementsState.val = toElements(triOutputs.trianglelist);
     boundaryIndicesState.val = boundaryIndices;
 
@@ -118,4 +139,35 @@ function toElements(trianglelist: number[]): number[][] {
   }
 
   return elements;
+}
+
+// from global 3D to local 2D
+function getTransformationMatrix(n1: Node, n2: Node, n3: Node): number[][] {
+  // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 5.4
+  // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
+
+  const j = getAverage([n2, n3]);
+  const k = getAverage([n1, n3]);
+  const i = getAverage([n1, n2]);
+  const x = divide(subtract(j, k), norm(subtract(j, k))) as MathCollection;
+  const r = divide(subtract(n3, i), norm(subtract(j, k))) as MathCollection;
+  const z = divide(cross(x, r), norm(cross(x, r))) as MathCollection;
+  const y = divide(cross(z, x), norm(cross(z, x)));
+
+  return [
+    [x[0], y[0], z[0]],
+    [x[1], y[1], z[1]],
+    [x[2], y[2], z[2]],
+  ];
+
+  // utils
+  function getAverage(Nodes: Node[]): Node {
+    const sum = Nodes.reduce(
+      (acc, n) => [acc[0] + n[0], acc[1] + n[1], acc[2] + n[2]],
+      [0, 0, 0]
+    );
+
+    const count = Nodes.length;
+    return [sum[0] / count, sum[1] / count, sum[2] / count];
+  }
 }
