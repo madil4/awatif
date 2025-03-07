@@ -30,45 +30,58 @@ export function mesh({
   maxNumSteinerPoints?: number;
   minMeshAngleDegrees?: number;
 }): {
-  nodes: State<Node[]>; // the output are reactive just to react after wasm is loaded
+  // the output are reactive just to react after wasm is loaded
+  nodes: State<Node[]>;
   elements: State<Element[]>;
+  boundaryIndices: State<number[]>;
 } {
   // init
-  const nodes: State<Node[]> = van.state([]);
-  const elements: State<Element[]> = van.state([]);
+  const nodesState: State<Node[]> = van.state([]);
+  const elementsState: State<Element[]> = van.state([]);
+  const boundaryIndicesState: State<number[]> = van.state([]);
 
   // events: when points or polygon changes -> mesh
   van.derive(() => {
     if (!isWsLoaded.val) return;
 
-    const input = triangle.makeIO({
+    const triInputs = triangle.makeIO({
       pointlist: points.val.flat(),
       // @ts-ignore
-      segmentlist: polygonToSegments(polygon.val),
+      segmentlist: toSegments(polygon.val),
     });
-    const output = triangle.makeIO();
+    const triOutputs = triangle.makeIO();
 
     // Todo: refactor into reactive settings object
     triangle.triangulate(
       `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
         maxMeshSize != null ? "a" : null
       }${maxMeshSize ?? ""}`,
-      input,
-      output
+      triInputs,
+      triOutputs
     );
 
-    nodes.val = triOutputToPoints(output).map((p) => [p[0], 0, p[1]]);
-    elements.val = triOutputToTriangles(output);
+    const { nodes, boundaryIndices } = toNodesAndBoundaryIndices(
+      triOutputs.pointlist,
+      triOutputs.pointmarkerlist
+    );
 
-    triangle.freeIO(input, true);
-    triangle.freeIO(output);
+    nodesState.val = nodes.map((p) => [p[0], 0, p[1]]);
+    elementsState.val = toElements(triOutputs.trianglelist);
+    boundaryIndicesState.val = boundaryIndices;
+
+    triangle.freeIO(triInputs, true);
+    triangle.freeIO(triOutputs);
   });
 
-  return { nodes, elements };
+  return {
+    nodes: nodesState,
+    elements: elementsState,
+    boundaryIndices: boundaryIndicesState,
+  };
 }
 
 // Utils
-function polygonToSegments(polygon: number[]): number[] {
+function toSegments(polygon: number[]): number[] {
   const segments: number[] = [];
 
   for (let i = 0; i < polygon.length; i += 1) {
@@ -78,24 +91,31 @@ function polygonToSegments(polygon: number[]): number[] {
   return segments;
 }
 
-function triOutputToPoints(output: any): number[][] {
-  const points = [];
-  const outPoints = output.pointlist;
+function toNodesAndBoundaryIndices( // combine Node and boundaryIndices to loop once only on pointlist
+  pointlist: number[],
+  pointmarkerlist: number[]
+): {
+  nodes: number[][];
+  boundaryIndices: number[];
+} {
+  const nodes = [];
+  const boundaryIndices = [];
 
-  for (let i = 0; i < outPoints.length; i += 2) {
-    points.push([outPoints[i], outPoints[i + 1]]);
+  for (let i = 0; i < pointlist.length; i += 2) {
+    nodes.push([pointlist[i], pointlist[i + 1]]);
+
+    if (pointmarkerlist[i / 2]) boundaryIndices.push(i / 2);
   }
 
-  return points;
+  return { nodes, boundaryIndices };
 }
 
-function triOutputToTriangles(output: any): number[][] {
-  const triangles = [];
-  const outTriangles = output.trianglelist;
+function toElements(trianglelist: number[]): number[][] {
+  const elements = [];
 
-  for (let i = 0; i < outTriangles.length; i += 3) {
-    triangles.push([outTriangles[i], outTriangles[i + 1], outTriangles[i + 2]]);
+  for (let i = 0; i < trianglelist.length; i += 3) {
+    elements.push([trianglelist[i], trianglelist[i + 1], trianglelist[i + 2]]);
   }
 
-  return triangles;
+  return elements;
 }
