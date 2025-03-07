@@ -88,15 +88,17 @@ export function settings(
       },
       label: "Node results",
     });
-    outputs.addBinding(settingsState.contours, "val", {
-      options: {
-        none: "none",
-        deformationsX: "deformationsX",
-        deformationsY: "deformationsY",
-        deformationsZ: "deformationsZ",
-      },
-      label: "Contours",
-    });
+
+    // add contours when the feature is completed
+    // outputs.addBinding(settingsState.contours, "val", {
+    //   options: {
+    //     none: "none",
+    //     deformationsX: "deformationsX",
+    //     deformationsY: "deformationsY",
+    //     deformationsZ: "deformationsZ",
+    //   },
+    //   label: "Contours",
+    // });
     outputs.addBinding(settingsState.deformedShape, "val", {
       label: "Deformed shape",
     });
