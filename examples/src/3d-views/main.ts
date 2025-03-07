@@ -13,18 +13,19 @@ import {
   Float32BufferAttribute,
   Vector2,
   BufferAttribute,
-  Matrix4
+  Matrix4, BoxGeometry
 } from "three";
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { Pane } from "tweakpane";
+import { Node, Element } from "awatif-data-structure";
+import { Building } from "awatif-data-structure";
 
 //Init
+const nodesState: State<Node[]> = van.state([]);
+const elementsState: State<Element[]> = van.state([]);
+
 const PARAMS = {
   floors: 1,
-};
-
-const SETTINGS = {
-  visualizeModel: false
 };
 
 const COL_A: number = 0.3;
@@ -32,30 +33,16 @@ const COL_B: number = 0.3;
 
 
 const parametersElm = document.createElement("div");
-const settingsElm = document.createElement("div");
-
 parametersElm.setAttribute("id", "parameters");
-settingsElm.setAttribute("id", "settings");
 
 const parametersPane = new Pane({ title: "Parameters", container: parametersElm });
-const settingsPane = new Pane({ title: "Settings", container: settingsElm });
 
 parametersPane.addBinding(PARAMS, 'floors', {
   min: 1,
-  max: 9,
+  max: 12,
   step: 1
 });
 
-settingsPane.addBinding(SETTINGS, "visualizeModel", {label: "solid model"});
-
-type Building = {
-  points: number[][],
-  stories: number[],
-  columns: number[][],
-  slabs: number[][][],
-  columnsByStorey: Map<number,number[]>,
-  slabsByStorey: Map<number,number[]>
-};
 
 const building: State<Building> = van.state({
   points: [],
@@ -83,24 +70,43 @@ const firstFloorColumnsPos: number [][][] = [
   [[6,10,0], [6,10,4]]
 ];
 
+//TODO:: NODES & ELEMENTS
+// nodesState.val = [
+//   [0,0,4],
+//   [0,10,4],
+//   [18,10,4],
+//   [18,0,4],
+//   [0,0,4]
+// ];
+// elementsState.val = [[0,1], [1,2], [2,3], [3,4]];
+
 
 addSlab(firstFloorSlabPos);
+
+// addSlab(offsetContour(firstFloorSlabPos, COL_A/2));
 for (let k = 0; k < firstFloorColumnsPos.length; k++)
   addColumn(firstFloorColumnsPos[k]);
 
 
-const solidMaterial: Material = new MeshPhongMaterial({color: 0xffffff});//0xffe6cc
+const material: Material = new MeshPhongMaterial({ color: 0xffe6cc, transparent: false });
+const slabsGeometry: BufferGeometry = createSlabsGeometry(building.val.points, building.val.slabs, 0.3);
+const columnsGeometry: BufferGeometry = createColumnsGeometry(building.val.points, building.val.columns);
+const combinedGeometry: BufferGeometry = mergeGeometries([slabsGeometry, columnsGeometry]);
+const objects3D: State<Mesh[]> = van.state([new Mesh( combinedGeometry, material )]); 
+
+
+const solidMaterial: Material = new MeshPhongMaterial({color: 0xffe6cc});
 const outlineMaterial = new LineBasicMaterial({color: 0xffffff});
 
 //* OUTLINE MODEL
-const slabsOutlines = createSlabOutline(building.val.points, building.val.slabs);
-const columnsOutlines = createColumnsOutline(building.val.points, building.val.columns);
-const objects3D: State<any> = van.state([...slabsOutlines, ...columnsOutlines]);
+// const slabsOutlines = createSlabOutline(building.val.points, building.val.slabs);
+// const columnsOutlines = createColumnsOutline(building.val.points, building.val.columns);
+// const objects3D: State<any> = van.state([...slabsOutlines, ...columnsOutlines]);
 
 
-parametersPane.on('change', (ev) => onChange());
-settingsPane.on('change', (ev) => onChange());
-
+parametersPane.on('change', (ev) => {
+  if (ev.last) onChange();
+});
 
 //* Creating relations
 // building.slabsByStorey.val.set(0, [0]);
@@ -113,13 +119,34 @@ settingsPane.on('change', (ev) => onChange());
 
 //Events
 van.derive(() => {
+  nodesState.val = building.val.points as Node[];
+  elementsState.val = [];
+  elementsState.val.push(...(building.val.columns as Element[]));
+  for (let i = 0; i < building.val.slabs.length; i++) {
+    const slab = building.val.slabs[i];
+    elementsState.val.push( ...createPairs(slab[0]));
+  }
+
   objects3D.val = [...objects3D.rawVal]; // trigger rendering
 });
 
 document.body.append(
-  viewer({objects3D}),
-  parametersElm,
-  settingsElm
+  // viewer({objects3D}),
+  viewer({
+    structure: {
+      nodes: nodesState,
+      elements: elementsState,
+    },
+    settingsObj: {
+      nodes: false,
+      solidModel: false
+    },
+    options: {
+      hasSolids: true
+    },
+    objects3D
+  }),
+  parametersElm
 );
 
 //Utils
@@ -151,51 +178,38 @@ function createISectionColumn(height: number): BufferGeometry {
 
 function createSlabsGeometry(points: number[][], slabsIndices: number[][][], slabHeight: number = 0.2): BufferGeometry {
   const buffers: BufferGeometry[] = [];
+  const contour: number[][] = [];
 
   for (let k = 0; k < slabsIndices.length; k++) {
     for (let i = 0; i < slabsIndices[k].length; i++) {
-
-      // if (slabsIndices[k].length < 3) continue;
-
-      let elevation: number;
-      elevation = points[slabsIndices[k][i][0]][2];
-      const pointIdx = slabsIndices[k][i][0];
-      const p = points[pointIdx];
-      
-      const slabShape = new Shape();
-      const hole = new Path();
-
-      if (i==0)
-        slabShape.moveTo(p[0], p[1]);
-      else
-        hole.moveTo(p[0], p[1]);
-      
-
-      for (let j = 1; j < slabsIndices[k][i].length; j++) {
-      
+      for (let j = 0; j < slabsIndices[k][i].length; j++) {
         const pointIdx = slabsIndices[k][i][j];
-        const p = points[pointIdx];
-    
-        if (i==0)
-          slabShape.lineTo(p[0], p[1]);
-        else
-          hole.lineTo(p[0], p[1]);
-
+        contour.push(points[pointIdx]);
       }
-
-      if (i>0) slabShape.holes = [hole];
-
-      const geometry = new ExtrudeGeometry(slabShape, 
-        { 
-          depth: slabHeight, 
-          bevelEnabled: false
-        }
-      );
-        
-      geometry.translate(0,0,elevation); 
-      buffers.push(geometry);
     }
   }
+
+  const offsetedContour: number[][] = offsetContour(contour, COL_A/2);
+
+  const slabShape = new Shape();
+  const hole = new Path();
+  for (let i = 0; i < offsetedContour.length; i++) {
+
+    if (i==0)
+      slabShape.moveTo(offsetedContour[0][0], offsetedContour[0][1]);
+    else
+      slabShape.lineTo(offsetedContour[i][0], offsetedContour[i][1]);
+  }
+
+  const geometry = new ExtrudeGeometry(slabShape, 
+    { 
+      depth: slabHeight, 
+      bevelEnabled: false
+    }
+  );
+    
+  geometry.translate(0,0,offsetedContour[0][2]); 
+  buffers.push(geometry);
 
   return mergeGeometries(buffers);
 }
@@ -304,6 +318,10 @@ function addSlab(positions: number[][], lastPntIdx?: number): void {
 
   for (let i = 0; i < positions.length; i++){
     building.val.points.push(positions[i]);
+    
+    //TODO
+    // nodesState.val.push(positions[i])
+    
     idx.push(i + lastIndex);
   }
     
@@ -362,17 +380,11 @@ function onChange(){
     for (let i = 0; i < firstFloorSlabPos.length; i++)
       newSlabArray.push([firstFloorSlabPos[i][0], firstFloorSlabPos[i][1], firstFloorSlabPos[i][2] + z]);
 
-    const contour: Vector2[] = [];
-    for (let i = 0; i < newSlabArray.length; i++) {
-      contour.push(new Vector2(newSlabArray[i][0], newSlabArray[i][1]));
-    }
-    const offsetPoints = offsetContour(COL_A/2, contour);
-    const offsetNewSlabArray = [];
-    for (let i = 0; i < offsetPoints.length; i++) {
-      offsetNewSlabArray.push( [offsetPoints[i].x, offsetPoints[i].y, newSlabArray[0][2]] );
-    }
+    // if (SETTINGS.visualizeModel) addSlab(offsetContour(newSlabArray, COL_A/2));
+    // else 
+    // addSlab(offsetContour(newSlabArray, COL_A/2));
+    addSlab(newSlabArray);
 
-    addSlab(SETTINGS.visualizeModel ? offsetNewSlabArray : newSlabArray);
 
     for (let l = 0; l < firstFloorColumnsPos.length; l++) {
       const column = firstFloorColumnsPos[l];
@@ -384,30 +396,48 @@ function onChange(){
     
   }
   
-  if (SETTINGS.visualizeModel) {
-    const slabsGeometry: BufferGeometry = createSlabsGeometry(building.val.points, building.val.slabs, 0.3);
-    const columnsGeometry: BufferGeometry = createColumnsGeometry(building.val.points, building.val.columns);
-    const combinedGeometry: BufferGeometry = mergeGeometries([slabsGeometry, columnsGeometry]);
+  // if (SETTINGS.visualizeModel) {
+  //   const slabsGeometry: BufferGeometry = createSlabsGeometry(building.val.points, building.val.slabs, 0.3);
+  //   const columnsGeometry: BufferGeometry = createColumnsGeometry(building.val.points, building.val.columns);
+  //   const combinedGeometry: BufferGeometry = mergeGeometries([slabsGeometry, columnsGeometry]);
   
-    objects3D.val = [new Mesh(combinedGeometry, solidMaterial)];
-  } else {
-    const slabOutlines = createSlabOutline(building.val.points, building.val.slabs);
-    const columnsOutlines = createColumnsOutline(building.val.points, building.val.columns);
+  //   objects3D.val = [new Mesh(combinedGeometry, solidMaterial)];
+  // } else {
+    // const slabOutlines = createSlabOutline(building.val.points, building.val.slabs);
+    // const columnsOutlines = createColumnsOutline(building.val.points, building.val.columns);
 
-    objects3D.val = [...slabOutlines, ...columnsOutlines];  
+    // objects3D.val = [...slabOutlines, ...columnsOutlines];  
+  // }
+  const slabsGeometry: BufferGeometry = createSlabsGeometry(building.val.points, building.val.slabs, 0.3);
+  const columnsGeometry: BufferGeometry = createColumnsGeometry(building.val.points, building.val.columns);
+  const combinedGeometry: BufferGeometry = mergeGeometries([slabsGeometry, columnsGeometry]);
+  objects3D.val = [ new Mesh(combinedGeometry, material) ]; 
+
+  nodesState.val = building.val.points as Node[];
+  elementsState.val = [];
+  elementsState.val.push(...(building.val.columns as Element[]));
+  for (let i = 0; i < building.val.slabs.length; i++) {
+    const slab = building.val.slabs[i];
+    elementsState.val.push( ...createPairs(slab[0]));
   }
   
   objects3D.val = [...objects3D.rawVal];
 }
 
-function offsetContour(offset: any, contour: Vector2[]) {
-  const result = [];
+function offsetContour(contour: number[][], offset: number = 0): number[][] {
+  const result: number[][] = [];
 
-  offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
+  const _contour: Vector2[] = [];
+  
+  for (let i = 0; i < contour.length; i++)
+    _contour.push(new Vector2(contour[i][0], contour[i][1]));
+  
 
-  for (let i = 0; i < contour.length - 1; i++) {
-    let v1 = new Vector2().subVectors(contour[i - 1 < 0 ? contour.length - 1 : i - 1], contour[i]);
-    let v2 = new Vector2().subVectors(contour[i + 1 == contour.length ? 0 : i + 1], contour[i]);
+  let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
+
+  for (let i = 0; i < _contour.length - 1; i++) {
+    let v1 = new Vector2().subVectors(_contour[i - 1 < 0 ? _contour.length - 1 : i - 1], _contour[i]);
+    let v2 = new Vector2().subVectors(_contour[i + 1 == _contour.length ? 0 : i + 1], _contour[i]);
     let angle = v2.angle() - v1.angle();
     let halfAngle = angle * 0.5;
 
@@ -432,23 +462,31 @@ function offsetContour(offset: any, contour: Vector2[]) {
     );
 
     let translationMatrix = new Matrix4().set(
-      1, 0, 0, contour[i].x,
-      0, 1, 0, contour[i].y,
+      1, 0, 0, _contour[i].x,
+      0, 1, 0, _contour[i].y,
       0, 0, 1, 0,
       0, 0, 0, 1,
     );
 
-    let cloneOffset = offset.clone();
+    let cloneOffset = _offset.clone();
     cloneOffset.needsUpdate = true;
     cloneOffset.applyMatrix4(shiftMatrix);
     cloneOffset.applyMatrix4(rotationMatrix);
     cloneOffset.applyMatrix4(translationMatrix);
 
-
-    result.push(new Vector2(cloneOffset.getX(0), cloneOffset.getY(0)));
+    result.push([cloneOffset.getX(0), cloneOffset.getY(0), contour[i][2]]);
   }
 
-  //added recently
-  result.push(result[0]);
+  return result;
+}
+
+function createPairs(arr: number[]): any[] {
+  // Return empty array for invalid input
+  if (!arr || arr.length < 2) return [];
+
+  const result = [];
+  for (let i = 0; i < arr.length - 1; i++) {
+    result.push([arr[i], arr[i + 1]]);
+  }
   return result;
 }

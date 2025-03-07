@@ -36,6 +36,11 @@ export type SettingsObj = {
   elementResults?: string;
   nodeResults?: string;
   flipAxes?: boolean;
+  solidModel?: boolean
+};
+
+export type ViewerOptions = {
+  hasSolids?: boolean
 };
 
 export function viewer({
@@ -44,6 +49,7 @@ export function viewer({
   objects3D,
   drawingObj,
   reportObj,
+  options
 }: {
   structure?: Structure;
   settingsObj?: SettingsObj;
@@ -53,6 +59,8 @@ export function viewer({
     template: (data: any) => TemplateResult;
     data: any;
   };
+  options?: ViewerOptions
+
 }): HTMLDivElement {
   // init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -91,7 +99,7 @@ export function viewer({
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
   controls.target.set(0.5 * gridSize, 0.5 * gridSize, 0);
   controls.minDistance = 1;
-  controls.maxDistance = z2fit * 1.5;
+  controls.maxDistance = z2fit * 7;
   controls.zoomSpeed = 10;
   controls.update();
 
@@ -121,7 +129,7 @@ export function viewer({
   scene.add(gridObj, axes(settings.gridSize.rawVal, settings.flipAxes.rawVal));
 
   if (structure) {
-    viewerElm.appendChild(settingsElement(structure, settings));
+    viewerElm.appendChild(settingsElement(structure, settings, options));
 
     scene.add(
       nodes(settings, derivedNodes, derivedDisplayScale),
@@ -132,7 +140,7 @@ export function viewer({
       loads(structure, settings, derivedNodes, derivedDisplayScale),
       orientations(structure, settings, derivedNodes, derivedDisplayScale),
       elementResults(structure, settings, derivedNodes, derivedDisplayScale),
-      nodeResults(structure, settings, derivedNodes, derivedDisplayScale)
+      nodeResults(structure, settings, derivedNodes, derivedDisplayScale),
     );
   }
 
@@ -189,6 +197,7 @@ export function viewer({
     settings.deformedShape.val;
     settings.elementResults.val;
     settings.nodeResults.val;
+    settings.solidModel;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
@@ -196,12 +205,18 @@ export function viewer({
   // on objects3D change add/remove objects from the scene
   van.derive(() => {
     if (!objects3D?.val.length) return;
-
+    
     scene.remove(...objects3D.oldVal);
-    scene.add(...objects3D.rawVal);
-
+    
+    if (options.hasSolids){
+      if (settings.solidModel.val)
+        scene.add(...objects3D.rawVal);
+    
+    } else scene.add(...objects3D.rawVal);
+    
     viewerRender();
   });
+
 
   // Object's functions (Actions)
   function viewerRender() {
@@ -227,6 +242,7 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     elementResults: van.state(settingsObj?.elementResults ?? "none"),
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
     flipAxes: van.state(settingsObj?.flipAxes ?? false),
+    solidModel: van.state(settingsObj?.solidModel ?? false)
   };
 }
 

@@ -1,6 +1,7 @@
 import { State } from "vanjs-core";
 import { Pane } from "tweakpane";
 import { Structure } from "awatif-data-structure";
+import { ViewerOptions } from "../viewer";
 
 import "./styles.css";
 
@@ -18,17 +19,19 @@ export type Settings = {
   elementResults: State<string>;
   nodeResults: State<string>;
   flipAxes: State<boolean>;
+  solidModel?: State<boolean>;
 };
 
 export function settings(
   structure: Structure,
-  settingsState: Settings
+  settingsState: Settings,
+  options?: ViewerOptions
 ): HTMLElement {
   // init
   const container = document.createElement("div");
   const pane = new Pane({
     title: "Settings",
-    expanded: false,
+    expanded: true,
     container,
   });
 
@@ -56,6 +59,9 @@ export function settings(
       label: "Orientations",
     });
   }
+
+  if (options?.hasSolids) 
+    pane.addBinding(settingsState.solidModel, "val", { label: "Solid model" });
 
   if (structure.nodeInputs || structure.elementInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
