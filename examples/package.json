@@ -25,10 +25,6 @@
     "awatif-fem": "^1.0.0",
     "awatif-mesh": "^1.0.0",
     "awatif-ui": "^1.0.0",
-<<<<<<< HEAD
-    "katex": "^0.16.21",
-=======
->>>>>>> combine-dialog-report
     "lit-html": "^3.2.1",
     "three": "^0.169.0",
     "vanjs-core": "^1.5.2",

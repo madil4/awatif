@@ -6,7 +6,7 @@
     <title>Awatif UI - Dialog</title>
     <script type="module">
       import { dialog } from "./dialog";
-      import { sheets } from "awatif-ui/src/sheets/sheets";
+      import { table } from "awatif-ui/src/table/table";
       import { html } from "lit-html";
       import van from "vanjs-core";
 
@@ -41,7 +41,7 @@
       });
 
       // Create sheets element
-      const sheetsElm = sheets({
+      const sheetsElm = table({
         sheets: sheetsObj,
         onChange: (e) => console.log(e), // test on change
       });

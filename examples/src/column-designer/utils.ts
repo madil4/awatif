@@ -4,11 +4,11 @@
 export function getKmod(serviceClass: number, loadDurationClass: string): { kMod: number; gamma: number; chi: number } {
     // Define service class, load duration class, and modification factor
     const dfDict: { [key: string]: number[] } = {
-        permanent: [0.6, 0.6, 0.5],
+        "permanent": [0.6, 0.6, 0.5],
         "long-term": [0.7, 0.7, 0.55],
         "medium-term": [0.8, 0.8, 0.65],
         "short-term": [0.9, 0.9, 0.7],
-        instantaneous: [1.1, 1.1, 0.9],
+        "instantaneous": [1.1, 1.1, 0.9],
     };
 
     const validServiceClasses = [1, 2, 3];

@@ -88,8 +88,8 @@ export function timberColumnDesign(
 
   // Effective length coefficient based on support type
   const betaValues: { [key in SupportType]: number } = {
-    pinned: 1,
-    cantilever: 2,
+    "pinned": 1,
+    "cantilever": 2,
     "fixed (top)": 0.7,
     "fixed (bottom)": 0.7,
   };
