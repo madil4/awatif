@@ -127,3 +127,24 @@ export function renderThreeJs(
 
   return objects3D;
 }
+
+function createSurface(scene, xyzArray, colorArray) {
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    const colors = [];
+
+    xyzArray.forEach((point, index) => {
+        vertices.push(point.x, point.y, point.z);
+        colors.push(colorArray[index].r, colorArray[index].g, colorArray[index].b);
+    });
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    geometry.computeVertexNormals();
+
+    const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(geometry, material);
+    
+    scene.add(mesh);
+    return mesh;
+}

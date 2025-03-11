@@ -166,7 +166,7 @@ van.derive(() => {
   designResultsInterface.val = resultsInterface;
 });
 
-
+console.log(slabInputs.val)
 // THREEJS
 const objects3D = renderThreeJs(
   slabInputs,

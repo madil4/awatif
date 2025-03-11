@@ -18,11 +18,10 @@ export const paramsGrade = {
 };
 
 export const parametersPane = new Pane({
-  title: "Parameter", // Correct way to set a title
 });
 
 // Add custom class and inline styles
-parametersPane.element.classList.add("parameters");
+// parametersPane.element.classList.add("parameters");
 
 parametersPane
   .addBinding(paramsSupport, "support", {

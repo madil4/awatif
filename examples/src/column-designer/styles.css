@@ -371,11 +371,3 @@ li p {
   color: #007bff; /* Changes text color to blue for emphasis */
 }
 
-.tp-dfwv {
-  position: fixed;
-  z-index: 9999;
-  transform: translateY(-60px); /* Verschiebt die Toolbar nach unten */
-  right: 8px; /* Abstand von der rechten Seite */
-  width: 300px;
-  max-width: 100%; /* Verhindert Überlauf */
-}
