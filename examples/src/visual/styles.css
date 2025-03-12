@@ -1,0 +1,7 @@
+.tp-dfwv {
+  position: absolute !important; /* Allow movement */
+  bottom: 0px; /* Initial position */
+  right: 0px; /* Initial position */
+  width: 300px;
+  z-index: 3;
+}
