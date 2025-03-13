@@ -81,29 +81,3 @@ export function createText(x, y, z, height, text) {
 
   return texts;
 }
-
-export function createTextOld(xyzCoords, height) {
-  // Add new text objects dynamically
-  const texts = [];
-  let i = 0;
-  for (let point of xyzCoords) {
-    const xCord = point.x;
-    const yCord = point.y;
-    const zCord = point.z + height / 2;
-
-    // console.log(xyzCoords.x)
-
-    // Multi-line text content
-    const text = [`Col${i + 1}`, `GL24h`];
-
-    text.forEach((line, index) => {
-      const lineText = new Text(line);
-      lineText.updateScale(0.4);
-      lineText.position.set(xCord, yCord, zCord - index * 0.4);
-      texts.push(lineText);
-    });
-
-    i++;
-  }
-  return texts;
-}
