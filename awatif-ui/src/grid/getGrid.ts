@@ -6,7 +6,7 @@ import "./styles.css";
 type Table = number[][];
 export type Data = object | Table;
 
-export function grid({
+export function getGrid({
   fields,
   data,
   onChange,
