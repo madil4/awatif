@@ -1,7 +1,13 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { viewer, layout, title, grid, marketing } from "awatif-ui";
-import {table} from "awatif-ui/src/table/table"
+import {
+  viewer,
+  layout,
+  title,
+  marketing,
+  getTables,
+  getGrid,
+} from "awatif-ui";
 import { html, TemplateResult } from "lit-html";
 
 // init
@@ -16,10 +22,10 @@ const lines = new THREE.Line(
   new THREE.LineBasicMaterial()
 );
 const objects3D = van.state([lines]);
-const sheetsObj = new Map();
+const tables = new Map();
 
 // update
-sheetsObj.set("polyline", {
+tables.set("polyline", {
   text: "Polyline",
   fields: [
     {
@@ -63,11 +69,9 @@ van.derive(() => {
   outputLines.val = lengths;
 });
 
-
-
 document.body.append(
   layout({
-    topLeft: { element: title("Sheets Example") },
+    topLeft: { element: title("Table Example") },
     topRight: {
       element: marketing({
         getStarted: getGetStartedHtml(),
@@ -75,11 +79,11 @@ document.body.append(
       }),
     },
     main: {
-      element: table({ sheets: sheetsObj, onChange: onSheetChange }),
+      element: getTables({ tables, onChange: onSheetChange }),
       title: "Inputs",
     },
     preview: {
-      element: grid({
+      element: getGrid({
         fields: [
           { field: "A", text: "Line Length" },
           { field: "B", text: "Between" },
