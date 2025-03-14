@@ -2,7 +2,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  top: 0px;
   padding: 10px;
   background-color: #f4f4f4;
 }
@@ -114,4 +113,3 @@
 .dialog-body .content.active {
   display: block;
 }
-
