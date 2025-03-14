@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Awatif UI - Sheets</title>
+    <title>Awatif UI - Tables</title>
     <script type="module">
       import van from "vanjs-core";
-      import { table } from "./table/";
+      import { getTables } from "./getTables/";
 
-      const sheetsObj = new Map();
+      const tables = new Map();
 
-      sheetsObj.set("nodes", {
+      tables.set("nodes", {
         text: "Nodes",
         fields: [
           { field: "A", text: "X-coordinate", editable: { type: "float" } },
@@ -24,7 +24,7 @@
         ]),
       });
 
-      sheetsObj.set("elements", {
+      tables.set("elements", {
         text: "Elements",
         fields: [
           { field: "A", text: "Node 1", editable: { type: "float" } },
@@ -37,12 +37,12 @@
         ]),
       });
 
-      const sheetsElm = table({
-        sheets: sheetsObj,
+      const tablesElm = getTables({
+        tables,
         onChange: (e) => console.log(e), // test on change
       });
 
-      document.body.appendChild(sheetsElm);
+      document.body.appendChild(tablesElm);
     </script>
   </head>
   <body></body>

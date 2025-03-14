@@ -6,7 +6,7 @@
     <title>Awatif UI - Grid</title>
     <script type="module" lang="ts">
       import van from "vanjs-core";
-      import { grid } from "./grid";
+      import { getGrid } from "./getGrid";
 
       const fields = [
         {
@@ -31,7 +31,7 @@
         [3, 4, 1],
       ]);
 
-      const gridElm = grid({
+      const gridElm = getGrid({
         fields,
         data,
         onChange: (e) => console.log(e), // test on change
@@ -58,7 +58,7 @@
         zPosition: 0,
       });
 
-      const gridElmObj = grid({
+      const gridElmObj = getGrid({
         fields: fieldsObj,
         data: dataObj,
         onChange: (v) => console.log(v), // to test on change
