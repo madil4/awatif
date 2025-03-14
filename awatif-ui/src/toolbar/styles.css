@@ -1,8 +1,67 @@
-.tp-dfwv {
-  position: fixed;
-  z-index: 9999;
-  transform: translateY(-10px); /* Verschiebt die Toolbar nach unten */
-  right: 8px; /* Abstand von der rechten Seite */
-  width: 300px;
-  max-width: 100%; /* Verhindert Überlauf */
+#toolbar {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2; /* On top of the viewer */
+}
+
+#toolbar .buttons-container {
+  display: flex;
+  gap: 5px;
+}
+
+#toolbar .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.3s;
+}
+
+#toolbar .btn-text {
+  background-color: #ddd;
+}
+#toolbar .btn-text:hover {
+  background-color: #bbb;
+}
+
+#toolbar .btn-icon {
+  width: 35px;
+  height: 35px;
+  background-color: rgb(0 95 115);
+}
+
+#toolbar .btn-icon {
+  width: 35px;
+  height: 35px;
+  background-color: rgb(0 95 115);
+  fill: rgb(255, 255, 255);
+}
+
+/* Dropdown */
+#toolbar #dropdown-menu {
+  position: absolute;
+  top: 115%;
+  right: 5px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 150px;
+}
+
+#toolbar .dropdown-link {
+  font-size: 12px;
+  color: #333;
+  text-decoration: none;
+  display: block;
+  padding: 8px 15px;
+}
+
+#toolbar .dropdown-link:hover {
+  background-color: #f1f1f1;
+  transition: background 0.3s;
 }
