@@ -1,95 +1,63 @@
-  
-  /* Dialog Input */
-  dialog.dialog-input {
-    position: absolute;
-    top: 400px;
-    bottom: 5px;
-    width: 60%;
-    height: 45%;
-    margin: 2rem 1rem 0;
-    padding: 0;
-    overflow: auto;
-    resize: both;
+#dialog dialog {
+  position: fixed;
+  z-index: 2;
+  overflow: auto;
+  width: calc(100% - 292px - 3rem);
+  height: calc(100% - 3rem);
+  margin: 2rem 1rem 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+@media only screen and (max-width: 600px) {
+  #dialog dialog {
+    width: calc(100% - 2rem);
+    height: calc(70%);
   }
-  
-  .dialog-input .dialog-header {
-    position: sticky;
-    top: 0;
-    background: #adafb8;
-    padding: 10px;
-    font-size: 1.2rem;
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .dialog-header .close {
-    color: #000000;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .dialog-input .dialog-body {
-    padding: 20px;
-  }
-  
-  /* Resizing Handles */
-  .resize-handle {
-    position: absolute;
-    background: #adafb8;
-    z-index: 10;
-    opacity: 0.8;
-  }
-  
-  .resize-handle-right {
-    width: 5px;
-    height: 100%;
-    top: 50px;
-    right: 0;
-    background: #ffffff;
-    cursor: ew-resize;
-  }
-  
-  .resize-handle-top {
-    height: 5px;
-    width: 100%;
-    top: 0;
-    left: 0;
-    cursor: ns-resize;
-  }
-  
-  /* Input Button */
-  .input-button {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: 80px;
-    height: 40px;
-    color: #fefafa;
-    background-color: #46474C; /* Dark gray */
-    border-radius: 10px;
-    font-family: "Arial", sans-serif;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-  
-  .input-button:hover {
-    background-color: #333333; /* Darker gray on hover */
-    color: #fff;
-  }
-  
-  .input-button:active {
-    transform: scale(0.95);
-  }
-  
-  /* Responsive Adjustments */
-  @media only screen and (max-width: 600px) {
-    dialog.dialog-input {
-      width: calc(100% - 2rem);
-      height: 100%;
-    }
-  }
+}
+
+#dialog .dialog-header {
+  position: sticky;
+  top: 0;
+  background: #f1f1f1;
+  padding: 10px 20px;
+  height: 22px;
+  font-size: 1.2rem;
+}
+
+#dialog .close {
+  color: #000000;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  float: right;
+}
+
+#dialog .dialog-body {
+  padding: 20px;
+}
+
+/* Resizing Handles */
+.resize-handle {
+  position: absolute;
+  z-index: 10;
+}
+
+.resize-handle-right {
+  width: 5px;
+  height: 100%;
+  top: 50px;
+  right: 0;
+  cursor: ew-resize;
+}
+
+.resize-handle-top {
+  height: 5px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  cursor: ns-resize;
+}
