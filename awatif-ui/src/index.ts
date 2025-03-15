@@ -10,3 +10,6 @@ export { getGrid } from "./grid/getGrid";
 export { marketing } from "./marketing/marketing";
 export { contours } from "./viewer/objects/contours";
 export { colorMap } from "./color-map/colorMap";
+export { getToolbar } from "./toolbar/getToolbar";
+export { getDialog } from "./dialog/getDialog";
+export { getReport } from "./report/getReport";

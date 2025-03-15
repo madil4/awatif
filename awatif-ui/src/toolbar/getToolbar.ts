@@ -5,14 +5,14 @@ import "./styles.css";
 
 export function getToolbar({
   buttons,
+  clickedButton,
   author,
   sourceCode,
-  clickedButton,
 }: {
   buttons: string[];
-  author: string;
-  sourceCode: string;
   clickedButton: State<string>;
+  author?: string;
+  sourceCode?: string;
 }): HTMLElement {
   // Init
   const element = document.createElement("div");
@@ -54,7 +54,8 @@ export function getToolbar({
   // On button click set clickedButton value
   function onButtonClick(e: Event) {
     const button = e.target as HTMLButtonElement;
-    clickedButton.val = button.innerText;
+    clickedButton.val = ""; // A hack to trigger vanjs update
+    setTimeout(() => (clickedButton.val = button.innerText));
   }
 
   function onIconClick(e: Event) {

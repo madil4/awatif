@@ -4,11 +4,9 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 
 export function getDialog({
-  title,
   dialogBody,
 }: {
-  title: State<string>;
-  dialogBody: State<HTMLElement>;
+  dialogBody: State<HTMLElement | undefined>;
 }): HTMLElement {
   // Init
   const element = document.createElement("div");
@@ -17,12 +15,9 @@ export function getDialog({
 
   function template() {
     return html`
-      <dialog open ref=${ref(dialogElm)}>
+      <dialog ref=${ref(dialogElm)}>
         <div class="dialog-header">
-          ${title.val}
-          <span class="close" @click=${() => dialogElm.value?.close()}
-            >&times;</span
-          >
+          <span class="close" @click=${onClose}>&times;</span>
         </div>
 
         <div class="dialog-body">${dialogBody.val}</div>
@@ -40,6 +35,15 @@ export function getDialog({
   van.derive(() => {
     render(template(), element);
   });
+
+  van.derive(() => {
+    if (dialogBody.val) dialogElm.value?.show();
+  });
+
+  function onClose() {
+    dialogElm.value?.close();
+    dialogBody.val = undefined;
+  }
 
   addResizeListeners(dialogElm.value);
 

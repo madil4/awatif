@@ -14,15 +14,13 @@
       const bold = document.createElement("b");
       bold.textContent = "Mohamed Adil";
 
-      const title = van.state("Span");
       const dialogBody = van.state(span);
 
       setTimeout(() => {
-        title.val = "Bold";
         dialogBody.val = bold;
       }, 1000);
 
-      const dialogElm = getDialog({ title, dialogBody });
+      const dialogElm = getDialog({ dialogBody });
 
       document.body.appendChild(dialogElm);
     </script>
