@@ -3,8 +3,8 @@
   z-index: 2;
   overflow: auto;
   width: calc(100% - 292px - 3rem);
-  height: calc(100% - 3rem);
-  margin: 2rem 1rem 0;
+  height: calc(100% - 4rem);
+  margin: 2.5rem 0.6rem 0;
   padding: 0;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -14,7 +14,7 @@
 
 @media only screen and (max-width: 600px) {
   #dialog dialog {
-    width: calc(100% - 2rem);
+    width: calc(100% - 1.5rem);
     height: calc(70%);
   }
 }
