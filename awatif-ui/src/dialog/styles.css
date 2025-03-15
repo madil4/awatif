@@ -34,10 +34,15 @@
   font-weight: bold;
   cursor: pointer;
   float: right;
+  z-index: 999;
 }
 
 #dialog .dialog-body {
-  padding: 20px;
+  position: absolute;
+  top: 42px; /* Height of header */
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 /* Resizing Handles */
