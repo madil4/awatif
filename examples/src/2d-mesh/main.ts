@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, parameters, Parameters, viewer } from "awatif-ui";
 import { Node, Element } from "awatif-data-structure";
 import { mesh } from "awatif-mesh";
 
@@ -46,5 +46,10 @@ document.body.append(
       nodes: nodesState,
       elements: elementsState,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

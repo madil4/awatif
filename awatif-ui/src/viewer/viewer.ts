@@ -16,9 +16,9 @@ import { axes } from "./objects/axes";
 import { orientations } from "./objects/orientations";
 import { elementResults } from "./objects/elementResults";
 import { nodeResults } from "./objects/nodeResults";
+import { drawing, Drawing } from "./drawing/drawing";
 
 import "./styles.css";
-import { drawing, Drawing } from "./drawing/drawing";
 
 export type SettingsObj = {
   gridSize?: number;

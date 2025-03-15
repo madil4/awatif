@@ -8,7 +8,7 @@ import {
   AnalyzeOutputs,
 } from "awatif-data-structure";
 import { analyze, deform } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, parameters, Parameters, viewer } from "awatif-ui";
 
 // Init
 const params: Parameters = {
@@ -117,5 +117,10 @@ document.body.append(
     settingsObj: {
       deformedShape: true,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

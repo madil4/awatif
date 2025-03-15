@@ -9,8 +9,8 @@ export function getToolbar({
   author,
   sourceCode,
 }: {
-  buttons: string[];
-  clickedButton: State<string>;
+  buttons?: string[];
+  clickedButton?: State<string>;
   author?: string;
   sourceCode?: string;
 }): HTMLElement {

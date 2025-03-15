@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import { Element, Node } from "awatif-data-structure";
-import { viewer, Drawing, Parameters, parameters } from "awatif-ui";
+import { viewer, Drawing, Parameters, parameters, getToolbar } from "awatif-ui";
 import { toolbar } from "./toolbar";
 
 // Init
@@ -120,7 +120,12 @@ document.body.append(
       gridTarget,
     },
   }),
-  toolbar({ onToolbarClick })
+  toolbar({ onToolbarClick }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
+  })
 );
 
 // Utils
