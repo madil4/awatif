@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import * as THREE from "three";
 import { Node, Element, NodeInputs } from "awatif-data-structure";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, parameters, Parameters, viewer } from "awatif-ui";
 
 // Init
 const params: Parameters = {
@@ -127,5 +127,10 @@ document.body.append(
       elements: elementsState,
       nodeInputs: nodeInputsState,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

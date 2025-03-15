@@ -6,7 +6,7 @@ import {
   ElementInputs,
   DeformOutputs,
 } from "awatif-data-structure";
-import { viewer, Parameters, parameters } from "awatif-ui";
+import { viewer, Parameters, parameters, getToolbar } from "awatif-ui";
 import { deform } from "awatif-fem";
 import { mesh } from "awatif-mesh";
 
@@ -79,5 +79,10 @@ document.body.append(
       deformedShape: true,
       loads: false,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );
