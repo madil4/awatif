@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "sheets/index.html",
+    open: "tables/index.html",
   },
   base: "./", // to resolve assets
   root: "./src",
@@ -21,7 +21,7 @@ export default defineConfig({
         "1d-mesh": "src/1d-mesh/index.html",
         sphere: "src/sphere/index.html",
         truss: "src/truss/index.html",
-        sheets: "src/sheets/index.html",
+        tables: "src/tables/index.html",
         "2d-mesh": "src/2d-mesh/index.html",
         drawing: "src/drawing/index.html",
         report: "src/report/index.html",

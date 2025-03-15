@@ -9,7 +9,14 @@ import {
 import { deform, analyze } from "awatif-fem";
 import van from "vanjs-core";
 import { State } from "vanjs-core/debug";
-import { Parameters, parameters, viewer } from "awatif-ui";
+import {
+  getDialog,
+  getReport,
+  getToolbar,
+  Parameters,
+  parameters,
+  viewer,
+} from "awatif-ui";
 import { template } from "./template";
 
 // Init
@@ -80,16 +87,26 @@ van.derive(() => {
   );
 });
 
+// report
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+
+van.derive(() => {
+  if (clickedButton.val === "Report")
+    dialogBody.val = getReport({ template, data: structure });
+});
+
 document.body.append(
+  getToolbar({
+    clickedButton,
+    buttons: ["Report"],
+  }),
+  getDialog({ dialogBody }),
   parameters(params),
   viewer({
     structure,
     settingsObj: {
       gridSize: 1000,
-    },
-    reportObj: {
-      template,
-      data: structure,
     },
   })
 );
