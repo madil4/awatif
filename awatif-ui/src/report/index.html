@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Awatif UI - Viewer - Report</title>
+    <title>Awatif UI - Report</title>
     <script type="module">
-      import { report } from "./report";
+      import { getReport } from "./getReport";
       import { html } from "lit-html";
       import van from "vanjs-core";
 
@@ -17,9 +17,9 @@
 
       setTimeout(() => {
         nodes.val = [];
-      }, 2000);
+      }, 1000);
 
-      const reportElm = report({
+      const reportElm = getReport({
         template,
         data: nodes,
       });
