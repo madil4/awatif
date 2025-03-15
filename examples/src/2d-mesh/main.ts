@@ -49,7 +49,7 @@ document.body.append(
   }),
   getToolbar({
     sourceCode:
-      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+      "https://github.com/madil4/awatif/blob/main/examples/src/2d-mesh/main.ts",
     author: "https://www.linkedin.com/in/madil4/",
   })
 );

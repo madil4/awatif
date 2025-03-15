@@ -4287,7 +4287,7 @@ R: `+this.R.toString()}}}function v(b){var x=g(b),C=x.R._data;if(b._data.length>
         class="dropdown-link"
         >Source Code</a
       >
-      ${t?Il`<a href="${t}" class="dropdown-link">Message Author</a>`:""}
+      ${Il`<a href="${t}" class="dropdown-link">Message Author</a>`}
       <a href="https://awatif.co/examples" class="dropdown-link"
         >More Examples</a
       >

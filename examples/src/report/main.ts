@@ -100,6 +100,9 @@ document.body.append(
   getToolbar({
     clickedButton,
     buttons: ["Report"],
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   }),
   getDialog({ dialogBody }),
   parameters(params),

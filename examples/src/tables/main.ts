@@ -59,6 +59,9 @@ document.body.append(
   getToolbar({
     clickedButton,
     buttons: ["Tables"],
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/tables/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   }),
   getDialog({ dialogBody }),
   viewer({ objects3D })
