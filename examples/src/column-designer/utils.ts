@@ -1,3 +1,4 @@
+import van, { State } from "vanjs-core";
 
 
 // Function to get modification factor
@@ -32,13 +33,7 @@ export function getKmod(serviceClass: number, loadDurationClass: string): { kMod
     return { kMod, gamma, chi };
 }
 
-// Example usage
-try {
-    const { kMod, gamma, chi } = getKmod(2, "short-term");
-    console.log(`kMod: ${kMod}, gamma: ${gamma}, chi: ${chi}`);
-} catch (error) {
-    console.error(error.message);
-}
+
 
 // Define Glulam properties
 export interface Glulam {
@@ -95,12 +90,3 @@ export function getGlulamProperties(grade: string): Glulam | null {
     return L_glulam_classes[timberIndex];
 }
 
-// Example usage: Retrieve glulam properties for a specific grade
-const grade = "GL24h";
-const glulam = getGlulamProperties(grade);
-
-if (glulam) {
-    console.log(`Glulam Properties for ${grade}:`, glulam);
-} else {
-    console.error(`Grade "${grade}" not found.`);
-}

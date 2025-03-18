@@ -1,7 +1,6 @@
-.tp-dfwv {
-  position: fixed;
+.custom-pane {
+  position: absolute;
   z-index: 9999;
-  transform: translateY(-10px); /* Verschiebt die Toolbar nach unten */
   right: 8px; /* Abstand von der rechten Seite */
   width: 300px;
   max-width: 100%; /* Verhindert Überlauf */

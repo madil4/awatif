@@ -371,3 +371,11 @@ li p {
   color: #007bff; /* Changes text color to blue for emphasis */
 }
 
+.parameters-pane {
+  position: absolute;
+  z-index: 9999;
+  bottom: 8px; /* Abstand von der rechten Seite */
+  right: 8px; /* Abstand von der rechten Seite */
+  width: 300px;
+  max-width: 100%; /* Verhindert Überlauf */
+}

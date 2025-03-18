@@ -3,7 +3,11 @@ import { Pane } from "tweakpane";
 import "./styles.css";
 
 export function toolbar(buttons: string[]) {
-  const pane = new Pane({ expanded: true });
+  const container = document.createElement("div");
+  container.classList.add("custom-pane"); // Add your custom class
+  document.body.appendChild(container);
+
+  const pane = new Pane({ container, expanded: true });
   const f1 = pane.addFolder({
     title: "awatif.co",
     expanded: false,

@@ -19,7 +19,7 @@ export function generateCompressionCheckHTML(results) {
 
     <p class="math">
       ${renderMath(
-        `f_{c,0,d} = f_{c,0,k} \\cdot \\chi = ${results.designResistance.f_c0d.toFixed(
+        `f_{c,0,d} = f_{c,0,k} \\cdot \\chi = ${results.resistance.f_c0d.toFixed(
           2
         )} \\ \\text{N/mm}^2`
       )}
