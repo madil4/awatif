@@ -1,7 +1,7 @@
 .legend {
     width: 30px;
     height: 50vh;
-    background: linear-gradient(#FF0000, #FFFF00, #00FF00, #00FFFF, #0000FF);
+    background: linear-gradient(#FF0000, #FFFF00 20%, #00FF00 50%, #00FFFF 80%, #0000FF);
     position: absolute;
     right: 7%;
     bottom: 25vh;
