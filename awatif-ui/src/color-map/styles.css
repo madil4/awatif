@@ -1,9 +1,9 @@
 .legend {
-    border-left: 30px solid white;
+    width: 30px;
     height: 50vh;
+    background: linear-gradient(#FF0000, #FFFF00, #00FF00, #00FFFF, #0000FF);
     position: absolute;
     right: 7%;
-    margin-left: -15px;
     bottom: 25vh;
     z-index: 2; /* On top of the viewer */
-  }
+}
