@@ -8,7 +8,6 @@ import "./styles.css";
 
 export function getTables({
   tables,
-  onChange,
 }: {
   tables: Map<
     string,
@@ -18,7 +17,6 @@ export function getTables({
       data: State<Data>;
     }
   >;
-  onChange?: ({ table, data }) => void;
 }): HTMLElement {
   // Init
   const tablesElm = document.createElement("div");
@@ -33,7 +31,6 @@ export function getTables({
       getTable({
         fields: table.fields,
         data: table.data,
-        onChange: onGridChange,
       })
     );
   });
@@ -57,10 +54,6 @@ export function getTables({
   tabs.onClick = (e: { target: string }) => {
     tablesElm.firstChild.replaceWith(tablesMap.get(e.target));
   };
-
-  function onGridChange(data: Data) {
-    if (onChange) onChange({ table: tabs.active, data });
-  }
 
   return tablesElm;
 }

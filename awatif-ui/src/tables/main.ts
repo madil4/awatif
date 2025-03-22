@@ -31,9 +31,14 @@ tables.set("elements", {
   ]),
 });
 
-const tablesElm = getTables({
-  tables,
-  onChange: (e) => console.log(e), // test on change
+const tablesElm = getTables({ tables });
+
+van.derive(() => {
+  console.log(tables.get("nodes").data.val);
+});
+
+van.derive(() => {
+  console.log(tables.get("elements").data.val);
 });
 
 document.body.appendChild(tablesElm);

@@ -10,11 +10,9 @@ export type Data = object | Table;
 export function getTable({
   fields,
   data,
-  onChange,
 }: {
   fields: object[];
   data: State<Data>;
-  onChange?: (data: Data) => void;
 }): HTMLDivElement {
   // Init
   const tableElm = document.createElement("div");
@@ -46,7 +44,7 @@ export function getTable({
     const field = FIELDS_INDEXES[e.detail.column];
     grid.records[e.detail.index][field] = e.detail.value.new;
 
-    if (onChange) onChange(toData(grid.records, fields));
+    data.val = toData(grid.records, fields);
   };
 
   // On delete update data
@@ -54,7 +52,7 @@ export function getTable({
     e.detail.force = true;
 
     e.onComplete = () => {
-      if (onChange) onChange(toData(grid.records, fields));
+      data.val = toData(grid.records, fields);
     };
   };
 
@@ -63,7 +61,7 @@ export function getTable({
     e.onComplete = () => {
       grid.mergeChanges();
 
-      if (onChange) onChange(toData(grid.records, fields));
+      data.val = toData(grid.records, fields);
     };
   };
 

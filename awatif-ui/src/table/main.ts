@@ -1,6 +1,7 @@
 import van from "vanjs-core";
 import { getTable } from "./getTable";
 
+// Init
 const fields = [
   {
     field: "A",
@@ -27,15 +28,20 @@ const data = van.state([
 const tableElm = getTable({
   fields,
   data,
-  onChange: (e) => console.log(e), // test on change
 });
 
-setTimeout(() => (data.val = [[0, 0, 0]]), 3000); // test on data change
-
+// Update
 tableElm.style.height = "250px";
+
+// Events
+setTimeout(() => (data.val = [[0, 0, 0]]), 2000); // test on data change
+
+van.derive(() => console.log(data.val));
 
 document.body.appendChild(tableElm);
 
+// Another test case
+// Init
 const fieldsObj = [
   {
     field: "xPosition",
@@ -54,10 +60,13 @@ const dataObj = van.state({
 const tableElmObj = getTable({
   fields: fieldsObj,
   data: dataObj,
-  onChange: (v) => console.log(v), // to test on change
 });
 
+// Update
 tableElmObj.style.height = "250px";
 tableElmObj.style.top = "260px";
+
+// Events
+van.derive(() => console.log(dataObj.val));
 
 document.body.appendChild(tableElmObj);

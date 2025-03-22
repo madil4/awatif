@@ -2,7 +2,7 @@ import van from "vanjs-core";
 import * as THREE from "three";
 import { getViewer, getTables, getToolbar, getDialog } from "awatif-ui";
 
-// init
+// Init
 const inputPolyline = van.state([
   [0, 0, 0],
   [5, 0, 5],
@@ -18,7 +18,7 @@ const objects3D = van.state([lines]);
 
 const tables = new Map();
 
-// update
+// Update
 tables.set("polyline", {
   text: "Polyline",
   fields: [
@@ -34,8 +34,8 @@ tables.set("polyline", {
   data: inputPolyline,
 });
 
-// events
-const onTablesChange = ({ data }) => (inputPolyline.val = data);
+// Events
+van.derive(() => (inputPolyline.val = tables.get("polyline").data.val));
 
 // on inputPolyline change: render lines
 van.derive(() => {
@@ -51,8 +51,7 @@ van.derive(() => {
 const clickedButton = van.state("");
 const dialogBody = van.state(undefined);
 van.derive(() => {
-  if (clickedButton.val === "Tables")
-    dialogBody.val = getTables({ tables, onChange: onTablesChange });
+  if (clickedButton.val === "Tables") dialogBody.val = getTables({ tables });
 });
 
 document.body.append(
