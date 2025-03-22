@@ -7,7 +7,7 @@ import "./styles.css";
 type Table = number[][];
 export type Data = object | Table;
 
-export function getGrid({
+export function getTable({
   fields,
   data,
   onChange,
@@ -17,11 +17,11 @@ export function getGrid({
   onChange?: (data: Data) => void;
 }): HTMLDivElement {
   // Init
-  const gridElm = document.createElement("div");
+  const tableElm = document.createElement("div");
 
   const grid = new w2grid({
     name: Math.random().toString().substring(2),
-    box: gridElm,
+    box: tableElm,
     selectType: "cell",
     recordHeight: 26,
     show: { columnMenu: false, lineNumbers: true },
@@ -30,12 +30,12 @@ export function getGrid({
   });
 
   // Update
-  gridElm.setAttribute("id", "grid");
+  tableElm.setAttribute("id", "table");
 
   // Events
   // On size change refresh grid
   const resizeObserver = new ResizeObserver(() => grid.refresh());
-  resizeObserver.observe(gridElm);
+  resizeObserver.observe(tableElm);
 
   // On field edit update data
   grid.onChange = (e) => {
@@ -73,7 +73,7 @@ export function getGrid({
     grid.refresh();
   });
 
-  return gridElm;
+  return tableElm;
 }
 
 // Utils

@@ -1,7 +1,7 @@
 import { w2tabs } from "w2ui";
 import { State } from "vanjs-core";
 
-import { Data, getGrid } from "../grid/getGrid";
+import { Data, getTable } from "../table/getTable";
 
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
@@ -25,12 +25,12 @@ export function getTables({
   const tabsElm = document.createElement("div");
 
   const tabsData = [];
-  const grids = new Map<string, HTMLDivElement>();
+  const tablesMap = new Map<string, HTMLDivElement>();
   tables.forEach((table, index) => {
     tabsData.push({ id: index, text: table.text });
-    grids.set(
+    tablesMap.set(
       index,
-      getGrid({
+      getTable({
         fields: table.fields,
         data: table.data,
         onChange: onGridChange,
@@ -50,12 +50,12 @@ export function getTables({
   tablesElm.id = "tables";
   tabsElm.id = "tabs";
 
-  tablesElm.append(grids.values().next().value, tabsElm);
+  tablesElm.append(tablesMap.values().next().value, tabsElm);
 
   // Events
-  // On tab click replace grid
+  // On tab click replace table
   tabs.onClick = (e: { target: string }) => {
-    tablesElm.firstChild.replaceWith(grids.get(e.target));
+    tablesElm.firstChild.replaceWith(tablesMap.get(e.target));
   };
 
   function onGridChange(data: Data) {

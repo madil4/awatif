@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { getGrid } from "./getGrid";
+import { getTable } from "./getTable";
 
 const fields = [
   {
@@ -24,7 +24,7 @@ const data = van.state([
   [3, 4, 1],
 ]);
 
-const gridElm = getGrid({
+const tableElm = getTable({
   fields,
   data,
   onChange: (e) => console.log(e), // test on change
@@ -32,9 +32,9 @@ const gridElm = getGrid({
 
 setTimeout(() => (data.val = [[0, 0, 0]]), 3000); // test on data change
 
-gridElm.style.height = "250px";
+tableElm.style.height = "250px";
 
-document.body.appendChild(gridElm);
+document.body.appendChild(tableElm);
 
 const fieldsObj = [
   {
@@ -51,13 +51,13 @@ const dataObj = van.state({
   zPosition: 0,
 });
 
-const gridElmObj = getGrid({
+const tableElmObj = getTable({
   fields: fieldsObj,
   data: dataObj,
   onChange: (v) => console.log(v), // to test on change
 });
 
-gridElmObj.style.height = "250px";
-gridElmObj.style.top = "260px";
+tableElmObj.style.height = "250px";
+tableElmObj.style.top = "260px";
 
-document.body.appendChild(gridElmObj);
+document.body.appendChild(tableElmObj);

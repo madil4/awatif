@@ -1,5 +1,5 @@
 /* Stretching to its container allow size change events */
-#grid {
+#table {
   position: absolute;
   top: 0;
   bottom: 0;
