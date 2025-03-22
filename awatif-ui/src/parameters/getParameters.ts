@@ -18,7 +18,7 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
   // Init
   const parametersElm = document.createElement("div");
   const pane = new Pane({ title: "Parameters", container: parametersElm });
-  const params = convertToTweakParams(parameters);
+  const tweakParameters = convertToTweakparameters(parameters);
   const folders = new Map<string, FolderApi>();
 
   // Update
@@ -34,7 +34,7 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
         pane.addFolder({ title: parameter.folder })
       );
 
-    folders.get(parameter.folder ?? "root")?.addBinding(params, key, {
+    folders.get(parameter.folder ?? "root")?.addBinding(tweakParameters, key, {
       min: parameter.min || 0,
       max: parameter.max || 50,
       step: parameter.step || 0.5,
@@ -52,13 +52,13 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
 }
 
 // Utils
-const convertToTweakParams = (
+const convertToTweakparameters = (
   parameters: Parameters
 ): Record<string, unknown> =>
   Object.entries(parameters).reduce(
-    (tweakParams: Record<string, number>, [key, parameter]) => {
-      tweakParams[key] = parameter.value.val;
-      return tweakParams;
+    (tweakparameters: Record<string, number>, [key, parameter]) => {
+      tweakparameters[key] = parameter.value.val;
+      return tweakparameters;
     },
     {}
   );

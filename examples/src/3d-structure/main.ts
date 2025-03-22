@@ -11,7 +11,7 @@ import { analyze, deform } from "awatif-fem";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   dx: {
     value: van.state(2),
     min: 1,
@@ -57,10 +57,10 @@ const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  const dx = params.dx.value.val;
-  const dy = params.dy.value.val;
-  const dz = params.dz.value.val;
-  const divisions = params.divisions.value.val;
+  const dx = parameters.dx.value.val;
+  const dy = parameters.dy.value.val;
+  const dz = parameters.dz.value.val;
+  const divisions = parameters.divisions.value.val;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -104,7 +104,7 @@ van.derive(() => {
       [3, fixed],
     ]),
     loads: new Map([
-      [nodes.length - 2, [params.load.value.val, 0, 0, 0, 0, 0]],
+      [nodes.length - 2, [parameters.load.value.val, 0, 0, 0, 0, 0]],
     ]),
   };
 
@@ -127,7 +127,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

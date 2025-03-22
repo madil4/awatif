@@ -3,7 +3,7 @@ import { Node, Element } from "awatif-data-structure";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   radius: {
     value: van.state(4),
     min: 1,
@@ -29,9 +29,9 @@ const elementsState: State<Element[]> = van.state([]);
 
 // Events: on parameter change
 van.derive(() => {
-  const radius = params.radius.value.val;
-  const points = params.points.value.val;
-  const circumferences = params.circumferences.value.val;
+  const radius = parameters.radius.value.val;
+  const points = parameters.points.value.val;
+  const circumferences = parameters.circumferences.value.val;
 
   let nodes: Node[] = [];
   const elements: Element[] = [];
@@ -85,7 +85,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

@@ -20,7 +20,7 @@ import {
 import { template } from "./template";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
@@ -45,7 +45,7 @@ const structure = {
 van.derive(() => {
   nodes.val = [
     [250, 0, 0],
-    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [parameters.xPosition.value.val, 0, parameters.zPosition.value.val],
     [250, 0, 400],
   ];
   elements.val = [
@@ -105,7 +105,7 @@ document.body.append(
     author: "https://www.linkedin.com/in/cal-mense/",
   }),
   getDialog({ dialogBody }),
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure,
     settingsObj: {

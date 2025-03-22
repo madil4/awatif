@@ -11,7 +11,7 @@ import { analyze, deform } from "awatif-fem";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   length: { value: van.state(10), min: 1, max: 20 },
   height: { value: van.state(10), min: 1, max: 10 },
   xLoad: { value: van.state(10), min: 0, max: 10, folder: "Loads" },
@@ -27,10 +27,10 @@ const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  const length = params.length.value.val;
-  const height = params.height.value.val;
-  const xLoad = params.xLoad.value.val;
-  const area = params.area.value.val;
+  const length = parameters.length.value.val;
+  const height = parameters.height.value.val;
+  const xLoad = parameters.xLoad.value.val;
+  const area = parameters.area.value.val;
 
   nodes.val = [
     [0, 0, 0],
@@ -77,7 +77,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes,

@@ -11,7 +11,7 @@ import { deform } from "awatif-fem";
 import { mesh } from "awatif-mesh";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(15), min: 5, max: 20 },
   load: { value: van.state(-50), min: -100, max: 100, step: 1 },
 };
@@ -28,7 +28,7 @@ van.derive(() => {
     points: van.state([
       [0, 0, 0],
       [15, 0, 0],
-      [params.xPosition.value.val, 10, 0],
+      [parameters.xPosition.value.val, 10, 0],
       [0, 5, 0],
     ]),
     polygon: van.state([0, 1, 2, 3]),
@@ -40,7 +40,7 @@ van.derive(() => {
       boundaryIndices.val.map((i) => [i, [true, true, true, true, true, true]])
     ),
     loads: new Map(
-      nodes.val.map((_, i) => [i, [0, 0, params.load.value.val, 0, 0, 0]])
+      nodes.val.map((_, i) => [i, [0, 0, parameters.load.value.val, 0, 0, 0]])
     ),
   };
   const elementsVal = elements.val;
@@ -66,7 +66,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

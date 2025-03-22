@@ -3,7 +3,7 @@ import { Node, Element } from "awatif-data-structure";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   width: {
     value: van.state(18),
     min: 10,
@@ -60,14 +60,14 @@ van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
 
-  let xLength = params.width.value.val;
-  let yLength = params.breadth.value.val;
-  let zLength = params.height.value.val;
-  let xSpan = params.xSpan.value.val;
-  let ySpan = params.ySpan.value.val;
-  let zSpan = params.zSpan.value.val;
-  const mainDirX = params.mainDirX.value.val;
-  let spacing = params.spacing.value.val;
+  let xLength = parameters.width.value.val;
+  let yLength = parameters.breadth.value.val;
+  let zLength = parameters.height.value.val;
+  let xSpan = parameters.xSpan.value.val;
+  let ySpan = parameters.ySpan.value.val;
+  let zSpan = parameters.zSpan.value.val;
+  const mainDirX = parameters.mainDirX.value.val;
+  let spacing = parameters.spacing.value.val;
 
   if (xSpan > xLength) xSpan = xLength;
   if (ySpan > yLength) ySpan = yLength;
@@ -204,7 +204,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

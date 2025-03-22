@@ -4,7 +4,7 @@ import { Node, Element, NodeInputs } from "awatif-data-structure";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xSpan: {
     value: van.state(16),
     min: 1,
@@ -53,12 +53,12 @@ const nodeInputsState: State<NodeInputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  const xSpan = params.xSpan.value.val;
-  const xDivisions = params.xDivisions.value.val;
-  const ySpan = params.ySpan.value.val;
-  const yDivisions = params.yDivisions.value.val;
-  const height = params.height.value.val;
-  const heightOffset = params.heightOffset.value.val;
+  const xSpan = parameters.xSpan.value.val;
+  const xDivisions = parameters.xDivisions.value.val;
+  const ySpan = parameters.ySpan.value.val;
+  const yDivisions = parameters.yDivisions.value.val;
+  const height = parameters.height.value.val;
+  const heightOffset = parameters.heightOffset.value.val;
 
   const curve = new THREE.QuadraticBezierCurve3(
     new THREE.Vector3(0, 0, 0),
@@ -120,7 +120,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

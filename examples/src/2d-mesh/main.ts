@@ -4,7 +4,7 @@ import { Node, Element } from "awatif-data-structure";
 import { mesh } from "awatif-mesh";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   boundary: {
     value: van.state(5),
     min: 1,
@@ -22,7 +22,7 @@ van.derive(() => {
   const points = van.state([
     [0, 0, 0],
     [5, 0, 0],
-    [params.boundary.value.val, 0, 3],
+    [parameters.boundary.value.val, 0, 3],
     [8, 0, 7],
     [15, 0, 5],
     [15, 0, 0],
@@ -40,7 +40,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

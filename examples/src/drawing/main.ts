@@ -30,7 +30,7 @@ const polylines2nd: Drawing["polylines"] = van.state([[0, 1, 2, 3], []]);
 const points: Drawing["points"] = van.state([]);
 const polylines: Drawing["polylines"] = van.state([]);
 
-const params: Parameters = {
+const parameters: Parameters = {
   width: { value: van.state(2), min: 0.5, max: 5, step: 0.1 },
 };
 
@@ -88,7 +88,7 @@ van.derive(() => {
       pointIndex * 4,
       point,
       floorHeight,
-      params.width.value.val
+      parameters.width.value.val
     );
 
     columnsNodes.push(...columnNodes);
@@ -114,7 +114,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes,

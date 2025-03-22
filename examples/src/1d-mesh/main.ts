@@ -11,7 +11,7 @@ import { analyze, deform } from "awatif-fem";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   meshDensity: {
     value: van.state(7),
     min: 1,
@@ -35,10 +35,10 @@ const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
-  const count = params.meshDensity.value.val;
-  const height = params.height.value.val;
-  const span = params.span.value.val;
-  const load = params.load.value.val;
+  const count = parameters.meshDensity.value.val;
+  const height = parameters.height.value.val;
+  const span = parameters.span.value.val;
+  const load = parameters.load.value.val;
 
   // beam 1
   nodes.push(
@@ -104,7 +104,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes: nodesState,

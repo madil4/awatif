@@ -11,7 +11,7 @@ import { deform, analyze } from "awatif-fem";
 import { getToolbar, Parameters, getParameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
@@ -27,7 +27,7 @@ const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 van.derive(() => {
   nodes.val = [
     [250, 0, 0],
-    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [parameters.xPosition.value.val, 0, parameters.zPosition.value.val],
     [250, 0, 400],
   ];
   elements.val = [
@@ -69,7 +69,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getParameters(params),
+  getParameters(parameters),
   getViewer({
     structure: {
       nodes,
