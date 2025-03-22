@@ -83,6 +83,6 @@ document.body.append(
   getToolbar({
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/plate/main.ts",
-    author: "https://www.linkedin.com/in/madil4/",
+    author: "https://www.linkedin.com/in/mahjoubmusaab/",
   })
 );

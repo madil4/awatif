@@ -102,7 +102,7 @@ document.body.append(
     buttons: ["Report"],
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",
-    author: "https://www.linkedin.com/in/madil4/",
+    author: "https://www.linkedin.com/in/cal-mense/",
   }),
   getDialog({ dialogBody }),
   parameters(params),
