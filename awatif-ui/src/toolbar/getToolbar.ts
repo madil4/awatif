@@ -58,6 +58,7 @@ export function getToolbar({
     setTimeout(() => (clickedButton.val = button.innerText));
   }
 
+  // onIconClick toggle dropdown menu
   function onIconClick(e: Event) {
     const dropdown = document.getElementById("dropdown-menu");
     dropdown.style.display =

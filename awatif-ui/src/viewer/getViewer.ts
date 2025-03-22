@@ -37,7 +37,7 @@ export type SettingsObj = {
   flipAxes?: boolean;
 };
 
-export function viewer({
+export function getViewer({
   structure,
   settingsObj,
   objects3D,

@@ -14,8 +14,8 @@ import {
   getReport,
   getToolbar,
   Parameters,
-  parameters,
-  viewer,
+  getParameters,
+  getViewer,
 } from "awatif-ui";
 import { template } from "./template";
 
@@ -105,8 +105,8 @@ document.body.append(
     author: "https://www.linkedin.com/in/cal-mense/",
   }),
   getDialog({ dialogBody }),
-  parameters(params),
-  viewer({
+  getParameters(params),
+  getViewer({
     structure,
     settingsObj: {
       gridSize: 1000,

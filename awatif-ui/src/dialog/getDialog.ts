@@ -1,6 +1,7 @@
+import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { createRef, ref } from "lit-html/directives/ref.js";
-import van, { State } from "vanjs-core";
+
 import "./styles.css";
 
 export function getDialog({
@@ -31,25 +32,30 @@ export function getDialog({
   // Update
   element.id = "dialog";
 
-  // Event
+  // Events
+  // On dialogBody change render the dialog
   van.derive(() => {
     render(template(), element);
   });
 
+  // On dialogBody change show the dialog
   van.derive(() => {
     if (dialogBody.val) dialogElm.value?.show();
   });
 
+  // On close button click close the dialog and reset dialogBody
   function onClose() {
     dialogElm.value?.close();
     dialogBody.val = undefined;
   }
 
+  // On resize click resize dialog
   addResizeListeners(dialogElm.value);
 
   return element;
 }
 
+// Utils
 function addResizeListeners(dialog: HTMLDialogElement | null) {
   if (!dialog) return;
 

@@ -1,6 +1,12 @@
 import van, { State } from "vanjs-core";
 import { Element, Node } from "awatif-data-structure";
-import { viewer, Drawing, Parameters, parameters, getToolbar } from "awatif-ui";
+import {
+  getViewer,
+  Drawing,
+  Parameters,
+  getParameters,
+  getToolbar,
+} from "awatif-ui";
 import { toolbar } from "./toolbar";
 
 // Init
@@ -108,8 +114,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(params),
+  getViewer({
     structure: {
       nodes,
       elements,

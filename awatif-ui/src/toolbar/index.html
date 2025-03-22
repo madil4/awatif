@@ -4,24 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Awatif UI - Toolbar</title>
-    <script type="module">
-      import { html } from "lit-html";
-      import van from "vanjs-core";
-      import { getToolbar } from "./getToolbar";
-
-      const clickedButton = van.state("");
-
-      const toolbarElm = getToolbar({
-        buttons: ["Report", "Tables"],
-        sourceCode: "http://localhost:4600/toolbar/index.html",
-        author: "https://www.linkedin.com/in/madil4/",
-        clickedButton,
-      });
-
-      van.derive(() => console.log(clickedButton.val));
-
-      document.body.appendChild(toolbarElm);
-    </script>
   </head>
-  <body></body>
+  <body>
+    <script type="module" src="main.ts"></script>
+  </body>
 </html>

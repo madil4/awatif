@@ -8,7 +8,7 @@ import {
   AnalyzeOutputs,
 } from "awatif-data-structure";
 import { analyze, deform } from "awatif-fem";
-import { getToolbar, parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 import { createTruss } from "./createTruss";
 
 // Init
@@ -429,8 +429,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(params),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,

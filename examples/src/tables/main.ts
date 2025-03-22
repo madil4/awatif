@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { viewer, getTables, getToolbar, getDialog } from "awatif-ui";
+import { getViewer, getTables, getToolbar, getDialog } from "awatif-ui";
 
 // init
 const inputPolyline = van.state([
@@ -64,5 +64,5 @@ document.body.append(
     author: "https://www.linkedin.com/in/cal-mense/",
   }),
   getDialog({ dialogBody }),
-  viewer({ objects3D })
+  getViewer({ objects3D })
 );

@@ -1,5 +1,6 @@
-import { w2grid } from "w2ui";
 import van, { State } from "vanjs-core";
+import { w2grid } from "w2ui";
+
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
@@ -15,7 +16,7 @@ export function getGrid({
   data: State<Data>;
   onChange?: (data: Data) => void;
 }): HTMLDivElement {
-  // init
+  // Init
   const gridElm = document.createElement("div");
 
   const grid = new w2grid({
@@ -28,15 +29,15 @@ export function getGrid({
     records: toRecords(data.rawVal, fields),
   });
 
-  // update
+  // Update
   gridElm.setAttribute("id", "grid");
 
-  // events
-  // on size change
+  // Events
+  // On size change refresh grid
   const resizeObserver = new ResizeObserver(() => grid.refresh());
   resizeObserver.observe(gridElm);
 
-  // on field edit
+  // On field edit update data
   grid.onChange = (e) => {
     // ignore changes if outside fields
     if (!fields[e.detail.column]) return;
@@ -48,6 +49,7 @@ export function getGrid({
     if (onChange) onChange(toData(grid.records, fields));
   };
 
+  // On delete update data
   grid.onDelete = (e) => {
     e.detail.force = true;
 
@@ -56,6 +58,7 @@ export function getGrid({
     };
   };
 
+  // On paste update data
   grid.onPaste = (e) => {
     e.onComplete = () => {
       grid.mergeChanges();
@@ -64,7 +67,7 @@ export function getGrid({
     };
   };
 
-  // on data change
+  // on data change update grid and refresh
   van.derive(() => {
     grid.records = toRecords(data.val, fields);
     grid.refresh();

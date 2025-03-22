@@ -8,7 +8,7 @@ import {
   AnalyzeOutputs,
 } from "awatif-data-structure";
 import { deform, analyze } from "awatif-fem";
-import { getToolbar, Parameters, parameters, viewer } from "awatif-ui";
+import { getToolbar, Parameters, getParameters, getViewer } from "awatif-ui";
 
 // Init
 const params: Parameters = {
@@ -69,8 +69,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(params),
+  getViewer({
     structure: {
       nodes,
       elements,

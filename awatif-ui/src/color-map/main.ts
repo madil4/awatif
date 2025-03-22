@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import * as math from "mathjs";
-
 import van from "vanjs-core";
-import { parameters, Parameters, viewer, colorMap } from "awatif-ui";
+
 import { Node } from "awatif-data-structure";
+import { getParameters, Parameters, getViewer, getColorMap } from "awatif-ui";
 
 // Init
 const params: Parameters = {
@@ -39,17 +39,17 @@ van.derive(() => {
     getDistancesFromVertex([params.boundary.value.val, 0, 3], points.val)
   );
 
-  objects3D.val = [colorMap(points, polygon, distancesState).val];
+  objects3D.val = [getColorMap(points, polygon, distancesState).val];
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(params),
+  getViewer({
     objects3D,
   })
 );
 
-// Utils ------------------------------------------------------
+// Utils
 function getDistancesFromVertex(
   vertex: [number, number, number],
   points: Node[]

@@ -1,6 +1,8 @@
 import { w2tabs } from "w2ui";
 import { State } from "vanjs-core";
+
 import { Data, getGrid } from "../grid/getGrid";
+
 import "w2ui/w2ui-2.0.min.css";
 import "./styles.css";
 
@@ -18,6 +20,7 @@ export function getTables({
   >;
   onChange?: ({ table, data }) => void;
 }): HTMLElement {
+  // Init
   const tablesElm = document.createElement("div");
   const tabsElm = document.createElement("div");
 
@@ -43,13 +46,14 @@ export function getTables({
     tabs: tabsData,
   });
 
-  // update
+  // Update
   tablesElm.id = "tables";
   tabsElm.id = "tabs";
 
   tablesElm.append(grids.values().next().value, tabsElm);
 
-  // events
+  // Events
+  // On tab click replace grid
   tabs.onClick = (e: { target: string }) => {
     tablesElm.firstChild.replaceWith(grids.get(e.target));
   };

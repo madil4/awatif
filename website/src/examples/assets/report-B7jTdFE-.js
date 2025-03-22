@@ -1,4 +1,4 @@
-import{v as e,e as w,x as l,g as $,a as x}from"./styles-fAu9ATwT.js";import{a as y}from"./analyze-BUmtxk8b.js";import{d as z}from"./deform-zhDK5UXh.js";import{p as T}from"./parameters-BXCk-peK.js";import{g as S}from"./getDialog-BoDfFnoY.js";function F({template:i,data:n}){const s=document.createElement("div");return e.derive(()=>{w(i(n),s)}),s}function B({nodes:i,nodeInputs:n,elementInputs:s,deformOutputs:g,analyzeOutputs:f}){return l`
+import{v as e,e as w,x as l,a as $,g as x}from"./styles-C_lYwh80.js";import{a as y}from"./analyze-DGxmRSWm.js";import{d as z}from"./deform-DOtEKqRG.js";import{g as T}from"./getParameters-C2iMw336.js";import{g as S}from"./getDialog-LU-WaF3Z.js";function F({template:i,data:n}){const s=document.createElement("div");return e.derive(()=>{w(i(n),s)}),s}function B({nodes:i,nodeInputs:n,elementInputs:s,deformOutputs:g,analyzeOutputs:f}){return l`
     <br />
     <header class="header">
       <div class="header-left">
