@@ -18,13 +18,12 @@
   "scripts": {
     "dev:fem": "npm run dev -w awatif-fem",
     "dev:mesh": "npm run dev -w awatif-mesh",
+    "dev:proprietary": "npm run dev -w awatif-proprietary",
     "dev:ui": "npm run dev -w awatif-ui",
     "dev:examples": "npm run dev -w examples",
     "build:examples": "npm run build -w examples",
     "dev:website": "npm run dev -w website",
     "build:website": "npm run build -w website",
-    "dev:marketplace": "npm run dev -w marketplace",
-    "build:marketplace": "npm run build -w marketplace",
     "dedupe": "npm dedupe && echo 'Optimize build size when using same package in multiple packages'",
     "ncu": "ncu && echo 'Update npm packages'"
   },
@@ -33,10 +32,10 @@
     "awatif-design",
     "awatif-fem",
     "awatif-mesh",
+    "awatif-proprietary",
     "awatif-ui",
     "examples",
-    "website",
-    "marketplace"
+    "website"
   ],
   "engines": {
     "node": ">=20"

@@ -3,14 +3,14 @@ import * as THREE from "three";
 import { sheets, viewer, layout, title, grid, marketing } from "awatif-ui";
 import { html, TemplateResult } from "lit-html";
 
+import { getSectionProperties } from "awatif-proprietary";
+import { convert2DTo3D } from "./utils/convert2DTo3D";
+import { handleNumericalData } from "./utils/handleNumericalData";
 import {
   BasicInputs,
   getBasicInputs,
-  getSectionProperties,
   getMonteCarloPoints,
-} from "../../../marketplace/getSectionProperties";
-import { convert2DTo3D } from "./utils/convert2DTo3D";
-import { handleNumericalData } from "./utils/handleNumericalData";
+} from "awatif-proprietary/src/getSectionProperties";
 
 // init
 const bf = 165; // Flange width
