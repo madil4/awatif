@@ -4,6 +4,7 @@ import van from "vanjs-core";
 
 import { Node } from "awatif-data-structure";
 import { getParameters, Parameters, getViewer, getColorMap } from "awatif-ui";
+import { getLegend } from "./getLegend";
 
 // Init
 const parameters: Parameters = {
@@ -17,6 +18,7 @@ const parameters: Parameters = {
 };
 
 const objects3D = van.state([new THREE.Mesh()]);
+const legendState = van.state(getLegend(van.state([0])));
 
 // Events: on parameter change
 van.derive(() => {
@@ -39,12 +41,14 @@ van.derive(() => {
     getDistancesFromVertex([parameters.boundary.value.val, 0, 3], points.val)
   );
 
-  objects3D.val = [getColorMap(points, polygon, distancesState).val];
+  objects3D.val = [colorMap(points, polygon, distancesState).val];
+  legendState.val = getLegend(distancesState);
 });
 
 document.body.append(
-  getParameters(parameters),
-  getViewer({
+  legendState.val,
+  parameters(params),
+  viewer({
     objects3D,
   })
 );
