@@ -45,7 +45,7 @@ van.derive(() => {
 });
 
 document.body.append(
-  getLegend(distancesState),
+  getLegend(distancesState, 10),
   parameters(params),
   viewer({
     objects3D,

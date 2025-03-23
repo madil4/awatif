@@ -9,19 +9,14 @@
     #0000ff
   );
   position: absolute;
-  right: 7%;
+  right: 10%;
   bottom: 25vh;
   z-index: 2; /* On top of the viewer */
-}
-
-#marker-0 {
-  margin-top: 0px;
 }
 
 .marker {
   width: 10px;
   height: 1px;
-  margin-top: calc(12.5vh - 1px);
   margin-left: 30px;
   background: white;
   position: relative;
