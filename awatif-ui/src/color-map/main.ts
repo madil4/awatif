@@ -38,10 +38,10 @@ van.derive(() => {
   const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   distancesState.val = getDistancesFromVertex(
-    [params.boundary.value.val, 0, 3],
+    [parameters.boundary.value.val, 0, 3],
     points.val
   );
-  objects3D.val = [colorMap(points, polygon, distancesState).val];
+  objects3D.val = [getColorMap(points, polygon, distancesState).val];
 });
 
 document.body.append(
