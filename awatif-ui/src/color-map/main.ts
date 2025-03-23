@@ -18,7 +18,7 @@ const parameters: Parameters = {
 };
 
 const objects3D = van.state([new THREE.Mesh()]);
-const distancesState = van.state([0]);
+const distancesState = van.state([]);
 
 // Events: on parameter change
 van.derive(() => {
