@@ -31,9 +31,12 @@ export function getLegend(
 
   // update marker values
   van.derive(() => {
-    markerRatios.forEach((ratio, i) => {
-      markerText = document.getElementById(`marker-text-${i}`);
-      markerText.innerHTML = getMarkerValue(values.val, ratio).toString();
+    // ensure update is done after all DOM elements are created
+    setTimeout(() => {
+      markerRatios.forEach((ratio, i) => {
+        markerText = document.getElementById(`marker-text-${i}`);
+        markerText.innerText = getMarkerValue(values.val, ratio).toString();
+      });
     });
   });
 
@@ -42,6 +45,5 @@ export function getLegend(
 
 function getMarkerValue(values: number[], ratio: number) {
   const valueRange = Math.max(...values) - Math.min(...values);
-
   return (Math.min(...values) + ratio * valueRange).toPrecision(3);
 }
