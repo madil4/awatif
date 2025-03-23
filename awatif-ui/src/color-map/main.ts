@@ -9,7 +9,7 @@ import { getLegend } from "./getLegend";
 // Init
 const parameters: Parameters = {
   boundary: {
-    value: van.state(5),
+    value: van.state(10),
     min: 1,
     max: 10,
     step: 0.1,
@@ -18,7 +18,7 @@ const parameters: Parameters = {
 };
 
 const objects3D = van.state([new THREE.Mesh()]);
-const legendState = van.state(getLegend(van.state([0])));
+const distancesState = van.state([0]);
 
 // Events: on parameter change
 van.derive(() => {
@@ -37,16 +37,15 @@ van.derive(() => {
   ] as Node[]);
   const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
-  const distancesState = van.state(
-    getDistancesFromVertex([parameters.boundary.value.val, 0, 3], points.val)
+  distancesState.val = getDistancesFromVertex(
+    [params.boundary.value.val, 0, 3],
+    points.val
   );
-
   objects3D.val = [colorMap(points, polygon, distancesState).val];
-  legendState.val = getLegend(distancesState);
 });
 
 document.body.append(
-  legendState.val,
+  getLegend(distancesState),
   parameters(params),
   viewer({
     objects3D,

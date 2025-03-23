@@ -7,16 +7,26 @@ export function getLegend(values: State<number[]>): HTMLDivElement {
 
   const markerRatios = [1, 0.75, 0.5, 0.25, 0];
 
-  markerRatios.forEach((ratio, i) => {
-    const markerElem = document.createElement("div");
+  let markerElem: HTMLElement;
+  let markerText: HTMLElement;
+  markerRatios.forEach((_, i) => {
+    markerElem = document.createElement("div");
     markerElem.id = `marker-${i}`;
     markerElem.className = "marker";
 
-    const markerText = document.createElement("p");
-    markerText.innerHTML = getMarkerValue(values.val, ratio).toString();
+    markerText = document.createElement("p");
+    markerText.id = `marker-text-${i}`;
 
     markerElem.append(markerText);
     legendElm.append(markerElem);
+  });
+
+  // update marker values
+  van.derive(() => {
+    markerRatios.forEach((ratio, i) => {
+      markerText = document.getElementById(`marker-text-${i}`);
+      markerText.innerHTML = getMarkerValue(values.val, ratio).toString();
+    });
   });
 
   return legendElm;
