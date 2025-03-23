@@ -30,9 +30,9 @@ export function getLegend(
   });
 
   // update marker values
-  van.derive(() => {
-    // ensure update is done after all DOM elements are created
-    setTimeout(() => {
+  setTimeout(() => {
+    van.derive(() => {
+      // ensure update is done after all DOM elements are created
       markerRatios.forEach((ratio, i) => {
         markerText = document.getElementById(`marker-text-${i}`);
         markerText.innerText = getMarkerValue(values.val, ratio).toString();
