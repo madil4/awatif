@@ -1,11 +1,17 @@
 import van, { State } from "vanjs-core";
 import "./styles.css";
 
-export function getLegend(values: State<number[]>): HTMLDivElement {
+export function getLegend(
+  values: State<number[]>,
+  numMarkerIntervals: number = 4
+): HTMLDivElement {
   const legendElm = document.createElement("div");
   legendElm.className = "legend";
 
-  const markerRatios = [1, 0.75, 0.5, 0.25, 0];
+  const markerRatios = Array.from(
+    { length: numMarkerIntervals + 1 },
+    (_, i) => i / numMarkerIntervals
+  ).reverse();
 
   let markerElem: HTMLElement;
   let markerText: HTMLElement;
@@ -13,6 +19,8 @@ export function getLegend(values: State<number[]>): HTMLDivElement {
     markerElem = document.createElement("div");
     markerElem.id = `marker-${i}`;
     markerElem.className = "marker";
+    markerElem.style.marginTop =
+      i == 0 ? `0px` : `calc(${50 / numMarkerIntervals}vh - 1px)`;
 
     markerText = document.createElement("p");
     markerText.id = `marker-text-${i}`;
