@@ -3,23 +3,18 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Node, Element } from "awatif-data-structure";
 
-export function contours(
+export function getContours(
   nodes: State<Node[]>,
   elements: State<Element[]>,
   contourValues: State<number[]>,
-  contourOptions: State<string>,
+  contourOptions: State<string>
 ): State<THREE.Mesh> {
-  let contourMesh = getContourBaseMesh(
-    nodes.val,
-    elements.val
-  );
+  let contourMesh = getContourBaseMesh(nodes.val, elements.val);
+
   van.derive(() => {
     if (!contourOptions.val) return;
 
-    contourMesh = getContourBaseMesh(
-      nodes.val,
-      elements.val
-    );
+    contourMesh = getContourBaseMesh(nodes.val, elements.val);
 
     contourMesh = addColorToMesh(contourMesh, contourValues.val);
   });
@@ -27,7 +22,7 @@ export function contours(
   return van.state(contourMesh);
 }
 
-// Utils ------------------------------------------------------
+// Utils
 function getContourBaseMesh(nodes: Node[], elements: Element[]): THREE.Mesh {
   const mesh = new THREE.Mesh(
     new THREE.BufferGeometry(),
