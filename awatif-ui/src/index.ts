@@ -10,5 +10,3 @@ export { getColorMap } from "./color-map/getColorMap";
 export { getToolbar } from "./toolbar/getToolbar";
 export { getDialog } from "./dialog/getDialog";
 export { getReport } from "./report/getReport";
-
-export { contours } from "./viewer/objects/contours";

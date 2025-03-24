@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 import { Node } from "awatif-data-structure";
 import { mesh } from "awatif-mesh";
-import { contours } from "awatif-ui";
+import { getContours } from "./getContours";
 
 export function getColorMap(
   points: State<Node[]>, // Points that define the vertices of the polygon and ones inside the polygon.
@@ -17,6 +17,12 @@ export function getColorMap(
     maxNumSteinerPoints: 0,
     minMeshAngleDegrees: 1,
   });
-  const contourMesh = contours(nodes, elements, values, van.state("color-map"));
+
+  const contourMesh = getContours(
+    nodes,
+    elements,
+    values,
+    van.state("color-map")
+  );
   return contourMesh;
 }
