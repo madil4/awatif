@@ -6,7 +6,7 @@ export function getLegend(
   numMarkerIntervals: number = 4
 ): HTMLDivElement {
   const legendElm = document.createElement("div");
-  legendElm.className = "legend";
+  legendElm.id = "legend";
 
   const markerRatios = Array.from(
     { length: numMarkerIntervals + 1 },
