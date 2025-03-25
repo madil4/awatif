@@ -5,6 +5,7 @@ import { Node } from "awatif-data-structure";
 import { mesh } from "awatif-mesh";
 import { getContours } from "./getContours";
 
+// Todo: Better to remove reactivity since we are creating new objects3D every time.
 export function getColorMap(
   points: State<Node[]>, // Points that define the vertices of the polygon and ones inside the polygon.
   polygon: State<number[]>, // Polygon that defines the shape of the mesh.
