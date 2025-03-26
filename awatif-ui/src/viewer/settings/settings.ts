@@ -19,6 +19,7 @@ export type Settings = {
   nodeResults: State<string>;
   contours: State<string>;
   flipAxes: State<boolean>;
+  solidModel?: State<boolean>;
 };
 
 export function settings(
@@ -57,6 +58,8 @@ export function settings(
       label: "Orientations",
     });
   }
+
+  pane.addBinding(settingsState.solidModel, "val", { label: "Solid model" });
 
   if (structure.nodeInputs || structure.elementInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });

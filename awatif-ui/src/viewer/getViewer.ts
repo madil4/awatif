@@ -35,6 +35,7 @@ export type SettingsObj = {
   nodeResults?: string;
   contours?: string;
   flipAxes?: boolean;
+  solidModel?: boolean
 };
 
 export function getViewer({
@@ -85,9 +86,32 @@ export function getViewer({
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
   controls.target.set(0.5 * gridSize, 0.5 * gridSize, 0);
   controls.minDistance = 1;
-  controls.maxDistance = z2fit * 1.5;
+  controls.maxDistance = z2fit * 3.5;
   controls.zoomSpeed = 10;
   controls.update();
+
+  const lightColor = 0xffffff;
+  const ambientLight = new THREE.AmbientLight(lightColor, 0.5);
+  scene.add(ambientLight);
+
+  const light1 = new THREE.DirectionalLight(0xffffff, 0.5);
+  light1.position.set(30, 25, -10);
+  light1.shadow.mapSize.width = 1024;
+  light1.shadow.mapSize.height = 1024;
+  
+  const d = 10;
+  light1.shadow.camera.left = -d;
+  light1.shadow.camera.right = d;
+  light1.shadow.camera.top = d;
+  light1.shadow.camera.bottom = -d;
+  light1.shadow.camera.far = 1000;
+  
+  const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+  light2.color.setHSL(11, 43, 96);
+  light2.position.set(-10, 0, 30);
+  
+  scene.add(light1);
+  scene.add(light2);
 
   scene.add(gridObj, axes(settings.gridSize.rawVal, settings.flipAxes.rawVal));
 
@@ -159,6 +183,7 @@ export function getViewer({
     settings.elementResults.val;
     settings.nodeResults.val;
     settings.contours.val;
+    settings.solidModel;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
@@ -168,7 +193,9 @@ export function getViewer({
     if (!objects3D?.val.length) return;
 
     scene.remove(...objects3D.oldVal);
-    scene.add(...objects3D.rawVal);
+
+    if (settings.solidModel.val)
+      scene.add(...objects3D.rawVal);
 
     viewerRender();
   });
@@ -198,6 +225,7 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
     contours: van.state(settingsObj?.contours ?? "none"),
     flipAxes: van.state(settingsObj?.flipAxes ?? false),
+    solidModel: van.state(settingsObj?.solidModel ?? false)
   };
 }
 
