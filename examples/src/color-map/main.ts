@@ -9,6 +9,7 @@ import {
   getViewer,
   getColorMap,
   getLegend,
+  getToolbar,
 } from "awatif-ui";
 import { mesh } from "awatif-mesh";
 
@@ -67,7 +68,12 @@ document.body.append(
     structure: { nodes, elements },
     objects3D,
   }),
-  getLegend(distances)
+  getLegend(distances),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/color-map/main.ts",
+    author: "https://www.linkedin.com/in/siu-kai-cheung/",
+  })
 );
 
 // Utils
