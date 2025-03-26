@@ -1,29 +1,52 @@
-import van, { State } from "vanjs-core";
 import * as THREE from "three";
+import { Node, Element } from "awatif-data-structure";
 
-import { Node } from "awatif-data-structure";
-import { mesh } from "awatif-mesh";
-import { getContours } from "./getContours";
+import { Lut } from "three/addons/math/Lut.js";
 
-// Todo: Better to remove reactivity since we are creating new objects3D every time.
 export function getColorMap(
-  points: State<Node[]>, // Points that define the vertices of the polygon and ones inside the polygon.
-  polygon: State<number[]>, // Polygon that defines the shape of the mesh.
-  values: State<number[]> // Values used to color the mesh.
-): State<THREE.Mesh> {
-  const { nodes, elements } = mesh({
-    points,
-    polygon,
-    maxMeshSize: null,
-    maxNumSteinerPoints: 0,
-    minMeshAngleDegrees: 1,
-  });
+  nodes: Node[],
+  elements: Element[],
+  values: number[]
+): THREE.Mesh {
+  // Init
+  const lut = new Lut();
+  const color = new THREE.Color();
 
-  const contourMesh = getContours(
-    nodes,
-    elements,
-    values,
-    van.state("color-map")
+  const colorMap = new THREE.Mesh(
+    new THREE.BufferGeometry(),
+    new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      vertexColors: true,
+    })
   );
-  return contourMesh;
+
+  // Update
+  lut.setColorMap("rainbow");
+  colorMap.renderOrder = -1; // to ensure that it always set behind the mesh
+
+  // Update geometry
+  colorMap.geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(nodes.flat(), 3)
+  );
+  colorMap.geometry.setIndex(
+    new THREE.Uint16BufferAttribute(elements.flat(), 1)
+  );
+
+  colorMap.geometry.setAttribute(
+    "color",
+    new THREE.Float32BufferAttribute(nodes.map(() => [0, 0, 0]).flat(), 3)
+  );
+
+  // Update colors
+  lut.setMax(Math.max(...values));
+  lut.setMin(Math.min(...values));
+
+  for (let i = 0; i < values.length; i++) {
+    color.copy(lut.getColor(values[i])).convertSRGBToLinear();
+
+    colorMap.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);
+  }
+
+  return colorMap;
 }

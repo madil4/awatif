@@ -1,33 +1,35 @@
 import van from "vanjs-core";
-
 import { Node } from "awatif-data-structure";
-import { getViewer, getColorMap } from "awatif-ui";
+
+import { getViewer } from "../viewer/getViewer";
+import { getColorMap } from "./getColorMap";
 import { getLegend } from "./getLegend";
 
-const objects3D = van.state([]);
-const values = van.state([0, 1, 2, 1]);
-
-const points = van.state([
+const nodes = van.state([
   [0, 0, 0],
   [5, 0, 0],
   [5, 0, 5],
   [0, 0, 5],
 ] as Node[]);
-const polygon = van.state([0, 1, 2, 3]);
+const elements = van.state([
+  [0, 1, 2],
+  [0, 2, 3],
+]);
+const values = van.state([0, 0, 10, 0]);
+const objects3D = van.state([]);
 
 van.derive(() => {
-  values.val; // to trigger reactivity
-
-  objects3D.val = [getColorMap(points, polygon, values).val];
+  objects3D.val = [getColorMap(nodes.val, elements.val, values.val)];
 });
 
 setTimeout(() => {
-  values.val = [0, 1, 5, 1];
+  values.val = [1, 5, 0, 0];
 }, 1000);
 
 document.body.append(
-  getLegend(values, 10),
+  getLegend(values),
   getViewer({
+    structure: { nodes, elements },
     objects3D,
   })
 );
