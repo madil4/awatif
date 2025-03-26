@@ -1,9 +1,10 @@
 import van, { State } from "vanjs-core";
+
 import "./styles.css";
 
 export function getLegend(
   values: State<number[]>,
-  numMarkerIntervals: number = 4
+  numMarkerIntervals: number = 8
 ): HTMLDivElement {
   const legendElm = document.createElement("div");
   legendElm.id = "legend";
@@ -43,6 +44,7 @@ export function getLegend(
   return legendElm;
 }
 
+// Utils
 function getMarkerValue(values: number[], ratio: number) {
   const valueRange = Math.max(...values) - Math.min(...values);
   return (Math.min(...values) + ratio * valueRange).toPrecision(3);
