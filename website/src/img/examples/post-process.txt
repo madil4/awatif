@@ -1,1 +1,2 @@
-To produce good images, use sharpen edges filter then oil paint then level (800x600)
+- To produce good images, use sharpen edges filter then oil paint then level (800x600)
+- Use MacOS convertImage with medium quality 
