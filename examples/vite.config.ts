@@ -27,6 +27,7 @@ export default defineConfig({
         drawing: "src/drawing/index.html",
         report: "src/report/index.html",
         plate: "src/plate/index.html",
+        "3d-views": "src/3d-views/index.html",
       },
     },
   },
