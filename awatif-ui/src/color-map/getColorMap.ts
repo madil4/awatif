@@ -45,6 +45,8 @@ export function getColorMap(
   for (let i = 0; i < values.length; i++) {
     color.copy(lut.getColor(values[i])).convertSRGBToLinear();
 
+    color.multiplyScalar(0.6); // dim the color for better integration with mesh
+
     colorMap.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);
   }
 
