@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Node, Structure } from "awatif-data-structure";
+import { Node, Structure } from "awatif-data-model";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import { Settings } from "./settings/settings";
@@ -35,7 +35,7 @@ export type SettingsObj = {
   nodeResults?: string;
   contours?: string;
   flipAxes?: boolean;
-  solidModel?: boolean
+  solidModel?: boolean;
 };
 
 export function getViewer({
@@ -98,18 +98,18 @@ export function getViewer({
   light1.position.set(30, 25, -10);
   light1.shadow.mapSize.width = 1024;
   light1.shadow.mapSize.height = 1024;
-  
+
   const d = 10;
   light1.shadow.camera.left = -d;
   light1.shadow.camera.right = d;
   light1.shadow.camera.top = d;
   light1.shadow.camera.bottom = -d;
   light1.shadow.camera.far = 1000;
-  
+
   const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
   light2.color.setHSL(11, 43, 96);
   light2.position.set(-10, 0, 30);
-  
+
   scene.add(light1);
   scene.add(light2);
 
@@ -194,8 +194,7 @@ export function getViewer({
 
     scene.remove(...objects3D.oldVal);
 
-    if (settings.solidModel.val)
-      scene.add(...objects3D.rawVal);
+    scene.add(...objects3D.rawVal);
 
     viewerRender();
   });
@@ -225,7 +224,7 @@ function getDefaultSettings(settingsObj: SettingsObj): Settings {
     nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
     contours: van.state(settingsObj?.contours ?? "none"),
     flipAxes: van.state(settingsObj?.flipAxes ?? false),
-    solidModel: van.state(settingsObj?.solidModel ?? false)
+    solidModel: van.state(settingsObj?.solidModel ?? false),
   };
 }
 

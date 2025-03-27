@@ -4,7 +4,7 @@ import {
   NodeInputs,
   ElementInputs,
   DeformOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { flatten, lusolve, multiply, subset, index } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 

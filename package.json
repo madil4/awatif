@@ -28,7 +28,7 @@
     "ncu": "ncu && echo 'Update npm packages'"
   },
   "workspaces": [
-    "awatif-data-structure",
+    "awatif-data-model",
     "awatif-design",
     "awatif-fem",
     "awatif-mesh",

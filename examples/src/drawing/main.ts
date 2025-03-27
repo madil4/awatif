@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import { Element, Node } from "awatif-data-structure";
+import { Element, Node } from "awatif-data-model";
 import {
   getViewer,
   Drawing,

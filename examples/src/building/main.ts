@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-structure";
+import { Node, Element } from "awatif-data-model";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init

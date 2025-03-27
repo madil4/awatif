@@ -1,5 +1,5 @@
 import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-structure";
+import { Node, Element } from "awatif-data-model";
 import triangle from "triangle-wasm";
 // @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";

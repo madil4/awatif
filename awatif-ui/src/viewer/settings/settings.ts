@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { Pane } from "tweakpane";
-import { Structure } from "awatif-data-structure";
+import { Structure } from "awatif-data-model";
 
 import "./styles.css";
 

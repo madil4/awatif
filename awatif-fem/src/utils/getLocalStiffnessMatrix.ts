@@ -1,4 +1,4 @@
-import { Node, ElementInputs } from "awatif-data-structure";
+import { Node, ElementInputs } from "awatif-data-model";
 import {
   add,
   matrix,

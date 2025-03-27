@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as math from "mathjs";
 import van, { State } from "vanjs-core";
 
-import { Element, Node } from "awatif-data-structure";
+import { Element, Node } from "awatif-data-model";
 import {
   getParameters,
   Parameters,

@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import * as THREE from "three";
-import { Node, Element, NodeInputs } from "awatif-data-structure";
+import { Node, Element, NodeInputs } from "awatif-data-model";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
