@@ -1,17 +1,16 @@
 import van from "vanjs-core";
-
-import { Node } from "awatif-data-model";
 import { getViewer } from "awatif-ui";
+
 import { mesh } from "../.././mesh";
 
-const points = van.state([
-  [0, 0, 0],
-  [10, 0, 0],
-  [10, 10, 0],
-] as Node[]);
-const polygon = van.state([0, 1, 2]);
-
-const { nodes, elements, boundaryIndices } = mesh({ points, polygon });
+const { nodes, elements, boundaryIndices } = mesh({
+  points: [
+    [0, 0, 0],
+    [10, 0, 0],
+    [10, 10, 0],
+  ],
+  polygon: [0, 1, 2],
+});
 
 // Add supports at boundary nodes
 const nodeInputs = van.state({});

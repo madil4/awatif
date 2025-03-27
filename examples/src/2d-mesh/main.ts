@@ -14,37 +14,37 @@ const parameters: Parameters = {
   },
 };
 
-const nodesState: State<Node[]> = van.state([]);
-const elementsState: State<Element[]> = van.state([]);
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
 
-// Events: on parameter change
+// Events: on parameter change mesh
 van.derive(() => {
-  const points = van.state([
-    [0, 0, 0],
-    [5, 0, 0],
-    [parameters.boundary.value.val, 0, 3],
-    [8, 0, 7],
-    [15, 0, 5],
-    [15, 0, 0],
-    [20, 0, 0],
-    [20, 0, 10],
-    [0, 0, 10],
-    [0, 0, 0],
-  ] as Node[]);
-  const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+  const { nodes: meshNodes, elements: meshElements } = mesh({
+    points: [
+      [0, 0, 0],
+      [5, 0, 0],
+      [parameters.boundary.value.val, 0, 3],
+      [8, 0, 7],
+      [15, 0, 5],
+      [15, 0, 0],
+      [20, 0, 0],
+      [20, 0, 10],
+      [0, 0, 10],
+      [0, 0, 0],
+    ],
+    polygon: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  });
 
-  const { nodes, elements } = mesh({ points, polygon });
-
-  nodesState.val = nodes.val;
-  elementsState.val = elements.val;
+  nodes.val = meshNodes.val;
+  elements.val = meshElements.val;
 });
 
 document.body.append(
   getParameters(parameters),
   getViewer({
     structure: {
-      nodes: nodesState,
-      elements: elementsState,
+      nodes: nodes,
+      elements: elements,
     },
   }),
   getToolbar({

@@ -1,7 +1,5 @@
-import * as THREE from "three";
 import * as math from "mathjs";
 import van, { State } from "vanjs-core";
-
 import { Element, Node } from "awatif-data-model";
 import {
   getParameters,
@@ -27,30 +25,27 @@ const parameters: Parameters = {
 const nodes: State<Node[]> = van.state([]);
 const elements: State<Element[]> = van.state([]);
 
-const objects3D = van.state([new THREE.Mesh()]);
-const distances = van.state([0]);
+const objects3D = van.state([]);
+const distances = van.state([]);
 
 // Events: on parameter change
 van.derive(() => {
   const boundaryNode = [parameters.boundary.value.val, 0, 3] as Node;
 
-  const boundaryNodes = van.state([
-    [0, 0, 0],
-    [5, 0, 0],
-    boundaryNode,
-    [8, 0, 7],
-    [15, 0, 5],
-    [15, 0, 0],
-    [20, 0, 0],
-    [20, 0, 10],
-    [0, 0, 10],
-    [0, 0, 0],
-  ] as Node[]);
-  const polygon = van.state([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-
   const { nodes: meshNodes, elements: meshElements } = mesh({
-    points: boundaryNodes,
-    polygon,
+    points: [
+      [0, 0, 0],
+      [5, 0, 0],
+      boundaryNode,
+      [8, 0, 7],
+      [15, 0, 5],
+      [15, 0, 0],
+      [20, 0, 0],
+      [20, 0, 10],
+      [0, 0, 10],
+      [0, 0, 0],
+    ],
+    polygon: [0, 1, 2, 3, 4, 5, 6, 7, 8],
     maxMeshSize: 1,
   });
   nodes.val = meshNodes.val;

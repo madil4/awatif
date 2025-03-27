@@ -1,8 +1,4 @@
 import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-model";
-import triangle from "triangle-wasm";
-// @ts-ignore
-import triangleWasmUrl from "./assets/triangle.wasm?url";
 import {
   cross,
   divide,
@@ -12,29 +8,25 @@ import {
   subtract,
   transpose,
 } from "mathjs";
+import { Node, Element } from "awatif-data-model";
+import triangle from "triangle-wasm";
+
+// @ts-ignore
+import triangleWasmUrl from "./assets/triangle.wasm?url";
 
 // to make sure init is called once with multiple mesh call
 const isWsLoaded = van.state(false);
 triangle.init(triangleWasmUrl).then(() => (isWsLoaded.val = true));
 
-/**
- * Return an array of meshed nodes and elements.
- *
- * @remarks
- * The meshed nodes are in [x, y, z] format on the X-Z plane with y = 0.
- *
- * @param points Array of point(s) in the form of [x, y].
- * @param polygon Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
- */
 export function mesh({
-  points,
-  polygon,
+  points, // Array of point(s) in the form of [x, y].
+  polygon, // Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
   maxMeshSize = 3,
   maxNumSteinerPoints = 300,
   minMeshAngleDegrees = 30,
 }: {
-  points: State<Node[]>;
-  polygon: State<number[]>;
+  points: Node[];
+  polygon: number[];
   maxMeshSize?: number;
   maxNumSteinerPoints?: number;
   minMeshAngleDegrees?: number;
@@ -55,18 +47,18 @@ export function mesh({
 
     // convert from the 3DD to 2D plane for triangulation
     const transformationMatrix = getTransformationMatrix(
-      points.val[0],
-      points.val[1],
-      points.val[2]
+      points[0],
+      points[1],
+      points[2]
     );
-    const points2D = points.val
+    const points2D = points
       .map((p) => multiply(transpose(transformationMatrix), p))
       .map((p) => [p[0], p[1]]);
 
     const triInputs = triangle.makeIO({
       pointlist: points2D.flat(),
       // @ts-ignore
-      segmentlist: toSegments(polygon.val),
+      segmentlist: toSegments(polygon),
     });
     const triOutputs = triangle.makeIO();
 

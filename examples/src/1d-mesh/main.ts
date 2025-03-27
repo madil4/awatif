@@ -24,6 +24,7 @@ const parameters: Parameters = {
   load: { value: van.state(10), min: 0, max: 20 },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});

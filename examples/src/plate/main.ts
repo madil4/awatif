@@ -16,26 +16,32 @@ const parameters: Parameters = {
   load: { value: van.state(-50), min: -100, max: 100, step: 1 },
 };
 
-const nodesState: State<Node[]> = van.state([]);
-const elementsState: State<Element[]> = van.state([]);
-const nodeInputsState: State<NodeInputs> = van.state({});
-const elementInputsState: State<ElementInputs> = van.state({});
-const deformOutputsState: State<DeformOutputs> = van.state({});
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
+const nodeInputs: State<NodeInputs> = van.state({});
+const elementInputs: State<ElementInputs> = van.state({});
+const deformOutputs: State<DeformOutputs> = van.state({});
 
-// Events: on parameter change
+// Events: on parameter change mesh & deform
 van.derive(() => {
-  const { nodes, elements, boundaryIndices } = mesh({
-    points: van.state([
+  const {
+    nodes: meshNodes,
+    elements: meshElements,
+    boundaryIndices,
+  } = mesh({
+    points: [
       [0, 0, 0],
       [15, 0, 0],
       [parameters.xPosition.value.val, 10, 0],
       [0, 5, 0],
-    ]),
-    polygon: van.state([0, 1, 2, 3]),
+    ],
+    polygon: [0, 1, 2, 3],
     maxMeshSize: 2,
   });
+  nodes.val = meshNodes.val;
+  elements.val = meshElements.val;
 
-  const nodeInputs: NodeInputs = {
+  nodeInputs.val = {
     supports: new Map(
       boundaryIndices.val.map((i) => [i, [true, true, true, true, true, true]])
     ),
@@ -43,37 +49,31 @@ van.derive(() => {
       nodes.val.map((_, i) => [i, [0, 0, parameters.load.value.val, 0, 0, 0]])
     ),
   };
+
   const elementsVal = elements.val;
-  const elementInputs: ElementInputs = {
+  elementInputs.val = {
     elasticities: new Map(elementsVal.map((_, i) => [i, 100])),
     thicknesses: new Map(elementsVal.map((_, i) => [i, 1])),
     poissonsRatios: new Map(elementsVal.map((_, i) => [i, 0.3])),
   };
 
-  const deformOutputs = deform(
-    nodes.val,
-    elements.val,
-    nodeInputs,
-    elementInputs
+  deformOutputs.val = deform(
+    meshNodes.val,
+    meshElements.val,
+    nodeInputs.val,
+    elementInputs.val
   );
-
-  // update state
-  nodesState.val = nodes.val;
-  elementsState.val = elements.val;
-  nodeInputsState.val = nodeInputs;
-  elementInputsState.val = elementInputs;
-  deformOutputsState.val = deformOutputs;
 });
 
 document.body.append(
   getParameters(parameters),
   getViewer({
     structure: {
-      nodes: nodesState,
-      elements: elementsState,
-      nodeInputs: nodeInputsState,
-      elementInputs: elementInputsState,
-      deformOutputs: deformOutputsState,
+      nodes,
+      elements,
+      nodeInputs: nodeInputs,
+      elementInputs: elementInputs,
+      deformOutputs: deformOutputs,
     },
     settingsObj: {
       deformedShape: true,

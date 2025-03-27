@@ -8,7 +8,6 @@ const inputPolyline = van.state([
   [5, 0, 5],
   [10, 0, 0],
 ]);
-const outputLines = van.state([]);
 
 const lines = new THREE.Line(
   new THREE.BufferGeometry(),

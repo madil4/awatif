@@ -1,4 +1,4 @@
-import{v as e,i as w,x as l,a as $,g as x}from"./styles-CVhKyYX7.js";import{a as y}from"./analyze-VZgtIitG.js";import{d as z}from"./deform-D3jFwYyY.js";import{g as T}from"./getParameters-BO171xuA.js";import{g as S}from"./getDialog-Bg3lTjT6.js";import"./pureFunctionsAny.generated-BITz6FsS.js";import"./complex-i8qiIvCl.js";function F({template:c,data:n}){const s=document.createElement("div");return e.derive(()=>{w(c(n),s)}),s}function B({nodes:c,nodeInputs:n,elementInputs:s,deformOutputs:g,analyzeOutputs:f}){return l`
+import{v as e,h as w,x as l,g as $}from"./styles-BT9ucHwM.js";import{a as x}from"./analyze-VZgtIitG.js";import{d as y}from"./deform-D3jFwYyY.js";import{g as z}from"./getParameters-BYp-3p_e.js";import{g as T}from"./getToolbar-CO4pQWZZ.js";import{g as S}from"./getDialog-Cd8ixDn8.js";import"./pureFunctionsAny.generated-BITz6FsS.js";import"./complex-i8qiIvCl.js";function F({template:c,data:r}){const s=document.createElement("div");return e.derive(()=>{w(c(r),s)}),s}function B({nodes:c,nodeInputs:r,elementInputs:s,deformOutputs:g,analyzeOutputs:f}){return l`
     <br />
     <header class="header">
       <div class="header-left">
@@ -81,7 +81,7 @@ import{v as e,i as w,x as l,a as $,g as x}from"./styles-CVhKyYX7.js";import{a as
         <th>my</th>
         <th>mz</th>
       </tr>
-      ${[...n.val.supports].map(([a,t])=>l`
+      ${[...r.val.supports].map(([a,t])=>l`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
             <td>
@@ -166,4 +166,4 @@ import{v as e,i as w,x as l,a as $,g as x}from"./styles-CVhKyYX7.js";import{a as
         `)}
     </table>
     <br /><br /><br />
-  `}const r={xPosition:{value:e.state(600),min:0,max:1e3},zPosition:{value:e.state(0),min:0,max:500}},o=e.state([]),d=e.state([]),v=e.state({}),i=e.state({}),h=e.state({}),m=e.state({}),u={nodes:o,elements:d,nodeInputs:v,elementInputs:i,deformOutputs:h,analyzeOutputs:m};e.derive(()=>{o.val=[[250,0,0],[r.xPosition.value.val,0,r.zPosition.value.val],[250,0,400]],d.val=[[0,1],[1,2]],v.val={supports:new Map([[0,[!0,!0,!0,!0,!0,!0]],[2,[!0,!0,!0,!0,!0,!0]]]),loads:new Map([[1,[0,0,-1e3,0,0,0]]])},i.val={elasticities:new Map([[0,200],[1,200]]),areas:new Map([[0,100],[1,100]])},h.val=z(o.val,d.val,v.val,i.val),m.val=y(o.val,d.val,i.val,h.val)});const p=e.state(""),b=e.state(void 0);e.derive(()=>{p.val==="Report"&&(b.val=F({template:B,data:u}))});document.body.append($({clickedButton:p,buttons:["Report"],sourceCode:"https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",author:"https://www.linkedin.com/in/cal-mense/"}),S({dialogBody:b}),T(r),x({structure:u,settingsObj:{gridSize:1e3}}));
+  `}const n={xPosition:{value:e.state(600),min:0,max:1e3},zPosition:{value:e.state(0),min:0,max:500}},o=e.state([]),d=e.state([]),v=e.state({}),i=e.state({}),h=e.state({}),m=e.state({}),u={nodes:o,elements:d,nodeInputs:v,elementInputs:i,deformOutputs:h,analyzeOutputs:m};e.derive(()=>{o.val=[[250,0,0],[n.xPosition.value.val,0,n.zPosition.value.val],[250,0,400]],d.val=[[0,1],[1,2]],v.val={supports:new Map([[0,[!0,!0,!0,!0,!0,!0]],[2,[!0,!0,!0,!0,!0,!0]]]),loads:new Map([[1,[0,0,-1e3,0,0,0]]])},i.val={elasticities:new Map([[0,200],[1,200]]),areas:new Map([[0,100],[1,100]])},h.val=y(o.val,d.val,v.val,i.val),m.val=x(o.val,d.val,i.val,h.val)});const p=e.state(""),b=e.state(void 0);e.derive(()=>{p.val==="Report"&&(b.val=F({template:B,data:u}))});document.body.append(T({clickedButton:p,buttons:["Report"],sourceCode:"https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",author:"https://www.linkedin.com/in/cal-mense/"}),S({dialogBody:b}),z(n),$({structure:u,settingsObj:{gridSize:1e3}}));

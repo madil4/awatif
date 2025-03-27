@@ -55,6 +55,7 @@ const parameters: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});
