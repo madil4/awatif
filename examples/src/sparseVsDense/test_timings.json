@@ -1,0 +1,26 @@
+[
+  {
+    "caseName": "Case 1",
+    "time_dense": 367.336167,
+    "time_dense_lu": 350.37533300000007,
+    "time_sparse_lu": 34.47891700000014,
+    "speedup_denseLU": 1.0484076143568015,
+    "speedup_sparseLU": 10.653935766021842
+  },
+  {
+    "caseName": "Case 2",
+    "time_dense": 7531.938292000001,
+    "time_dense_lu": 7480.112375000001,
+    "time_sparse_lu": 161.44687500000146,
+    "speedup_denseLU": 1.006928494439898,
+    "speedup_sparseLU": 46.65273509939374
+  },
+  {
+    "caseName": "Case 3",
+    "time_dense": 840483.823792,
+    "time_dense_lu": 975499.3583750001,
+    "time_sparse_lu": 19418.414499999955,
+    "speedup_denseLU": 0.8615934152863916,
+    "speedup_sparseLU": 43.28282434140037
+  }
+]
