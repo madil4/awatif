@@ -1,6 +1,5 @@
 import van, { State } from "vanjs-core";
 
-
 // Function to get modification factor
 export function getKmod(serviceClass: number, loadDurationClass: string): { kMod: number; gamma: number; chi: number } {
     // Define service class, load duration class, and modification factor
@@ -32,8 +31,6 @@ export function getKmod(serviceClass: number, loadDurationClass: string): { kMod
 
     return { kMod, gamma, chi };
 }
-
-
 
 // Define Glulam properties
 export interface Glulam {

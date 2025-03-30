@@ -78,38 +78,59 @@ h4 {
 }
 
 /* ==========================
-     Header Section
-     ========================== */
+     Minimalistic Header
+   ========================== */
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f4f4f4;
+  align-items: center; /* Center elements vertically */
+  padding: 15px 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  min-height: 60px; /* Ensures enough height for vertical centering */
 }
 
-.header-left h1 {
-  margin: 0;
-  font-size: 24px;
+/* Left Side (Text) */
+.header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
 }
 
+.header-title {
+  font-size: 20px;
+  color: #2e5368;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+
+.header-link {
+  font-size: 14px;
+  color: #666; /* More visible link */
+  text-decoration: none;
+}
+
+.header-link:hover {
+  text-decoration: underline;
+}
+
+.header-date {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Right Side (Logo) */
 .header-right {
   display: flex;
   align-items: center;
 }
 
-.header-right .info {
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  margin-right: 20px;
-}
-
-.headerLogo {
-  height: 10px;
+#headerLogo {
+  max-height: 50px; /* Ensures the logo stays within limits */
   width: auto;
+  opacity: 0.9;
 }
 
 /* ==========================

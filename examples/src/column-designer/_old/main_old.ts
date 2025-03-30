@@ -19,18 +19,18 @@ import {
   Loads,
   EntryParams,
   Geometry,
-} from "./timber-column-designer";
-import { getKmod, getGlulamProperties } from "./utils";
+} from "../utils/timber-column-designer";
+import { getKmod, getGlulamProperties } from "../utils/ec5Utils";
 import "./styles.css";
 
 //@ts-ignorets-ignore
 import logo from "./awatif-logo.jpg";
-import * as reportChecks from "./reportChecks";
+import * as reportChecks from "../utils/reportChecks";
 import { toolbar } from "awatif-ui/src/toolbar/toolbar";
-import { templateReport, templateTables } from "./template";
+import { templateReport, templateTables } from "../utils/template";
 import { dialog } from "awatif-ui/src/dialog/dialog";
-import { levelState, paramsGrade, paramsLoadDurationClass, paramsServiceClass, paramsSupport } from "./parameters";
-import { createColumn, createNodes, createSurface, createText } from "./threejsUtils";
+import { levelState, paramsGrade, paramsLoadDurationClass, paramsServiceClass, paramsSupport } from "../utils/parameters";
+import { createColumn, createNodes, createSurface, createText } from "../utils/threejsUtils";
 
 const designResults = van.state([]);
 const nodes: State<Node[]> = van.state([]);

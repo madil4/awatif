@@ -1,32 +1,17 @@
 import { html, TemplateResult } from "lit-html";
-import { Structure } from "awatif-data-structure";
 import van, { State } from "vanjs-core";
 //@ts-ignorets-ignore
 import logo from "./awatif-logo.jpg";
 
-
-import "./template.css";
-import { getGlulamProperties, getKmod } from "./utils";
+// import "./template.css";
+import { getGlulamProperties, getKmod } from "./ec5Utils";
 import { renderMath } from "./reportUtils";
 
-// Template for the tables dialog
-export const templateTables = ({ sheetsElm }) => {
-  return html`
-    <div>
-      <h2>Tables</h2>
-      <div id="sheets-container">
-        ${sheetsElm}
-        <!-- Render the sheets here -->
-      </div>
-    </div>
-  `;
-};
-
-export const templateReport = ({
+export const template = ({
   designInputs,
   globalInputs,
   designResults,
-  reportChecks
+  reportChecks,
 }) => {
   // var i = 0;
 
@@ -35,27 +20,34 @@ export const templateReport = ({
   const glulam = getGlulamProperties(globalInputs.grade.val);
   const colNames = [];
   for (let j = 0; j < noCols; j++) {
-  colNames.push(designInputs.val[j].name)};
+    colNames.push(designInputs.val[j].name);
+  }
   const selectedColumn = van.state(colNames[0]); // Default to the first column
   var i = colNames.indexOf(selectedColumn.val);
 
 
   return html`
     <header class="header">
-      <div class="header-left">
-        <p class="header-h1">Timber Column Designer</p>
-        <p class="header-h2">https://awatif.co</p>
-        <p class="header-h3">20.02.2025</p>
-      </div>
-      <div class="header-right">
-        <img src=${logo} id="headerLogo" height="60px" />
-      </div>
-    </header>
+    <div class="header-left">
+      <p class="header-title">Report</p>
+      <a href="https://awatif.co" class="header-link" target="_blank">https://awatif.co</a>
+    </div>
+    <div class="header-right">
+      <img src="${logo}" id="headerLogo" alt="Logo" />
+    </div>
+  </header>
+
+
+
 
     <br />
+    <h1>Timber Column Design</h1>
+    <p class="caption">EN 1995-1-1: 2004</p>
+    <br />
+
+
     <h1>Global Summary</h1>
     <h4>Overview of all design results</h4>
-    <p class="caption">EN 1995-1-1: 2004</p>
 
     <p class="p1">The following table gives an overview of all results:</p>
 
@@ -100,16 +92,24 @@ export const templateReport = ({
               <div class="custom-cell-content">${designInputs.val[i].name}</div>
             </td>
             <td>
-              <div class="custom-cell-content">${designInputs.val[i].level}</div>
+              <div class="custom-cell-content">
+                ${designInputs.val[i].level}
+              </div>
             </td>
             <td>
-              <div class="custom-cell-content">${designInputs.val[i].length}</div>
+              <div class="custom-cell-content">
+                ${designInputs.val[i].length}
+              </div>
             </td>
             <td>
-              <div class="custom-cell-content">${designInputs.val[i].width}</div>
+              <div class="custom-cell-content">
+                ${designInputs.val[i].width}
+              </div>
             </td>
             <td>
-              <div class="custom-cell-content">${designInputs.val[i].height}</div>
+              <div class="custom-cell-content">
+                ${designInputs.val[i].height}
+              </div>
             </td>
             <td>
               <div class="custom-cell-content">${globalInputs.grade.val}</div>
@@ -145,19 +145,19 @@ export const templateReport = ({
 
     <p class="p1">Select a column to view results:</p>
 
-  <select
-    id="columnSelect"
-    @change=${(e) => (selectedColumn.val = e.target.value)}
-  >
-    ${colNames.map(
-      (col) =>
-        html`<option value=${col} ?selected=${col === selectedColumn.val}>
-          ${col}
-        </option>`
-    )}
-  </select>
-  <br /><br />
-  
+    <select
+      id="columnSelect"
+      @change=${(e) => (selectedColumn.val = e.target.value)}
+    >
+      ${colNames.map(
+        (col) =>
+          html`<option value=${col} ?selected=${col === selectedColumn.val}>
+            ${col}
+          </option>`
+      )}
+    </select>
+    <br /><br />
+
     <!-- Dropdown in UI -->
 
     <br /><br />
@@ -170,7 +170,11 @@ export const templateReport = ({
     </p>
     <p class="math">
       ${renderMath(
-        `\\chi = \\frac{k_{mod}}{\\gamma} = \\frac{${designResults.val[i].entryParams.kmod}}{${designResults.val[i].entryParams.gamma}} = ${designResults.val[i].entryParams.chi.toFixed(2)}`
+        `\\chi = \\frac{k_{mod}}{\\gamma} = \\frac{${
+          designResults.val[i].entryParams.kmod
+        }}{${designResults.val[i].entryParams.gamma}} = ${designResults.val[
+          i
+        ].entryParams.chi.toFixed(2)}`
       )}
     </p>
     <br />
@@ -224,7 +228,6 @@ export const templateReport = ({
       </tr>
     </table>
 
-
     <br /><br />
     <h2>Design Loading</h2>
     <h4>Summary of applied design forces and moments</h4>
@@ -264,6 +267,5 @@ export const templateReport = ({
     <br /><br />
     <h2>Stress of Members</h2>
     ${reportChecks.generateCompressionCheckHTML(designResults.val[i])}
-
   `;
 };

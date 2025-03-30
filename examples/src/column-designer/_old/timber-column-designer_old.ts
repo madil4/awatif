@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { Glulam } from "./utils";
+import { Glulam } from "../utils/ec5Utils";
 
 // Define a type for support conditions
 export type SupportType =

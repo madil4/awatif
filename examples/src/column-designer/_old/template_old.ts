@@ -3,8 +3,8 @@ import { Structure } from "awatif-data-structure";
 import van, { State } from "vanjs-core";
 
 import "./template.css";
-import { getGlulamProperties, getKmod } from "./utils";
-import { renderMath } from "./reportUtils";
+import { getGlulamProperties, getKmod } from "../utils/ec5Utils";
+import { renderMath } from "../utils/reportUtils";
 
 // Template for the tables dialog
 export const templateTables = ({ sheetsElm }) => {

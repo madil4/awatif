@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import * as THREE from "three";
-import { getViewer, getTables, getToolbar, getDialog } from "awatif-ui";
+import { getViewer, getTables, getToolbar, getDialog } from "awatif-ui/src";
 
 // Init
 const inputPolyline = van.state([

@@ -1,51 +1,40 @@
 import van, { State } from "vanjs-core";
-import { Text } from "awatif-ui/src/viewer/objects/Text";
 import * as THREE from "three";
-import {
-  Parameters,
-  parameters,
-  table,
-  viewer,
-  layout,
-  title,
-  grid,
-  marketing,
-} from "awatif-ui";
-import { html, TemplateResult } from "lit-html";
 import {
   timberColumnDesign,
   SupportType,
-  TimberColumnDesignInput,
   Loads,
   EntryParams,
   Geometry,
-  testFunction,
-  TestInput,
   ColumnDesignInput,
-} from "./timber-column-designer";
-import { getKmod, getGlulamProperties } from "./utils";
-import "./styles.css";
+} from "./utils/timber-column-designer";
+import { getKmod, getGlulamProperties } from "./utils/ec5Utils";
+import { getViewer, getTables, getToolbar, getDialog, getReport } from "awatif-ui/src";
+
+// import "./styles.css";
 
 //@ts-ignorets-ignore
-import logo from "./awatif-logo.jpg";
-import * as reportChecks from "./reportChecks";
-import { toolbar } from "awatif-ui/src/toolbar/toolbar";
-import { templateReport, templateTables } from "./template";
-import { dialog } from "awatif-ui/src/dialog/dialog";
-import { gradeState, levelState, loadDurationClassState, paramsGrade, paramsLoadDurationClass, paramsServiceClass, paramsSupport, serviceClassState, showGeoState, showNedState, supportState } from "./parameters";
-import { createColumn, createNodes, createSurface, createText } from "./threejsUtils";
+import * as reportChecks from "./utils/reportChecks";
+import { template } from "./utils/template";
+import { gradeState, levelState, loadDurationClassState, paramsGrade, paramsLoadDurationClass, paramsServiceClass, paramsSupport, serviceClassState, showGeoState, showNedState, supportState } from "./utils/parameters";
+import { createColumn, createNodes, createSurface, createText } from "./utils/threejsUtils";
 
-// init 
+
+// ---------------------------------------------------
+// Initialization of states and global variables
+// ---------------------------------------------------
+
 const designResults = van.state([]);
 const nodes: State<Node[]> = van.state([]);
 const sheetsObj = new Map();
 const objects3D = van.state([]);
+const tables = new Map();
 
 interface GlobalInputs {
   support: State<string>;
   serviceClass: State<number>;
   loadDurationClass: State<string>;
-  grade: State<string> ;
+  grade: State<string>;
 }
 
 var globalInputs: GlobalInputs = {
@@ -54,6 +43,11 @@ var globalInputs: GlobalInputs = {
   loadDurationClass: loadDurationClassState,
   grade: gradeState,
 };
+
+
+// ---------------------------------------------------
+// Table Data for Design Inputs and Slab Inputs
+// ---------------------------------------------------
 
 const designInputsArray = van.state([
   ["Col1", 0, 7, 0.4, 0.4, 3000, 0, 15, 0, 0, 0],
@@ -99,7 +93,7 @@ const slabInputs = van.state([
 ]);
 
 // slab inputs
-sheetsObj.set("slab-Inputs", {
+tables.set("slab-Inputs", {
   text: "Slab",
   fields: [
     { field: "A", text: "xCord", editable: { type: "int" } },
@@ -110,7 +104,7 @@ sheetsObj.set("slab-Inputs", {
 });
 
 // design inputs
-sheetsObj.set("design-Inputs", {
+tables.set("design-Inputs", {
   text: "Columns",
   fields: [
     { field: "A", text: "Column", editable: { type: "string" } },
@@ -128,24 +122,25 @@ sheetsObj.set("design-Inputs", {
   data: designInputsArray,
 });
 
-// events
+
+// ---------------------------------------------------
+// Event Handling for Sheet Changes
+// ---------------------------------------------------
+
 const onSheetChange = ({ data, sheet }) => {
   console.log(`Data updated on sheet: ${sheet}`);
-  if (sheet == "design-Inputs") {
-    var changedData = designInputsArray;
-  } else if (sheet == "slab-Inputs") {
-    changedData = slabInputs;
+
+  if (sheet === "design-Inputs") {
+    van.derive(() => (designInputsArray.val = data));
+  } else if (sheet === "slab-Inputs") {
+    van.derive(() => (slabInputs.val = data));
   }
-  changedData.val = data; // Update the reactive state with new sheet data
 };
 
-// create sheets element
-const sheetsElm = table({
-  sheets: sheetsObj,
-  onChange: onSheetChange,
-});
+// ---------------------------------------------------
+// Processing Design and Slab Inputs into Objects
+// ---------------------------------------------------
 
-// create reactive  objects from arrays
 const slabInputsObj = van.derive(() => 
   slabInputs.val.map(([x, y, z]) => ({ x, y, z }))
 );
@@ -156,7 +151,11 @@ const designInputs = van.derive(() =>
   )
 );
 
-// Group coordinates by unique Z values
+
+// ---------------------------------------------------
+// Calculation and Grouping of Data by Z-Level
+// ---------------------------------------------------
+
 const groupByZ = (data) =>
   van.derive(() =>
     [...new Set(data.val.map((p) => p.z))].map((z) => data.val.filter((p) => p.z === z))
@@ -166,12 +165,12 @@ const filteredSlabCords = groupByZ(slabInputsObj);
 const filteredColCords = groupByZ(designInputs);
 const uniqueZValues = [...new Set([...filteredColCords.val, ...filteredSlabCords.val].flat().map((p) => p.z))];
 const columnLengths = uniqueZValues.slice(1).map((val, i) => val - uniqueZValues[i]);
-
-console.log(groupByZ)
-
-
 const noCols = designInputs.val.length;
 
+
+// ---------------------------------------------------
+// Calculation and Grouping of Data by Z-Level
+// ---------------------------------------------------
 
 van.derive(() => {
 
@@ -219,9 +218,11 @@ van.derive(() => {
   designResults.val = resultsInterface;
 });
 
-console.log( "designInputs", designInputs.val)
 
-// threejs
+// ---------------------------------------------------
+// ThreeJS
+// ---------------------------------------------------
+
 // Colors
 const colorBlue = 0x132e39;
 const colorGrey = 0x29292E;
@@ -268,7 +269,6 @@ van.derive(() => {
 
         texts.push(...createText(point.x, point.y, point.z, length, colText, colorText));
 
-
         points.push(createNodes(point.x, point.y, point.z, colorNodeDefault));
         const nodesCopy = points[points.length - 1].clone();
         nodesCopy.position.z = length;
@@ -289,9 +289,7 @@ van.derive(() => {
     objects3D.val = [...surfaces, ...columns, light, ...points, ...texts];
   });
 
-
 // report
-// report input
 const reportInput = {
   designInputs,
   globalInputs,
@@ -299,40 +297,28 @@ const reportInput = {
   reportChecks
 };
 
-console.log(designResults.val[0].resistance.f_c0d)
-// console.log(designResults.val.compressionCheckResult.sigma_c0d)
-
-// toolbar
-const toolbarElm = toolbar(["tables", "report"]);
-
-// Open Report Dialog on Toolbar Button Click
-for (let i = 0; i < toolbarElm.length; i += 1) {
-  if (toolbarElm[i].title === "tables") {
-    toolbarElm[i].on("click", () => {
-      console.log("Tables button clicked"); // Check if the button works
-      // @ts-ignore
-      const dialogObjTables = dialog({
-        template: () => templateTables({ sheetsElm }),
-      });
-      console.log(dialogObjTables); // Check if the button works
-      document.body.appendChild(dialogObjTables);
-    });
-  } else if (toolbarElm[i].title === "report") {
-    toolbarElm[i].on("click", () => {
-      console.log("Report button clicked"); // Check if the button works
-      // @ts-ignore
-      const dialogObjReport = dialog({
-        template: () => templateReport(reportInput),
-      });
-      document.body.appendChild(dialogObjReport);
-    });
+// dialog
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+van.derive(() => {
+  if (clickedButton.val === "Tables") {
+    dialogBody.val = getTables({ tables });
+  } else if (clickedButton.val === "Report") {
+    dialogBody.val = getReport({ template, data: reportInput });
   }
-}
+});
 
-
+// ---------------------------------------------------
+// UI Components - Toolbar, Dialog, and Viewer
+// ---------------------------------------------------
 
 document.body.append(
-  viewer({
-    objects3D,
-  })
+  getToolbar({
+    clickedButton,
+    buttons: ["Tables", "Report"],
+    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/tables/main.ts",
+    author: "https://www.linkedin.com/in/cal-mense/",
+  }),
+  getDialog({ dialogBody }),
+  getViewer({ objects3D })
 );

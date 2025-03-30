@@ -1,6 +1,6 @@
 import { Pane } from "tweakpane";
 import van, { State } from "vanjs-core";
-import "./styles.css";
+import "../styles.css";
 
 export const levelState = van.state(1);
 export const supportState = van.state("pinned");

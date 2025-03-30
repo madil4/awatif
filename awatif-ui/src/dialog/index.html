@@ -4,76 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Awatif UI - Dialog</title>
-<<<<<<< HEAD
-    <script type="module">
-      import { dialog } from "./dialog";
-      import { table } from "awatif-ui/src/table/table";
-      import { html } from "lit-html";
-      import van from "vanjs-core";
-
-      // Define sheets
-      const sheetsObj = new Map();
-
-      sheetsObj.set("nodes", {
-        text: "Nodes",
-        fields: [
-          { field: "A", text: "X-coordinate", editable: { type: "float" } },
-          { field: "B", text: "Y-coordinate", editable: { type: "float" } },
-          { field: "C", text: "Z-coordinate", editable: { type: "float" } },
-        ],
-        data: van.state([
-          [0, 0, 0],
-          [1, 2, 3],
-          [3, 4, 1],
-        ]),
-      });
-
-      sheetsObj.set("elements", {
-        text: "Elements",
-        fields: [
-          { field: "A", text: "Node 1", editable: { type: "float" } },
-          { field: "B", text: "Node 2", editable: { type: "float" } },
-        ],
-        data: van.state([
-          [0, 0],
-          [1, 2],
-          [3, 4],
-        ]),
-      });
-
-      // Create sheets element
-      const sheetsElm = table({
-        sheets: sheetsObj,
-        onChange: (e) => console.log(e), // test on change
-      });
-
-      // Template for the tables dialog
-      const templateTables = () => {
-        return html`
-          <div>
-            <h2>Tables</h2>
-            <div id="sheets-container">
-              ${sheetsElm} <!-- Render the sheets here -->
-            </div>
-          </div>
-        `;
-      };
-
-      // Create the dialog with the template
-      const dialogObj = dialog({
-        template: templateTables,
-      });
-
-      // Append the dialog to the body
-      document.body.appendChild(dialogObj);
-    </script>
-  </head>
-  <body></body>
-</html>
-=======
   </head>
   <body>
     <script type="module" src="main.ts"></script>
   </body>
 </html>
->>>>>>> main
