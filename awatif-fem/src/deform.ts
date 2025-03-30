@@ -5,7 +5,7 @@ import {
   ElementInputs,
   DeformOutputs,
 } from "awatif-data-model";
-import { flatten, lusolve, multiply, subset, index } from "mathjs";
+import { flatten, lusolve, multiply, subset, index, lup, sparse } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 
 export function deform(
@@ -28,7 +28,12 @@ export function deform(
 
   const forcesFree = subset(appliedForces, index(freeInd));
   const stiffnessesFree = subset(stiffnesses, index(freeInd, freeInd));
-  const deformationFree = lusolve(stiffnessesFree, forcesFree) as number[];
+
+  const stiffnessesFreeSparse = sparse(stiffnessesFree);
+
+  const lu = lup(stiffnessesFreeSparse);
+
+  const deformationFree = lusolve(lu, forcesFree) as number[];
 
   const deformationsArray: number[] = subset(
     Array(dof).fill(0),
