@@ -13,7 +13,7 @@ Awatif.co helps you build parametric structural engineering apps that run on the
 - [x] FEM: Meshing [Example](https://awatif.co/examples/2d-mesh/)
 - [ ] Design: Member checks (coming soon)
 - [ ] Design: Connection checks
-- [x] UI: Tabular editing [Example](https://awatif.co/examples/sheets/)
+- [x] UI: Tabular editing [Example](https://awatif.co/examples/tables/)
 - [x] UI: Drawing [Example](https://awatif.co/examples/drawing/)
 - [x] UI: Reporting [Example](https://awatif.co/examples/report/)
 - [ ] UI: Element selection
