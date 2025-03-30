@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node } from "awatif-data-structure";
+import { Node } from "awatif-data-model";
 import { Text } from "../Text";
 import { getAverage } from "../utils/getAverage";
 import { IResultObject } from "./IResultObject";

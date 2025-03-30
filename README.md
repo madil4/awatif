@@ -6,7 +6,7 @@ Awatif.co helps you build parametric structural engineering apps that run on the
 
 ## Roadmap
 - [x] FEM: Bar & beam elements [Example](https://awatif.co/examples/1d-mesh/)
-- [ ] FEM: Plate & shell elements (coming soon)
+- [x] FEM: Plate & shell elements [Example](https://awatif.co/examples/plate/)
 - [x] FEM: Static simulations [Example](https://awatif.co/examples/3d-structure/)
 - [ ] FEM: Dynamic simulations
 - [ ] FEM: Nonlinear analysis

@@ -5,19 +5,31 @@ import {
   DeformOutputs,
   ElementInputs,
   NodeInputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { deform, analyze } from "awatif-fem";
 import van from "vanjs-core";
 import { State } from "vanjs-core/debug";
+<<<<<<< HEAD
 import { Parameters, parameters, viewer } from "awatif-ui";
 import { templateReport, templateTables } from "./template";
 import { toolbar } from "awatif-ui/src/toolbar/toolbar";
 import { dialog } from "awatif-ui/src/dialog/dialog";
 
 import "./template.css";
+=======
+import {
+  getDialog,
+  getReport,
+  getToolbar,
+  Parameters,
+  getParameters,
+  getViewer,
+} from "awatif-ui";
+import { template } from "./template";
+>>>>>>> main
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
@@ -33,7 +45,7 @@ const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 van.derive(() => {
   nodes.val = [
     [250, 0, 0],
-    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [parameters.xPosition.value.val, 0, parameters.zPosition.value.val],
     [250, 0, 400],
   ];
   elements.val = [
@@ -74,6 +86,7 @@ van.derive(() => {
   );
 });
 
+<<<<<<< HEAD
 let structure = {
   nodes,
   elements,
@@ -102,10 +115,34 @@ for (let i = 0; i < toolbarElm.length; i += 1) {
     });
   }
 }
+=======
+// report
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+
+van.derive(() => {
+  if (clickedButton.val === "Report")
+    dialogBody.val = getReport({ template, data: structure });
+});
+>>>>>>> main
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getToolbar({
+    clickedButton,
+    buttons: ["Report"],
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",
+    author: "https://www.linkedin.com/in/cal-mense/",
+  }),
+  getDialog({ dialogBody }),
+  getParameters(parameters),
+  getViewer({
     structure,
+<<<<<<< HEAD
+=======
+    settingsObj: {
+      gridSize: 1000,
+    },
+>>>>>>> main
   })
 );

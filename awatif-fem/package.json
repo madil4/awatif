@@ -29,7 +29,7 @@
     "ts-jest": "~29.2.5"
   },
   "dependencies": {
-    "awatif-data-structure": "^1.0.0",
+    "awatif-data-model": "^1.0.0",
     "mathjs": "~13.2.0"
   }
 }

@@ -1,9 +1,4 @@
-import {
-  Node,
-  Element,
-  NodeInputs,
-  ElementInputs,
-} from "awatif-data-structure";
+import { Node, Element, NodeInputs, ElementInputs } from "awatif-data-model";
 import { analyze } from "awatif-fem";
 import { deform } from "./deform";
 
@@ -54,11 +49,31 @@ describe("analyze", () => {
         [1, [-4.2105263157894735, 4.2105263157894735]],
         [2, [5.289408221642574, -5.289408221642574]],
       ]),
-      shearsY: new Map([]),
-      shearsZ: new Map([]),
-      torsions: new Map([]),
-      bendingsY: new Map([]),
-      bendingsZ: new Map([]),
+      shearsY: new Map([
+        [0, [0, 0]],
+        [1, [0, 0]],
+        [2, [0, 0]],
+      ]),
+      shearsZ: new Map([
+        [0, [0, 0]],
+        [1, [0, 0]],
+        [2, [0, 0]],
+      ]),
+      torsions: new Map([
+        [0, [0, 0]],
+        [1, [0, 0]],
+        [2, [0, 0]],
+      ]),
+      bendingsY: new Map([
+        [0, [0, 0]],
+        [1, [0, 0]],
+        [2, [0, 0]],
+      ]),
+      bendingsZ: new Map([
+        [0, [0, 0]],
+        [1, [0, 0]],
+        [2, [0, 0]],
+      ]),
     });
   });
 

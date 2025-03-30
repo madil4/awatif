@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Ensure the parent container has relative positioning */
 #parentContainer {
   position: relative;  /* Add this to the parent container */
@@ -27,4 +28,13 @@
   left: 0;
   right: 0;
   height: 28px;
+=======
+/* Stretching to its container allow size change events */
+#table {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+>>>>>>> main
 }

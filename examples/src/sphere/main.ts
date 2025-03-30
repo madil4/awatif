@@ -1,9 +1,9 @@
 import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-structure";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { Node, Element } from "awatif-data-model";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   radius: {
     value: van.state(4),
     min: 1,
@@ -24,14 +24,15 @@ const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 
 // Events: on parameter change
 van.derive(() => {
-  const radius = params.radius.value.val;
-  const points = params.points.value.val;
-  const circumferences = params.circumferences.value.val;
+  const radius = parameters.radius.value.val;
+  const points = parameters.points.value.val;
+  const circumferences = parameters.circumferences.value.val;
 
   let nodes: Node[] = [];
   const elements: Element[] = [];
@@ -85,11 +86,16 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/sphere/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

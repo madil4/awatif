@@ -6,12 +6,12 @@ import {
   ElementInputs,
   DeformOutputs,
   AnalyzeOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { analyze, deform } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   meshDensity: {
     value: van.state(7),
     min: 1,
@@ -24,6 +24,7 @@ const params: Parameters = {
   load: { value: van.state(10), min: 0, max: 20 },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});
@@ -35,10 +36,10 @@ const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
-  const count = params.meshDensity.value.val;
-  const height = params.height.value.val;
-  const span = params.span.value.val;
-  const load = params.load.value.val;
+  const count = parameters.meshDensity.value.val;
+  const height = parameters.height.value.val;
+  const span = parameters.span.value.val;
+  const load = parameters.load.value.val;
 
   // beam 1
   nodes.push(
@@ -104,8 +105,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
@@ -117,5 +118,10 @@ document.body.append(
     settingsObj: {
       deformedShape: true,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

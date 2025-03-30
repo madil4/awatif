@@ -105,7 +105,7 @@ breadcrumb: User Interface
           <div class="overflow-auto">
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre><code class="language-ts">import { Node, Element, AnalysisInput } from "awatif-data-structure";
+            <pre><code class="language-ts">import { Node, Element, AnalysisInput } from "awatif-data-model";
 import { app, Parameters, Model } from "awatif-ui";
 import { analyze } from "awatif-fem";
 
@@ -255,7 +255,7 @@ app({
                       <div id="on-parameter-change-collapse" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="on-parameter-change-heading">
                         <p>
                           Here is where all the magic happens. It is a function that will be triggered as the user changes the parameters. It takes the parameters list as input and returns a new model as output. The model consists of nodes, elements,
-                          analysisInputs, and analysis outputs, as described in <a href="/awatif-data-structure/" class="text-primary-light hover:underline">awatif-data-structure</a>.
+                          analysisInputs, and analysis outputs, as described in <a href="/awatif-data-model/" class="text-primary-light hover:underline">awatif-data-model</a>.
                         </p>
                         <pre class="mb-3 grid grid-cols-1"><code class="language-ts">function onParameterChange(parameters) {
     // Recompute the model according to the newly changed parameters

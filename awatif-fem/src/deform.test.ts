@@ -1,9 +1,4 @@
-import {
-  Node,
-  Element,
-  NodeInputs,
-  ElementInputs,
-} from "awatif-data-structure";
+import { Node, Element, NodeInputs, ElementInputs } from "awatif-data-model";
 import { deform } from "./deform";
 
 describe("deform", () => {

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { html } from "lit-html";
+=======
+import { Structure } from "awatif-data-model";
+import { html, TemplateResult } from "lit-html";
+>>>>>>> main
 
 import "./template.css";
 

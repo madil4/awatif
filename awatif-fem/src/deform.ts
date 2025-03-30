@@ -4,7 +4,7 @@ import {
   NodeInputs,
   ElementInputs,
   DeformOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { flatten, lusolve, multiply, subset, index } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 
@@ -15,6 +15,7 @@ export function deform(
   elementInputs: ElementInputs
 ): DeformOutputs {
   const dof = nodes.length * 6;
+  if (dof === 0) return; // don't run if there are no nodes
 
   const freeInd = getFreeIndices(nodeInputs.supports, dof);
   const appliedForces = getAppliedForces(nodeInputs.loads, dof);
