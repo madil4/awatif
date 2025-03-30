@@ -4,7 +4,7 @@ import {
   ElementInputs,
   AnalyzeOutputs,
   DeformOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
 import { multiply } from "mathjs";

@@ -1,9 +1,9 @@
 import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-structure";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { Node, Element } from "awatif-data-model";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   width: {
     value: van.state(18),
     min: 10,
@@ -52,6 +52,7 @@ const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 
@@ -60,14 +61,14 @@ van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
 
-  let xLength = params.width.value.val;
-  let yLength = params.breadth.value.val;
-  let zLength = params.height.value.val;
-  let xSpan = params.xSpan.value.val;
-  let ySpan = params.ySpan.value.val;
-  let zSpan = params.zSpan.value.val;
-  const mainDirX = params.mainDirX.value.val;
-  let spacing = params.spacing.value.val;
+  let xLength = parameters.width.value.val;
+  let yLength = parameters.breadth.value.val;
+  let zLength = parameters.height.value.val;
+  let xSpan = parameters.xSpan.value.val;
+  let ySpan = parameters.ySpan.value.val;
+  let zSpan = parameters.zSpan.value.val;
+  const mainDirX = parameters.mainDirX.value.val;
+  let spacing = parameters.spacing.value.val;
 
   if (xSpan > xLength) xSpan = xLength;
   if (ySpan > yLength) ySpan = yLength;
@@ -204,8 +205,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
@@ -213,5 +214,10 @@ document.body.append(
     settingsObj: {
       nodes: false,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/building/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

@@ -6,13 +6,13 @@ import {
   ElementInputs,
   DeformOutputs,
   AnalyzeOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { analyze, deform } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 import { createTruss } from "./createTruss";
 
 // Init
-export const params: Parameters = {
+export const parameters: Parameters = {
   span: {
     value: van.state(20),
     min: 1,
@@ -141,6 +141,7 @@ export const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});
@@ -150,22 +151,22 @@ const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  let span = params.span.value.val;
-  let spacing = params.spacing.value.val;
-  const webType = params.webType.value.val;
-  const trimType = params.trimType.value.val;
-  const leftHeight = params.leftHeight.value.val;
-  const midHeight = params.midHeight.value.val;
-  const rightHeight = params.rightHeight.value.val;
-  const leftOffset = params.leftOffset.value.val;
-  const midOffset = params.midOffset.value.val;
-  const rightOffset = params.rightOffset.value.val;
-  const supportType = params.supportType.value.val;
-  const uniformLoad = params.uniformLoad.value.val;
-  const chordsArea = params.chordsArea.value.val * 1e-4;
-  const chordsElasticity = params.chordsElasticity.value.val * 1e6;
-  const websArea = params.websArea.value.val * 1e-4;
-  const websElasticity = params.websElasticity.value.val * 1e6;
+  let span = parameters.span.value.val;
+  let spacing = parameters.spacing.value.val;
+  const webType = parameters.webType.value.val;
+  const trimType = parameters.trimType.value.val;
+  const leftHeight = parameters.leftHeight.value.val;
+  const midHeight = parameters.midHeight.value.val;
+  const rightHeight = parameters.rightHeight.value.val;
+  const leftOffset = parameters.leftOffset.value.val;
+  const midOffset = parameters.midOffset.value.val;
+  const rightOffset = parameters.rightOffset.value.val;
+  const supportType = parameters.supportType.value.val;
+  const uniformLoad = parameters.uniformLoad.value.val;
+  const chordsArea = parameters.chordsArea.value.val * 1e-4;
+  const chordsElasticity = parameters.chordsElasticity.value.val * 1e6;
+  const websArea = parameters.websArea.value.val * 1e-4;
+  const websElasticity = parameters.websElasticity.value.val * 1e6;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -429,8 +430,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
@@ -443,6 +444,11 @@ document.body.append(
       deformedShape: true,
       loads: false,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/advanced-truss/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );
 

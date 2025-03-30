@@ -8,7 +8,7 @@ export function toolbar({
   onToolbarClick: (floor: string) => void;
 }): HTMLElement {
   const container = document.createElement("div");
-  container.id = "toolbar";
+  container.id = "drawing-toolbar";
 
   new w2toolbar({
     name: "toolbar",

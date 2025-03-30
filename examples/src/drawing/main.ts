@@ -1,6 +1,12 @@
 import van, { State } from "vanjs-core";
-import { Element, Node } from "awatif-data-structure";
-import { viewer, Drawing, Parameters, parameters } from "awatif-ui";
+import { Element, Node } from "awatif-data-model";
+import {
+  getViewer,
+  Drawing,
+  Parameters,
+  getParameters,
+  getToolbar,
+} from "awatif-ui";
 import { toolbar } from "./toolbar";
 
 // Init
@@ -24,7 +30,7 @@ const polylines2nd: Drawing["polylines"] = van.state([[0, 1, 2, 3], []]);
 const points: Drawing["points"] = van.state([]);
 const polylines: Drawing["polylines"] = van.state([]);
 
-const params: Parameters = {
+const parameters: Parameters = {
   width: { value: van.state(2), min: 0.5, max: 5, step: 0.1 },
 };
 
@@ -82,7 +88,7 @@ van.derive(() => {
       pointIndex * 4,
       point,
       floorHeight,
-      params.width.value.val
+      parameters.width.value.val
     );
 
     columnsNodes.push(...columnNodes);
@@ -108,8 +114,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes,
       elements,
@@ -120,7 +126,12 @@ document.body.append(
       gridTarget,
     },
   }),
-  toolbar({ onToolbarClick })
+  toolbar({ onToolbarClick }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/drawing/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
+  })
 );
 
 // Utils

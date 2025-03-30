@@ -1,10 +1,10 @@
 import van, { State } from "vanjs-core";
 import * as THREE from "three";
-import { Node, Element, NodeInputs } from "awatif-data-structure";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { Node, Element, NodeInputs } from "awatif-data-model";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xSpan: {
     value: van.state(16),
     min: 1,
@@ -47,18 +47,19 @@ const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  const xSpan = params.xSpan.value.val;
-  const xDivisions = params.xDivisions.value.val;
-  const ySpan = params.ySpan.value.val;
-  const yDivisions = params.yDivisions.value.val;
-  const height = params.height.value.val;
-  const heightOffset = params.heightOffset.value.val;
+  const xSpan = parameters.xSpan.value.val;
+  const xDivisions = parameters.xDivisions.value.val;
+  const ySpan = parameters.ySpan.value.val;
+  const yDivisions = parameters.yDivisions.value.val;
+  const height = parameters.height.value.val;
+  const heightOffset = parameters.heightOffset.value.val;
 
   const curve = new THREE.QuadraticBezierCurve3(
     new THREE.Vector3(0, 0, 0),
@@ -120,12 +121,17 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
       nodeInputs: nodeInputsState,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/curves/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

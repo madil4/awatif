@@ -5,15 +5,22 @@ import {
   DeformOutputs,
   ElementInputs,
   NodeInputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { deform, analyze } from "awatif-fem";
 import van from "vanjs-core";
 import { State } from "vanjs-core/debug";
-import { Parameters, parameters, viewer } from "awatif-ui";
+import {
+  getDialog,
+  getReport,
+  getToolbar,
+  Parameters,
+  getParameters,
+  getViewer,
+} from "awatif-ui";
 import { template } from "./template";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
@@ -38,7 +45,7 @@ const structure = {
 van.derive(() => {
   nodes.val = [
     [250, 0, 0],
-    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [parameters.xPosition.value.val, 0, parameters.zPosition.value.val],
     [250, 0, 400],
   ];
   elements.val = [
@@ -80,16 +87,29 @@ van.derive(() => {
   );
 });
 
+// report
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+
+van.derive(() => {
+  if (clickedButton.val === "Report")
+    dialogBody.val = getReport({ template, data: structure });
+});
+
 document.body.append(
-  parameters(params),
-  viewer({
+  getToolbar({
+    clickedButton,
+    buttons: ["Report"],
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",
+    author: "https://www.linkedin.com/in/cal-mense/",
+  }),
+  getDialog({ dialogBody }),
+  getParameters(parameters),
+  getViewer({
     structure,
     settingsObj: {
       gridSize: 1000,
-    },
-    reportObj: {
-      template,
-      data: structure,
     },
   })
 );

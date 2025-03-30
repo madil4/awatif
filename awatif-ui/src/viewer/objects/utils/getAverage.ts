@@ -1,4 +1,4 @@
-import { Node } from "awatif-data-structure";
+import { Node } from "awatif-data-model";
 
 export function getAverage(Nodes: Node[]): Node {
   const sum = Nodes.reduce(

@@ -6,12 +6,12 @@ import {
   ElementInputs,
   DeformOutputs,
   AnalyzeOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { deform, analyze } from "awatif-fem";
-import { Parameters, parameters, viewer } from "awatif-ui";
+import { getToolbar, Parameters, getParameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   xPosition: { value: van.state(600), min: 0, max: 1000 },
   zPosition: { value: van.state(0), min: 0, max: 500 },
 };
@@ -27,7 +27,7 @@ const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
 van.derive(() => {
   nodes.val = [
     [250, 0, 0],
-    [params.xPosition.value.val, 0, params.zPosition.value.val],
+    [parameters.xPosition.value.val, 0, parameters.zPosition.value.val],
     [250, 0, 400],
   ];
   elements.val = [
@@ -69,8 +69,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes,
       elements,
@@ -82,5 +82,10 @@ document.body.append(
     settingsObj: {
       gridSize: 1000,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/bars/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

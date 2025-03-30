@@ -1,4 +1,9 @@
-import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyze-D2aRrfYK.js";import{d as w}from"./deform-Cwdrr_ew.js";import{p as g}from"./parameters-Bpf96Z0A.js";function x({nodes:h,nodeInputs:m,elementInputs:u,deformOutputs:p,analyzeOutputs:b}){return l`
+import { x as l, v as a, a as f } from "./mesh-Cs8aYJBQ.js";
+import { a as $ } from "./analyze-D2aRrfYK.js";
+import { d as w } from "./deform-Cwdrr_ew.js";
+import { p as g } from "./parameters-Bpf96Z0A.js";
+function x({ nodes: h, nodeInputs: m, elementInputs: u, deformOutputs: p, analyzeOutputs: b }) {
+  return l`
     <br />
     <header class="header">
       <div class="header-left">
@@ -7,7 +12,7 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
           <a href="https://awatif.co" target="_blank">Awatif.co</a>
         </p>
         <p class="normal" id="reportDate">
-          ${new Date().toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"})}
+          ${new Date().toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
       <div class="header-right">
@@ -47,7 +52,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
         <th>yCoord</th>
         <th>zCoord</th>
       </tr>
-      ${h.val.map((e,t)=>l`
+      ${h.val.map(
+        (e, t) => l`
           <tr>
             <td><div class="custom-cell-content">${t}</div></td>
             <td>
@@ -60,7 +66,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
               <div class="custom-cell-content">${e[2]}</div>
             </td>
           </tr>
-        `)}
+        `
+      )}
     </table>
 
     <br />
@@ -81,7 +88,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
         <th>my</th>
         <th>mz</th>
       </tr>
-      ${[...m.val.supports].map(([e,t])=>l`
+      ${[...m.val.supports].map(
+        ([e, t]) => l`
           <tr>
             <td><div class="custom-cell-content">${e}</div></td>
             <td>
@@ -103,7 +111,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
               <div class="custom-cell-content">${t[5]}</div>
             </td>
           </tr>
-        `)}
+        `
+      )}
     </table>
 
     <br />
@@ -121,7 +130,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
         <th>Fy</th>
         <th>Fz</th>
       </tr>
-      ${[...p.val.reactions].map(([e,t])=>l`
+      ${[...p.val.reactions].map(
+        ([e, t]) => l`
           <tr>
             <td><div class="custom-cell-content">${e}</div></td>
             <td>
@@ -134,7 +144,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
               <div class="custom-cell-content">${t[2].toFixed(0)}</div>
             </td>
           </tr>
-        `)}
+        `
+      )}
     </table>
 
     <br />
@@ -151,7 +162,8 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
         <th>Area</th>
         <th>Normal</th>
       </tr>
-      ${[...b.val.normals].map(([e,t])=>l`
+      ${[...b.val.normals].map(
+        ([e, t]) => l`
           <tr>
             <td><div class="custom-cell-content">${e}</div></td>
             <td>
@@ -163,7 +175,48 @@ import{x as l,v as a,a as f}from"./mesh-Cs8aYJBQ.js";import{a as $}from"./analyz
               <div class="custom-cell-content">${t[0].toFixed(0)}</div>
             </td>
           </tr>
-        `)}
+        `
+      )}
     </table>
     <br /><br /><br />
-  `}const c={xPosition:{value:a.state(600),min:0,max:1e3},zPosition:{value:a.state(0),min:0,max:500}},s=a.state([]),o=a.state([]),i=a.state({}),d=a.state({}),n=a.state({}),v=a.state({}),r={nodes:s,elements:o,nodeInputs:i,elementInputs:d,deformOutputs:n,analyzeOutputs:v};a.derive(()=>{s.val=[[250,0,0],[c.xPosition.value.val,0,c.zPosition.value.val],[250,0,400]],o.val=[[0,1],[1,2]],i.val={supports:new Map([[0,[!0,!0,!0,!0,!0,!0]],[2,[!0,!0,!0,!0,!0,!0]]]),loads:new Map([[1,[0,0,-1e3,0,0,0]]])},d.val={elasticities:new Map([[0,200],[1,200]]),areas:new Map([[0,100],[1,100]])},n.val=w(s.val,o.val,i.val,d.val),v.val=$(s.val,o.val,d.val,n.val)});document.body.append(g(c),f({structure:r,settingsObj:{gridSize:1e3},reportObj:{template:x,data:r}}));
+  `;
+}
+const c = { xPosition: { value: a.state(600), min: 0, max: 1e3 }, zPosition: { value: a.state(0), min: 0, max: 500 } },
+  s = a.state([]),
+  o = a.state([]),
+  i = a.state({}),
+  d = a.state({}),
+  n = a.state({}),
+  v = a.state({}),
+  r = { nodes: s, elements: o, nodeInputs: i, elementInputs: d, deformOutputs: n, analyzeOutputs: v };
+a.derive(() => {
+  (s.val = [
+    [250, 0, 0],
+    [c.xPosition.value.val, 0, c.zPosition.value.val],
+    [250, 0, 400],
+  ]),
+    (o.val = [
+      [0, 1],
+      [1, 2],
+    ]),
+    (i.val = {
+      supports: new Map([
+        [0, [!0, !0, !0, !0, !0, !0]],
+        [2, [!0, !0, !0, !0, !0, !0]],
+      ]),
+      loads: new Map([[1, [0, 0, -1e3, 0, 0, 0]]]),
+    }),
+    (d.val = {
+      elasticities: new Map([
+        [0, 200],
+        [1, 200],
+      ]),
+      areas: new Map([
+        [0, 100],
+        [1, 100],
+      ]),
+    }),
+    (n.val = w(s.val, o.val, i.val, d.val)),
+    (v.val = $(s.val, o.val, d.val, n.val));
+});
+document.body.append(g(c), f({ structure: r, settingsObj: { gridSize: 1e3 }, reportObj: { template: x, data: r } }));

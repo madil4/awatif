@@ -107,7 +107,7 @@ export function drawing({
     const size = 0.05 * gridSize * 0.5 * derivedDisplayScale.val;
 
     indicationPoint.material.size = size;
-    raycaster.params.Points.threshold = 0.4 * size;
+    raycaster.parameters.Points.threshold = 0.4 * size;
   });
 
   // Pointer events

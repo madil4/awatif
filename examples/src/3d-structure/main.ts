@@ -6,12 +6,12 @@ import {
   ElementInputs,
   DeformOutputs,
   AnalyzeOutputs,
-} from "awatif-data-structure";
+} from "awatif-data-model";
 import { analyze, deform } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   dx: {
     value: van.state(2),
     min: 1,
@@ -48,6 +48,7 @@ const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
 const nodeInputsState: State<NodeInputs> = van.state({});
@@ -57,10 +58,10 @@ const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  const dx = params.dx.value.val;
-  const dy = params.dy.value.val;
-  const dz = params.dz.value.val;
-  const divisions = params.divisions.value.val;
+  const dx = parameters.dx.value.val;
+  const dy = parameters.dy.value.val;
+  const dz = parameters.dz.value.val;
+  const divisions = parameters.divisions.value.val;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -104,7 +105,7 @@ van.derive(() => {
       [3, fixed],
     ]),
     loads: new Map([
-      [nodes.length - 2, [params.load.value.val, 0, 0, 0, 0, 0]],
+      [nodes.length - 2, [parameters.load.value.val, 0, 0, 0, 0, 0]],
     ]),
   };
 
@@ -127,8 +128,8 @@ van.derive(() => {
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
+  getParameters(parameters),
+  getViewer({
     structure: {
       nodes: nodesState,
       elements: elementsState,
@@ -141,5 +142,10 @@ document.body.append(
       deformedShape: true,
       gridSize: 15,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/3d-structure/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

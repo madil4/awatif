@@ -146,7 +146,7 @@ breadcrumb: FEM Solver
           <div>
             <h3 class="mb-3 text-lg text-gray-800 font-bold">Usage</h3>
 
-            <pre class="grid grid-cols-1"><code class="language-ts">import { Node, Element, AnalysisInputs, AnalysisOutputs } from "awatif-data-structure";
+            <pre class="grid grid-cols-1"><code class="language-ts">import { Node, Element, AnalysisInputs, AnalysisOutputs } from "awatif-data-model";
 import { analyze } from "awatif-fem";
 
 const nodes: Node[] = [
@@ -261,8 +261,8 @@ const expectedAnalysisOutputs: AnalysisOutputs = {
                 <!-- Inner Lists -->
                 <div id="inner-list-collapse" class="hs-accordion-content hidden w-full overflow-auto transition-[height] duration-300" aria-labelledby="inner-list-heading">
                   <p class="mb-3">
-                    This library exposes a single function named analyze. It takes three inputs: Nodes, Elements, and AnalysisInputs, and returns the AnalysisOutputs. For detailed type definitions, please refer to the awatif-data-structure
-                    <a class="text-primary-light hover:underline" href="/awatif-data-structure/#api-reference">API Reference</a>.
+                    This library exposes a single function named analyze. It takes three inputs: Nodes, Elements, and AnalysisInputs, and returns the AnalysisOutputs. For detailed type definitions, please refer to the awatif-data-model
+                    <a class="text-primary-light hover:underline" href="/awatif-data-model/#api-reference">API Reference</a>.
                   </p>
                   <pre class="mb-3 grid grid-cols-1"><code class="language-ts">const analysisOutputs = analyze(nodes, elements, analysisInputs);</code></pre>
 
