@@ -18,8 +18,8 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { Pane } from "tweakpane";
-import { Node, Element } from "awatif-data-model";
-// import { Building } from "awatif-data-model";
+import { Node, Element } from "awatif-fem";
+// import { Building } from "awatif-fem";
 
 //Init
 type Building = {

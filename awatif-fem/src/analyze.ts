@@ -1,13 +1,13 @@
+import { multiply } from "mathjs";
 import {
   Node,
   Element,
-  ElementInputs,
   AnalyzeOutputs,
   DeformOutputs,
-} from "awatif-data-model";
+  ElementInputs,
+} from "./data-model";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
-import { multiply } from "mathjs";
 
 export function analyze(
   nodes: Node[],

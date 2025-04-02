@@ -8,7 +8,7 @@ import {
   subtract,
   transpose,
 } from "mathjs";
-import { Node, Element } from "awatif-data-model";
+import { Node, Element } from "awatif-fem";
 import triangle from "triangle-wasm";
 
 // @ts-ignore

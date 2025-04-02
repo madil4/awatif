@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { IResultObject } from "./IResultObject";
 import { Text } from "../Text";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 import { ResultType } from "../nodeResults";
 
 export class NodeResult extends THREE.Group implements IResultObject {

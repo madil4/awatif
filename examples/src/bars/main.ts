@@ -6,7 +6,7 @@ import {
   ElementInputs,
   DeformOutputs,
   AnalyzeOutputs,
-} from "awatif-data-model";
+} from "awatif-fem";
 import { deform, analyze } from "awatif-fem";
 import { getToolbar, Parameters, getParameters, getViewer } from "awatif-ui";
 

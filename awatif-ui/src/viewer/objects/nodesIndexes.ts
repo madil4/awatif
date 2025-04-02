@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Text } from "./Text";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 import { Settings } from "../settings/settings";
 
 export function nodesIndexes(

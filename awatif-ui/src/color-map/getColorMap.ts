@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node, Element } from "awatif-data-model";
+import { Node, Element } from "awatif-fem";
 
 import { Lut } from "three/addons/math/Lut.js";
 

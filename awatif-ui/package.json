@@ -24,7 +24,6 @@
     "vite": "~5.4.10"
   },
   "dependencies": {
-    "awatif-data-model": "^1.0.0",
     "lit-html": "^3.2.1",
     "three": "~0.169.0",
     "tweakpane": "~4.0.4",

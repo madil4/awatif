@@ -1,4 +1,4 @@
-import { Structure } from "awatif-data-model";
+import { Structure } from "awatif-fem";
 import { html, TemplateResult } from "lit-html";
 
 import "./template.css";
