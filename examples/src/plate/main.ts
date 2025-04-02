@@ -5,7 +5,7 @@ import {
   NodeInputs,
   ElementInputs,
   DeformOutputs,
-} from "awatif-data-model";
+} from "awatif-fem";
 import { getViewer, Parameters, getParameters, getToolbar } from "awatif-ui";
 import { deform } from "awatif-fem";
 import { mesh } from "awatif-mesh";

@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { getViewer } from "./getViewer";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 
 const nodes = van.state([
   // To test orientation for beams

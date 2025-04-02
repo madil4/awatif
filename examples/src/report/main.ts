@@ -5,7 +5,7 @@ import {
   DeformOutputs,
   ElementInputs,
   NodeInputs,
-} from "awatif-data-model";
+} from "awatif-fem";
 import { deform, analyze } from "awatif-fem";
 import van from "vanjs-core";
 import { State } from "vanjs-core/debug";

@@ -24,7 +24,6 @@
     "vite": "~5.4.10"
   },
   "dependencies": {
-    "awatif-data-model": "^1.0.0",
     "mathjs": "^14.3.1",
     "triangle-wasm": "^1.0.0",
     "vanjs-core": "^1.5.2"

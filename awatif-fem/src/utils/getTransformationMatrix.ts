@@ -1,4 +1,4 @@
-import { Node } from "awatif-data-model";
+import { Node } from ".././data-model";
 import {
   cross,
   divide,

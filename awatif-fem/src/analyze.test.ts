@@ -1,5 +1,5 @@
-import { Node, Element, NodeInputs, ElementInputs } from "awatif-data-model";
-import { analyze } from "awatif-fem";
+import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
+import { analyze } from "./analyze";
 import { deform } from "./deform";
 
 describe("analyze", () => {

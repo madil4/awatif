@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 import { getAverage } from "./getAverage";
 
 // from global to local

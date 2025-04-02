@@ -1,4 +1,4 @@
-import { Node, Element, ElementInputs } from "awatif-data-model";
+import { Node, Element, ElementInputs } from "../data-model";
 import { e, multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";

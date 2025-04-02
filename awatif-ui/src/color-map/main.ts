@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 
 import { getViewer } from "../viewer/getViewer";
 import { getColorMap } from "./getColorMap";

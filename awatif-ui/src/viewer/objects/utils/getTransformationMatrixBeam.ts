@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Node } from "awatif-data-model";
+import { Node } from "awatif-fem";
 
 // from global to local
 export function getTransformationMatrixBeam(node1: Node, node2: Node) {
