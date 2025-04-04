@@ -18,6 +18,7 @@ export const template = ({
   const noCols = designInputs.val.length;
   const index = Array.from({ length: noCols }, (_, i) => i);
   const glulam = getGlulamProperties(globalInputs.grade.val);
+  
   const colNames = [];
   for (let j = 0; j < noCols; j++) {
     colNames.push(designInputs.val[j].name);
@@ -36,9 +37,6 @@ export const template = ({
       <img src="${logo}" id="headerLogo" alt="Logo" />
     </div>
   </header>
-
-
-
 
     <br />
     <h1>Timber Column Design</h1>
