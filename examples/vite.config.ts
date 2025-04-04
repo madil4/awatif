@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "tables/index.html",
+    open: "color-map/index.html",
   },
   base: "./", // to resolve assets
   root: "./src",
