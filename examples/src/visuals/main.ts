@@ -17,24 +17,18 @@ import { Parameters, getParameters, getViewer } from "awatif-ui";
 
 //Init
 type Building = {
-  points: number[][];
-  stories: number[];
-  columns: number[][];
-  slabs: number[][][];
-  columnsByStorey: Map<number, number[]>;
-  slabsByStorey: Map<number, number[]>;
+  points: State<number[][]>;
+  columns: State<number[][]>; // [start, end] Todo: change to [end] get start from the story below
+  slabs: State<number[][][]>;
 };
 
-const building: State<Building> = van.state({
-  points: [],
-  stories: [],
-  columns: [],
-  slabs: [],
-  slabsByStorey: new Map(),
-  columnsByStorey: new Map(),
-});
+const building: Building = {
+  points: van.state([]),
+  columns: van.state([]),
+  slabs: van.state([]),
+};
 
-const slab: number[][] = [
+const slabSample: number[][] = [
   [0, 0, 4],
   [0, 10, 4],
   [18, 10, 4],
@@ -42,7 +36,7 @@ const slab: number[][] = [
   [0, 0, 4],
 ];
 
-const columns: number[][][] = [
+const columnsSample: number[][][] = [
   [
     [0, 0, 0],
     [0, 0, 4],
@@ -70,67 +64,96 @@ const columns: number[][][] = [
 ];
 
 const parameters: Parameters = {
-  floors: { value: van.state(1), min: 1, max: 5, step: 1 },
+  stories: { value: van.state(1), min: 1, max: 5, step: 1 },
 };
 
-const material: Material = new MeshPhongMaterial({ color: 0xffe6cc });
 const objects3D: State<Mesh[]> = van.state([]);
 
-// to be removed
+const solids = new Mesh(
+  new BufferGeometry(),
+  new MeshPhongMaterial({ color: 0xffe6cc })
+);
+
+const columnWidth: number = 0.3;
+const columnHeight: number = 0.3;
+
 const nodes: State<Node[]> = van.state([]);
 const elements: State<Element[]> = van.state([]);
 
-const COL_A: number = 0.3;
-const COL_B: number = 0.3;
-
 // Events
+// When number of stories changes, update building data model
 van.derive(() => {
-  building.val.points = [];
-  building.val.slabs = [];
-  building.val.columns = [];
+  const points = [];
+  const slabs = [];
+  const columns = [];
 
-  const FLOOR_HEIGHT = 4;
+  for (let j = 0; j < parameters.stories.value.val; j++) {
+    const storySlabsPoints: number[][] = [];
+    const storyColumnsPoints: number[][][] = [];
 
-  for (let j = 0; j < parameters.floors.value.val; j++) {
-    const newSlabArray = [];
-    const newColumnsArray = [];
-
+    const FLOOR_HEIGHT = 4;
     const z: number = FLOOR_HEIGHT * j;
 
-    for (let i = 0; i < slab.length; i++)
-      newSlabArray.push([slab[i][0], slab[i][1], slab[i][2] + z]);
+    // slabs
+    for (let i = 0; i < slabSample.length; i++)
+      storySlabsPoints.push([
+        slabSample[i][0],
+        slabSample[i][1],
+        slabSample[i][2] + z,
+      ]);
 
-    addSlab(newSlabArray);
+    const storySlabIndices: number[] = [];
+    const lastIndex = points.length;
+    for (let i = 0; i < storySlabsPoints.length; i++) {
+      points.push(storySlabsPoints[i]);
+      storySlabIndices.push(i + lastIndex);
+    }
 
-    for (let l = 0; l < columns.length; l++) {
-      const column = columns[l];
-      newColumnsArray.push([
+    slabs.push([storySlabIndices]);
+
+    // columns
+    for (let i = 0; i < columnsSample.length; i++) {
+      const column = columnsSample[i];
+      storyColumnsPoints.push([
         [column[0][0], column[0][1], column[0][2] + z],
         [column[1][0], column[1][1], column[1][2] + z],
       ]);
     }
 
-    for (let k = 0; k < newColumnsArray.length; k++)
-      addColumn(newColumnsArray[k]);
+    for (let i = 0; i < storyColumnsPoints.length; i++) {
+      const lastIndex = points.length;
+
+      points.push(...storyColumnsPoints[i]);
+      columns.push([lastIndex, lastIndex + 1]);
+    }
   }
 
+  // Update state
+  building.points.val = points;
+  building.columns.val = columns;
+  building.slabs.val = slabs;
+});
+
+// When building data model changes, update geometry
+van.derive(() => {
+  // Base model
+  nodes.val = building.points.val as Node[];
+  elements.val = [...building.columns.val, ...building.slabs.val.flat(1)];
+
+  // Solids model
   const slabsGeometry: BufferGeometry = createSlabsGeometry(
-    building.val.points,
-    building.val.slabs,
+    building.points.val,
+    building.slabs.val,
     0.3
   );
   const columnsGeometry: BufferGeometry = createColumnsGeometry(
-    building.val.points,
-    building.val.columns
+    building.points.val,
+    building.columns.val
   );
-  const combinedGeometry: BufferGeometry = mergeGeometries([
-    slabsGeometry,
-    columnsGeometry,
-  ]);
-  objects3D.val = [new Mesh(combinedGeometry, material)];
 
-  nodes.val = building.val.points as Node[];
-  elements.val = [...building.val.columns, ...building.val.slabs.flat(1)];
+  solids.geometry = mergeGeometries([slabsGeometry, columnsGeometry]);
+
+  objects3D.val = [solids];
 });
 
 document.body.append(
@@ -157,7 +180,7 @@ function createSlabsGeometry(
         contour.push(points[pointIdx]);
       }
 
-      const offsetedContour = offsetContour(contour, COL_A / 2);
+      const offsetedContour = offsetContour(contour, columnWidth / 2);
 
       const slabShape = new Shape();
       const hole = new Path();
@@ -281,15 +304,12 @@ function createColumnsGeometry(
   columnsIndices: number[][]
 ): BufferGeometry {
   const buffers: BufferGeometry[] = [];
-  const a: number = 0.3;
-  const b: number = 0.3;
-
   const columnShape = new Shape();
 
   // columns base
-  columnShape.lineTo(0 + COL_A, 0);
-  columnShape.lineTo(0 + COL_A, 0 + COL_B);
-  columnShape.lineTo(0, 0 + COL_B);
+  columnShape.lineTo(0 + columnWidth, 0);
+  columnShape.lineTo(0 + columnWidth, 0 + columnHeight);
+  columnShape.lineTo(0, 0 + columnHeight);
 
   for (let i = 0; i < columnsIndices.length; i++) {
     const p1 = points[columnsIndices[i][0]];
@@ -302,36 +322,14 @@ function createColumnsGeometry(
       bevelEnabled: false,
     });
 
-    geometry.translate(p1[0] - COL_A / 2, p1[1] - COL_B / 2, p1[2]);
-
-    // const geometry = createISectionColumn(height);
-    // geometry.translate(p1[0], p1[1], p1[2]);
+    geometry.translate(
+      p1[0] - columnWidth / 2,
+      p1[1] - columnHeight / 2,
+      p1[2]
+    );
 
     buffers.push(geometry);
   }
 
   return mergeGeometries(buffers);
-}
-
-function addColumn(positions: number[][]): void {
-  const lastIndex = building.val.points.length;
-
-  building.val.points.push(...positions);
-  building.val.columns.push([lastIndex, lastIndex + 1]);
-}
-
-function addSlab(positions: number[][]): void {
-  const lastIndex = building.val.points.length;
-  const idx = [];
-
-  for (let i = 0; i < positions.length; i++) {
-    building.val.points.push(positions[i]);
-
-    //TODO
-    // nodesState.val.push(positions[i])
-
-    idx.push(i + lastIndex);
-  }
-
-  building.val.slabs.push([idx]);
 }
