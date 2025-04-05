@@ -86,7 +86,7 @@ export function getViewer({
   camera.position.set(0.5 * gridSize, 0.8 * -z2fit, 0.5 * gridSize);
   controls.target.set(0.5 * gridSize, 0.5 * gridSize, 0);
   controls.minDistance = 1;
-  controls.maxDistance = z2fit * 3.5;
+  controls.maxDistance = z2fit * 2.5;
   controls.zoomSpeed = 10;
   controls.update();
 

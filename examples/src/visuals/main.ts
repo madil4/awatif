@@ -5,14 +5,17 @@ import {
   ExtrudeGeometry,
   MeshPhongMaterial,
   BufferGeometry,
-  Material,
   Path,
   Vector2,
   BufferAttribute,
   Matrix4,
+  LineSegments,
+  LineBasicMaterial,
+  Object3D,
+  Float32BufferAttribute,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { Node, Element } from "awatif-fem";
+import { Element } from "awatif-fem";
 import { Parameters, getParameters, getViewer } from "awatif-ui";
 
 //Init
@@ -67,18 +70,15 @@ const parameters: Parameters = {
   stories: { value: van.state(1), min: 1, max: 5, step: 1 },
 };
 
-const objects3D: State<Mesh[]> = van.state([]);
-
 const solids = new Mesh(
   new BufferGeometry(),
   new MeshPhongMaterial({ color: 0xffe6cc })
 );
+const base = new LineSegments(new BufferGeometry(), new LineBasicMaterial());
+base.frustumCulled = false;
+base.material.depthTest = false; // don't know why but is solves the rendering order issue
 
-const columnWidth: number = 0.3;
-const columnHeight: number = 0.3;
-
-const nodes: State<Node[]> = van.state([]);
-const elements: State<Element[]> = van.state([]);
+const objects3D: State<Object3D[]> = van.state([solids, base]);
 
 // Events
 // When number of stories changes, update building data model
@@ -134,202 +134,248 @@ van.derive(() => {
   building.slabs.val = slabs;
 });
 
-// When building data model changes, update geometry
+// When building data model changes, update base and solids geometry
 van.derive(() => {
-  // Base model
-  nodes.val = building.points.val as Node[];
-  elements.val = [...building.columns.val, ...building.slabs.val.flat(1)];
-
-  // Solids model
-  const slabsGeometry: BufferGeometry = createSlabsGeometry(
+  base.geometry = getBaseGeometry(
     building.points.val,
     building.slabs.val,
-    0.3
-  );
-  const columnsGeometry: BufferGeometry = createColumnsGeometry(
-    building.points.val,
     building.columns.val
   );
 
-  solids.geometry = mergeGeometries([slabsGeometry, columnsGeometry]);
+  solids.geometry = getSolidsGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
 
-  objects3D.val = [solids];
+  objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
 
-document.body.append(
-  getParameters(parameters),
-  getViewer({
-    structure: { nodes, elements },
-    objects3D,
-  })
-);
+document.body.append(getParameters(parameters), getViewer({ objects3D }));
 
 //Utils
-function createSlabsGeometry(
+function getBaseGeometry(
   points: number[][],
-  slabsIndices: number[][][],
-  slabHeight: number = 0.2
+  slabs: number[][][],
+  columns: number[][]
 ): BufferGeometry {
-  const buffers: BufferGeometry[] = [];
+  const geometry = new BufferGeometry();
 
-  for (let k = 0; k < slabsIndices.length; k++) {
-    for (let i = 0; i < slabsIndices[k].length; i++) {
-      const contour: number[][] = [];
-      for (let j = 0; j < slabsIndices[k][i].length; j++) {
-        const pointIdx = slabsIndices[k][i][j];
-        contour.push(points[pointIdx]);
-      }
+  const columnsVertices = columns
+    .map((column) => [points[column[0]], points[column[1]]].flat())
+    .flat();
 
-      const offsetedContour = offsetContour(contour, columnWidth / 2);
+  // borrowed from viewer elements object
+  const slabsVertices = slabs
+    .map((slab) =>
+      elementToEdges(slab[0])
+        .map((edge) => [...points[edge[0]], ...points[edge[1]]])
+        .flat()
+    )
+    .flat();
 
-      const slabShape = new Shape();
-      const hole = new Path();
-      for (let i = 0; i < offsetedContour.length; i++) {
-        if (i == 0)
-          slabShape.moveTo(offsetedContour[0][0], offsetedContour[0][1]);
-        else slabShape.lineTo(offsetedContour[i][0], offsetedContour[i][1]);
-      }
+  geometry.setAttribute(
+    "position",
+    new Float32BufferAttribute([...columnsVertices, ...slabsVertices], 3)
+  );
 
-      const geometry = new ExtrudeGeometry(slabShape, {
-        depth: slabHeight,
-        bevelEnabled: false,
-      });
+  return geometry;
 
-      geometry.translate(0, 0, offsetedContour[0][2]);
-      buffers.push(geometry);
-    }
-  }
+  function elementToEdges(element: number[]): Element[] {
+    if (element.length === 2) return [element];
 
-  return mergeGeometries(buffers);
+    const edges: [number, number][] = [];
 
-  function offsetContour(contour: number[][], offset: number = 0): number[][] {
-    const result: number[][] = [];
-
-    const _contour: Vector2[] = [];
-
-    for (let i = 0; i < contour.length; i++)
-      _contour.push(new Vector2(contour[i][0], contour[i][1]));
-
-    let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
-
-    for (let i = 0; i < _contour.length - 1; i++) {
-      let v1 = new Vector2().subVectors(
-        _contour[i - 1 < 0 ? _contour.length - 1 : i - 1],
-        _contour[i]
-      );
-      let v2 = new Vector2().subVectors(
-        _contour[i + 1 == _contour.length ? 0 : i + 1],
-        _contour[i]
-      );
-      let angle = v2.angle() - v1.angle();
-      let halfAngle = angle * 0.5;
-
-      let hA = halfAngle;
-      let tA = v2.angle() + Math.PI * 0.5;
-
-      let shift = Math.tan(hA - Math.PI * 0.5);
-      let shiftMatrix = new Matrix4().set(
-        1,
-        0,
-        0,
-        0,
-        -shift,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1
-      );
-
-      let tempAngle = tA;
-      let rotationMatrix = new Matrix4().set(
-        Math.cos(tempAngle),
-        -Math.sin(tempAngle),
-        0,
-        0,
-        Math.sin(tempAngle),
-        Math.cos(tempAngle),
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1
-      );
-
-      let translationMatrix = new Matrix4().set(
-        1,
-        0,
-        0,
-        _contour[i].x,
-        0,
-        1,
-        0,
-        _contour[i].y,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1
-      );
-
-      let cloneOffset = _offset.clone();
-      cloneOffset.needsUpdate = true;
-      cloneOffset.applyMatrix4(shiftMatrix);
-      cloneOffset.applyMatrix4(rotationMatrix);
-      cloneOffset.applyMatrix4(translationMatrix);
-
-      result.push([cloneOffset.getX(0), cloneOffset.getY(0), contour[i][2]]);
+    for (let i = 0; i < element.length; i++) {
+      edges.push([element[i], element[(i + 1) % element.length]]);
     }
 
-    return result;
+    return edges;
   }
 }
 
-function createColumnsGeometry(
-  points: any[][],
-  columnsIndices: number[][]
+function getSolidsGeometry(
+  points: number[][],
+  slabs: number[][][],
+  columns: number[][]
 ): BufferGeometry {
-  const buffers: BufferGeometry[] = [];
-  const columnShape = new Shape();
+  const columnWidth: number = 0.3;
+  const columnHeight: number = 0.3;
 
-  // columns base
-  columnShape.lineTo(0 + columnWidth, 0);
-  columnShape.lineTo(0 + columnWidth, 0 + columnHeight);
-  columnShape.lineTo(0, 0 + columnHeight);
+  const slabsGeometry = createSlabsGeometry(points, slabs, 0.3);
+  const columnsGeometry = createColumnsGeometry(points, columns);
 
-  for (let i = 0; i < columnsIndices.length; i++) {
-    const p1 = points[columnsIndices[i][0]];
-    const p2 = points[columnsIndices[i][1]];
+  return mergeGeometries([slabsGeometry, columnsGeometry]);
 
-    const height = p2[2] - p1[2];
+  function createSlabsGeometry(
+    points: number[][],
+    slabsIndices: number[][][],
+    slabHeight: number = 0.2
+  ): BufferGeometry {
+    const buffers: BufferGeometry[] = [];
 
-    const geometry = new ExtrudeGeometry(columnShape, {
-      depth: height,
-      bevelEnabled: false,
-    });
+    for (let k = 0; k < slabsIndices.length; k++) {
+      for (let i = 0; i < slabsIndices[k].length; i++) {
+        const contour: number[][] = [];
+        for (let j = 0; j < slabsIndices[k][i].length; j++) {
+          const pointIdx = slabsIndices[k][i][j];
+          contour.push(points[pointIdx]);
+        }
 
-    geometry.translate(
-      p1[0] - columnWidth / 2,
-      p1[1] - columnHeight / 2,
-      p1[2]
-    );
+        const offsetedContour = offsetContour(contour, columnWidth / 2);
 
-    buffers.push(geometry);
+        const slabShape = new Shape();
+        const hole = new Path();
+        for (let i = 0; i < offsetedContour.length; i++) {
+          if (i == 0)
+            slabShape.moveTo(offsetedContour[0][0], offsetedContour[0][1]);
+          else slabShape.lineTo(offsetedContour[i][0], offsetedContour[i][1]);
+        }
+
+        const geometry = new ExtrudeGeometry(slabShape, {
+          depth: slabHeight,
+          bevelEnabled: false,
+        });
+
+        geometry.translate(0, 0, offsetedContour[0][2]);
+        buffers.push(geometry);
+      }
+    }
+
+    return mergeGeometries(buffers);
+
+    function offsetContour(
+      contour: number[][],
+      offset: number = 0
+    ): number[][] {
+      const result: number[][] = [];
+
+      const _contour: Vector2[] = [];
+
+      for (let i = 0; i < contour.length; i++)
+        _contour.push(new Vector2(contour[i][0], contour[i][1]));
+
+      let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
+
+      for (let i = 0; i < _contour.length - 1; i++) {
+        let v1 = new Vector2().subVectors(
+          _contour[i - 1 < 0 ? _contour.length - 1 : i - 1],
+          _contour[i]
+        );
+        let v2 = new Vector2().subVectors(
+          _contour[i + 1 == _contour.length ? 0 : i + 1],
+          _contour[i]
+        );
+        let angle = v2.angle() - v1.angle();
+        let halfAngle = angle * 0.5;
+
+        let hA = halfAngle;
+        let tA = v2.angle() + Math.PI * 0.5;
+
+        let shift = Math.tan(hA - Math.PI * 0.5);
+        let shiftMatrix = new Matrix4().set(
+          1,
+          0,
+          0,
+          0,
+          -shift,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        );
+
+        let tempAngle = tA;
+        let rotationMatrix = new Matrix4().set(
+          Math.cos(tempAngle),
+          -Math.sin(tempAngle),
+          0,
+          0,
+          Math.sin(tempAngle),
+          Math.cos(tempAngle),
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        );
+
+        let translationMatrix = new Matrix4().set(
+          1,
+          0,
+          0,
+          _contour[i].x,
+          0,
+          1,
+          0,
+          _contour[i].y,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        );
+
+        let cloneOffset = _offset.clone();
+        cloneOffset.needsUpdate = true;
+        cloneOffset.applyMatrix4(shiftMatrix);
+        cloneOffset.applyMatrix4(rotationMatrix);
+        cloneOffset.applyMatrix4(translationMatrix);
+
+        result.push([cloneOffset.getX(0), cloneOffset.getY(0), contour[i][2]]);
+      }
+
+      return result;
+    }
   }
 
-  return mergeGeometries(buffers);
+  function createColumnsGeometry(
+    points: any[][],
+    columnsIndices: number[][]
+  ): BufferGeometry {
+    const buffers: BufferGeometry[] = [];
+    const columnShape = new Shape();
+
+    // columns base
+    columnShape.lineTo(0 + columnWidth, 0);
+    columnShape.lineTo(0 + columnWidth, 0 + columnHeight);
+    columnShape.lineTo(0, 0 + columnHeight);
+
+    for (let i = 0; i < columnsIndices.length; i++) {
+      const p1 = points[columnsIndices[i][0]];
+      const p2 = points[columnsIndices[i][1]];
+
+      const height = p2[2] - p1[2];
+
+      const geometry = new ExtrudeGeometry(columnShape, {
+        depth: height,
+        bevelEnabled: false,
+      });
+
+      geometry.translate(
+        p1[0] - columnWidth / 2,
+        p1[1] - columnHeight / 2,
+        p1[2]
+      );
+
+      buffers.push(geometry);
+    }
+
+    return mergeGeometries(buffers);
+  }
 }
