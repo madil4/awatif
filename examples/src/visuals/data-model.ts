@@ -1,3 +1,4 @@
+import { TemplateResult } from "lit-html";
 import { State } from "vanjs-core";
 
 export type Building = {

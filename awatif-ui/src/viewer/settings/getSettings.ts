@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { Pane } from "tweakpane";
-import { Structure } from "awatif-fem";
+import { Mesh } from "awatif-fem";
 
 import "./styles.css";
 
@@ -17,14 +17,14 @@ export type Settings = {
   deformedShape: State<boolean>;
   elementResults: State<string>;
   nodeResults: State<string>;
-  contours: State<string>;
+  solids?: State<boolean>;
   flipAxes: State<boolean>;
-  solidModel?: State<boolean>;
 };
 
-export function settings(
-  structure: Structure,
-  settingsState: Settings
+export function getSettings(
+  settings: Settings,
+  mesh?: Mesh,
+  solids?: State<any>
 ): HTMLElement {
   // init
   const container = document.createElement("div");
@@ -37,41 +37,39 @@ export function settings(
   // update
   container.setAttribute("id", "settings");
 
-  if (structure.nodes) {
-    pane.addBinding(settingsState.displayScale, "val", {
+  if (mesh?.nodes) {
+    pane.addBinding(settings.displayScale, "val", {
       label: "Display scale",
       min: -10,
       max: 10,
       step: 1,
     });
-    pane.addBinding(settingsState.nodes, "val", { label: "Nodes" });
-    pane.addBinding(settingsState.elements, "val", {
+    pane.addBinding(settings.nodes, "val", { label: "Nodes" });
+    pane.addBinding(settings.elements, "val", {
       label: "Elements",
     });
-    pane.addBinding(settingsState.nodesIndexes, "val", {
+    pane.addBinding(settings.nodesIndexes, "val", {
       label: "Nodes indexes",
     });
-    pane.addBinding(settingsState.elementsIndexes, "val", {
+    pane.addBinding(settings.elementsIndexes, "val", {
       label: "Elements indexes",
     });
-    pane.addBinding(settingsState.orientations, "val", {
+    pane.addBinding(settings.orientations, "val", {
       label: "Orientations",
     });
   }
 
-  pane.addBinding(settingsState.solidModel, "val", { label: "Solid model" });
-
-  if (structure.nodeInputs || structure.elementInputs) {
+  if (mesh?.nodeInputs || mesh?.elementInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
 
-    inputs.addBinding(settingsState.supports, "val", { label: "Supports" });
-    inputs.addBinding(settingsState.loads, "val", { label: "Loads" });
+    inputs.addBinding(settings.supports, "val", { label: "Supports" });
+    inputs.addBinding(settings.loads, "val", { label: "Loads" });
   }
 
-  if (structure.deformOutputs || structure.analyzeOutputs) {
+  if (mesh?.deformOutputs || mesh?.analyzeOutputs) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
 
-    outputs.addBinding(settingsState.elementResults, "val", {
+    outputs.addBinding(settings.elementResults, "val", {
       options: {
         none: "none",
         normals: "normals",
@@ -83,7 +81,7 @@ export function settings(
       },
       label: "Element results",
     });
-    outputs.addBinding(settingsState.nodeResults, "val", {
+    outputs.addBinding(settings.nodeResults, "val", {
       options: {
         none: "none",
         deformations: "deformations",
@@ -92,20 +90,12 @@ export function settings(
       label: "Node results",
     });
 
-    // add contours when the feature is completed
-    // outputs.addBinding(settingsState.contours, "val", {
-    //   options: {
-    //     none: "none",
-    //     deformationsX: "deformationsX",
-    //     deformationsY: "deformationsY",
-    //     deformationsZ: "deformationsZ",
-    //   },
-    //   label: "Contours",
-    // });
-    outputs.addBinding(settingsState.deformedShape, "val", {
+    outputs.addBinding(settings.deformedShape, "val", {
       label: "Deformed shape",
     });
   }
+
+  if (solids) pane.addBinding(settings.solids, "val", { label: "Solids" });
 
   return container;
 }

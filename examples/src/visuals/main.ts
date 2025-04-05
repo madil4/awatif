@@ -67,10 +67,10 @@ const columnsSample: number[][][] = [
 ];
 
 const parameters: Parameters = {
-  stories: { value: van.state(1), min: 1, max: 5, step: 1 },
+  stories: { value: van.state(2), min: 1, max: 5, step: 1 },
 };
 
-const solids = new Mesh(
+const solidsMesh = new Mesh(
   new BufferGeometry(),
   new MeshPhongMaterial({ color: 0xffe6cc })
 );
@@ -78,7 +78,8 @@ const base = new LineSegments(new BufferGeometry(), new LineBasicMaterial());
 base.frustumCulled = false;
 base.material.depthTest = false; // don't know why but is solves the rendering order issue
 
-const objects3D: State<Object3D[]> = van.state([solids, base]);
+const objects3D: State<Object3D[]> = van.state([base]);
+const solids: State<Object3D[]> = van.state([solidsMesh]);
 
 // Events
 // When number of stories changes, update building data model
@@ -142,7 +143,7 @@ van.derive(() => {
     building.columns.val
   );
 
-  solids.geometry = getSolidsGeometry(
+  solidsMesh.geometry = getSolidsGeometry(
     building.points.val,
     building.slabs.val,
     building.columns.val
@@ -151,7 +152,10 @@ van.derive(() => {
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
 
-document.body.append(getParameters(parameters), getViewer({ objects3D }));
+document.body.append(
+  getParameters(parameters),
+  getViewer({ objects3D, solids })
+);
 
 //Utils
 function getBaseGeometry(
@@ -202,7 +206,7 @@ function getSolidsGeometry(
   const columnWidth: number = 0.3;
   const columnHeight: number = 0.3;
 
-  const slabsGeometry = createSlabsGeometry(points, slabs, 0.3);
+  const slabsGeometry = createSlabsGeometry(points, slabs);
   const columnsGeometry = createColumnsGeometry(points, columns);
 
   return mergeGeometries([slabsGeometry, columnsGeometry]);
@@ -210,7 +214,7 @@ function getSolidsGeometry(
   function createSlabsGeometry(
     points: number[][],
     slabsIndices: number[][][],
-    slabHeight: number = 0.2
+    slabHeight: number = 0.3
   ): BufferGeometry {
     const buffers: BufferGeometry[] = [];
 
@@ -237,7 +241,7 @@ function getSolidsGeometry(
           bevelEnabled: false,
         });
 
-        geometry.translate(0, 0, offsetedContour[0][2]);
+        geometry.translate(0, 0, offsetedContour[0][2] - slabHeight / 2);
         buffers.push(geometry);
       }
     }

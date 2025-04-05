@@ -59,7 +59,7 @@ van.derive(() => {
 document.body.append(
   getParameters(parameters),
   getViewer({
-    structure: { nodes, elements },
+    mesh: { nodes, elements },
     objects3D,
   }),
   getLegend(distances),
