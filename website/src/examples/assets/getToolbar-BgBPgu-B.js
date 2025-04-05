@@ -1,4 +1,4 @@
-import{x as o,h as p}from"./styles-BT9ucHwM.js";function w({buttons:e,clickedButton:l,author:c,sourceCode:i}){const a=document.createElement("div"),s=o`
+import{x as o,h as p}from"./styles-CRQ6mFCx.js";function w({buttons:e,clickedButton:l,author:c,sourceCode:i}){const a=document.createElement("div"),s=o`
     <div class="buttons-container">
       ${e==null?void 0:e.map(t=>o`<button class="btn btn-text" @click=${d}>
             ${t}
