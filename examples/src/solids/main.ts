@@ -16,7 +16,7 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { Element } from "awatif-fem";
-import { Parameters, getParameters, getViewer } from "awatif-ui";
+import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
 
 //Init
 type Building = {
@@ -154,7 +154,12 @@ van.derive(() => {
 
 document.body.append(
   getParameters(parameters),
-  getViewer({ objects3D, solids })
+  getViewer({ objects3D, solids }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/solids/main.ts",
+    author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
+  })
 );
 
 //Utils
