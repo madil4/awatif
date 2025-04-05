@@ -25,16 +25,6 @@ type Building = {
   slabsByStorey: Map<number, number[]>;
 };
 
-const nodes: State<Node[]> = van.state([]);
-const elements: State<Element[]> = van.state([]);
-
-const parameters: Parameters = {
-  floors: { value: van.state(1), min: 1, max: 5, step: 1 },
-};
-
-const COL_A: number = 0.3;
-const COL_B: number = 0.3;
-
 const building: State<Building> = van.state({
   points: [],
   stories: [],
@@ -44,7 +34,7 @@ const building: State<Building> = van.state({
   columnsByStorey: new Map(),
 });
 
-const firstFloorSlabPos: number[][] = [
+const slab: number[][] = [
   [0, 0, 4],
   [0, 10, 4],
   [18, 10, 4],
@@ -52,7 +42,7 @@ const firstFloorSlabPos: number[][] = [
   [0, 0, 4],
 ];
 
-const firstFloorColumnsPos: number[][][] = [
+const columns: number[][][] = [
   [
     [0, 0, 0],
     [0, 0, 4],
@@ -79,42 +69,21 @@ const firstFloorColumnsPos: number[][][] = [
   ],
 ];
 
-addSlab(firstFloorSlabPos);
-
-for (let k = 0; k < firstFloorColumnsPos.length; k++)
-  addColumn(firstFloorColumnsPos[k]);
+const parameters: Parameters = {
+  floors: { value: van.state(1), min: 1, max: 5, step: 1 },
+};
 
 const material: Material = new MeshPhongMaterial({ color: 0xffe6cc });
-const slabsGeometry: BufferGeometry = createSlabsGeometry(
-  building.val.points,
-  building.val.slabs,
-  0.3
-);
-const columnsGeometry: BufferGeometry = createColumnsGeometry(
-  building.val.points,
-  building.val.columns
-);
-const combinedGeometry: BufferGeometry = mergeGeometries([
-  slabsGeometry,
-  columnsGeometry,
-]);
-const objects3D: State<Mesh[]> = van.state([
-  new Mesh(combinedGeometry, material),
-]);
+const objects3D: State<Mesh[]> = van.state([]);
 
-//Events
-van.derive(() => {
-  nodes.val = building.val.points as Node[];
-  elements.val = [];
-  elements.val.push(...(building.val.columns as Element[]));
-  for (let i = 0; i < building.val.slabs.length; i++) {
-    const slab = building.val.slabs[i];
-    elements.val.push(...createPairs(slab[0]));
-  }
+// to be removed
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
 
-  objects3D.val = [...objects3D.rawVal]; // trigger rendering
-});
+const COL_A: number = 0.3;
+const COL_B: number = 0.3;
 
+// Events
 van.derive(() => {
   building.val.points = [];
   building.val.slabs = [];
@@ -128,17 +97,13 @@ van.derive(() => {
 
     const z: number = FLOOR_HEIGHT * j;
 
-    for (let i = 0; i < firstFloorSlabPos.length; i++)
-      newSlabArray.push([
-        firstFloorSlabPos[i][0],
-        firstFloorSlabPos[i][1],
-        firstFloorSlabPos[i][2] + z,
-      ]);
+    for (let i = 0; i < slab.length; i++)
+      newSlabArray.push([slab[i][0], slab[i][1], slab[i][2] + z]);
 
     addSlab(newSlabArray);
 
-    for (let l = 0; l < firstFloorColumnsPos.length; l++) {
-      const column = firstFloorColumnsPos[l];
+    for (let l = 0; l < columns.length; l++) {
+      const column = columns[l];
       newColumnsArray.push([
         [column[0][0], column[0][1], column[0][2] + z],
         [column[1][0], column[1][1], column[1][2] + z],
@@ -165,14 +130,7 @@ van.derive(() => {
   objects3D.val = [new Mesh(combinedGeometry, material)];
 
   nodes.val = building.val.points as Node[];
-  elements.val = [];
-  elements.val.push(...(building.val.columns as Element[]));
-  for (let i = 0; i < building.val.slabs.length; i++) {
-    const slab = building.val.slabs[i];
-    elements.val.push(...createPairs(slab[0]));
-  }
-
-  objects3D.val = [...objects3D.rawVal];
+  elements.val = [...building.val.columns, ...building.val.slabs.flat(1)];
 });
 
 document.body.append(
@@ -220,6 +178,102 @@ function createSlabsGeometry(
   }
 
   return mergeGeometries(buffers);
+
+  function offsetContour(contour: number[][], offset: number = 0): number[][] {
+    const result: number[][] = [];
+
+    const _contour: Vector2[] = [];
+
+    for (let i = 0; i < contour.length; i++)
+      _contour.push(new Vector2(contour[i][0], contour[i][1]));
+
+    let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
+
+    for (let i = 0; i < _contour.length - 1; i++) {
+      let v1 = new Vector2().subVectors(
+        _contour[i - 1 < 0 ? _contour.length - 1 : i - 1],
+        _contour[i]
+      );
+      let v2 = new Vector2().subVectors(
+        _contour[i + 1 == _contour.length ? 0 : i + 1],
+        _contour[i]
+      );
+      let angle = v2.angle() - v1.angle();
+      let halfAngle = angle * 0.5;
+
+      let hA = halfAngle;
+      let tA = v2.angle() + Math.PI * 0.5;
+
+      let shift = Math.tan(hA - Math.PI * 0.5);
+      let shiftMatrix = new Matrix4().set(
+        1,
+        0,
+        0,
+        0,
+        -shift,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      );
+
+      let tempAngle = tA;
+      let rotationMatrix = new Matrix4().set(
+        Math.cos(tempAngle),
+        -Math.sin(tempAngle),
+        0,
+        0,
+        Math.sin(tempAngle),
+        Math.cos(tempAngle),
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      );
+
+      let translationMatrix = new Matrix4().set(
+        1,
+        0,
+        0,
+        _contour[i].x,
+        0,
+        1,
+        0,
+        _contour[i].y,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      );
+
+      let cloneOffset = _offset.clone();
+      cloneOffset.needsUpdate = true;
+      cloneOffset.applyMatrix4(shiftMatrix);
+      cloneOffset.applyMatrix4(rotationMatrix);
+      cloneOffset.applyMatrix4(translationMatrix);
+
+      result.push([cloneOffset.getX(0), cloneOffset.getY(0), contour[i][2]]);
+    }
+
+    return result;
+  }
 }
 
 function createColumnsGeometry(
@@ -259,14 +313,14 @@ function createColumnsGeometry(
   return mergeGeometries(buffers);
 }
 
-function addColumn(positions: number[][], lastPntIdx?: number): void {
+function addColumn(positions: number[][]): void {
   const lastIndex = building.val.points.length;
 
   building.val.points.push(...positions);
   building.val.columns.push([lastIndex, lastIndex + 1]);
 }
 
-function addSlab(positions: number[][], lastPntIdx?: number): void {
+function addSlab(positions: number[][]): void {
   const lastIndex = building.val.points.length;
   const idx = [];
 
@@ -280,111 +334,4 @@ function addSlab(positions: number[][], lastPntIdx?: number): void {
   }
 
   building.val.slabs.push([idx]);
-}
-
-function offsetContour(contour: number[][], offset: number = 0): number[][] {
-  const result: number[][] = [];
-
-  const _contour: Vector2[] = [];
-
-  for (let i = 0; i < contour.length; i++)
-    _contour.push(new Vector2(contour[i][0], contour[i][1]));
-
-  let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
-
-  for (let i = 0; i < _contour.length - 1; i++) {
-    let v1 = new Vector2().subVectors(
-      _contour[i - 1 < 0 ? _contour.length - 1 : i - 1],
-      _contour[i]
-    );
-    let v2 = new Vector2().subVectors(
-      _contour[i + 1 == _contour.length ? 0 : i + 1],
-      _contour[i]
-    );
-    let angle = v2.angle() - v1.angle();
-    let halfAngle = angle * 0.5;
-
-    let hA = halfAngle;
-    let tA = v2.angle() + Math.PI * 0.5;
-
-    let shift = Math.tan(hA - Math.PI * 0.5);
-    let shiftMatrix = new Matrix4().set(
-      1,
-      0,
-      0,
-      0,
-      -shift,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1
-    );
-
-    let tempAngle = tA;
-    let rotationMatrix = new Matrix4().set(
-      Math.cos(tempAngle),
-      -Math.sin(tempAngle),
-      0,
-      0,
-      Math.sin(tempAngle),
-      Math.cos(tempAngle),
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1
-    );
-
-    let translationMatrix = new Matrix4().set(
-      1,
-      0,
-      0,
-      _contour[i].x,
-      0,
-      1,
-      0,
-      _contour[i].y,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1
-    );
-
-    let cloneOffset = _offset.clone();
-    cloneOffset.needsUpdate = true;
-    cloneOffset.applyMatrix4(shiftMatrix);
-    cloneOffset.applyMatrix4(rotationMatrix);
-    cloneOffset.applyMatrix4(translationMatrix);
-
-    result.push([cloneOffset.getX(0), cloneOffset.getY(0), contour[i][2]]);
-  }
-
-  return result;
-}
-
-function createPairs(arr: number[]): any[] {
-  // Return empty array for invalid input
-  if (!arr || arr.length < 2) return [];
-
-  const result = [];
-  for (let i = 0; i < arr.length - 1; i++) {
-    result.push([arr[i], arr[i + 1]]);
-  }
-  return result;
 }
