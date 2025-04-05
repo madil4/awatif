@@ -107,7 +107,7 @@ document.body.append(
   getDialog({ dialogBody }),
   getParameters(parameters),
   getViewer({
-    structure,
+    mesh: structure,
     settingsObj: {
       gridSize: 1000,
     },

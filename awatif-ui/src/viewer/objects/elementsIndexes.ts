@@ -2,7 +2,7 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Node } from "awatif-fem";
 import { Structure } from "awatif-fem";
-import { Settings } from "../settings/settings";
+import { Settings } from "../settings/getSettings";
 
 import { Text } from "./Text";
 

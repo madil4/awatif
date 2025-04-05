@@ -139,7 +139,7 @@ van.derive(() => {
 document.body.append(
   getParameters(parameters),
   getViewer({
-    structure: {
+    mesh: {
       nodes: nodesState,
       elements: elementsState,
       nodeInputs: nodeInputsState,

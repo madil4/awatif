@@ -17,7 +17,7 @@ const elements = van.state([
 ]);
 
 const viewerElm = getViewer({
-  structure: { nodes, elements },
+  mesh: { nodes, elements },
   settingsObj: { orientations: true },
 });
 

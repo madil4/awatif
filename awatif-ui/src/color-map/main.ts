@@ -29,7 +29,7 @@ setTimeout(() => {
 document.body.append(
   getLegend(values),
   getViewer({
-    structure: { nodes, elements },
+    mesh: { nodes, elements },
     objects3D,
   })
 );
