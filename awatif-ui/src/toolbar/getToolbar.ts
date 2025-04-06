@@ -70,7 +70,12 @@ export function getToolbar({
 
 // Utils
 function getAwatifSvg(): TemplateResult {
-  return html`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -3 35 35">
+  return html`<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15"
+    height="25"
+    viewBox="0 -3 35 35"
+  >
     <path
       d="M2,29.14l9.86-16.87c1.86,3.34,4.56,7.62,3.34,11.57a7.61,7.61,0,0,1-2.61,3.68,7.78,7.78,0,0,1-5,1.61c-1.48,0-3,0-4.47,0A4.5,4.5,0,0,0,2,29.14Z"
     ></path>

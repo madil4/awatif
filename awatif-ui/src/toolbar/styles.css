@@ -30,14 +30,6 @@
 }
 
 #toolbar .btn-icon {
-  width: 35px;
-  height: 35px;
-  background-color: rgb(0 95 115);
-}
-
-#toolbar .btn-icon {
-  width: 35px;
-  height: 35px;
   background-color: rgb(0 95 115);
   fill: rgb(255, 255, 255);
 }
