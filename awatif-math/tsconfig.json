@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
     "esModuleInterop": true, // required by Jest
-    "noEmit": true,
-    "target": "ES2017", // Needed only to Top-level await to load wasm
-    "module": "es2022" // Needed only to Top-level await to load wasm
+    "noEmit": true
   }
 }

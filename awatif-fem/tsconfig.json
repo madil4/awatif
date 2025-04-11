@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
     "esModuleInterop": true, // required by Jest
     "noEmit": true
   }
