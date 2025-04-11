@@ -1,4 +1,4 @@
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import {
   cross,
   divide,
@@ -11,12 +11,9 @@ import {
 import { Node, Element } from "awatif-fem";
 import triangle from "triangle-wasm";
 
-// @ts-ignore
+// @ts-ignore Loading the wasm file (UI blocking)
 import triangleWasmUrl from "./assets/triangle.wasm?url";
-
-// to make sure init is called once with multiple mesh call
-const isWsLoaded = van.state(false);
-triangle.init(triangleWasmUrl).then(() => (isWsLoaded.val = true));
+await triangle.init(triangleWasmUrl);
 
 export function mesh({
   points, // Array of point(s) in the form of [x, y].
@@ -32,19 +29,17 @@ export function mesh({
   minMeshAngleDegrees?: number;
 }): {
   // the output are reactive just to react after wasm is loaded
-  nodes: State<Node[]>;
-  elements: State<Element[]>;
-  boundaryIndices: State<number[]>;
+  nodes: Node[];
+  elements: Element[];
+  boundaryIndices: number[];
 } {
   // init
-  const nodesState: State<Node[]> = van.state([]);
-  const elementsState: State<Element[]> = van.state([]);
-  const boundaryIndicesState: State<number[]> = van.state([]);
+  let nodes: Node[] = [];
+  let elements: Element[] = [];
+  let boundaryIndices: number[] = [];
 
   // events: when points or polygon changes -> mesh
   van.derive(() => {
-    if (!isWsLoaded.val) return;
-
     // convert from the 3DD to 2D plane for triangulation
     const transformationMatrix = getTransformationMatrix(
       points[0],
@@ -71,25 +66,26 @@ export function mesh({
       triOutputs
     );
 
-    const { nodes, boundaryIndices } = toNodesAndBoundaryIndices(
-      triOutputs.pointlist,
-      triOutputs.pointmarkerlist
-    );
+    const { nodes: meshNodes, boundaryIndices: meshBoundaryIndices } =
+      toNodesAndBoundaryIndices(
+        triOutputs.pointlist,
+        triOutputs.pointmarkerlist
+      );
 
-    nodesState.val = nodes.map(
+    nodes = meshNodes.map(
       (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
     );
-    elementsState.val = toElements(triOutputs.trianglelist);
-    boundaryIndicesState.val = boundaryIndices;
+    elements = toElements(triOutputs.trianglelist);
+    boundaryIndices = meshBoundaryIndices;
 
     triangle.freeIO(triInputs, true);
     triangle.freeIO(triOutputs);
   });
 
   return {
-    nodes: nodesState,
-    elements: elementsState,
-    boundaryIndices: boundaryIndicesState,
+    nodes,
+    elements,
+    boundaryIndices,
   };
 }
 
