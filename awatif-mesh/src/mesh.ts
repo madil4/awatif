@@ -11,8 +11,10 @@ import {
 import { Node, Element } from "awatif-fem";
 import triangle from "triangle-wasm";
 
-// @ts-ignore Loading the wasm file (UI blocking)
+// Loading the wasm file (UI blocking)
+// @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";
+// @ts-ignore
 await triangle.init(triangleWasmUrl);
 
 export function mesh({

@@ -1,4 +1,18 @@
-import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as y}from"./analyze-CrVriBdi.js";import{d as z}from"./deform-BAYIOx97.js";import{g as T}from"./getParameters-DyT4YkU0.js";import{g as S}from"./getDialog-I66Aed6S.js";import"./pureFunctionsAny.generated-CUnD8y8X.js";import"./complex-i8qiIvCl.js";function F({template:c,data:n}){const l=document.createElement("div");return e.derive(()=>{w(c(n),l)}),l}function B({nodes:c,nodeInputs:n,elementInputs:l,deformOutputs:g,analyzeOutputs:f}){return s`
+import { v as e, i as w, x as s, a as $, g as x } from "./styles-CpURnv7o.js";
+import { a as y } from "./analyze-htS-5mGW.js";
+import { d as z } from "./deform-DIFTkfEQ.js";
+import { g as T } from "./getParameters-C7XsMMMg.js";
+import { g as S } from "./getDialog-CLdnpTKc.js";
+import "./pureFunctionsAny.generated-B4njVAtx.js";
+import "./complex-i8qiIvCl.js";
+function F({ template: c, data: n }) {
+  const l = document.createElement("div");
+  return e.derive(() => {
+    w(c(n), l);
+  }), l;
+}
+function B({ nodes: c, nodeInputs: n, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
+  return s`
     <br />
     <header class="header">
       <div class="header-left">
@@ -7,7 +21,7 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
           <a href="https://awatif.co" target="_blank">Awatif.co</a>
         </p>
         <p class="normal" id="reportDate">
-          ${new Date().toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"})}
+          ${(/* @__PURE__ */ new Date()).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
       <div class="header-right">
@@ -47,7 +61,7 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
         <th>yCoord</th>
         <th>zCoord</th>
       </tr>
-      ${c.val.map((a,t)=>s`
+      ${c.val.map((a, t) => s`
           <tr>
             <td><div class="custom-cell-content">${t}</div></td>
             <td>
@@ -81,7 +95,7 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
         <th>my</th>
         <th>mz</th>
       </tr>
-      ${[...n.val.supports].map(([a,t])=>s`
+      ${[...n.val.supports].map(([a, t]) => s`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
             <td>
@@ -121,7 +135,7 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
         <th>Fy</th>
         <th>Fz</th>
       </tr>
-      ${[...g.val.reactions].map(([a,t])=>s`
+      ${[...g.val.reactions].map(([a, t]) => s`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
             <td>
@@ -151,7 +165,7 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
         <th>Area</th>
         <th>Normal</th>
       </tr>
-      ${[...f.val.normals].map(([a,t])=>s`
+      ${[...f.val.normals].map(([a, t]) => s`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
             <td>
@@ -166,4 +180,14 @@ import{v as e,i as w,x as s,a as $,g as x}from"./styles-BwXseZdl.js";import{a as
         `)}
     </table>
     <br /><br /><br />
-  `}const r={xPosition:{value:e.state(600),min:0,max:1e3},zPosition:{value:e.state(0),min:0,max:500}},o=e.state([]),d=e.state([]),v=e.state({}),i=e.state({}),h=e.state({}),m=e.state({}),u={nodes:o,elements:d,nodeInputs:v,elementInputs:i,deformOutputs:h,analyzeOutputs:m};e.derive(()=>{o.val=[[250,0,0],[r.xPosition.value.val,0,r.zPosition.value.val],[250,0,400]],d.val=[[0,1],[1,2]],v.val={supports:new Map([[0,[!0,!0,!0,!0,!0,!0]],[2,[!0,!0,!0,!0,!0,!0]]]),loads:new Map([[1,[0,0,-1e3,0,0,0]]])},i.val={elasticities:new Map([[0,200],[1,200]]),areas:new Map([[0,100],[1,100]])},h.val=z(o.val,d.val,v.val,i.val),m.val=y(o.val,d.val,i.val,h.val)});const p=e.state(""),b=e.state(void 0);e.derive(()=>{p.val==="Report"&&(b.val=F({template:B,data:u}))});document.body.append($({clickedButton:p,buttons:["Report"],sourceCode:"https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",author:"https://www.linkedin.com/in/cal-mense/"}),S({dialogBody:b}),T(r),x({mesh:u,settingsObj:{gridSize:1e3}}));
+  `;
+}
+const r = { xPosition: { value: e.state(600), min: 0, max: 1e3 }, zPosition: { value: e.state(0), min: 0, max: 500 } }, o = e.state([]), d = e.state([]), v = e.state({}), i = e.state({}), h = e.state({}), m = e.state({}), u = { nodes: o, elements: d, nodeInputs: v, elementInputs: i, deformOutputs: h, analyzeOutputs: m };
+e.derive(() => {
+  o.val = [[250, 0, 0], [r.xPosition.value.val, 0, r.zPosition.value.val], [250, 0, 400]], d.val = [[0, 1], [1, 2]], v.val = { supports: /* @__PURE__ */ new Map([[0, [true, true, true, true, true, true]], [2, [true, true, true, true, true, true]]]), loads: /* @__PURE__ */ new Map([[1, [0, 0, -1e3, 0, 0, 0]]]) }, i.val = { elasticities: /* @__PURE__ */ new Map([[0, 200], [1, 200]]), areas: /* @__PURE__ */ new Map([[0, 100], [1, 100]]) }, h.val = z(o.val, d.val, v.val, i.val), m.val = y(o.val, d.val, i.val, h.val);
+});
+const p = e.state(""), b = e.state(void 0);
+e.derive(() => {
+  p.val === "Report" && (b.val = F({ template: B, data: u }));
+});
+document.body.append($({ clickedButton: p, buttons: ["Report"], sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts", author: "https://www.linkedin.com/in/cal-mense/" }), S({ dialogBody: b }), T(r), x({ mesh: u, settingsObj: { gridSize: 1e3 } }));
