@@ -1,4 +1,3 @@
-import van from "vanjs-core";
 import {
   cross,
   divide,
@@ -35,54 +34,42 @@ export function mesh({
   elements: Element[];
   boundaryIndices: number[];
 } {
-  // init
-  let nodes: Node[] = [];
-  let elements: Element[] = [];
-  let boundaryIndices: number[] = [];
+  const transformationMatrix = getTransformationMatrix(
+    points[0],
+    points[1],
+    points[2]
+  );
+  const points2D = points
+    .map((p) => multiply(transpose(transformationMatrix), p))
+    .map((p) => [p[0], p[1]]);
 
-  // events: when points or polygon changes -> mesh
-  van.derive(() => {
-    // convert from the 3DD to 2D plane for triangulation
-    const transformationMatrix = getTransformationMatrix(
-      points[0],
-      points[1],
-      points[2]
-    );
-    const points2D = points
-      .map((p) => multiply(transpose(transformationMatrix), p))
-      .map((p) => [p[0], p[1]]);
-
-    const triInputs = triangle.makeIO({
-      pointlist: points2D.flat(),
-      // @ts-ignore
-      segmentlist: toSegments(polygon),
-    });
-    const triOutputs = triangle.makeIO();
-
-    // Todo: refactor into reactive settings object
-    triangle.triangulate(
-      `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
-        maxMeshSize != null ? "a" : null
-      }${maxMeshSize ?? ""}`,
-      triInputs,
-      triOutputs
-    );
-
-    const { nodes: meshNodes, boundaryIndices: meshBoundaryIndices } =
-      toNodesAndBoundaryIndices(
-        triOutputs.pointlist,
-        triOutputs.pointmarkerlist
-      );
-
-    nodes = meshNodes.map(
-      (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
-    );
-    elements = toElements(triOutputs.trianglelist);
-    boundaryIndices = meshBoundaryIndices;
-
-    triangle.freeIO(triInputs, true);
-    triangle.freeIO(triOutputs);
+  const triInputs = triangle.makeIO({
+    pointlist: points2D.flat(),
+    // @ts-ignore
+    segmentlist: toSegments(polygon),
   });
+  const triOutputs = triangle.makeIO();
+
+  triangle.triangulate(
+    `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
+      maxMeshSize != null ? "a" : null
+    }${maxMeshSize ?? ""}`,
+    triInputs,
+    triOutputs
+  );
+
+  const { nodes: meshNodes, boundaryIndices } = toNodesAndBoundaryIndices(
+    triOutputs.pointlist,
+    triOutputs.pointmarkerlist
+  );
+
+  const nodes = meshNodes.map(
+    (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
+  );
+  const elements = toElements(triOutputs.trianglelist);
+
+  triangle.freeIO(triInputs, true);
+  triangle.freeIO(triOutputs);
 
   return {
     nodes,
