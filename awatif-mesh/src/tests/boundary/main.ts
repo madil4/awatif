@@ -1,6 +1,5 @@
 import van from "vanjs-core";
 import { getViewer } from "awatif-ui";
-
 import { mesh } from "../.././mesh";
 
 const { nodes, elements, boundaryIndices } = mesh({
@@ -14,18 +13,16 @@ const { nodes, elements, boundaryIndices } = mesh({
 
 // Add supports at boundary nodes
 const nodeInputs = van.state({});
-van.derive(() => {
-  nodeInputs.val = {
-    supports: new Map(
-      boundaryIndices.val.map((i) => [i, [true, true, true, true, true, true]])
-    ),
-  };
-});
+nodeInputs.val = {
+  supports: new Map(
+    boundaryIndices.map((i) => [i, [true, true, true, true, true, true]])
+  ),
+};
 
 const viewerElm = getViewer({
-  structure: {
-    nodes,
-    elements,
+  mesh: {
+    nodes: van.state(nodes),
+    elements: van.state(elements),
     nodeInputs,
   },
 });

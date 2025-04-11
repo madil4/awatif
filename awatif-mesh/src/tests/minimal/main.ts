@@ -1,6 +1,5 @@
 import van from "vanjs-core";
 import { getViewer } from "awatif-ui";
-
 import { mesh } from "../.././mesh";
 
 const nodes = van.state([]);
@@ -23,12 +22,12 @@ van.derive(() => {
     polygon: polygon.val,
   });
 
-  nodes.val = meshNodes.val;
-  elements.val = meshElements.val;
+  nodes.val = meshNodes;
+  elements.val = meshElements;
 });
 
 const viewerElm = getViewer({
-  structure: {
+  mesh: {
     nodes,
     elements,
   },

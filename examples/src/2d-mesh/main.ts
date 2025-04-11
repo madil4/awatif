@@ -35,8 +35,8 @@ van.derive(() => {
     polygon: [0, 1, 2, 3, 4, 5, 6, 7, 8],
   });
 
-  nodes.val = meshNodes.val;
-  elements.val = meshElements.val;
+  nodes.val = meshNodes;
+  elements.val = meshElements;
 });
 
 document.body.append(

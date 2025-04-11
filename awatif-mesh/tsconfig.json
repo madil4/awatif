@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2015", // For new programming features
     "moduleResolution": "Bundler", // To resolve modules for browsers
-    "noEmit": true
+    "noEmit": true,
+    "target": "ES2017", // Needed only to Top-level await to load wasm
+    "module": "es2022" // Needed only to Top-level await to load wasm
   }
 }

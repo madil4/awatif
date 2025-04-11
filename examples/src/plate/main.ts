@@ -38,12 +38,12 @@ van.derive(() => {
     polygon: [0, 1, 2, 3],
     maxMeshSize: 2,
   });
-  nodes.val = meshNodes.val;
-  elements.val = meshElements.val;
+  nodes.val = meshNodes;
+  elements.val = meshElements;
 
   nodeInputs.val = {
     supports: new Map(
-      boundaryIndices.val.map((i) => [i, [true, true, true, true, true, true]])
+      boundaryIndices.map((i) => [i, [true, true, true, true, true, true]])
     ),
     loads: new Map(
       nodes.val.map((_, i) => [i, [0, 0, parameters.load.value.val, 0, 0, 0]])
@@ -58,8 +58,8 @@ van.derive(() => {
   };
 
   deformOutputs.val = deform(
-    meshNodes.val,
-    meshElements.val,
+    meshNodes,
+    meshElements,
     nodeInputs.val,
     elementInputs.val
   );
