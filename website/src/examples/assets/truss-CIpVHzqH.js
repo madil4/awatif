@@ -1,9 +1,9 @@
-import { v as a, g as I, a as z } from "./styles-CpURnv7o.js";
-import { a as M } from "./analyze-htS-5mGW.js";
-import { d as _ } from "./deform-DIFTkfEQ.js";
-import { g as k } from "./getParameters-C7XsMMMg.js";
-import "./pureFunctionsAny.generated-B4njVAtx.js";
-import "./complex-i8qiIvCl.js";
+import { v as a, g as I, a as z } from "./styles-aHt-Mdxa.js";
+import { a as M } from "./analyze-dlO8fDC-.js";
+import { d as _ } from "./deform-Bjt4qPV-.js";
+import { g as k } from "./getParameters-DjGKBsKO.js";
+import "./pureFunctionsAny.generated-HP0TxL6F.js";
+import "./complex-ViNjxWW9.js";
 const n = { span: { value: a.state(15), min: 5, max: 20, step: 1, label: "span (m)" }, divisions: { value: a.state(5), min: 2, max: 5, step: 1 }, height: { value: a.state(2), min: 1, max: 5, step: 0.1, label: "height (m)" }, elasticity: { value: a.state(10), min: 1, max: 250, step: 1, label: "Elasticity (gpa)" }, area: { value: a.state(10), min: 1, max: 300, step: 1, label: "area (cm2)" }, load: { value: a.state(250), min: 1, max: 500, step: 1, label: "load (kN)" } }, c = a.state([]), d = a.state([]), v = a.state({}), h = a.state({}), f = a.state({}), b = a.state({});
 a.derive(() => {
   const g = n.span.value.val, e = n.divisions.value.val, w = n.height.value.val, y = n.elasticity.value.val * 1e6, x = n.area.value.val * 1e-4, O = n.load.value.val, l = [], s = [], i = g / e, p = [];
