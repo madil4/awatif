@@ -19,5 +19,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/madil4/awatif"
+  },
+  "dependencies": {
+    "eigen": "^0.2.2"
   }
 }

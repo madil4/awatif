@@ -1,5 +1,6 @@
-console.log("Hello from awatif-math!");
+import eig from "eigen";
 
-export const add = (a: number, b: number): number => {
-  return a + b;
-};
+// @ts-ignore
+await eig.ready;
+
+export const matrix = eig.Matrix;
