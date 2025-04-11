@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true, // required by Jest
+    "noEmit": true
+  }
+}
