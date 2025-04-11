@@ -3,7 +3,7 @@ import { analyze } from "./analyze";
 import { deform } from "./deform";
 
 describe("analyze", () => {
-  test("3D bars from Logan's book example 3.9", () => {
+  test("Bars from Logan's book example 3.9", () => {
     const nodes: Node[] = [
       [12, -3, -4],
       [0, 0, 0],
@@ -77,7 +77,7 @@ describe("analyze", () => {
     });
   });
 
-  test("3D frames from Logan's book example 5.8", () => {
+  test("Frames from Logan's book example 5.8", () => {
     const nodes: Node[] = [
       [2.5, 0, 0],
       [0, 0, 0],
