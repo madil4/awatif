@@ -21,7 +21,7 @@
     "url": "https://github.com/madil4/awatif"
   },
   "scripts": {
-    "dev": "jest --watch"
+    "dev": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --watch"
   },
   "devDependencies": {
     "@types/jest": "~29.5.14",
