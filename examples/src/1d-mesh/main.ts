@@ -2,14 +2,16 @@ import van, { State } from "vanjs-core";
 import {
   Node,
   Element,
-  AnalysisInputs,
-  AnalysisOutputs,
-} from "awatif-data-structure";
-import { analyze } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+  NodeInputs,
+  ElementInputs,
+  DeformOutputs,
+  AnalyzeOutputs,
+} from "awatif-fem";
+import { analyze, deform } from "awatif-fem";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 
 // Init
-const params: Parameters = {
+const parameters: Parameters = {
   meshDensity: {
     value: van.state(7),
     min: 1,
@@ -22,19 +24,22 @@ const params: Parameters = {
   load: { value: van.state(10), min: 0, max: 20 },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
-const analysisInputsState: State<AnalysisInputs> = van.state({});
-const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+const nodeInputsState: State<NodeInputs> = van.state({});
+const elementInputsState: State<ElementInputs> = van.state({});
+const deformOutputsState: State<DeformOutputs> = van.state({});
+const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
   const nodes: Node[] = [];
   const elements: Element[] = [];
-  const count = params.meshDensity.value.val;
-  const height = params.height.value.val;
-  const span = params.span.value.val;
-  const load = params.load.value.val;
+  const count = parameters.meshDensity.value.val;
+  const height = parameters.height.value.val;
+  const span = parameters.span.value.val;
+  const load = parameters.load.value.val;
 
   // beam 1
   nodes.push(
@@ -69,57 +74,54 @@ van.derive(() => {
   );
   elements.push([s - 1, s]); // connecting beam
 
-  const analysisInputs: AnalysisInputs = {
-    sections: new Map(),
-    materials: new Map(),
-    pointSupports: new Map(),
-    pointLoads: new Map(),
+  const nodeInputs: NodeInputs = {
+    supports: new Map([
+      [0, [true, true, true, true, true, true]],
+      [nodes.length - 1, [true, true, true, true, true, true]],
+    ]),
+    loads: new Map([[loadNode, [load, 0, 0, 0, 0, 0]]]),
   };
 
-  elements.forEach((_, i) => {
-    analysisInputs.materials?.set(i, {
-      elasticity: 10,
-      shearModulus: 10,
-    });
-    analysisInputs.sections?.set(i, {
-      area: 10,
-      torsionalConstant: 10,
-      momentOfInertiaY: 10,
-      momentOfInertiaZ: 10,
-    });
-  });
+  const elementInputs: ElementInputs = {
+    elasticities: new Map(elements.map((_, i) => [i, 10])),
+    shearModuli: new Map(elements.map((_, i) => [i, 10])),
+    areas: new Map(elements.map((_, i) => [i, 10])),
+    torsionalConstants: new Map(elements.map((_, i) => [i, 10])),
+    momentsOfInertiaY: new Map(elements.map((_, i) => [i, 10])),
+    momentsOfInertiaZ: new Map(elements.map((_, i) => [i, 10])),
+  };
 
-  analysisInputs.pointSupports?.set(0, [true, true, true, true, true, true]);
-  analysisInputs.pointSupports?.set(nodes.length - 1, [
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-  ]);
-  analysisInputs.pointLoads?.set(loadNode, [load, 0, 0, 0, 0, 0]);
+  const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
 
-  const analysisOutputs = analyze(nodes, elements, analysisInputs);
+  const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
 
   // update state
   nodesState.val = nodes;
   elementsState.val = elements;
-  analysisInputsState.val = analysisInputs;
-  analysisOutputsState.val = analysisOutputs;
+  nodeInputsState.val = nodeInputs;
+  elementInputsState.val = elementInputs;
+  deformOutputsState.val = deformOutputs;
+  analyzeOutputsState.val = analyzeOutputs;
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
-    structure: {
+  getParameters(parameters),
+  getViewer({
+    mesh: {
       nodes: nodesState,
       elements: elementsState,
-      analysisInputs: analysisInputsState,
-      analysisOutputs: analysisOutputsState,
+      nodeInputs: nodeInputsState,
+      elementInputs: elementInputsState,
+      deformOutputs: deformOutputsState,
+      analyzeOutputs: analyzeOutputsState,
     },
     settingsObj: {
       deformedShape: true,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );

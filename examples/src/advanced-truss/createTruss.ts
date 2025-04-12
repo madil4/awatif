@@ -1,4 +1,4 @@
-import { Node, Element } from "awatif-data-structure";
+import { Node, Element } from "awatif-fem";
 
 export function createTruss(
   span: number,

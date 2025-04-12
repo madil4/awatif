@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Node } from "awatif-data-structure";
-import { Structure } from "awatif-data-structure";
-import { Settings } from "../settings/settings";
+import { Node } from "awatif-fem";
+import { Structure } from "awatif-fem";
+import { Settings } from "../settings/getSettings";
 
 export function loads(
   structure: Structure,
@@ -21,10 +21,14 @@ export function loads(
 
     group.children.forEach((o) => (o as THREE.ArrowHelper).dispose());
     group.clear();
-    structure.analysisInputs?.val.pointLoads?.forEach((load, index) => {
+
+    structure.nodeInputs?.val.loads?.forEach((load, index) => {
+      const position = derivedNodes.val[index];
+      if (!position) return; // do not create if node does not exist
+
       const arrow = new THREE.ArrowHelper(
         new THREE.Vector3(...load.slice(0, 3)).normalize(),
-        new THREE.Vector3(...derivedNodes.rawVal[index]),
+        new THREE.Vector3(...position),
         1,
         0xee9b00,
         0.3,

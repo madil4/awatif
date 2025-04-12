@@ -1,59 +1,85 @@
-import van, { State } from "vanjs-core";
-import { Node, Element } from "awatif-data-structure";
+import {
+  cross,
+  divide,
+  MathCollection,
+  multiply,
+  norm,
+  subtract,
+  transpose,
+} from "mathjs";
+import { Node, Element } from "awatif-fem";
 import triangle from "triangle-wasm";
+
+// Loading the wasm file (UI blocking)
 // @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";
-import { subdivide } from "./subdivide";
-
-// to make sure init is called once with multiple mesh call
-const isWsLoaded = van.state(false);
-triangle.init(triangleWasmUrl).then(() => (isWsLoaded.val = true));
+// @ts-ignore
+await triangle.init(triangleWasmUrl);
 
 export function mesh({
-  points,
-  polygon,
+  points, // Array of point(s) in the form of [x, y].
+  polygon, // Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
+  maxMeshSize = 3,
+  maxNumSteinerPoints = 300,
+  minMeshAngleDegrees = 30,
 }: {
-  points: State<number[][]>;
-  polygon: State<number[]>;
+  points: Node[];
+  polygon: number[];
+  maxMeshSize?: number;
+  maxNumSteinerPoints?: number;
+  minMeshAngleDegrees?: number;
 }): {
-  nodes: State<Node[]>; // the output are reactive just to react after wasm is loaded
-  elements: State<Element[]>;
+  // the output are reactive just to react after wasm is loaded
+  nodes: Node[];
+  elements: Element[];
+  boundaryIndices: number[];
 } {
-  // init
-  const nodes: State<Node[]> = van.state([]);
-  const elements: State<Element[]> = van.state([]);
+  const transformationMatrix = getTransformationMatrix(
+    points[0],
+    points[1],
+    points[2]
+  );
+  const points2D = points
+    .map((p) => multiply(transpose(transformationMatrix), p))
+    .map((p) => [p[0], p[1]]);
 
-  // events: mesh when points and faces change
-  van.derive(() => {
-    if (!isWsLoaded.val) return;
-
-    const input = triangle.makeIO({
-      pointlist: points.val.flat(),
-      // @ts-ignore
-      segmentlist: polygonToSegments(polygon.val),
-    });
-    const output = triangle.makeIO();
-
-    triangle.triangulate("pzQOS300q30a3", input, output);
-
-    const { points: subPoints, faces: subFaces } = subdivide({
-      points: triOutputToPoints(output),
-      faces: triOutputToTriangles(output),
-      subdivisions: 0,
-    });
-
-    nodes.val = subPoints.map((p) => [p[0], 0, p[1]]);
-    elements.val = subFaces;
-
-    triangle.freeIO(input, true);
-    triangle.freeIO(output);
+  const triInputs = triangle.makeIO({
+    pointlist: points2D.flat(),
+    // @ts-ignore
+    segmentlist: toSegments(polygon),
   });
+  const triOutputs = triangle.makeIO();
 
-  return { nodes, elements };
+  triangle.triangulate(
+    `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
+      maxMeshSize != null ? "a" : null
+    }${maxMeshSize ?? ""}`,
+    triInputs,
+    triOutputs
+  );
+
+  const { nodes: meshNodes, boundaryIndices } = toNodesAndBoundaryIndices(
+    triOutputs.pointlist,
+    triOutputs.pointmarkerlist
+  );
+
+  const nodes = meshNodes.map(
+    (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
+  );
+  const elements = toElements(triOutputs.trianglelist);
+
+  triangle.freeIO(triInputs, true);
+  triangle.freeIO(triOutputs);
+
+  return {
+    nodes,
+    elements,
+    boundaryIndices,
+  };
 }
 
 // Utils
-function polygonToSegments(polygon: number[]): number[] {
+function toSegments(polygon: number[]): number[] {
   const segments: number[] = [];
 
   for (let i = 0; i < polygon.length; i += 1) {
@@ -63,24 +89,62 @@ function polygonToSegments(polygon: number[]): number[] {
   return segments;
 }
 
-function triOutputToPoints(output: any): number[][] {
-  const points = [];
-  const outPoints = output.pointlist;
+function toNodesAndBoundaryIndices( // combine Node and boundaryIndices to loop once only on pointlist
+  pointlist: number[],
+  pointmarkerlist: number[]
+): {
+  nodes: number[][];
+  boundaryIndices: number[];
+} {
+  const nodes = [];
+  const boundaryIndices = [];
 
-  for (let i = 0; i < outPoints.length; i += 2) {
-    points.push([outPoints[i], outPoints[i + 1]]);
+  for (let i = 0; i < pointlist.length; i += 2) {
+    nodes.push([pointlist[i], pointlist[i + 1]]);
+
+    if (pointmarkerlist[i / 2]) boundaryIndices.push(i / 2);
   }
 
-  return points;
+  return { nodes, boundaryIndices };
 }
 
-function triOutputToTriangles(output: any): number[][] {
-  const triangles = [];
-  const outTriangles = output.trianglelist;
+function toElements(trianglelist: number[]): number[][] {
+  const elements = [];
 
-  for (let i = 0; i < outTriangles.length; i += 3) {
-    triangles.push([outTriangles[i], outTriangles[i + 1], outTriangles[i + 2]]);
+  for (let i = 0; i < trianglelist.length; i += 3) {
+    elements.push([trianglelist[i], trianglelist[i + 1], trianglelist[i + 2]]);
   }
 
-  return triangles;
+  return elements;
+}
+
+// from global 3D to local 2D
+function getTransformationMatrix(n1: Node, n2: Node, n3: Node): number[][] {
+  // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 5.4
+  // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
+
+  const j = getAverage([n2, n3]);
+  const k = getAverage([n1, n3]);
+  const i = getAverage([n1, n2]);
+  const x = divide(subtract(j, k), norm(subtract(j, k))) as MathCollection;
+  const r = divide(subtract(n3, i), norm(subtract(j, k))) as MathCollection;
+  const z = divide(cross(x, r), norm(cross(x, r))) as MathCollection;
+  const y = divide(cross(z, x), norm(cross(z, x)));
+
+  return [
+    [x[0], y[0], z[0]],
+    [x[1], y[1], z[1]],
+    [x[2], y[2], z[2]],
+  ];
+
+  // utils
+  function getAverage(Nodes: Node[]): Node {
+    const sum = Nodes.reduce(
+      (acc, n) => [acc[0] + n[0], acc[1] + n[1], acc[2] + n[2]],
+      [0, 0, 0]
+    );
+
+    const count = Nodes.length;
+    return [sum[0] / count, sum[1] / count, sum[2] / count];
+  }
 }

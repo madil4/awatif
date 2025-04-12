@@ -1,0 +1,68 @@
+#dialog dialog {
+  position: fixed;
+  z-index: 2;
+  overflow: auto;
+  width: calc(100% - 292px - 3rem);
+  height: calc(100% - 4rem);
+  margin: 2.5rem 0.6rem 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+@media only screen and (max-width: 600px) {
+  #dialog dialog {
+    width: calc(100% - 1.5rem);
+    height: calc(70%);
+  }
+}
+
+#dialog .dialog-header {
+  position: sticky;
+  top: 0;
+  background: #f1f1f1;
+  padding: 10px 20px;
+  height: 22px;
+  font-size: 1.2rem;
+}
+
+#dialog .close {
+  color: #000000;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  float: right;
+  z-index: 999;
+}
+
+#dialog .dialog-body {
+  position: absolute;
+  top: 42px; /* Height of header */
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Resizing Handles */
+.resize-handle {
+  position: absolute;
+  z-index: 10;
+}
+
+.resize-handle-right {
+  width: 5px;
+  height: 100%;
+  top: 50px;
+  right: 0;
+  cursor: ew-resize;
+}
+
+.resize-handle-top {
+  height: 5px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  cursor: ns-resize;
+}

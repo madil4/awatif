@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Node } from "awatif-data-structure";
-import { Settings } from "../settings/settings";
+import { Node } from "awatif-fem";
+import { Settings } from "../settings/getSettings";
 
 export function nodes(
   settings: Settings,

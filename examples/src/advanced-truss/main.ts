@@ -1,16 +1,18 @@
 import van, { State } from "vanjs-core";
 import {
-  AnalysisInputs,
   Node,
   Element,
-  AnalysisOutputs,
-} from "awatif-data-structure";
-import { analyze } from "awatif-fem";
-import { parameters, Parameters, viewer } from "awatif-ui";
+  NodeInputs,
+  ElementInputs,
+  DeformOutputs,
+  AnalyzeOutputs,
+} from "awatif-fem";
+import { analyze, deform } from "awatif-fem";
+import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 import { createTruss } from "./createTruss";
 
 // Init
-export const params: Parameters = {
+export const parameters: Parameters = {
   span: {
     value: van.state(20),
     min: 1,
@@ -139,29 +141,32 @@ export const params: Parameters = {
   },
 };
 
+// Todo: refactor this State prefix, it is not needed, see color-map example
 const nodesState: State<Node[]> = van.state([]);
 const elementsState: State<Element[]> = van.state([]);
-const analysisInputsState: State<AnalysisInputs> = van.state({});
-const analysisOutputsState: State<AnalysisOutputs> = van.state({});
+const nodeInputsState: State<NodeInputs> = van.state({});
+const elementInputsState: State<ElementInputs> = van.state({});
+const deformOutputsState: State<DeformOutputs> = van.state({});
+const analyzeOutputsState: State<AnalyzeOutputs> = van.state({});
 
 // Events: on parameter change
 van.derive(() => {
-  let span = params.span.value.val;
-  let spacing = params.spacing.value.val;
-  const webType = params.webType.value.val;
-  const trimType = params.trimType.value.val;
-  const leftHeight = params.leftHeight.value.val;
-  const midHeight = params.midHeight.value.val;
-  const rightHeight = params.rightHeight.value.val;
-  const leftOffset = params.leftOffset.value.val;
-  const midOffset = params.midOffset.value.val;
-  const rightOffset = params.rightOffset.value.val;
-  const supportType = params.supportType.value.val;
-  const uniformLoad = params.uniformLoad.value.val;
-  const chordsArea = params.chordsArea.value.val * 1e-4;
-  const chordsElasticity = params.chordsElasticity.value.val * 1e6;
-  const websArea = params.websArea.value.val * 1e-4;
-  const websElasticity = params.websElasticity.value.val * 1e6;
+  let span = parameters.span.value.val;
+  let spacing = parameters.spacing.value.val;
+  const webType = parameters.webType.value.val;
+  const trimType = parameters.trimType.value.val;
+  const leftHeight = parameters.leftHeight.value.val;
+  const midHeight = parameters.midHeight.value.val;
+  const rightHeight = parameters.rightHeight.value.val;
+  const leftOffset = parameters.leftOffset.value.val;
+  const midOffset = parameters.midOffset.value.val;
+  const rightOffset = parameters.rightOffset.value.val;
+  const supportType = parameters.supportType.value.val;
+  const uniformLoad = parameters.uniformLoad.value.val;
+  const chordsArea = parameters.chordsArea.value.val * 1e-4;
+  const chordsElasticity = parameters.chordsElasticity.value.val * 1e6;
+  const websArea = parameters.websArea.value.val * 1e-4;
+  const websElasticity = parameters.websElasticity.value.val * 1e6;
 
   let nodes: Node[] = [];
   let elements: Element[] = [];
@@ -390,56 +395,60 @@ van.derive(() => {
     }
   }
 
-  const analysisInputs: AnalysisInputs = {
-    materials: new Map(),
-    sections: new Map(),
-    pointSupports: new Map(),
-    pointLoads: new Map(),
+  // Supports and loads
+  const nodeInputs: NodeInputs = {
+    supports: new Map(
+      supportIndices.map((i) => [i, [true, true, true, true, true, true]])
+    ),
+    loads: new Map(
+      loadIndices.map((i) => [i, [0, 0, -uniformLoad * spacing, 0, 0, 0]])
+    ),
   };
 
-  // analysisInputs - supports
-  supportIndices.forEach((i) =>
-    analysisInputs.pointSupports?.set(i, [true, true, true, true, true, true])
-  );
+  const elementInputs: ElementInputs = {
+    elasticities: new Map([
+      ...(chordsIndices.map((i) => [i, chordsElasticity]) as any),
+      ...(websIndices.map((i) => [i, websElasticity]) as any),
+    ]),
+    areas: new Map([
+      ...(chordsIndices.map((i) => [i, chordsArea]) as any),
+      ...(websIndices.map((i) => [i, websArea]) as any),
+    ]),
+  };
 
-  // analysisInputs - loads
-  loadIndices.forEach((i) =>
-    analysisInputs.pointLoads?.set(i, [0, 0, -uniformLoad * spacing, 0, 0, 0])
-  );
+  const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
 
-  // analysisInputs - properties
-  chordsIndices.forEach((i) => {
-    analysisInputs.materials?.set(i, { elasticity: chordsElasticity });
-    analysisInputs.sections?.set(i, { area: chordsArea });
-  });
-
-  websIndices.forEach((i) => {
-    analysisInputs.materials?.set(i, { elasticity: websArea });
-    analysisInputs.sections?.set(i, { area: websElasticity });
-  });
-
-  const analysisOutputs = analyze(nodes, elements, analysisInputs);
+  const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
 
   // update state
   nodesState.val = nodes;
   elementsState.val = elements;
-  analysisInputsState.val = analysisInputs;
-  analysisOutputsState.val = analysisOutputs;
+  nodeInputsState.val = nodeInputs;
+  elementInputsState.val = elementInputs;
+  deformOutputsState.val = deformOutputs;
+  analyzeOutputsState.val = analyzeOutputs;
 });
 
 document.body.append(
-  parameters(params),
-  viewer({
-    structure: {
+  getParameters(parameters),
+  getViewer({
+    mesh: {
       nodes: nodesState,
       elements: elementsState,
-      analysisInputs: analysisInputsState,
-      analysisOutputs: analysisOutputsState,
+      nodeInputs: nodeInputsState,
+      elementInputs: elementInputsState,
+      deformOutputs: deformOutputsState,
+      analyzeOutputs: analyzeOutputsState,
     },
     settingsObj: {
       deformedShape: true,
       loads: false,
     },
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/advanced-truss/main.ts",
+    author: "https://www.linkedin.com/in/madil4/",
   })
 );
 

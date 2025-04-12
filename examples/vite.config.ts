@@ -1,9 +1,10 @@
 import { defineConfig } from "vite";
+import topLevelAwait from "vite-plugin-top-level-await";
 
 export default defineConfig({
   server: {
     port: 4600,
-    open: "sheets/index.html",
+    open: "color-map/index.html",
   },
   base: "./", // to resolve assets
   root: "./src",
@@ -14,17 +15,20 @@ export default defineConfig({
       input: {
         "3d-structure": "src/3d-structure/index.html",
         "advanced-truss": "src/advanced-truss/index.html",
-        bars: "src/bars/index.html",
         beams: "src/beams/index.html",
-        building: "src/building/index.html",
+        "color-map": "src/color-map/index.html",
         curves: "src/curves/index.html",
         "1d-mesh": "src/1d-mesh/index.html",
-        sphere: "src/sphere/index.html",
         truss: "src/truss/index.html",
-        sheets: "src/sheets/index.html",
+        tables: "src/tables/index.html",
         "2d-mesh": "src/2d-mesh/index.html",
-        "draw-points": "src/draw-points/index.html",
+        drawing: "src/drawing/index.html",
+        report: "src/report/index.html",
+        plate: "src/plate/index.html",
+        solids: "src/solids/index.html",
       },
     },
   },
+  plugins: [topLevelAwait()], // used by awatif-math & awatif-mesh to load wasm at top level
+  define: { global: "globalThis" }, // to avoid "global is not defined" error induced by the library eigen in awatif-math
 });

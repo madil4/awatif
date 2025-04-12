@@ -1,104 +1,49 @@
+import { multiply } from "mathjs";
 import {
   Node,
   Element,
-  AnalysisInputs,
-  AnalysisOutputs,
-} from "awatif-data-structure";
-import { deform } from "./deform";
+  AnalyzeOutputs,
+  DeformOutputs,
+  ElementInputs,
+} from "./data-model";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
-import { getStiffness } from "./utils/getStiffness";
-import { multiply, norm, subset, subtract, index } from "mathjs";
+import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
 
 export function analyze(
   nodes: Node[],
   elements: Element[],
-  analysisInputs: AnalysisInputs
-): AnalysisOutputs {
-  const { deformations, reactions } = deform(nodes, elements, analysisInputs);
-
-  const analysisOutputs: AnalysisOutputs = {
-    nodes: new Map(),
-    elements: new Map(),
+  elementInputs: ElementInputs,
+  deformOutputs: DeformOutputs
+): AnalyzeOutputs {
+  const analyzeOutputs: AnalyzeOutputs = {
+    normals: new Map(),
+    shearsY: new Map(),
+    shearsZ: new Map(),
+    torsions: new Map(),
+    bendingsY: new Map(),
+    bendingsZ: new Map(),
   };
 
-  nodes.forEach((_, index) => {
-    const hasReaction = analysisInputs.pointSupports?.get(index);
+  elements.forEach((e, i) => {
+    const n0 = nodes[e[0]];
+    const n1 = nodes[e[1]];
 
-    analysisOutputs.nodes?.set(index, {
-      deformation: [
-        deformations[index * 6],
-        deformations[index * 6 + 1],
-        deformations[index * 6 + 2],
-        deformations[index * 6 + 3],
-        deformations[index * 6 + 4],
-        deformations[index * 6 + 5],
-      ],
-      ...(hasReaction && {
-        reaction: [
-          reactions[index * 6],
-          reactions[index * 6 + 1],
-          reactions[index * 6 + 2],
-          reactions[index * 6 + 3],
-          reactions[index * 6 + 4],
-          reactions[index * 6 + 5],
-        ],
-      }),
-    });
-  });
-
-  elements.forEach((element, elmIndex) => {
-    const node0 = nodes[element[0]];
-    const node1 = nodes[element[1]];
-    const L = norm(subtract(node1, node0)) as number;
-
-    const dxGlobal = subset(
-      deformations,
-      index(getElementNodesIndices(element))
-    );
-    const T = getTransformationMatrix(node0, node1);
+    const dxGlobal = [
+      ...deformOutputs.deformations.get(e[0]),
+      ...deformOutputs.deformations.get(e[1]),
+    ];
+    const T = getTransformationMatrix([n0, n1]);
     const dxLocal = multiply(T, dxGlobal);
-    const kLocal = getStiffness(
-      analysisInputs.sections?.get(elmIndex),
-      analysisInputs.materials?.get(elmIndex),
-      L
-    );
+    const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
     let fLocal = multiply(kLocal, dxLocal) as number[];
 
-    const section = analysisInputs.sections?.get(elmIndex);
-    const isFrame = section?.momentOfInertiaY && section.momentOfInertiaZ;
-
-    analysisOutputs.elements?.set(elmIndex, {
-      normal: [fLocal[0], fLocal[6]],
-      ...(isFrame && {
-        shearY: [fLocal[1], fLocal[7]],
-        shearZ: [fLocal[2], fLocal[8]],
-        torsion: [fLocal[3], fLocal[9]],
-        bendingY: [fLocal[4], fLocal[10]],
-        bendingZ: [fLocal[5], fLocal[11]],
-      }),
-    });
+    analyzeOutputs.normals.set(i, [fLocal[0], fLocal[6]]);
+    analyzeOutputs.shearsY.set(i, [fLocal[1], fLocal[7]]);
+    analyzeOutputs.shearsZ.set(i, [fLocal[2], fLocal[8]]);
+    analyzeOutputs.torsions.set(i, [fLocal[3], fLocal[9]]);
+    analyzeOutputs.bendingsY.set(i, [fLocal[4], fLocal[10]]);
+    analyzeOutputs.bendingsZ.set(i, [fLocal[5], fLocal[11]]);
   });
 
-  return analysisOutputs;
-}
-
-// Utils functions
-function getElementNodesIndices(element: Element): number[] {
-  const node1Range = [
-    element[0] * 6,
-    element[0] * 6 + 1,
-    element[0] * 6 + 2,
-    element[0] * 6 + 3,
-    element[0] * 6 + 4,
-    element[0] * 6 + 5,
-  ];
-  const node2Range = [
-    element[1] * 6,
-    element[1] * 6 + 1,
-    element[1] * 6 + 2,
-    element[1] * 6 + 3,
-    element[1] * 6 + 4,
-    element[1] * 6 + 5,
-  ];
-  return [...node1Range, ...node2Range];
+  return analyzeOutputs;
 }
