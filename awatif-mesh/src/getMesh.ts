@@ -16,7 +16,7 @@ import triangleWasmUrl from "./assets/triangle.wasm?url";
 // @ts-ignore
 await triangle.init(triangleWasmUrl);
 
-export function mesh({
+export function getMesh({
   points, // Array of point(s) in the form of [x, y].
   polygon, // Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
   maxMeshSize = 3,
