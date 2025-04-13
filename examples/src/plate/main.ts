@@ -8,7 +8,7 @@ import {
 } from "awatif-fem";
 import { getViewer, Parameters, getParameters, getToolbar } from "awatif-ui";
 import { deform } from "awatif-fem";
-import { mesh } from "awatif-mesh";
+import { getMesh } from "awatif-mesh";
 
 // Init
 const parameters: Parameters = {
@@ -28,7 +28,7 @@ van.derive(() => {
     nodes: meshNodes,
     elements: meshElements,
     boundaryIndices,
-  } = mesh({
+  } = getMesh({
     points: [
       [0, 0, 0],
       [15, 0, 0],

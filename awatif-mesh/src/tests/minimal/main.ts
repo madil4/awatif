@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { getViewer } from "awatif-ui";
-import { mesh } from "../.././mesh";
+import { getMesh } from "../../getMesh";
 
 const nodes = van.state([]);
 const elements = van.state([]);
@@ -12,7 +12,7 @@ setTimeout(() => {
 }, 1000);
 
 van.derive(() => {
-  const { nodes: meshNodes, elements: meshElements } = mesh({
+  const { nodes: meshNodes, elements: meshElements } = getMesh({
     points: [
       [0, 0, 0],
       [10, 0, 0],
