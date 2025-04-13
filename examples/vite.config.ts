@@ -4,7 +4,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "color-map/index.html",
+    open: "solids/index.html",
   },
   base: "./", // to resolve assets
   root: "./src",
@@ -16,7 +16,6 @@ export default defineConfig({
         "3d-structure": "src/3d-structure/index.html",
         "advanced-truss": "src/advanced-truss/index.html",
         beams: "src/beams/index.html",
-        "color-map": "src/color-map/index.html",
         curves: "src/curves/index.html",
         "1d-mesh": "src/1d-mesh/index.html",
         truss: "src/truss/index.html",

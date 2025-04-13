@@ -1,1 +1,1 @@
-export { mesh } from "./mesh";
+export { getMesh } from "./getMesh";

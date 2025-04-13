@@ -1,8 +1,8 @@
 import van from "vanjs-core";
 import { getViewer } from "awatif-ui";
-import { mesh } from "../.././mesh";
+import { getMesh } from "../../getMesh";
 
-const { nodes, elements, boundaryIndices } = mesh({
+const { nodes, elements, boundaryIndices } = getMesh({
   points: [
     [0, 0, 0],
     [10, 0, 0],
