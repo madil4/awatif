@@ -1,5 +1,12 @@
 import van, { State } from "vanjs-core";
-import { Node, Element, NodeInputs, ElementInputs, AnalyzeOutputs } from "awatif-fem";
+import {
+  Node,
+  Element,
+  NodeInputs,
+  ElementInputs,
+  DeformOutputs,
+  AnalyzeOutputs,
+} from "awatif-fem";
 import { Building } from "./data-model";
 import { Mesh } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
@@ -11,15 +18,33 @@ export function meshing(
 ): Mesh {
   const nodesState: State<Node[]> = van.state([]);
   const elementsState: State<Element[]> = van.state([]);
-  const analysisInputsState: State<AnalysisInputs> = van.state({
-    materials: new Map(),
-    sections: new Map(),
-    pointSupports: new Map(),
-    pointLoads: new Map(),
+  const nodeInputsState: State<NodeInputs> = van.state({
+    supports: new Map(),
+    loads: new Map(),
   });
-  const analysisOutputsState: State<AnalysisOutputs> = van.state({
+  const elementInputsState: State<ElementInputs> = van.state({
     nodes: new Map(),
     elements: new Map(),
+    elasticities: new Map(),
+    shearModuli: new Map(),
+    areas: new Map(),
+    momentsOfInertiaZ: new Map(),
+    momentsOfInertiaY: new Map(),
+    torsionalConstants: new Map(),
+    thicknesses: new Map(),
+    poissonsRatios: new Map(),
+  });
+  const deformOutputsState: State<DeformOutputs> = van.state({
+    deformations: new Map(),
+    reactions: new Map(),
+  });
+  const analyzeOutputsState: State<AnalyzeOutputs> = van.state({
+    normals: new Map(),
+    shearsY: new Map(),
+    shearsZ: new Map(),
+    torsions: new Map(),
+    bendingsY: new Map(),
+    bendingsZ: new Map(),
   });
 
   // slabs
@@ -33,34 +58,29 @@ export function meshing(
       );
       slabsIndices.forEach((slabIndex) => {
         const slab: number[] = building.slabs.val[slabIndex];
-        const points = van.state(
-          slab.map((s) => [
-            building.points.val[s][0],
-            building.points.val[s][1],
-          ])
-        );
-        const polygon = van.state(points.val.map((_, i) => i));
-        const { nodes, elements } = getMesh({ points.val, polygon.val });
+        const points = slab.map((s) => building.points.val[s] as Node);
+        const polygon = points.map((_, i) => i);
+        const { nodes, elements } = getMesh({ points, polygon });
 
         const numExistingNodes = nodesState.val.length;
-        const newNodesIndices = nodes.val.map((_, i) => i + numExistingNodes);
-        const slabElements = elements.val.map((e) =>
+        const newNodesIndices = nodes.map((_, i) => i + numExistingNodes);
+        const slabElements = elements.map((e) =>
           e.map((i) => i + numExistingNodes)
         );
 
         nodesState.val = [
           ...nodesState.val,
-          ...convertMeshNodesTo3d(nodes.val, elevation),
+          ...convertMeshNodesTo3d(nodes, elevation),
         ];
         elementsState.val = [...elementsState.val, ...slabElements];
 
         // slab loads ----------------------------------------------------------------
         const areaLoad =
           building.slabData.val.get(slabIndex)["analysisInput"].areaLoad;
-        analysisInputsState.val = getNodalLoadsFromSlabAreaLoad(
+        nodeInputsState.val = getNodalLoadsFromSlabAreaLoad(
           nodesState.val,
           slabElements,
-          analysisInputsState.val,
+          nodeInputsState.val,
           areaLoad,
           newNodesIndices
         );
@@ -108,8 +128,10 @@ export function meshing(
   return {
     nodes: nodesState,
     elements: elementsState,
-    analysisInputs: analysisInputsState,
-    analysisOutputs: analysisOutputsState,
+    nodeInputs: nodeInputsState,
+    elementInputs: elementInputsState,
+    deformOutputs: deformOutputsState,
+    analyzeOutputs: analyzeOutputsState,
   };
 }
 
@@ -141,11 +163,11 @@ function meshMember(
 function getNodalLoadsFromSlabAreaLoad(
   nodes: Node[],
   storySlabElements: Element[],
-  analysisInputs: AnalysisInputs,
+  nodeInputs: NodeInputs,
   areaLoad: number,
   slabsNodeIndices: number[]
-): AnalysisInputs {
-  analysisInputs = structuredClone(analysisInputs);
+): NodeInputs {
+  nodeInputs = structuredClone(nodeInputs);
   // 1. iterate over elements
   storySlabElements.forEach((e) => {
     const [n1, n2, n3] = e.map((i) => nodes[i]);
@@ -161,15 +183,13 @@ function getNodalLoadsFromSlabAreaLoad(
           number,
           number
         ];
-        const existingLoad = analysisInputs.pointLoads.get(n) ?? [
-          0, 0, 0, 0, 0, 0,
-        ];
-        analysisInputs.pointLoads.set(n, add(existingLoad, loadVector));
+        const existingLoad = nodeInputs.loads.get(n) ?? [0, 0, 0, 0, 0, 0];
+        nodeInputs.loads.set(n, add(existingLoad, loadVector));
       }
     });
   });
 
-  return analysisInputs;
+  return nodeInputs;
 }
 
 function getTriangleArea(n1: Node, n2: Node, n3: Node): number {
