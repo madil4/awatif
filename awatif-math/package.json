@@ -20,7 +20,7 @@
     "type": "git",
     "url": "https://github.com/madil4/awatif"
   },
-  "dependencies": {
-    "eigen": "^0.2.2"
+  "scripts": {
+    "dev": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --watch"
   }
 }
