@@ -1,4 +1,22 @@
+/* eslint-disable sort-class-members/sort-class-members */
+/* eslint-disable lines-between-class-members */
+/* eslint-disable semi */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable prettier/prettier */
+import HashMap from "hashmap";
+
 declare namespace eig {
+  class GC {
+    static add(...addList: unknown[]): void;
+    static pushException(...exceptionList: unknown[]): void;
+    static popException(...exceptionList: unknown[]): void;
+    static flush(): number;
+    static set(ref: unknown, name: string, newObj: unknown): void;
+    static initClass(classes: Set<unknown>, Class: unknown): unknown;
+    static objects: Set<unknown>;
+    static whitelist: HashMap<unknown, number>;
+  }
+
   const ready: Promise<void>;
 
   class Vector {
