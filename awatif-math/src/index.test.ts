@@ -1,4 +1,4 @@
-import { matrix, simplicialCholesky, sparseMatrix, tripletVector } from ".";
+import { matrix, simplicialCholesky, sparseMatrix, tripletVector, gc } from ".";
 
 describe("eigen", () => {
   test("Solve linear system Ax=B", () => {
@@ -39,5 +39,7 @@ describe("eigen", () => {
     const x = chol.solve(new matrix([10, 8]));
 
     expect([x.get(0, 0), x.get(1, 0)]).toEqual([1.75, 1.5]);
+
+    gc.flush(); // It is important to call this function to free memory
   });
 });
