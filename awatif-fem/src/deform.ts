@@ -34,7 +34,7 @@ export function deform(
   );
 
   const freeInd = getFreeIndices(nodeInputs.supports, dof);
-  const zerosIndices = getZerosIndices(stiffnesses, freeInd.length);
+  const zerosIndices = getZerosIndices(stiffnesses);
   const reducedIndices = freeInd.filter((f) => !zerosIndices.includes(f));
 
   const cholesky = new simplicialCholesky(
@@ -123,9 +123,10 @@ function getFreeIndices(
     .filter((v) => !toRemove.includes(v));
 }
 
-function getZerosIndices(matrix: SparseMatrix, matrixLength: number): number[] {
+function getZerosIndices(matrix: SparseMatrix): number[] {
+  const matrixLength = matrix.rows();
   const zerosIndices: number[] = [];
-  for (let i = 0; i < matrix.rows(); i++) {
+  for (let i = 0; i < matrixLength; i++) {
     if (matrix.block(0, matrixLength, i, i + 1).nonZeros() === 0) {
       zerosIndices.push(i);
     }
