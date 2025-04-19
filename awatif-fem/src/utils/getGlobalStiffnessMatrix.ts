@@ -19,10 +19,10 @@ export function getGlobalStiffnessMatrix(
 
   elements.forEach((e, i) => {
     const elmNodes = e.map((e) => nodes[e]);
-    const kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
-    const T = getTransformationMatrix(elmNodes);
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i); // 20mm
+    const T = getTransformationMatrix(elmNodes); // 20mm
 
-    const kGlobal = multiply(transpose(T), multiply(kLocal, T));
+    const kGlobal = multiply(transpose(T), multiply(kLocal, T)); // 40mm
     tripleV = assemble(tripleV, kGlobal, e);
   });
 

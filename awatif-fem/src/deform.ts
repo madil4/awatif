@@ -138,14 +138,15 @@ function getReducedMatrix(
   matrix: SparseMatrix,
   reducedInd: number[]
 ): SparseMatrix {
+  const dense = matrix.toDense();
   const tripleV = new tripletVector(reducedInd.length * reducedInd.length);
 
   for (let i = 0; i < reducedInd.length; i++) {
     for (let j = 0; j < reducedInd.length; j++) {
       const row = reducedInd[i];
       const col = reducedInd[j];
-      const value = matrix.get(row, col);
-      tripleV.add(i, j, value);
+      const value = dense.get(row, col);
+      if (value) tripleV.add(i, j, value);
     }
   }
 
