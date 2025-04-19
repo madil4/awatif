@@ -9,6 +9,7 @@ import {
   zeros,
   Matrix,
 } from "mathjs";
+import { buildOrthotropicDb } from "awatif-proprietary";
 
 export function getLocalStiffnessMatrix(
   nodes: Node[],
@@ -117,16 +118,22 @@ function getLocalStiffnessMatrixPlate(
   // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
 
   const E = elementInputs?.elasticities?.get(index) ?? 0;
+  const Eo = elementInputs.elasticitiesOrthogonal?.get(index) ?? 0;
   const nu = elementInputs?.poissonsRatios?.get(index) ?? 0;
+  const Gxy = elementInputs.shearModuli?.get(index) ?? 0;
   const thickness = elementInputs?.thicknesses?.get(index) ?? 0;
+
+  let Db: Matrix;
+  if (Eo) {
+    Db = buildOrthotropicDb(E, Eo, Gxy, nu, thickness);
+  } else {
+    Db = buildIsoDb(E, nu, thickness);
+  }
 
   // 1) extract coords
   const [x1, y1] = [nodes[0][0], nodes[0][1]];
   const [x2, y2] = [nodes[1][0], nodes[1][1]];
   const [x3, y3] = [nodes[2][0], nodes[2][1]];
-
-  // 2) build Db
-  const Db = buildConstitutiveMatrix(E, nu, thickness);
 
   // 3) area factor
   const twoA = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
@@ -348,7 +355,7 @@ function getLocalStiffnessMatrixPlate(
     return B;
   }
 
-  function buildConstitutiveMatrix(E: number, nu: number, t: number): Matrix {
+  function buildIsoDb(E: number, nu: number, t: number): Matrix {
     const factor = (E * t ** 3) / (12 * (1 - nu * nu));
     const data = [
       [1, nu, 0],

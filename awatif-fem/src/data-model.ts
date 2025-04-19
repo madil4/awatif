@@ -24,6 +24,7 @@ export type NodeInputs = {
 
 export type ElementInputs = {
   elasticities?: Map<number, number>;
+  elasticitiesOrthogonal?: Map<number, number>;
   shearModuli?: Map<number, number>;
   areas?: Map<number, number>;
   momentsOfInertiaZ?: Map<number, number>;
