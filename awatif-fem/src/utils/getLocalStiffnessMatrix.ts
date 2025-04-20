@@ -1,21 +1,12 @@
 import { Node, ElementInputs } from ".././data-model";
-import {
-  add,
-  matrix,
-  multiply,
-  norm,
-  subtract,
-  transpose,
-  zeros,
-  Matrix,
-} from "mathjs";
+import { Matrix, matrix } from "awatif-math";
 import { buildOrthotropicDb } from "awatif-proprietary";
 
 export function getLocalStiffnessMatrix(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
-): number[][] {
+): Matrix {
   if (nodes.length === 2)
     return getLocalStiffnessMatrixFrame(nodes, elementInputs, index);
 
@@ -27,21 +18,21 @@ function getLocalStiffnessMatrixFrame(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
-): number[][] {
+): Matrix {
   const Iz = elementInputs?.momentsOfInertiaZ?.get(index) ?? 0;
   const Iy = elementInputs?.momentsOfInertiaY?.get(index) ?? 0;
   const E = elementInputs?.elasticities?.get(index) ?? 0;
   const A = elementInputs?.areas?.get(index) ?? 0;
   const G = elementInputs?.shearModuli?.get(index) ?? 0;
   const J = elementInputs?.torsionalConstants?.get(index) ?? 0;
-  const L = norm(subtract(nodes[0], nodes[1])) as number;
+  const L = new matrix(nodes[1]).matSub(new matrix(nodes[0])).norm();
 
   const EA = (E * A) / L;
   const EIz = (E * Iz) / L ** 3;
   const EIy = (E * Iy) / L ** 3;
   const GJ = (G * J) / L;
 
-  return [
+  return new matrix([
     [EA, 0, 0, 0, 0, 0, -EA, 0, 0, 0, 0, 0],
     [0, 12 * EIz, 0, 0, 0, 6 * L * EIz, 0, -12 * EIz, 0, 0, 0, 6 * L * EIz],
     [0, 0, 12 * EIy, 0, -6 * L * EIy, 0, 0, 0, -12 * EIy, 0, -6 * L * EIy, 0],
@@ -106,14 +97,14 @@ function getLocalStiffnessMatrixFrame(
       0,
       4 * EIz * L ** 2,
     ],
-  ];
+  ]);
 }
 
 function getLocalStiffnessMatrixPlate(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
-): number[][] {
+): Matrix {
   // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 4.4
   // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
 
@@ -141,31 +132,31 @@ function getLocalStiffnessMatrixPlate(
 
   // 4) 3 integration points, each with weight=1/3 (over ref triangle area=1/2)
   //    => The factor will be 2A * w in the integral
-  const gaussPoints: Array<[number, number, number]> = [
+  const gaussPoints: [number, number, number][] = [
     [0.5, 0.0, 1 / 3],
     [0.0, 0.5, 1 / 3],
     [0.5, 0.5, 1 / 3],
   ];
 
   // 5) assemble K
-  let K = zeros(9, 9) as Matrix;
+  let K = new matrix(9, 9);
 
   for (const [k, e, w] of gaussPoints) {
     // build B at (k,e)
     const B = buildBMatrix(k, e, x1, y1, x2, y2, x3, y3);
-    const Bt = transpose(B) as Matrix;
+    const Bt = B.transpose();
 
     const factor = 2 * A * w; // "2A" because the reference triangle has area=1/2
 
     // B^T * Db * B
-    const BtDb = multiply(Bt, Db) as Matrix; // (9x3)
-    const BtDbB = multiply(BtDb, B) as Matrix; // (9x9)
-    const stiffPart = multiply(factor, BtDbB) as Matrix;
-    K = add(K, stiffPart) as Matrix;
+    const BtDb = Bt.matMul(Db); // (9x3)
+    const BtDbB = BtDb.matMul(B); // (9x9)
+    const stiffPart = BtDbB.mul(factor);
+    K.matAddSelf(stiffPart);
   }
 
   // 6) return as a 2D array
-  return mapK9x9ToK18x18(K.toArray() as number[][]);
+  return mapK9x9ToK18x18(K);
 
   // Utils
   function buildEdgeCoeffs(
@@ -335,21 +326,21 @@ function getLocalStiffnessMatrixPlate(
     const { x31, y31, x12, y12 } = ec;
 
     // 5) assemble B
-    let B = zeros(3, 9) as Matrix;
+    let B = new matrix(3, 9);
 
     for (let i = 0; i < 9; i++) {
       // row 0 => kappa_x
       const val0 = (y31 * Hxk[i] + y12 * Hxe[i]) / twoA;
-      B.set([0, i], val0);
+      B.set(0, i, val0);
 
       // row 1 => kappa_y
       const val1 = (-x31 * Hyk[i] - x12 * Hye[i]) / twoA;
-      B.set([1, i], val1);
+      B.set(1, i, val1);
 
       // row 2 => kappa_xy
       const val2 =
         (-x31 * Hxk[i] - x12 * Hxe[i] + y31 * Hyk[i] + y12 * Hye[i]) / twoA;
-      B.set([2, i], val2);
+      B.set(2, i, val2);
     }
 
     return B;
@@ -362,34 +353,34 @@ function getLocalStiffnessMatrixPlate(
       [nu, 1, 0],
       [0, 0, (1 - nu) / 2],
     ].map((row) => row.map((val) => val * factor));
-    return matrix(data);
+    return new matrix(data);
   }
 
-  function mapK9x9ToK18x18(k9: number[][]): number[][] {
+  function mapK9x9ToK18x18(k9: Matrix): Matrix {
     // prettier-ignore
     const k18 = [
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0][0], k9[0][2], k9[0][1], 0    , 0, 0, k9[0][0+3], k9[0][2+3], k9[0][1+3], 0,     0, 0, k9[0][0+6], k9[0][2+6], k9[0][1+6], 0],
-      [0, 0, k9[2][0], k9[2][2], k9[2][1], 0    , 0, 0, k9[2][0+3], k9[2][2+3], k9[2][1+3], 0,     0, 0, k9[2][0+6], k9[2][2+6], k9[2][1+6], 0],
-      [0, 0, k9[1][0], k9[1][2], k9[1][1], 0    , 0, 0, k9[1][0+3], k9[1][2+3], k9[1][1+3], 0,     0, 0, k9[1][0+6], k9[1][2+6], k9[1][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0+3][0], k9[0+3][2], k9[0+3][1], 0    , 0, 0, k9[0+3][0+3], k9[0+3][2+3], k9[0+3][1+3], 0,     0, 0, k9[0+3][0+6], k9[0+3][2+6], k9[0+3][1+6], 0],
-      [0, 0, k9[2+3][0], k9[2+3][2], k9[2+3][1], 0    , 0, 0, k9[2+3][0+3], k9[2+3][2+3], k9[2+3][1+3], 0,     0, 0, k9[2+3][0+6], k9[2+3][2+6], k9[2+3][1+6], 0],
-      [0, 0, k9[1+3][0], k9[1+3][2], k9[1+3][1], 0    , 0, 0, k9[1+3][0+3], k9[1+3][2+3], k9[1+3][1+3], 0,     0, 0, k9[1+3][0+6], k9[1+3][2+6], k9[1+3][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0+6][0], k9[0+6][2], k9[0+6][1], 0    , 0, 0, k9[0+6][0+3], k9[0+6][2+3], k9[0+6][1+3], 0,     0, 0, k9[0+6][0+6], k9[0+6][2+6], k9[0+6][1+6], 0],
-      [0, 0, k9[2+6][0], k9[2+6][2], k9[2+6][1], 0    , 0, 0, k9[2+6][0+3], k9[2+6][2+3], k9[2+6][1+3], 0,     0, 0, k9[2+6][0+6], k9[2+6][2+6], k9[2+6][1+6], 0],
-      [0, 0, k9[1+6][0], k9[1+6][2], k9[1+6][1], 0    , 0, 0, k9[1+6][0+3], k9[1+6][2+3], k9[1+6][1+3], 0,     0, 0, k9[1+6][0+6], k9[1+6][2+6], k9[1+6][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9.get(0,0), k9.get(0,2), k9.get(0,1), 0,     0, 0, k9.get(0,0+3), k9.get(0,2+3), k9.get(0,1+3), 0,     0, 0, k9.get(0,0+6), k9.get(0,2+6), k9.get(0,1+6), 0],
+      [0, 0, k9.get(2,0), k9.get(2,2), k9.get(2,1), 0,     0, 0, k9.get(2,0+3), k9.get(2,2+3), k9.get(2,1+3), 0,     0, 0, k9.get(2,0+6), k9.get(2,2+6), k9.get(2,1+6), 0],
+      [0, 0, k9.get(1,0), k9.get(1,2), k9.get(1,1), 0,     0, 0, k9.get(1,0+3), k9.get(1,2+3), k9.get(1,1+3), 0,     0, 0, k9.get(1,0+6), k9.get(1,2+6), k9.get(1,1+6), 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+    
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9.get(0+3,0), k9.get(0+3,2), k9.get(0+3,1), 0,     0, 0, k9.get(0+3,0+3), k9.get(0+3,2+3), k9.get(0+3,1+3), 0,     0, 0, k9.get(0+3,0+6), k9.get(0+3,2+6), k9.get(0+3,1+6), 0],
+      [0, 0, k9.get(2+3,0), k9.get(2+3,2), k9.get(2+3,1), 0,     0, 0, k9.get(2+3,0+3), k9.get(2+3,2+3), k9.get(2+3,1+3), 0,     0, 0, k9.get(2+3,0+6), k9.get(2+3,2+6), k9.get(2+3,1+6), 0],
+      [0, 0, k9.get(1+3,0), k9.get(1+3,2), k9.get(1+3,1), 0,     0, 0, k9.get(1+3,0+3), k9.get(1+3,2+3), k9.get(1+3,1+3), 0,     0, 0, k9.get(1+3,0+6), k9.get(1+3,2+6), k9.get(1+3,1+6), 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+    
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+      [0, 0, k9.get(0+6,0), k9.get(0+6,2), k9.get(0+6,1), 0,     0, 0, k9.get(0+6,0+3), k9.get(0+6,2+3), k9.get(0+6,1+3), 0,     0, 0, k9.get(0+6,0+6), k9.get(0+6,2+6), k9.get(0+6,1+6), 0],
+      [0, 0, k9.get(2+6,0), k9.get(2+6,2), k9.get(2+6,1), 0,     0, 0, k9.get(2+6,0+3), k9.get(2+6,2+3), k9.get(2+6,1+3), 0,     0, 0, k9.get(2+6,0+6), k9.get(2+6,2+6), k9.get(2+6,1+6), 0],
+      [0, 0, k9.get(1+6,0), k9.get(1+6,2), k9.get(1+6,1), 0,     0, 0, k9.get(1+6,0+3), k9.get(1+6,2+3), k9.get(1+6,1+3), 0,     0, 0, k9.get(1+6,0+6), k9.get(1+6,2+6), k9.get(1+6,1+6), 0],
+      [0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
     ];
 
-    return k18;
+    return new matrix(k18);
   }
 }
