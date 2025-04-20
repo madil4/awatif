@@ -63,7 +63,8 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
         const columnPoints = building.columnsByStory.val
           .get(Number(story))
           .map(
-            (columnPointIndex) => building.points.val[columnPointIndex] as Node
+            (columnIndex) =>
+              building.points.val[building.columns.val[columnIndex]] as Node
           );
         const points = [...boundaryPoints, ...columnPoints];
 
