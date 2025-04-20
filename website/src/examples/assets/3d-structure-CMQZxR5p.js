@@ -1,9 +1,7 @@
 import { v as e, g as y, a as z } from "./styles-aHt-Mdxa.js";
-import { a as S, __tla as __tla_0 } from "./analyze-roGieJFf.js";
-import { d as O, __tla as __tla_1 } from "./deform-BxVBPNqQ.js";
+import { a as S, __tla as __tla_0 } from "./analyze-DDDIG0wq.js";
+import { d as O, __tla as __tla_1 } from "./deform-C3_9Anee.js";
 import { g as I } from "./getParameters-DjGKBsKO.js";
-import "./pureFunctionsAny.generated-pdW0xjir.js";
-import "./complex-ViNjxWW9.js";
 Promise.all([
   (() => {
     try {
@@ -55,31 +53,31 @@ Promise.all([
     }
   }, c = e.state([]), f = e.state([]), h = e.state({}), x = e.state({}), b = e.state({}), g = e.state({});
   e.derive(() => {
-    const d = n.dx.value.val, i = n.dy.value.val, o = n.dz.value.val, l = n.divisions.value.val;
+    const p = n.dx.value.val, i = n.dy.value.val, l = n.dz.value.val, o = n.divisions.value.val;
     let s = [], a = [];
-    for (let t = 0; t <= l; t++) s.push([
+    for (let t = 0; t <= o; t++) s.push([
       0,
       0,
-      o * t
+      l * t
     ], [
-      d,
+      p,
       0,
-      o * t
+      l * t
     ], [
-      d,
+      p,
       i,
-      o * t
+      l * t
     ], [
       0,
       i,
-      o * t
+      l * t
     ]);
     s = s.map((t) => [
       6 + t[0],
       6 + t[1],
       t[2]
     ]);
-    for (let t = 0; t < l * 4; ) t += 4, a.push([
+    for (let t = 0; t < o * 4; ) t += 4, a.push([
       t,
       t + 1
     ], [
@@ -95,11 +93,11 @@ Promise.all([
       t,
       t + 2
     ]);
-    for (let t = 0; t < l * 4; t++) a.push([
+    for (let t = 0; t < o * 4; t++) a.push([
       t,
       t + 4
     ]);
-    for (let t = 0; t < l * 4; t += 4) a.push([
+    for (let t = 0; t < o * 4; t += 4) a.push([
       t,
       t + 5
     ], [
@@ -112,7 +110,7 @@ Promise.all([
       t + 1,
       t + 6
     ]);
-    const m = [
+    const u = [
       true,
       true,
       true,
@@ -123,19 +121,19 @@ Promise.all([
       supports: /* @__PURE__ */ new Map([
         [
           0,
-          m
+          u
         ],
         [
           1,
-          m
+          u
         ],
         [
           2,
-          m
+          u
         ],
         [
           3,
-          m
+          u
         ]
       ]),
       loads: /* @__PURE__ */ new Map([
@@ -151,17 +149,17 @@ Promise.all([
           ]
         ]
       ])
-    }, u = {
-      elasticities: new Map(a.map((t, p) => [
-        p,
+    }, m = {
+      elasticities: new Map(a.map((t, d) => [
+        d,
         100
       ])),
-      areas: new Map(a.map((t, p) => [
-        p,
+      areas: new Map(a.map((t, d) => [
+        d,
         10
       ]))
-    }, v = O(s, a, r, u), w = S(s, a, u, v);
-    c.val = s, f.val = a, h.val = r, x.val = u, b.val = v, g.val = w;
+    }, v = O(s, a, r, m), w = S(s, a, m, v);
+    c.val = s, f.val = a, h.val = r, x.val = m, b.val = v, g.val = w;
   });
   document.body.append(I(n), y({
     mesh: {

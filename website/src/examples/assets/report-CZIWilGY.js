@@ -1,10 +1,8 @@
 import { v as e, i as w, x as s, a as $, g as x } from "./styles-aHt-Mdxa.js";
-import { a as y, __tla as __tla_0 } from "./analyze-roGieJFf.js";
-import { d as z, __tla as __tla_1 } from "./deform-BxVBPNqQ.js";
+import { a as y, __tla as __tla_0 } from "./analyze-DDDIG0wq.js";
+import { d as z, __tla as __tla_1 } from "./deform-C3_9Anee.js";
 import { g as T } from "./getParameters-DjGKBsKO.js";
 import { g as S } from "./getDialog-BVqD3sqV.js";
-import "./pureFunctionsAny.generated-pdW0xjir.js";
-import "./complex-ViNjxWW9.js";
 Promise.all([
   (() => {
     try {
@@ -19,13 +17,13 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function F({ template: c, data: n }) {
+  function F({ template: i, data: n }) {
     const l = document.createElement("div");
     return e.derive(() => {
-      w(c(n), l);
+      w(i(n), l);
     }), l;
   }
-  function B({ nodes: c, nodeInputs: n, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
+  function B({ nodes: i, nodeInputs: n, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
     return s`
     <br />
     <header class="header">
@@ -79,7 +77,7 @@ Promise.all([
         <th>yCoord</th>
         <th>zCoord</th>
       </tr>
-      ${c.val.map((a, t) => s`
+      ${i.val.map((a, t) => s`
           <tr>
             <td><div class="custom-cell-content">${t}</div></td>
             <td>
@@ -217,11 +215,11 @@ Promise.all([
       min: 0,
       max: 500
     }
-  }, o = e.state([]), d = e.state([]), v = e.state({}), i = e.state({}), h = e.state({}), m = e.state({}), u = {
+  }, o = e.state([]), d = e.state([]), v = e.state({}), c = e.state({}), h = e.state({}), m = e.state({}), u = {
     nodes: o,
     elements: d,
     nodeInputs: v,
-    elementInputs: i,
+    elementInputs: c,
     deformOutputs: h,
     analyzeOutputs: m
   };
@@ -289,7 +287,7 @@ Promise.all([
           ]
         ]
       ])
-    }, i.val = {
+    }, c.val = {
       elasticities: /* @__PURE__ */ new Map([
         [
           0,
@@ -310,7 +308,7 @@ Promise.all([
           100
         ]
       ])
-    }, h.val = z(o.val, d.val, v.val, i.val), m.val = y(o.val, d.val, i.val, h.val);
+    }, h.val = z(o.val, d.val, v.val, c.val), m.val = y(o.val, d.val, c.val, h.val);
   });
   const p = e.state(""), b = e.state(void 0);
   e.derive(() => {
