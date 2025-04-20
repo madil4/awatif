@@ -7,15 +7,15 @@ import {
   DeformOutputs,
   AnalyzeOutputs,
 } from "awatif-fem";
-import { Building } from "./data-model";
+import { Building, MeshReference, SlabData, ColumnData } from "./data-model";
 import { Mesh } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
-import { subtract, divide, add, multiply, column, cross, norm } from "mathjs";
+import { subtract, divide, add, multiply, cross, norm } from "mathjs";
 
-export function meshing(
-  building: Building,
-  frameMeshDensity: number = 3
-): Mesh {
+/**
+ * This function mutates the building object.
+ */
+export function meshing(building: Building, frameMeshDensity: number = 3) {
   const nodesState: State<Node[]> = van.state([]);
   const elementsState: State<Element[]> = van.state([]);
   const nodeInputsState: State<NodeInputs> = van.state({
@@ -63,9 +63,15 @@ export function meshing(
         const { nodes, elements } = getMesh({ points, polygon });
 
         const numExistingNodes = nodesState.val.length;
-        const newNodesIndices = nodes.map((_, i) => i + numExistingNodes);
+        const numExistingElements = elementsState.val.length;
+
         const slabElements = elements.map((e) =>
           e.map((i) => i + numExistingNodes)
+        );
+
+        const slabsNodesIndices = nodes.map((_, i) => i + numExistingNodes);
+        const slabElementsIndices = elements.map(
+          (_, i) => i + numExistingElements
         );
 
         nodesState.val = [
@@ -73,6 +79,20 @@ export function meshing(
           ...convertMeshNodesTo3d(nodes, elevation),
         ];
         elementsState.val = [...elementsState.val, ...slabElements];
+
+        const slabMeshReference: MeshReference = {
+          nodesIndices: slabsNodesIndices,
+          elementsIndices: slabElementsIndices,
+        };
+        const existingSlabData = building.slabData.val.get(slabIndex) || {};
+        const updatedSlabData: SlabData = {
+          ...existingSlabData,
+          meshReference: slabMeshReference,
+        };
+        building.slabData.val = building.slabData.val.set(
+          slabIndex,
+          updatedSlabData
+        );
 
         // slab loads ----------------------------------------------------------------
         const areaLoad =
@@ -82,7 +102,7 @@ export function meshing(
           slabElements,
           nodeInputsState.val,
           areaLoad,
-          newNodesIndices
+          slabsNodesIndices
         );
       });
     }
@@ -99,9 +119,9 @@ export function meshing(
           : elevation;
       const columnsIndices: number[] = building.columnsByStory.val.get(story);
 
-      columnsIndices.forEach((i) => {
+      columnsIndices.forEach((columnIndex) => {
         const referenceNode: Node =
-          building.points.val[building.columns.val[i]];
+          building.points.val[building.columns.val[columnIndex]];
         const columnTopNode: Node = [
           referenceNode[0],
           referenceNode[1],
@@ -119,13 +139,37 @@ export function meshing(
           frameMeshDensity
         );
 
+        const numExistingNodes = nodesState.val.length;
+        const numExistingElements = elementsState.val.length;
+
+        const columnNodesIndices = columnNodes.map(
+          (_, i) => i + numExistingNodes
+        );
+        const columnElementsIndices = columnElements.map(
+          (_, i) => i + numExistingElements
+        );
         nodesState.val = [...nodesState.val, ...columnNodes];
         elementsState.val = [...elementsState.val, ...columnElements];
+
+        const columnMeshReference: MeshReference = {
+          nodesIndices: columnNodesIndices,
+          elementsIndices: columnElementsIndices,
+        };
+        const existingColumnData =
+          building.columnData.val.get(columnIndex) || {};
+        const updatedColumnData: ColumnData = {
+          ...existingColumnData,
+          meshReference: columnMeshReference,
+        };
+        building.columnData.val = building.columnData.val.set(
+          columnIndex,
+          updatedColumnData
+        );
       });
     }
   });
 
-  return {
+  const mesh = {
     nodes: nodesState,
     elements: elementsState,
     nodeInputs: nodeInputsState,
@@ -133,6 +177,8 @@ export function meshing(
     deformOutputs: deformOutputsState,
     analyzeOutputs: analyzeOutputsState,
   };
+
+  building.meshObject.val = mesh;
 }
 
 // Utils ---------------------------------------
