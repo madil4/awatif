@@ -58,8 +58,15 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
       );
       slabsIndices.forEach((slabIndex) => {
         const slab: number[] = building.slabs.val[slabIndex];
-        const points = slab.map((s) => building.points.val[s] as Node);
-        const polygon = points.map((_, i) => i);
+        const boundaryPoints = slab.map((s) => building.points.val[s] as Node);
+        const polygon = boundaryPoints.map((_, i) => i);
+        const columnPoints = building.columnsByStory.val
+          .get(Number(story))
+          .map(
+            (columnPointIndex) => building.points.val[columnPointIndex] as Node
+          );
+        const points = [...boundaryPoints, ...columnPoints];
+
         const { nodes, elements } = getMesh({ points, polygon });
 
         const numExistingNodes = nodesState.val.length;
@@ -169,7 +176,7 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
     }
   });
 
-  const mesh = {
+  const mesh: Mesh = {
     nodes: nodesState,
     elements: elementsState,
     nodeInputs: nodeInputsState,
