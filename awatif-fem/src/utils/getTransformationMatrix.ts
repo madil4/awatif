@@ -1,4 +1,4 @@
-import { cross, kronecker, Matrix, matrix } from "awatif-math";
+import { cross, Matrix, matrix } from "awatif-math";
 import { Node } from ".././data-model";
 
 // from global to local
@@ -41,7 +41,12 @@ function getTransformationMatrixFrame(n0: Node, n1: Node): Matrix {
     ];
   }
 
-  return kronecker(matrix.identity(4, 4), new matrix(lambda));
+  const t = new matrix(4 * 3, 4 * 3);
+  for (let i = 0; i < 4; i++) {
+    t.setBlock(i * 3, i * 3, new matrix(lambda));
+  }
+
+  return t;
 }
 
 function getTransformationMatrixPlate(n1: Node, n2: Node, n3: Node): Matrix {
@@ -56,13 +61,18 @@ function getTransformationMatrixPlate(n1: Node, n2: Node, n3: Node): Matrix {
   const z = cross(x, r).div(cross(x, r).norm());
   const y = cross(z, x).div(cross(z, x).norm());
 
-  const lambda = [
+  const lambda = new matrix([
     [x.get(0, 0), y.get(0, 0), z.get(0, 0)],
     [x.get(1, 0), y.get(1, 0), z.get(1, 0)],
     [x.get(2, 0), y.get(2, 0), z.get(2, 0)],
-  ];
+  ]);
 
-  return kronecker(matrix.identity(6, 6), new matrix(lambda));
+  const t = new matrix(6 * 3, 6 * 3);
+  for (let i = 0; i < 6; i++) {
+    t.setBlock(i * 3, i * 3, lambda);
+  }
+
+  return t;
 
   // utils
   function getAverage(Nodes: Node[]): Matrix {

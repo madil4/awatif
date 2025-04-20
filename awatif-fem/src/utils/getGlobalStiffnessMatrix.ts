@@ -10,23 +10,24 @@ import { Node, Element, ElementInputs } from "../data-model";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
+// Benchmark: it takes 40mm with plate example (0.5 mesh size)
 export function getGlobalStiffnessMatrix(
   nodes: Node[],
   elements: Element[],
   elementInputs: ElementInputs,
   dof: number
 ): SparseMatrix {
-  let tripleV = new tripletVector(elements.length * 6 * 6 * 9); // Not accurate but enough for now based on the assemble function
+  let tripleV = new tripletVector(elements.length * 6 * 6 * 9);
 
   elements.forEach((e, i) => {
     const elmNodes = e.map((e) => nodes[e]);
     const kLocal = new matrix(
       getLocalStiffnessMatrix(elmNodes, elementInputs, i)
     ); // 20mm
-    const T = getTransformationMatrix(elmNodes); // 20mm
+    const T = getTransformationMatrix(elmNodes); // 10mm
 
-    const kGlobal = T.transpose().matMul(kLocal).matMul(T); // 40mm
-    tripleV = assemble(tripleV, kGlobal, e);
+    const kGlobal = T.transpose().matMul(kLocal).matMul(T); // 2mm
+    tripleV = assemble(tripleV, kGlobal, e); // 10mm
   });
 
   return new sparseMatrix(dof, dof, tripleV);
