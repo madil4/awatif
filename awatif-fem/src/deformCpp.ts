@@ -1,4 +1,4 @@
-import createModule from "./cpp-dist/deformCpp.js";
+import createModule from "./cpp-dist/deform.js";
 
 // @ts-ignore
 const module = await createModule();
