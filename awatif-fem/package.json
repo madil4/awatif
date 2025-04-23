@@ -21,7 +21,8 @@
     "url": "https://github.com/madil4/awatif"
   },
   "scripts": {
-    "dev": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --watch"
+    "dev": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --watch",
+    "cpp": "emcc ./src/deform.cpp -o ./src/cpp-dist/deformCpp.js -O3 -s MODULARIZE -s EXPORT_ES6 -s EXPORTED_FUNCTIONS=_add,_main && tsc ./src/deformCpp.ts --module es6 --moduleResolution node && node ./src/deformCpp.js && rm ./src/deformCpp.js"
   },
   "devDependencies": {
     "@types/jest": "~29.5.14",
