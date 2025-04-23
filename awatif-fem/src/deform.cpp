@@ -25,3 +25,12 @@ extern "C" {
         return a + b;
     }
 }
+
+extern "C" {
+    void process_nodes(float *data, int length) {
+      printf("Received %d items.\n", length);
+      for (int i = 0; i < length; ++i) {
+        printf("Item: %f \n", data[i]);
+      }
+    }
+  }
