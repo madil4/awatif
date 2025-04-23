@@ -17,6 +17,7 @@
   },
   "scripts": {
     "dev:fem": "npm run dev -w awatif-fem",
+    "cpp:fem": "npm run cpp -w awatif-fem",
     "dev:math": "npm run dev -w awatif-math",
     "dev:mesh": "npm run dev -w awatif-mesh",
     "dev:proprietary": "npm run dev -w awatif-proprietary",
