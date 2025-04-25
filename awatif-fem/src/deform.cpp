@@ -27,10 +27,22 @@ extern "C" {
 }
 
 extern "C" {
-    void process_nodes(float *data, int length) {
-      printf("Received %d items.\n", length);
+    void printArray(float *data, int length) {
+      printf("Print array \n");
       for (int i = 0; i < length; ++i) {
-        printf("Item: %f \n", data[i]);
+        printf("%f \n", data[i]);
       }
     }
   }
+
+  extern "C" {
+    void printNestedArray(float **data, int rows, int cols) {
+    printf("Print nested array \n");
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < cols; c++) {
+        printf("%f ", data[r][c]);
+      }
+      printf("\n");
+    }
+  }
+}
