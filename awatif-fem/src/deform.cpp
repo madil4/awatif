@@ -1,27 +1,18 @@
 #include <cstdio>
+#include <map>
 
 extern "C"
 {
-  void deform(double **nodes, int nodesLen, int **elements, int elementsLen)
+  void deform(double **nodes, int nodesLen, int **elements, int elementsLen, double **elasticities, int elasticitiesLen)
   {
-    printf("Print Nodes \n");
-    for (int r = 0; r < nodesLen; r++)
+    std::map<int, double> elasticitiesMap;
+
+    for (int r = 0; r < elasticitiesLen; r++)
     {
-      for (int c = 0; c < 3; c++)
-      {
-        printf("%f ", nodes[r][c]);
-      }
-      printf("\n");
+      elasticitiesMap[elasticities[r][0]] = elasticities[r][1];
     }
 
-    printf("Print Elements \n");
-    for (int r = 0; r < elementsLen; r++)
-    {
-      for (int c = 0; c < 3; c++)
-      {
-        printf("%i ", elements[r][c]);
-      }
-      printf("\n");
-    }
+    printf("Print Elasticities %zu \n", elasticitiesMap.size());
+    printf("Print Elasticities %f \n", elasticitiesMap[0]);
   }
 }

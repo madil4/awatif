@@ -10,7 +10,11 @@ import createModule from "./cpp-dist/deform.js";
 // @ts-ignore, load wasm
 const module = await createModule();
 
-export function deformCpp(nodes: Node[], elements: Element[]): DeformOutputs {
+export function deformCpp(
+  nodes: Node[],
+  elements: Element[],
+  elementInputs: ElementInputs
+): DeformOutputs {
   // Prepare data for c++
   const nodeData = getMemoryData(
     nodes.flat(),
@@ -27,12 +31,23 @@ export function deformCpp(nodes: Node[], elements: Element[]): DeformOutputs {
     module.HEAPU32
   );
 
+  const elasticitiesData = getMemoryData(
+    elementInputs.elasticities && [...elementInputs.elasticities].flat(),
+    elementInputs.elasticities?.size,
+    2,
+    Float64Array,
+    module.HEAPF64
+  );
+
   // Call C++ function
   module._deform(
     nodeData.pointersPtr,
     nodes.length,
     elementData.pointersPtr,
-    elements.length
+    elements.length,
+
+    elasticitiesData.pointersPtr,
+    elementInputs.elasticities?.size
   );
 
   // Convert result to js types
@@ -43,8 +58,18 @@ export function deformCpp(nodes: Node[], elements: Element[]): DeformOutputs {
   module._free(elementData.pointersPtr);
   module._free(elementData.dataPtr);
 
+  module._free(elasticitiesData.pointersPtr);
+  module._free(elasticitiesData.dataPtr);
+
   return {};
 }
+
+const elementInputs: ElementInputs = {
+  elasticities: new Map(),
+};
+
+elementInputs.elasticities?.set(3, 210e6);
+elementInputs.elasticities?.set(6, 590e6);
 
 deformCpp(
   [
@@ -54,7 +79,8 @@ deformCpp(
   [
     [0, 1],
     [2, 3],
-  ]
+  ],
+  elementInputs
 );
 
 // Utils
