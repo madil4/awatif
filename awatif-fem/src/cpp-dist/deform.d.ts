@@ -3,7 +3,10 @@ export interface DeformCppModule extends EmscriptenModule {
     nodesPtr: number,
     nodesLen: number,
     elementsPtr: number,
-    elementsLen: number
+    elementsLen: number,
+
+    elasticitiesPtr: number,
+    elasticitiesLen: number
   ): void;
 }
 
