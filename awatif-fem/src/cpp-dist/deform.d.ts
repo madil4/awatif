@@ -1,7 +1,10 @@
 export interface DeformCppModule extends EmscriptenModule {
-  _add(a: number, b: number): number;
-  _printArray(dataPtr: number, length: number): void;
-  _printNestedArray(dataPtr: number, rows: number, cols: number): void;
+  _deform(
+    nodesPtr: number,
+    nodesLen: number,
+    elementsPtr: number,
+    elementsLen: number
+  ): void;
 }
 
 declare function createModule(): Promise<DeformCppModule>;
