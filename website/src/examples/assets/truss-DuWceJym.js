@@ -154,7 +154,7 @@ Promise.all([
       deformedShape: true
     }
   }), z({
-    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/truess/main.ts",
+    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/truss/main.ts",
     author: "https://www.linkedin.com/in/madil4/"
   }));
 });

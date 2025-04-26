@@ -153,7 +153,7 @@ document.body.append(
   }),
   getToolbar({
     sourceCode:
-      "https://github.com/madil4/awatif/blob/main/examples/src/truess/main.ts",
+      "https://github.com/madil4/awatif/blob/main/examples/src/truss/main.ts",
     author: "https://www.linkedin.com/in/madil4/",
   })
 );
