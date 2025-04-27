@@ -25,6 +25,7 @@ export default defineConfig({
         report: "src/report/index.html",
         plate: "src/plate/index.html",
         solids: "src/solids/index.html",
+        "slab-designer": "src/slab-designer/index.html",
       },
     },
   },
