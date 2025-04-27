@@ -107,7 +107,7 @@ export function drawing({
     const size = 0.05 * gridSize * 0.5 * derivedDisplayScale.val;
 
     indicationPoint.material.size = size;
-    raycaster.parameters.Points.threshold = 0.4 * size;
+    raycaster.params.Points.threshold = 0.4 * size;
   });
 
   // Pointer events
@@ -142,9 +142,18 @@ export function drawing({
     const intersect = raycaster.intersectObject(plane);
 
     if (intersect.length) {
+      let point = intersect[0].point;
+      if (event.ctrlKey) {
+        point = new THREE.Vector3(
+          Math.round(intersect[0].point.x),
+          Math.round(intersect[0].point.y),
+          Math.round(intersect[0].point.z)
+        );
+      }
+
       drawingObj.points.val = [
         ...drawingObj.points.rawVal,
-        intersect[0].point.toArray(),
+        point.toArray(),
       ];
 
       if (drawingObj.polylines) {
@@ -183,9 +192,19 @@ export function drawing({
     indicationPoint.geometry.deleteAttribute("position"); // delete point if not intersection
 
     if (intersect.length) {
+      let point = intersect[0].point;
+
+      if (event.ctrlKey) {
+        point = new THREE.Vector3(
+          Math.round(intersect[0].point.x),
+          Math.round(intersect[0].point.y),
+          Math.round(intersect[0].point.z)
+        );
+      }
+
       indicationPoint.geometry.setAttribute(
         "position",
-        new THREE.Float32BufferAttribute(intersect[0].point.toArray(), 3)
+        new THREE.Float32BufferAttribute(point.toArray(), 3)
       );
     }
 
