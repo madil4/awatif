@@ -12,6 +12,7 @@ import {
   Object3D,
 } from "three";
 import { Mesh } from "awatif-fem";
+import { getMesh } from "./getMesh";
 
 const parameters: Parameters = {
   stories: { value: van.state(2), min: 1, max: 5, step: 1 },
@@ -61,9 +62,6 @@ const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   nodeInputs: van.state({}),
-  elementInputs: van.state({}),
-  deformOutputs: van.state({}),
-  analyzeOutputs: van.state({}),
 };
 
 // Events
@@ -107,6 +105,7 @@ van.derive(() => {
     });
 
     // columns
+    const newColumnsIndices: number[] = [];
     for (let i = 0; i < columnsSample.length; i++) {
       const lastIndex = points.length;
 
@@ -116,9 +115,10 @@ van.derive(() => {
         columnsSample[i][2] + z,
       ]);
       columns.push(lastIndex);
+      newColumnsIndices.push(columns.length - 1);
     }
 
-    // columnsByStory.set(j, newColumnsIndices);
+    columnsByStory.set(j, newColumnsIndices);
   }
 
   // Update state
@@ -133,19 +133,22 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  base.geometry = getBaseGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
-  );
+  // base.geometry = getBaseGeometry(
+  //   building.points.val,
+  //   building.slabs.val,
+  //   building.columns.val
+  // );
 
-  solidsMesh.geometry = getSolidsGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
-  );
+  // solidsMesh.geometry = getSolidsGeometry(
+  //   building.points.val,
+  //   building.slabs.val,
+  //   building.columns.val
+  // );
 
-  // getMesh(building);
+  const { nodes, elements, nodeInputs } = getMesh(building);
+  mesh.nodes.val = nodes;
+  mesh.elements.val = elements;
+  mesh.nodeInputs.val = nodeInputs;
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
