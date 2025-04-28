@@ -6543,10 +6543,11 @@ R: ` + this.R.toString();
     solids: If,
     mesh: ve,
     settingsObj: {
+      nodes: false,
       loads: false
     }
   }), Du({
-    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/solids/main.ts",
+    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/building/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/"
   }));
 });

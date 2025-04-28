@@ -153,11 +153,11 @@ document.body.append(
     objects3D,
     solids,
     mesh,
-    settingsObj: { loads: false },
+    settingsObj: { nodes: false, loads: false },
   }),
   getToolbar({
     sourceCode:
-      "https://github.com/madil4/awatif/blob/main/examples/src/solids/main.ts",
+      "https://github.com/madil4/awatif/blob/main/examples/src/building/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
   })
 );
