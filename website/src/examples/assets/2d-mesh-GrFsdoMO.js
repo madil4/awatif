@@ -1,6 +1,6 @@
-import { v as e, g as n, a as r } from "./styles-aHt-Mdxa.js";
-import { g as i } from "./getParameters-DjGKBsKO.js";
-import { m as l, __tla as __tla_0 } from "./mesh-BuuDAlH2.js";
+import { v as e, g as n, a as r } from "./styles-C277HhWC.js";
+import { g as i } from "./getParameters-mm0cZPxW.js";
+import { g as l, __tla as __tla_0 } from "./getMesh-Bm83U438.js";
 Promise.all([
   (() => {
     try {
@@ -17,7 +17,7 @@ Promise.all([
       step: 0.1,
       label: "Boundary point"
     }
-  }, s = e.state([]), t = e.state([]);
+  }, t = e.state([]), s = e.state([]);
   e.derive(() => {
     const { nodes: o, elements: m } = l({
       points: [
@@ -84,12 +84,12 @@ Promise.all([
         8
       ]
     });
-    s.val = o, t.val = m;
+    t.val = o, s.val = m;
   });
   document.body.append(i(a), n({
     mesh: {
-      nodes: s,
-      elements: t
+      nodes: t,
+      elements: s
     }
   }), r({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/2d-mesh/main.ts",

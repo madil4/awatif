@@ -1,7 +1,7 @@
-import { w as T, v as d, d as A, e as B, B as M, f as C, F as D, a as O, g as j } from "./styles-aHt-Mdxa.js";
-import { g as z } from "./getDialog-BVqD3sqV.js";
-function F({ fields: a, data: l }) {
-  const n = document.createElement("div"), e = new T({ name: Math.random().toString().substring(2), box: n, selectType: "cell", recordHeight: 26, show: { columnMenu: false, lineNumbers: true }, columns: L(a), records: h(l.rawVal, a) });
+import { w as T, v as d, b as A, L as B, B as M, c as C, F as D, a as O, g as j } from "./styles-C277HhWC.js";
+import { g as L } from "./getDialog-BEwbTuoa.js";
+function z({ fields: a, data: l }) {
+  const n = document.createElement("div"), e = new T({ name: Math.random().toString().substring(2), box: n, selectType: "cell", recordHeight: 26, show: { columnMenu: false, lineNumbers: true }, columns: F(a), records: h(l.rawVal, a) });
   return n.setAttribute("id", "table"), new ResizeObserver(() => e.refresh()).observe(n), e.onChange = (r) => {
     if (!a[r.detail.column]) return;
     const t = b[r.detail.column];
@@ -19,7 +19,7 @@ function F({ fields: a, data: l }) {
   }), n;
 }
 const b = "ABCDEFGHIJKLMNOPRST";
-function L(a) {
+function F(a) {
   return b.split("").map((n) => ({ field: n, text: '<div style="text-align: center">' + n + "</div>", size: "90px", resizable: true, sortable: true, editable: { type: "text" } })).map((n) => {
     const e = a.find((s) => s.field === n.field);
     return e ? { ...n, ...e } : n;
@@ -53,7 +53,7 @@ function m(a, l) {
 function I({ tables: a }) {
   const l = document.createElement("div"), n = document.createElement("div"), e = [], s = /* @__PURE__ */ new Map();
   a.forEach((t, o) => {
-    e.push({ id: o, text: t.text }), s.set(o, F({ fields: t.fields, data: t.data }));
+    e.push({ id: o, text: t.text }), s.set(o, z({ fields: t.fields, data: t.data }));
   });
   const r = new A({ box: n, name: "tabs", active: e[0].id, flow: "up", tabs: e });
   return l.id = "tables", n.id = "tabs", l.append(s.values().next().value, n), r.onClick = (t) => {
@@ -70,4 +70,4 @@ const y = d.state(""), x = d.state(void 0);
 d.derive(() => {
   y.val === "Tables" && (x.val = I({ tables: v }));
 });
-document.body.append(O({ clickedButton: y, buttons: ["Tables"], sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/tables/main.ts", author: "https://www.linkedin.com/in/cal-mense/" }), z({ dialogBody: x }), j({ objects3D: p }));
+document.body.append(O({ clickedButton: y, buttons: ["Tables"], sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/tables/main.ts", author: "https://www.linkedin.com/in/cal-mense/" }), L({ dialogBody: x }), j({ objects3D: p }));
