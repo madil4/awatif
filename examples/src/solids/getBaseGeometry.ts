@@ -1,33 +1,24 @@
 import { Element } from "awatif-fem";
-import {
-  BufferGeometry,
-  Float32BufferAttribute,
-  LineBasicMaterial,
-  LineSegments,
-} from "three";
-
-export const base = new LineSegments(
-  new BufferGeometry(),
-  new LineBasicMaterial()
-);
-base.frustumCulled = false;
-base.material.depthTest = false; // don't know why but is solves the rendering order issue
+import { BufferGeometry, Float32BufferAttribute } from "three";
 
 export function getBaseGeometry(
   points: number[][],
-  slabs: number[][][],
-  columns: number[][]
+  slabs: number[][],
+  columns: number[]
 ): BufferGeometry {
   const geometry = new BufferGeometry();
 
-  const columnsVertices = columns
-    .map((column) => [points[column[0]], points[column[1]]].flat())
-    .flat();
+  const storyHeight = 4; // Todo: compute from the story below
 
-  // borrowed from viewer elements object
+  const columnsVertices = columns.flatMap((columnIndex) => {
+    const topPoint = points[columnIndex];
+    const bottomPoint = [topPoint[0], topPoint[1], topPoint[2] - storyHeight];
+    return [...topPoint, ...bottomPoint];
+  });
+
   const slabsVertices = slabs
     .map((slab) =>
-      elementToEdges(slab[0])
+      elementToEdges(slab)
         .map((edge) => [...points[edge[0]], ...points[edge[1]]])
         .flat()
     )

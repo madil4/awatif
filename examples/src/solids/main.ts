@@ -1,22 +1,20 @@
 import van, { State } from "vanjs-core";
-import { Object3D } from "three";
-import { Mesh } from "awatif-fem";
 import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
 import { Building, ColumnData, SlabData } from "./data-model";
-import { getMesh } from "./getMesh";
-import { base, getBaseGeometry } from "./getBase";
-import { getSolidsGeometry, solids as solidsMesh } from "./getSolids";
+import { getBaseGeometry } from "./getBaseGeometry";
+import { getSolidsGeometry } from "./getSolidsGeometry";
+import {
+  BufferGeometry,
+  LineBasicMaterial,
+  LineSegments,
+  Mesh as Math3js,
+  MeshPhongMaterial,
+  Object3D,
+} from "three";
+import { Mesh } from "awatif-fem";
 
-type SimpleBuilding = {
-  points: State<number[][]>;
-  columns: State<number[][]>; // [start, end] Todo: change to [end] get start from the story below
-  slabs: State<number[][][]>;
-};
-
-const simpleBuilding: SimpleBuilding = {
-  points: van.state([]),
-  columns: van.state([]),
-  slabs: van.state([]),
+const parameters: Parameters = {
+  stories: { value: van.state(2), min: 1, max: 5, step: 1 },
 };
 
 const building: Building = {
@@ -38,38 +36,24 @@ const slabSample: number[][] = [
   [0, 0, 4],
 ];
 
-const columnsSample: number[][][] = [
-  [
-    [0, 0, 0],
-    [0, 0, 4],
-  ],
-  [
-    [0, 10, 0],
-    [0, 10, 4],
-  ],
-  [
-    [18, 10, 0],
-    [18, 10, 4],
-  ],
-  [
-    [18, 0, 0],
-    [18, 0, 4],
-  ],
-  [
-    [6, 0, 0],
-    [6, 0, 4],
-  ],
-  [
-    [6, 10, 0],
-    [6, 10, 4],
-  ],
+const columnsSample: number[][] = [
+  [0, 0, 4],
+  [0, 10, 4],
+  [18, 10, 4],
+  [18, 0, 4],
+  [6, 0, 4],
+  [6, 10, 4],
 ];
 
 const slabLoad: number = 1;
 
-const parameters: Parameters = {
-  stories: { value: van.state(2), min: 1, max: 5, step: 1 },
-};
+const solidsMesh = new Math3js(
+  new BufferGeometry(),
+  new MeshPhongMaterial({ color: 0xffe6cc })
+);
+const base = new LineSegments(new BufferGeometry(), new LineBasicMaterial());
+base.frustumCulled = false;
+base.material.depthTest = false; // don't know why but is solves the rendering order issue
 
 const objects3D: State<Object3D[]> = van.state([base]);
 const solids: State<Object3D[]> = van.state([solidsMesh]);
@@ -93,12 +77,8 @@ van.derive(() => {
   const slabsByStory = new Map<number, number[]>();
   const slabData = new Map<number, SlabData>();
 
-  const simpleSlabs = [];
-  const simpleColumns = [];
-
   for (let j = 0; j < parameters.stories.value.val; j++) {
     const storySlabsPoints: [number, number, number][] = [];
-    const storyColumnsPoints: [number, number, number][][] = [];
 
     const FLOOR_HEIGHT = 4;
     const z: number = FLOOR_HEIGHT * j;
@@ -118,9 +98,8 @@ van.derive(() => {
       storySlabIndices.push(i + lastIndex);
     }
 
-    simpleSlabs.push([storySlabIndices]);
-
     slabs.push(storySlabIndices);
+
     stories.push(lastIndex);
     slabsByStory.set(j, [j]);
     slabData.set(j, {
@@ -129,24 +108,17 @@ van.derive(() => {
 
     // columns
     for (let i = 0; i < columnsSample.length; i++) {
-      const column = columnsSample[i];
-      storyColumnsPoints.push([
-        [column[0][0], column[0][1], column[0][2] + z],
-        [column[1][0], column[1][1], column[1][2] + z],
+      const lastIndex = points.length;
+
+      points.push([
+        columnsSample[i][0],
+        columnsSample[i][1],
+        columnsSample[i][2] + z,
       ]);
+      columns.push(lastIndex);
     }
 
-    const newColumnsIndices: number[] = [];
-    for (let i = 0; i < storyColumnsPoints.length; i++) {
-      lastIndex = points.length;
-      points.push(...storyColumnsPoints[i]);
-      columns.push(lastIndex + 1);
-      newColumnsIndices.push(columns.length - 1);
-
-      simpleColumns.push([lastIndex, lastIndex + 1]);
-    }
-
-    columnsByStory.set(j, newColumnsIndices);
+    // columnsByStory.set(j, newColumnsIndices);
   }
 
   // Update state
@@ -157,34 +129,35 @@ van.derive(() => {
   building.columnsByStory.val = columnsByStory;
   building.slabsByStory.val = slabsByStory;
   building.slabData.val = slabData;
-
-  simpleBuilding.points.val = points;
-  simpleBuilding.slabs.val = simpleSlabs;
-  simpleBuilding.columns.val = simpleColumns;
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
   base.geometry = getBaseGeometry(
-    simpleBuilding.points.val,
-    simpleBuilding.slabs.val,
-    simpleBuilding.columns.val
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
   );
 
   solidsMesh.geometry = getSolidsGeometry(
-    simpleBuilding.points.val,
-    simpleBuilding.slabs.val,
-    simpleBuilding.columns.val
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
   );
 
-  getMesh(building);
+  // getMesh(building);
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
 
 document.body.append(
   getParameters(parameters),
-  getViewer({ objects3D, solids, mesh, settingsObj: { loads: false } }),
+  getViewer({
+    objects3D,
+    solids,
+    mesh,
+    settingsObj: { loads: false },
+  }),
   getToolbar({
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/solids/main.ts",

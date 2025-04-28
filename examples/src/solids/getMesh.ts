@@ -12,9 +12,6 @@ import { Mesh } from "awatif-fem";
 import { getMesh as getMeshCore } from "awatif-mesh";
 import { subtract, divide, add, multiply, cross, norm } from "mathjs";
 
-/**
- * This function mutates the building object.
- */
 export function getMesh(building: Building, frameMeshDensity: number = 3) {
   const nodesState: State<Node[]> = van.state([]);
   const elementsState: State<Element[]> = van.state([]);
