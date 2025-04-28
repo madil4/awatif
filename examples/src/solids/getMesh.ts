@@ -9,13 +9,13 @@ import {
 } from "awatif-fem";
 import { Building, MeshReference, SlabData, ColumnData } from "./data-model";
 import { Mesh } from "awatif-fem";
-import { getMesh } from "awatif-mesh";
+import { getMesh as getMeshCore } from "awatif-mesh";
 import { subtract, divide, add, multiply, cross, norm } from "mathjs";
 
 /**
  * This function mutates the building object.
  */
-export function meshing(building: Building, frameMeshDensity: number = 3) {
+export function getMesh(building: Building, frameMeshDensity: number = 3) {
   const nodesState: State<Node[]> = van.state([]);
   const elementsState: State<Element[]> = van.state([]);
   const nodeInputsState: State<NodeInputs> = van.state({
@@ -68,7 +68,7 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
           );
         const points = [...boundaryPoints, ...columnPoints];
 
-        const { nodes, elements, boundaryIndices } = getMesh({
+        const { nodes, elements, boundaryIndices } = getMeshCore({
           points,
           polygon,
         });
@@ -188,8 +188,6 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
     deformOutputs: deformOutputsState,
     analyzeOutputs: analyzeOutputsState,
   };
-
-  building.meshObject.val = mesh;
 }
 
 // Utils ---------------------------------------

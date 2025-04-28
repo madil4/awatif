@@ -1,9 +1,9 @@
 import van, { State } from "vanjs-core";
 import { Object3D } from "three";
-import { Mesh as FemMesh } from "awatif-fem";
+import { Mesh } from "awatif-fem";
 import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
 import { Building, ColumnData, SlabData } from "./data-model";
-import { meshing } from "./meshing";
+import { getMesh } from "./getMesh";
 import { base, getBaseGeometry } from "./getBase";
 import { getSolidsGeometry, solids as solidsMesh } from "./getSolids";
 
@@ -28,7 +28,6 @@ const building: Building = {
   slabsByStory: van.state(new Map<number, number[]>()),
   columnData: van.state(new Map<number, ColumnData>()),
   slabData: van.state(new Map<number, SlabData>()),
-  meshObject: van.state({} as FemMesh),
 };
 
 const slabSample: number[][] = [
@@ -74,8 +73,7 @@ const parameters: Parameters = {
 
 const objects3D: State<Object3D[]> = van.state([base]);
 const solids: State<Object3D[]> = van.state([solidsMesh]);
-
-const mesh: FemMesh = {
+const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   nodeInputs: van.state({}),
@@ -179,10 +177,7 @@ van.derive(() => {
     simpleBuilding.columns.val
   );
 
-  meshing(building);
-  for (const property in mesh) {
-    mesh[property].val = building.meshObject.val[property].val;
-  }
+  getMesh(building);
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
