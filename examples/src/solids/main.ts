@@ -133,19 +133,27 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  // base.geometry = getBaseGeometry(
-  //   building.points.val,
-  //   building.slabs.val,
-  //   building.columns.val
-  // );
+  base.geometry = getBaseGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
 
-  // solidsMesh.geometry = getSolidsGeometry(
-  //   building.points.val,
-  //   building.slabs.val,
-  //   building.columns.val
-  // );
+  solidsMesh.geometry = getSolidsGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
 
-  const { nodes, elements, nodeInputs } = getMesh(building);
+  const { nodes, elements, nodeInputs } = getMesh(
+    building.points.val,
+    building.stories.val,
+    building.columns.val,
+    building.slabs.val,
+    building.columnsByStory.val,
+    building.slabsByStory.val,
+    building.slabData.val
+  );
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
