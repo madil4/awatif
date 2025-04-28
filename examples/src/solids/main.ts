@@ -15,20 +15,33 @@ import {
   Float32BufferAttribute,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { Element } from "awatif-fem";
+import { Element, Mesh as FemMesh } from "awatif-fem";
 import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
+import { Building, ColumnData, SlabData } from "./data-model";
+import { meshing } from "./meshing";
 
-//Init
-type Building = {
+type SimpleBuilding = {
   points: State<number[][]>;
   columns: State<number[][]>; // [start, end] Todo: change to [end] get start from the story below
   slabs: State<number[][][]>;
 };
 
-const building: Building = {
+const simpleBuilding: SimpleBuilding = {
   points: van.state([]),
   columns: van.state([]),
   slabs: van.state([]),
+};
+
+const building: Building = {
+  points: van.state([]),
+  stories: van.state([]),
+  columns: van.state([]),
+  slabs: van.state([]),
+  columnsByStory: van.state(new Map<number, number[]>()),
+  slabsByStory: van.state(new Map<number, number[]>()),
+  columnData: van.state(new Map<number, ColumnData>()),
+  slabData: van.state(new Map<number, SlabData>()),
+  meshObject: van.state({} as FemMesh),
 };
 
 const slabSample: number[][] = [
@@ -66,6 +79,8 @@ const columnsSample: number[][][] = [
   ],
 ];
 
+const slabLoad: number = 1;
+
 const parameters: Parameters = {
   stories: { value: van.state(2), min: 1, max: 5, step: 1 },
 };
@@ -80,17 +95,32 @@ base.material.depthTest = false; // don't know why but is solves the rendering o
 
 const objects3D: State<Object3D[]> = van.state([base]);
 const solids: State<Object3D[]> = van.state([solidsMesh]);
+const mesh: FemMesh = {
+  nodes: van.state([]),
+  elements: van.state([]),
+  nodeInputs: van.state({}),
+  elementInputs: van.state({}),
+  deformOutputs: van.state({}),
+  analyzeOutputs: van.state({}),
+};
 
 // Events
 // When number of stories changes, update building data model
 van.derive(() => {
-  const points = [];
-  const slabs = [];
-  const columns = [];
+  const points: [number, number, number][] = [];
+  const stories: number[] = [];
+  const slabs: number[][] = [];
+  const columns: number[] = [];
+  const columnsByStory = new Map<number, number[]>();
+  const slabsByStory = new Map<number, number[]>();
+  const slabData = new Map<number, SlabData>();
+
+  const simpleSlabs = [];
+  const simpleColumns = [];
 
   for (let j = 0; j < parameters.stories.value.val; j++) {
-    const storySlabsPoints: number[][] = [];
-    const storyColumnsPoints: number[][][] = [];
+    const storySlabsPoints: [number, number, number][] = [];
+    const storyColumnsPoints: [number, number, number][][] = [];
 
     const FLOOR_HEIGHT = 4;
     const z: number = FLOOR_HEIGHT * j;
@@ -104,13 +134,20 @@ van.derive(() => {
       ]);
 
     const storySlabIndices: number[] = [];
-    const lastIndex = points.length;
+    let lastIndex = points.length;
     for (let i = 0; i < storySlabsPoints.length; i++) {
       points.push(storySlabsPoints[i]);
       storySlabIndices.push(i + lastIndex);
     }
 
-    slabs.push([storySlabIndices]);
+    simpleSlabs.push([storySlabIndices]);
+
+    slabs.push(storySlabIndices);
+    stories.push(lastIndex);
+    slabsByStory.set(j, [j]);
+    slabData.set(j, {
+      analysisInput: { areaLoad: slabLoad, isOpening: false },
+    });
 
     // columns
     for (let i = 0; i < columnsSample.length; i++) {
@@ -121,40 +158,58 @@ van.derive(() => {
       ]);
     }
 
+    const newColumnsIndices: number[] = [];
     for (let i = 0; i < storyColumnsPoints.length; i++) {
-      const lastIndex = points.length;
-
+      lastIndex = points.length;
       points.push(...storyColumnsPoints[i]);
-      columns.push([lastIndex, lastIndex + 1]);
+      columns.push(lastIndex + 1);
+      newColumnsIndices.push(columns.length - 1);
+
+      simpleColumns.push([lastIndex, lastIndex + 1]);
     }
+
+    columnsByStory.set(j, newColumnsIndices);
   }
 
   // Update state
   building.points.val = points;
-  building.columns.val = columns;
+  building.stories.val = stories;
   building.slabs.val = slabs;
+  building.columns.val = columns;
+  building.columnsByStory.val = columnsByStory;
+  building.slabsByStory.val = slabsByStory;
+  building.slabData.val = slabData;
+
+  simpleBuilding.points.val = points;
+  simpleBuilding.slabs.val = simpleSlabs;
+  simpleBuilding.columns.val = simpleColumns;
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
   base.geometry = getBaseGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
+    simpleBuilding.points.val,
+    simpleBuilding.slabs.val,
+    simpleBuilding.columns.val
   );
 
   solidsMesh.geometry = getSolidsGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
+    simpleBuilding.points.val,
+    simpleBuilding.slabs.val,
+    simpleBuilding.columns.val
   );
+
+  meshing(building);
+  for (const property in mesh) {
+    mesh[property].val = building.meshObject.val[property].val;
+  }
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
 
 document.body.append(
   getParameters(parameters),
-  getViewer({ objects3D, solids }),
+  getViewer({ objects3D, solids, mesh }),
   getToolbar({
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/solids/main.ts",

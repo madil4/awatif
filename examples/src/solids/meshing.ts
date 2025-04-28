@@ -68,7 +68,10 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
           );
         const points = [...boundaryPoints, ...columnPoints];
 
-        const { nodes, elements } = getMesh({ points, polygon });
+        const { nodes, elements, boundaryIndices } = getMesh({
+          points,
+          polygon,
+        });
 
         const numExistingNodes = nodesState.val.length;
         const numExistingElements = elementsState.val.length;
@@ -104,7 +107,7 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
 
         // slab loads ----------------------------------------------------------------
         const areaLoad =
-          building.slabData.val.get(slabIndex)["analysisInput"].areaLoad;
+          building.slabData.val.get(slabIndex)["analysisInput"]?.areaLoad ?? 0;
         nodeInputsState.val = getNodalLoadsFromSlabAreaLoad(
           nodesState.val,
           slabElements,
@@ -191,7 +194,7 @@ export function meshing(building: Building, frameMeshDensity: number = 3) {
 
 // Utils ---------------------------------------
 function convertMeshNodesTo3d(nodes: Node[], elevation: number): Node[] {
-  return nodes.map((p) => [p[0], p[2], elevation]);
+  return nodes.map((p) => [p[0], p[1], elevation]);
 }
 
 function meshMember(
