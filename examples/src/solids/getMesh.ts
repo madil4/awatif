@@ -3,10 +3,15 @@ import { Node, Element, NodeInputs } from "awatif-fem";
 import { getMesh as getMeshCore } from "awatif-mesh";
 import { Building } from "./data-model";
 
-// Todo: Mesh the column from the point on the story to the story below not above
 // Todo: Optimize how nodes and elements are accumulated
 export function getMesh(
-  building: Building,
+  points: Building["points"]["val"],
+  stories: Building["stories"]["val"],
+  columns: Building["columns"]["val"],
+  slabs: Building["slabs"]["val"],
+  columnsByStory: Building["columnsByStory"]["val"],
+  slabsByStory: Building["slabsByStory"]["val"],
+  slabData: Building["slabData"]["val"],
   frameMeshDensity: number = 3
 ): {
   nodes: Node[];
@@ -21,42 +26,32 @@ export function getMesh(
   };
 
   // slabs
-  for (let story in building.stories.val) {
+  for (let story in stories) {
     // slab geometry
-    const pointIndex = building.stories.val[story];
-    const elevation = building.points.val[pointIndex][2];
-    const slabsIndices: number[] = building.slabsByStory.val.get(Number(story));
+    const pointIndex = stories[story];
+    const elevation = points[pointIndex][2];
+    const slabsIndices: number[] = slabsByStory.get(Number(story));
     slabsIndices.forEach((slabIndex) => {
-      const slab: number[] = building.slabs.val[slabIndex];
-      const boundaryPoints = slab.map((s) => building.points.val[s] as Node);
+      const slab: number[] = slabs[slabIndex];
+      const boundaryPoints = slab.map((s) => points[s] as Node);
       const polygon = boundaryPoints.map((_, i) => i);
-      const columnPoints = building.columnsByStory.val
+      const columnPoints = columnsByStory
         .get(Number(story))
-        .map(
-          (columnIndex) =>
-            building.points.val[building.columns.val[columnIndex]] as Node
-        );
-      const points = [...boundaryPoints, ...columnPoints];
-
+        .map((columnIndex) => points[columns[columnIndex]] as Node);
+      const slabPoints = [...boundaryPoints, ...columnPoints];
       const { nodes: meshNodes, elements: meshElements } = getMeshCore({
-        points,
+        points: slabPoints,
         polygon,
       });
-
       const numExistingNodes = nodes.length;
-
       const slabElements = meshElements.map((e) =>
         e.map((i) => i + numExistingNodes)
       );
-
       const slabsNodesIndices = meshNodes.map((_, i) => i + numExistingNodes);
-
       nodes = [...nodes, ...convertMeshNodesTo3d(meshNodes, elevation)];
       elements = [...elements, ...slabElements];
-
       // slab loads
-      const areaLoad =
-        building.slabData.val.get(slabIndex)["analysisInput"]?.areaLoad ?? 0;
+      const areaLoad = slabData.get(slabIndex)["analysisInput"]?.areaLoad ?? 0;
       nodeInputs.loads = getNodalLoadsFromSlabAreaLoad(
         nodes,
         slabElements,
@@ -68,18 +63,14 @@ export function getMesh(
   }
 
   // columns
-  for (let story = 0; story < building.stories.val.length; story++) {
-    const pointIndex = building.stories.val[story];
-    const elevation = building.points.val[pointIndex][2];
-    const belowElevation =
-      story > 0
-        ? building.points.val[building.stories.rawVal[story - 1]][2]
-        : elevation;
-    const columnsIndices: number[] = building.columnsByStory.val.get(story);
+  for (let story = 0; story < stories.length; story++) {
+    const pointIndex = stories[story];
+    const elevation = points[pointIndex][2];
+    const belowElevation = story > 0 ? points[stories[story - 1]][2] : 0;
+    const columnsIndices: number[] = columnsByStory.get(story);
 
     columnsIndices.forEach((columnIndex) => {
-      const referenceNode: Node =
-        building.points.val[building.columns.val[columnIndex]];
+      const referenceNode: Node = points[columns[columnIndex]];
       const columnTopNode: Node = [
         referenceNode[0],
         referenceNode[1],
