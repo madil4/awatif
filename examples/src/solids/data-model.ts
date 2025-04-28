@@ -1,4 +1,3 @@
-import { TemplateResult } from "lit-html";
 import { State } from "vanjs-core";
 
 export type Building = {
@@ -17,24 +16,11 @@ export type Building = {
 };
 
 // Todo: think of way to separate the generic type ColumnAnalysisInput from the remaining specific onces
-// Todo: maybe better to separate functions from data
 export type ColumnData = {
   analysisInput?: ColumnAnalysisInput;
   analysisOutput?: ColumnAnalysisOutput;
   designInput?: ColumnDesignInput;
   designOutput?: ColumnDesignOutput;
-  meshReference?: MeshReference; // reference to the mesh object
-  script?: (
-    analysisInput: ColumnAnalysisInput,
-    designInput: ColumnDesignInput
-  ) => ColumnDesignOutput;
-  report?: (
-    analysisInput: ColumnAnalysisInput,
-    designInput: ColumnDesignInput,
-    analysisOutput: ColumnAnalysisOutput,
-    designOutput: ColumnDesignOutput
-  ) => TemplateResult;
-  visualObject?: (inputs: unknown) => unknown;
 };
 
 export type ColumnDesignInput = EcTimberColumnDesignInput;
@@ -61,31 +47,17 @@ export type EcTimberColumnDesignOutput = {
   utilizationFactor: number;
 };
 
+export type SlabData = {
+  analysisInput?: SlabAnalysisInput;
+  analysisOutput?: unknown;
+  designInput?: unknown;
+  designOutput?: unknown;
+};
+
 // TODO: update depending the slab design function requirements
 export type SlabAnalysisInput = {
   areaLoad: number;
   isOpening: boolean;
   section?: unknown;
   material?: unknown;
-};
-
-export type SlabData = {
-  analysisInput?: SlabAnalysisInput;
-  analysisOutput?: unknown;
-  designInput?: unknown;
-  designOutput?: unknown;
-  meshReference?: MeshReference;
-  script?: (analysisInput: SlabAnalysisInput, designInput: unknown) => unknown;
-  report?: (
-    analysisInput: SlabAnalysisInput,
-    designInput: unknown,
-    analysisOutput: unknown,
-    designOutput: unknown
-  ) => TemplateResult;
-  visualObject?: (inputs: unknown) => unknown;
-};
-
-export type MeshReference = {
-  nodesIndices: number[];
-  elementsIndices: number[];
 };

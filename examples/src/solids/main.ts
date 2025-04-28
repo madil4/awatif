@@ -1,18 +1,10 @@
-import van, { State } from "vanjs-core";
-import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
-import { Building, ColumnData, SlabData } from "./data-model";
-import { getBaseGeometry } from "./getBaseGeometry";
-import { getSolidsGeometry } from "./getSolidsGeometry";
-import {
-  BufferGeometry,
-  LineBasicMaterial,
-  LineSegments,
-  Mesh as Math3js,
-  MeshPhongMaterial,
-  Object3D,
-} from "three";
+import van from "vanjs-core";
 import { Mesh } from "awatif-fem";
+import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
+import { Building } from "./data-model";
 import { getMesh } from "./getMesh";
+import { getBase, getBaseGeometry } from "./getBase";
+import { getSolids, getSolidsGeometry } from "./getSolids";
 
 const parameters: Parameters = {
   stories: { value: van.state(2), min: 1, max: 5, step: 1 },
@@ -23,10 +15,16 @@ const building: Building = {
   stories: van.state([]),
   columns: van.state([]),
   slabs: van.state([]),
-  columnsByStory: van.state(new Map<number, number[]>()),
-  slabsByStory: van.state(new Map<number, number[]>()),
-  columnData: van.state(new Map<number, ColumnData>()),
-  slabData: van.state(new Map<number, SlabData>()),
+  columnsByStory: van.state(new Map()),
+  slabsByStory: van.state(new Map()),
+  columnData: van.state(new Map()),
+  slabData: van.state(new Map()),
+};
+
+const mesh: Mesh = {
+  nodes: van.state([]),
+  elements: van.state([]),
+  nodeInputs: van.state({}),
 };
 
 const slabSample: number[][] = [
@@ -36,7 +34,6 @@ const slabSample: number[][] = [
   [18, 0, 4],
   [0, 0, 4],
 ];
-
 const columnsSample: number[][] = [
   [0, 0, 4],
   [0, 10, 4],
@@ -46,34 +43,21 @@ const columnsSample: number[][] = [
   [6, 10, 4],
 ];
 
-const slabLoad: number = 1;
-
-const solidsMesh = new Math3js(
-  new BufferGeometry(),
-  new MeshPhongMaterial({ color: 0xffe6cc })
-);
-const base = new LineSegments(new BufferGeometry(), new LineBasicMaterial());
-base.frustumCulled = false;
-base.material.depthTest = false; // don't know why but is solves the rendering order issue
-
-const objects3D: State<Object3D[]> = van.state([base]);
-const solids: State<Object3D[]> = van.state([solidsMesh]);
-const mesh: Mesh = {
-  nodes: van.state([]),
-  elements: van.state([]),
-  nodeInputs: van.state({}),
-};
+const solidsMesh = getSolids();
+const base = getBase();
+const objects3D = van.state([base]);
+const solids = van.state([solidsMesh]);
 
 // Events
 // When number of stories changes, update building data model
 van.derive(() => {
-  const points: [number, number, number][] = [];
-  const stories: number[] = [];
-  const slabs: number[][] = [];
-  const columns: number[] = [];
-  const columnsByStory = new Map<number, number[]>();
-  const slabsByStory = new Map<number, number[]>();
-  const slabData = new Map<number, SlabData>();
+  const points: Building["points"]["val"] = [];
+  const stories: Building["stories"]["val"] = [];
+  const slabs: Building["slabs"]["val"] = [];
+  const columns: Building["columns"]["val"] = [];
+  const columnsByStory: Building["columnsByStory"]["val"] = new Map();
+  const slabsByStory: Building["slabsByStory"]["val"] = new Map();
+  const slabData: Building["slabData"]["val"] = new Map();
 
   for (let j = 0; j < parameters.stories.value.val; j++) {
     const storySlabsPoints: [number, number, number][] = [];
@@ -100,6 +84,8 @@ van.derive(() => {
 
     stories.push(lastIndex);
     slabsByStory.set(j, [j]);
+
+    const slabLoad: number = 1;
     slabData.set(j, {
       analysisInput: { areaLoad: slabLoad, isOpening: false },
     });
@@ -133,18 +119,6 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  base.geometry = getBaseGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
-  );
-
-  solidsMesh.geometry = getSolidsGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
-  );
-
   const { nodes, elements, nodeInputs } = getMesh(
     building.points.val,
     building.stories.val,
@@ -157,6 +131,18 @@ van.derive(() => {
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
+
+  base.geometry = getBaseGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
+
+  solidsMesh.geometry = getSolidsGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
