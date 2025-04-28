@@ -1,6 +1,5 @@
 import { TemplateResult } from "lit-html";
 import { State } from "vanjs-core";
-import { Mesh } from "awatif-fem";
 
 export type Building = {
   points: State<[number, number, number][]>; // all the points used to define stories, floors, ..etc
@@ -15,7 +14,6 @@ export type Building = {
   // example (1) -> {analysisInput,designOutput,..}, 1 is column index from columns list
   slabData: State<Map<number, SlabData>>; // any additional data attached to slabs,
   // example (1) -> {analysisInput,designOutput,..}, 1 is slab index from slabs list
-  meshObject: State<Mesh>; // associated mesh object
 };
 
 // Todo: think of way to separate the generic type ColumnAnalysisInput from the remaining specific onces
