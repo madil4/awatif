@@ -1,8 +1,9 @@
 import { subtract, divide, add, multiply, cross, norm } from "mathjs";
 import { Node, Element, NodeInputs } from "awatif-fem";
-import { getMesh as getMeshCore } from "awatif-mesh";
+import { getMesh as getAwatifMesh } from "awatif-mesh";
 import { Building } from "./data-model";
 
+// Todo: Add reference mesh
 // Todo: Optimize how nodes and elements are accumulated
 export function getMesh(
   points: Building["points"]["val"],
@@ -11,8 +12,7 @@ export function getMesh(
   slabs: Building["slabs"]["val"],
   columnsByStory: Building["columnsByStory"]["val"],
   slabsByStory: Building["slabsByStory"]["val"],
-  slabData: Building["slabData"]["val"],
-  frameMeshDensity: number = 3
+  slabData: Building["slabData"]["val"]
 ): {
   nodes: Node[];
   elements: Element[];
@@ -30,6 +30,7 @@ export function getMesh(
     // slab geometry
     const pointIndex = stories[story];
     const elevation = points[pointIndex][2];
+
     const slabsIndices: number[] = slabsByStory.get(Number(story));
     slabsIndices.forEach((slabIndex) => {
       const slab: number[] = slabs[slabIndex];
@@ -39,17 +40,32 @@ export function getMesh(
         .get(Number(story))
         .map((columnIndex) => points[columns[columnIndex]] as Node);
       const slabPoints = [...boundaryPoints, ...columnPoints];
-      const { nodes: meshNodes, elements: meshElements } = getMeshCore({
+      const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
+        maxMeshSize: 1,
       });
+
       const numExistingNodes = nodes.length;
+      const numExistingElements = elements.length;
+
       const slabElements = meshElements.map((e) =>
         e.map((i) => i + numExistingNodes)
       );
       const slabsNodesIndices = meshNodes.map((_, i) => i + numExistingNodes);
+      const slabElementsIndices = elements.map(
+        (_, i) => i + numExistingElements
+      );
+
       nodes = [...nodes, ...convertMeshNodesTo3d(meshNodes, elevation)];
       elements = [...elements, ...slabElements];
+
+      // Todo: Reference
+      const slabMeshReference = {
+        nodesIndices: slabsNodesIndices,
+        elementsIndices: slabElementsIndices,
+      };
+
       // slab loads
       const areaLoad = slabData.get(slabIndex)["analysisInput"]?.areaLoad ?? 0;
       nodeInputs.loads = getNodalLoadsFromSlabAreaLoad(
@@ -84,12 +100,26 @@ export function getMesh(
       const { nodes: columnNodes, elements: columnElements } = meshMember(
         columnTopNode,
         columnBottomNode,
-        nodes.length,
-        frameMeshDensity
+        nodes.length
       );
 
       nodes = [...nodes, ...columnNodes];
       elements = [...elements, ...columnElements];
+
+      // Todo: Reference
+      const numExistingNodes = nodes.length;
+      const numExistingElements = elements.length;
+      const columnNodesIndices = columnNodes.map(
+        (_, i) => i + numExistingNodes
+      );
+      const columnElementsIndices = columnElements.map(
+        (_, i) => i + numExistingElements
+      );
+
+      const columnMeshReference = {
+        nodesIndices: columnNodesIndices,
+        elementsIndices: columnElementsIndices,
+      };
     });
   }
 
@@ -105,7 +135,7 @@ function meshMember(
   node1: Node,
   node2: Node,
   startIndex: number,
-  meshDensity: number
+  meshDensity: number = 3
 ): { nodes: Node[]; elements: Element[] } {
   let nodes: Node[] = [[...node1]];
   let elements: Element[] = [];

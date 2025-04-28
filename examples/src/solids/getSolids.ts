@@ -6,9 +6,19 @@ import {
   Vector2,
   BufferAttribute,
   Matrix4,
+  MeshPhongMaterial,
+  Mesh,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+export function getSolids() {
+  return new Mesh(
+    new BufferGeometry(),
+    new MeshPhongMaterial({ color: 0xffe6cc })
+  );
+}
+
+// Todo: Make offset work with generic column sections
 export function getSolidsGeometry(
   points: number[][],
   slabs: number[][],

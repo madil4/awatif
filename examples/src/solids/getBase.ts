@@ -1,6 +1,19 @@
+import {
+  BufferGeometry,
+  Color,
+  Float32BufferAttribute,
+  LineBasicMaterial,
+  LineSegments,
+} from "three";
 import { Element } from "awatif-fem";
-import { BufferGeometry, Float32BufferAttribute } from "three";
 
+export function getBase(): LineSegments {
+  const base = new LineSegments(new BufferGeometry(), new LineBasicMaterial());
+  base.frustumCulled = false;
+  base.material.depthTest = false; // don't know why but is solves the rendering order issue
+
+  return base;
+}
 export function getBaseGeometry(
   points: number[][],
   slabs: number[][],
