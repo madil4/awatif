@@ -202,20 +202,17 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  if (building.points.val.length == 0) return;
   base.geometry = getBaseGeometry(
     building.points.val,
     building.slabs.val,
     building.columns.val
   );
 
-  if (building.columns.val.length > 0 || building.slabs.val[0][0].length > 2){
-    solidsMesh.geometry = getSolidsGeometry(
-      building.points.val,
-      building.slabs.val,
-      building.columns.val
-    );
-  }
+  solidsMesh.geometry = getSolidsGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
@@ -302,7 +299,7 @@ function getSolidsGeometry(
   if (columns.length > 0)
     solidGeoms.push(createColumnsGeometry(points, columns));
 
-  return mergeGeometries(solidGeoms);
+  return solidGeoms.length > 0 ? mergeGeometries(solidGeoms) : new BufferGeometry();
 
   function createSlabsGeometry(
     points: number[][],
