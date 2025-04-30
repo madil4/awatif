@@ -143,7 +143,7 @@ export function drawing({
 
     if (intersect.length) {
       let point = intersect[0].point;
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey) {
         point = new THREE.Vector3(
           Math.round(intersect[0].point.x),
           Math.round(intersect[0].point.y),
@@ -194,7 +194,7 @@ export function drawing({
     if (intersect.length) {
       let point = intersect[0].point;
 
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey) {
         point = new THREE.Vector3(
           Math.round(intersect[0].point.x),
           Math.round(intersect[0].point.y),
@@ -275,7 +275,7 @@ export function drawing({
     if (pointIndex !== undefined){
       let newPosition = intersectWithPlane[0].point;
       
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey) {
         newPosition = new THREE.Vector3(
           Math.round(newPosition.x),
           Math.round(newPosition.y),
