@@ -26,6 +26,7 @@ export default defineConfig({
         plate: "src/plate/index.html",
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
+        "color-map": "src/color-map/index.html",
       },
     },
   },
