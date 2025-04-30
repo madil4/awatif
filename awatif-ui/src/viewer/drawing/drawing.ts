@@ -272,8 +272,20 @@ export function drawing({
     if (pointerDownAndMovedCount % 2 !== 0) return; // slow movements for (parametric) performance opt 5
 
     const newPoints = [...drawingObj.points.rawVal];
-    if (pointIndex !== undefined)
-      newPoints[pointIndex] = intersectWithPlane[0].point.toArray();
+    if (pointIndex !== undefined){
+      let newPosition = intersectWithPlane[0].point;
+      
+      if (event.ctrlKey) {
+        newPosition = new THREE.Vector3(
+          Math.round(newPosition.x),
+          Math.round(newPosition.y),
+          Math.round(newPosition.z)
+        );
+      }
+      
+      newPoints[pointIndex] = newPosition.toArray();
+      // newPoints[pointIndex] = intersectWithPlane[0].point.toArray();
+    }
     drawingObj.points.val = newPoints;
   });
 
