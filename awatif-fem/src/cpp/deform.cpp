@@ -88,7 +88,7 @@ extern "C"
         int *reactions_size_out             // Total number of doubles in reactions_data_ptr_out (num_react_nodes * 7)
     )
     {
-        printf("Hello from C++ \n");
+        printf("Hello from C++ {%f} \n", load_values_ptr[0]);
 
         if (num_nodes == 0)
         {
