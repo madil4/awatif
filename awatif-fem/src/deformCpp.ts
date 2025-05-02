@@ -18,74 +18,57 @@ export function deformCpp(
 ): DeformOutputs {
   if (nodes.length === 0) return;
 
-  const allocatedMemory: number[] = [];
+  const gc: number[] = []; // Garage Collector
 
-  // --- Prepare Input Data ---
-  // Nodes (Float64Array)
-  const nodesFlat = nodes.flat();
-  const nodeData = getMemoryData(nodesFlat, Float64Array, mod.HEAPF64);
-  allocatedMemory.push(nodeData.dataPtr);
+  // Allocate data
+  // Nodes
+  const nodesPtr = allocate(nodes.flat(), Float64Array, mod.HEAPF64);
+  gc.push(nodesPtr);
 
-  // Elements (Indices and Sizes - Uint32Array)
-  const elementIndicesFlat = elements.flat();
+  // Elements
+  const elementIndices = elements.flat();
+  const elementsPtr = allocate(elementIndices, Uint32Array, mod.HEAPU32);
+  gc.push(elementsPtr);
   const elementSizes = elements.map((e) => e.length);
-  const elementIndicesData = getMemoryData(
-    elementIndicesFlat,
-    Uint32Array,
-    mod.HEAPU32
-  );
-  allocatedMemory.push(elementIndicesData.dataPtr);
-  const elementSizesData = getMemoryData(
-    elementSizes,
-    Uint32Array,
-    mod.HEAPU32
-  );
-  allocatedMemory.push(elementSizesData.dataPtr);
+  const elementSizesPtz = allocate(elementSizes, Uint32Array, mod.HEAPU32);
+  gc.push(elementSizesPtz);
 
-  // NodeInputs.supports (Keys: Uint32Array, Values: Uint8Array for boolean)
+  // NodeInputs.supports
   const supportKeys = nodeInputs.supports
     ? Array.from(nodeInputs.supports.keys())
     : [];
-  const supportValuesFlat = nodeInputs.supports
+  const supportValues = nodeInputs.supports
     ? Array.from(nodeInputs.supports.values())
         .flat()
         .map((b) => (b ? 1 : 0))
     : [];
-  const supportKeysData = getMemoryData(supportKeys, Uint32Array, mod.HEAPU32);
-  allocatedMemory.push(supportKeysData.dataPtr);
-  // Use HEAPU8 for boolean values represented as 0 or 1
-  const supportValuesData = getMemoryData(
-    supportValuesFlat,
-    Uint8Array,
-    mod.HEAPU8
-  );
-  allocatedMemory.push(supportValuesData.dataPtr);
+  const supportKeysPtr = allocate(supportKeys, Uint32Array, mod.HEAPU32);
+  gc.push(supportKeysPtr);
+  const supportValuesPtr = allocate(supportValues, Uint8Array, mod.HEAPU8);
+  gc.push(supportValuesPtr);
 
-  // NodeInputs.loads (Keys: Uint32Array, Values: Float64Array)
+  // NodeInputs.loads
   const loadKeys = nodeInputs.loads ? Array.from(nodeInputs.loads.keys()) : [];
-  const loadValuesFlat = nodeInputs.loads
+  const loadValues = nodeInputs.loads
     ? Array.from(nodeInputs.loads.values()).flat()
     : [];
-  const loadKeysData = getMemoryData(loadKeys, Uint32Array, mod.HEAPU32);
-  allocatedMemory.push(loadKeysData.dataPtr);
-  const loadValuesData = getMemoryData(
-    loadValuesFlat,
-    Float64Array,
-    mod.HEAPF64
-  );
-  allocatedMemory.push(loadValuesData.dataPtr);
+  const loadKeysPtr = allocate(loadKeys, Uint32Array, mod.HEAPU32);
+  gc.push(loadKeysPtr);
+  const loadValuesPtr = allocate(loadValues, Float64Array, mod.HEAPF64);
+  gc.push(loadValuesPtr);
 
-  // ElementInputs (Keys: Uint32Array, Values: Float64Array)
+  // ElementInputs
   const processElementInput = (inputMap: Map<number, number> | undefined) => {
     const keys = inputMap ? Array.from(inputMap.keys()) : [];
     const values = inputMap ? Array.from(inputMap.values()) : [];
-    const keysData = getMemoryData(keys, Uint32Array, mod.HEAPU32);
-    allocatedMemory.push(keysData.dataPtr);
-    const valuesData = getMemoryData(values, Float64Array, mod.HEAPF64);
-    allocatedMemory.push(valuesData.dataPtr);
+    const keysPtr = allocate(keys, Uint32Array, mod.HEAPU32);
+    gc.push(keysPtr);
+    const valuesPtr = allocate(values, Float64Array, mod.HEAPF64);
+    gc.push(valuesPtr);
+
     return {
-      keysPtr: keysData.dataPtr,
-      valuesPtr: valuesData.dataPtr,
+      keysPtr,
+      valuesPtr,
       size: keys.length,
     };
   };
@@ -103,27 +86,27 @@ export function deformCpp(
   // --- Prepare Output Pointers ---
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
-  allocatedMemory.push(deformationsDataPtrOutPtr);
+  gc.push(deformationsDataPtrOutPtr);
   const deformationsSizeOutPtr = mod._malloc(4); // Pointer to an int (size 4)
-  allocatedMemory.push(deformationsSizeOutPtr);
+  gc.push(deformationsSizeOutPtr);
   const reactionsDataPtrOutPtr = mod._malloc(4);
-  allocatedMemory.push(reactionsDataPtrOutPtr);
+  gc.push(reactionsDataPtrOutPtr);
   const reactionsSizeOutPtr = mod._malloc(4);
-  allocatedMemory.push(reactionsSizeOutPtr);
+  gc.push(reactionsSizeOutPtr);
 
   // --- Call C++ Function ---
   mod._deform(
-    nodeData.dataPtr,
+    nodesPtr,
     nodes.length,
-    elementIndicesData.dataPtr,
-    elementIndicesFlat.length,
-    elementSizesData.dataPtr,
+    elementsPtr,
+    elementIndices.length,
+    elementSizesPtz,
     elements.length,
-    supportKeysData.dataPtr,
-    supportValuesData.dataPtr, // Pass the Uint8 pointer
+    supportKeysPtr,
+    supportValuesPtr,
     supportKeys.length,
-    loadKeysData.dataPtr,
-    loadValuesData.dataPtr,
+    loadKeysPtr,
+    loadValuesPtr,
     loadKeys.length,
     elasticities.keysPtr,
     elasticities.valuesPtr,
@@ -209,11 +192,11 @@ export function deformCpp(
   }
 
   // Add pointers to C++ allocated output data to the list for freeing
-  if (deformationsDataPtr) allocatedMemory.push(deformationsDataPtr);
-  if (reactionsDataPtr) allocatedMemory.push(reactionsDataPtr);
+  if (deformationsDataPtr) gc.push(deformationsDataPtr);
+  if (reactionsDataPtr) gc.push(reactionsDataPtr);
 
   // --- Free Memory ---
-  allocatedMemory.forEach((ptr) => {
+  gc.forEach((ptr) => {
     if (ptr !== 0) {
       // Avoid freeing null pointers
       mod._free(ptr);
@@ -238,40 +221,15 @@ type TypedArrayConstructor =
   | Float32ArrayConstructor
   | Float64ArrayConstructor;
 
-// Simplified memory allocation helper
-function getMemoryData<T extends TypedArrayConstructor>(
-  data: ArrayLike<number>,
+function allocate<T extends TypedArrayConstructor>(
+  data: number[], // flatten list
   TypedArrayCtor: T,
-  heapTypedArray: InstanceType<T> | undefined // Make heap optional as it might not be ready initially
-): {
-  dataPtr: number; // Pointer to data
-} {
-  if (!data || data.length === 0) {
-    return { dataPtr: 0 }; // Return null pointer if data is empty
-  }
+  heapTypedArray: InstanceType<T>
+): number {
+  const buffer = new TypedArrayCtor(data);
+  const pointer = mod._malloc(buffer.length * buffer.BYTES_PER_ELEMENT);
 
-  const dataBuf = new TypedArrayCtor(data);
-  const dataByteLength = dataBuf.length * dataBuf.BYTES_PER_ELEMENT;
-  const dataPtr = mod._malloc(dataByteLength);
+  heapTypedArray.set(buffer, pointer / buffer.BYTES_PER_ELEMENT);
 
-  if (dataPtr === 0) {
-    throw new Error("Memory allocation failed in WASM module.");
-  }
-
-  // Ensure heapTypedArray is valid before using set
-  if (!heapTypedArray) {
-    // This error should ideally not happen if EXPORTED_RUNTIME_METHODS is used correctly
-    // and the module is awaited properly in tests.
-    throw new Error(
-      `WASM heap array (e.g., HEAPF64) is not available for ${TypedArrayCtor.name}. Check module initialization and EXPORTED_RUNTIME_METHODS.`
-    );
-  }
-
-  // Copy data to WASM heap
-  // Offset is in elements for set(), but pointer is in bytes
-  heapTypedArray.set(dataBuf, dataPtr / dataBuf.BYTES_PER_ELEMENT);
-
-  return {
-    dataPtr,
-  };
+  return pointer;
 }
