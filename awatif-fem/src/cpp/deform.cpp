@@ -5,7 +5,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Cholesky>
 #include <iostream>
-#include <cstdlib> // For malloc and free
+#include <cstdio>
 
 // Helper function to parse map data from flat arrays (key-value pairs)
 template <typename K, typename V>
@@ -59,7 +59,6 @@ std::map<K, std::vector<bool>> parseMapBoolVecFromFlat(K *keys_ptr, bool *values
 
 extern "C"
 {
-
     void deform(
         // Inputs from TypeScript
         double *nodes_flat_ptr, int num_nodes,                      // nodes.flat()
@@ -89,6 +88,8 @@ extern "C"
         int *reactions_size_out             // Total number of doubles in reactions_data_ptr_out (num_react_nodes * 7)
     )
     {
+        printf("Hello from C++ \n");
+
         if (num_nodes == 0)
         {
             *deformations_data_ptr_out = nullptr;
@@ -315,9 +316,6 @@ extern "C"
         //             (*reactions_data_ptr_out)[react_idx++] = val;
         //     }
         // }
-
-        // // 6. Output pointers and sizes are already set via arguments
-        // // Memory allocated here must be freed by the caller (TypeScript) using module._free()
     }
 }
 
