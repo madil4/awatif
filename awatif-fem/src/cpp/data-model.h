@@ -37,34 +37,18 @@ struct DeformOutputs
     std::map<int, std::vector<double>> reactions;    // Map<node_index, [fx, fy, fz, mx, my, mz]>
 };
 
-// Function declaration for getLocalStiffnessMatrix
+// Utils
 Eigen::MatrixXd getLocalStiffnessMatrix(
     const std::vector<Node> &elementNodes,
     const ElementInputs &elementInputs,
     int elementIndex);
 
-// Function declaration for getTransformationMatrix
 Eigen::MatrixXd getTransformationMatrix(
     const std::vector<Node> &elementNodes);
 
-// Function declaration for getGlobalStiffnessMatrix (Corrected Signature)
 Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
     const std::vector<Node> &nodes,
     const std::vector<unsigned int> &element_indices, // Flat list of indices
     const std::vector<unsigned int> &elementSizes,    // Size of each element
     const ElementInputs &elementInputs,
     int dof);
-
-// Function declaration for getZerosIndices
-std::vector<int> getZerosIndices(
-    const Eigen::SparseMatrix<double> &matrix);
-
-// Function declaration for getReducedMatrix
-Eigen::SparseMatrix<double> getReducedMatrix(
-    const Eigen::SparseMatrix<double> &matrix,
-    const std::vector<int> &reducedIndices);
-
-// Function declaration for getReducedVector
-Eigen::VectorXd getReducedVector(
-    const Eigen::VectorXd &vector,
-    const std::vector<int> &reducedIndices);
