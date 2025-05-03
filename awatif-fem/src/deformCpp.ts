@@ -83,7 +83,6 @@ export function deformCpp(
   const poisson = processElementInput(elementInputs.poissonsRatios);
   // Add other element inputs if needed (e.g., elasticitiesOrthogonal)
 
-  // --- Prepare Output Pointers ---
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
   gc.push(deformationsDataPtrOutPtr);
@@ -94,7 +93,7 @@ export function deformCpp(
   const reactionsSizeOutPtr = mod._malloc(4);
   gc.push(reactionsSizeOutPtr);
 
-  // --- Call C++ Function ---
+  // Call C++ Function
   mod._deform(
     nodesPtr,
     nodes.length,
@@ -139,7 +138,7 @@ export function deformCpp(
     reactionsSizeOutPtr
   );
 
-  // --- Read Output Data ---
+  // Read Output Data
   // Read the pointers and sizes written by C++
   const deformationsDataPtr = mod.HEAPU32[deformationsDataPtrOutPtr / 4];
   const deformationsSize = mod.HEAPU32[deformationsSizeOutPtr / 4];
@@ -191,17 +190,8 @@ export function deformCpp(
     );
   }
 
-  // Add pointers to C++ allocated output data to the list for freeing
-  if (deformationsDataPtr) gc.push(deformationsDataPtr);
-  if (reactionsDataPtr) gc.push(reactionsDataPtr);
-
-  // --- Free Memory ---
-  gc.forEach((ptr) => {
-    if (ptr !== 0) {
-      // Avoid freeing null pointers
-      mod._free(ptr);
-    }
-  });
+  // Free Memory
+  gc.forEach((ptr) => mod._free(ptr));
 
   return {
     deformations,
