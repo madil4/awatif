@@ -35,39 +35,34 @@ Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
 
         Eigen::MatrixXd kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
         Eigen::MatrixXd T = getTransformationMatrix(elmNodes);
-        // // Use original formula: T^T * K_local * T
         Eigen::MatrixXd kGlobalElement = T.transpose() * kLocal * T;
 
-        // // std::cout << "    kGlobalElement (size " << kGlobalElement.rows() << "x" << kGlobalElement.cols() << ") first 6x6 block:\n" << kGlobalElement.block(0,0,6,6) << std::endl;
-
-        // // Assemble into global stiffness matrix
-        // int elementDof = numElementNodes * 6;
-        // for (unsigned int rowNodeIdx = 0; rowNodeIdx < numElementNodes; ++rowNodeIdx)
-        // {
-        //     for (int rowDof = 0; rowDof < 6; ++rowDof)
-        //     {
-        //         int globalRow = currentElementIndices[rowNodeIdx] * 6 + rowDof;
-        //         for (unsigned int colNodeIdx = 0; colNodeIdx < numElementNodes; ++colNodeIdx)
-        //         {
-        //             for (int colDof = 0; colDof < 6; ++colDof)
-        //             {
-        //                 int globalCol = currentElementIndices[colNodeIdx] * 6 + colDof;
-        //                 double value = kGlobalElement(rowNodeIdx * 6 + rowDof, colNodeIdx * 6 + colDof);
-        //                 if (std::abs(value) > 1e-15)
-        //                 { // Tolerance for adding triplets
-        //                     tripletList.emplace_back(globalRow, globalCol, value);
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        // Assemble into global stiffness matrix
+        for (unsigned int rowNodeIdx = 0; rowNodeIdx < numElementNodes; ++rowNodeIdx)
+        {
+            for (int rowDof = 0; rowDof < 6; ++rowDof)
+            {
+                int globalRow = currentElementIndices[rowNodeIdx] * 6 + rowDof;
+                for (unsigned int colNodeIdx = 0; colNodeIdx < numElementNodes; ++colNodeIdx)
+                {
+                    for (int colDof = 0; colDof < 6; ++colDof)
+                    {
+                        int globalCol = currentElementIndices[colNodeIdx] * 6 + colDof;
+                        double value = kGlobalElement(rowNodeIdx * 6 + rowDof, colNodeIdx * 6 + colDof);
+                        if (std::abs(value) > 1e-15) // Tolerance for adding triplets
+                        {
+                            tripletList.emplace_back(globalRow, globalCol, value);
+                        }
+                    }
+                }
+            }
+        }
 
         current_element_node_idx += numElementNodes;
     }
 
     Eigen::SparseMatrix<double> K(dof, dof);
     K.setFromTriplets(tripletList.begin(), tripletList.end());
-    // std::cout << "  Assembled Global Stiffness Matrix K (Non-zeros: " << K.nonZeros() << ")" << std::endl;
-    // std::cout << K << std::endl; // Avoid printing large sparse matrix
+
     return K;
 }
