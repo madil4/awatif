@@ -55,18 +55,6 @@ Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
     const ElementInputs &elementInputs,
     int dof);
 
-// Function declaration for getForces
-Eigen::VectorXd getForces(
-    const NodeInputs &nodeInputs,
-    int numNodes,
-    int dof);
-
-// Function declaration for getFreeIndices
-std::vector<int> getFreeIndices(
-    const NodeInputs &nodeInputs,
-    int numNodes,
-    int dof);
-
 // Function declaration for getZerosIndices
 std::vector<int> getZerosIndices(
     const Eigen::SparseMatrix<double> &matrix);

@@ -1,4 +1,4 @@
-// #include "data-model.h"
+#include "data-model.h"
 #include <vector>
 #include <map>
 #include <Eigen/Dense>
@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cstdio>
 
+// Utils
 // Helper function to parse map data from flat arrays (key-value pairs)
 template <typename K, typename V>
 std::map<K, V> parseMapFromFlat(K *keys_ptr, V *values_ptr, int size)
@@ -57,6 +58,59 @@ std::map<K, std::vector<bool>> parseMapBoolVecFromFlat(K *keys_ptr, bool *values
     return map_data;
 }
 
+Eigen::VectorXd getForces(
+    const NodeInputs &nodeInputs,
+    int dof)
+{
+    Eigen::VectorXd forces = Eigen::VectorXd::Zero(dof);
+    for (const auto &pair : nodeInputs.loads)
+    {
+        int nodeIndex = pair.first;
+        const auto &loadVector = pair.second;
+        if (loadVector.size() == 6)
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                forces(nodeIndex * 6 + i) = loadVector[i];
+            }
+        }
+    }
+    return forces;
+}
+
+std::vector<int> getFreeIndices(
+    const NodeInputs &nodeInputs,
+    int dof)
+{
+    std::vector<bool> isFixed(dof, false);
+    for (const auto &pair : nodeInputs.supports)
+    {
+        int nodeIndex = pair.first;
+        const auto &supportFlags = pair.second;
+        if (supportFlags.size() == 6)
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                if (supportFlags[i])
+                {
+                    isFixed[nodeIndex * 6 + i] = true;
+                }
+            }
+        }
+    }
+
+    std::vector<int> freeIndices;
+    for (int i = 0; i < dof; ++i)
+    {
+        if (!isFixed[i])
+        {
+            freeIndices.push_back(i);
+        }
+    }
+
+    return freeIndices;
+}
+
 extern "C"
 {
     void deform(
@@ -88,52 +142,40 @@ extern "C"
         int *reactions_size_out             // Total number of doubles in reactions_data_ptr_out (num_react_nodes * 7)
     )
     {
-        printf("Hello from C++ {%f} \n", load_values_ptr[0]);
-
-        if (num_nodes == 0)
+        // 1. Parse Inputs
+        std::vector<Node> nodes(num_nodes, Node(3));
+        for (int i = 0; i < num_nodes; ++i)
         {
-            *deformations_data_ptr_out = nullptr;
-            *deformations_size_out = 0;
-            *reactions_data_ptr_out = nullptr;
-            *reactions_size_out = 0;
-            return;
+            nodes[i][0] = nodes_flat_ptr[i * 3 + 0];
+            nodes[i][1] = nodes_flat_ptr[i * 3 + 1];
+            nodes[i][2] = nodes_flat_ptr[i * 3 + 2];
         }
 
-        // // 1. Parse input data from pointers into C++ data structures
-        // std::vector<Node> nodes(num_nodes, Node(3));
-        // for (int i = 0; i < num_nodes; ++i)
-        // {
-        //     nodes[i][0] = nodes_flat_ptr[i * 3 + 0];
-        //     nodes[i][1] = nodes_flat_ptr[i * 3 + 1];
-        //     nodes[i][2] = nodes_flat_ptr[i * 3 + 2];
-        // }
+        std::vector<unsigned int> element_indices(element_indices_ptr, element_indices_ptr + num_element_indices);
+        std::vector<unsigned int> element_sizes(element_sizes_ptr, element_sizes_ptr + num_elements);
 
-        // // Element indices (already flat)
-        // std::vector<unsigned int> element_indices(element_indices_ptr, element_indices_ptr + num_element_indices);
-        // std::vector<unsigned int> element_sizes(element_sizes_ptr, element_sizes_ptr + num_elements);
+        NodeInputs nodeInputs;
+        nodeInputs.supports = parseMapBoolVecFromFlat(support_keys_ptr, support_values_ptr, num_supports, 6);
+        nodeInputs.loads = parseMapVecFromFlat(load_keys_ptr, load_values_ptr, num_loads, 6);
 
-        // NodeInputs nodeInputs;
-        // nodeInputs.supports = parseMapBoolVecFromFlat(support_keys_ptr, support_values_ptr, num_supports, 6);
-        // nodeInputs.loads = parseMapVecFromFlat(load_keys_ptr, load_values_ptr, num_loads, 6);
+        ElementInputs elementInputs;
+        elementInputs.elasticities = parseMapFromFlat(elasticity_keys_ptr, elasticity_values_ptr, num_elasticities);
+        elementInputs.areas = parseMapFromFlat(area_keys_ptr, area_values_ptr, num_areas);
+        elementInputs.momentsOfInertiaZ = parseMapFromFlat(moi_z_keys_ptr, moi_z_values_ptr, num_moi_z);
+        elementInputs.momentsOfInertiaY = parseMapFromFlat(moi_y_keys_ptr, moi_y_values_ptr, num_moi_y);
+        elementInputs.shearModuli = parseMapFromFlat(shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod);
+        elementInputs.torsionalConstants = parseMapFromFlat(torsion_keys_ptr, torsion_values_ptr, num_torsion);
+        elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
+        elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
 
-        // ElementInputs elementInputs;
-        // elementInputs.elasticities = parseMapFromFlat(elasticity_keys_ptr, elasticity_values_ptr, num_elasticities);
-        // elementInputs.areas = parseMapFromFlat(area_keys_ptr, area_values_ptr, num_areas);
-        // elementInputs.momentsOfInertiaZ = parseMapFromFlat(moi_z_keys_ptr, moi_z_values_ptr, num_moi_z);
-        // elementInputs.momentsOfInertiaY = parseMapFromFlat(moi_y_keys_ptr, moi_y_values_ptr, num_moi_y);
-        // elementInputs.shearModuli = parseMapFromFlat(shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod);
-        // elementInputs.torsionalConstants = parseMapFromFlat(torsion_keys_ptr, torsion_values_ptr, num_torsion);
-        // elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
-        // elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
-        // // Parse other element inputs similarly
+        // 2. Implement the core logic from deform.ts using Eigen
+        int dof = num_nodes * 6;
 
-        // // 2. Implement the core logic from deform.ts using Eigen
-        // int dof = num_nodes * 6;
+        Eigen::VectorXd forces = getForces(nodeInputs, dof);
+        Eigen::SparseMatrix<double> stiffnesses = getGlobalStiffnessMatrix(nodes, element_indices, element_sizes, elementInputs, dof);
 
-        // Eigen::VectorXd forces = getForces(nodeInputs, num_nodes, dof);
-        // Eigen::SparseMatrix<double> stiffnesses = getGlobalStiffnessMatrix(nodes, element_indices, element_sizes, elementInputs, dof);
+        std::vector<int> freeIndices = getFreeIndices(nodeInputs, dof);
 
-        // std::vector<int> freeIndices = getFreeIndices(nodeInputs, num_nodes, dof);
         // std::vector<int> zeroIndices = getZerosIndices(stiffnesses);
 
         // // Filter freeIndices to remove those corresponding to zero columns/rows in stiffness matrix
@@ -319,78 +361,7 @@ extern "C"
     }
 }
 
-// --- Implementation of getForces --- //
-
-// Eigen::VectorXd getForces(
-//     const NodeInputs &nodeInputs,
-//     int numNodes,
-//     int dof)
-// {
-//     // std::cout << std::fixed << std::setprecision(15);
-//     // std::cout << "--- getForces ---" << std::endl;
-//     Eigen::VectorXd forces = Eigen::VectorXd::Zero(dof);
-//     for (const auto &pair : nodeInputs.loads)
-//     {
-//         int nodeIndex = pair.first;
-//         const auto &loadVector = pair.second;
-//         if (loadVector.size() == 6)
-//         {
-//             // std::cout << "  Load at Node " << nodeIndex << ": [ ";
-//             for (int i = 0; i < 6; ++i)
-//             {
-//                 forces(nodeIndex * 6 + i) = loadVector[i];
-//                 // std::cout << loadVector[i] << " ";
-//             }
-//             // std::cout << "]" << std::endl;
-//         }
-//     }
-//     // std::cout << "  Force Vector F (size " << forces.size() << ") first 12 elements:\n" << forces.head(std::min((long)forces.size(), 12L)).transpose() << "..." << std::endl;
-//     return forces;
-// }
-
 // // --- Implementation of getFreeIndices --- //
-
-// std::vector<int> getFreeIndices(
-//     const NodeInputs &nodeInputs,
-//     int numNodes,
-//     int dof)
-// {
-//     // std::cout << "--- getFreeIndices ---" << std::endl;
-//     std::vector<bool> isFixed(dof, false);
-//     for (const auto &pair : nodeInputs.supports)
-//     {
-//         int nodeIndex = pair.first;
-//         const auto &supportFlags = pair.second;
-//         if (supportFlags.size() == 6)
-//         {
-//             // std::cout << "  Support at Node " << nodeIndex << ": [ ";
-//             for (int i = 0; i < 6; ++i)
-//             {
-//                 if (supportFlags[i])
-//                 {
-//                     isFixed[nodeIndex * 6 + i] = true;
-//                     // std::cout << "T ";
-//                 }
-//                 else
-//                 {
-//                     // std::cout << "F ";
-//                 }
-//             }
-//             // std::cout << "]" << std::endl;
-//         }
-//     }
-
-//     std::vector<int> freeIndices;
-//     for (int i = 0; i < dof; ++i)
-//     {
-//         if (!isFixed[i])
-//         {
-//             freeIndices.push_back(i);
-//         }
-//     }
-//     // std::cout << "  Found " << freeIndices.size() << " free DOFs." << std::endl;
-//     return freeIndices;
-// }
 
 // // --- Implementation of getZerosIndices --- //
 

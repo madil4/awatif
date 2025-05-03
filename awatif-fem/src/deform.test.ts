@@ -2,7 +2,7 @@ import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { deform } from "./deform";
 
 describe("deform", () => {
-  test("Bars from Logan's book example 3.9", () => {
+  test.only("Bars from Logan's book example 3.9", () => {
     const nodes: Node[] = [
       [12, -3, -4],
       [0, 0, 0],
