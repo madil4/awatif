@@ -6,75 +6,90 @@
 #include <iomanip>
 #include <stdexcept>
 
-// --- Implementation of getTransformationMatrix --- //
-
-Eigen::MatrixXd getTransformationMatrix(
-    const std::vector<Node> &elementNodes)
+// Utils
+Eigen::MatrixXd getTransformationMatrixFrame(const Node &n0, const Node &n1)
 {
-    // std::cout << std::fixed << std::setprecision(15);
-    // std::cout << "--- getTransformationMatrix ---" << std::endl;
+    Eigen::Vector3d vector(n1[0] - n0[0], n1[1] - n0[1], n1[2] - n0[2]);
+    double length = vector.norm();
+    double l = vector.dot(Eigen::Vector3d::UnitX()) / length;
+    double m = vector.dot(Eigen::Vector3d::UnitY()) / length;
+    double n = vector.dot(Eigen::Vector3d::UnitZ()) / length;
+    double D = std::sqrt(l * l + m * m);
 
-    Eigen::Vector3d p1(elementNodes[0][0], elementNodes[0][1], elementNodes[0][2]);
-    Eigen::Vector3d p2(elementNodes[1][0], elementNodes[1][1], elementNodes[1][2]);
-    Eigen::Vector3d p3 = (elementNodes.size() > 2) ? Eigen::Vector3d(elementNodes[2][0], elementNodes[2][1], elementNodes[2][2]) : Eigen::Vector3d(0, 0, 0); // Handle 2-node elements
-
-    // std::cout << "  Nodes: p1=" << p1.transpose() << ", p2=" << p2.transpose();
-    // if (elementNodes.size() > 2) std::cout << ", p3=" << p3.transpose();
-    // std::cout << std::endl;
-
-    Eigen::Vector3d v12 = p2 - p1;
-    double L = v12.norm();
-    if (L == 0)
-    {
-        std::cerr << "  Warning: Zero length element in getTransformationMatrix!" << std::endl;
-        int matrixSize = elementNodes.size() * 6;
-        return Eigen::MatrixXd::Identity(matrixSize, matrixSize);
+    Eigen::MatrixXd lambda(3, 3);
+    if (std::abs(n - 1.0) < 1e-9)
+    { // Handle n === 1
+        lambda << 0, 0, 1,
+            0, 1, 0,
+            -1, 0, 0;
     }
-
-    Eigen::Vector3d x = v12.normalized();
-    Eigen::Vector3d y, z;
-
-    if (elementNodes.size() == 2)
-    { // Frame element
-        // Simplified approach: Assume Z is vertical unless the member is vertical
-        Eigen::Vector3d globalZ(0, 0, 1);
-        if (std::abs(x.dot(globalZ)) > 0.999)
-        { // Member is nearly vertical
-            Eigen::Vector3d globalY(0, 1, 0);
-            z = x.cross(globalY).normalized();
-            y = z.cross(x).normalized();
-        }
-        else
-        {
-            y = globalZ.cross(x).normalized();
-            z = x.cross(y).normalized();
-        }
+    else if (std::abs(n + 1.0) < 1e-9)
+    { // Handle n === -1
+        lambda << 0, 0, -1,
+            0, 1, 0,
+            1, 0, 0;
     }
     else
-    { // Plate element (assuming p3 defines the plane)
-        Eigen::Vector3d v13 = p3 - p1;
-        z = v12.cross(v13).normalized(); // Normal to the plate
-        y = z.cross(x).normalized();     // In-plane y-axis
-    }
-
-    Eigen::Matrix3d R;
-    R.col(0) = x;
-    R.col(1) = y;
-    R.col(2) = z;
-
-    // std::cout << "  Rotation Matrix R:\n" << R << std::endl;
-
-    int numNodes = elementNodes.size();
-    int matrixSize = numNodes * 6;
-    Eigen::MatrixXd T = Eigen::MatrixXd::Zero(matrixSize, matrixSize);
-
-    for (int i = 0; i < numNodes; ++i)
     {
-        T.block<3, 3>(i * 6, i * 6) = R;
-        T.block<3, 3>(i * 6 + 3, i * 6 + 3) = R;
+        lambda << l, m, n,
+            -m / D, l / D, 0,
+            (-l * n) / D, (-m * n) / D, D;
     }
 
-    // std::cout << "  Transformation Matrix T (size " << matrixSize << "x" << matrixSize << "):\n" << T.block(0,0,std::min(12, matrixSize), std::min(12, matrixSize)) << "..." << std::endl; // Print first 12x12 block
+    Eigen::MatrixXd t = Eigen::MatrixXd::Zero(12, 12);
+    for (int i = 0; i < 4; ++i)
+    {
+        t.block<3, 3>(i * 3, i * 3) = lambda;
+    }
 
-    return T;
+    return t;
 }
+
+Eigen::MatrixXd getTransformationMatrix(const std::vector<Node> &nodes)
+{
+    if (nodes.size() == 2)
+    {
+        return getTransformationMatrixFrame(nodes[0], nodes[1]);
+    }
+
+    // if (nodes.size() == 3)
+    // {
+    //     return getTransformationMatrixPlate(nodes[0], nodes[1], nodes[2]);
+    // }
+
+    return Eigen::MatrixXd();
+}
+
+// Eigen::MatrixXd getTransformationMatrixPlate(const Node &n1, const Node &n2, const Node &n3)
+// {
+//     auto getAverage = [](const std::vector<Node> &nodes)
+//     {
+//         Eigen::Vector3d sum = Eigen::Vector3d::Zero();
+//         for (const auto &node : nodes)
+//         {
+//             sum += Eigen::Vector3d(node[0], node[1], node[2]);
+//         }
+//         return sum / static_cast<double>(nodes.size());
+//     };
+
+//     Eigen::Vector3d j = getAverage({n2, n3});
+//     Eigen::Vector3d k = getAverage({n1, n3});
+//     Eigen::Vector3d i = getAverage({n1, n2});
+//     Eigen::Vector3d x = (j - k).normalized();
+//     Eigen::Vector3d r = (Eigen::Vector3d(n3[0], n3[1], n3[2]) - i).normalized();
+//     Eigen::Vector3d z = x.cross(r).normalized();
+//     Eigen::Vector3d y = z.cross(x).normalized();
+
+//     Eigen::MatrixXd lambda(3, 3);
+//     lambda << x(0), y(0), z(0),
+//         x(1), y(1), z(1),
+//         x(2), y(2), z(2);
+
+//     Eigen::MatrixXd t = Eigen::MatrixXd::Zero(18, 18); // Initialize an 18x18 zero matrix
+//     for (int i = 0; i < 6; ++i)
+//     {
+//         t.block<3, 3>(i * 3, i * 3) = lambda;
+//     }
+
+//     return t;
+// }

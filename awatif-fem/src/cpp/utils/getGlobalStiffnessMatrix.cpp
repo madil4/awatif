@@ -34,10 +34,9 @@ Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
         }
 
         Eigen::MatrixXd kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
-
-        // Eigen::MatrixXd T = getTransformationMatrix(elmNodes);
+        Eigen::MatrixXd T = getTransformationMatrix(elmNodes);
         // // Use original formula: T^T * K_local * T
-        // Eigen::MatrixXd kGlobalElement = T.transpose() * kLocal * T;
+        Eigen::MatrixXd kGlobalElement = T.transpose() * kLocal * T;
 
         // // std::cout << "    kGlobalElement (size " << kGlobalElement.rows() << "x" << kGlobalElement.cols() << ") first 6x6 block:\n" << kGlobalElement.block(0,0,6,6) << std::endl;
 
