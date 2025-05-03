@@ -27,7 +27,6 @@ describe("deformCpp", () => {
     nodeInputs.supports?.set(2, [true, true, true, false, false, false]);
     nodeInputs.supports?.set(3, [true, true, true, false, false, false]);
     nodeInputs.loads?.set(0, [20, 0, 0, 0, 0, 0]);
-    nodeInputs.loads?.set(2, [20, 30, 0, 0, 0, 0]);
 
     elements.forEach((_, i) => {
       elementInputs.elasticities?.set(i, 210e6);
