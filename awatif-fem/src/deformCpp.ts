@@ -20,7 +20,7 @@ export function deformCpp(
 
   const gc: number[] = []; // Garage Collector
 
-  // Allocate data
+  // 1- Allocate data
   // Nodes
   const nodesPtr = allocate(nodes.flat(), Float64Array, mod.HEAPF64);
   gc.push(nodesPtr);
@@ -93,7 +93,7 @@ export function deformCpp(
   const reactionsSizeOutPtr = mod._malloc(4);
   gc.push(reactionsSizeOutPtr);
 
-  // Call C++ Function
+  // 2- Call C++ Function
   mod._deform(
     nodesPtr,
     nodes.length,
@@ -138,7 +138,7 @@ export function deformCpp(
     reactionsSizeOutPtr
   );
 
-  // Read Output Data
+  // 3- Read Output Data
   // Read the pointers and sizes written by C++
   const deformationsDataPtr = mod.HEAPU32[deformationsDataPtrOutPtr / 4];
   const deformationsSize = mod.HEAPU32[deformationsSizeOutPtr / 4];
@@ -157,7 +157,7 @@ export function deformCpp(
     reactionsSize
   );
 
-  // Convert flat output arrays back to Map format
+  // 4- Convert flat output arrays back to Map format
   const deformations: DeformOutputs["deformations"] = new Map();
   for (let i = 0; i < deformationsSize; i += 7) {
     const nodeIndex = deformationsFlat[i];

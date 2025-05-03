@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --watch",
-    "build": "emcc ./src/cpp/deform.cpp -o ./src/cpp/dist/deform.js -O3 -s MODULARIZE -s EXPORT_ES6 -s EXPORTED_FUNCTIONS=_malloc,_free,_deform -s EXPORTED_RUNTIME_METHODS=HEAPF64,HEAPU32,HEAPU8 -I /Users/mohamed/Applications/eigen/ && tsc ./src/deformCpp.ts --module es6 --target es2015 --moduleResolution node && node ./src/deformCpp.js && rm ./src/deformCpp.js ./src/data-model.js"
+    "build": "emcc ./src/cpp/deform.cpp ./src/cpp/utils/getGlobalStiffnessMatrix.cpp ./src/cpp/utils/getLocalStiffnessMatrix.cpp -o ./src/cpp/dist/deform.js -O3 -s MODULARIZE -s EXPORT_ES6 -s EXPORTED_FUNCTIONS=_malloc,_free,_deform -s EXPORTED_RUNTIME_METHODS=HEAPF64,HEAPU32,HEAPU8 -I /Users/mohamed/Applications/eigen/ && tsc ./src/deformCpp.ts --module es6 --target es2015 --moduleResolution node && node ./src/deformCpp.js && rm ./src/deformCpp.js ./src/data-model.js"
   },
   "devDependencies": {
     "@types/emscripten": "^1.40.1",
