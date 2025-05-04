@@ -144,7 +144,6 @@ describe("deformCpp", () => {
   });
 
   test("Plate", () => {
-    // Note: This test will likely fail or produce zeros because the C++ plate stiffness matrix is not implemented yet.
     const nodes: Node[] = [
       [0, 0, 0],
       [0, 5, 0],
