@@ -110,8 +110,8 @@ Eigen::MatrixXd getLocalStiffnessMatrixFrame(
 // Structure to hold intermediate edge coefficients for plate calculations
 struct EdgeCoeffs
 {
-    double x12, y12, x23, y23, x31, y31; // Edge vector components
-    double l12, l23, l31;               // Squared edge lengths
+    double x12, y12, x23, y23, x31, y31;                   // Edge vector components
+    double l12, l23, l31;                                  // Squared edge lengths
     double P4, P5, P6, q4, q5, q6, r4, r5, r6, t4, t5, t6; // Intermediate terms
 };
 
@@ -214,7 +214,7 @@ std::vector<double> buildHye(double k, double e, const EdgeCoeffs &ec)
 
 // Builds the B matrix (strain-displacement matrix) for a plate element at a given Gauss point (k, e).
 Eigen::MatrixXd buildBMatrix(
-    double k, double e, // Natural coordinates (ksi, eta) of the Gauss point
+    double k, double e,                                               // Natural coordinates (ksi, eta) of the Gauss point
     double x1, double y1, double x2, double y2, double x3, double y3) // Node coordinates
 {
     // Calculate twice the area of the triangle
@@ -261,16 +261,6 @@ Eigen::Matrix3d buildIsoDb(double E, double nu, double t)
     return Db * factor;
 }
 
-// Builds the Db matrix for an orthotropic plate.
-// NOTE: This currently uses the isotropic formulation as a fallback.
-// The correct orthotropic implementation depends on the 'awatif-proprietary' logic.
-Eigen::Matrix3d buildOrthotropicDb(double E, double Eo, double Gxy, double nu, double t)
-{
-    // Placeholder - requires proprietary implementation
-    std::cerr << "Warning: Orthotropic material calculation not implemented. Using isotropic fallback in buildOrthotropicDb." << std::endl;
-    return buildIsoDb(E, nu, t); // Using isotropic as fallback
-}
-
 // Maps the 9x9 stiffness matrix (related to w, rx, ry DOFs) to the full 18x18 local stiffness matrix.
 Eigen::MatrixXd mapK9x9ToK18x18(const Eigen::MatrixXd &k9)
 {
@@ -283,38 +273,40 @@ Eigen::MatrixXd mapK9x9ToK18x18(const Eigen::MatrixXd &k9)
     // Mapping based on DOF order: [u, v, w, rx, ry, rz] for each node
     // k9 relates DOFs [w1, ry1, rx1, w2, ry2, rx2, w3, ry3, rx3]
     // k18 relates DOFs [u1..rz1, u2..rz2, u3..rz3]
-    for (int i = 0; i < 3; ++i) { // Node block row (node i+1)
-        for (int j = 0; j < 3; ++j) { // Node block col (node j+1)
+    for (int i = 0; i < 3; ++i)
+    { // Node block row (node i+1)
+        for (int j = 0; j < 3; ++j)
+        { // Node block col (node j+1)
             // k9 indices (w=0, ry=1, rx=2 within 3x3 block)
-            int k9_r_w  = i * 3 + 0;
+            int k9_r_w = i * 3 + 0;
             int k9_r_ry = i * 3 + 1;
             int k9_r_rx = i * 3 + 2;
 
-            int k9_c_w  = j * 3 + 0;
+            int k9_c_w = j * 3 + 0;
             int k9_c_ry = j * 3 + 1;
             int k9_c_rx = j * 3 + 2;
 
             // k18 indices (w=2, rx=3, ry=4 within 6x6 block)
-            int k18_r_w  = i * 6 + 2;
+            int k18_r_w = i * 6 + 2;
             int k18_r_rx = i * 6 + 3;
             int k18_r_ry = i * 6 + 4;
 
-            int k18_c_w  = j * 6 + 2;
+            int k18_c_w = j * 6 + 2;
             int k18_c_rx = j * 6 + 3;
             int k18_c_ry = j * 6 + 4;
 
             // Map w-w, w-rx, w-ry
-            k18(k18_r_w, k18_c_w)  = k9(k9_r_w, k9_c_w);
+            k18(k18_r_w, k18_c_w) = k9(k9_r_w, k9_c_w);
             k18(k18_r_w, k18_c_rx) = k9(k9_r_w, k9_c_rx);
             k18(k18_r_w, k18_c_ry) = k9(k9_r_w, k9_c_ry);
 
             // Map rx-w, rx-rx, rx-ry
-            k18(k18_r_rx, k18_c_w)  = k9(k9_r_rx, k9_c_w);
+            k18(k18_r_rx, k18_c_w) = k9(k9_r_rx, k9_c_w);
             k18(k18_r_rx, k18_c_rx) = k9(k9_r_rx, k9_c_rx);
             k18(k18_r_rx, k18_c_ry) = k9(k9_r_rx, k9_c_ry);
 
             // Map ry-w, ry-rx, ry-ry
-            k18(k18_r_ry, k18_c_w)  = k9(k9_r_ry, k9_c_w);
+            k18(k18_r_ry, k18_c_w) = k9(k9_r_ry, k9_c_w);
             k18(k18_r_ry, k18_c_rx) = k9(k9_r_ry, k9_c_rx);
             k18(k18_r_ry, k18_c_ry) = k9(k9_r_ry, k9_c_ry);
         }
@@ -396,4 +388,3 @@ Eigen::MatrixXd getLocalStiffnessMatrixPlate(
 
     return K18x18;
 }
-

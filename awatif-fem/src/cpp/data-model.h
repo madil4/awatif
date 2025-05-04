@@ -51,3 +51,5 @@ Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
     const std::vector<unsigned int> &elementSizes,    // Size of each element
     const ElementInputs &elementInputs,
     int dof);
+
+Eigen::Matrix3d buildOrthotropicDb(double Ex, double Ey, double Gxy, double nu_xy, double t);

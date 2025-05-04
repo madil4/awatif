@@ -36,15 +36,15 @@ extern "C"
 
         // Element Inputs (Material & Section Properties)
         // Note: Pass pointers/sizes for all potential properties used by getLocalStiffnessMatrix
-        int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities, // Map<elemIdx, E>
-        int *area_keys_ptr, double *area_values_ptr, int num_areas,                    // Map<elemIdx, A>
-        int *moi_z_keys_ptr, double *moi_z_values_ptr, int num_moi_z,                  // Map<elemIdx, Iz>
-        int *moi_y_keys_ptr, double *moi_y_values_ptr, int num_moi_y,                  // Map<elemIdx, Iy>
-        int *shear_mod_keys_ptr, double *shear_mod_values_ptr, int num_shear_mod,      // Map<elemIdx, G>
-        int *torsion_keys_ptr, double *torsion_values_ptr, int num_torsion,            // Map<elemIdx, J>
-        int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,      // Map<elemIdx, t>
-        int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,            // Map<elemIdx, nu>
-        // Add elasticitiesOrthogonal if/when implemented
+        int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities,                                   // Map<elemIdx, E>
+        int *area_keys_ptr, double *area_values_ptr, int num_areas,                                                      // Map<elemIdx, A>
+        int *moi_z_keys_ptr, double *moi_z_values_ptr, int num_moi_z,                                                    // Map<elemIdx, Iz>
+        int *moi_y_keys_ptr, double *moi_y_values_ptr, int num_moi_y,                                                    // Map<elemIdx, Iy>
+        int *shear_mod_keys_ptr, double *shear_mod_values_ptr, int num_shear_mod,                                        // Map<elemIdx, G>
+        int *torsion_keys_ptr, double *torsion_values_ptr, int num_torsion,                                              // Map<elemIdx, J>
+        int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,                                        // Map<elemIdx, t>
+        int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,                                              // Map<elemIdx, nu>
+        int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal, // Map<elemIdx, E_ortho>
 
         // --- Output Pointers (to be allocated by C++ and filled) ---
         // These are pointers *to* pointers. C++ allocates memory using malloc
@@ -85,7 +85,7 @@ extern "C"
         elementInputs.torsionalConstants = parseMapFromFlat(torsion_keys_ptr, torsion_values_ptr, num_torsion);
         elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
         elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
-        // Parse elasticitiesOrthogonal here if added
+        elementInputs.elasticitiesOrthogonal = parseMapFromFlat(elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal);
 
         // --- 2. Core FEA Calculation using Eigen ---
         int dof = num_nodes * 6; // Total degrees of freedom

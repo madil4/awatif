@@ -74,6 +74,9 @@ export function deformCpp(
   };
 
   const elasticities = processElementInput(elementInputs.elasticities);
+  const elasticitiesOrthogonal = processElementInput(
+    elementInputs.elasticitiesOrthogonal
+  );
   const areas = processElementInput(elementInputs.areas);
   const moiZ = processElementInput(elementInputs.momentsOfInertiaZ);
   const moiY = processElementInput(elementInputs.momentsOfInertiaY);
@@ -81,7 +84,6 @@ export function deformCpp(
   const torsion = processElementInput(elementInputs.torsionalConstants);
   const thickness = processElementInput(elementInputs.thicknesses);
   const poisson = processElementInput(elementInputs.poissonsRatios);
-  // Add other element inputs if needed (e.g., elasticitiesOrthogonal)
 
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
@@ -131,6 +133,9 @@ export function deformCpp(
     poisson.keysPtr,
     poisson.valuesPtr,
     poisson.size,
+    elasticitiesOrthogonal.keysPtr,
+    elasticitiesOrthogonal.valuesPtr,
+    elasticitiesOrthogonal.size,
     // Output pointers
     deformationsDataPtrOutPtr,
     deformationsSizeOutPtr,

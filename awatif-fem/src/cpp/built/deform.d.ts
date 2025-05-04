@@ -41,6 +41,9 @@ export interface DeformCppModule {
     poisson_keys_ptr: number, // int*
     poisson_values_ptr: number, // double*
     num_poisson: number, // int
+    elasticitiesOrthogonal_keys_ptr: number, // int*
+    elasticitiesOrthogonal_values_ptr: number, // double*
+    num_elasticitiesOrthogonal: number, // int
 
     // Output Pointers (Pointers to Pointers/Ints)
     deformations_data_ptr_out: number, // double**
