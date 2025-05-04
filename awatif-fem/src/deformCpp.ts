@@ -212,7 +212,7 @@ type TypedArrayConstructor =
   | Float64ArrayConstructor;
 
 function allocate<T extends TypedArrayConstructor>(
-  data: number[], // flatten list
+  data: number[],
   TypedArrayCtor: T,
   heapTypedArray: InstanceType<T>
 ): number {
