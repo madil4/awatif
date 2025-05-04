@@ -1,7 +1,9 @@
-import { v as e, g as v, a as c } from "./styles-C_4VGeCN.js";
-import { g as h } from "./getParameters-DLMS8EAe.js";
-import { d as g, __tla as __tla_0 } from "./deform-C3_9Anee.js";
-import { g as w, __tla as __tla_1 } from "./getMesh-Bm83U438.js";
+import { v as e, g as v, a as c } from "./styles-BHEEcEe8.js";
+import { g as h } from "./getParameters-DUGbK7gy.js";
+import { d as g, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
+import { g as w, __tla as __tla_1 } from "./getMesh-CMeRczJW.js";
+import "./__vite-browser-external-D7Ct-6yo.js";
+import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
     try {
@@ -28,7 +30,7 @@ Promise.all([
       max: 100,
       step: 1
     }
-  }, n = e.state([]), m = e.state([]), l = e.state({}), p = e.state({}), u = e.state({});
+  }, m = e.state([]), n = e.state([]), p = e.state({}), l = e.state({}), u = e.state({});
   e.derive(() => {
     const { nodes: i, elements: r, boundaryIndices: d } = w({
       points: [
@@ -59,11 +61,11 @@ Promise.all([
         2,
         3
       ],
-      maxMeshSize: 2
+      maxMeshSize: 0.5
     });
-    n.val = i, m.val = r, l.val = {
-      supports: new Map(d.map((t) => [
-        t,
+    m.val = i, n.val = r, p.val = {
+      supports: new Map(d.map((a) => [
+        a,
         [
           true,
           true,
@@ -73,8 +75,8 @@ Promise.all([
           true
         ]
       ])),
-      loads: new Map(n.val.map((t, a) => [
-        a,
+      loads: new Map(m.val.map((a, t) => [
+        t,
         [
           0,
           0,
@@ -85,28 +87,28 @@ Promise.all([
         ]
       ]))
     };
-    const s = m.val;
-    p.val = {
-      elasticities: new Map(s.map((t, a) => [
-        a,
+    const s = n.val;
+    l.val = {
+      elasticities: new Map(s.map((a, t) => [
+        t,
         100
       ])),
-      thicknesses: new Map(s.map((t, a) => [
-        a,
+      thicknesses: new Map(s.map((a, t) => [
+        t,
         1
       ])),
-      poissonsRatios: new Map(s.map((t, a) => [
-        a,
+      poissonsRatios: new Map(s.map((a, t) => [
+        t,
         0.3
       ]))
-    }, u.val = g(i, r, l.val, p.val);
+    }, u.val = g(i, r, p.val, l.val);
   });
   document.body.append(h(o), v({
     mesh: {
-      nodes: n,
-      elements: m,
-      nodeInputs: l,
-      elementInputs: p,
+      nodes: m,
+      elements: n,
+      nodeInputs: p,
+      elementInputs: l,
       deformOutputs: u
     },
     settingsObj: {

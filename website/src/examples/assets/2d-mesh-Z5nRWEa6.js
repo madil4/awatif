@@ -1,6 +1,8 @@
-import { v as e, g as n, a as r } from "./styles-C_4VGeCN.js";
-import { g as i } from "./getParameters-DLMS8EAe.js";
-import { g as l, __tla as __tla_0 } from "./getMesh-Bm83U438.js";
+import { v as e, g as n, a as r } from "./styles-BHEEcEe8.js";
+import { g as i } from "./getParameters-DUGbK7gy.js";
+import { g as l, __tla as __tla_0 } from "./getMesh-CMeRczJW.js";
+import "./__vite-browser-external-D7Ct-6yo.js";
+import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
     try {
@@ -9,7 +11,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const a = {
+  const t = {
     boundary: {
       value: e.state(5),
       min: 1,
@@ -17,7 +19,7 @@ Promise.all([
       step: 0.1,
       label: "Boundary point"
     }
-  }, t = e.state([]), s = e.state([]);
+  }, a = e.state([]), s = e.state([]);
   e.derive(() => {
     const { nodes: o, elements: m } = l({
       points: [
@@ -32,7 +34,7 @@ Promise.all([
           0
         ],
         [
-          a.boundary.value.val,
+          t.boundary.value.val,
           0,
           3
         ],
@@ -84,11 +86,11 @@ Promise.all([
         8
       ]
     });
-    t.val = o, s.val = m;
+    a.val = o, s.val = m;
   });
-  document.body.append(i(a), n({
+  document.body.append(i(t), n({
     mesh: {
-      nodes: t,
+      nodes: a,
       elements: s
     }
   }), r({
