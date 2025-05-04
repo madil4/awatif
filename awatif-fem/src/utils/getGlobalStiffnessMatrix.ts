@@ -1,43 +1,35 @@
-import {
-  Matrix,
-  matrix,
-  SparseMatrix,
-  sparseMatrix,
-  tripletVector,
-  TripletVector,
-} from "awatif-math";
 import { Node, Element, ElementInputs } from "../data-model";
+import { e, multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
-// Benchmark: it takes 40mm with plate example (0.5 mesh size)
 export function getGlobalStiffnessMatrix(
   nodes: Node[],
   elements: Element[],
   elementInputs: ElementInputs,
   dof: number
-): SparseMatrix {
-  let tripleV = new tripletVector(elements.length * 6 * 6 * 9);
+): number[][] {
+  let stiffnessMatrix = Array(dof)
+    .fill(0)
+    .map(() => Array(dof).fill(0));
 
   elements.forEach((e, i) => {
     const elmNodes = e.map((e) => nodes[e]);
-    const kLocal = new matrix(
-      getLocalStiffnessMatrix(elmNodes, elementInputs, i)
-    ); // 20mm
-    const T = getTransformationMatrix(elmNodes); // 10mm
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
+    const T = getTransformationMatrix(elmNodes);
 
-    const kGlobal = T.transpose().matMul(kLocal).matMul(T); // 2mm
-    tripleV = assemble(tripleV, kGlobal, e); // 10mm
+    const kGlobal = multiply(transpose(T), multiply(kLocal, T));
+    stiffnessMatrix = assemble(stiffnessMatrix, kGlobal, e);
   });
 
-  return new sparseMatrix(dof, dof, tripleV);
+  return stiffnessMatrix;
 }
 
 function assemble(
-  tripleV: TripletVector,
-  kGlobal: Matrix,
+  stiffnessMatrix: number[][],
+  kGlobal: number[][],
   element: number[]
-): TripletVector {
+): number[][] {
   const isN2 = element.length === 3;
   const offset0 = 6 * element[0];
   const offset1 = 6 * element[1];
@@ -45,22 +37,22 @@ function assemble(
 
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j < 6; j++) {
-      tripleV.add(offset0 + i, offset0 + j, kGlobal.get(i, j));
-      tripleV.add(offset1 + i, offset0 + j, kGlobal.get(i + 6, j));
-      if (isN2) tripleV.add(offset2 + i, offset0 + j, kGlobal.get(i + 12, j));
+      stiffnessMatrix[offset0 + i][offset0 + j] += kGlobal[i][j];
+      stiffnessMatrix[offset1 + i][offset0 + j] += kGlobal[i + 6][j];
+      if (isN2) stiffnessMatrix[offset2 + i][offset0 + j] += kGlobal[i + 12][j];
 
-      tripleV.add(offset0 + i, offset1 + j, kGlobal.get(i, j + 6));
-      tripleV.add(offset1 + i, offset1 + j, kGlobal.get(i + 6, j + 6));
+      stiffnessMatrix[offset0 + i][offset1 + j] += kGlobal[i][j + 6];
+      stiffnessMatrix[offset1 + i][offset1 + j] += kGlobal[i + 6][j + 6];
       if (isN2)
-        tripleV.add(offset2 + i, offset1 + j, kGlobal.get(i + 12, j + 6));
+        stiffnessMatrix[offset2 + i][offset1 + j] += kGlobal[i + 12][j + 6];
 
       if (isN2) {
-        tripleV.add(offset0 + i, offset2 + j, kGlobal.get(i, j + 12));
-        tripleV.add(offset1 + i, offset2 + j, kGlobal.get(i + 6, j + 12));
-        tripleV.add(offset2 + i, offset2 + j, kGlobal.get(i + 12, j + 12));
+        stiffnessMatrix[offset0 + i][offset2 + j] += kGlobal[i][j + 12];
+        stiffnessMatrix[offset1 + i][offset2 + j] += kGlobal[i + 6][j + 12];
+        stiffnessMatrix[offset2 + i][offset2 + j] += kGlobal[i + 12][j + 12];
       }
     }
   }
 
-  return tripleV;
+  return stiffnessMatrix;
 }

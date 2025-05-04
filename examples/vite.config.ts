@@ -30,6 +30,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [topLevelAwait()], // used by awatif-math & awatif-mesh to load wasm at top level
-  define: { global: "globalThis" }, // to avoid "global is not defined" error induced by the library eigen in awatif-math
+  plugins: [topLevelAwait()], // used by awatif-fem & awatif-mesh to load wasm at top level
 });
