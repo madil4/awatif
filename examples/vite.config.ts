@@ -4,7 +4,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "solids/index.html",
+    open: "building/index.html",
   },
   base: "./", // to resolve assets
   root: "./src",
@@ -26,6 +26,7 @@ export default defineConfig({
         plate: "src/plate/index.html",
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
+        "color-map": "src/color-map/index.html",
       },
     },
   },

@@ -1,5 +1,5 @@
-import { w as T, v as d, b as A, L as B, B as M, c as C, F as D, a as O, g as j } from "./styles-C277HhWC.js";
-import { g as L } from "./getDialog-BEwbTuoa.js";
+import { w as T, v as d, b as A, L as B, B as M, c as C, F as D, a as O, g as j } from "./styles-C_4VGeCN.js";
+import { g as L } from "./getDialog-DgIFDz60.js";
 function z({ fields: a, data: l }) {
   const n = document.createElement("div"), e = new T({ name: Math.random().toString().substring(2), box: n, selectType: "cell", recordHeight: 26, show: { columnMenu: false, lineNumbers: true }, columns: F(a), records: h(l.rawVal, a) });
   return n.setAttribute("id", "table"), new ResizeObserver(() => e.refresh()).observe(n), e.onChange = (r) => {
