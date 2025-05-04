@@ -20,14 +20,17 @@ export function getBaseGeometry(
   columns: number[]
 ): BufferGeometry {
   const geometry = new BufferGeometry();
-
+  
   const storyHeight = 4; // Todo: compute from the story below
-
+  
   const columnsVertices = columns.flatMap((columnIndex) => {
     const topPoint = points[columnIndex];
     const bottomPoint = [topPoint[0], topPoint[1], topPoint[2] - storyHeight];
+    // console.log('[Cols]: ', topPoint, bottomPoint);
     return [...topPoint, ...bottomPoint];
   });
+
+  // console.log('[SlabVErts]: ', slabs);
 
   const slabsVertices = slabs
     .map((slab) =>

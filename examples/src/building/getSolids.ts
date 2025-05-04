@@ -11,6 +11,11 @@ import {
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+enum WindingDirection {
+  Clockwise = 1,
+  CounterClockwise = -1
+}
+
 export function getSolids() {
   return new Mesh(
     new BufferGeometry(),
@@ -27,10 +32,15 @@ export function getSolidsGeometry(
   const columnWidth: number = 0.3;
   const columnHeight: number = 0.3;
 
-  const slabsGeometry = createSlabsGeometry(points, slabs);
-  const columnsGeometry = createColumnsGeometry(points, columns);
+  const solidGeoms: BufferGeometry[] = [];
+  
+  if (slabs[0]?.length > 2) 
+    solidGeoms.push(createSlabsGeometry(points, slabs));
 
-  return mergeGeometries([slabsGeometry, columnsGeometry]);
+  if (columns.length > 0)
+    solidGeoms.push(createColumnsGeometry(points, columns));
+
+  return solidGeoms.length > 0 ? mergeGeometries(solidGeoms) : new BufferGeometry();
 
   function createSlabsGeometry(
     points: number[][],
@@ -46,8 +56,9 @@ export function getSolidsGeometry(
         contour.push(points[pointIdx]);
       }
 
-      const offsetedContour = offsetContour(contour, columnWidth / 2);
-
+      const windingDirection = determineWindingDirection(contour);
+      const offsetedContour = offsetContour(contour, windingDirection * columnWidth / 2);
+      
       const slabShape = new Shape();
       const hole = new Path();
       for (let i = 0; i < offsetedContour.length; i++) {
@@ -80,7 +91,7 @@ export function getSolidsGeometry(
 
       let _offset = new BufferAttribute(new Float32Array([offset, 0, 0]), 3);
 
-      for (let i = 0; i < _contour.length - 1; i++) {
+      for (let i = 0; i < _contour.length; i++) {
         let v1 = new Vector2().subVectors(
           _contour[i - 1 < 0 ? _contour.length - 1 : i - 1],
           _contour[i]
@@ -198,5 +209,35 @@ export function getSolidsGeometry(
     }
 
     return mergeGeometries(buffers);
+  }
+
+  function isClosedPolygon(vertices: number[][]): boolean {
+    let isClosed: boolean = false;
+    const firstVertex: number[] = vertices[0];
+    const lastVertex: number[] = vertices[vertices.length - 1];
+
+    if (
+      firstVertex[0] == lastVertex[0] 
+      && firstVertex[1] == lastVertex[1] 
+      && firstVertex[2] == lastVertex[2]
+    )  isClosed = true;
+
+    return isClosed;
+  }
+
+  function determineWindingDirection(polygon: number[][]): WindingDirection {
+    let sum = 0;
+    const closed = isClosedPolygon(polygon);
+    const n = closed ? polygon.length - 1 : polygon.length;
+
+    for (let i = 0; i < n; i++) {
+      const [x1, y1] = polygon[i];
+      const nextIdx = (i + 1) % (closed ? polygon.length : n);
+      const [x2, y2] = polygon[nextIdx];
+      sum += (x2 - x1) * (y2 + y1);
+    }
+    
+    // The sign of the sum determines the winding direction
+    return sum > 0 ? WindingDirection.Clockwise : WindingDirection.CounterClockwise;
   }
 }
