@@ -13,7 +13,7 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 
 enum WindingDirection {
   Clockwise = 1,
-  CounterClockwise = -1
+  CounterClockwise = -1,
 }
 
 export function getSolids() {
@@ -33,14 +33,15 @@ export function getSolidsGeometry(
   const columnHeight: number = 0.3;
 
   const solidGeoms: BufferGeometry[] = [];
-  
-  if (slabs[0]?.length > 2) 
-    solidGeoms.push(createSlabsGeometry(points, slabs));
+
+  if (slabs[0]?.length > 2) solidGeoms.push(createSlabsGeometry(points, slabs));
 
   if (columns.length > 0)
     solidGeoms.push(createColumnsGeometry(points, columns));
 
-  return solidGeoms.length > 0 ? mergeGeometries(solidGeoms) : new BufferGeometry();
+  return solidGeoms.length > 0
+    ? mergeGeometries(solidGeoms)
+    : new BufferGeometry();
 
   function createSlabsGeometry(
     points: number[][],
@@ -56,13 +57,16 @@ export function getSolidsGeometry(
         contour.push(points[pointIdx]);
       }
 
-      if (contour.length < 3) continue; 
+      if (contour.length < 3) continue;
 
       if (isClosedPolygon(contour)) contour.pop();
 
       const windingDirection = determineWindingDirection(contour);
-      const offsetedContour = offsetContour(contour, windingDirection * columnWidth / 2);
-      
+      const offsetedContour = offsetContour(
+        contour,
+        (windingDirection * columnWidth) / 2
+      );
+
       const slabShape = new Shape();
       const hole = new Path();
       for (let i = 0; i < offsetedContour.length; i++) {
@@ -221,10 +225,11 @@ export function getSolidsGeometry(
     const lastVertex: number[] = vertices[vertices.length - 1];
 
     if (
-      firstVertex[0] == lastVertex[0] 
-      && firstVertex[1] == lastVertex[1] 
-      && firstVertex[2] == lastVertex[2]
-    )  isClosed = true;
+      firstVertex[0] == lastVertex[0] &&
+      firstVertex[1] == lastVertex[1] &&
+      firstVertex[2] == lastVertex[2]
+    )
+      isClosed = true;
 
     return isClosed;
   }
@@ -240,8 +245,10 @@ export function getSolidsGeometry(
       const [x2, y2] = polygon[nextIdx];
       sum += (x2 - x1) * (y2 + y1);
     }
-    
+
     // The sign of the sum determines the winding direction
-    return sum > 0 ? WindingDirection.Clockwise : WindingDirection.CounterClockwise;
+    return sum > 0
+      ? WindingDirection.Clockwise
+      : WindingDirection.CounterClockwise;
   }
 }
