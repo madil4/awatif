@@ -5,7 +5,7 @@ import {
   NodeInputs,
   DeformOutputs,
 } from "./data-model.js";
-import createModule from "./cpp/dist/deform.js";
+import createModule from "./cpp/built/deform.js";
 
 // @ts-ignore, load wasm
 const mod = await createModule();

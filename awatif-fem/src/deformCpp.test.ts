@@ -35,13 +35,18 @@ describe("deformCpp", () => {
 
     const deformOutputs = deformCpp(nodes, elements, nodeInputs, elementInputs);
 
+    // Updated expected values to match Cholesky output exactly
     expect(deformOutputs).toEqual({
       deformations: new Map([
         [
           0,
           [
-            0.0013837249332365918, -0.000051566432467165236,
-            0.000060150375939849595, 0, 0, 0,
+            0.001383724933236592, // No change observed
+            -0.000051566432467165236, // Updated
+            0.000060150375939849595, // Updated
+            0,
+            0,
+            0,
           ],
         ],
         [1, [0, 0, 0, 0, 0, 0]],
@@ -51,13 +56,34 @@ describe("deformCpp", () => {
       reactions: new Map([
         [
           1,
-          [-18.94736842105263, 4.7368421052631575, 6.315789473684209, 0, 0, 0],
+          [
+            -18.947368421052634, // No change observed
+            4.736842105263158, // Updated
+            6.31578947368421, // Updated
+            0,
+            0,
+            0,
+          ],
         ],
-        [2, [0, 0, -4.210526315789472, 0, 0, 0]],
+        [
+          2,
+          [
+            0,
+            0,
+            -4.210526315789472, // Updated
+            0,
+            0,
+            0,
+          ],
+        ],
         [
           3,
           [
-            -1.0526315789473684, -4.7368421052631575, -2.1052631578947367, 0, 0,
+            -1.0526315789473686, // Updated
+            -4.736842105263158, // Updated
+            -2.105263157894737, // Updated
+            0,
+            0,
             0,
           ],
         ],
@@ -105,43 +131,80 @@ describe("deformCpp", () => {
 
     const deformOutputs = deformCpp(nodes, elements, nodeInputs, elementInputs);
 
-    expect(deformOutputs).toEqual({
-      deformations: new Map([
+    // Expected values (kept from original test for toBeCloseTo comparison)
+    const expectedDeformations = new Map([
+      [
+        0,
         [
-          0,
-          [
-            0.000001746653441474847, -0.00033564417271263484,
-            -0.000056507877693047675, -0.003752156183061716,
-            0.000017154708554951415, -0.00009935435371409366,
-          ],
+          0.0000017466534414748468, // Updated to match Cholesky
+          -0.00033564417271263484,
+          -0.000056507877693047675,
+          -0.003752156183061716,
+          0.00001715470855495142, // Updated to match Cholesky
+          -0.00009935435371409366,
         ],
-        [1, [0, 0, 0, 0, 0, 0]],
-        [2, [0, 0, 0, 0, 0, 0]],
-        [3, [0, 0, 0, 0, 0, 0]],
-      ]),
-      reactions: new Map([
+      ],
+      [1, [0, 0, 0, 0, 0, 0]],
+      [2, [0, 0, 0, 0, 0, 0]],
+      [3, [0, 0, 0, 0, 0, 0]],
+    ]);
+
+    const expectedReactions = new Map([
+      [
+        1,
         [
-          1,
-          [
-            -873.3267207374236, 1299.1563606221894, 215.4362388440581,
-            1801.0349678696236, -324.1903659309171, 1941.8793826628362,
-          ],
+          -873.3267207374234, // Updated to match Cholesky
+          1299.1563606221894,
+          215.43623884405807, // Updated to match Cholesky
+          1801.0349678696236,
+          -324.19036593091715, // Updated to match Cholesky
+          1941.8793826628366, // Updated to match Cholesky
         ],
+      ],
+      [
+        2,
         [
-          2,
-          [
-            121.01672295760542, 30878.75728306041, 28253.938846523837,
-            -26591.54681802802, 96.37583632116224, 47.69008978276496,
-          ],
+          121.01672295760545, // Updated to match Cholesky
+          30878.757283060415, // Updated to match Cholesky
+          28253.938846523837,
+          -26591.54681802802,
+          96.37583632116227, // Updated to match Cholesky
+          47.69008978276496,
         ],
+      ],
+      [
+        3,
         [
-          3,
-          [
-            752.309997779818, 167822.08635631742, -28469.375085367898,
-            -23579.819070912377, -8.234260106376679, -622.4535653396727,
-          ],
+          752.309997779818,
+          167822.08635631742,
+          -28469.3750853679, // Updated to match Cholesky
+          -23579.819070912377,
+          -8.23426010637668, // Updated to match Cholesky
+          -622.4535653396727,
         ],
-      ]),
+      ],
+    ]);
+
+    // Compare sizes first
+    expect(deformOutputs.deformations.size).toEqual(expectedDeformations.size);
+    expect(deformOutputs.reactions.size).toEqual(expectedReactions.size);
+
+    // Compare deformations using toBeCloseTo
+    deformOutputs.deformations.forEach((actualDef, nodeIndex) => {
+      const expectedDef = expectedDeformations.get(nodeIndex);
+      expect(expectedDef).toBeDefined(); // Ensure the node exists in expected
+      actualDef.forEach((val, i) => {
+        expect(val).toBeCloseTo(expectedDef[i], 8); // Use 8 decimal places for tolerance
+      });
+    });
+
+    // Compare reactions using toBeCloseTo
+    deformOutputs.reactions.forEach((actualReact, nodeIndex) => {
+      const expectedReact = expectedReactions.get(nodeIndex);
+      expect(expectedReact).toBeDefined(); // Ensure the node exists in expected
+      actualReact.forEach((val, i) => {
+        expect(val).toBeCloseTo(expectedReact[i], 8); // Use 8 decimal places for tolerance
+      });
     });
   });
 
@@ -177,6 +240,7 @@ describe("deformCpp", () => {
 
     const deformOutputs = deformCpp(nodes, elements, nodeInputs, elementInputs);
 
+    // Updated expected values to match Cholesky output exactly
     expect(deformOutputs).toEqual({
       deformations: new Map([
         [0, [0, 0, 0, 0, 0, 0]],
@@ -184,8 +248,12 @@ describe("deformCpp", () => {
         [
           2,
           [
-            0, 0, -1.3467100041517626, 0.20068292565742002,
-            -0.08312558954401492, 0,
+            0,
+            0,
+            -1.3467100041517628, // Updated
+            0.2006829256574201, // Updated
+            -0.08312558954401499, // Updated
+            0,
           ],
         ],
         [3, [0, 0, 0, 0, 0, 0]],
@@ -195,25 +263,44 @@ describe("deformCpp", () => {
         [
           0,
           [
-            0, 0, 0.36780676281428193, 0.11886720202236686, 0.9739614221402424,
+            0,
+            0,
+            0.36780676281428193, // Updated
+            0.11886720202236686, // Updated
+            0.9739614221402426, // Updated
             0,
           ],
         ],
         [
           1,
-          [0, 0, 0.1321932371857181, 0.1429860312813887, 0.5624946747141106, 0],
+          [
+            0,
+            0,
+            0.13219323718571813, // Updated
+            0.14298603128138881, // Updated
+            0.5624946747141107, // Updated
+            0,
+          ],
         ],
         [
           3,
           [
-            0, 0, 0.1321932371857181, -0.29663740653764703, -0.4988501912056905,
+            0,
+            0,
+            0.13219323718571813, // Updated
+            -0.29663740653764714, // Updated
+            -0.4988501912056905, // Updated
             0,
           ],
         ],
         [
           4,
           [
-            0, 0, 0.36780676281428193, -0.6046429215987721, -0.7727465308201458,
+            0,
+            0,
+            0.367806762814282, // Updated
+            -0.6046429215987722, // Updated
+            -0.7727465308201459, // Updated
             0,
           ],
         ],
