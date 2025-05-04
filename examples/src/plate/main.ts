@@ -36,7 +36,7 @@ van.derive(() => {
       [0, 5, 0],
     ],
     polygon: [0, 1, 2, 3],
-    maxMeshSize: 2,
+    maxMeshSize: 0.5,
   });
   nodes.val = meshNodes;
   elements.val = meshElements;

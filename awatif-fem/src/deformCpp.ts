@@ -194,6 +194,8 @@ export function deformCpp(
       ]
     );
   }
+  if (deformationsDataPtr) gc.push(deformationsDataPtr);
+  if (reactionsDataPtr) gc.push(reactionsDataPtr);
 
   // Free Memory
   gc.forEach((ptr) => mod._free(ptr));
