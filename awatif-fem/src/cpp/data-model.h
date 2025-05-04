@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <Eigen/Core> // Explicitly include Core
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
@@ -22,7 +22,6 @@ struct ElementInputs
     std::map<int, double> torsionalConstants;
     std::map<int, double> thicknesses;
     std::map<int, double> poissonsRatios;
-    // Add other potential inputs if needed based on analysis
 };
 
 struct NodeInputs

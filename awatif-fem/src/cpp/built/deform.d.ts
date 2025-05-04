@@ -41,9 +41,6 @@ export interface DeformCppModule {
     poisson_keys_ptr: number, // int*
     poisson_values_ptr: number, // double*
     num_poisson: number, // int
-    // elasticities_ortho_keys_ptr: number, // int*
-    // elasticities_ortho_values_ptr: number, // double*
-    // num_elasticities_ortho: number, // int
 
     // Output Pointers (Pointers to Pointers/Ints)
     deformations_data_ptr_out: number, // double**
@@ -52,7 +49,6 @@ export interface DeformCppModule {
     reactions_size_out: number // int*
   ): void;
 
-  // Add other exported C++ functions if any
   _malloc(size: number): number;
   _free(ptr: number): void;
 
