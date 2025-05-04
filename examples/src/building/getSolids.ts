@@ -56,6 +56,8 @@ export function getSolidsGeometry(
         contour.push(points[pointIdx]);
       }
 
+      if (isClosedPolygon(contour)) contour.pop();
+
       const windingDirection = determineWindingDirection(contour);
       const offsetedContour = offsetContour(contour, windingDirection * columnWidth / 2);
       
