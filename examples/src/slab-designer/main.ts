@@ -115,8 +115,7 @@ van.derive(() => {
     const newPolyline = polyline.map((v) => baseIndex + v);
     slabsElements.push(newPolyline);
   });
-
-
+  
   // add columns and slabs
   nodes.val = [...nodes.rawVal, ...columnsNodes, ...slabsNodes];
   elements.val = [...elements.rawVal, ...columnsElements, ...slabsElements];
@@ -135,24 +134,24 @@ van.derive(() => {
 
   const storySlabsPoints: number[][] = [];
   const storyColumnsPoints: number[][][] = [];
-
+  const lastIndex = points.length;
+  
   // slabs
   if (drawingSlabPoints.val.length > 0 ){
-    for (let i = 0; i < drawingSlabPoints.val.length; i++)
+
+    for (let i = 0; i < drawingSlabPoints.val.length; i++){
       storySlabsPoints.push([
         drawingSlabPoints.val[i][0],
         drawingSlabPoints.val[i][1],
         FLOOR_HEIGHT,
       ]);
 
-    const storySlabIndices: number[] = [];
-    const lastIndex = points.length;
-    for (let i = 0; i < storySlabsPoints.length; i++) {
-      points.push(storySlabsPoints[i]);
-      storySlabIndices.push(i + lastIndex);
+      points.push([
+        drawingSlabPoints.val[i][0],
+        drawingSlabPoints.val[i][1],
+        FLOOR_HEIGHT,
+      ]);
     }
-
-    slabs.push(storySlabIndices);
   }
 
   // columns
@@ -177,15 +176,11 @@ van.derive(() => {
   // Update state
   building.points.val = points;
   building.columns.val = columns;
-  building.slabs.val = slabs;
+  building.slabs.val = drawingSlabPolylines.val;
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  // console.log('[Columns]:', building.columns.val)
-  // console.log('[Slabs]:', building.slabs.val)
-  // console.log('[Points]:', building.points.val)
-
   base.geometry = getBaseGeometry(
     building.points.val,
     building.slabs.val,
