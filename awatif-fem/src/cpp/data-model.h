@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <Eigen/Core> // Explicitly include Core
+#include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
@@ -22,7 +22,6 @@ struct ElementInputs
     std::map<int, double> torsionalConstants;
     std::map<int, double> thicknesses;
     std::map<int, double> poissonsRatios;
-    // Add other potential inputs if needed based on analysis
 };
 
 struct NodeInputs
@@ -52,3 +51,5 @@ Eigen::SparseMatrix<double> getGlobalStiffnessMatrix(
     const std::vector<unsigned int> &elementSizes,    // Size of each element
     const ElementInputs &elementInputs,
     int dof);
+
+Eigen::Matrix3d buildOrthotropicDb(double Ex, double Ey, double Gxy, double nu_xy, double t);

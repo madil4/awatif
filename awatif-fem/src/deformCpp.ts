@@ -5,7 +5,7 @@ import {
   NodeInputs,
   DeformOutputs,
 } from "./data-model.js";
-import createModule from "./cpp/dist/deform.js";
+import createModule from "./cpp/built/deform.js";
 
 // @ts-ignore, load wasm
 const mod = await createModule();
@@ -74,6 +74,9 @@ export function deformCpp(
   };
 
   const elasticities = processElementInput(elementInputs.elasticities);
+  const elasticitiesOrthogonal = processElementInput(
+    elementInputs.elasticitiesOrthogonal
+  );
   const areas = processElementInput(elementInputs.areas);
   const moiZ = processElementInput(elementInputs.momentsOfInertiaZ);
   const moiY = processElementInput(elementInputs.momentsOfInertiaY);
@@ -81,7 +84,6 @@ export function deformCpp(
   const torsion = processElementInput(elementInputs.torsionalConstants);
   const thickness = processElementInput(elementInputs.thicknesses);
   const poisson = processElementInput(elementInputs.poissonsRatios);
-  // Add other element inputs if needed (e.g., elasticitiesOrthogonal)
 
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
@@ -131,6 +133,9 @@ export function deformCpp(
     poisson.keysPtr,
     poisson.valuesPtr,
     poisson.size,
+    elasticitiesOrthogonal.keysPtr,
+    elasticitiesOrthogonal.valuesPtr,
+    elasticitiesOrthogonal.size,
     // Output pointers
     deformationsDataPtrOutPtr,
     deformationsSizeOutPtr,
@@ -189,6 +194,8 @@ export function deformCpp(
       ]
     );
   }
+  if (deformationsDataPtr) gc.push(deformationsDataPtr);
+  if (reactionsDataPtr) gc.push(reactionsDataPtr);
 
   // Free Memory
   gc.forEach((ptr) => mod._free(ptr));
@@ -212,7 +219,7 @@ type TypedArrayConstructor =
   | Float64ArrayConstructor;
 
 function allocate<T extends TypedArrayConstructor>(
-  data: number[], // flatten list
+  data: number[],
   TypedArrayCtor: T,
   heapTypedArray: InstanceType<T>
 ): number {
