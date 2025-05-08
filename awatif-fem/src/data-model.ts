@@ -47,3 +47,12 @@ export type AnalyzeOutputs = {
   bendingsY?: Map<number, [number, number]>;
   bendingsZ?: Map<number, [number, number]>;
 };
+
+export type AnalyzePlateOutputs = {
+  forceX?: Map<number, [number, number, number]>;
+  forceY?: Map<number, [number, number, number]>;
+  forceZ?: Map<number, [number, number, number]>;
+  momentX?: Map<number, [number, number, number]>;
+  momentY?: Map<number, [number, number, number]>;
+  momentZ?: Map<number, [number, number, number]>;
+};
