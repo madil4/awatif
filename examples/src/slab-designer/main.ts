@@ -122,15 +122,60 @@ van.derive(() => {
   const slabsByStory: Building["slabsByStory"]["val"] = new Map();
   const slabData: Building["slabData"]["val"] = new Map();
 
+<<<<<<< HEAD
+=======
+  // create columns
+  const columnsNodes: Node[] = [];
+  const columnsElements: Element[] = [];
+  drawingColumnPoints.val.forEach((point, pointIndex) => {
+    const { columnNodes, columnElements } = createColumn(
+      pointIndex * 2,
+      point,
+      FLOOR_HEIGHT,
+    );
+
+    columnsNodes.push(...columnNodes);
+    columnsElements.push(...columnElements);
+  });
+
+
+  // create slabs
+  const slabsNodes: Node[] = [];
+  drawingSlabPoints.val.forEach((point, pointIndex) => {
+    slabsNodes.push([point[0], point[1], FLOOR_HEIGHT]);
+  });
+
+  const slabsElements: Element[] = [];
+  const baseIndex = columnsNodes.length;
+  drawingSlabPolylines.val.forEach((polyline, polylineIndex) => {
+    const newPolyline = polyline.map((v) => baseIndex + v);
+    slabsElements.push(newPolyline);
+  });
+  
+  // add columns and slabs
+  nodes.val = [...nodes.rawVal, ...columnsNodes, ...slabsNodes];
+  elements.val = [...elements.rawVal, ...columnsElements, ...slabsElements];
+})
+
+// When number of stories changes, update building data model
+van.derive(() => {
+>>>>>>> ec92c3b (fix multi slab drawing)
   const points = [];
   const columns = [];
 
   const storySlabsPoints: number[][] = [];
   const storyColumnsPoints: number[][][] = [];
-
+  const lastIndex = points.length;
+  
   // slabs
+<<<<<<< HEAD
   if (drawingSlabPoints.val.length > 0) {
     for (let i = 0; i < drawingSlabPoints.val.length; i++) {
+=======
+  if (drawingSlabPoints.val.length > 0 ){
+
+    for (let i = 0; i < drawingSlabPoints.val.length; i++){
+>>>>>>> ec92c3b (fix multi slab drawing)
       storySlabsPoints.push([
         drawingSlabPoints.val[i][0],
         drawingSlabPoints.val[i][1],
@@ -191,14 +236,21 @@ van.derive(() => {
   building.points.val = points;
   building.columns.val = columns;
   building.slabs.val = drawingSlabPolylines.val;
+<<<<<<< HEAD
   building.columnsByStory.val = columnsByStory;
   building.slabsByStory.val = slabsByStory;
   building.slabData.val = slabData;
+=======
+>>>>>>> ec92c3b (fix multi slab drawing)
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
+<<<<<<< HEAD
   const { nodes, elements, nodeInputs, elementInputs } = getMesh(
+=======
+  base.geometry = getBaseGeometry(
+>>>>>>> ec92c3b (fix multi slab drawing)
     building.points.val,
     building.stories.val,
     building.columns.val,
