@@ -6,7 +6,9 @@ import { getBase, getBaseGeometry } from "../building/getBase.js";
 import { getSolids, getSolidsGeometry } from "../building/getSolids.js";
 import { getDrawingToolbar } from "./getDrawingToolbar.js";
 import { getSnapTip } from "./getSnapTip.js";
+import { getMesh } from "../building/getMesh.js";
 
+// Todo: Review reactive calls (.val vs .rawVal)
 // Enums and Types
 enum DrawingStory {
   first = "1st-floor",
@@ -16,7 +18,7 @@ enum DrawingStory {
 // Init
 const building: Building = {
   points: van.state([]),
-  stories: van.state([]),
+  stories: van.state([0]), // only one story
   columns: van.state([]),
   slabs: van.state([]),
   columnsByStory: van.state(new Map()),
@@ -33,16 +35,38 @@ const solids = van.state([solidsMesh]);
 const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
+  nodeInputs: van.state({}),
 };
 
 //* Drawing Data (Points - Polylines)
+const sampleColumnPoints = [
+  [3, 2, 0],
+  [3, 11, 0],
+  [12, 11, 0],
+  [18, 11, 0],
+  [18, 6, 0],
+  [12, 6, 0],
+  [12, 2, 0],
+  [3, 6, 0],
+] as [number, number, number][];
+const sampleSlabPoints = [
+  [3, 2, 4],
+  [3, 11, 4],
+  [18, 11, 4],
+  [18, 6, 4],
+  [12, 6, 4],
+  [12, 2, 4],
+] as [number, number, number][];
+const sampleSlabPolylines = [[0, 1, 2, 3, 4, 5], []];
+
 const drawingColumnPoints: Drawing["points"] = van.state([]);
-const drawingSlabPoints: Drawing["points"] = van.state([]);
-
 const drawingColumnPolylines: Drawing["polylines"] = van.state([]);
-const drawingSlabPolylines: Drawing["polylines"] = van.state([]);
 
-const totalDrawingPoints: Drawing["points"] = van.state([]);
+const drawingSlabPoints: Drawing["points"] = van.state(sampleSlabPoints);
+const drawingSlabPolylines: Drawing["polylines"] =
+  van.state(sampleSlabPolylines);
+
+const totalDrawingPoints: Drawing["points"] = van.state(sampleColumnPoints);
 const totalDrawingPolylines: Drawing["polylines"] = van.state([]);
 
 const gridTarget = van.state({
@@ -52,9 +76,10 @@ const gridTarget = van.state({
 
 const FLOOR_HEIGHT: number = 4;
 
+let activeStory: DrawingStory = DrawingStory.first;
+
 // Events
 // On toolbar click, update grid target and points
-let activeStory: DrawingStory = DrawingStory.first;
 function onToolbarClick(floor: DrawingStory) {
   activeStory = floor;
 
@@ -91,6 +116,10 @@ van.derive(() => {
 
 // When drawings data change, update building data model
 van.derive(() => {
+  const columnsByStory: Building["columnsByStory"]["val"] = new Map();
+  const slabsByStory: Building["slabsByStory"]["val"] = new Map();
+  const slabData: Building["slabData"]["val"] = new Map();
+
   const points = [];
   const columns = [];
 
@@ -114,7 +143,20 @@ van.derive(() => {
     }
   }
 
-  // columns
+  slabsByStory.set(0, Array.from(drawingSlabPolylines.rawVal.keys()));
+
+  const slabLoad: number = 1;
+  slabData.set(0, {
+    analysisInput: { areaLoad: slabLoad, isOpening: false },
+  });
+  drawingSlabPolylines.rawVal.forEach((_, k) => {
+    slabData.set(k, {
+      analysisInput: { areaLoad: slabLoad, isOpening: false },
+    });
+  });
+
+  columns;
+  const newColumnsIndices: number[] = [];
   if (drawingColumnPoints.val.length > 0) {
     for (let i = 0; i < drawingColumnPoints.val.length; i++) {
       const column = drawingColumnPoints.val[i];
@@ -128,17 +170,35 @@ van.derive(() => {
 
       points.push(...storyColumnsPoints[i]);
       columns.push(lastIndex);
+      newColumnsIndices.push(columns.length - 1);
     }
   }
+  columnsByStory.set(0, newColumnsIndices);
 
   // Update state
   building.points.val = points;
   building.columns.val = columns;
   building.slabs.val = drawingSlabPolylines.val;
+  building.columnsByStory.val = columnsByStory;
+  building.slabsByStory.val = slabsByStory;
+  building.slabData.val = slabData;
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
+  const { nodes, elements, nodeInputs } = getMesh(
+    building.points.val,
+    building.stories.val,
+    building.columns.val,
+    building.slabs.val,
+    building.columnsByStory.val,
+    building.slabsByStory.val,
+    building.slabData.val
+  );
+  mesh.nodes.val = nodes;
+  mesh.elements.val = elements;
+  mesh.nodeInputs.val = nodeInputs;
+
   base.geometry = getBaseGeometry(
     building.points.val,
     building.slabs.val,
@@ -163,6 +223,9 @@ document.body.append(
       points: totalDrawingPoints,
       polylines: totalDrawingPolylines,
       gridTarget,
+    },
+    settingsObj: {
+      loads: false,
     },
   }),
   getSnapTip(),

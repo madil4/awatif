@@ -45,7 +45,7 @@ export function getMesh({
   });
   const triOutputs = triangle.makeIO();
 
-  triangle.triangulate(`pzQODa${maxMeshSize}`, triInputs, triOutputs);
+  triangle.triangulate(`pzQOq30a${maxMeshSize}`, triInputs, triOutputs);
 
   const { nodes: meshNodes, boundaryIndices } = toNodesAndBoundaryIndices(
     triOutputs.pointlist,
