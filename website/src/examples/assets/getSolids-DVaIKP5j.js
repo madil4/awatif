@@ -110,6 +110,7 @@ function Z(n, m, i) {
         const E = r[u][y];
         d.push(e[E]);
       }
+      if (d.length < 3) continue;
       s(d) && d.pop();
       const x = g(d), a = l(d, x * 0.3 / 2), w = new U();
       new X();
