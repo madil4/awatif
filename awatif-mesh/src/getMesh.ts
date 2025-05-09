@@ -20,16 +20,11 @@ export function getMesh({
   points, // Array of point(s) in the form of [x, y].
   polygon, // Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
   maxMeshSize = 3,
-  maxNumSteinerPoints = 300,
-  minMeshAngleDegrees = 30,
 }: {
   points: Node[];
   polygon: number[];
   maxMeshSize?: number;
-  maxNumSteinerPoints?: number;
-  minMeshAngleDegrees?: number;
 }): {
-  // the output are reactive just to react after wasm is loaded
   nodes: Node[];
   elements: Element[];
   boundaryIndices: number[];
@@ -50,13 +45,7 @@ export function getMesh({
   });
   const triOutputs = triangle.makeIO();
 
-  triangle.triangulate(
-    `pzQOS${maxNumSteinerPoints}q${minMeshAngleDegrees}${
-      maxMeshSize != null ? "a" : null
-    }${maxMeshSize ?? ""}`,
-    triInputs,
-    triOutputs
-  );
+  triangle.triangulate(`pzQODa${maxMeshSize}`, triInputs, triOutputs);
 
   const { nodes: meshNodes, boundaryIndices } = toNodesAndBoundaryIndices(
     triOutputs.pointlist,
