@@ -39,7 +39,7 @@ export function getMesh(
       const columnPoints = columnsByStory
         .get(Number(story))
         .map((columnIndex) => points[columns[columnIndex]] as Node);
-      const slabPoints = [...boundaryPoints, ...columnPoints];
+      const slabPoints = mergeUniquePoints(boundaryPoints, columnPoints); // more stable
       const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
@@ -186,4 +186,32 @@ function getNodalLoadsFromSlabAreaLoad(
 
     return (norm(cross(a, b)) as number) / 2;
   }
+}
+
+// Utils
+function mergeUniquePoints(boundaryPts: Node[], columnPts: Node[], tol = 1e-2) {
+  const tol2 = tol * tol;
+  // Copy boundary points into the result
+  const slabPts = boundaryPts.slice();
+
+  for (const pt of columnPts) {
+    let isDuplicate = false;
+
+    // check against all boundary points
+    for (const b of boundaryPts) {
+      const dx = pt[0] - b[0];
+      const dy = pt[1] - b[1];
+      const dz = pt[2] - b[2];
+      if (dx * dx + dy * dy + dz * dz <= tol2) {
+        isDuplicate = true;
+        break;
+      }
+    }
+
+    if (!isDuplicate) {
+      slabPts.push(pt);
+    }
+  }
+
+  return slabPts;
 }
