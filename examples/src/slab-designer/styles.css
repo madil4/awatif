@@ -1,74 +1,68 @@
-#drawing-toolbar{
+/* Container */
+#drawing-toolbar {
   position: absolute;
   bottom: 10px;
   left: 10px;
-  z-index: 2; /* On top of the viewer */
-  background-color: #3e3f44 !important;
-  color: #adafb8 !important;
+  z-index: 2; /* on top of viewer */
+  background-color: #3e3f44;
+  color: #adafb8;
   border-radius: 4px;
 }
 
-#w2toolbar {
-  background-color: #3e3f44 !important; /* Dark grey (matches snap tip) */
-  border-color: #1a1a1a !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+/* Inner w2ui toolbar */
+#drawing-toolbar #w2toolbar {
+  background-color: #3e3f44; /* dark grey */
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Buttons & Items */
-.w2ui-tb-button, 
-.w2ui-tb-image, 
-.w2ui-tb-text {
-  color: #adafb8 !important;
-  background-color: transparent !important;
+/* Buttons, images & text items */
+#drawing-toolbar .w2ui-tb-button,
+#drawing-toolbar .w2ui-tb-image,
+#drawing-toolbar .w2ui-tb-text {
+  color: inherit; /* #adafb8 from parent */
+  background: transparent;
   cursor: pointer;
-  font-family: Consolas, Menlo, monospace !important;
+  font-family: Consolas, Menlo, monospace;
 }
 
-.checked {
-  background-color: #28292e !important;
+/* Checked / hover / active all share same bg */
+#drawing-toolbar .checked,
+#drawing-toolbar .w2ui-tb-button:hover,
+#drawing-toolbar .w2ui-tb-image:hover,
+#drawing-toolbar .w2ui-tb-button:active,
+#drawing-toolbar .w2ui-tb-image:active {
+  background-color: #28292e;
 }
 
-/* Button Hover State */
-.w2ui-tb-button:hover, 
-.w2ui-tb-image:hover {
-  background-color: #28292e !important; /* Slightly lighter grey */
+/* Separator line */
+#drawing-toolbar .w2ui-tb-separator {
+  border-left-color: #444;
 }
 
-/* Button Active/Pressed State */
-.w2ui-tb-button:active, 
-.w2ui-tb-image:active {
-  background-color: #28292e !important; /* Darker grey (matches key cap) */
+/* Dropdown arrow */
+#drawing-toolbar .w2ui-tb-down:after {
+  border-top-color: #adafb8;
 }
 
-/* Separators */
-.w2ui-tb-separator {
-  border-left-color: #444 !important;
+/* Disabled state */
+#drawing-toolbar .w2ui-tb-button.disabled,
+#drawing-toolbar .w2ui-tb-image.disabled {
+  color: #777;
 }
 
-/* Dropdown Arrows */
-.w2ui-tb-down:after {
-  border-top-color: white !important;
-}
-
-/* Disabled Items */
-.w2ui-tb-button.disabled, 
-.w2ui-tb-image.disabled {
-  color: #777 !important;
-}
-
+/* Snap‑tip (still global, but kept here for completeness) */
 .snap-tip {
   position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #3e3f44;
-  color: white;
+  color: #fff;
   padding: 10px 20px;
   border-radius: 4px;
-  /* font-family: 'Segoe UI', Arial, sans-serif; */
   font-family: Consolas, Menlo, monospace;
   font-size: 14px;
-  /* box-shadow: 0 2px 10px rgba(0,0,0,0.2); */
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -87,5 +81,4 @@
   border-radius: 3px;
   font-family: monospace;
   font-weight: bold;
-  /* box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2); */
 }
