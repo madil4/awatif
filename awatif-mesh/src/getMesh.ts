@@ -29,6 +29,9 @@ export function getMesh({
   elements: Element[];
   boundaryIndices: number[];
 } {
+  if (!points[2] || !polygon[2])
+    return { nodes: [], elements: [], boundaryIndices: [] };
+
   const transformationMatrix = getTransformationMatrix(
     points[0],
     points[1],
