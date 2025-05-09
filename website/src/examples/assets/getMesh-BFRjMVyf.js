@@ -6956,6 +6956,11 @@ R: ` + this.R.toString();
   const ce = zu(Kf), Hf = "" + new URL("triangle-CCJHBrBP.wasm", import.meta.url).href;
   await ce.init(Hf);
   ul = function({ points: r, polygon: e, maxMeshSize: u = 3 }) {
+    if (!r[2] || !e[2]) return {
+      nodes: [],
+      elements: [],
+      boundaryIndices: []
+    };
     const n = el(r[0], r[1], r[2]), t = r.map((l) => jr(yu(n), l)).map((l) => [
       l[0],
       l[1]
