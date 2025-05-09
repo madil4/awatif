@@ -9,7 +9,6 @@ import {
   zeros,
   Matrix,
 } from "mathjs";
-import { buildOrthotropicDb } from "awatif-proprietary";
 
 export function getLocalStiffnessMatrix(
   nodes: Node[],
@@ -107,6 +106,33 @@ function getLocalStiffnessMatrixFrame(
       4 * EIz * L ** 2,
     ],
   ];
+}
+
+export function buildOrthotropicDb(
+  Ex: number,
+  Ey: number,
+  Gxy: number,
+  nu_xy: number,
+  t: number
+): Matrix {
+  // reciprocal Poisson
+  const nu_yx = (Ey * nu_xy) / Ex;
+  const denom = 1 - nu_xy * nu_yx;
+
+  // reduced stiffnesses
+  const Q11 = Ex / denom;
+  const Q22 = Ey / denom;
+  const Q12 = (nu_xy * Ey) / denom;
+  const Q66 = Gxy;
+
+  // base Q matrix
+  let Q = matrix([
+    [Q11, Q12, 0],
+    [Q12, Q22, 0],
+    [0, 0, Q66],
+  ]);
+
+  return multiply(t ** 3 / 12, Q) as Matrix;
 }
 
 function getLocalStiffnessMatrixPlate(
