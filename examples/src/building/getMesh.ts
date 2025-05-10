@@ -185,7 +185,7 @@ function meshMember(
   return { nodes, elements };
 }
 
-function getNodalLoadsFromSlabAreaLoad(
+export function getNodalLoadsFromSlabAreaLoad(
   nodes: Node[],
   storySlabElements: Element[],
   loads: NodeInputs["loads"],
