@@ -7,7 +7,7 @@ import {
 } from "./data-model";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
-import { matrix } from "awatif-math";
+import { multiply } from "mathjs";
 
 // TODO:
 // 1. get forces in local axes -
@@ -39,40 +39,16 @@ export function analyzePlate(
       ...deformOutputs.deformations.get(e[2]),
     ];
     const T = getTransformationMatrix([n0, n1, n2]);
-    const dxLocal = T.matMul(new matrix(dxGlobal));
+    const dxLocal = multiply(T, dxGlobal);
     const kLocal = getLocalStiffnessMatrix([n0, n1, n2], elementInputs, i);
-    let fLocal = kLocal.matMul(dxLocal);
+    const fLocal = multiply(kLocal, dxLocal) as number[];
 
-    analyzeOutputs.forceX.set(i, [
-      fLocal.get(0, 0),
-      fLocal.get(6, 0),
-      fLocal.get(12, 0),
-    ]);
-    analyzeOutputs.forceY.set(i, [
-      fLocal.get(1, 0),
-      fLocal.get(7, 0),
-      fLocal.get(13, 0),
-    ]);
-    analyzeOutputs.forceZ.set(i, [
-      fLocal.get(2, 0),
-      fLocal.get(8, 0),
-      fLocal.get(14, 0),
-    ]);
-    analyzeOutputs.momentX.set(i, [
-      fLocal.get(3, 0),
-      fLocal.get(9, 0),
-      fLocal.get(15, 0),
-    ]);
-    analyzeOutputs.momentY.set(i, [
-      fLocal.get(4, 0),
-      fLocal.get(10, 0),
-      fLocal.get(16, 0),
-    ]);
-    analyzeOutputs.momentZ.set(i, [
-      fLocal.get(5, 0),
-      fLocal.get(11, 0),
-      fLocal.get(17, 0),
-    ]);
+    analyzeOutputs.forceX.set(i, [fLocal[0], fLocal[6], fLocal[12]]);
+    analyzeOutputs.forceY.set(i, [fLocal[1], fLocal[7], fLocal[13]]);
+    analyzeOutputs.forceZ.set(i, [fLocal[2], fLocal[8], fLocal[14]]);
+    analyzeOutputs.momentX.set(i, [fLocal[3], fLocal[9], fLocal[15]]);
+    analyzeOutputs.momentY.set(i, [fLocal[4], fLocal[10], fLocal[16]]);
+    analyzeOutputs.momentZ.set(i, [fLocal[5], fLocal[11], fLocal[17]]);
   });
 
   return analyzeOutputs;
