@@ -26,6 +26,7 @@
     "awatif-mesh": "^1.0.0",
     "awatif-ui": "^1.0.0",
     "lit-html": "^3.2.1",
+    "mathjs": "^14.4.0",
     "three": "^0.169.0",
     "vanjs-core": "^1.5.2",
     "w2ui": "^2.0.0"

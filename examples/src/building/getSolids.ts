@@ -56,6 +56,8 @@ export function getSolidsGeometry(
         contour.push(points[pointIdx]);
       }
 
+      if (contour.length < 3) continue; 
+
       if (isClosedPolygon(contour)) contour.pop();
 
       const windingDirection = determineWindingDirection(contour);

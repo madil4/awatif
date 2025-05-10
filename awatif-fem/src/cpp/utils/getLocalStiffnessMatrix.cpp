@@ -315,6 +315,46 @@ Eigen::MatrixXd mapK9x9ToK18x18(const Eigen::MatrixXd &k9)
     return k18;
 }
 
+// Builds the Db matrix for an orthotropic plate based on provided properties.
+Eigen::Matrix3d buildOrthotropicDb(double Ex, double Ey, double Gxy, double nu_xy, double t)
+{
+    // Check for zero moduli to prevent division by zero
+    if (std::abs(Ex) < 1e-12)
+    {
+        std::cerr << "Warning: Ex (E) is near zero in buildOrthotropicDb. Returning zero matrix." << std::endl;
+        return Eigen::Matrix3d::Zero();
+    }
+
+    // Calculate reciprocal Poisson's ratio
+    double nu_yx = (Ey * nu_xy) / Ex;
+
+    // Calculate the denominator for reduced stiffnesses
+    double denom = 1.0 - nu_xy * nu_yx;
+    if (std::abs(denom) < 1e-12)
+    {
+        std::cerr << "Warning: Denominator (1 - nu_xy * nu_yx) is near zero in buildOrthotropicDb. Returning zero matrix." << std::endl;
+        return Eigen::Matrix3d::Zero();
+    }
+
+    // Calculate reduced stiffnesses (Q matrix components)
+    double Q11 = Ex / denom;
+    double Q22 = Ey / denom;
+    double Q12 = (nu_xy * Ey) / denom; // Or equivalently (nu_yx * Ex) / denom
+    double Q66 = Gxy;
+
+    // Assemble the Q matrix
+    Eigen::Matrix3d Q;
+    Q << Q11, Q12, 0,
+        Q12, Q22, 0,
+        0, 0, Q66;
+
+    // Calculate the final Db matrix (constitutive matrix for bending)
+    double factor = (t * t * t) / 12.0;
+    Eigen::Matrix3d Db = Q * factor;
+
+    return Db;
+}
+
 // Calculates the local stiffness matrix for a 3-node plate element using numerical integration (Gauss quadrature).
 Eigen::MatrixXd getLocalStiffnessMatrixPlate(
     const std::vector<Node> &nodes,

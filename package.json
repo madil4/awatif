@@ -19,7 +19,6 @@
     "dev:fem": "npm run dev -w awatif-fem",
     "build:fem": "npm run build -w awatif-fem",
     "dev:mesh": "npm run dev -w awatif-mesh",
-    "dev:proprietary": "npm run dev -w awatif-proprietary",
     "dev:ui": "npm run dev -w awatif-ui",
     "dev:examples": "npm run dev -w examples",
     "build:examples": "npm run build -w examples",
@@ -31,7 +30,6 @@
   "workspaces": [
     "awatif-fem",
     "awatif-mesh",
-    "awatif-proprietary",
     "awatif-ui",
     "examples",
     "website"
