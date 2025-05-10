@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import { getToolbar, getParameters, Parameters, getViewer } from "awatif-ui";
 import { Node, Element } from "awatif-fem";
-import { mesh } from "awatif-mesh";
+import { getMesh } from "awatif-mesh";
 
 // Init
 const parameters: Parameters = {
@@ -19,7 +19,7 @@ const elements: State<Element[]> = van.state([]);
 
 // Events: on parameter change mesh
 van.derive(() => {
-  const { nodes: meshNodes, elements: meshElements } = mesh({
+  const { nodes: meshNodes, elements: meshElements } = getMesh({
     points: [
       [0, 0, 0],
       [5, 0, 0],

@@ -9,7 +9,7 @@ import {
   getLegend,
   getToolbar,
 } from "awatif-ui";
-import { mesh } from "awatif-mesh";
+import { getMesh } from "awatif-mesh";
 
 // Init
 const parameters: Parameters = {
@@ -32,7 +32,7 @@ const distances = van.state([]);
 van.derive(() => {
   const boundaryNode = [parameters.boundary.value.val, 0, 3] as Node;
 
-  const { nodes: meshNodes, elements: meshElements } = mesh({
+  const { nodes: meshNodes, elements: meshElements } = getMesh({
     points: [
       [0, 0, 0],
       [5, 0, 0],

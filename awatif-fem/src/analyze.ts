@@ -1,3 +1,4 @@
+import { multiply } from "mathjs";
 import {
   Node,
   Element,
@@ -7,7 +8,6 @@ import {
 } from "./data-model";
 import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
-import { matrix } from "awatif-math";
 
 export function analyze(
   nodes: Node[],
@@ -33,16 +33,16 @@ export function analyze(
       ...deformOutputs.deformations.get(e[1]),
     ];
     const T = getTransformationMatrix([n0, n1]);
-    const dxLocal = T.matMul(new matrix(dxGlobal));
+    const dxLocal = multiply(T, dxGlobal);
     const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
-    let fLocal = kLocal.matMul(dxLocal);
+    let fLocal = multiply(kLocal, dxLocal) as number[];
 
-    analyzeOutputs.normals.set(i, [fLocal.get(0, 0), fLocal.get(6, 0)]);
-    analyzeOutputs.shearsY.set(i, [fLocal.get(1, 0), fLocal.get(7, 0)]);
-    analyzeOutputs.shearsZ.set(i, [fLocal.get(2, 0), fLocal.get(8, 0)]);
-    analyzeOutputs.torsions.set(i, [fLocal.get(3, 0), fLocal.get(9, 0)]);
-    analyzeOutputs.bendingsY.set(i, [fLocal.get(4, 0), fLocal.get(10, 0)]);
-    analyzeOutputs.bendingsZ.set(i, [fLocal.get(5, 0), fLocal.get(11, 0)]);
+    analyzeOutputs.normals.set(i, [fLocal[0], fLocal[6]]);
+    analyzeOutputs.shearsY.set(i, [fLocal[1], fLocal[7]]);
+    analyzeOutputs.shearsZ.set(i, [fLocal[2], fLocal[8]]);
+    analyzeOutputs.torsions.set(i, [fLocal[3], fLocal[9]]);
+    analyzeOutputs.bendingsY.set(i, [fLocal[4], fLocal[10]]);
+    analyzeOutputs.bendingsZ.set(i, [fLocal[5], fLocal[11]]);
   });
 
   return analyzeOutputs;

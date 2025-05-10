@@ -107,7 +107,7 @@ export function drawing({
     const size = 0.05 * gridSize * 0.5 * derivedDisplayScale.val;
 
     indicationPoint.material.size = size;
-    raycaster.parameters.Points.threshold = 0.4 * size;
+    raycaster.params.Points.threshold = 0.4 * size;
   });
 
   // Pointer events
@@ -142,9 +142,18 @@ export function drawing({
     const intersect = raycaster.intersectObject(plane);
 
     if (intersect.length) {
+      let point = intersect[0].point;
+      if (event.ctrlKey || event.metaKey) {
+        point = new THREE.Vector3(
+          Math.round(intersect[0].point.x),
+          Math.round(intersect[0].point.y),
+          Math.round(intersect[0].point.z)
+        );
+      }
+
       drawingObj.points.val = [
         ...drawingObj.points.rawVal,
-        intersect[0].point.toArray(),
+        point.toArray(),
       ];
 
       if (drawingObj.polylines) {
@@ -183,9 +192,19 @@ export function drawing({
     indicationPoint.geometry.deleteAttribute("position"); // delete point if not intersection
 
     if (intersect.length) {
+      let point = intersect[0].point;
+
+      if (event.ctrlKey || event.metaKey) {
+        point = new THREE.Vector3(
+          Math.round(intersect[0].point.x),
+          Math.round(intersect[0].point.y),
+          Math.round(intersect[0].point.z)
+        );
+      }
+
       indicationPoint.geometry.setAttribute(
         "position",
-        new THREE.Float32BufferAttribute(intersect[0].point.toArray(), 3)
+        new THREE.Float32BufferAttribute(point.toArray(), 3)
       );
     }
 
@@ -253,8 +272,20 @@ export function drawing({
     if (pointerDownAndMovedCount % 2 !== 0) return; // slow movements for (parametric) performance opt 5
 
     const newPoints = [...drawingObj.points.rawVal];
-    if (pointIndex !== undefined)
-      newPoints[pointIndex] = intersectWithPlane[0].point.toArray();
+    if (pointIndex !== undefined){
+      let newPosition = intersectWithPlane[0].point;
+      
+      if (event.ctrlKey || event.metaKey) {
+        newPosition = new THREE.Vector3(
+          Math.round(newPosition.x),
+          Math.round(newPosition.y),
+          Math.round(newPosition.z)
+        );
+      }
+      
+      newPoints[pointIndex] = newPosition.toArray();
+      // newPoints[pointIndex] = intersectWithPlane[0].point.toArray();
+    }
     drawingObj.points.val = newPoints;
   });
 
