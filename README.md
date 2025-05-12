@@ -28,7 +28,7 @@ The default example will open in your browser. To view a different example, chan
 - [x] UI: Reporting [Example](https://awatif.co/examples/report/)
 - [ ] UI: Element selection
 - [x] Structural Systems: Truss design [Example](https://awatif.co/examples/advanced-truss/)
-- [ ] Structural Systems: Building Design (coming soon)
+- [ ] Structural Systems: Slab Design (coming soon)
 
 ## Stack 
 1. **VanJS**: for handling reactive state [Docs](https://vanjs.org/)
