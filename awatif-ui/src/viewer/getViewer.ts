@@ -17,7 +17,7 @@ import { nodesIndexes } from "./objects/nodesIndexes";
 import { elementsIndexes } from "./objects/elementsIndexes";
 import { axes } from "./objects/axes";
 import { orientations } from "./objects/orientations";
-import { elementResults } from "./objects/elementResults";
+import { frameResults } from "./objects/frameResults";
 import { nodeResults } from "./objects/nodeResults";
 import { drawing, Drawing } from "./drawing/drawing";
 
@@ -130,6 +130,20 @@ export function getViewer({
   }
 
   // Optional inputs
+  if (mesh) {
+    scene.add(
+      nodes(settings, derivedNodes, derivedDisplayScale),
+      elements(mesh, settings, derivedNodes),
+      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+      elementsIndexes(mesh, settings, derivedNodes, derivedDisplayScale),
+      supports(mesh, settings, derivedNodes, derivedDisplayScale),
+      loads(mesh, settings, derivedNodes, derivedDisplayScale),
+      orientations(mesh, settings, derivedNodes, derivedDisplayScale),
+      frameResults(mesh, settings, derivedNodes, derivedDisplayScale),
+      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale)
+    );
+  }
+
   if (solids) {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
@@ -182,20 +196,6 @@ export function getViewer({
 
       viewerRender();
     });
-  }
-
-  if (mesh) {
-    scene.add(
-      nodes(settings, derivedNodes, derivedDisplayScale),
-      elements(mesh, settings, derivedNodes),
-      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
-      elementsIndexes(mesh, settings, derivedNodes, derivedDisplayScale),
-      supports(mesh, settings, derivedNodes, derivedDisplayScale),
-      loads(mesh, settings, derivedNodes, derivedDisplayScale),
-      orientations(mesh, settings, derivedNodes, derivedDisplayScale),
-      elementResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale)
-    );
   }
 
   if (drawingObj)

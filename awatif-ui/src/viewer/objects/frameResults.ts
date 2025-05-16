@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { AnalyzeOutputs, Node } from "awatif-fem";
-import { Structure } from "awatif-fem";
+import { Mesh } from "awatif-fem";
 import { Settings } from "../settings/getSettings";
 
 import { getTransformationMatrixBeam } from "./utils/getTransformationMatrixBeam";
@@ -18,8 +18,8 @@ enum ResultType {
   bendingsZ = "bendingsZ",
 }
 
-export function elementResults(
-  structure: Structure,
+export function frameResults(
+  mesh: Mesh,
   settings: Settings,
   derivedNodes: State<Node[]>,
   deridedDisplayScale: State<number>
@@ -48,14 +48,14 @@ export function elementResults(
     const resultType =
       ResultType[settings.frameResults.rawVal as keyof typeof ResultType];
 
-    structure.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
-      const element = structure.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
+    mesh.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
+      const element = mesh.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];
       const length = new THREE.Vector3(...node2).distanceTo(
         new THREE.Vector3(...node1)
       );
-      const maxResult = findMax(structure.analyzeOutputs?.rawVal[resultType]);
+      const maxResult = findMax(mesh.analyzeOutputs?.rawVal[resultType]);
       const normalizedResult = result?.map(
         (n) => n / (maxResult === 0 ? 1 : maxResult)
       );
