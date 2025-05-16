@@ -25,8 +25,8 @@ const parameters: Parameters = {
 const nodes: State<Node[]> = van.state([]);
 const elements: State<Element[]> = van.state([]);
 
-const objects3D = van.state([]);
 const distances = van.state([]);
+const objects3D = van.state([getColorMap(nodes, elements, distances)]);
 
 // Events: on parameter change
 van.derive(() => {
@@ -53,7 +53,7 @@ van.derive(() => {
 
   distances.val = getDistancesFromNode(boundaryNode, nodes.val);
 
-  objects3D.val = [getColorMap(nodes.val, elements.val, distances.val)];
+  objects3D.val = [...objects3D.rawVal]; // just to trigger viewer render
 });
 
 document.body.append(
