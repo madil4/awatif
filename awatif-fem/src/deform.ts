@@ -1,3 +1,4 @@
+import { flatten, lusolve, multiply, subset, index, lup, sparse } from "mathjs";
 import {
   Node,
   Element,
@@ -5,7 +6,6 @@ import {
   ElementInputs,
   DeformOutputs,
 } from "./data-model";
-import { flatten, lusolve, multiply, subset, index, lup, sparse } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 
 export function deform(
@@ -14,8 +14,9 @@ export function deform(
   nodeInputs: NodeInputs,
   elementInputs: ElementInputs
 ): DeformOutputs {
+  if (nodes.length === 0 || elements.length === 0) return;
+
   const dof = nodes.length * 6;
-  if (dof === 0) return; // don't run if there are no nodes
 
   const freeInd = getFreeIndices(nodeInputs.supports, dof);
   const appliedForces = getAppliedForces(nodeInputs.loads, dof);
@@ -32,7 +33,6 @@ export function deform(
   const stiffnessesFreeSparse = sparse(stiffnessesFree);
 
   const lu = lup(stiffnessesFreeSparse);
-
   const deformationFree = lusolve(lu, forcesFree);
 
   const deformationsArray: number[] = subset(
