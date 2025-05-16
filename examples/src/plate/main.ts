@@ -70,6 +70,7 @@ document.body.append(
     settingsObj: {
       deformedShape: true,
       loads: false,
+      shellResults: "displacementZ",
     },
   }),
   getToolbar({

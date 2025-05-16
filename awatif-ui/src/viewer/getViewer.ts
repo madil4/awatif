@@ -20,8 +20,10 @@ import { orientations } from "./objects/orientations";
 import { frameResults } from "./objects/frameResults";
 import { nodeResults } from "./objects/nodeResults";
 import { drawing, Drawing } from "./drawing/drawing";
+import { shellResults } from "./objects/shellResults";
 
 import "./styles.css";
+import { getLegend } from "../color-map/getLegend";
 
 export function getViewer({
   mesh,
@@ -118,8 +120,9 @@ export function getViewer({
     settings.supports.val;
     settings.loads.val;
     settings.deformedShape.val;
-    settings.frameResults.val;
     settings.nodeResults.val;
+    settings.frameResults.val;
+    settings.shellResults.val;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
@@ -131,6 +134,16 @@ export function getViewer({
 
   // Optional inputs
   if (mesh) {
+    // Color map
+    const colorMapValues = getColorMapValues(mesh, settings);
+
+    const legend = getLegend(colorMapValues);
+    van.derive(() => {
+      legend.hidden = settings.shellResults.val == "none";
+    });
+    viewerElm.appendChild(legend);
+
+    // 3D objects
     scene.add(
       nodes(settings, derivedNodes, derivedDisplayScale),
       elements(mesh, settings, derivedNodes),
@@ -139,8 +152,9 @@ export function getViewer({
       supports(mesh, settings, derivedNodes, derivedDisplayScale),
       loads(mesh, settings, derivedNodes, derivedDisplayScale),
       orientations(mesh, settings, derivedNodes, derivedDisplayScale),
+      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale),
       frameResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale)
+      shellResults(mesh, settings, derivedNodes, colorMapValues)
     );
   }
 
@@ -230,4 +244,37 @@ function deriveNodes(
       }) ?? []
     );
   });
+}
+
+function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
+  // Init
+  const colorMapValues = van.state([]);
+
+  enum ResultType {
+    bendingXX = "bendingXX",
+    bendingYY = "bendingYY",
+    bendingXY = "bendingXY",
+    displacementZ = "displacementZ",
+  }
+
+  // Events
+  // On resultMapper, nodes, settings.shellResults change: get new values
+  van.derive(() => {
+    const resultMapper = {
+      [ResultType.bendingXX]: [mesh.analyzeOutputs.val.bendingXX, 1],
+      [ResultType.bendingYY]: [mesh.analyzeOutputs.val.bendingYY, 0],
+      [ResultType.bendingXY]: [mesh.analyzeOutputs.val.bendingXY, 0],
+      [ResultType.displacementZ]: [mesh.deformOutputs.val.deformations, 2],
+    };
+
+    const values = [];
+    mesh.nodes.val.forEach((_, i) => {
+      const resultMap = resultMapper[settings.shellResults.val];
+      values.push(resultMap[0].get(i)[resultMap[1]]);
+    });
+
+    colorMapValues.val = values;
+  });
+
+  return colorMapValues;
 }

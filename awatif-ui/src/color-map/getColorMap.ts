@@ -47,8 +47,9 @@ export function getColorMap(
     lut.setMin(Math.min(...values.val));
 
     for (let i = 0; i < values.val.length; i++) {
-      color.copy(lut.getColor(values.val[i])).convertSRGBToLinear();
+      const lutColor = lut.getColor(values.val[i]) ?? new THREE.Color(0, 0, 0);
 
+      color.copy(lutColor).convertSRGBToLinear();
       color.multiplyScalar(0.6); // dim the color for better integration with mesh
 
       colorMap.geometry.attributes.color.setXYZ(i, color.r, color.g, color.b);

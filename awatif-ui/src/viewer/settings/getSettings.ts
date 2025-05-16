@@ -111,7 +111,7 @@ export function getSettings(
       label: "Frame results",
     });
 
-    outputs.addBinding(settings.frameResults, "val", {
+    outputs.addBinding(settings.shellResults, "val", {
       options: {
         none: "none",
         bendingXX: "bendingXX",
