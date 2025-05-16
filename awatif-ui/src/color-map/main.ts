@@ -16,14 +16,12 @@ const elements = van.state([
   [0, 2, 3],
 ]);
 const values = van.state([0, 0, 10, 0]);
-const objects3D = van.state([]);
-
-van.derive(() => {
-  objects3D.val = [getColorMap(nodes.val, elements.val, values.val)];
-});
+const objects3D = van.state([getColorMap(nodes, elements, values)]);
 
 setTimeout(() => {
   values.val = [1, 5, 0, 0];
+
+  objects3D.val = [...objects3D.rawVal]; // just to trigger viewer render
 }, 1000);
 
 document.body.append(
