@@ -40,13 +40,13 @@ export function elementResults(
   van.derive(() => {
     settings.deformedShape.val; // triggers update
 
-    if (settings.elementResults.val == "none") return;
+    if (settings.frameResults.val == "none") return;
 
     group.children.forEach((c) => (c as IResultObject).dispose());
     group.clear();
 
     const resultType =
-      ResultType[settings.elementResults.rawVal as keyof typeof ResultType];
+      ResultType[settings.frameResults.rawVal as keyof typeof ResultType];
 
     structure.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
       const element = structure.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
@@ -87,7 +87,7 @@ export function elementResults(
   van.derive(() => {
     deridedDisplayScale.val; // trigger updates
 
-    if (settings.elementResults.rawVal == "none") return;
+    if (settings.frameResults.rawVal == "none") return;
 
     group.children.forEach((c) =>
       (c as IResultObject).updateScale(size * deridedDisplayScale.rawVal)
@@ -96,7 +96,7 @@ export function elementResults(
 
   // on settings.elementResults update viability
   van.derive(() => {
-    group.visible = settings.elementResults.val != "none";
+    group.visible = settings.frameResults.val != "none";
   });
 
   return group;

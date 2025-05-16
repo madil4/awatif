@@ -2,7 +2,12 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Node, Mesh } from "awatif-fem";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Settings, getSettings } from "./settings/getSettings";
+import {
+  Settings,
+  SettingsObj,
+  getDefaultSettings,
+  getSettings,
+} from "./settings/getSettings";
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
@@ -17,23 +22,6 @@ import { nodeResults } from "./objects/nodeResults";
 import { drawing, Drawing } from "./drawing/drawing";
 
 import "./styles.css";
-
-export type SettingsObj = {
-  gridSize?: number;
-  displayScale?: number;
-  nodes?: boolean;
-  elements?: boolean;
-  nodesIndexes?: boolean;
-  elementsIndexes?: boolean;
-  orientations?: boolean;
-  supports?: boolean;
-  loads?: boolean;
-  deformedShape?: boolean;
-  elementResults?: string;
-  nodeResults?: string;
-  flipAxes?: boolean;
-  solids?: boolean;
-};
 
 export function getViewer({
   mesh,
@@ -130,7 +118,7 @@ export function getViewer({
     settings.supports.val;
     settings.loads.val;
     settings.deformedShape.val;
-    settings.elementResults.val;
+    settings.frameResults.val;
     settings.nodeResults.val;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
@@ -226,25 +214,6 @@ export function getViewer({
 }
 
 // Utils
-function getDefaultSettings(settingsObj: SettingsObj): Settings {
-  return {
-    gridSize: van.state(settingsObj?.gridSize ?? 20),
-    displayScale: van.state(settingsObj?.displayScale ?? 1),
-    nodes: van.state(settingsObj?.nodes ?? true),
-    elements: van.state(settingsObj?.elements ?? true),
-    nodesIndexes: van.state(settingsObj?.nodesIndexes ?? false),
-    elementsIndexes: van.state(settingsObj?.elementsIndexes ?? false),
-    orientations: van.state(settingsObj?.orientations ?? false),
-    supports: van.state(settingsObj?.supports ?? true),
-    loads: van.state(settingsObj?.loads ?? true),
-    deformedShape: van.state(settingsObj?.deformedShape ?? false),
-    elementResults: van.state(settingsObj?.elementResults ?? "none"),
-    nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
-    flipAxes: van.state(settingsObj?.flipAxes ?? false),
-    solids: van.state(settingsObj?.solids ?? true),
-  };
-}
-
 function deriveNodes(
   mesh: Mesh | undefined,
   settings: Settings
