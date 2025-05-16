@@ -1,7 +1,6 @@
 import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { analyze } from "./analyze";
 import { deform } from "./deform";
-import { analyzePlate } from "./analyzePlate";
 
 describe("analyze", () => {
   test("Bars from Logan's book example 3.9", () => {
@@ -75,6 +74,9 @@ describe("analyze", () => {
         [1, [0, 0]],
         [2, [0, 0]],
       ]),
+      bendingXX: new Map(),
+      bendingYY: new Map(),
+      bendingXY: new Map(),
     });
   });
 
@@ -156,6 +158,9 @@ describe("analyze", () => {
         [1, [26591.54681802802, 50605.346389623]],
         [2, [-622.4535653396724, -1258.3214291098718]],
       ]),
+      bendingXX: new Map(),
+      bendingYY: new Map(),
+      bendingXY: new Map(),
     });
   });
 
@@ -190,27 +195,29 @@ describe("analyze", () => {
     };
 
     const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
-    const analyzeOutputs = analyzePlate(
+    const analyzeOutputs = analyze(
       nodes,
       elements,
       elementInputs,
       deformOutputs
     );
 
-    expect(Object.keys(analyzeOutputs)).toEqual([
-      "forceX",
-      "forceY",
-      "forceZ",
-      "momentX",
-      "momentY",
-      "momentZ",
-    ]);
-
-    expect(analyzeOutputs["forceZ"]).toEqual(
-      new Map([
+    expect(analyzeOutputs).toEqual({
+      normals: new Map(),
+      shearsY: new Map(),
+      shearsZ: new Map(),
+      torsions: new Map(),
+      bendingsY: new Map(),
+      bendingsZ: new Map(),
+      bendingXX: new Map([
+        [0, [0.11886720202236689, 0.1429860312813887, 0.3991129526248349]],
+        [1, [0.39911295262483504, 0.14298603128138862, 0.11886720202236686]],
+      ]),
+      bendingYY: new Map(),
+      bendingXY: new Map([
         [0, [-0.36780676281428204, -0.1321932371857181, 0.5000000000000001]],
         [1, [0.5000000000000001, -0.1321932371857181, -0.36780676281428204]],
-      ])
-    );
+      ]),
+    });
   });
 });
