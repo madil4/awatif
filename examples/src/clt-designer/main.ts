@@ -7,7 +7,7 @@ import {
   DeformOutputs,
   AnalyzeOutputs,
 } from "awatif-data-model";
-import { template } from "./utils/template";
+import { setupThreeCanvas, template } from "./utils/template";
 import { getViewer, Parameters, getParameters, getToolbar, getReport, getDialog, getColorMap, getLegend } from "awatif-ui";
 import { deform } from "awatif-fem";
 import { mesh } from "awatif-mesh";
@@ -92,7 +92,7 @@ van.derive(() => {
   etaBendingMax.val = results.val.map(result => Math.max(...result.eta));
   
   // annotation
-  texts.push(...createText(node[0], node[1], node[2], 1, ["Node " + maxMomentIndex, maxMoment.toFixed(0) + " kNm", (etaBendingMax.val[maxMomentIndex] * 100).toFixed(0) + "%"], ""))
+  texts.push(...createText(node[0], node[1], node[2], 1, ["Node " + maxMomentIndex, "Myd = " + maxMoment.toFixed(0) + "kNm", "η = " + (etaBendingMax.val[maxMomentIndex] * 100).toFixed(0) + "%"], ""))
   points.push(createNodes(node[0], node[1], node[2], 0x00FF00))
 
   let i = 0
@@ -121,12 +121,15 @@ const reportInput = {
 // dialog
 const clickedButton = van.state("");
 const dialogBody = van.state(undefined);
+
 van.derive(() => {
   if (clickedButton.val === "Report") {
     dialogBody.val = getReport({ template, data: reportInput });
+    setTimeout(() => {
+      setupThreeCanvas();
+    }, 0);
   }
 });
-
 
 document.body.append(
   getParameters(parameters),
@@ -155,20 +158,6 @@ document.body.append(
   })
 );
 
-function getCentroid(points) {
-  const N = points.length;
-  if (N === 0) throw new Error("No points provided");
-
-  let sumX = 0, sumY = 0, sumZ = 0;
-
-  for (const point of points) {
-    sumX += point[0];
-    sumY += point[1];
-    sumZ += point[2];
-  }
-
-  return [sumX / N, sumY / N, sumZ / N];
-}
 
 function getDistanceToClosestEdge(node: number[], edgeNodes: number[][]): number {
   return Math.min(...edgeNodes.map(edge => Math.hypot(node[0] - edge[0], node[1] - edge[1])));
