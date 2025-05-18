@@ -15,14 +15,15 @@ import { getNodalLoadsFromSlabAreaLoad } from "../building/getMesh"; // Import n
 const a = 10; // m
 const h = 0.15; // m
 const E_x = 1.0e10; // Pa
-const E_y = 0.5e10; // Pa
+const E_y = 1.0e10; // Pa
 const G_xy = 1.0e9; // Pa
 const nu_xy = 0.25;
 
 // Init
 const parameters: Parameters = {
   xPosition: { value: van.state(10), min: 5, max: 20 },
-  load: { value: van.state(-50), min: -1000, max: 1000, step: 1 }, // Pressure load (N/m²)
+  load: { value: van.state(1000), min: 0, max: 1000, step: 1 }, // Fixed pressure load at 1000 N/m²
+  maxMeshSize: { value: van.state(0.5), min: 0.05, max: 0.5, step: -0.01 }, // Start at max (0.5), decrease to min (0.05)
 };
 
 const nodes: State<Node[]> = van.state([]);
@@ -45,7 +46,7 @@ van.derive(() => {
       [0, a, 0], // Top-left corner
     ],
     polygon: [0, 1, 2, 3],
-    maxMeshSize: 0.1,
+    maxMeshSize: parameters.maxMeshSize.value.val,
   });
   nodes.val = meshNodes;
   elements.val = meshElements;
@@ -73,13 +74,13 @@ van.derive(() => {
     totalAppliedLoad += -loadVector[2]; // Negative because loadVector[2] is negative for downward load
   });
   const expectedLoad = parameters.load.value.val * 10 * 10; // Pressure * Area
-  console.log(
-    `Total applied load: ${totalAppliedLoad.toFixed(
-      2
-    )} N, Expected: ${expectedLoad.toFixed(2)} N, Difference: ${(
-      totalAppliedLoad - expectedLoad
-    ).toFixed(2)} N`
-  );
+  // console.log(
+  //   `Total applied load: ${totalAppliedLoad.toFixed(
+  //     2
+  //   )} N, Expected: ${expectedLoad.toFixed(2)} N, Difference: ${(
+  //     totalAppliedLoad - expectedLoad
+  //   ).toFixed(2)} N`
+  // );
 
   const elementsVal = elements.val;
 
@@ -107,7 +108,9 @@ van.derive(() => {
       maxZDisplacement = Math.max(maxZDisplacement, absDz);
     });
     console.log(
-      `Maximum Z-displacement: ${(maxZDisplacement * 1000).toFixed(6)} mm`
+      `Mesh size: ${parameters.maxMeshSize.value.val.toFixed(
+        2
+      )} m, Maximum Z-displacement: ${(maxZDisplacement * 1000).toFixed(6)} mm`
     );
   }
 });
