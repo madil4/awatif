@@ -58,6 +58,11 @@ export type SlabData = {
 export type SlabAnalysisInput = {
   areaLoad: number;
   isOpening: boolean;
-  section?: unknown;
-  material?: unknown;
+  thickness?: number;
+  material?: SlabMaterial;
+};
+
+export type SlabMaterial = {
+  elasticity: number;
+  poissonsRatio: number;
 };
