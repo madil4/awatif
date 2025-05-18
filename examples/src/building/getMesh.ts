@@ -1,5 +1,5 @@
 import { subtract, divide, add, multiply, cross, norm } from "mathjs";
-import { Node, Element, NodeInputs } from "awatif-fem";
+import { Node, Element, NodeInputs, ElementInputs } from "awatif-fem";
 import { getMesh as getAwatifMesh } from "awatif-mesh";
 import { Building } from "./data-model";
 
@@ -12,17 +12,24 @@ export function getMesh(
   slabs: Building["slabs"]["val"],
   columnsByStory: Building["columnsByStory"]["val"],
   slabsByStory: Building["slabsByStory"]["val"],
+  columnData: Building["columnData"]["val"],
   slabData: Building["slabData"]["val"]
 ): {
   nodes: Node[];
   elements: Element[];
   nodeInputs: NodeInputs;
+  elementInputs: ElementInputs;
 } {
   let nodes: Node[] = [];
   let elements: Element[] = [];
   const nodeInputs: NodeInputs = {
     supports: new Map(),
     loads: new Map(),
+  };
+  const elementInputs: ElementInputs = {
+    elasticities: new Map(),
+    thicknesses: new Map(),
+    poissonsRatios: new Map(),
   };
 
   // slabs
@@ -59,6 +66,18 @@ export function getMesh(
 
       nodes = [...nodes, ...convertMeshNodesTo3d(meshNodes, elevation)];
       elements = [...elements, ...slabElements];
+
+      // slab element properties
+      const slabInput = slabData.get(slabIndex)?.analysisInput;
+      const slabElasticity = slabInput?.material?.elasticity ?? 1;
+      const slabThickness = slabInput?.thickness ?? 1;
+      const slabPoissonsRatio = slabInput?.material?.poissonsRatio ?? 1;
+
+      slabElementsIndices.forEach((elementIndex) => {
+        elementInputs.elasticities.set(elementIndex, slabElasticity);
+        elementInputs.thicknesses.set(elementIndex, slabThickness);
+        elementInputs.poissonsRatios.set(elementIndex, slabPoissonsRatio);
+      });
 
       // Todo: Reference
       const slabMeshReference = {
@@ -103,6 +122,21 @@ export function getMesh(
         nodes.length
       );
 
+      // column node supports
+      if (story === 0) {
+        nodeInputs.supports.set(
+          nodes.length + columnNodes.length - 1,
+          columnData.get(columnIndex)?.analysisInput?.support ?? [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+          ]
+        );
+      }
+
       nodes = [...nodes, ...columnNodes];
       elements = [...elements, ...columnElements];
 
@@ -123,7 +157,7 @@ export function getMesh(
     });
   }
 
-  return { nodes, elements, nodeInputs };
+  return { nodes, elements, nodeInputs, elementInputs };
 }
 
 // Utils
