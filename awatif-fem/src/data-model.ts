@@ -46,4 +46,7 @@ export type AnalyzeOutputs = {
   torsions?: Map<number, [number, number]>;
   bendingsY?: Map<number, [number, number]>;
   bendingsZ?: Map<number, [number, number]>;
+  bendingXX?: Map<number, [number, number, number]>;
+  bendingYY?: Map<number, [number, number, number]>;
+  bendingXY?: Map<number, [number, number, number]>;
 };

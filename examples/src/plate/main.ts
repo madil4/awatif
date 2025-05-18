@@ -1,13 +1,6 @@
-import van, { State } from "vanjs-core";
-import {
-  Node,
-  Element,
-  NodeInputs,
-  ElementInputs,
-  DeformOutputs,
-} from "awatif-fem";
+import van from "vanjs-core";
+import { deform, analyze, Mesh } from "awatif-fem";
 import { getViewer, Parameters, getParameters, getToolbar } from "awatif-ui";
-import { deform } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 
 // Init
@@ -16,19 +9,18 @@ const parameters: Parameters = {
   load: { value: van.state(-50), min: -100, max: 100, step: 1 },
 };
 
-const nodes: State<Node[]> = van.state([]);
-const elements: State<Element[]> = van.state([]);
-const nodeInputs: State<NodeInputs> = van.state({});
-const elementInputs: State<ElementInputs> = van.state({});
-const deformOutputs: State<DeformOutputs> = van.state({});
+const mesh: Mesh = {
+  nodes: van.state([]),
+  elements: van.state([]),
+  nodeInputs: van.state({}),
+  elementInputs: van.state({}),
+  deformOutputs: van.state({}),
+  analyzeOutputs: van.state({}),
+};
 
 // Events: on parameter change mesh & deform
 van.derive(() => {
-  const {
-    nodes: meshNodes,
-    elements: meshElements,
-    boundaryIndices,
-  } = getMesh({
+  const { nodes, elements, boundaryIndices } = getMesh({
     points: [
       [0, 0, 0],
       [15, 0, 0],
@@ -38,46 +30,47 @@ van.derive(() => {
     polygon: [0, 1, 2, 3],
     maxMeshSize: 0.5,
   });
-  nodes.val = meshNodes;
-  elements.val = meshElements;
 
-  nodeInputs.val = {
+  mesh.nodeInputs.val = {
     supports: new Map(
       boundaryIndices.map((i) => [i, [true, true, true, true, true, true]])
     ),
     loads: new Map(
-      nodes.val.map((_, i) => [i, [0, 0, parameters.load.value.val, 0, 0, 0]])
+      nodes.map((_, i) => [i, [0, 0, parameters.load.value.val, 0, 0, 0]])
     ),
   };
+  mesh.nodes.val = nodes;
+  mesh.elements.val = elements;
 
-  const elementsVal = elements.val;
-  elementInputs.val = {
-    elasticities: new Map(elementsVal.map((_, i) => [i, 100])),
-    thicknesses: new Map(elementsVal.map((_, i) => [i, 1])),
-    poissonsRatios: new Map(elementsVal.map((_, i) => [i, 0.3])),
+  mesh.elementInputs.val = {
+    elasticities: new Map(elements.map((_, i) => [i, 100])),
+    thicknesses: new Map(elements.map((_, i) => [i, 1])),
+    poissonsRatios: new Map(elements.map((_, i) => [i, 0.3])),
   };
 
-  deformOutputs.val = deform(
-    meshNodes,
-    meshElements,
-    nodeInputs.val,
-    elementInputs.val
+  mesh.deformOutputs.val = deform(
+    nodes,
+    elements,
+    mesh.nodeInputs.val,
+    mesh.elementInputs.val
+  );
+
+  mesh.analyzeOutputs.val = analyze(
+    nodes,
+    elements,
+    mesh.elementInputs.val,
+    mesh.deformOutputs.val
   );
 });
 
 document.body.append(
   getParameters(parameters),
   getViewer({
-    mesh: {
-      nodes,
-      elements,
-      nodeInputs: nodeInputs,
-      elementInputs: elementInputs,
-      deformOutputs: deformOutputs,
-    },
+    mesh,
     settingsObj: {
       deformedShape: true,
       loads: false,
+      shellResults: "displacementZ",
     },
   }),
   getToolbar({

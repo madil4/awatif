@@ -1,25 +1,24 @@
 import { _ as Ne, t as Ae, D as ht, C as wr } from "./complex-i8qiIvCl.js";
-import { m as au, a as iu } from "./pureFunctionsAny.generated-CaW_ywTZ.js";
 var mn = { relTol: 1e-12, absTol: 1e-15, matrix: "Matrix", number: "number", numberFallback: "number", precision: 64, predictable: false, randomSeed: null };
-function ou(r, e) {
+function au(r, e) {
   if (Fe(r, e)) return r[e];
-  throw typeof r[e] == "function" && fu(r, e) ? new Error('Cannot access method "' + e + '" as a property') : new Error('No access to property "' + e + '"');
+  throw typeof r[e] == "function" && ou(r, e) ? new Error('Cannot access method "' + e + '" as a property') : new Error('No access to property "' + e + '"');
 }
-function su(r, e, n) {
+function iu(r, e, n) {
   if (Fe(r, e)) return r[e] = n, n;
   throw new Error('No access to property "' + e + '"');
 }
 function Fe(r, e) {
-  return !lu(r) && !Array.isArray(r) ? false : ie(cu, e) ? true : !(e in Object.prototype || e in Function.prototype);
+  return !su(r) && !Array.isArray(r) ? false : ie(fu, e) ? true : !(e in Object.prototype || e in Function.prototype);
 }
-function fu(r, e) {
-  return r == null || typeof r[e] != "function" || ie(r, e) && Object.getPrototypeOf && e in Object.getPrototypeOf(r) ? false : ie(vu, e) ? true : !(e in Object.prototype || e in Function.prototype);
+function ou(r, e) {
+  return r == null || typeof r[e] != "function" || ie(r, e) && Object.getPrototypeOf && e in Object.getPrototypeOf(r) ? false : ie(lu, e) ? true : !(e in Object.prototype || e in Function.prototype);
 }
-function lu(r) {
+function su(r) {
   return typeof r == "object" && r && r.constructor === Object;
 }
-var cu = { length: true, name: true }, vu = { toString: true, valueOf: true, toLocaleString: true };
-class Du {
+var fu = { length: true, name: true }, lu = { toString: true, valueOf: true, toLocaleString: true };
+class cu {
   constructor(e) {
     this.wrappedObject = e, this[Symbol.iterator] = this.entries;
   }
@@ -27,16 +26,16 @@ class Du {
     return Object.keys(this.wrappedObject).filter((e) => this.has(e)).values();
   }
   get(e) {
-    return ou(this.wrappedObject, e);
+    return au(this.wrappedObject, e);
   }
   set(e, n) {
-    return su(this.wrappedObject, e, n), this;
+    return iu(this.wrappedObject, e, n), this;
   }
   has(e) {
     return Fe(this.wrappedObject, e) && e in this.wrappedObject;
   }
   entries() {
-    return pu(this.keys(), (e) => [e, this.get(e)]);
+    return vu(this.keys(), (e) => [e, this.get(e)]);
   }
   forEach(e) {
     for (var n of this.keys()) e(this.get(n), n, this);
@@ -51,7 +50,7 @@ class Du {
     return Object.keys(this.wrappedObject).length;
   }
 }
-function pu(r, e) {
+function vu(r, e) {
   return { next: () => {
     var n = r.next();
     return n.done ? n : { value: e(n.value), done: false };
@@ -63,7 +62,7 @@ function vr(r) {
 function Ar(r) {
   return !r || typeof r != "object" || typeof r.constructor != "function" ? false : r.isBigNumber === true && typeof r.constructor.prototype == "object" && r.constructor.prototype.isBigNumber === true || typeof r.constructor.isDecimal == "function" && r.constructor.isDecimal(r) === true;
 }
-function du(r) {
+function Du(r) {
   return typeof r == "bigint";
 }
 function He(r) {
@@ -97,85 +96,85 @@ function Fn(r) {
 function ke(r) {
   return r && r.constructor.prototype.isIndex === true || false;
 }
-function hu(r) {
+function pu(r) {
   return typeof r == "boolean";
 }
-function mu(r) {
+function du(r) {
   return r && r.constructor.prototype.isResultSet === true || false;
 }
-function gu(r) {
+function hu(r) {
   return r && r.constructor.prototype.isHelp === true || false;
 }
-function yu(r) {
+function mu(r) {
   return typeof r == "function";
 }
-function Au(r) {
+function gu(r) {
   return r instanceof Date;
 }
-function Fu(r) {
+function yu(r) {
   return r instanceof RegExp;
 }
 function rt(r) {
   return !!(r && typeof r == "object" && r.constructor === Object && !He(r) && !je(r));
 }
-function Eu(r) {
-  return r ? r instanceof Map || r instanceof Du || typeof r.set == "function" && typeof r.get == "function" && typeof r.keys == "function" && typeof r.has == "function" : false;
+function Au(r) {
+  return r ? r instanceof Map || r instanceof cu || typeof r.set == "function" && typeof r.get == "function" && typeof r.keys == "function" && typeof r.has == "function" : false;
 }
-function Cu(r) {
+function Fu(r) {
   return r === null;
 }
-function wu(r) {
+function Eu(r) {
   return r === void 0;
 }
-function bu(r) {
+function Cu(r) {
   return r && r.isAccessorNode === true && r.constructor.prototype.isNode === true || false;
 }
-function _u(r) {
+function wu(r) {
   return r && r.isArrayNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Bu(r) {
+function bu(r) {
   return r && r.isAssignmentNode === true && r.constructor.prototype.isNode === true || false;
 }
-function xu(r) {
+function _u(r) {
   return r && r.isBlockNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Su(r) {
+function Bu(r) {
   return r && r.isConditionalNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Mu(r) {
+function xu(r) {
   return r && r.isConstantNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Nu(r) {
+function Su(r) {
   return r && r.isFunctionAssignmentNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Tu(r) {
+function Mu(r) {
   return r && r.isFunctionNode === true && r.constructor.prototype.isNode === true || false;
 }
-function zu(r) {
+function Nu(r) {
   return r && r.isIndexNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Ou(r) {
+function Tu(r) {
   return r && r.isNode === true && r.constructor.prototype.isNode === true || false;
 }
-function $u(r) {
+function zu(r) {
   return r && r.isObjectNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Iu(r) {
+function Ou(r) {
   return r && r.isOperatorNode === true && r.constructor.prototype.isNode === true || false;
 }
-function qu(r) {
+function $u(r) {
   return r && r.isParenthesisNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Ru(r) {
+function Iu(r) {
   return r && r.isRangeNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Uu(r) {
+function qu(r) {
   return r && r.isRelationalNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Pu(r) {
+function Ru(r) {
   return r && r.isSymbolNode === true && r.constructor.prototype.isNode === true || false;
 }
-function Lu(r) {
+function Uu(r) {
   return r && r.constructor.prototype.isChain === true || false;
 }
 function Ir(r) {
@@ -191,11 +190,11 @@ function ar(r) {
   });
   if (r instanceof Date) return new Date(r.valueOf());
   if (Ar(r)) return r;
-  if (rt(r)) return Vu(r, ar);
+  if (rt(r)) return Pu(r, ar);
   if (e === "function") return r;
   throw new TypeError("Cannot clone: unknown type of value (value: ".concat(r, ")"));
 }
-function Vu(r, e) {
+function Pu(r, e) {
   var n = {};
   for (var u in r) ie(r, u) && (n[u] = e(r[u]));
   return n;
@@ -223,14 +222,14 @@ function Jr(r, e) {
 function ie(r, e) {
   return r && Object.hasOwnProperty.call(r, e);
 }
-function Zu(r, e) {
+function Lu(r, e) {
   for (var n = {}, u = 0; u < e.length; u++) {
     var t = e[u], a = r[t];
     a !== void 0 && (n[t] = a);
   }
   return n;
 }
-var Ju = ["Matrix", "Array"], Qu = ["number", "BigNumber", "Fraction"], br = function(e) {
+var Vu = ["Matrix", "Array"], Zu = ["number", "BigNumber", "Fraction"], br = function(e) {
   if (e) throw new Error(`The global config is readonly. 
 Please create a mathjs instance if you want to change the default configuration. 
 Example:
@@ -241,31 +240,31 @@ Example:
 `);
   return Object.freeze(mn);
 };
-Ne(br, mn, { MATRIX_OPTIONS: Ju, NUMBER_OPTIONS: Qu });
+Ne(br, mn, { MATRIX_OPTIONS: Vu, NUMBER_OPTIONS: Zu });
 function G(r, e, n, u) {
   function t(a) {
-    var s = Zu(a, e.map(Yu));
-    return Wu(r, e, a), n(s);
+    var s = Lu(a, e.map(Wu));
+    return Ju(r, e, a), n(s);
   }
   return t.isFactory = true, t.fn = r, t.dependencies = e.slice().sort(), u && (t.meta = u), t;
 }
-function Wu(r, e, n) {
-  var u = e.filter((a) => !Gu(a)).every((a) => n[a] !== void 0);
+function Ju(r, e, n) {
+  var u = e.filter((a) => !Qu(a)).every((a) => n[a] !== void 0);
   if (!u) {
     var t = e.filter((a) => n[a] === void 0);
     throw new Error('Cannot create function "'.concat(r, '", ') + "some dependencies are missing: ".concat(t.map((a) => '"'.concat(a, '"')).join(", "), "."));
   }
 }
-function Gu(r) {
+function Qu(r) {
   return r && r[0] === "?";
 }
-function Yu(r) {
+function Wu(r) {
   return r && r[0] === "?" ? r.slice(1) : r;
 }
 function pr(r) {
   return typeof r == "boolean" ? true : isFinite(r) ? r === Math.round(r) : false;
 }
-var Xu = Math.sign || function(r) {
+var Gu = Math.sign || function(r) {
   return r > 0 ? 1 : r < 0 ? -1 : 0;
 };
 function Ve(r, e, n) {
@@ -288,11 +287,11 @@ function Je(r, e) {
   var { notation: n, precision: u, wordSize: t } = Cn(e);
   switch (n) {
     case "fixed":
-      return Hu(r, u);
+      return Xu(r, u);
     case "exponential":
       return wn(r, u);
     case "engineering":
-      return Ku(r, u);
+      return Yu(r, u);
     case "bin":
       return Ve(r, 2, t);
     case "oct":
@@ -300,7 +299,7 @@ function Je(r, e) {
     case "hex":
       return Ve(r, 16, t);
     case "auto":
-      return ju(r, u, e).replace(/((\.\d*?)(0+))($|e)/, function() {
+      return Ku(r, u, e).replace(/((\.\d*?)(0+))($|e)/, function() {
         var a = arguments[2], s = arguments[4];
         return a !== "." ? a + s : s;
       });
@@ -332,7 +331,7 @@ function Te(r) {
   });
   return s.length === 0 && (s.push(0), t++), { sign: n, coefficients: s, exponent: t };
 }
-function Ku(r, e) {
+function Yu(r, e) {
   if (isNaN(r) || !isFinite(r)) return String(r);
   var n = Te(r), u = ze(n, e), t = u.exponent, a = u.coefficients, s = t % 3 === 0 ? t : t < 0 ? t - 3 - t % 3 : t - t % 3;
   if (vr(e)) for (; e > a.length || t - s + 1 > a.length; ) a.push(0);
@@ -341,7 +340,7 @@ function Ku(r, e) {
   var l = a.slice(o).join(""), m = vr(e) && l.length || l.match(/[1-9]/) ? "." + l : "", v = a.slice(0, o).join("") + m + "e" + (t >= 0 ? "+" : "") + s.toString();
   return u.sign + v;
 }
-function Hu(r, e) {
+function Xu(r, e) {
   if (isNaN(r) || !isFinite(r)) return String(r);
   var n = Te(r), u = typeof e == "number" ? ze(n, n.exponent + 1 + e) : n, t = u.coefficients, a = u.exponent + 1, s = a + (e || 0);
   return t.length < s && (t = t.concat(re(s - t.length))), a < 0 && (t = re(-a + 1).concat(t), a = 1), a < t.length && t.splice(a, 0, a === 0 ? "0." : "."), u.sign + t.join("");
@@ -353,7 +352,7 @@ function wn(r, e) {
   var s = t.shift();
   return u.sign + s + (t.length > 0 ? "." + t.join("") : "") + "e" + (a >= 0 ? "+" : "") + a;
 }
-function ju(r, e, n) {
+function Ku(r, e, n) {
   if (isNaN(r) || !isFinite(r)) return String(r);
   var u = gt(n == null ? void 0 : n.lowerExp, -3), t = gt(n == null ? void 0 : n.upperExp, 5), a = Te(r), s = e ? ze(a, e) : a;
   if (s.exponent < u || s.exponent >= t) return wn(r, e);
@@ -377,7 +376,7 @@ function re(r) {
   for (var e = [], n = 0; n < r; n++) e.push(0);
   return e;
 }
-function ku(r) {
+function Hu(r) {
   return r.toExponential().replace(/e.*$/, "").replace(/^0\.?0*|\./, "").length;
 }
 function Pr(r, e) {
@@ -396,10 +395,10 @@ function gt(r, e) {
 }
 var bn = function() {
   return bn = Ae.create, Ae;
-}, ra = ["?BigNumber", "?Complex", "?DenseMatrix", "?Fraction"], ea = G("typed", ra, function(e) {
+}, ju = ["?BigNumber", "?Complex", "?DenseMatrix", "?Fraction"], ku = G("typed", ju, function(e) {
   var { BigNumber: n, Complex: u, DenseMatrix: t, Fraction: a } = e, s = bn();
-  return s.clear(), s.addTypes([{ name: "number", test: vr }, { name: "Complex", test: He }, { name: "BigNumber", test: Ar }, { name: "bigint", test: du }, { name: "Fraction", test: je }, { name: "Unit", test: gn }, { name: "identifier", test: (D) => $r && /^(?:[A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDDC0-\uDDF3\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDD4A-\uDD65\uDD6F-\uDD85\uDE80-\uDEA9\uDEB0\uDEB1\uDEC2-\uDEC4\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61\uDF80-\uDF89\uDF8B\uDF8E\uDF90-\uDFB5\uDFB7\uDFD1\uDFD3]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8\uDFC0-\uDFE0]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD80E\uD80F\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46\uDC60-\uDFFF]|\uD810[\uDC00-\uDFFA]|\uD811[\uDC00-\uDE46]|\uD818[\uDD00-\uDD1D]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDD40-\uDD6C\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDCFF-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDDD0-\uDDED\uDDF0\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0\uDFF0-\uDFFF]|\uD87B[\uDC00-\uDE5D]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])(?:[0-9A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDDC0-\uDDF3\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDD4A-\uDD65\uDD6F-\uDD85\uDE80-\uDEA9\uDEB0\uDEB1\uDEC2-\uDEC4\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61\uDF80-\uDF89\uDF8B\uDF8E\uDF90-\uDFB5\uDFB7\uDFD1\uDFD3]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8\uDFC0-\uDFE0]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD80E\uD80F\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46\uDC60-\uDFFF]|\uD810[\uDC00-\uDFFA]|\uD811[\uDC00-\uDE46]|\uD818[\uDD00-\uDD1D]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDD40-\uDD6C\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDCFF-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDDD0-\uDDED\uDDF0\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0\uDFF0-\uDFFF]|\uD87B[\uDC00-\uDE5D]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])*$/.test(D) }, { name: "string", test: $r }, { name: "Chain", test: Lu }, { name: "Array", test: mr }, { name: "Matrix", test: lr }, { name: "DenseMatrix", test: yn }, { name: "SparseMatrix", test: An }, { name: "Range", test: Fn }, { name: "Index", test: ke }, { name: "boolean", test: hu }, { name: "ResultSet", test: mu }, { name: "Help", test: gu }, { name: "function", test: yu }, { name: "Date", test: Au }, { name: "RegExp", test: Fu }, { name: "null", test: Cu }, { name: "undefined", test: wu }, { name: "AccessorNode", test: bu }, { name: "ArrayNode", test: _u }, { name: "AssignmentNode", test: Bu }, { name: "BlockNode", test: xu }, { name: "ConditionalNode", test: Su }, { name: "ConstantNode", test: Mu }, { name: "FunctionNode", test: Tu }, { name: "FunctionAssignmentNode", test: Nu }, { name: "IndexNode", test: zu }, { name: "Node", test: Ou }, { name: "ObjectNode", test: $u }, { name: "OperatorNode", test: Iu }, { name: "ParenthesisNode", test: qu }, { name: "RangeNode", test: Ru }, { name: "RelationalNode", test: Uu }, { name: "SymbolNode", test: Pu }, { name: "Map", test: Eu }, { name: "Object", test: rt }]), s.addConversions([{ from: "number", to: "BigNumber", convert: function(c) {
-    if (n || de(c), ku(c) > 15) throw new TypeError("Cannot implicitly convert a number with >15 significant digits to BigNumber (value: " + c + "). Use function bignumber(x) to convert to BigNumber.");
+  return s.clear(), s.addTypes([{ name: "number", test: vr }, { name: "Complex", test: He }, { name: "BigNumber", test: Ar }, { name: "bigint", test: Du }, { name: "Fraction", test: je }, { name: "Unit", test: gn }, { name: "identifier", test: (D) => $r && /^(?:[A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDDC0-\uDDF3\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDD4A-\uDD65\uDD6F-\uDD85\uDE80-\uDEA9\uDEB0\uDEB1\uDEC2-\uDEC4\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61\uDF80-\uDF89\uDF8B\uDF8E\uDF90-\uDFB5\uDFB7\uDFD1\uDFD3]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8\uDFC0-\uDFE0]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD80E\uD80F\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46\uDC60-\uDFFF]|\uD810[\uDC00-\uDFFA]|\uD811[\uDC00-\uDE46]|\uD818[\uDD00-\uDD1D]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDD40-\uDD6C\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDCFF-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDDD0-\uDDED\uDDF0\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0\uDFF0-\uDFFF]|\uD87B[\uDC00-\uDE5D]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])(?:[0-9A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0560-\u0588\u05D0-\u05EA\u05EF-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u0870-\u0887\u0889-\u088E\u08A0-\u08C9\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C5D\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D04-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E86-\u0E8A\u0E8C-\u0EA3\u0EA5\u0EA7-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u1711\u171F-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1878\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4C\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C8A\u1C90-\u1CBA\u1CBD-\u1CBF\u1CE9-\u1CEC\u1CEE-\u1CF3\u1CF5\u1CF6\u1CFA\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312F\u3131-\u318E\u31A0-\u31BF\u31F0-\u31FF\u3400-\u4DBF\u4E00-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7CD\uA7D0\uA7D1\uA7D3\uA7D5-\uA7DC\uA7F2-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA8FE\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB69\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF40\uDF42-\uDF49\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDD70-\uDD7A\uDD7C-\uDD8A\uDD8C-\uDD92\uDD94\uDD95\uDD97-\uDDA1\uDDA3-\uDDB1\uDDB3-\uDDB9\uDDBB\uDDBC\uDDC0-\uDDF3\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67\uDF80-\uDF85\uDF87-\uDFB0\uDFB2-\uDFBA]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE35\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2\uDD00-\uDD23\uDD4A-\uDD65\uDD6F-\uDD85\uDE80-\uDEA9\uDEB0\uDEB1\uDEC2-\uDEC4\uDF00-\uDF1C\uDF27\uDF30-\uDF45\uDF70-\uDF81\uDFB0-\uDFC4\uDFE0-\uDFF6]|\uD804[\uDC03-\uDC37\uDC71\uDC72\uDC75\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD44\uDD47\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE3F\uDE40\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61\uDF80-\uDF89\uDF8B\uDF8E\uDF90-\uDFB5\uDFB7\uDFD1\uDFD3]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC5F-\uDC61\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDEB8\uDF00-\uDF1A\uDF40-\uDF46]|\uD806[\uDC00-\uDC2B\uDCA0-\uDCDF\uDCFF-\uDD06\uDD09\uDD0C-\uDD13\uDD15\uDD16\uDD18-\uDD2F\uDD3F\uDD41\uDDA0-\uDDA7\uDDAA-\uDDD0\uDDE1\uDDE3\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE89\uDE9D\uDEB0-\uDEF8\uDFC0-\uDFE0]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46\uDD60-\uDD65\uDD67\uDD68\uDD6A-\uDD89\uDD98\uDEE0-\uDEF2\uDF02\uDF04-\uDF10\uDF12-\uDF33\uDFB0]|\uD808[\uDC00-\uDF99]|\uD809[\uDC80-\uDD43]|\uD80B[\uDF90-\uDFF0]|[\uD80C\uD80E\uD80F\uD81C-\uD820\uD822\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879\uD880-\uD883\uD885-\uD887][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2F\uDC41-\uDC46\uDC60-\uDFFF]|\uD810[\uDC00-\uDFFA]|\uD811[\uDC00-\uDE46]|\uD818[\uDD00-\uDD1D]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE70-\uDEBE\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDD40-\uDD6C\uDE40-\uDE7F\uDF00-\uDF4A\uDF50\uDF93-\uDF9F\uDFE0\uDFE1\uDFE3]|\uD821[\uDC00-\uDFF7]|\uD823[\uDC00-\uDCD5\uDCFF-\uDD08]|\uD82B[\uDFF0-\uDFF3\uDFF5-\uDFFB\uDFFD\uDFFE]|\uD82C[\uDC00-\uDD22\uDD32\uDD50-\uDD52\uDD55\uDD64-\uDD67\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD837[\uDF00-\uDF1E\uDF25-\uDF2A]|\uD838[\uDC30-\uDC6D\uDD00-\uDD2C\uDD37-\uDD3D\uDD4E\uDE90-\uDEAD\uDEC0-\uDEEB]|\uD839[\uDCD0-\uDCEB\uDDD0-\uDDED\uDDF0\uDFE0-\uDFE6\uDFE8-\uDFEB\uDFED\uDFEE\uDFF0-\uDFFE]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43\uDD4B]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDEDF\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF39\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0\uDFF0-\uDFFF]|\uD87B[\uDC00-\uDE5D]|\uD87E[\uDC00-\uDE1D]|\uD884[\uDC00-\uDF4A\uDF50-\uDFFF]|\uD888[\uDC00-\uDFAF])*$/.test(D) }, { name: "string", test: $r }, { name: "Chain", test: Uu }, { name: "Array", test: mr }, { name: "Matrix", test: lr }, { name: "DenseMatrix", test: yn }, { name: "SparseMatrix", test: An }, { name: "Range", test: Fn }, { name: "Index", test: ke }, { name: "boolean", test: pu }, { name: "ResultSet", test: du }, { name: "Help", test: hu }, { name: "function", test: mu }, { name: "Date", test: gu }, { name: "RegExp", test: yu }, { name: "null", test: Fu }, { name: "undefined", test: Eu }, { name: "AccessorNode", test: Cu }, { name: "ArrayNode", test: wu }, { name: "AssignmentNode", test: bu }, { name: "BlockNode", test: _u }, { name: "ConditionalNode", test: Bu }, { name: "ConstantNode", test: xu }, { name: "FunctionNode", test: Mu }, { name: "FunctionAssignmentNode", test: Su }, { name: "IndexNode", test: Nu }, { name: "Node", test: Tu }, { name: "ObjectNode", test: zu }, { name: "OperatorNode", test: Ou }, { name: "ParenthesisNode", test: $u }, { name: "RangeNode", test: Iu }, { name: "RelationalNode", test: qu }, { name: "SymbolNode", test: Ru }, { name: "Map", test: Au }, { name: "Object", test: rt }]), s.addConversions([{ from: "number", to: "BigNumber", convert: function(c) {
+    if (n || de(c), Hu(c) > 15) throw new TypeError("Cannot implicitly convert a number with >15 significant digits to BigNumber (value: " + c + "). Use function bignumber(x) to convert to BigNumber.");
     return new n(c);
   } }, { from: "number", to: "Complex", convert: function(c) {
     return u || he(c), new u(c, 0);
@@ -463,7 +462,7 @@ var bn = function() {
   } }, { from: "boolean", to: "string", convert: function(c) {
     return String(c);
   } }, { from: "Array", to: "Matrix", convert: function(c) {
-    return t || ta(), new t(c);
+    return t || ra(), new t(c);
   } }, { from: "Matrix", to: "Array", convert: function(c) {
     return c.valueOf();
   } }]), s.onMismatch = (D, c, f) => {
@@ -488,13 +487,13 @@ function de(r) {
 function he(r) {
   throw new Error("Cannot convert value ".concat(r, " into a Complex number: no class 'Complex' provided"));
 }
-function ta() {
+function ra() {
   throw new Error("Cannot convert array into a Matrix: no class 'DenseMatrix' provided");
 }
 function me(r) {
   throw new Error("Cannot convert value ".concat(r, " into a Fraction, no class 'Fraction' provided."));
 }
-var na = "BigNumber", ua = ["?on", "config"], aa = G(na, ua, (r) => {
+var ea = "BigNumber", ta = ["?on", "config"], na = G(ea, ta, (r) => {
   var { on: e, config: n } = r, u = ht.clone({ precision: n.precision, modulo: ht.EUCLID });
   return u.prototype = Object.create(u.prototype), u.prototype.type = "BigNumber", u.prototype.isBigNumber = true, u.prototype.toJSON = function() {
     return { mathjs: "BigNumber", value: this.toString() };
@@ -503,7 +502,7 @@ var na = "BigNumber", ua = ["?on", "config"], aa = G(na, ua, (r) => {
   }, e && e("config", function(t, a) {
     t.precision !== a.precision && u.config({ precision: t.precision });
   }), u;
-}, { isClass: true }), ia = "Complex", oa = [], sa = G(ia, oa, () => (Object.defineProperty(wr, "name", { value: "Complex" }), wr.prototype.constructor = wr, wr.prototype.type = "Complex", wr.prototype.isComplex = true, wr.prototype.toJSON = function() {
+}, { isClass: true }), ua = "Complex", aa = [], ia = G(ua, aa, () => (Object.defineProperty(wr, "name", { value: "Complex" }), wr.prototype.constructor = wr, wr.prototype.type = "Complex", wr.prototype.isComplex = true, wr.prototype.toJSON = function() {
   return { mathjs: "Complex", re: this.re, im: this.im };
 }, wr.prototype.toPolar = function() {
   return { r: this.abs(), phi: this.arg() };
@@ -540,7 +539,7 @@ typeof BigInt > "u" && (BigInt = function(r) {
   if (isNaN(r)) throw new Error("");
   return r;
 });
-const k = BigInt(0), er = BigInt(1), oe = BigInt(2), Qe = BigInt(5), _r = BigInt(10), fa = 2e3, X = { s: er, n: k, d: er };
+const k = BigInt(0), er = BigInt(1), oe = BigInt(2), Qe = BigInt(5), _r = BigInt(10), oa = 2e3, X = { s: er, n: k, d: er };
 function Ur(r, e) {
   try {
     r = BigInt(r);
@@ -554,7 +553,7 @@ function Or(r) {
 }
 function hr(r, e) {
   if (e === k) throw et();
-  const n = Object.create(Tr.prototype);
+  const n = Object.create(zr.prototype);
   n.s = r < k ? -er : er, r = r < k ? -r : r;
   const u = Wr(r, e);
   return n.n = r / u, n.d = e / u, n;
@@ -614,21 +613,21 @@ const Er = function(r, e) {
   if (u === k) throw et();
   X.s = t < k ? -er : er, X.n = n < k ? -n : n, X.d = u < k ? -u : u;
 };
-function la(r, e, n) {
+function sa(r, e, n) {
   let u = er;
   for (; e > k; r = r * r % n, e >>= er) e & er && (u = u * r % n);
   return u;
 }
-function ca(r, e) {
+function fa(r, e) {
   for (; e % oe === k; e /= oe) ;
   for (; e % Qe === k; e /= Qe) ;
   if (e === er) return k;
   let n = _r % e, u = 1;
-  for (; n !== er; u++) if (n = n * _r % e, u > fa) return k;
+  for (; n !== er; u++) if (n = n * _r % e, u > oa) return k;
   return BigInt(u);
 }
-function va(r, e, n) {
-  let u = er, t = la(_r, n, e);
+function la(r, e, n) {
+  let u = er, t = sa(_r, n, e);
   for (let a = 0; a < 300; a++) {
     if (u === t) return BigInt(a);
     u = u * _r % e, t = t * _r % e;
@@ -643,8 +642,8 @@ function Wr(r, e) {
     if (e %= r, !e) return r;
   }
 }
-function Tr(r, e) {
-  if (Er(r, e), this instanceof Tr) r = Wr(X.d, X.n), this.s = X.s, this.n = X.n / r, this.d = X.d / r;
+function zr(r, e) {
+  if (Er(r, e), this instanceof zr) r = Wr(X.d, X.n), this.s = X.s, this.n = X.n / r, this.d = X.d / r;
   else return hr(X.s * X.n, X.d);
 }
 var et = function() {
@@ -654,7 +653,7 @@ var et = function() {
 }, yt = function() {
   return new Error("Parameters must be integer");
 };
-Tr.prototype = { s: er, n: k, d: er, abs: function() {
+zr.prototype = { s: er, n: k, d: er, abs: function() {
   return hr(this.n, this.d);
 }, neg: function() {
   return hr(-this.s * this.n, this.d);
@@ -749,7 +748,7 @@ Tr.prototype = { s: er, n: k, d: er, abs: function() {
 }, toString: function(r) {
   let e = this.n, n = this.d;
   r = r || 15;
-  let u = ca(e, n), t = va(e, n, u), a = this.s < k ? "-" : "";
+  let u = fa(e, n), t = la(e, n, u), a = this.s < k ? "-" : "";
   if (a += Or(e / n), e %= n, e *= _r, e && (a += "."), u) {
     for (let s = t; s--; ) a += Or(e / n), e %= n, e *= _r;
     a += "(";
@@ -791,11 +790,11 @@ Tr.prototype = { s: er, n: k, d: er, abs: function() {
   }
   return this;
 } };
-var Da = "Fraction", pa = [], da = G(Da, pa, () => (Object.defineProperty(Tr, "name", { value: "Fraction" }), Tr.prototype.constructor = Tr, Tr.prototype.type = "Fraction", Tr.prototype.isFraction = true, Tr.prototype.toJSON = function() {
+var ca = "Fraction", va = [], Da = G(ca, va, () => (Object.defineProperty(zr, "name", { value: "Fraction" }), zr.prototype.constructor = zr, zr.prototype.type = "Fraction", zr.prototype.isFraction = true, zr.prototype.toJSON = function() {
   return { mathjs: "Fraction", n: String(this.s * this.n), d: String(this.d) };
-}, Tr.fromJSON = function(r) {
-  return new Tr(r);
-}, Tr), { isClass: true }), ha = "Matrix", ma = [], ga = G(ha, ma, () => {
+}, zr.fromJSON = function(r) {
+  return new zr(r);
+}, zr), { isClass: true }), pa = "Matrix", da = [], ha = G(pa, da, () => {
   function r() {
     if (!(this instanceof r)) throw new SyntaxError("Constructor must be called with the new operator");
   }
@@ -855,17 +854,17 @@ function Ze(r, e, n) {
       throw new Error("Base ".concat(e, " not supported "));
   }
 }
-function ya(r, e) {
+function ma(r, e) {
   if (typeof e == "function") return e(r);
   if (!r.isFinite()) return r.isNaN() ? "NaN" : r.gt(0) ? "Infinity" : "-Infinity";
   var { notation: n, precision: u, wordSize: t } = Cn(e);
   switch (n) {
     case "fixed":
-      return Fa(r, u);
+      return ya(r, u);
     case "exponential":
       return At(r, u);
     case "engineering":
-      return Aa(r, u);
+      return ga(r, u);
     case "bin":
       return Ze(r, 2, t);
     case "oct":
@@ -885,7 +884,7 @@ function ya(r, e) {
       throw new Error('Unknown notation "' + n + '". Choose "auto", "exponential", "fixed", "bin", "oct", or "hex.');
   }
 }
-function Aa(r, e) {
+function ga(r, e) {
   var n = r.e, u = n % 3 === 0 ? n : n < 0 ? n - 3 - n % 3 : n - n % 3, t = r.mul(Math.pow(10, -u)), a = t.toPrecision(e);
   if (a.includes("e")) {
     var s = r.constructor;
@@ -896,20 +895,20 @@ function Aa(r, e) {
 function At(r, e) {
   return e !== void 0 ? r.toExponential(e - 1) : r.toExponential();
 }
-function Fa(r, e) {
+function ya(r, e) {
   return r.toFixed(e);
 }
 function Ft(r, e) {
   return vr(r) ? r : Ar(r) ? r.toNumber() : e;
 }
 function dr(r, e) {
-  var n = Ea(r, e);
+  var n = Aa(r, e);
   return e && typeof e == "object" && "truncate" in e && n.length > e.truncate ? n.substring(0, e.truncate - 3) + "..." : n;
 }
-function Ea(r, e) {
+function Aa(r, e) {
   if (typeof r == "number") return Je(r, e);
-  if (Ar(r)) return ya(r, e);
-  if (Ca(r)) return !e || e.fraction !== "decimal" ? "".concat(r.s * r.n, "/").concat(r.d) : r.toString();
+  if (Ar(r)) return ma(r, e);
+  if (Fa(r)) return !e || e.fraction !== "decimal" ? "".concat(r.s * r.n, "/").concat(r.d) : r.toString();
   if (Array.isArray(r)) return _n(r, e);
   if ($r(r)) return Et(r);
   if (typeof r == "function") return r.syntax ? String(r.syntax) : "function";
@@ -935,7 +934,7 @@ function _n(r, e) {
     return n += "]", n;
   } else return dr(r, e);
 }
-function Ca(r) {
+function Fa(r) {
   return r && typeof r == "object" && typeof r.s == "bigint" && typeof r.n == "bigint" && typeof r.d == "bigint" || false;
 }
 function or(r, e, n) {
@@ -1010,7 +1009,7 @@ function tt(r, e) {
   var t = xn(e);
   if (u !== t) throw new or(t, u, "!=");
   try {
-    return wa(n, e);
+    return Ea(n, e);
   } catch (a) {
     throw a instanceof or ? new or(t, u, "!=") : a;
   }
@@ -1026,7 +1025,7 @@ function nt(r, e) {
 function xn(r) {
   return r.reduce((e, n) => e * n, 1);
 }
-function wa(r, e) {
+function Ea(r, e) {
   for (var n = r, u, t = e.length - 1; t > 0; t--) {
     var a = e[t];
     u = [];
@@ -1123,12 +1122,12 @@ function Ye(r, e) {
   var n = ir(r);
   if (Jr(n, e)) return r;
   $n(n, e);
-  var u = On(n, e), t = u.length, a = [...Array(t - n.length).fill(1), ...n], s = _a(r);
+  var u = On(n, e), t = u.length, a = [...Array(t - n.length).fill(1), ...n], s = wa(r);
   n.length < t && (s = tt(s, a), n = ir(s));
-  for (var D = 0; D < t; D++) n[D] < u[D] && (s = ba(s, u[D], D), n = ir(s));
+  for (var D = 0; D < t; D++) n[D] < u[D] && (s = Ca(s, u[D], D), n = ir(s));
   return s;
 }
-function ba(r, e, n) {
+function Ca(r, e, n) {
   return zn(...Array(e).fill(r), n);
 }
 function In(r, e) {
@@ -1157,7 +1156,7 @@ function _t(r, e) {
     } else return e(s);
   }
 }
-function _a(r) {
+function wa(r) {
   return Ne([], r);
 }
 function we(r, e, n) {
@@ -1167,11 +1166,11 @@ function we(r, e, n) {
     if (u) t = 1;
     else {
       var a = (e.isMatrix ? e.size() : ir(e)).map(() => 0), s = e.isMatrix ? e.get(a) : In(e, a);
-      t = Sa(r, s, a, e);
+      t = Ba(r, s, a, e);
     }
     var D;
     if (e.isMatrix && e.dataType !== "mixed" && e.dataType !== void 0) {
-      var c = Ba(r, t);
+      var c = ba(r, t);
       D = c !== void 0 ? c : r;
     } else D = r;
     return t >= 1 && t <= 3 ? { isUnary: t === 1, fn: function() {
@@ -1182,23 +1181,23 @@ function we(r, e, n) {
       return Bt(D, l, n, r.name);
     } };
   }
-  return u === void 0 ? { isUnary: xa(r), fn: r } : { isUnary: u, fn: r };
+  return u === void 0 ? { isUnary: _a(r), fn: r } : { isUnary: u, fn: r };
 }
-function Ba(r, e) {
+function ba(r, e) {
   var n = [];
   if (Object.entries(r.signatures).forEach((u) => {
     var [t, a] = u;
     t.split(",").length === e && n.push(a);
   }), n.length === 1) return n[0];
 }
-function xa(r) {
+function _a(r) {
   if (r.length !== 1) return false;
   var e = r.toString();
   if (/arguments/.test(e)) return false;
   var n = e.match(/\(.*?\)/);
   return !/\.\.\./.test(n);
 }
-function Sa(r, e, n, u) {
+function Ba(r, e, n, u) {
   for (var t = [e, n, u], a = 3; a > 0; a--) {
     var s = t.slice(0, a);
     if (Ae.resolve(r, s) !== null) return a;
@@ -1208,17 +1207,17 @@ function Bt(r, e, n, u) {
   try {
     return r(...e);
   } catch (t) {
-    Ma(t, e, n, u);
+    xa(t, e, n, u);
   }
 }
-function Ma(r, e, n, u) {
+function xa(r, e, n, u) {
   var t;
   if (r instanceof TypeError && ((t = r.data) === null || t === void 0 ? void 0 : t.category) === "wrongType") {
     var a = [];
     throw a.push("value: ".concat(Ir(e[0]))), e.length >= 2 && a.push("index: ".concat(Ir(e[1]))), e.length >= 3 && a.push("array: ".concat(Ir(e[2]))), new TypeError("Function ".concat(n, " cannot apply callback arguments ") + "".concat(u, "(").concat(a.join(", "), ") at index ").concat(JSON.stringify(e[1])));
   } else throw new TypeError("Function ".concat(n, " cannot apply callback arguments ") + "to function ".concat(u, ": ").concat(r.message));
 }
-var Na = "DenseMatrix", Ta = ["Matrix"], za = G(Na, Ta, (r) => {
+var Sa = "DenseMatrix", Ma = ["Matrix"], Na = G(Sa, Ma, (r) => {
   var { Matrix: e } = r;
   function n(o, l) {
     if (!(this instanceof n)) throw new SyntaxError("Constructor must be called with the new operator");
@@ -1472,12 +1471,12 @@ var Na = "DenseMatrix", Ta = ["Matrix"], za = G(Na, Ta, (r) => {
   }
   return n;
 }, { isClass: true });
-function Mr(r, e, n) {
+function Nr(r, e, n) {
   if (!n) return lr(r) ? r.map((t) => e(t), false, true) : _t(r, e, true);
   var u = (t) => t === 0 ? t : e(t);
   return lr(r) ? r.map((t) => u(t), false, true) : _t(r, u, true);
 }
-var xt = "isInteger", Oa = ["typed"], $a = G(xt, Oa, (r) => {
+var xt = "isInteger", Ta = ["typed"], za = G(xt, Ta, (r) => {
   var { typed: e } = r;
   return e(xt, { number: pr, BigNumber: function(u) {
     return u.isInt();
@@ -1485,7 +1484,7 @@ var xt = "isInteger", Oa = ["typed"], $a = G(xt, Oa, (r) => {
     return true;
   }, Fraction: function(u) {
     return u.d === 1n;
-  }, "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n)) });
+  }, "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n)) });
 }), ut = "number", $e = "number, number";
 function qn(r) {
   return Math.abs(r);
@@ -1508,32 +1507,32 @@ function Ln(r) {
 }
 Ln.signature = ut;
 function Xe(r) {
-  return Xu(r);
+  return Gu(r);
 }
 Xe.signature = ut;
 function Vn(r, e) {
   return r * r < 1 && e === 1 / 0 || r * r > 1 && e === -1 / 0 ? 0 : Math.pow(r, e);
 }
 Vn.signature = $e;
-var Ia = "number";
+var Oa = "number";
 function Zn(r) {
   return r > 0;
 }
-Zn.signature = Ia;
+Zn.signature = Oa;
 function ee(r, e) {
   var n = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : 1e-9, u = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : 0;
   if (n <= 0) throw new Error("Relative tolerance must be greater than 0");
   if (u < 0) throw new Error("Absolute tolerance must be at least 0");
   return r.isNaN() || e.isNaN() ? false : !r.isFinite() || !e.isFinite() ? r.eq(e) : r.eq(e) ? true : r.minus(e).abs().lte(r.constructor.max(r.constructor.max(r.abs(), e.abs()).mul(n), u));
 }
-var St = "isPositive", qa = ["typed", "config"], Ra = G(St, qa, (r) => {
+var St = "isPositive", $a = ["typed", "config"], Ia = G(St, $a, (r) => {
   var { typed: e, config: n } = r;
-  return e(St, { number: (u) => Pr(u, 0, n.relTol, n.absTol) ? false : Zn(u), BigNumber: (u) => ee(u, new u.constructor(0), n.relTol, n.absTol) ? false : !u.isNeg() && !u.isZero() && !u.isNaN(), bigint: (u) => u > 0n, Fraction: (u) => u.s > 0n && u.n > 0n, Unit: e.referToSelf((u) => (t) => e.find(u, t.valueType())(t.value)), "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
-}), Mt = "isZero", Ua = ["typed", "equalScalar"], Pa = G(Mt, Ua, (r) => {
+  return e(St, { number: (u) => Pr(u, 0, n.relTol, n.absTol) ? false : Zn(u), BigNumber: (u) => ee(u, new u.constructor(0), n.relTol, n.absTol) ? false : !u.isNeg() && !u.isZero() && !u.isNaN(), bigint: (u) => u > 0n, Fraction: (u) => u.s > 0n && u.n > 0n, Unit: e.referToSelf((u) => (t) => e.find(u, t.valueType())(t.value)), "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
+}), Mt = "isZero", qa = ["typed", "equalScalar"], Ra = G(Mt, qa, (r) => {
   var { typed: e, equalScalar: n } = r;
-  return e(Mt, { "number | BigNumber | Complex | Fraction": (u) => n(u, 0), bigint: (u) => u === 0n, Unit: e.referToSelf((u) => (t) => e.find(u, t.valueType())(t.value)), "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
+  return e(Mt, { "number | BigNumber | Complex | Fraction": (u) => n(u, 0), bigint: (u) => u === 0n, Unit: e.referToSelf((u) => (t) => e.find(u, t.valueType())(t.value)), "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
 });
-function La(r, e, n, u) {
+function Ua(r, e, n, u) {
   return Pr(r.re, e.re, n, u) && Pr(r.im, e.im, n, u);
 }
 var se = G("compareUnits", ["typed"], (r) => {
@@ -1542,7 +1541,7 @@ var se = G("compareUnits", ["typed"], (r) => {
     if (!u.equalBase(t)) throw new Error("Cannot compare units with different base");
     return e.find(n, [u.valueType(), t.valueType()])(u.value, t.value);
   }) };
-}), be = "equalScalar", Va = ["typed", "config"], Za = G(be, Va, (r) => {
+}), be = "equalScalar", Pa = ["typed", "config"], La = G(be, Pa, (r) => {
   var { typed: e, config: n } = r, u = se({ typed: e });
   return e(be, { "boolean, boolean": function(a, s) {
     return a === s;
@@ -1555,7 +1554,7 @@ var se = G("compareUnits", ["typed"], (r) => {
   }, "Fraction, Fraction": function(a, s) {
     return a.equals(s);
   }, "Complex, Complex": function(a, s) {
-    return La(a, s, n.relTol, n.absTol);
+    return Ua(a, s, n.relTol, n.absTol);
   } }, u);
 });
 G(be, ["typed", "config"], (r) => {
@@ -1564,7 +1563,7 @@ G(be, ["typed", "config"], (r) => {
     return Pr(t, a, n.relTol, n.absTol);
   } });
 });
-var Ja = "SparseMatrix", Qa = ["typed", "equalScalar", "Matrix"], Wa = G(Ja, Qa, (r) => {
+var Va = "SparseMatrix", Za = ["typed", "equalScalar", "Matrix"], Ja = G(Va, Za, (r) => {
   var { typed: e, equalScalar: n, Matrix: u } = r;
   function t(i, d) {
     if (!(this instanceof t)) throw new SyntaxError("Constructor must be called with the new operator");
@@ -1930,15 +1929,15 @@ var Ja = "SparseMatrix", Qa = ["typed", "equalScalar", "Matrix"], Wa = G(Ja, Qa,
       }
     }
   }, t;
-}, { isClass: true }), Ga = "number", Ya = ["typed"];
-function Xa(r) {
+}, { isClass: true }), Qa = "number", Wa = ["typed"];
+function Ga(r) {
   var e = r.match(/(0[box])([0-9a-fA-F]*)\.([0-9a-fA-F]*)/);
   if (e) {
     var n = { "0b": 2, "0o": 8, "0x": 16 }[e[1]], u = e[2], t = e[3];
     return { input: r, radix: n, integerPart: u, fractionalPart: t };
   } else return null;
 }
-function Ka(r) {
+function Ya(r) {
   for (var e = parseInt(r.integerPart, r.radix), n = 0, u = 0; u < r.fractionalPart.length; u++) {
     var t = parseInt(r.fractionalPart[u], r.radix);
     n += t / Math.pow(r.radix, u + 1);
@@ -1947,15 +1946,15 @@ function Ka(r) {
   if (isNaN(a)) throw new SyntaxError('String "' + r.input + '" is not a valid number');
   return a;
 }
-var Ha = G(Ga, Ya, (r) => {
+var Xa = G(Qa, Wa, (r) => {
   var { typed: e } = r, n = e("number", { "": function() {
     return 0;
   }, number: function(t) {
     return t;
   }, string: function(t) {
     if (t === "NaN") return NaN;
-    var a = Xa(t);
-    if (a) return Ka(a);
+    var a = Ga(t);
+    if (a) return Ya(a);
     var s = 0, D = t.match(/(0[box][0-9a-fA-F]*)i([0-9]*)/);
     D && (s = Number(D[2]), t = D[1]);
     var c = Number(t);
@@ -1978,11 +1977,11 @@ var Ha = G(Ga, Ya, (r) => {
     return 0;
   }, "Unit, string | Unit": function(t, a) {
     return t.toNumber(a);
-  }, "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
+  }, "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
   return n.fromJSON = function(u) {
     return parseFloat(u.value);
   }, n;
-}), ja = "bignumber", ka = ["typed", "BigNumber"], ri = G(ja, ka, (r) => {
+}), Ka = "bignumber", Ha = ["typed", "BigNumber"], ja = G(Ka, Ha, (r) => {
   var { typed: e, BigNumber: n } = r;
   return e("bignumber", { "": function() {
     return new n(0);
@@ -2008,8 +2007,8 @@ var Ha = G(Ga, Ya, (r) => {
     return new n(String(t.n)).div(String(t.d)).times(String(t.s));
   }, null: function(t) {
     return new n(0);
-  }, "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
-}), ei = "complex", ti = ["typed", "Complex"], ni = G(ei, ti, (r) => {
+  }, "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
+}), ka = "complex", ri = ["typed", "Complex"], ei = G(ka, ri, (r) => {
   var { typed: e, Complex: n } = r;
   return e("complex", { "": function() {
     return n.ZERO;
@@ -2031,8 +2030,8 @@ var Ha = G(Ga, Ya, (r) => {
     if ("re" in t && "im" in t) return new n(t.re, t.im);
     if ("r" in t && "phi" in t || "abs" in t && "arg" in t) return new n(t);
     throw new Error("Expected object with properties (re and im) or (r and phi) or (abs and arg)");
-  }, "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
-}), ui = "fraction", ai = ["typed", "Fraction"], ii = G(ui, ai, (r) => {
+  }, "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
+}), ti = "fraction", ni = ["typed", "Fraction"], ui = G(ti, ni, (r) => {
   var { typed: e, Fraction: n } = r;
   return e("fraction", { number: function(t) {
     if (!isFinite(t) || isNaN(t)) throw new Error(t + " cannot be represented as a fraction");
@@ -2056,8 +2055,8 @@ var Ha = G(Ga, Ya, (r) => {
     return a.value = u(t.value), a;
   }), Object: function(t) {
     return new n(t);
-  }, "Array | Matrix": e.referToSelf((u) => (t) => Mr(t, u)) });
-}), Nt = "matrix", oi = ["typed", "Matrix", "DenseMatrix", "SparseMatrix"], si = G(Nt, oi, (r) => {
+  }, "Array | Matrix": e.referToSelf((u) => (t) => Nr(t, u)) });
+}), Nt = "matrix", ai = ["typed", "Matrix", "DenseMatrix", "SparseMatrix"], ii = G(Nt, ai, (r) => {
   var { typed: e, Matrix: n, DenseMatrix: u, SparseMatrix: t } = r;
   return e(Nt, { "": function() {
     return a([]);
@@ -2075,7 +2074,7 @@ var Ha = G(Ga, Ya, (r) => {
     if (D === "sparse") return new t(s, c);
     throw new TypeError("Unknown matrix type " + JSON.stringify(D) + ".");
   }
-}), Tt = "matrixFromColumns", fi = ["typed", "matrix", "flatten", "size"], li = G(Tt, fi, (r) => {
+}), Tt = "matrixFromColumns", oi = ["typed", "matrix", "flatten", "size"], si = G(Tt, oi, (r) => {
   var { typed: e, matrix: n, flatten: u, size: t } = r;
   return e(Tt, { "...Array": function(c) {
     return a(c);
@@ -2101,16 +2100,16 @@ var Ha = G(Ga, Ya, (r) => {
       throw new TypeError("At least one of the arguments is not a vector.");
     } else throw new TypeError("Only one- or two-dimensional vectors are supported.");
   }
-}), zt = "unaryMinus", ci = ["typed"], vi = G(zt, ci, (r) => {
+}), zt = "unaryMinus", fi = ["typed"], li = G(zt, fi, (r) => {
   var { typed: e } = r;
   return e(zt, { number: Ln, "Complex | BigNumber | Fraction": (n) => n.neg(), bigint: (n) => -n, Unit: e.referToSelf((n) => (u) => {
     var t = u.clone();
     return t.value = e.find(n, t.valueType())(u.value), t;
-  }), "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n, true)) });
-}), Ot = "abs", Di = ["typed"], pi = G(Ot, Di, (r) => {
+  }), "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n, true)) });
+}), Ot = "abs", ci = ["typed"], vi = G(Ot, ci, (r) => {
   var { typed: e } = r;
-  return e(Ot, { number: qn, "Complex | BigNumber | Fraction | Unit": (n) => n.abs(), bigint: (n) => n < 0n ? -n : n, "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n, true)) });
-}), $t = "addScalar", di = ["typed"], hi = G($t, di, (r) => {
+  return e(Ot, { number: qn, "Complex | BigNumber | Fraction | Unit": (n) => n.abs(), bigint: (n) => n < 0n ? -n : n, "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n, true)) });
+}), $t = "addScalar", Di = ["typed"], pi = G($t, Di, (r) => {
   var { typed: e } = r;
   return e($t, { "number, number": Rn, "Complex, Complex": function(u, t) {
     return u.add(t);
@@ -2127,7 +2126,7 @@ var Ha = G(Ga, Ya, (r) => {
     var a = u.clone();
     return a.value = e.find(n, [a.valueType(), t.valueType()])(a.value, t.value), a.fixPrefix = false, a;
   }) });
-}), It = "subtractScalar", mi = ["typed"], gi = G(It, mi, (r) => {
+}), It = "subtractScalar", di = ["typed"], hi = G(It, di, (r) => {
   var { typed: e } = r;
   return e(It, { "number, number": Un, "Complex, Complex": function(u, t) {
     return u.sub(t);
@@ -2144,7 +2143,7 @@ var Ha = G(Ga, Ya, (r) => {
     var a = u.clone();
     return a.value = e.find(n, [a.valueType(), t.valueType()])(a.value, t.value), a.fixPrefix = false, a;
   }) });
-}), yi = "matAlgo11xS0s", Ai = ["typed", "equalScalar"], Jn = G(yi, Ai, (r) => {
+}), mi = "matAlgo11xS0s", gi = ["typed", "equalScalar"], Jn = G(mi, gi, (r) => {
   var { typed: e, equalScalar: n } = r;
   return function(t, a, s, D) {
     var c = t._values, f = t._index, o = t._ptr, l = t._size, m = t._datatype;
@@ -2160,7 +2159,7 @@ var Ha = G(Ga, Ya, (r) => {
     }
     return E[p] = _.length, t.createSparseMatrix({ values: A, index: _, ptr: E, size: [v, p], datatype: i });
   };
-}), Fi = "matAlgo12xSfs", Ei = ["typed", "DenseMatrix"], te = G(Fi, Ei, (r) => {
+}), yi = "matAlgo12xSfs", Ai = ["typed", "DenseMatrix"], te = G(yi, Ai, (r) => {
   var { typed: e, DenseMatrix: n } = r;
   return function(t, a, s, D) {
     var c = t._values, f = t._index, o = t._ptr, l = t._size, m = t._datatype;
@@ -2176,7 +2175,7 @@ var Ha = G(Ga, Ya, (r) => {
     }
     return new n({ data: g, size: [v, p], datatype: i });
   };
-}), Ci = "matAlgo14xDs", wi = ["typed"], at = G(Ci, wi, (r) => {
+}), Fi = "matAlgo14xDs", Ei = ["typed"], at = G(Fi, Ei, (r) => {
   var { typed: e } = r;
   return function(t, a, s, D) {
     var c = t._data, f = t._size, o = t._datatype, l, m = s;
@@ -2190,7 +2189,7 @@ var Ha = G(Ga, Ya, (r) => {
     else for (var m = 0; m < s; m++) o[m] = n(u, t + 1, a, a[t + 1], D[m], c, f);
     return o;
   }
-}), bi = "matAlgo03xDSf", _i = ["typed"], ne = G(bi, _i, (r) => {
+}), Ci = "matAlgo03xDSf", wi = ["typed"], ne = G(Ci, wi, (r) => {
   var { typed: e } = r;
   return function(u, t, a, s) {
     var D = u._data, c = u._size, f = u._datatype || u.getDataType(), o = t._values, l = t._index, m = t._ptr, v = t._size, p = t._datatype || t._data === void 0 ? t._datatype : t.getDataType();
@@ -2209,7 +2208,7 @@ var Ha = G(Ga, Ya, (r) => {
     }
     return u.createDenseMatrix({ data: _, size: [i, d], datatype: f === u._datatype && p === t._datatype ? g : void 0 });
   };
-}), Bi = "matAlgo05xSfSf", xi = ["typed", "equalScalar"], Si = G(Bi, xi, (r) => {
+}), bi = "matAlgo05xSfSf", _i = ["typed", "equalScalar"], Bi = G(bi, _i, (r) => {
   var { typed: e, equalScalar: n } = r;
   return function(t, a, s) {
     var D = t._values, c = t._index, f = t._ptr, o = t._size, l = t._datatype || t._data === void 0 ? t._datatype : t.getDataType(), m = a._values, v = a._index, p = a._ptr, i = a._size, d = a._datatype || a._data === void 0 ? a._datatype : a.getDataType();
@@ -2234,7 +2233,7 @@ var Ha = G(Ga, Ya, (r) => {
     }
     return y[w] = C.length, t.createSparseMatrix({ values: B, index: C, ptr: y, size: [g, w], datatype: l === t._datatype && d === a._datatype ? A : void 0 });
   };
-}), Mi = "matAlgo13xDD", Ni = ["typed"], Ti = G(Mi, Ni, (r) => {
+}), xi = "matAlgo13xDD", Si = ["typed"], Mi = G(xi, Si, (r) => {
   var { typed: e } = r;
   return function(t, a, s) {
     var D = t._data, c = t._size, f = t._datatype, o = a._data, l = a._size, m = a._datatype, v = [];
@@ -2258,13 +2257,13 @@ var Ha = G(Ga, Ya, (r) => {
 function Fr(r, e) {
   if (Jr(r.size(), e.size())) return [r, e];
   var n = On(r.size(), e.size());
-  return [r, e].map((u) => zi(u, n));
+  return [r, e].map((u) => Ni(u, n));
 }
-function zi(r, e) {
+function Ni(r, e) {
   return Jr(r.size(), e) ? r : r.create(Ye(r.valueOf(), e), r.datatype());
 }
-var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) => {
-  var { typed: e, matrix: n } = r, u = Ti({ typed: e }), t = at({ typed: e });
+var Ti = "matrixAlgorithmSuite", zi = ["typed", "matrix"], Yr = G(Ti, zi, (r) => {
+  var { typed: e, matrix: n } = r, u = Mi({ typed: e }), t = at({ typed: e });
   return function(s) {
     var D = s.elop, c = s.SD || s.DS, f;
     D ? (f = { "DenseMatrix, DenseMatrix": (v, p) => u(...Fr(v, p), D), "Array, Array": (v, p) => u(...Fr(n(v), n(p)), D).valueOf(), "Array, DenseMatrix": (v, p) => u(...Fr(n(v), p), D), "DenseMatrix, Array": (v, p) => u(...Fr(v, n(p)), D) }, s.SS && (f["SparseMatrix, SparseMatrix"] = (v, p) => s.SS(...Fr(v, p), D, false)), s.DS && (f["DenseMatrix, SparseMatrix"] = (v, p) => s.DS(...Fr(v, p), D, false), f["Array, SparseMatrix"] = (v, p) => s.DS(...Fr(n(v), p), D, false)), c && (f["SparseMatrix, DenseMatrix"] = (v, p) => c(...Fr(p, v), D, true), f["SparseMatrix, Array"] = (v, p) => c(...Fr(n(p), v), D, true))) : (f = { "DenseMatrix, DenseMatrix": e.referToSelf((v) => (p, i) => u(...Fr(p, i), v)), "Array, Array": e.referToSelf((v) => (p, i) => u(...Fr(n(p), n(i)), v).valueOf()), "Array, DenseMatrix": e.referToSelf((v) => (p, i) => u(...Fr(n(p), i), v)), "DenseMatrix, Array": e.referToSelf((v) => (p, i) => u(...Fr(p, n(i)), v)) }, s.SS && (f["SparseMatrix, SparseMatrix"] = e.referToSelf((v) => (p, i) => s.SS(...Fr(p, i), v, false))), s.DS && (f["DenseMatrix, SparseMatrix"] = e.referToSelf((v) => (p, i) => s.DS(...Fr(p, i), v, false)), f["Array, SparseMatrix"] = e.referToSelf((v) => (p, i) => s.DS(...Fr(n(p), i), v, false))), c && (f["SparseMatrix, DenseMatrix"] = e.referToSelf((v) => (p, i) => c(...Fr(i, p), v, true)), f["SparseMatrix, Array"] = e.referToSelf((v) => (p, i) => c(...Fr(n(i), p), v, true))));
@@ -2273,7 +2272,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     var m = s.sS !== void 0 ? s.sS : s.Ss;
     return D ? (s.Ss && (f["SparseMatrix," + o] = (v, p) => s.Ss(v, p, D, false)), m && (f[o + ", SparseMatrix"] = (v, p) => m(p, v, D, true))) : (s.Ss && (f["SparseMatrix," + o] = e.referToSelf((v) => (p, i) => s.Ss(p, i, v, false))), m && (f[o + ", SparseMatrix"] = e.referToSelf((v) => (p, i) => m(i, p, v, true)))), D && D.signatures && En(f, D.signatures), f;
   };
-}), Ii = "matAlgo01xDSid", qi = ["typed"], Qn = G(Ii, qi, (r) => {
+}), Oi = "matAlgo01xDSid", $i = ["typed"], Qn = G(Oi, $i, (r) => {
   var { typed: e } = r;
   return function(u, t, a, s) {
     var D = u._data, c = u._size, f = u._datatype || u.getDataType(), o = t._values, l = t._index, m = t._ptr, v = t._size, p = t._datatype || t._data === void 0 ? t._datatype : t.getDataType();
@@ -2289,7 +2288,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     }
     return u.createDenseMatrix({ data: E, size: [i, d], datatype: f === u._datatype && p === t._datatype ? g : void 0 });
   };
-}), Ri = "matAlgo04xSidSid", Ui = ["typed", "equalScalar"], Pi = G(Ri, Ui, (r) => {
+}), Ii = "matAlgo04xSidSid", qi = ["typed", "equalScalar"], Ri = G(Ii, qi, (r) => {
   var { typed: e, equalScalar: n } = r;
   return function(t, a, s) {
     var D = t._values, c = t._index, f = t._ptr, o = t._size, l = t._datatype || t._data === void 0 ? t._datatype : t.getDataType(), m = a._values, v = a._index, p = a._ptr, i = a._size, d = a._datatype || a._data === void 0 ? a._datatype : a.getDataType();
@@ -2312,7 +2311,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     }
     return y[w] = C.length, t.createSparseMatrix({ values: B, index: C, ptr: y, size: [g, w], datatype: l === t._datatype && d === a._datatype ? A : void 0 });
   };
-}), Li = "matAlgo10xSids", Vi = ["typed", "DenseMatrix"], Wn = G(Li, Vi, (r) => {
+}), Ui = "matAlgo10xSids", Pi = ["typed", "DenseMatrix"], Wn = G(Ui, Pi, (r) => {
   var { typed: e, DenseMatrix: n } = r;
   return function(t, a, s, D) {
     var c = t._values, f = t._index, o = t._ptr, l = t._size, m = t._datatype;
@@ -2328,7 +2327,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     }
     return new n({ data: g, size: [v, p], datatype: i });
   };
-}), Zi = "multiplyScalar", Ji = ["typed"], Qi = G(Zi, Ji, (r) => {
+}), Li = "multiplyScalar", Vi = ["typed"], Zi = G(Li, Vi, (r) => {
   var { typed: e } = r;
   return e("multiplyScalar", { "number, number": Pn, "Complex, Complex": function(u, t) {
     return u.mul(t);
@@ -2339,7 +2338,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
   }, "Fraction, Fraction": function(u, t) {
     return u.mul(t);
   }, "number | Fraction | BigNumber | Complex, Unit": (n, u) => u.multiply(n), "Unit, number | Fraction | BigNumber | Complex | Unit": (n, u) => n.multiply(u) });
-}), qt = "multiply", Wi = ["typed", "matrix", "addScalar", "multiplyScalar", "equalScalar", "dot"], Gi = G(qt, Wi, (r) => {
+}), qt = "multiply", Ji = ["typed", "matrix", "addScalar", "multiplyScalar", "equalScalar", "dot"], Qi = G(qt, Ji, (r) => {
   var { typed: e, matrix: n, addScalar: u, multiplyScalar: t, equalScalar: a, dot: s } = r, D = Jn({ typed: e, equalScalar: a }), c = at({ typed: e });
   function f(E, F) {
     switch (E.length) {
@@ -2508,7 +2507,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     for (var y = E(F, B), x = 0; x < C.length; x++) y = E(y, C[x]);
     return y;
   }) });
-}), Rt = "sign", Yi = ["typed", "BigNumber", "Fraction", "complex"], Xi = G(Rt, Yi, (r) => {
+}), Rt = "sign", Wi = ["typed", "BigNumber", "Fraction", "complex"], Gi = G(Rt, Wi, (r) => {
   var { typed: e, BigNumber: n, complex: u, Fraction: t } = r;
   return e(Rt, { number: Xe, Complex: function(s) {
     return s.im === 0 ? u(Xe(s.re)) : s.sign();
@@ -2518,11 +2517,11 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     return s > 0n ? 1n : s < 0n ? -1n : 0n;
   }, Fraction: function(s) {
     return new t(s.s);
-  }, "Array | Matrix": e.referToSelf((a) => (s) => Mr(s, a, true)), Unit: e.referToSelf((a) => (s) => {
+  }, "Array | Matrix": e.referToSelf((a) => (s) => Nr(s, a, true)), Unit: e.referToSelf((a) => (s) => {
     if (!s._isDerived() && s.units[0].unit.offset !== 0) throw new TypeError("sign is ambiguous for units with offset");
     return e.find(a, s.valueType())(s.value);
   }) });
-}), Ki = "sqrt", Hi = ["config", "typed", "Complex"], ji = G(Ki, Hi, (r) => {
+}), Yi = "sqrt", Xi = ["config", "typed", "Complex"], Ki = G(Yi, Xi, (r) => {
   var { config: e, typed: n, Complex: u } = r;
   return n("sqrt", { number: t, Complex: function(s) {
     return s.sqrt();
@@ -2534,10 +2533,10 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
   function t(a) {
     return isNaN(a) ? NaN : a >= 0 || e.predictable ? Math.sqrt(a) : new u(a, 0).sqrt();
   }
-}), Ut = "subtract", ki = ["typed", "matrix", "equalScalar", "subtractScalar", "unaryMinus", "DenseMatrix", "concat"], ro = G(Ut, ki, (r) => {
-  var { typed: e, matrix: n, equalScalar: u, subtractScalar: t, unaryMinus: a, DenseMatrix: s, concat: D } = r, c = Qn({ typed: e }), f = ne({ typed: e }), o = Si({ typed: e, equalScalar: u }), l = Wn({ typed: e, DenseMatrix: s }), m = te({ typed: e, DenseMatrix: s }), v = Yr({ typed: e, matrix: n, concat: D });
+}), Ut = "subtract", Hi = ["typed", "matrix", "equalScalar", "subtractScalar", "unaryMinus", "DenseMatrix", "concat"], ji = G(Ut, Hi, (r) => {
+  var { typed: e, matrix: n, equalScalar: u, subtractScalar: t, unaryMinus: a, DenseMatrix: s, concat: D } = r, c = Qn({ typed: e }), f = ne({ typed: e }), o = Bi({ typed: e, equalScalar: u }), l = Wn({ typed: e, DenseMatrix: s }), m = te({ typed: e, DenseMatrix: s }), v = Yr({ typed: e, matrix: n, concat: D });
   return e(Ut, { "any, any": t }, v({ elop: t, SS: o, DS: c, SD: f, Ss: m, sS: l }));
-}), eo = "matAlgo07xSSf", to = ["typed", "SparseMatrix"], fe = G(eo, to, (r) => {
+}), ki = "matAlgo07xSSf", ro = ["typed", "SparseMatrix"], fe = G(ki, ro, (r) => {
   var { typed: e, SparseMatrix: n } = r;
   return function(a, s, D) {
     var c = a._size, f = a._datatype || a._data === void 0 ? a._datatype : a.getDataType(), o = s._size, l = s._datatype || s._data === void 0 ? s._datatype : s.getDataType();
@@ -2562,16 +2561,16 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
       s[p] = c, D[p] = f[m];
     }
   }
-}), Pt = "conj", no = ["typed"], uo = G(Pt, no, (r) => {
+}), Pt = "conj", eo = ["typed"], to = G(Pt, eo, (r) => {
   var { typed: e } = r;
-  return e(Pt, { "number | BigNumber | Fraction": (n) => n, Complex: (n) => n.conjugate(), "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n)) });
-}), Lt = "im", ao = ["typed"], io = G(Lt, ao, (r) => {
+  return e(Pt, { "number | BigNumber | Fraction": (n) => n, Complex: (n) => n.conjugate(), "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n)) });
+}), Lt = "im", no = ["typed"], uo = G(Lt, no, (r) => {
   var { typed: e } = r;
-  return e(Lt, { number: () => 0, "BigNumber | Fraction": (n) => n.mul(0), Complex: (n) => n.im, "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n)) });
-}), Vt = "re", oo = ["typed"], so = G(Vt, oo, (r) => {
+  return e(Lt, { number: () => 0, "BigNumber | Fraction": (n) => n.mul(0), Complex: (n) => n.im, "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n)) });
+}), Vt = "re", ao = ["typed"], io = G(Vt, ao, (r) => {
   var { typed: e } = r;
-  return e(Vt, { "number | BigNumber | Fraction": (n) => n, Complex: (n) => n.re, "Array | Matrix": e.referToSelf((n) => (u) => Mr(u, n)) });
-}), Zt = "concat", fo = ["typed", "matrix", "isInteger"], lo = G(Zt, fo, (r) => {
+  return e(Vt, { "number | BigNumber | Fraction": (n) => n, Complex: (n) => n.re, "Array | Matrix": e.referToSelf((n) => (u) => Nr(u, n)) });
+}), Zt = "concat", oo = ["typed", "matrix", "isInteger"], so = G(Zt, oo, (r) => {
   var { typed: e, matrix: n, isInteger: u } = r;
   return e(Zt, { "...Array | Matrix | number | BigNumber": function(a) {
     var s, D = a.length, c = -1, f, o = false, l = [];
@@ -2592,7 +2591,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
   }, "...string": function(a) {
     return a.join("");
   } });
-}), Jt = "column", co = ["typed", "Index", "matrix", "range"], vo = G(Jt, co, (r) => {
+}), Jt = "column", fo = ["typed", "Index", "matrix", "range"], lo = G(Jt, fo, (r) => {
   var { typed: e, Index: n, matrix: u, range: t } = r;
   return e(Jt, { "Matrix, number": a, "Array, number": function(D, c) {
     return a(u(ar(D)), c).valueOf();
@@ -2603,7 +2602,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     var c = t(0, s.size()[0]), f = new n(c, D), o = s.subset(f);
     return lr(o) ? o : u([[o]]);
   }
-}), Qt = "cross", Do = ["typed", "matrix", "subtract", "multiply"], po = G(Qt, Do, (r) => {
+}), Qt = "cross", co = ["typed", "matrix", "subtract", "multiply"], vo = G(Qt, co, (r) => {
   var { typed: e, matrix: n, subtract: u, multiply: t } = r;
   return e(Qt, { "Matrix, Matrix": function(D, c) {
     return n(a(D.toArray(), c.toArray()));
@@ -2620,7 +2619,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     var l = [u(t(s[1], D[2]), t(s[2], D[1])), u(t(s[2], D[0]), t(s[0], D[2])), u(t(s[0], D[1]), t(s[1], D[0]))];
     return c > 1 ? [l] : l;
   }
-}), Wt = "diag", ho = ["typed", "matrix", "DenseMatrix", "SparseMatrix"], mo = G(Wt, ho, (r) => {
+}), Wt = "diag", Do = ["typed", "matrix", "DenseMatrix", "SparseMatrix"], po = G(Wt, Do, (r) => {
   var { typed: e, matrix: n, DenseMatrix: u, SparseMatrix: t } = r;
   return e(Wt, { Array: function(f) {
     return a(f, 0, ir(f), null);
@@ -2672,21 +2671,21 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     for (var i = Math.min(l[0] - m, l[1] - v), d = [], g = 0; g < i; g++) d[g] = c[g + m][g + v];
     return o !== null ? n(d) : d;
   }
-}), Gt = "flatten", go = ["typed"], yo = G(Gt, go, (r) => {
+}), Gt = "flatten", ho = ["typed"], mo = G(Gt, ho, (r) => {
   var { typed: e } = r;
   return e(Gt, { Array: function(u) {
     return Ge(u);
   }, Matrix: function(u) {
     return u.create(Ge(u.valueOf(), true), u.datatype());
   } });
-}), Yt = "getMatrixDataType", Ao = ["typed"], Fo = G(Yt, Ao, (r) => {
+}), Yt = "getMatrixDataType", go = ["typed"], yo = G(Yt, go, (r) => {
   var { typed: e } = r;
   return e(Yt, { Array: function(u) {
     return Oe(u, Ir);
   }, Matrix: function(u) {
     return u.getDataType();
   } });
-}), Xt = "identity", Eo = ["typed", "config", "matrix", "BigNumber", "DenseMatrix", "SparseMatrix"], Co = G(Xt, Eo, (r) => {
+}), Xt = "identity", Ao = ["typed", "config", "matrix", "BigNumber", "DenseMatrix", "SparseMatrix"], Fo = G(Xt, Ao, (r) => {
   var { typed: e, config: n, matrix: u, BigNumber: t, DenseMatrix: a, SparseMatrix: s } = r;
   return e(Xt, { "": function() {
     return n.matrix === "Matrix" ? u([]) : [];
@@ -2734,7 +2733,7 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
     for (var d = Ce([], i, p), g = f < o ? f : o, w = 0; w < g; w++) d[w][w] = v;
     return d;
   }
-}), Kt = "kron", wo = ["typed", "matrix", "multiplyScalar"], bo = G(Kt, wo, (r) => {
+}), Kt = "kron", Eo = ["typed", "matrix", "multiplyScalar"], Co = G(Kt, Eo, (r) => {
   var { typed: e, matrix: n, multiplyScalar: u } = r;
   return e(Kt, { "Matrix, Matrix": function(s, D) {
     return n(t(s.toArray(), D.toArray()));
@@ -2760,13 +2759,13 @@ var Oi = "matrixAlgorithmSuite", $i = ["typed", "matrix"], Yr = G(Oi, $i, (r) =>
 function Gn() {
   throw new Error('No "bignumber" implementation available');
 }
-function _o() {
+function wo() {
   throw new Error('No "fraction" implementation available');
 }
 function Yn() {
   throw new Error('No "matrix" implementation available');
 }
-var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "smallerEq", "larger", "largerEq", "add", "isPositive"], xo = G(Ht, Bo, (r) => {
+var Ht = "range", bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "smallerEq", "larger", "largerEq", "add", "isPositive"], _o = G(Ht, bo, (r) => {
   var { typed: e, config: n, matrix: u, bignumber: t, smaller: a, smallerEq: s, larger: D, largerEq: c, add: f, isPositive: o } = r;
   return e(Ht, { string: m, "string, boolean": m, number: function(d) {
     throw new TypeError("Too few arguments to function range(): ".concat(d));
@@ -2847,7 +2846,7 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
         return null;
     }
   }
-}), jt = "reshape", So = ["typed", "isInteger", "matrix"], Mo = G(jt, So, (r) => {
+}), jt = "reshape", Bo = ["typed", "isInteger", "matrix"], xo = G(jt, Bo, (r) => {
   var { typed: e, isInteger: n } = r;
   return e(jt, { "Matrix, Array": function(t, a) {
     return t.reshape(a, true);
@@ -2856,7 +2855,7 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
       if (!n(s)) throw new TypeError("Invalid size for dimension: " + s);
     }), tt(t, a);
   } });
-}), kt = "size", No = ["typed", "config", "?matrix"], To = G(kt, No, (r) => {
+}), kt = "size", So = ["typed", "config", "?matrix"], Mo = G(kt, So, (r) => {
   var { typed: e, config: n, matrix: u } = r;
   return e(kt, { Matrix: function(a) {
     return a.create(a.size(), "number");
@@ -2865,7 +2864,7 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
   }, "number | Complex | BigNumber | Unit | boolean | null": function(a) {
     return n.matrix === "Array" ? [] : u ? u([], "dense", "number") : Yn();
   } });
-}), rn = "transpose", zo = ["typed", "matrix"], Oo = G(rn, zo, (r) => {
+}), rn = "transpose", No = ["typed", "matrix"], To = G(rn, No, (r) => {
   var { typed: e, matrix: n } = r;
   return e(rn, { Array: (s) => u(n(s)).valueOf(), Matrix: u, any: ar });
   function u(s) {
@@ -2911,12 +2910,12 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
     }
     return s.createSparseMatrix({ values: m, index: v, ptr: p, size: [c, D], datatype: s._datatype });
   }
-}), en = "ctranspose", $o = ["typed", "transpose", "conj"], Io = G(en, $o, (r) => {
+}), en = "ctranspose", zo = ["typed", "transpose", "conj"], Oo = G(en, zo, (r) => {
   var { typed: e, transpose: n, conj: u } = r;
   return e(en, { any: function(a) {
     return u(n(a));
   } });
-}), tn = "zeros", qo = ["typed", "config", "matrix", "BigNumber"], Ro = G(tn, qo, (r) => {
+}), tn = "zeros", $o = ["typed", "config", "matrix", "BigNumber"], Io = G(tn, $o, (r) => {
   var { typed: e, config: n, matrix: u, BigNumber: t } = r;
   return e(tn, { "": function() {
     return n.matrix === "Array" ? a([]) : a([], "default");
@@ -2953,8 +2952,8 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
       if (typeof f != "number" || !pr(f) || f < 0) throw new Error("Parameters in function zeros must be positive integers");
     });
   }
-}), Uo = "numeric", Po = ["number", "?bignumber", "?fraction"], Lo = G(Uo, Po, (r) => {
-  var { number: e, bignumber: n, fraction: u } = r, t = { string: true, number: true, BigNumber: true, Fraction: true }, a = { number: (s) => e(s), BigNumber: n ? (s) => n(s) : Gn, bigint: (s) => BigInt(s), Fraction: u ? (s) => u(s) : _o };
+}), qo = "numeric", Ro = ["number", "?bignumber", "?fraction"], Uo = G(qo, Ro, (r) => {
+  var { number: e, bignumber: n, fraction: u } = r, t = { string: true, number: true, BigNumber: true, Fraction: true }, a = { number: (s) => e(s), BigNumber: n ? (s) => n(s) : Gn, bigint: (s) => BigInt(s), Fraction: u ? (s) => u(s) : wo };
   return function(D) {
     var c = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "number", f = arguments.length > 2 ? arguments[2] : void 0;
     if (f !== void 0) throw new SyntaxError("numeric() takes one or two arguments");
@@ -2963,7 +2962,7 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
     if (!(c in a)) throw new TypeError("Cannot convert " + D + ' to type "' + c + '"; valid output types are ' + Object.keys(a).join(", "));
     return c === o ? D : a[c](D);
   };
-}), nn = "divideScalar", Vo = ["typed", "numeric"], Zo = G(nn, Vo, (r) => {
+}), nn = "divideScalar", Po = ["typed", "numeric"], Lo = G(nn, Po, (r) => {
   var { typed: e, numeric: n } = r;
   return e(nn, { "number, number": function(t, a) {
     return t / a;
@@ -2976,7 +2975,7 @@ var Ht = "range", Bo = ["typed", "config", "?matrix", "?bignumber", "smaller", "
   }, "Fraction, Fraction": function(t, a) {
     return t.div(a);
   }, "Unit, number | Complex | Fraction | BigNumber | Unit": (u, t) => u.divide(t), "number | Fraction | Complex | BigNumber, Unit": (u, t) => t.divideInto(u) });
-}), un = "pow", Jo = ["typed", "config", "identity", "multiply", "matrix", "inv", "fraction", "number", "Complex"], Qo = G(un, Jo, (r) => {
+}), un = "pow", Vo = ["typed", "config", "identity", "multiply", "matrix", "inv", "fraction", "number", "Complex"], Zo = G(un, Vo, (r) => {
   var { typed: e, config: n, identity: u, multiply: t, matrix: a, inv: s, number: D, fraction: c, Complex: f } = r;
   return e(un, { "number, number": o, "Complex, Complex": function(p, i) {
     return p.pow(i);
@@ -3071,7 +3070,7 @@ function Xn(r) {
     }
   };
 }
-var an = "usolve", Wo = ["typed", "matrix", "divideScalar", "multiplyScalar", "subtractScalar", "equalScalar", "DenseMatrix"], Go = G(an, Wo, (r) => {
+var an = "usolve", Jo = ["typed", "matrix", "divideScalar", "multiplyScalar", "subtractScalar", "equalScalar", "DenseMatrix"], Qo = G(an, Jo, (r) => {
   var { typed: e, matrix: n, divideScalar: u, multiplyScalar: t, subtractScalar: a, equalScalar: s, DenseMatrix: D } = r, c = Xn({ DenseMatrix: D });
   return e(an, { "SparseMatrix, Array | Matrix": function(m, v) {
     return o(m, v);
@@ -3116,7 +3115,7 @@ var an = "usolve", Wo = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     }
     return new D({ data: A, size: [p, 1] });
   }
-}), on = "usolveAll", Yo = ["typed", "matrix", "divideScalar", "multiplyScalar", "subtractScalar", "equalScalar", "DenseMatrix"], Xo = G(on, Yo, (r) => {
+}), on = "usolveAll", Wo = ["typed", "matrix", "divideScalar", "multiplyScalar", "subtractScalar", "equalScalar", "DenseMatrix"], Go = G(on, Wo, (r) => {
   var { typed: e, matrix: n, divideScalar: u, multiplyScalar: t, subtractScalar: a, equalScalar: s, DenseMatrix: D } = r, c = Xn({ DenseMatrix: D });
   return e(on, { "SparseMatrix, Array | Matrix": function(m, v) {
     return o(m, v);
@@ -3177,75 +3176,75 @@ var an = "usolve", Wo = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     }
     return v.map((W) => new D({ data: W.map(($) => [$]), size: [p, 1] }));
   }
-}), _e = "equal", Ko = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat", "SparseMatrix"], Ho = G(_e, Ko, (r) => {
+}), _e = "equal", Yo = ["typed", "matrix", "equalScalar", "DenseMatrix", "concat", "SparseMatrix"], Xo = G(_e, Yo, (r) => {
   var { typed: e, matrix: n, equalScalar: u, DenseMatrix: t, concat: a, SparseMatrix: s } = r, D = ne({ typed: e }), c = fe({ typed: e, SparseMatrix: s }), f = te({ typed: e, DenseMatrix: t }), o = Yr({ typed: e, matrix: n, concat: a });
-  return e(_e, jo({ typed: e, equalScalar: u }), o({ elop: u, SS: c, DS: D, Ss: f }));
-}), jo = G(_e, ["typed", "equalScalar"], (r) => {
+  return e(_e, Ko({ typed: e, equalScalar: u }), o({ elop: u, SS: c, DS: D, Ss: f }));
+}), Ko = G(_e, ["typed", "equalScalar"], (r) => {
   var { typed: e, equalScalar: n } = r;
   return e(_e, { "any, any": function(t, a) {
     return t === null ? a === null : a === null ? t === null : t === void 0 ? a === void 0 : a === void 0 ? t === void 0 : n(t, a);
   } });
-}), Be = "smaller", ko = ["typed", "config", "bignumber", "matrix", "DenseMatrix", "concat", "SparseMatrix"], rs = G(Be, ko, (r) => {
+}), Be = "smaller", Ho = ["typed", "config", "bignumber", "matrix", "DenseMatrix", "concat", "SparseMatrix"], jo = G(Be, Ho, (r) => {
   var { typed: e, config: n, bignumber: u, matrix: t, DenseMatrix: a, concat: s, SparseMatrix: D } = r, c = ne({ typed: e }), f = fe({ typed: e, SparseMatrix: D }), o = te({ typed: e, DenseMatrix: a }), l = Yr({ typed: e, matrix: t, concat: s }), m = se({ typed: e });
   function v(p, i) {
     return p.lt(i) && !ee(p, i, n.relTol, n.absTol);
   }
-  return e(Be, es({ typed: e, config: n }), { "boolean, boolean": (p, i) => p < i, "BigNumber, BigNumber": v, "bigint, bigint": (p, i) => p < i, "Fraction, Fraction": (p, i) => p.compare(i) === -1, "Fraction, BigNumber": function(i, d) {
+  return e(Be, ko({ typed: e, config: n }), { "boolean, boolean": (p, i) => p < i, "BigNumber, BigNumber": v, "bigint, bigint": (p, i) => p < i, "Fraction, Fraction": (p, i) => p.compare(i) === -1, "Fraction, BigNumber": function(i, d) {
     return v(u(i), d);
   }, "BigNumber, Fraction": function(i, d) {
     return v(i, u(d));
   }, "Complex, Complex": function(i, d) {
     throw new TypeError("No ordering relation is defined for complex numbers");
   } }, m, l({ SS: f, DS: c, Ss: o }));
-}), es = G(Be, ["typed", "config"], (r) => {
+}), ko = G(Be, ["typed", "config"], (r) => {
   var { typed: e, config: n } = r;
   return e(Be, { "number, number": function(t, a) {
     return t < a && !Pr(t, a, n.relTol, n.absTol);
   } });
-}), xe = "smallerEq", ts = ["typed", "config", "matrix", "DenseMatrix", "concat", "SparseMatrix"], ns = G(xe, ts, (r) => {
+}), xe = "smallerEq", rs = ["typed", "config", "matrix", "DenseMatrix", "concat", "SparseMatrix"], es = G(xe, rs, (r) => {
   var { typed: e, config: n, matrix: u, DenseMatrix: t, concat: a, SparseMatrix: s } = r, D = ne({ typed: e }), c = fe({ typed: e, SparseMatrix: s }), f = te({ typed: e, DenseMatrix: t }), o = Yr({ typed: e, matrix: u, concat: a }), l = se({ typed: e });
-  return e(xe, us({ typed: e, config: n }), { "boolean, boolean": (m, v) => m <= v, "BigNumber, BigNumber": function(v, p) {
+  return e(xe, ts({ typed: e, config: n }), { "boolean, boolean": (m, v) => m <= v, "BigNumber, BigNumber": function(v, p) {
     return v.lte(p) || ee(v, p, n.relTol, n.absTol);
   }, "bigint, bigint": (m, v) => m <= v, "Fraction, Fraction": (m, v) => m.compare(v) !== 1, "Complex, Complex": function() {
     throw new TypeError("No ordering relation is defined for complex numbers");
   } }, l, o({ SS: c, DS: D, Ss: f }));
-}), us = G(xe, ["typed", "config"], (r) => {
+}), ts = G(xe, ["typed", "config"], (r) => {
   var { typed: e, config: n } = r;
   return e(xe, { "number, number": function(t, a) {
     return t <= a || Pr(t, a, n.relTol, n.absTol);
   } });
-}), Se = "larger", as = ["typed", "config", "bignumber", "matrix", "DenseMatrix", "concat", "SparseMatrix"], is = G(Se, as, (r) => {
+}), Se = "larger", ns = ["typed", "config", "bignumber", "matrix", "DenseMatrix", "concat", "SparseMatrix"], us = G(Se, ns, (r) => {
   var { typed: e, config: n, bignumber: u, matrix: t, DenseMatrix: a, concat: s, SparseMatrix: D } = r, c = ne({ typed: e }), f = fe({ typed: e, SparseMatrix: D }), o = te({ typed: e, DenseMatrix: a }), l = Yr({ typed: e, matrix: t, concat: s }), m = se({ typed: e });
   function v(p, i) {
     return p.gt(i) && !ee(p, i, n.relTol, n.absTol);
   }
-  return e(Se, os({ typed: e, config: n }), { "boolean, boolean": (p, i) => p > i, "BigNumber, BigNumber": v, "bigint, bigint": (p, i) => p > i, "Fraction, Fraction": (p, i) => p.compare(i) === 1, "Fraction, BigNumber": function(i, d) {
+  return e(Se, as({ typed: e, config: n }), { "boolean, boolean": (p, i) => p > i, "BigNumber, BigNumber": v, "bigint, bigint": (p, i) => p > i, "Fraction, Fraction": (p, i) => p.compare(i) === 1, "Fraction, BigNumber": function(i, d) {
     return v(u(i), d);
   }, "BigNumber, Fraction": function(i, d) {
     return v(i, u(d));
   }, "Complex, Complex": function() {
     throw new TypeError("No ordering relation is defined for complex numbers");
   } }, m, l({ SS: f, DS: c, Ss: o }));
-}), os = G(Se, ["typed", "config"], (r) => {
+}), as = G(Se, ["typed", "config"], (r) => {
   var { typed: e, config: n } = r;
   return e(Se, { "number, number": function(t, a) {
     return t > a && !Pr(t, a, n.relTol, n.absTol);
   } });
-}), Me = "largerEq", ss = ["typed", "config", "matrix", "DenseMatrix", "concat", "SparseMatrix"], fs = G(Me, ss, (r) => {
+}), Me = "largerEq", is = ["typed", "config", "matrix", "DenseMatrix", "concat", "SparseMatrix"], os = G(Me, is, (r) => {
   var { typed: e, config: n, matrix: u, DenseMatrix: t, concat: a, SparseMatrix: s } = r, D = ne({ typed: e }), c = fe({ typed: e, SparseMatrix: s }), f = te({ typed: e, DenseMatrix: t }), o = Yr({ typed: e, matrix: u, concat: a }), l = se({ typed: e });
-  return e(Me, ls({ typed: e, config: n }), { "boolean, boolean": (m, v) => m >= v, "BigNumber, BigNumber": function(v, p) {
+  return e(Me, ss({ typed: e, config: n }), { "boolean, boolean": (m, v) => m >= v, "BigNumber, BigNumber": function(v, p) {
     return v.gte(p) || ee(v, p, n.relTol, n.absTol);
   }, "bigint, bigint": function(v, p) {
     return v >= p;
   }, "Fraction, Fraction": (m, v) => m.compare(v) !== -1, "Complex, Complex": function() {
     throw new TypeError("No ordering relation is defined for complex numbers");
   } }, l, o({ SS: c, DS: D, Ss: f }));
-}), ls = G(Me, ["typed", "config"], (r) => {
+}), ss = G(Me, ["typed", "config"], (r) => {
   var { typed: e, config: n } = r;
   return e(Me, { "number, number": function(t, a) {
     return t >= a || Pr(t, a, n.relTol, n.absTol);
   } });
-}), cs = "ImmutableDenseMatrix", vs = ["smaller", "DenseMatrix"], Ds = G(cs, vs, (r) => {
+}), fs = "ImmutableDenseMatrix", ls = ["smaller", "DenseMatrix"], cs = G(fs, ls, (r) => {
   var { smaller: e, DenseMatrix: n } = r;
   function u(t, a) {
     if (!(this instanceof u)) throw new SyntaxError("Constructor must be called with the new operator");
@@ -3302,7 +3301,7 @@ var an = "usolve", Wo = ["typed", "matrix", "divideScalar", "multiplyScalar", "s
     }
     return this._max;
   }, u;
-}, { isClass: true }), ps = "Index", ds = ["ImmutableDenseMatrix", "getMatrixDataType"], hs = G(ps, ds, (r) => {
+}, { isClass: true }), vs = "Index", Ds = ["ImmutableDenseMatrix", "getMatrixDataType"], ps = G(vs, Ds, (r) => {
   var { ImmutableDenseMatrix: e, getMatrixDataType: n } = r;
   function u(a) {
     if (!(this instanceof u)) throw new SyntaxError("Constructor must be called with the new operator");
@@ -3385,7 +3384,7 @@ function sn(r) {
     n && e.push(u);
   }), e;
 }
-var ms = "atan", gs = ["typed"], ys = G(ms, gs, (r) => {
+var ds = "atan", hs = ["typed"], ms = G(ds, hs, (r) => {
   var { typed: e } = r;
   return e("atan", { number: function(u) {
     return Math.atan(u);
@@ -3400,19 +3399,19 @@ var ms = "atan", gs = ["typed"], ys = G(ms, gs, (r) => {
     if (!u.hasBase(u.constructor.BASE_UNITS.ANGLE)) throw new TypeError("Unit in function cot is no angle");
     return e.find(n, u.valueType())(u.value);
   }) };
-}), fn = "cos", As = ["typed"], Fs = G(fn, As, (r) => {
+}), fn = "cos", gs = ["typed"], ys = G(fn, gs, (r) => {
   var { typed: e } = r, n = Kn({ typed: e });
   return e(fn, { number: Math.cos, "Complex | BigNumber": (u) => u.cos() }, n);
-}), ln = "sin", Es = ["typed"], Cs = G(ln, Es, (r) => {
+}), ln = "sin", As = ["typed"], Fs = G(ln, As, (r) => {
   var { typed: e } = r, n = Kn({ typed: e });
   return e(ln, { number: Math.sin, "Complex | BigNumber": (u) => u.sin() }, n);
-}), cn = "add", ws = ["typed", "matrix", "addScalar", "equalScalar", "DenseMatrix", "SparseMatrix", "concat"], bs = G(cn, ws, (r) => {
-  var { typed: e, matrix: n, addScalar: u, equalScalar: t, DenseMatrix: a, SparseMatrix: s, concat: D } = r, c = Qn({ typed: e }), f = Pi({ typed: e, equalScalar: t }), o = Wn({ typed: e, DenseMatrix: a }), l = Yr({ typed: e, matrix: n, concat: D });
+}), cn = "add", Es = ["typed", "matrix", "addScalar", "equalScalar", "DenseMatrix", "SparseMatrix", "concat"], Cs = G(cn, Es, (r) => {
+  var { typed: e, matrix: n, addScalar: u, equalScalar: t, DenseMatrix: a, SparseMatrix: s, concat: D } = r, c = Qn({ typed: e }), f = Ri({ typed: e, equalScalar: t }), o = Wn({ typed: e, DenseMatrix: a }), l = Yr({ typed: e, matrix: n, concat: D });
   return e(cn, { "any, any": u, "any, any, ...any": e.referToSelf((m) => (v, p, i) => {
     for (var d = m(v, p), g = 0; g < i.length; g++) d = m(d, i[g]);
     return d;
   }) }, l({ elop: u, DS: c, SS: f, Ss: o }));
-}), vn = "norm", _s = ["typed", "abs", "add", "pow", "conj", "sqrt", "multiply", "equalScalar", "larger", "smaller", "matrix", "ctranspose", "eigs"], Bs = G(vn, _s, (r) => {
+}), vn = "norm", ws = ["typed", "abs", "add", "pow", "conj", "sqrt", "multiply", "equalScalar", "larger", "smaller", "matrix", "ctranspose", "eigs"], bs = G(vn, ws, (r) => {
   var { typed: e, abs: n, add: u, pow: t, conj: a, sqrt: s, multiply: D, equalScalar: c, larger: f, smaller: o, matrix: l, ctranspose: m, eigs: v } = r;
   return e(vn, { number: Math.abs, Complex: function(C) {
     return C.abs();
@@ -3499,7 +3498,7 @@ var ms = "atan", gs = ["typed"], ys = G(ms, gs, (r) => {
       throw new RangeError("Invalid matrix dimensions");
     }
   }
-}), Dn = "dot", xs = ["typed", "addScalar", "multiplyScalar", "conj", "size"], Ss = G(Dn, xs, (r) => {
+}), Dn = "dot", _s = ["typed", "addScalar", "multiplyScalar", "conj", "size"], Bs = G(Dn, _s, (r) => {
   var { typed: e, addScalar: n, multiplyScalar: u, conj: t, size: a } = r;
   return e(Dn, { "Array | DenseMatrix, Array | DenseMatrix": D, "SparseMatrix, SparseMatrix": c });
   function s(o, l) {
@@ -3556,7 +3555,7 @@ var ms = "atan", gs = ["typed"], ys = G(ms, gs, (r) => {
   function f(o) {
     return lr(o) ? o.size() : a(o);
   }
-}), pn = "qr", Ms = ["typed", "matrix", "zeros", "identity", "isZero", "equal", "sign", "sqrt", "conj", "unaryMinus", "addScalar", "divideScalar", "multiplyScalar", "subtractScalar", "complex"], Ns = G(pn, Ms, (r) => {
+}), pn = "qr", xs = ["typed", "matrix", "zeros", "identity", "isZero", "equal", "sign", "sqrt", "conj", "unaryMinus", "addScalar", "divideScalar", "multiplyScalar", "subtractScalar", "complex"], Ss = G(pn, xs, (r) => {
   var { typed: e, matrix: n, zeros: u, identity: t, isZero: a, equal: s, sign: D, sqrt: c, conj: f, unaryMinus: o, addScalar: l, divideScalar: m, multiplyScalar: v, subtractScalar: p, complex: i } = r;
   return Ne(e(pn, { DenseMatrix: function(_) {
     return g(_);
@@ -3599,7 +3598,7 @@ R: ` + this.R.toString();
   function w(A) {
     throw new Error("qr not implemented for sparse matrices yet");
   }
-}), dn = "det", Ts = ["typed", "matrix", "subtractScalar", "multiply", "divideScalar", "isZero", "unaryMinus"], zs = G(dn, Ts, (r) => {
+}), dn = "det", Ms = ["typed", "matrix", "subtractScalar", "multiply", "divideScalar", "isZero", "unaryMinus"], Ns = G(dn, Ms, (r) => {
   var { typed: e, matrix: n, subtractScalar: u, multiply: t, divideScalar: a, isZero: s, unaryMinus: D } = r;
   return e(dn, { any: function(o) {
     return ar(o);
@@ -3640,7 +3639,7 @@ R: ` + this.R.toString();
     var F = f[v[o - 1]][o - 1];
     return m ? D(F) : F;
   }
-}), hn = "inv", Os = ["typed", "matrix", "divideScalar", "addScalar", "multiply", "unaryMinus", "det", "identity", "abs"], $s = G(hn, Os, (r) => {
+}), hn = "inv", Ts = ["typed", "matrix", "divideScalar", "addScalar", "multiply", "unaryMinus", "det", "identity", "abs"], zs = G(hn, Ts, (r) => {
   var { typed: e, matrix: n, divideScalar: u, addScalar: t, multiply: a, unaryMinus: s, det: D, identity: c, abs: f } = r;
   return e(hn, { "Array | Matrix": function(m) {
     var v = lr(m) ? m.size() : ir(m);
@@ -3694,7 +3693,7 @@ R: ` + this.R.toString();
     }
   }
 });
-function Is(r) {
+function Os(r) {
   var { addScalar: e, subtract: n, flatten: u, multiply: t, multiplyScalar: a, divideScalar: s, sqrt: D, abs: c, bignumber: f, diag: o, size: l, reshape: m, inv: v, qr: p, usolve: i, usolveAll: d, equal: g, complex: w, larger: A, smaller: _, matrixFromColumns: E, dot: F } = r;
   function B($, q, V, Y) {
     var Z = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : true, R = C($, q, V, Y, Z);
@@ -3719,7 +3718,7 @@ function Is(r) {
           var Cr = _(s(e(Dr, fr), cr), a(e(ur, fr), 0.95));
           if (Cr) {
             tr = false;
-            for (var Qr = s(1, cr), Nr = 0; Nr < q; Nr++) nr !== Nr && ($[nr][Nr] = a($[nr][Nr], Qr), $[Nr][nr] = a($[Nr][nr], cr));
+            for (var Qr = s(1, cr), Tr = 0; Tr < q; Tr++) nr !== Tr && ($[nr][Tr] = a($[nr][Tr], Qr), $[Tr][nr] = a($[Tr][nr], cr));
             Z && (rr[nr] = a(rr[nr], Qr));
           }
         }
@@ -3784,8 +3783,8 @@ function Is(r) {
       var Qr = Error("The eigenvalues failed to converge. Only found these eigenvalues: " + K.join(", "));
       throw Qr.values = K, Qr.vectors = [], Qr;
     }
-    var Nr = Z ? t(rr, z(j, q)) : void 0;
-    return { values: K, C: Nr };
+    var Tr = Z ? t(rr, z(j, q)) : void 0;
+    return { values: K, C: Tr };
   }
   function h($, q, V, Y, Z, R, J) {
     var L = v(V), U = t(L, $, V), K = J === "BigNumber", Q = J === "Complex", j = K ? f(0) : Q ? w(0) : 0, rr = K ? f(1) : Q ? w(1) : 1, tr = [], nr = [];
@@ -3794,14 +3793,14 @@ function Is(r) {
       fr === -1 ? (tr.push(ur), nr.push(1)) : nr[fr] += 1;
     }
     for (var gr = [], cr = tr.length, Dr = Array(q).fill(j), xr = o(Array(q).fill(rr)), Sr = function() {
-      var Nr = tr[Cr], pe = n(U, t(Nr, xr)), Rr = d(pe, Dr);
+      var Tr = tr[Cr], pe = n(U, t(Tr, xr)), Rr = d(pe, Dr);
       for (Rr.shift(); Rr.length < nr[Cr]; ) {
         var dt = I(pe, q, Rr, R, J);
         if (dt === null) break;
         Rr.push(dt);
       }
       var uu = t(v(Y), V);
-      Rr = Rr.map((Le) => t(uu, Le)), gr.push(...Rr.map((Le) => ({ value: Nr, vector: u(Le) })));
+      Rr = Rr.map((Le) => t(uu, Le)), gr.push(...Rr.map((Le) => ({ value: Tr, vector: u(Le) })));
     }, Cr = 0; Cr < cr; Cr++) Sr();
     return gr;
   }
@@ -3871,7 +3870,7 @@ function Is(r) {
   }
   return B;
 }
-function qs(r) {
+function $s(r) {
   var { config: e, addScalar: n, subtract: u, abs: t, atan: a, cos: s, sin: D, multiplyScalar: c, inv: f, bignumber: o, multiply: l, add: m } = r;
   function v(y, x) {
     var h = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : e.relTol, b = arguments.length > 3 ? arguments[3] : void 0, M = arguments.length > 4 ? arguments[4] : void 0;
@@ -3959,8 +3958,8 @@ function qs(r) {
   }
   return v;
 }
-var Rs = "eigs", Us = ["config", "typed", "matrix", "addScalar", "equal", "subtract", "abs", "atan", "cos", "sin", "multiplyScalar", "divideScalar", "inv", "bignumber", "multiply", "add", "larger", "column", "flatten", "number", "complex", "sqrt", "diag", "size", "reshape", "qr", "usolve", "usolveAll", "im", "re", "smaller", "matrixFromColumns", "dot"], Ps = G(Rs, Us, (r) => {
-  var { config: e, typed: n, matrix: u, addScalar: t, subtract: a, equal: s, abs: D, atan: c, cos: f, sin: o, multiplyScalar: l, divideScalar: m, inv: v, bignumber: p, multiply: i, add: d, larger: g, column: w, flatten: A, number: _, complex: E, sqrt: F, diag: B, size: C, reshape: y, qr: x, usolve: h, usolveAll: b, im: M, re: S, smaller: z, matrixFromColumns: N, dot: I } = r, T = qs({ config: e, addScalar: t, subtract: a, abs: D, atan: c, cos: f, sin: o, multiplyScalar: l, inv: v, bignumber: p, multiply: i, add: d }), O = Is({ addScalar: t, subtract: a, multiply: i, multiplyScalar: l, flatten: A, divideScalar: m, sqrt: F, abs: D, bignumber: p, diag: B, size: C, reshape: y, qr: x, inv: v, usolve: h, usolveAll: b, equal: s, complex: E, larger: g, smaller: z, matrixFromColumns: N, dot: I });
+var Is = "eigs", qs = ["config", "typed", "matrix", "addScalar", "equal", "subtract", "abs", "atan", "cos", "sin", "multiplyScalar", "divideScalar", "inv", "bignumber", "multiply", "add", "larger", "column", "flatten", "number", "complex", "sqrt", "diag", "size", "reshape", "qr", "usolve", "usolveAll", "im", "re", "smaller", "matrixFromColumns", "dot"], Rs = G(Is, qs, (r) => {
+  var { config: e, typed: n, matrix: u, addScalar: t, subtract: a, equal: s, abs: D, atan: c, cos: f, sin: o, multiplyScalar: l, divideScalar: m, inv: v, bignumber: p, multiply: i, add: d, larger: g, column: w, flatten: A, number: _, complex: E, sqrt: F, diag: B, size: C, reshape: y, qr: x, usolve: h, usolveAll: b, im: M, re: S, smaller: z, matrixFromColumns: N, dot: I } = r, T = $s({ config: e, addScalar: t, subtract: a, abs: D, atan: c, cos: f, sin: o, multiplyScalar: l, inv: v, bignumber: p, multiply: i, add: d }), O = Os({ addScalar: t, subtract: a, multiply: i, multiplyScalar: l, flatten: A, divideScalar: m, sqrt: F, abs: D, bignumber: p, diag: B, size: C, reshape: y, qr: x, inv: v, usolve: h, usolveAll: b, equal: s, complex: E, larger: g, smaller: z, matrixFromColumns: N, dot: I });
   return n("eigs", { Array: function(R) {
     return P(u(R));
   }, "Array, number|BigNumber": function(R, J) {
@@ -4029,7 +4028,7 @@ var Rs = "eigs", Us = ["config", "typed", "matrix", "addScalar", "equal", "subtr
       return "number";
     } else throw TypeError("Matrix contains unsupported types only.");
   }
-}), Ls = "divide", Vs = ["typed", "matrix", "multiply", "equalScalar", "divideScalar", "inv"], Zs = G(Ls, Vs, (r) => {
+}), Us = "divide", Ps = ["typed", "matrix", "multiply", "equalScalar", "divideScalar", "inv"], Ls = G(Us, Ps, (r) => {
   var { typed: e, matrix: n, multiply: u, equalScalar: t, divideScalar: a, inv: s } = r, D = Jn({ typed: e, equalScalar: t }), c = at({ typed: e });
   return e("divide", En({ "Array | Matrix, Array | Matrix": function(o, l) {
     return u(o, s(l));
@@ -4042,17 +4041,17 @@ var Rs = "eigs", Us = ["config", "typed", "matrix", "addScalar", "equal", "subtr
   }, "any, Array | Matrix": function(o, l) {
     return u(o, s(l));
   } }, a.signatures));
-}), le = aa({ config: br }), Ie = sa({}), it = da({}), ot = ga({}), Br = za({ Matrix: ot }), H = ea({ BigNumber: le, Complex: Ie, DenseMatrix: Br, Fraction: it }), st = pi({ typed: H }), ue = hi({ typed: H }), Js = ys({ typed: H }), ft = ni({ Complex: Ie, typed: H }), qe = uo({ typed: H }), Qs = Fs({ typed: H }), qr = Za({ config: br, typed: H }), Hn = yo({ typed: H }), Ws = Fo({ typed: H }), Gs = io({ typed: H }), jn = $a({ typed: H }), Ys = Ra({ config: br, typed: H }), kn = Pa({ equalScalar: qr, typed: H }), Xr = Qi({ typed: H }), lt = Ha({ typed: H }), Xs = so({ typed: H }), Ks = Xi({ BigNumber: le, Fraction: it, complex: ft, typed: H }), Hs = Cs({ typed: H }), Lr = Wa({ Matrix: ot, equalScalar: qr, typed: H }), ce = gi({ typed: H }), ve = ri({ BigNumber: le, typed: H }), sr = si({ DenseMatrix: Br, Matrix: ot, SparseMatrix: Lr, typed: H }), js = Mo({ isInteger: jn, matrix: sr, typed: H }), ct = ji({ Complex: Ie, config: br, typed: H }), ru = Oo({ matrix: sr, typed: H }), Ke = Ro({ BigNumber: le, config: br, matrix: sr, typed: H }), Kr = lo({ isInteger: jn, matrix: sr, typed: H }), ks = Io({ conj: qe, transpose: ru, typed: H }), rf = mo({ DenseMatrix: Br, SparseMatrix: Lr, matrix: sr, typed: H }), eu = Ho({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, equalScalar: qr, matrix: sr, typed: H }), tu = ii({ Fraction: it, typed: H }), De = Co({ BigNumber: le, DenseMatrix: Br, SparseMatrix: Lr, config: br, matrix: sr, typed: H }), nu = bo({ matrix: sr, multiplyScalar: Xr, typed: H }), ef = fs({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, config: br, matrix: sr, typed: H }), tf = Lo({ bignumber: ve, fraction: tu, number: lt }), vt = To({ matrix: sr, config: br, typed: H }), Re = rs({ DenseMatrix: Br, SparseMatrix: Lr, bignumber: ve, concat: Kr, config: br, matrix: sr, typed: H }), Ue = vi({ typed: H }), Pe = bs({ DenseMatrix: Br, SparseMatrix: Lr, addScalar: ue, concat: Kr, equalScalar: qr, matrix: sr, typed: H }), Hr = Zo({ numeric: tf, typed: H }), nf = Ds({ DenseMatrix: Br, smaller: Re }), uf = hs({ ImmutableDenseMatrix: nf, getMatrixDataType: Ws }), Dt = is({ DenseMatrix: Br, SparseMatrix: Lr, bignumber: ve, concat: Kr, config: br, matrix: sr, typed: H }), af = li({ flatten: Hn, matrix: sr, size: vt, typed: H }), of = Ns({ addScalar: ue, complex: ft, conj: qe, divideScalar: Hr, equal: eu, identity: De, isZero: kn, matrix: sr, multiplyScalar: Xr, sign: Ks, sqrt: ct, subtractScalar: ce, typed: H, unaryMinus: Ue, zeros: Ke }), sf = ns({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, config: br, matrix: sr, typed: H }), Zr = ro({ DenseMatrix: Br, concat: Kr, equalScalar: qr, matrix: sr, subtractScalar: ce, typed: H, unaryMinus: Ue }), ff = Go({ DenseMatrix: Br, divideScalar: Hr, equalScalar: qr, matrix: sr, multiplyScalar: Xr, subtractScalar: ce, typed: H }), ae = Ss({ addScalar: ue, conj: qe, multiplyScalar: Xr, size: vt, typed: H }), zr = Gi({ addScalar: ue, dot: ae, equalScalar: qr, matrix: sr, multiplyScalar: Xr, typed: H }), lf = xo({ bignumber: ve, matrix: sr, add: Pe, config: br, isPositive: Ys, larger: Dt, largerEq: ef, smaller: Re, smallerEq: sf, typed: H }), cf = Xo({ DenseMatrix: Br, divideScalar: Hr, equalScalar: qr, matrix: sr, multiplyScalar: Xr, subtractScalar: ce, typed: H }), vf = vo({ Index: uf, matrix: sr, range: lf, typed: H }), ge = po({ matrix: sr, multiply: zr, subtract: Zr, typed: H }), Df = zs({ divideScalar: Hr, isZero: kn, matrix: sr, multiply: zr, subtractScalar: ce, typed: H, unaryMinus: Ue }), pt = $s({ abs: st, addScalar: ue, det: Df, divideScalar: Hr, identity: De, matrix: sr, multiply: zr, typed: H, unaryMinus: Ue }), pf = Qo({ Complex: Ie, config: br, fraction: tu, identity: De, inv: pt, matrix: sr, multiply: zr, number: lt, typed: H }), ye = Zs({ divideScalar: Hr, equalScalar: qr, inv: pt, matrix: sr, multiply: zr, typed: H }), df = Ps({ abs: st, add: Pe, addScalar: ue, atan: Js, bignumber: ve, column: vf, complex: ft, config: br, cos: Qs, diag: rf, divideScalar: Hr, dot: ae, equal: eu, flatten: Hn, im: Gs, inv: pt, larger: Dt, matrix: sr, matrixFromColumns: af, multiply: zr, multiplyScalar: Xr, number: lt, qr: of, re: Xs, reshape: js, sin: Hs, size: vt, smaller: Re, sqrt: ct, subtract: Zr, typed: H, usolve: ff, usolveAll: cf }), kr = Bs({ abs: st, add: Pe, conj: qe, ctranspose: ks, eigs: df, equalScalar: qr, larger: Dt, matrix: sr, multiply: zr, pow: pf, smaller: Re, sqrt: ct, typed: H });
-function hf(r) {
-  if (r.length === 2) return mf(r[0], r[1]);
-  if (r.length === 3) return gf(r[0], r[1], r[2]);
+}), le = na({ config: br }), Ie = ia({}), it = Da({}), ot = ha({}), Br = Na({ Matrix: ot }), H = ku({ BigNumber: le, Complex: Ie, DenseMatrix: Br, Fraction: it }), st = vi({ typed: H }), ue = pi({ typed: H }), Vs = ms({ typed: H }), ft = ei({ Complex: Ie, typed: H }), qe = to({ typed: H }), Zs = ys({ typed: H }), qr = La({ config: br, typed: H }), Hn = mo({ typed: H }), Js = yo({ typed: H }), Qs = uo({ typed: H }), jn = za({ typed: H }), Ws = Ia({ config: br, typed: H }), kn = Ra({ equalScalar: qr, typed: H }), Xr = Zi({ typed: H }), lt = Xa({ typed: H }), Gs = io({ typed: H }), Ys = Gi({ BigNumber: le, Fraction: it, complex: ft, typed: H }), Xs = Fs({ typed: H }), Lr = Ja({ Matrix: ot, equalScalar: qr, typed: H }), ce = hi({ typed: H }), ve = ja({ BigNumber: le, typed: H }), sr = ii({ DenseMatrix: Br, Matrix: ot, SparseMatrix: Lr, typed: H }), Ks = xo({ isInteger: jn, matrix: sr, typed: H }), ct = Ki({ Complex: Ie, config: br, typed: H }), ru = To({ matrix: sr, typed: H }), Ke = Io({ BigNumber: le, config: br, matrix: sr, typed: H }), Kr = so({ isInteger: jn, matrix: sr, typed: H }), Hs = Oo({ conj: qe, transpose: ru, typed: H }), js = po({ DenseMatrix: Br, SparseMatrix: Lr, matrix: sr, typed: H }), eu = Xo({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, equalScalar: qr, matrix: sr, typed: H }), tu = ui({ Fraction: it, typed: H }), De = Fo({ BigNumber: le, DenseMatrix: Br, SparseMatrix: Lr, config: br, matrix: sr, typed: H }), nu = Co({ matrix: sr, multiplyScalar: Xr, typed: H }), ks = os({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, config: br, matrix: sr, typed: H }), rf = Uo({ bignumber: ve, fraction: tu, number: lt }), vt = Mo({ matrix: sr, config: br, typed: H }), Re = jo({ DenseMatrix: Br, SparseMatrix: Lr, bignumber: ve, concat: Kr, config: br, matrix: sr, typed: H }), Ue = li({ typed: H }), Pe = Cs({ DenseMatrix: Br, SparseMatrix: Lr, addScalar: ue, concat: Kr, equalScalar: qr, matrix: sr, typed: H }), Hr = Lo({ numeric: rf, typed: H }), ef = cs({ DenseMatrix: Br, smaller: Re }), tf = ps({ ImmutableDenseMatrix: ef, getMatrixDataType: Js }), Dt = us({ DenseMatrix: Br, SparseMatrix: Lr, bignumber: ve, concat: Kr, config: br, matrix: sr, typed: H }), nf = si({ flatten: Hn, matrix: sr, size: vt, typed: H }), uf = Ss({ addScalar: ue, complex: ft, conj: qe, divideScalar: Hr, equal: eu, identity: De, isZero: kn, matrix: sr, multiplyScalar: Xr, sign: Ys, sqrt: ct, subtractScalar: ce, typed: H, unaryMinus: Ue, zeros: Ke }), af = es({ DenseMatrix: Br, SparseMatrix: Lr, concat: Kr, config: br, matrix: sr, typed: H }), Zr = ji({ DenseMatrix: Br, concat: Kr, equalScalar: qr, matrix: sr, subtractScalar: ce, typed: H, unaryMinus: Ue }), of = Qo({ DenseMatrix: Br, divideScalar: Hr, equalScalar: qr, matrix: sr, multiplyScalar: Xr, subtractScalar: ce, typed: H }), ae = Bs({ addScalar: ue, conj: qe, multiplyScalar: Xr, size: vt, typed: H }), Mr = Qi({ addScalar: ue, dot: ae, equalScalar: qr, matrix: sr, multiplyScalar: Xr, typed: H }), sf = _o({ bignumber: ve, matrix: sr, add: Pe, config: br, isPositive: Ws, larger: Dt, largerEq: ks, smaller: Re, smallerEq: af, typed: H }), ff = Go({ DenseMatrix: Br, divideScalar: Hr, equalScalar: qr, matrix: sr, multiplyScalar: Xr, subtractScalar: ce, typed: H }), lf = lo({ Index: tf, matrix: sr, range: sf, typed: H }), ge = vo({ matrix: sr, multiply: Mr, subtract: Zr, typed: H }), cf = Ns({ divideScalar: Hr, isZero: kn, matrix: sr, multiply: Mr, subtractScalar: ce, typed: H, unaryMinus: Ue }), pt = zs({ abs: st, addScalar: ue, det: cf, divideScalar: Hr, identity: De, matrix: sr, multiply: Mr, typed: H, unaryMinus: Ue }), vf = Zo({ Complex: Ie, config: br, fraction: tu, identity: De, inv: pt, matrix: sr, multiply: Mr, number: lt, typed: H }), ye = Ls({ divideScalar: Hr, equalScalar: qr, inv: pt, matrix: sr, multiply: Mr, typed: H }), Df = Rs({ abs: st, add: Pe, addScalar: ue, atan: Vs, bignumber: ve, column: lf, complex: ft, config: br, cos: Zs, diag: js, divideScalar: Hr, dot: ae, equal: eu, flatten: Hn, im: Qs, inv: pt, larger: Dt, matrix: sr, matrixFromColumns: nf, multiply: Mr, multiplyScalar: Xr, number: lt, qr: uf, re: Gs, reshape: Ks, sin: Xs, size: vt, smaller: Re, sqrt: ct, subtract: Zr, typed: H, usolve: of, usolveAll: ff }), kr = bs({ abs: st, add: Pe, conj: qe, ctranspose: Hs, eigs: Df, equalScalar: qr, larger: Dt, matrix: sr, multiply: Mr, pow: vf, smaller: Re, sqrt: ct, typed: H });
+function pf(r) {
+  if (r.length === 2) return df(r[0], r[1]);
+  if (r.length === 3) return hf(r[0], r[1], r[2]);
 }
-function mf(r, e) {
+function df(r, e) {
   const n = Zr(e, r), u = kr(n), t = ae(n, [1, 0, 0]) / u, a = ae(n, [0, 1, 0]) / u, s = ae(n, [0, 0, 1]) / u, D = Math.sqrt(t ** 2 + a ** 2);
   let c = [[t, a, s], [-a / D, t / D, 0], [-t * s / D, -a * s / D, D]];
   return s === 1 && (c = [[0, 0, 1], [0, 1, 0], [-1, 0, 0]]), s === -1 && (c = [[0, 0, -1], [0, 1, 0], [1, 0, 0]]), nu(De(4), c).toArray();
 }
-function gf(r, e, n) {
+function hf(r, e, n) {
   const u = l([e, n]), t = l([r, n]), a = l([r, e]), s = ye(Zr(u, t), kr(Zr(u, t))), D = ye(Zr(n, a), kr(Zr(u, t))), c = ye(ge(s, D), kr(ge(s, D))), f = ye(ge(c, s), kr(ge(c, s))), o = [[s[0], f[0], c[0]], [s[1], f[1], c[1]], [s[2], f[2], c[2]]];
   return nu(De(6), o).toArray();
   function l(m) {
@@ -4060,21 +4059,21 @@ function gf(r, e, n) {
     return [v[0] / p, v[1] / p, v[2] / p];
   }
 }
-function yf(r, e, n, u, t) {
-  const a = e * u / r, s = 1 - u * a, D = r / s, c = e / s, f = u * e / s;
-  let l = au([[D, f, 0], [f, c, 0], [0, 0, n]]);
-  return iu(t ** 3 / 12, l);
+function mf(r, e, n) {
+  if (r.length === 2) return gf(r, e, n);
+  if (r.length === 3) return Af(r, e, n);
 }
-function Af(r, e, n) {
-  if (r.length === 2) return Ff(r, e, n);
-  if (r.length === 3) return Ef(r, e, n);
-}
-function Ff(r, e, n) {
+function gf(r, e, n) {
   var _a2, _b, _c, _d, _e2, _f;
   const u = ((_a2 = e == null ? void 0 : e.momentsOfInertiaZ) == null ? void 0 : _a2.get(n)) ?? 0, t = ((_b = e == null ? void 0 : e.momentsOfInertiaY) == null ? void 0 : _b.get(n)) ?? 0, a = ((_c = e == null ? void 0 : e.elasticities) == null ? void 0 : _c.get(n)) ?? 0, s = ((_d = e == null ? void 0 : e.areas) == null ? void 0 : _d.get(n)) ?? 0, D = ((_e2 = e == null ? void 0 : e.shearModuli) == null ? void 0 : _e2.get(n)) ?? 0, c = ((_f = e == null ? void 0 : e.torsionalConstants) == null ? void 0 : _f.get(n)) ?? 0, f = kr(Zr(r[0], r[1])), o = a * s / f, l = a * u / f ** 3, m = a * t / f ** 3, v = D * c / f;
   return [[o, 0, 0, 0, 0, 0, -o, 0, 0, 0, 0, 0], [0, 12 * l, 0, 0, 0, 6 * f * l, 0, -12 * l, 0, 0, 0, 6 * f * l], [0, 0, 12 * m, 0, -6 * f * m, 0, 0, 0, -12 * m, 0, -6 * f * m, 0], [0, 0, 0, v, 0, 0, 0, 0, 0, -v, 0, 0], [0, 0, -6 * f * m, 0, 4 * m * f ** 2, 0, 0, 0, 6 * f * m, 0, 2 * m * f ** 2, 0], [0, 6 * f * l, 0, 0, 0, 4 * l * f ** 2, 0, -6 * f * l, 0, 0, 0, 2 * l * f ** 2], [-o, 0, 0, 0, 0, 0, o, 0, 0, 0, 0, 0], [0, -12 * l, 0, 0, 0, -6 * l * f, 0, 12 * l, 0, 0, 0, -6 * l * f], [0, 0, -12 * m, 0, 6 * f * m, 0, 0, 0, 12 * m, 0, 6 * f * m, 0], [0, 0, 0, -v, 0, 0, 0, 0, 0, v, 0, 0], [0, 0, -6 * f * m, 0, 2 * m * f ** 2, 0, 0, 0, 6 * f * m, 0, 4 * m * f ** 2, 0], [0, 6 * f * l, 0, 0, 0, 2 * l * f ** 2, 0, -6 * f * l, 0, 0, 0, 4 * l * f ** 2]];
 }
-function Ef(r, e, n) {
+function yf(r, e, n, u, t) {
+  const a = e * u / r, s = 1 - u * a, D = r / s, c = e / s, f = u * e / s;
+  let l = sr([[D, f, 0], [f, c, 0], [0, 0, n]]);
+  return Mr(t ** 3 / 12, l);
+}
+function Af(r, e, n) {
   var _a2, _b, _c, _d, _e2;
   const u = ((_a2 = e == null ? void 0 : e.elasticities) == null ? void 0 : _a2.get(n)) ?? 0, t = ((_b = e.elasticitiesOrthogonal) == null ? void 0 : _b.get(n)) ?? 0, a = ((_c = e == null ? void 0 : e.poissonsRatios) == null ? void 0 : _c.get(n)) ?? 0, s = ((_d = e.shearModuli) == null ? void 0 : _d.get(n)) ?? 0, D = ((_e2 = e == null ? void 0 : e.thicknesses) == null ? void 0 : _e2.get(n)) ?? 0;
   let c;
@@ -4082,7 +4081,7 @@ function Ef(r, e, n) {
   const [f, o] = [r[0][0], r[0][1]], [l, m] = [r[1][0], r[1][1]], [v, p] = [r[2][0], r[2][1]], i = f * (m - p) + l * (p - o) + v * (o - m), d = 0.5 * Math.abs(i), g = [[0.5, 0, 1 / 3], [0, 0.5, 1 / 3], [0.5, 0.5, 1 / 3]];
   let w = Ke(9, 9);
   for (const [h, b, M] of g) {
-    const S = C(h, b, f, o, l, m, v, p), z = ru(S), N = 2 * d * M, I = zr(z, c), T = zr(I, S), O = zr(N, T);
+    const S = C(h, b, f, o, l, m, v, p), z = ru(S), N = 2 * d * M, I = Mr(z, c), T = Mr(I, S), O = Mr(N, T);
     w = Pe(w, O);
   }
   return x(w.toArray());
@@ -4127,14 +4126,14 @@ function Ef(r, e, n) {
     return [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, h[0][0], h[0][2], h[0][1], 0, 0, 0, h[0][3], h[0][5], h[0][4], 0, 0, 0, h[0][6], h[0][8], h[0][7], 0], [0, 0, h[2][0], h[2][2], h[2][1], 0, 0, 0, h[2][3], h[2][5], h[2][4], 0, 0, 0, h[2][6], h[2][8], h[2][7], 0], [0, 0, h[1][0], h[1][2], h[1][1], 0, 0, 0, h[1][3], h[1][5], h[1][4], 0, 0, 0, h[1][6], h[1][8], h[1][7], 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, h[3][0], h[3][2], h[3][1], 0, 0, 0, h[3][3], h[3][5], h[3][4], 0, 0, 0, h[3][6], h[3][8], h[3][7], 0], [0, 0, h[5][0], h[5][2], h[5][1], 0, 0, 0, h[5][3], h[5][5], h[5][4], 0, 0, 0, h[5][6], h[5][8], h[5][7], 0], [0, 0, h[4][0], h[4][2], h[4][1], 0, 0, 0, h[4][3], h[4][5], h[4][4], 0, 0, 0, h[4][6], h[4][8], h[4][7], 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, h[6][0], h[6][2], h[6][1], 0, 0, 0, h[6][3], h[6][5], h[6][4], 0, 0, 0, h[6][6], h[6][8], h[6][7], 0], [0, 0, h[8][0], h[8][2], h[8][1], 0, 0, 0, h[8][3], h[8][5], h[8][4], 0, 0, 0, h[8][6], h[8][8], h[8][7], 0], [0, 0, h[7][0], h[7][2], h[7][1], 0, 0, 0, h[7][3], h[7][5], h[7][4], 0, 0, 0, h[7][6], h[7][8], h[7][7], 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
   }
 }
-function bf(r, e, n, u) {
+function Ef(r, e, n, u) {
   const t = { normals: /* @__PURE__ */ new Map(), shearsY: /* @__PURE__ */ new Map(), shearsZ: /* @__PURE__ */ new Map(), torsions: /* @__PURE__ */ new Map(), bendingsY: /* @__PURE__ */ new Map(), bendingsZ: /* @__PURE__ */ new Map() };
   return e.forEach((a, s) => {
-    const D = r[a[0]], c = r[a[1]], f = [...u.deformations.get(a[0]), ...u.deformations.get(a[1])], o = hf([D, c]), l = zr(o, f), m = Af([D, c], n, s);
-    let v = zr(m, l);
+    const D = r[a[0]], c = r[a[1]], f = [...u.deformations.get(a[0]), ...u.deformations.get(a[1])], o = pf([D, c]), l = Mr(o, f), m = mf([D, c], n, s);
+    let v = Mr(m, l);
     t.normals.set(s, [v[0], v[6]]), t.shearsY.set(s, [v[1], v[7]]), t.shearsZ.set(s, [v[2], v[8]]), t.torsions.set(s, [v[3], v[9]]), t.bendingsY.set(s, [v[4], v[10]]), t.bendingsZ.set(s, [v[5], v[11]]);
   }), t;
 }
 export {
-  bf as a
+  Ef as a
 };

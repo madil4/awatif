@@ -1,9 +1,10 @@
-import { State } from "vanjs-core";
+import van, { State } from "vanjs-core";
 import { Pane } from "tweakpane";
 import { Mesh } from "awatif-fem";
 
 import "./styles.css";
 
+// Todo: Remove this duplicated Settings type (might not be possible to remove it)
 export type Settings = {
   gridSize: State<number>;
   displayScale: State<number>;
@@ -15,16 +16,35 @@ export type Settings = {
   supports: State<boolean>;
   loads: State<boolean>;
   deformedShape: State<boolean>;
-  elementResults: State<string>;
   nodeResults: State<string>;
-  solids?: State<boolean>;
+  frameResults: State<string>;
+  shellResults: State<string>;
+  solids: State<boolean>;
   flipAxes: State<boolean>;
+};
+
+export type SettingsObj = {
+  gridSize?: number;
+  displayScale?: number;
+  nodes?: boolean;
+  elements?: boolean;
+  nodesIndexes?: boolean;
+  elementsIndexes?: boolean;
+  orientations?: boolean;
+  supports?: boolean;
+  loads?: boolean;
+  deformedShape?: boolean;
+  nodeResults?: string;
+  frameResults?: string;
+  shellResults?: string;
+  flipAxes?: boolean;
+  solids?: boolean;
 };
 
 export function getSettings(
   settings: Settings,
   mesh?: Mesh,
-  solids?: State<any>
+  solids?: State<object>
 ): HTMLElement {
   // init
   const container = document.createElement("div");
@@ -69,7 +89,16 @@ export function getSettings(
   if (mesh?.deformOutputs || mesh?.analyzeOutputs) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
 
-    outputs.addBinding(settings.elementResults, "val", {
+    outputs.addBinding(settings.nodeResults, "val", {
+      options: {
+        none: "none",
+        deformations: "deformations",
+        reactions: "reactions",
+      },
+      label: "Node results",
+    });
+
+    outputs.addBinding(settings.frameResults, "val", {
       options: {
         none: "none",
         normals: "normals",
@@ -79,15 +108,18 @@ export function getSettings(
         bendingsY: "bendingsY",
         bendingsZ: "bendingsZ",
       },
-      label: "Element results",
+      label: "Frame results",
     });
-    outputs.addBinding(settings.nodeResults, "val", {
+
+    outputs.addBinding(settings.shellResults, "val", {
       options: {
         none: "none",
-        deformations: "deformations",
-        reactions: "reactions",
+        bendingXX: "bendingXX",
+        bendingYY: "bendingYY",
+        bendingXY: "bendingXY",
+        displacementZ: "displacementZ",
       },
-      label: "Node results",
+      label: "Shell results",
     });
 
     outputs.addBinding(settings.deformedShape, "val", {
@@ -98,4 +130,25 @@ export function getSettings(
   if (solids) pane.addBinding(settings.solids, "val", { label: "Solids" });
 
   return container;
+}
+
+// Utils
+export function getDefaultSettings(settingsObj: SettingsObj): Settings {
+  return {
+    gridSize: van.state(settingsObj?.gridSize ?? 20),
+    displayScale: van.state(settingsObj?.displayScale ?? 1),
+    nodes: van.state(settingsObj?.nodes ?? true),
+    elements: van.state(settingsObj?.elements ?? true),
+    nodesIndexes: van.state(settingsObj?.nodesIndexes ?? false),
+    elementsIndexes: van.state(settingsObj?.elementsIndexes ?? false),
+    orientations: van.state(settingsObj?.orientations ?? false),
+    supports: van.state(settingsObj?.supports ?? true),
+    loads: van.state(settingsObj?.loads ?? true),
+    deformedShape: van.state(settingsObj?.deformedShape ?? false),
+    nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
+    frameResults: van.state(settingsObj?.frameResults ?? "none"),
+    shellResults: van.state(settingsObj?.shellResults ?? "none"),
+    flipAxes: van.state(settingsObj?.flipAxes ?? false),
+    solids: van.state(settingsObj?.solids ?? true),
+  };
 }

@@ -22,27 +22,37 @@ export function analyze(
     torsions: new Map(),
     bendingsY: new Map(),
     bendingsZ: new Map(),
+    bendingXX: new Map(),
+    bendingYY: new Map(),
+    bendingXY: new Map(),
   };
 
   elements.forEach((e, i) => {
-    const n0 = nodes[e[0]];
-    const n1 = nodes[e[1]];
+    const elmNodes = e.map((e) => nodes[e]);
 
-    const dxGlobal = [
-      ...deformOutputs.deformations.get(e[0]),
-      ...deformOutputs.deformations.get(e[1]),
-    ];
-    const T = getTransformationMatrix([n0, n1]);
+    const dxGlobal = e.reduce(
+      (a, b) => a.concat(deformOutputs.deformations.get(b)),
+      []
+    );
+    const T = getTransformationMatrix(elmNodes);
     const dxLocal = multiply(T, dxGlobal);
-    const kLocal = getLocalStiffnessMatrix([n0, n1], elementInputs, i);
-    let fLocal = multiply(kLocal, dxLocal) as number[];
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementInputs, i);
+    let fLocal = multiply(kLocal, dxLocal);
 
-    analyzeOutputs.normals.set(i, [fLocal[0], fLocal[6]]);
-    analyzeOutputs.shearsY.set(i, [fLocal[1], fLocal[7]]);
-    analyzeOutputs.shearsZ.set(i, [fLocal[2], fLocal[8]]);
-    analyzeOutputs.torsions.set(i, [fLocal[3], fLocal[9]]);
-    analyzeOutputs.bendingsY.set(i, [fLocal[4], fLocal[10]]);
-    analyzeOutputs.bendingsZ.set(i, [fLocal[5], fLocal[11]]);
+    if (e.length === 2) {
+      // Frame element
+      analyzeOutputs.normals.set(i, [fLocal[0], fLocal[6]]);
+      analyzeOutputs.shearsY.set(i, [fLocal[1], fLocal[7]]);
+      analyzeOutputs.shearsZ.set(i, [fLocal[2], fLocal[8]]);
+      analyzeOutputs.torsions.set(i, [fLocal[3], fLocal[9]]);
+      analyzeOutputs.bendingsY.set(i, [fLocal[4], fLocal[10]]);
+      analyzeOutputs.bendingsZ.set(i, [fLocal[5], fLocal[11]]);
+    } else {
+      // Plate element
+      analyzeOutputs.bendingXY.set(i, [fLocal[2], fLocal[8], fLocal[14]]);
+      analyzeOutputs.bendingXX.set(i, [fLocal[3], fLocal[9], fLocal[15]]);
+      analyzeOutputs.bendingXX.set(i, [fLocal[4], fLocal[10], fLocal[16]]);
+    }
   });
 
   return analyzeOutputs;

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { AnalyzeOutputs, Node } from "awatif-fem";
-import { Structure } from "awatif-fem";
+import { Mesh } from "awatif-fem";
 import { Settings } from "../settings/getSettings";
 
 import { getTransformationMatrixBeam } from "./utils/getTransformationMatrixBeam";
@@ -18,8 +18,8 @@ enum ResultType {
   bendingsZ = "bendingsZ",
 }
 
-export function elementResults(
-  structure: Structure,
+export function frameResults(
+  mesh: Mesh,
   settings: Settings,
   derivedNodes: State<Node[]>,
   deridedDisplayScale: State<number>
@@ -40,22 +40,22 @@ export function elementResults(
   van.derive(() => {
     settings.deformedShape.val; // triggers update
 
-    if (settings.elementResults.val == "none") return;
+    if (settings.frameResults.val == "none") return;
 
     group.children.forEach((c) => (c as IResultObject).dispose());
     group.clear();
 
     const resultType =
-      ResultType[settings.elementResults.rawVal as keyof typeof ResultType];
+      ResultType[settings.frameResults.rawVal as keyof typeof ResultType];
 
-    structure.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
-      const element = structure.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
+    mesh.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
+      const element = mesh.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];
       const length = new THREE.Vector3(...node2).distanceTo(
         new THREE.Vector3(...node1)
       );
-      const maxResult = findMax(structure.analyzeOutputs?.rawVal[resultType]);
+      const maxResult = findMax(mesh.analyzeOutputs?.rawVal[resultType]);
       const normalizedResult = result?.map(
         (n) => n / (maxResult === 0 ? 1 : maxResult)
       );
@@ -87,7 +87,7 @@ export function elementResults(
   van.derive(() => {
     deridedDisplayScale.val; // trigger updates
 
-    if (settings.elementResults.rawVal == "none") return;
+    if (settings.frameResults.rawVal == "none") return;
 
     group.children.forEach((c) =>
       (c as IResultObject).updateScale(size * deridedDisplayScale.rawVal)
@@ -96,7 +96,7 @@ export function elementResults(
 
   // on settings.elementResults update viability
   van.derive(() => {
-    group.visible = settings.elementResults.val != "none";
+    group.visible = settings.frameResults.val != "none";
   });
 
   return group;

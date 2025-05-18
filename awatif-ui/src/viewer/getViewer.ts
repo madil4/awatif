@@ -2,7 +2,12 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Node, Mesh } from "awatif-fem";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Settings, getSettings } from "./settings/getSettings";
+import {
+  Settings,
+  SettingsObj,
+  getDefaultSettings,
+  getSettings,
+} from "./settings/getSettings";
 import { nodes } from "./objects/nodes";
 import { elements } from "./objects/elements";
 import { grid } from "./objects/grid";
@@ -12,28 +17,13 @@ import { nodesIndexes } from "./objects/nodesIndexes";
 import { elementsIndexes } from "./objects/elementsIndexes";
 import { axes } from "./objects/axes";
 import { orientations } from "./objects/orientations";
-import { elementResults } from "./objects/elementResults";
+import { frameResults } from "./objects/frameResults";
 import { nodeResults } from "./objects/nodeResults";
 import { drawing, Drawing } from "./drawing/drawing";
+import { shellResults } from "./objects/shellResults";
 
 import "./styles.css";
-
-export type SettingsObj = {
-  gridSize?: number;
-  displayScale?: number;
-  nodes?: boolean;
-  elements?: boolean;
-  nodesIndexes?: boolean;
-  elementsIndexes?: boolean;
-  orientations?: boolean;
-  supports?: boolean;
-  loads?: boolean;
-  deformedShape?: boolean;
-  elementResults?: string;
-  nodeResults?: string;
-  flipAxes?: boolean;
-  solids?: boolean;
-};
+import { getLegend } from "../color-map/getLegend";
 
 export function getViewer({
   mesh,
@@ -130,8 +120,9 @@ export function getViewer({
     settings.supports.val;
     settings.loads.val;
     settings.deformedShape.val;
-    settings.elementResults.val;
     settings.nodeResults.val;
+    settings.frameResults.val;
+    settings.shellResults.val;
 
     setTimeout(viewerRender); // setTimeout to ensure render is called after all updates are done in that event tick
   });
@@ -142,6 +133,31 @@ export function getViewer({
   }
 
   // Optional inputs
+  if (mesh) {
+    // Color map
+    const colorMapValues = getColorMapValues(mesh, settings);
+
+    const legend = getLegend(colorMapValues);
+    van.derive(() => {
+      legend.hidden = settings.shellResults.val == "none";
+    });
+    viewerElm.appendChild(legend);
+
+    // 3D objects
+    scene.add(
+      nodes(settings, derivedNodes, derivedDisplayScale),
+      elements(mesh, settings, derivedNodes),
+      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
+      elementsIndexes(mesh, settings, derivedNodes, derivedDisplayScale),
+      supports(mesh, settings, derivedNodes, derivedDisplayScale),
+      loads(mesh, settings, derivedNodes, derivedDisplayScale),
+      orientations(mesh, settings, derivedNodes, derivedDisplayScale),
+      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale),
+      frameResults(mesh, settings, derivedNodes, derivedDisplayScale),
+      shellResults(mesh, settings, derivedNodes, colorMapValues)
+    );
+  }
+
   if (solids) {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
@@ -196,20 +212,6 @@ export function getViewer({
     });
   }
 
-  if (mesh) {
-    scene.add(
-      nodes(settings, derivedNodes, derivedDisplayScale),
-      elements(mesh, settings, derivedNodes),
-      nodesIndexes(settings, derivedNodes, derivedDisplayScale),
-      elementsIndexes(mesh, settings, derivedNodes, derivedDisplayScale),
-      supports(mesh, settings, derivedNodes, derivedDisplayScale),
-      loads(mesh, settings, derivedNodes, derivedDisplayScale),
-      orientations(mesh, settings, derivedNodes, derivedDisplayScale),
-      elementResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      nodeResults(mesh, settings, derivedNodes, derivedDisplayScale)
-    );
-  }
-
   if (drawingObj)
     drawing({
       drawingObj,
@@ -226,25 +228,6 @@ export function getViewer({
 }
 
 // Utils
-function getDefaultSettings(settingsObj: SettingsObj): Settings {
-  return {
-    gridSize: van.state(settingsObj?.gridSize ?? 20),
-    displayScale: van.state(settingsObj?.displayScale ?? 1),
-    nodes: van.state(settingsObj?.nodes ?? true),
-    elements: van.state(settingsObj?.elements ?? true),
-    nodesIndexes: van.state(settingsObj?.nodesIndexes ?? false),
-    elementsIndexes: van.state(settingsObj?.elementsIndexes ?? false),
-    orientations: van.state(settingsObj?.orientations ?? false),
-    supports: van.state(settingsObj?.supports ?? true),
-    loads: van.state(settingsObj?.loads ?? true),
-    deformedShape: van.state(settingsObj?.deformedShape ?? false),
-    elementResults: van.state(settingsObj?.elementResults ?? "none"),
-    nodeResults: van.state(settingsObj?.nodeResults ?? "none"),
-    flipAxes: van.state(settingsObj?.flipAxes ?? false),
-    solids: van.state(settingsObj?.solids ?? true),
-  };
-}
-
 function deriveNodes(
   mesh: Mesh | undefined,
   settings: Settings
@@ -261,4 +244,37 @@ function deriveNodes(
       }) ?? []
     );
   });
+}
+
+function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
+  // Init
+  const colorMapValues = van.state([]);
+
+  enum ResultType {
+    bendingXX = "bendingXX",
+    bendingYY = "bendingYY",
+    bendingXY = "bendingXY",
+    displacementZ = "displacementZ",
+  }
+
+  // Events
+  // On resultMapper, nodes, settings.shellResults change: get new values
+  van.derive(() => {
+    const resultMapper = {
+      [ResultType.bendingXX]: [mesh.analyzeOutputs.val.bendingXX, 1],
+      [ResultType.bendingYY]: [mesh.analyzeOutputs.val.bendingYY, 0],
+      [ResultType.bendingXY]: [mesh.analyzeOutputs.val.bendingXY, 0],
+      [ResultType.displacementZ]: [mesh.deformOutputs.val.deformations, 2],
+    };
+
+    const values = [];
+    mesh.nodes.val.forEach((_, i) => {
+      const resultMap = resultMapper[settings.shellResults.val];
+      values.push(resultMap[0].get(i)[resultMap[1]]);
+    });
+
+    colorMapValues.val = values;
+  });
+
+  return colorMapValues;
 }
