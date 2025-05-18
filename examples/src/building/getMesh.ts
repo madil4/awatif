@@ -12,6 +12,7 @@ export function getMesh(
   slabs: Building["slabs"]["val"],
   columnsByStory: Building["columnsByStory"]["val"],
   slabsByStory: Building["slabsByStory"]["val"],
+  columnData: Building["columnData"]["val"],
   slabData: Building["slabData"]["val"]
 ): {
   nodes: Node[];
@@ -102,6 +103,21 @@ export function getMesh(
         columnBottomNode,
         nodes.length
       );
+
+      // column node supports
+      if (story === 0) {
+        nodeInputs.supports.set(
+          nodes.length + columnNodes.length - 1,
+          columnData.get(columnIndex)?.analysisInput?.support ?? [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+          ]
+        );
+      }
 
       nodes = [...nodes, ...columnNodes];
       elements = [...elements, ...columnElements];

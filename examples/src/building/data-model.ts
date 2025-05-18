@@ -27,10 +27,10 @@ export type ColumnDesignInput = EcTimberColumnDesignInput;
 export type ColumnDesignOutput = EcTimberColumnDesignOutput;
 
 export type ColumnAnalysisInput = {
-  load: unknown;
-  support: unknown;
-  section: unknown;
-  material: unknown;
+  load?: unknown;
+  support?: [boolean, boolean, boolean, boolean, boolean, boolean];
+  section?: unknown;
+  material?: unknown;
 };
 export type ColumnAnalysisOutput = {
   bending: unknown;
