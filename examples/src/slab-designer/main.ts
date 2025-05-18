@@ -36,6 +36,7 @@ const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   nodeInputs: van.state({}),
+  elementInputs: van.state({}),
 };
 
 //* Drawing Data (Points - Polylines)
@@ -147,11 +148,21 @@ van.derive(() => {
 
   const slabLoad: number = 1;
   slabData.set(0, {
-    analysisInput: { areaLoad: slabLoad, isOpening: false },
+    analysisInput: {
+      areaLoad: slabLoad,
+      isOpening: false,
+      thickness: 1,
+      material: { elasticity: 100, poissonsRatio: 0.3 },
+    },
   });
   drawingSlabPolylines.rawVal.forEach((_, k) => {
     slabData.set(k, {
-      analysisInput: { areaLoad: slabLoad, isOpening: false },
+      analysisInput: {
+        areaLoad: slabLoad,
+        isOpening: false,
+        thickness: 1,
+        material: { elasticity: 100, poissonsRatio: 0.3 },
+      },
     });
   });
 
@@ -186,18 +197,20 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  const { nodes, elements, nodeInputs } = getMesh(
+  const { nodes, elements, nodeInputs, elementInputs } = getMesh(
     building.points.val,
     building.stories.val,
     building.columns.val,
     building.slabs.val,
     building.columnsByStory.val,
     building.slabsByStory.val,
+    building.columnData.val,
     building.slabData.val
   );
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
+  mesh.elementInputs.val = elementInputs;
 
   base.geometry = getBaseGeometry(
     building.points.val,

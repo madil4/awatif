@@ -26,6 +26,7 @@ const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   nodeInputs: van.state({}),
+  elementInputs: van.state({}),
 };
 
 const slabSample: number[][] = [
@@ -134,7 +135,7 @@ van.derive(() => {
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  const { nodes, elements, nodeInputs } = getMesh(
+  const { nodes, elements, nodeInputs, elementInputs } = getMesh(
     building.points.val,
     building.stories.val,
     building.columns.val,
@@ -147,6 +148,7 @@ van.derive(() => {
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
+  mesh.elementInputs.val = elementInputs;
 
   base.geometry = getBaseGeometry(
     building.points.val,
