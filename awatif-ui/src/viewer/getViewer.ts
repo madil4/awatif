@@ -134,15 +134,6 @@ export function getViewer({
 
   // Optional inputs
   if (mesh) {
-    // Color map
-    const colorMapValues = getColorMapValues(mesh, settings);
-
-    const legend = getLegend(colorMapValues);
-    van.derive(() => {
-      legend.hidden = settings.shellResults.val == "none";
-    });
-    viewerElm.appendChild(legend);
-
     // 3D objects
     scene.add(
       nodes(settings, derivedNodes, derivedDisplayScale),
@@ -153,9 +144,21 @@ export function getViewer({
       loads(mesh, settings, derivedNodes, derivedDisplayScale),
       orientations(mesh, settings, derivedNodes, derivedDisplayScale),
       nodeResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      frameResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      shellResults(mesh, settings, derivedNodes, colorMapValues)
+      frameResults(mesh, settings, derivedNodes, derivedDisplayScale)
     );
+
+    // Color map
+    if (settings.shellResults.val != "none") {
+      const colorMapValues = getColorMapValues(mesh, settings);
+
+      scene.add(shellResults(mesh, settings, derivedNodes, colorMapValues));
+
+      const legend = getLegend(colorMapValues);
+      van.derive(() => {
+        legend.hidden = settings.shellResults.val == "none";
+      });
+      viewerElm.appendChild(legend);
+    }
   }
 
   if (solids) {
