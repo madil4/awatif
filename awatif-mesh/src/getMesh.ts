@@ -19,7 +19,7 @@ await triangle.init(triangleWasmUrl);
 export function getMesh({
   points, // Array of point(s) in the form of [x, y].
   polygon, // Array of the indices in the points array in the form of [i_p1, i_p2, i_p3, ...].
-  maxMeshSize = 0.5,
+  maxMeshSize = 3,
 }: {
   points: Node[];
   polygon: number[];
