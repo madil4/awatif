@@ -80,18 +80,6 @@ boundaryIndices.forEach((i) => {
   nodeInputs2.supports!.set(i, [true, true, true, false, false, false]);
 });
 
-// Apply equivalent nodal forces for uniform pressure
-// For each triangular element:
-// 1. Calculate the area
-// 2. Calculate the centroid
-// 3. Calculate local coordinates relative to centroid
-// 4. Apply equivalent nodal forces formula
-
-// Initialize loads for all nodes to zero
-for (let i = 0; i < meshNodes.length; i++) {
-  nodeInputs2.loads!.set(i, [0, 0, 0, 0, 0, 0]);
-}
-
 // Process each element to calculate and apply equivalent nodal forces
 meshElements.forEach((element, elemIdx) => {
   // Get the three nodes of the triangle
@@ -103,61 +91,14 @@ meshElements.forEach((element, elemIdx) => {
   // Calculate the area of the triangle
   const area = calculateTriangleArea(node1, node2, node3);
 
-  // Calculate the centroid of the triangle
-  const centroid = [
-    (node1[0] + node2[0] + node3[0]) / 3,
-    (node1[1] + node2[1] + node3[1]) / 3,
-    (node1[2] + node2[2] + node3[2]) / 3,
-  ];
-
-  // Calculate local coordinates relative to centroid
-  const local1 = [
-    node1[0] - centroid[0],
-    node1[1] - centroid[1],
-    node1[2] - centroid[2],
-  ];
-  const local2 = [
-    node2[0] - centroid[0],
-    node2[1] - centroid[1],
-    node2[2] - centroid[2],
-  ];
-  const local3 = [
-    node3[0] - centroid[0],
-    node3[1] - centroid[1],
-    node3[2] - centroid[2],
-  ];
-
-  // Calculate equivalent nodal forces for each node
-  // For uniform pressure p0:
-  // - Transverse force: F = (p0 * area) / 3
-  // - Moment about x-axis: Mx = (p0 * area * y) / 12
-  // - Moment about y-axis: My = (p0 * area * x) / 12
-
   const transverseForce = (p0 * area) / 3;
-
-  // Node 1
-  const moment1x = (p0 * area * local1[1]) / 12;
-  const moment1y = (p0 * area * local1[0]) / 12;
-
-  // Node 2
-  const moment2x = (p0 * area * local2[1]) / 12;
-  const moment2y = (p0 * area * local2[0]) / 12;
-
-  // Node 3
-  const moment3x = (p0 * area * local3[1]) / 12;
-  const moment3y = (p0 * area * local3[0]) / 12;
-
-  // Apply forces and moments to nodes (add to existing values)
-  // Note: Negative transverse force because pressure acts downward in z-direction
-
-  // Node 1
   const existingLoad1 = nodeInputs2.loads!.get(i) || [0, 0, 0, 0, 0, 0];
   nodeInputs2.loads!.set(i, [
     existingLoad1[0],
     existingLoad1[1],
     existingLoad1[2] - transverseForce, // Negative for downward force
-    existingLoad1[3] + moment1x,
-    existingLoad1[4] + moment1y,
+    existingLoad1[3],
+    existingLoad1[4],
     existingLoad1[5],
   ] as [number, number, number, number, number, number]);
 
@@ -167,8 +108,8 @@ meshElements.forEach((element, elemIdx) => {
     existingLoad2[0],
     existingLoad2[1],
     existingLoad2[2] - transverseForce, // Negative for downward force
-    existingLoad2[3] + moment2x,
-    existingLoad2[4] + moment2y,
+    existingLoad2[3],
+    existingLoad2[4],
     existingLoad2[5],
   ] as [number, number, number, number, number, number]);
 
@@ -178,8 +119,8 @@ meshElements.forEach((element, elemIdx) => {
     existingLoad3[0],
     existingLoad3[1],
     existingLoad3[2] - transverseForce, // Negative for downward force
-    existingLoad3[3] + moment3x,
-    existingLoad3[4] + moment3y,
+    existingLoad3[3],
+    existingLoad3[4],
     existingLoad3[5],
   ] as [number, number, number, number, number, number]);
 });
