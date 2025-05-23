@@ -1,7 +1,8 @@
-import { v as o, g as pe, a as re } from "./styles-BHEEcEe8.js";
-import { a as ue } from "./analyze-D7gYJmBX.js";
-import { d as de, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
-import { g as ce } from "./getParameters-DUGbK7gy.js";
+import { v as a, g as pe } from "./styles-Bn9nRx26.js";
+import { a as re } from "./analyze-DIJR9NUR.js";
+import { d as ue, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
+import { g as me } from "./getParameters-BDqQ1x2Q.js";
+import { g as de } from "./getToolbar-bmYpFuWf.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -11,26 +12,26 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function V(l, t, u, f, g, v, m, c = 0) {
+  function V(l, t, u, f, g, v, c, d = 0) {
     const n = Math.round(l / t);
-    let d = [], h = [], C = [], T = [], M = [];
+    let m = [], i = [], C = [], T = [], M = [];
     for (let e = 0; e < n + 1; e++) {
-      const I = e * t, p = (m - v) / l, s = v + p * I;
-      d.push([
-        c + I,
+      const I = e * t, p = (c - v) / l, s = v + p * I;
+      m.push([
+        d + I,
         0,
         s
       ]);
     }
     for (let e = 0; e < n + 1; e++) {
-      const I = e * t, p = (g - f) / l, s = f + p * I, y = (m - v) / l, S = v + y * I;
-      d.push([
-        c + I,
+      const I = e * t, p = (g - f) / l, s = f + p * I, y = (c - v) / l, S = v + y * I;
+      m.push([
+        d + I,
         0,
         S + s
-      ]), C.push(d.length - 1);
+      ]), C.push(m.length - 1);
     }
-    if (u === 1) for (let e = 0; e < n; e++) h.push([
+    if (u === 1) for (let e = 0; e < n; e++) i.push([
       e,
       e + 1
     ], [
@@ -42,8 +43,8 @@ Promise.all([
     ], [
       e,
       n + 1 + e + 1
-    ]), T.push(h.length - 3, h.length - 4), M.push(h.length - 1, h.length - 2);
-    if (u === 2) for (let e = 0; e < n; e++) h.push([
+    ]), T.push(i.length - 3, i.length - 4), M.push(i.length - 1, i.length - 2);
+    if (u === 2) for (let e = 0; e < n; e++) i.push([
       e,
       e + 1
     ], [
@@ -55,8 +56,8 @@ Promise.all([
     ], [
       e + 1,
       n + 1 + e
-    ]), T.push(h.length - 3, h.length - 4), M.push(h.length - 1, h.length - 2);
-    if (u === 3) for (let e = 0; e < n; e++) h.push([
+    ]), T.push(i.length - 3, i.length - 4), M.push(i.length - 1, i.length - 2);
+    if (u === 3) for (let e = 0; e < n; e++) i.push([
       e,
       e + 1
     ], [
@@ -71,13 +72,13 @@ Promise.all([
     ], [
       e + 1,
       n + 1 + e
-    ]), T.push(h.length - 4, h.length - 5), M.push(h.length - 1, h.length - 2, h.length - 3);
-    return h.push([
+    ]), T.push(i.length - 4, i.length - 5), M.push(i.length - 1, i.length - 2, i.length - 3);
+    return i.push([
       n,
       2 * n + 1
-    ]), M.push(h.length - 1), {
-      nodes: d,
-      elements: h,
+    ]), M.push(i.length - 1), {
+      nodes: m,
+      elements: i,
       topNodesIndices: C,
       chordsIndices: T,
       websIndices: M
@@ -85,21 +86,21 @@ Promise.all([
   }
   const r = {
     span: {
-      value: o.state(20),
+      value: a.state(20),
       min: 1,
       max: 20,
       label: "Span (m)",
       folder: "Geometry"
     },
     spacing: {
-      value: o.state(2.5),
+      value: a.state(2.5),
       min: 1,
       max: 5,
       label: "Spacing (m)",
       folder: "Geometry"
     },
     webType: {
-      value: o.state(1),
+      value: a.state(1),
       min: 1,
       max: 3,
       step: 1,
@@ -107,7 +108,7 @@ Promise.all([
       folder: "Geometry"
     },
     trimType: {
-      value: o.state(1),
+      value: a.state(1),
       min: 1,
       max: 3,
       step: 1,
@@ -115,7 +116,7 @@ Promise.all([
       folder: "Geometry"
     },
     leftHeight: {
-      value: o.state(2.5),
+      value: a.state(2.5),
       min: 1,
       max: 10,
       step: 0.1,
@@ -123,7 +124,7 @@ Promise.all([
       folder: "Geometry"
     },
     midHeight: {
-      value: o.state(2.5),
+      value: a.state(2.5),
       min: 1,
       max: 10,
       step: 0.1,
@@ -131,7 +132,7 @@ Promise.all([
       folder: "Geometry"
     },
     rightHeight: {
-      value: o.state(2.5),
+      value: a.state(2.5),
       min: 1,
       max: 10,
       step: 0.1,
@@ -139,7 +140,7 @@ Promise.all([
       folder: "Geometry"
     },
     leftOffset: {
-      value: o.state(0),
+      value: a.state(0),
       min: 0,
       max: 10,
       step: 0.1,
@@ -147,7 +148,7 @@ Promise.all([
       folder: "Geometry"
     },
     midOffset: {
-      value: o.state(5),
+      value: a.state(5),
       min: 0,
       max: 10,
       step: 0.1,
@@ -155,7 +156,7 @@ Promise.all([
       folder: "Geometry"
     },
     rightOffset: {
-      value: o.state(0),
+      value: a.state(0),
       min: 0,
       max: 10,
       step: 0.1,
@@ -163,7 +164,7 @@ Promise.all([
       folder: "Geometry"
     },
     supportType: {
-      value: o.state(1),
+      value: a.state(1),
       min: 1,
       max: 2,
       step: 1,
@@ -171,7 +172,7 @@ Promise.all([
       folder: "Supports"
     },
     uniformLoad: {
-      value: o.state(300),
+      value: a.state(300),
       min: 0,
       max: 1e3,
       step: 1,
@@ -179,7 +180,7 @@ Promise.all([
       folder: "Loads"
     },
     chordsArea: {
-      value: o.state(50),
+      value: a.state(50),
       min: 1,
       max: 100,
       step: 1,
@@ -187,7 +188,7 @@ Promise.all([
       folder: "Sections & Materials"
     },
     chordsElasticity: {
-      value: o.state(10),
+      value: a.state(10),
       min: 1,
       max: 250,
       step: 1,
@@ -195,7 +196,7 @@ Promise.all([
       folder: "Sections & Materials"
     },
     websArea: {
-      value: o.state(50),
+      value: a.state(50),
       min: 1,
       max: 100,
       step: 1,
@@ -203,52 +204,52 @@ Promise.all([
       folder: "Sections & Materials"
     },
     websElasticity: {
-      value: o.state(10),
+      value: a.state(10),
       min: 1,
       max: 250,
       step: 1,
       label: "Webs elasticity (gpa)",
       folder: "Sections & Materials"
     }
-  }, Y = o.state([]), Z = o.state([]), _ = o.state({}), $ = o.state({}), ee = o.state({}), te = o.state({});
-  o.derive(() => {
+  }, Y = a.state([]), Z = a.state([]), _ = a.state({}), $ = a.state({}), ee = a.state({}), te = a.state({});
+  a.derive(() => {
     let l = r.span.value.val, t = r.spacing.value.val;
-    const u = r.webType.value.val, f = r.trimType.value.val, g = r.leftHeight.value.val, v = r.midHeight.value.val, m = r.rightHeight.value.val, c = r.leftOffset.value.val, n = r.midOffset.value.val, d = r.rightOffset.value.val, h = r.supportType.value.val, C = r.uniformLoad.value.val, T = r.chordsArea.value.val * 1e-4, M = r.chordsElasticity.value.val * 1e6, e = r.websArea.value.val * 1e-4, I = r.websElasticity.value.val * 1e6;
+    const u = r.webType.value.val, f = r.trimType.value.val, g = r.leftHeight.value.val, v = r.midHeight.value.val, c = r.rightHeight.value.val, d = r.leftOffset.value.val, n = r.midOffset.value.val, m = r.rightOffset.value.val, i = r.supportType.value.val, C = r.uniformLoad.value.val, T = r.chordsArea.value.val * 1e-4, M = r.chordsElasticity.value.val * 1e6, e = r.websArea.value.val * 1e-4, I = r.websElasticity.value.val * 1e6;
     let p = [], s = [], y = [], S = [], b = [], w = [];
-    if (t = l / Math.round(l / t), Math.abs(v - 0.5 * (g + m)) > 0.3 || Math.abs(n - 0.5 * (c + d)) > 0.3) {
+    if (t = l / Math.round(l / t), Math.abs(v - 0.5 * (g + c)) > 0.3 || Math.abs(n - 0.5 * (d + m)) > 0.3) {
       l = l / 2, t = l / Math.round(l / t);
-      const a = Math.round((l - 2 * t) / t), i = f >= 2 && a >= 1, W = (g - v) / l, A = g - W * t, x = (c - n) / l, k = c - x * t, { nodes: O, elements: K, topNodesIndices: P, chordsIndices: le, websIndices: ne } = V(i ? l - t : l, t, u, i ? A : g, v, i ? k : c, n, i ? t : 0);
+      const o = Math.round((l - 2 * t) / t), h = f >= 2 && o >= 1, W = (g - v) / l, A = g - W * t, x = (d - n) / l, k = d - x * t, { nodes: O, elements: K, topNodesIndices: P, chordsIndices: le, websIndices: ne } = V(h ? l - t : l, t, u, h ? A : g, v, h ? k : d, n, h ? t : 0);
       p.push(...O), s.push(...K), S.push(...P), b.push(...le), w.push(...ne);
-      const J = (v - m) / l, Q = (n - d) / l;
+      const J = (v - c) / l, Q = (n - m) / l;
       let U = u;
       u === 1 && (U = 2), u === 2 && (U = 1);
-      const { nodes: z, elements: ae, topNodesIndices: oe, chordsIndices: he, websIndices: ie } = V(i ? l - 2 * t : l - t, t, U, v - J * t, i ? m + J * t : m, n - Q * t, i ? d + Q * t : d, l + t);
-      if (b.push(...q(he, s.length)), w.push(...q(ie, s.length)), s.push(...me(ae, p.length)), S.push(...q(oe, p.length)), p.push(...z), i) {
+      const { nodes: z, elements: oe, topNodesIndices: ae, chordsIndices: ie, websIndices: he } = V(h ? l - 2 * t : l - t, t, U, v - J * t, h ? c + J * t : c, n - Q * t, h ? m + Q * t : m, l + t);
+      if (b.push(...q(ie, s.length)), w.push(...q(he, s.length)), s.push(...ce(oe, p.length)), S.push(...q(ae, p.length)), p.push(...z), h) {
         p.push([
           0,
           0,
-          f == 3 ? g + c : c
+          f == 3 ? g + d : d
         ], [
           2 * l,
           0,
-          f == 3 ? m + d : d
+          f == 3 ? c + m : m
         ]), S.push(p.length - 2, p.length - 1);
-        const H = (a + 1 + 1) * 2, X = (a + 1) * 2, R = H + X;
+        const H = (o + 1 + 1) * 2, X = (o + 1) * 2, R = H + X;
         s.push([
           0,
           R
         ], [
-          a + 2,
+          o + 2,
           R
         ], [
-          H + a,
+          H + o,
           R + 1
         ], [
           H + X - 1,
           R + 1
         ]), b.push(s.length - 1, s.length - 2, s.length - 3, s.length - 4);
       }
-      const D = Math.round(i ? (l - 1 * t) / t : l / t), G = D, E = (D + 1) * 2, N = (D + 1) * 2 - 1, L = N + D + 1;
+      const D = Math.round(h ? (l - 1 * t) / t : l / t), G = D, E = (D + 1) * 2, N = (D + 1) * 2 - 1, L = N + D + 1;
       if (u === 1 && (s.push([
         G,
         E
@@ -279,37 +280,37 @@ Promise.all([
       ], [
         N,
         E
-      ]), b.push(s.length - 4, s.length - 3), w.push(s.length - 2, s.length - 1)), i) {
+      ]), b.push(s.length - 4, s.length - 3), w.push(s.length - 2, s.length - 1)), h) {
         const H = O.length + z.length;
         y.push(H, H + 1);
-      } else h === 1 ? y.push(0, O.length + z.length / 2 - 1) : y.push(O.length / 2, O.length + z.length - 1);
+      } else i === 1 ? y.push(0, O.length + z.length / 2 - 1) : y.push(O.length / 2, O.length + z.length - 1);
     } else {
-      const a = Math.round((l - 2 * t) / t), i = f >= 2 && a >= 1, W = (g - m) / l, A = (c - d) / l, { nodes: x, elements: k, topNodesIndices: O, chordsIndices: K, websIndices: P } = V(i ? l - 2 * t : l, t, u, i ? g - W * t : g, i ? m + W * t : m, i ? c - A * t : c, i ? d + A * t : d, i ? t : 0);
-      p.push(...x), s.push(...k), S.push(...O), b.push(...K), w.push(...P), i && (p.push([
+      const o = Math.round((l - 2 * t) / t), h = f >= 2 && o >= 1, W = (g - c) / l, A = (d - m) / l, { nodes: x, elements: k, topNodesIndices: O, chordsIndices: K, websIndices: P } = V(h ? l - 2 * t : l, t, u, h ? g - W * t : g, h ? c + W * t : c, h ? d - A * t : d, h ? m + A * t : m, h ? t : 0);
+      p.push(...x), s.push(...k), S.push(...O), b.push(...K), w.push(...P), h && (p.push([
         0,
         0,
-        f == 3 ? g + c : c
+        f == 3 ? g + d : d
       ], [
         l,
         0,
-        f == 3 ? m + d : d
+        f == 3 ? c + m : m
       ]), S.push(p.length - 2, p.length - 1), s.push([
         0,
-        (a + 1) * 2
+        (o + 1) * 2
       ], [
-        a + 1,
-        (a + 1) * 2
+        o + 1,
+        (o + 1) * 2
       ], [
-        a,
-        (a + 1) * 2 + 1
+        o,
+        (o + 1) * 2 + 1
       ], [
-        a * 2 + 1,
-        (a + 1) * 2 + 1
-      ]), b.push(s.length - 1, s.length - 2, s.length - 3, s.length - 4)), i ? y.push(x.length, x.length + 1) : h === 1 ? y.push(0, x.length / 2 - 1) : y.push(x.length / 2, x.length - 1);
+        o * 2 + 1,
+        (o + 1) * 2 + 1
+      ]), b.push(s.length - 1, s.length - 2, s.length - 3, s.length - 4)), h ? y.push(x.length, x.length + 1) : i === 1 ? y.push(0, x.length / 2 - 1) : y.push(x.length / 2, x.length - 1);
     }
     const B = {
-      supports: new Map(y.map((a) => [
-        a,
+      supports: new Map(y.map((o) => [
+        o,
         [
           true,
           true,
@@ -319,8 +320,8 @@ Promise.all([
           true
         ]
       ])),
-      loads: new Map(S.map((a) => [
-        a,
+      loads: new Map(S.map((o) => [
+        o,
         [
           0,
           0,
@@ -332,29 +333,29 @@ Promise.all([
       ]))
     }, j = {
       elasticities: new Map([
-        ...b.map((a) => [
-          a,
+        ...b.map((o) => [
+          o,
           M
         ]),
-        ...w.map((a) => [
-          a,
+        ...w.map((o) => [
+          o,
           I
         ])
       ]),
       areas: new Map([
-        ...b.map((a) => [
-          a,
+        ...b.map((o) => [
+          o,
           T
         ]),
-        ...w.map((a) => [
-          a,
+        ...w.map((o) => [
+          o,
           e
         ])
       ])
-    }, F = de(p, s, B, j), se = ue(p, s, j, F);
+    }, F = ue(p, s, B, j), se = re(p, s, j, F);
     Y.val = p, Z.val = s, _.val = B, $.val = j, ee.val = F, te.val = se;
   });
-  document.body.append(ce(r), pe({
+  document.body.append(me(r), pe({
     mesh: {
       nodes: Y,
       elements: Z,
@@ -367,11 +368,11 @@ Promise.all([
       deformedShape: true,
       loads: false
     }
-  }), re({
+  }), de({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/advanced-truss/main.ts",
     author: "https://www.linkedin.com/in/madil4/"
   }));
-  function me(l, t) {
+  function ce(l, t) {
     return l.map(([u, f]) => [
       u + t,
       f + t

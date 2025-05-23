@@ -1,5 +1,6 @@
-import { d as I, v as t, g as T, a as D } from "./styles-BHEEcEe8.js";
-import { g as L, a as k, b as O, c as x, d as E, __tla as __tla_0 } from "./getSolids-moUadd3M.js";
+import { c as B, v as t, g as D } from "./styles-Bn9nRx26.js";
+import { g as k } from "./getToolbar-bmYpFuWf.js";
+import { g as T, a as L, b as O, c as x, d as E, __tla as __tla_0 } from "./getSolids-Cv8Br19D.js";
 import { __tla as __tla_1 } from "./getMesh-BFRjMVyf.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
@@ -20,7 +21,7 @@ Promise.all([
 ]).then(async () => {
   function H({ onToolbarClick: a }) {
     const n = document.createElement("div");
-    return n.id = "drawing-toolbar", new I({
+    return n.id = "drawing-toolbar", new B({
       name: "toolbar",
       box: n,
       items: [
@@ -62,15 +63,17 @@ Promise.all([
     slabs: t.state([]),
     columnsByStory: t.state(/* @__PURE__ */ new Map()),
     slabsByStory: t.state(/* @__PURE__ */ new Map()),
+    columnData: t.state(/* @__PURE__ */ new Map()),
     slabData: t.state(/* @__PURE__ */ new Map())
-  }, S = L(), C = k(), y = t.state([
+  }, S = T(), C = L(), y = t.state([
     C
   ]), j = t.state([
     S
-  ]), d = {
+  ]), c = {
     nodes: t.state([]),
     elements: t.state([]),
-    nodeInputs: t.state({})
+    nodeInputs: t.state({}),
+    elementInputs: t.state({})
   }, G = [
     [
       3,
@@ -112,7 +115,7 @@ Promise.all([
       6,
       0
     ]
-  ], A = [
+  ], R = [
     [
       3,
       2,
@@ -143,7 +146,7 @@ Promise.all([
       2,
       4
     ]
-  ], K = [
+  ], A = [
     [
       0,
       1,
@@ -153,7 +156,7 @@ Promise.all([
       5
     ],
     []
-  ], r = t.state([]), M = t.state([]), l = t.state(A), c = t.state(K), m = t.state(G), u = t.state([]), P = t.state({
+  ], p = t.state([]), M = t.state([]), l = t.state(R), m = t.state(A), d = t.state(G), u = t.state([]), I = t.state({
     position: [
       10,
       10,
@@ -165,9 +168,9 @@ Promise.all([
       0
     ]
   }), v = 4;
-  let w = "1st-floor";
-  function _(a) {
-    w = a, P.val = {
+  let h = "1st-floor";
+  function K(a) {
+    h = a, I.val = {
       position: [
         10,
         10,
@@ -178,42 +181,52 @@ Promise.all([
         0,
         0
       ]
-    }, m.val = a === "1st-floor" ? r.val : l.val, u.val = a === "1st-floor" ? M.val : c.val;
+    }, d.val = a === "1st-floor" ? p.val : l.val, u.val = a === "1st-floor" ? M.val : m.val;
   }
   t.derive(() => {
-    w == "1st-floor" && (r.val = m.val, M.val = u.val), w == "2nd-floor" && (l.val = m.val, c.val = u.val);
+    h == "1st-floor" && (p.val = d.val, M.val = u.val), h == "2nd-floor" && (l.val = d.val, m.val = u.val);
   });
   t.derive(() => {
-    const a = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), e = /* @__PURE__ */ new Map(), p = [], b = [], B = [], g = [];
-    if (l.val.length > 0) for (let o = 0; o < l.val.length; o++) B.push([
+    const a = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), e = /* @__PURE__ */ new Map(), r = [], g = [], P = [], b = [];
+    if (l.val.length > 0) for (let o = 0; o < l.val.length; o++) P.push([
       l.val[o][0],
       l.val[o][1],
       v
-    ]), p.push([
+    ]), r.push([
       l.val[o][0],
       l.val[o][1],
       v
     ]);
-    n.set(0, Array.from(c.rawVal.keys()));
-    const h = 1;
+    n.set(0, Array.from(m.rawVal.keys()));
+    const w = 1;
     e.set(0, {
       analysisInput: {
-        areaLoad: h,
-        isOpening: false
+        areaLoad: w,
+        isOpening: false,
+        thickness: 1,
+        material: {
+          elasticity: 100,
+          poissonsRatio: 0.3
+        }
       }
-    }), c.rawVal.forEach((o, i) => {
+    }), m.rawVal.forEach((o, i) => {
       e.set(i, {
         analysisInput: {
-          areaLoad: h,
-          isOpening: false
+          areaLoad: w,
+          isOpening: false,
+          thickness: 1,
+          material: {
+            elasticity: 100,
+            poissonsRatio: 0.3
+          }
         }
       });
     });
     const f = [];
-    if (r.val.length > 0) {
-      for (let o = 0; o < r.val.length; o++) {
-        const i = r.val[o];
-        g.push([
+    if (p.val.length > 0) {
+      for (let o = 0; o < p.val.length; o++) {
+        const i = p.val[o];
+        b.push([
           [
             i[0],
             i[1],
@@ -221,34 +234,34 @@ Promise.all([
           ]
         ]);
       }
-      for (let o = 0; o < g.length; o++) {
-        const i = p.length;
-        p.push(...g[o]), b.push(i), f.push(b.length - 1);
+      for (let o = 0; o < b.length; o++) {
+        const i = r.length;
+        r.push(...b[o]), g.push(i), f.push(g.length - 1);
       }
     }
-    a.set(0, f), s.points.val = p, s.columns.val = b, s.slabs.val = c.val, s.columnsByStory.val = a, s.slabsByStory.val = n, s.slabData.val = e;
+    a.set(0, f), s.points.val = r, s.columns.val = g, s.slabs.val = m.val, s.columnsByStory.val = a, s.slabsByStory.val = n, s.slabData.val = e;
   });
   t.derive(() => {
-    const { nodes: a, elements: n, nodeInputs: e } = O(s.points.val, s.stories.val, s.columns.val, s.slabs.val, s.columnsByStory.val, s.slabsByStory.val, s.slabData.val);
-    d.nodes.val = a, d.elements.val = n, d.nodeInputs.val = e, C.geometry = x(s.points.val, s.slabs.val, s.columns.val), S.geometry = E(s.points.val, s.slabs.val, s.columns.val), y.val = [
+    const { nodes: a, elements: n, nodeInputs: e, elementInputs: r } = O(s.points.val, s.stories.val, s.columns.val, s.slabs.val, s.columnsByStory.val, s.slabsByStory.val, s.columnData.val, s.slabData.val);
+    c.nodes.val = a, c.elements.val = n, c.nodeInputs.val = e, c.elementInputs.val = r, C.geometry = x(s.points.val, s.slabs.val, s.columns.val), S.geometry = E(s.points.val, s.slabs.val, s.columns.val), y.val = [
       ...y.rawVal
     ];
   });
-  document.body.append(T({
+  document.body.append(D({
     objects3D: y,
     solids: j,
-    mesh: d,
+    mesh: c,
     drawingObj: {
-      points: m,
+      points: d,
       polylines: u,
-      gridTarget: P
+      gridTarget: I
     },
     settingsObj: {
       loads: false
     }
   }), V(), H({
-    onToolbarClick: _
-  }), D({
+    onToolbarClick: K
+  }), k({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/"
   }));

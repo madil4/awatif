@@ -27,6 +27,7 @@ export default defineConfig({
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
         "color-map": "src/color-map/index.html",
+        "plate-ortho": "src/plate-ortho/index.html",
       },
     },
   },
