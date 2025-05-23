@@ -24,6 +24,7 @@ export function getColorMap(
   // Update
   lut.setColorMap("rainbow");
   colorMap.renderOrder = -1; // to ensure that it always set behind the mesh
+  colorMap.frustumCulled = false;
 
   // Events
   // When nodes, elements or values change, update the color map
