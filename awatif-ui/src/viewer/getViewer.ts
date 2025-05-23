@@ -261,15 +261,16 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
   // On resultMapper, nodes, settings.shellResults change: get new values
   van.derive(() => {
     const resultMapper = {
-      [ResultType.bendingXX]: [mesh.analyzeOutputs.val.bendingXX, 1],
-      [ResultType.bendingYY]: [mesh.analyzeOutputs.val.bendingYY, 0],
-      [ResultType.bendingXY]: [mesh.analyzeOutputs.val.bendingXY, 0],
-      [ResultType.displacementZ]: [mesh.deformOutputs.val.deformations, 2],
+      [ResultType.bendingXX]: [mesh.analyzeOutputs?.val.bendingXX, 1],
+      [ResultType.bendingYY]: [mesh.analyzeOutputs?.val.bendingYY, 0],
+      [ResultType.bendingXY]: [mesh.analyzeOutputs?.val.bendingXY, 0],
+      [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
     };
 
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
       const resultMap = resultMapper[settings.shellResults.val];
+      if (!resultMap) return;
       values.push(resultMap[0].get(i)[resultMap[1]]);
     });
 
