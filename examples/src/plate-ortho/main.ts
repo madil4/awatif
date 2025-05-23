@@ -6,25 +6,8 @@ import {
   ElementInputs,
   DeformOutputs,
 } from "awatif-fem";
-import { getViewer, Parameters, getParameters, getToolbar } from "awatif-ui";
+import { getViewer } from "awatif-ui";
 import { deform } from "awatif-fem";
-import { getMesh } from "awatif-mesh";
-import { getNodalLoadsFromSlabAreaLoad } from "../building/getMesh"; // Import new function
-
-// Plate dimensions and material properties
-const a = 10; // m
-const h = 0.15; // m
-const E_x = 1.0e10; // Pa
-const E_y = 1.0e10; // Pa
-const G_xy = 1.0e9; // Pa
-const nu_xy = 0.25;
-
-// Init
-const parameters: Parameters = {
-  xPosition: { value: van.state(10), min: 5, max: 20 },
-  load: { value: van.state(1000), min: 0, max: 1000, step: 1 }, // Fixed pressure load at 1000 N/m²
-  maxMeshSize: { value: van.state(0.5), min: 0.05, max: 0.5, step: -0.01 }, // Start at max (0.5), decrease to min (0.05)
-};
 
 const nodes: State<Node[]> = van.state([]);
 const elements: State<Element[]> = van.state([]);
@@ -32,91 +15,242 @@ const nodeInputs: State<NodeInputs> = van.state({});
 const elementInputs: State<ElementInputs> = van.state({});
 const deformOutputs: State<DeformOutputs> = van.state({});
 
-// Events: on parameter change mesh & deform
-van.derive(() => {
-  const {
-    nodes: meshNodes,
-    elements: meshElements,
-    boundaryIndices,
-  } = getMesh({
-    points: [
-      [0, 0, 0], // Bottom-left corner
-      [parameters.xPosition.value.val, 0, 0], // Bottom-right corner
-      [a, a, 0], // Top-right corner
-      [0, a, 0], // Top-left corner
-    ],
-    polygon: [0, 1, 2, 3],
-    maxMeshSize: parameters.maxMeshSize.value.val,
-  });
-  nodes.val = meshNodes;
-  elements.val = meshElements;
+// Plate dimensions and material properties - matching analytical.py
+const a = 10.0; // m (length in x direction)
+const b = 10.0; // m (length in y direction)
+const h = 0.15; // m (thickness)
+const p0 = 1000.0; // N/m² (pressure)
+const E_x = 1.0e10; // Pa (Young's modulus in x direction)
+const E_y = 1.0e10; // Pa (Young's modulus in y direction)
+const nu_xy = 0.25; // Poisson's ratio
+const G_xy = (0.5 * E_x) / (1 + nu_xy); // = 4.0e9 Pa
 
-  // Distribute pressure load using the new function
-  const allNodeIndices = Array.from({ length: meshNodes.length }, (_, i) => i);
-  nodeInputs.val = {
-    supports: new Map(
-      boundaryIndices.map((i) => [i, [true, true, true, true, true, true]])
-    ),
-    loads: new Map(),
-  };
-  nodeInputs.val.loads = getNodalLoadsFromSlabAreaLoad(
-    meshNodes,
-    meshElements,
-    nodeInputs.val.loads,
-    parameters.load.value.val, // Pressure load
-    allNodeIndices
-  );
+// Create a refined hardcoded mesh for a rectangular plate
+// Using a 5x5 grid of nodes, creating 32 triangular elements
 
-  // Aggregate total load to verify
-  let totalAppliedLoad = 0;
-  nodeInputs.val.loads.forEach((loadVector) => {
-    // Sum the z-component (index 2) of each nodal load, assuming negative for downward load
-    totalAppliedLoad += -loadVector[2]; // Negative because loadVector[2] is negative for downward load
-  });
-  const expectedLoad = parameters.load.value.val * 10 * 10; // Pressure * Area
-  // console.log(
-  //   `Total applied load: ${totalAppliedLoad.toFixed(
-  //     2
-  //   )} N, Expected: ${expectedLoad.toFixed(2)} N, Difference: ${(
-  //     totalAppliedLoad - expectedLoad
-  //   ).toFixed(2)} N`
-  // );
-
-  const elementsVal = elements.val;
-
-  elementInputs.val = {
-    elasticities: new Map(elementsVal.map((_, i) => [i, E_x])),
-    elasticitiesOrthogonal: new Map(elementsVal.map((_, i) => [i, E_y])),
-    shearModuli: new Map(elementsVal.map((_, i) => [i, G_xy])),
-    poissonsRatios: new Map(elementsVal.map((_, i) => [i, nu_xy])),
-    thicknesses: new Map(elementsVal.map((_, i) => [i, h])),
-  };
-
-  deformOutputs.val = deform(
-    meshNodes,
-    meshElements,
-    nodeInputs.val,
-    elementInputs.val
-  );
-
-  // Aggregate and log maximum displacement
-  if (deformOutputs.val.deformations) {
-    let maxZDisplacement = 0;
-    deformOutputs.val.deformations.forEach((deformation) => {
-      const dz = deformation[2]; // Isolate Z-axis displacement
-      const absDz = Math.abs(dz); // Consider magnitude (positive/negative deflection)
-      maxZDisplacement = Math.max(maxZDisplacement, absDz);
-    });
-    console.log(
-      `Mesh size: ${parameters.maxMeshSize.value.val.toFixed(
-        2
-      )} m, Maximum Z-displacement: ${(maxZDisplacement * 1000).toFixed(6)} mm`
-    );
+// Generate nodes in a 5x5 grid
+const meshNodes: Node[] = [];
+const numDivisions = 5;
+for (let j = 0; j < numDivisions; j++) {
+  for (let i = 0; i < numDivisions; i++) {
+    meshNodes.push([
+      (i * a) / (numDivisions - 1),
+      (j * b) / (numDivisions - 1),
+      0,
+    ]);
   }
+}
+
+// Generate triangular elements
+const meshElements: Element[] = [];
+for (let j = 0; j < numDivisions - 1; j++) {
+  for (let i = 0; i < numDivisions - 1; i++) {
+    // Calculate node indices for this grid cell
+    const bottomLeft = j * numDivisions + i;
+    const bottomRight = bottomLeft + 1;
+    const topLeft = (j + 1) * numDivisions + i;
+    const topRight = topLeft + 1;
+
+    // Add two triangles for each grid cell
+    meshElements.push([bottomLeft, bottomRight, topLeft]);
+    meshElements.push([bottomRight, topRight, topLeft]);
+  }
+}
+
+// Identify boundary nodes (nodes on the edges of the plate)
+const boundaryIndices: number[] = [];
+for (let i = 0; i < meshNodes.length; i++) {
+  const [x, y] = meshNodes[i];
+  if (x === 0 || x === a || y === 0 || y === b) {
+    boundaryIndices.push(i);
+  }
+}
+
+// Setup node inputs (supports and loads)
+const nodeInputs2: NodeInputs = {
+  supports: new Map<
+    number,
+    [boolean, boolean, boolean, boolean, boolean, boolean]
+  >(),
+  loads: new Map<number, [number, number, number, number, number, number]>(),
+};
+
+// Apply fixed supports at boundary nodes
+boundaryIndices.forEach((i) => {
+  nodeInputs2.supports!.set(i, [true, true, true, false, false, false]);
 });
 
+// Apply equivalent nodal forces for uniform pressure
+// For each triangular element:
+// 1. Calculate the area
+// 2. Calculate the centroid
+// 3. Calculate local coordinates relative to centroid
+// 4. Apply equivalent nodal forces formula
+
+// Initialize loads for all nodes to zero
+for (let i = 0; i < meshNodes.length; i++) {
+  nodeInputs2.loads!.set(i, [0, 0, 0, 0, 0, 0]);
+}
+
+// Process each element to calculate and apply equivalent nodal forces
+meshElements.forEach((element, elemIdx) => {
+  // Get the three nodes of the triangle
+  const [i, j, k] = element;
+  const node1 = meshNodes[i];
+  const node2 = meshNodes[j];
+  const node3 = meshNodes[k];
+
+  // Calculate the area of the triangle
+  const area = calculateTriangleArea(node1, node2, node3);
+
+  // Calculate the centroid of the triangle
+  const centroid = [
+    (node1[0] + node2[0] + node3[0]) / 3,
+    (node1[1] + node2[1] + node3[1]) / 3,
+    (node1[2] + node2[2] + node3[2]) / 3,
+  ];
+
+  // Calculate local coordinates relative to centroid
+  const local1 = [
+    node1[0] - centroid[0],
+    node1[1] - centroid[1],
+    node1[2] - centroid[2],
+  ];
+  const local2 = [
+    node2[0] - centroid[0],
+    node2[1] - centroid[1],
+    node2[2] - centroid[2],
+  ];
+  const local3 = [
+    node3[0] - centroid[0],
+    node3[1] - centroid[1],
+    node3[2] - centroid[2],
+  ];
+
+  // Calculate equivalent nodal forces for each node
+  // For uniform pressure p0:
+  // - Transverse force: F = (p0 * area) / 3
+  // - Moment about x-axis: Mx = (p0 * area * y) / 12
+  // - Moment about y-axis: My = (p0 * area * x) / 12
+
+  const transverseForce = (p0 * area) / 3;
+
+  // Node 1
+  const moment1x = (p0 * area * local1[1]) / 12;
+  const moment1y = (p0 * area * local1[0]) / 12;
+
+  // Node 2
+  const moment2x = (p0 * area * local2[1]) / 12;
+  const moment2y = (p0 * area * local2[0]) / 12;
+
+  // Node 3
+  const moment3x = (p0 * area * local3[1]) / 12;
+  const moment3y = (p0 * area * local3[0]) / 12;
+
+  // Apply forces and moments to nodes (add to existing values)
+  // Note: Negative transverse force because pressure acts downward in z-direction
+
+  // Node 1
+  const existingLoad1 = nodeInputs2.loads!.get(i) || [0, 0, 0, 0, 0, 0];
+  nodeInputs2.loads!.set(i, [
+    existingLoad1[0],
+    existingLoad1[1],
+    existingLoad1[2] - transverseForce, // Negative for downward force
+    existingLoad1[3] + moment1x,
+    existingLoad1[4] + moment1y,
+    existingLoad1[5],
+  ] as [number, number, number, number, number, number]);
+
+  // Node 2
+  const existingLoad2 = nodeInputs2.loads!.get(j) || [0, 0, 0, 0, 0, 0];
+  nodeInputs2.loads!.set(j, [
+    existingLoad2[0],
+    existingLoad2[1],
+    existingLoad2[2] - transverseForce, // Negative for downward force
+    existingLoad2[3] + moment2x,
+    existingLoad2[4] + moment2y,
+    existingLoad2[5],
+  ] as [number, number, number, number, number, number]);
+
+  // Node 3
+  const existingLoad3 = nodeInputs2.loads!.get(k) || [0, 0, 0, 0, 0, 0];
+  nodeInputs2.loads!.set(k, [
+    existingLoad3[0],
+    existingLoad3[1],
+    existingLoad3[2] - transverseForce, // Negative for downward force
+    existingLoad3[3] + moment3x,
+    existingLoad3[4] + moment3y,
+    existingLoad3[5],
+  ] as [number, number, number, number, number, number]);
+});
+
+// Setup element inputs
+const elementInputs2: ElementInputs = {
+  elasticities: new Map<number, number>(),
+  elasticitiesOrthogonal: new Map<number, number>(),
+  shearModuli: new Map<number, number>(),
+  poissonsRatios: new Map<number, number>(),
+  thicknesses: new Map<number, number>(),
+};
+
+// Apply material properties to all elements
+meshElements.forEach((_, i) => {
+  elementInputs2.elasticities!.set(i, E_x);
+  elementInputs2.elasticitiesOrthogonal!.set(i, E_y);
+  elementInputs2.shearModuli!.set(i, G_xy);
+  elementInputs2.poissonsRatios!.set(i, nu_xy);
+  elementInputs2.thicknesses!.set(i, h);
+});
+
+// Run deformation analysis
+deformOutputs.val = deform(
+  meshNodes,
+  meshElements,
+  nodeInputs2,
+  elementInputs2
+);
+
+// Calculate maximum displacement
+let maxZDisplacement = 0;
+deformOutputs.val!.deformations!.forEach((deformation) => {
+  const dz = deformation[2]; // Z-axis displacement
+  const absDz = Math.abs(dz);
+  maxZDisplacement = Math.max(maxZDisplacement, absDz);
+});
+
+// Convert to mm for comparison with analytical solution
+const maxDisplacementMm = maxZDisplacement * 1000;
+
+// Expected value from analytical solution
+const expectedDisplacementMm = 13.541176;
+
+// Log results for debugging
+console.log(`Maximum Z-displacement: ${maxDisplacementMm.toFixed(6)} mm`);
+console.log(
+  `Expected displacement from analytical solution: ${expectedDisplacementMm.toFixed(
+    6
+  )} mm`
+);
+console.log(
+  `Difference: ${(maxDisplacementMm - expectedDisplacementMm).toFixed(6)} mm`
+);
+console.log(
+  `Relative error: ${(
+    ((maxDisplacementMm - expectedDisplacementMm) / expectedDisplacementMm) *
+    100
+  ).toFixed(2)}%`
+);
+console.log(
+  `Mesh details: ${numDivisions}x${numDivisions} grid (${meshNodes.length} nodes, ${meshElements.length} elements)`
+);
+
+// update state
+nodes.val = meshNodes;
+elements.val = meshElements;
+nodeInputs.val = nodeInputs2;
+elementInputs.val = elementInputs2;
+
 document.body.append(
-  getParameters(parameters),
   getViewer({
     mesh: {
       nodes,
@@ -129,10 +263,18 @@ document.body.append(
       deformedShape: true,
       loads: false,
     },
-  }),
-  getToolbar({
-    sourceCode:
-      "https://github.com/madil4/awatif/blob/main/examples/src/plate/main.ts",
-    author: "https://www.linkedin.com/in/mahjoubmusaab/",
   })
 );
+
+// Helper function to calculate triangle area
+function calculateTriangleArea(n1: Node, n2: Node, n3: Node): number {
+  const a = [n2[0] - n1[0], n2[1] - n1[1], n2[2] - n1[2]];
+  const b = [n3[0] - n1[0], n3[1] - n1[1], n3[2] - n1[2]];
+  const cross = [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+  const norm = Math.sqrt(cross[0] ** 2 + cross[1] ** 2 + cross[2] ** 2);
+  return norm / 2;
+}
