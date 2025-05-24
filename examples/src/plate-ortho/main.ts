@@ -24,13 +24,14 @@ const E_x = 1.0e10; // Pa (Young's modulus in x direction)
 const E_y = 1.0e10; // Pa (Young's modulus in y direction)
 const nu_xy = 0.25; // Poisson's ratio
 const G_xy = (0.5 * E_x) / (1 + nu_xy); // = 4.0e9 Pa
+const support = [true, true, true, false, false, false];
+const numDivisions = 5;
 
 // Create a refined hardcoded mesh for a rectangular plate
 // Using a 5x5 grid of nodes, creating 32 triangular elements
 
 // Generate nodes in a 5x5 grid
 const meshNodes: Node[] = [];
-const numDivisions = 5;
 for (let j = 0; j < numDivisions; j++) {
   for (let i = 0; i < numDivisions; i++) {
     meshNodes.push([
@@ -77,7 +78,10 @@ const nodeInputs2: NodeInputs = {
 
 // Apply fixed supports at boundary nodes
 boundaryIndices.forEach((i) => {
-  nodeInputs2.supports!.set(i, [true, true, true, false, false, false]);
+  nodeInputs2.supports!.set(
+    i,
+    support as [boolean, boolean, boolean, boolean, boolean, boolean]
+  );
 });
 
 // Process each element to calculate and apply equivalent nodal forces
