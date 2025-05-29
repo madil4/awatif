@@ -30,6 +30,11 @@ export function getMesh(
     elasticities: new Map(),
     thicknesses: new Map(),
     poissonsRatios: new Map(),
+    shearModuli: new Map(),
+    areas: new Map(),
+    torsionalConstants: new Map(),
+    momentsOfInertiaY: new Map(),
+    momentsOfInertiaZ: new Map(),
   };
   const bottomColumnNodesIndicesByStory: Map<
     number,
@@ -86,7 +91,7 @@ export function getMesh(
       const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
-        maxMeshSize: 1,
+        maxMeshSize: 0.2,
       });
 
       const numExistingNodes = nodes.length;
@@ -96,7 +101,7 @@ export function getMesh(
         e.map((i) => i + numExistingNodes)
       );
       const slabsNodesIndices = meshNodes.map((_, i) => i + numExistingNodes);
-      const slabElementsIndices = elements.map(
+      const slabElementsIndices = meshElements.map(
         (_, i) => i + numExistingElements
       );
 
@@ -202,6 +207,16 @@ export function getMesh(
         );
       }
 
+      const lastIndex = elements.length;
+      columnElements.forEach((_, elementIndex) => {
+        elementInputs.elasticities.set(lastIndex + elementIndex, 1e6);
+        elementInputs.shearModuli.set(lastIndex + elementIndex, 1e6);
+        elementInputs.areas.set(lastIndex + elementIndex, 1e6);
+        elementInputs.torsionalConstants.set(lastIndex + elementIndex, 1e6);
+        elementInputs.momentsOfInertiaY.set(lastIndex + elementIndex, 1e6);
+        elementInputs.momentsOfInertiaZ.set(lastIndex + elementIndex, 1e6);
+      });
+
       nodes = [...nodes, ...intermediateColumnNodes];
       elements = [...elements, ...columnElements];
 
@@ -234,10 +249,12 @@ function meshMember(
   existingNodes: Node[],
   node1Index: number,
   node2Index?: number,
-  meshDensity: number = 3
+  meshDensity: number = 1
 ): { nodes: Node[]; elements: Element[] } {
   const node1 = existingNodes[node1Index];
   const node2 = existingNodes[node2Index];
+
+  if (!node1 || !node2) return { nodes: [], elements: [] };
 
   let nodes: Node[] = [];
   let elements: Element[] = [];

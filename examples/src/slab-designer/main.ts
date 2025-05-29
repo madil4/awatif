@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { getToolbar, getViewer, Drawing } from "awatif-ui";
-import { Mesh } from "awatif-fem";
+import { deform, Mesh } from "awatif-fem";
 import { Building } from "../building/data-model.js";
 import { getBase, getBaseGeometry } from "../building/getBase.js";
 import { getSolids, getSolidsGeometry } from "../building/getSolids.js";
@@ -37,6 +37,7 @@ const mesh: Mesh = {
   elements: van.state([]),
   nodeInputs: van.state({}),
   elementInputs: van.state({}),
+  deformOutputs: van.state({}),
 };
 
 //* Drawing Data (Points - Polylines)
@@ -146,7 +147,7 @@ van.derive(() => {
 
   slabsByStory.set(0, Array.from(drawingSlabPolylines.rawVal.keys()));
 
-  const slabLoad: number = 1;
+  const slabLoad: number = 10;
   slabData.set(0, {
     analysisInput: {
       areaLoad: slabLoad,
@@ -207,16 +208,15 @@ van.derive(() => {
     building.columnData.val,
     building.slabData.val
   );
-  mesh.nodes.val = nodes;
-  mesh.elements.val = elements;
-  mesh.nodeInputs.val = nodeInputs;
-  mesh.elementInputs.val = elementInputs;
 
-  base.geometry = getBaseGeometry(
-    building.points.val,
-    building.slabs.val,
-    building.columns.val
-  );
+  mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
+
+  // The base geometry is not used in this example, but can be uncommented if needed
+  // base.geometry = getBaseGeometry(
+  //   building.points.val,
+  //   building.slabs.val,
+  //   building.columns.val
+  // );
 
   solidsMesh.geometry = getSolidsGeometry(
     building.points.val,
@@ -225,6 +225,12 @@ van.derive(() => {
   );
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
+
+  // Update state
+  mesh.nodes.val = nodes;
+  mesh.elements.val = elements;
+  mesh.nodeInputs.val = nodeInputs;
+  mesh.elementInputs.val = elementInputs;
 });
 
 document.body.append(
@@ -238,7 +244,9 @@ document.body.append(
       gridTarget,
     },
     settingsObj: {
+      nodes: false,
       loads: false,
+      deformedShape: true,
     },
   }),
   getSnapTip(),
