@@ -17297,13 +17297,12 @@ function iC({ mesh: s, settingsObj: e, drawingObj: t, objects3D: i, solids: n })
   function g() {
     l.render(o, a);
   }
-  if (s && (o.add(uM(h, u, d), pM(s, h, u), xM(h, u, d), bM(s, h, u, d), gM(s, h, u, d), vM(s, h, u, d), EM(s, h, u, d), AM(s, h, u, d), MM(s, h, u, d)), h.shellResults.val != "none")) {
-    const y = FM(s, h);
-    o.add(IM(s, h, u, y));
-    const b = NM(y);
-    Ae.derive(() => {
-      b.hidden = h.shellResults.val == "none";
-    }), r.appendChild(b);
+  if (s) {
+    o.add(uM(h, u, d), pM(s, h, u), xM(h, u, d), bM(s, h, u, d), gM(s, h, u, d), vM(s, h, u, d), EM(s, h, u, d), AM(s, h, u, d), MM(s, h, u, d));
+    const y = FM(s, h), b = IM(s, h, u, y), S = NM(y);
+    o.add(b), r.appendChild(S), Ae.derive(() => {
+      S.hidden = h.shellResults.val == "none", b.visible = h.shellResults.val != "none";
+    });
   }
   if (n) {
     const y = new Sb(16777215, 0.5);
