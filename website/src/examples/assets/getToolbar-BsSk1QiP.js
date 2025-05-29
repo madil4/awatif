@@ -1,4 +1,4 @@
-import { x as o, d as p } from "./styles-C4Vy4UV0.js";
+import { x as o, d as p } from "./styles-CcZBryOO.js";
 function b({ buttons: i, clickedButton: a, author: s, sourceCode: l }) {
   const e = document.createElement("div"), c = o`
     <div class="buttons-container">
