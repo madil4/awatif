@@ -17247,7 +17247,7 @@ const sl = { rainbow: [[0, 255], [0.2, 65535], [0.5, 65280], [0.8, 16776960], [1
 function LM(s, e, t) {
   const i = new DM(), n = new ke(), r = new Nt(new ft(), new Mi({ side: Bt, vertexColors: true }));
   return i.setColorMap("rainbow"), r.renderOrder = -1, r.frustumCulled = false, Ae.derive(() => {
-    r.geometry.setAttribute("position", new at(s.val.flat(), 3)), r.geometry.setIndex(new wc(e.val.flat(), 1)), r.geometry.setAttribute("color", new at(s.val.map(() => [0, 0, 0]).flat(), 3)), i.setMax(Math.max(...t.val)), i.setMin(Math.min(...t.val));
+    r.geometry.setAttribute("position", new at(s.val.flat(), 3)), r.geometry.setIndex(new wc(e.val.filter((o) => o.length != 2).flat(), 1)), r.geometry.setAttribute("color", new at(s.val.map(() => [0, 0, 0]).flat(), 3)), i.setMax(Math.max(...t.val)), i.setMin(Math.min(...t.val));
     for (let o = 0; o < t.val.length; o++) {
       const a = i.getColor(t.val[o]) ?? new ke(0, 0, 0);
       n.copy(a).convertSRGBToLinear(), n.multiplyScalar(0.6), r.geometry.attributes.color.setXYZ(o, n.r, n.g, n.b);
