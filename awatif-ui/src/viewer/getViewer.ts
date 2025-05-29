@@ -148,17 +148,22 @@ export function getViewer({
     );
 
     // Color map
-    if (settings.shellResults.val != "none") {
-      const colorMapValues = getColorMapValues(mesh, settings);
+    const colorMapValues = getColorMapValues(mesh, settings);
+    const shellResultsObj = shellResults(
+      mesh,
+      settings,
+      derivedNodes,
+      colorMapValues
+    );
+    const legend = getLegend(colorMapValues);
 
-      scene.add(shellResults(mesh, settings, derivedNodes, colorMapValues));
+    scene.add(shellResultsObj);
+    viewerElm.appendChild(legend);
 
-      const legend = getLegend(colorMapValues);
-      van.derive(() => {
-        legend.hidden = settings.shellResults.val == "none";
-      });
-      viewerElm.appendChild(legend);
-    }
+    van.derive(() => {
+      legend.hidden = settings.shellResults.val == "none";
+      shellResultsObj.visible = settings.shellResults.val != "none";
+    });
   }
 
   if (solids) {
