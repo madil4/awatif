@@ -35,7 +35,10 @@ export function getColorMap(
       new THREE.Float32BufferAttribute(nodes.val.flat(), 3)
     );
     colorMap.geometry.setIndex(
-      new THREE.Uint16BufferAttribute(elements.val.flat(), 1)
+      new THREE.Uint16BufferAttribute(
+        elements.val.filter((e) => e.length != 2).flat(), // we only want triangles and quads
+        1
+      )
     );
 
     colorMap.geometry.setAttribute(
