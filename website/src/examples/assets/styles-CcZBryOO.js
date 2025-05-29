@@ -16819,7 +16819,7 @@ function hM(s, e, t) {
   }
   if ((e == null ? void 0 : e.deformOutputs) || (e == null ? void 0 : e.analyzeOutputs)) {
     const r = n.addFolder({ title: "Analysis Outputs" });
-    r.addBinding(s.nodeResults, "val", { options: { none: "none", deformations: "deformations", reactions: "reactions" }, label: "Node results" }), r.addBinding(s.frameResults, "val", { options: { none: "none", normals: "normals", shearsY: "shearsY", shearsZ: "shearsZ", torsions: "torsions", bendingsY: "bendingsY", bendingsZ: "bendingsZ" }, label: "Frame results" }), r.addBinding(s.shellResults, "val", { options: { none: "none", bendingXX: "bendingXX", bendingYY: "bendingYY", bendingXY: "bendingXY", displacementZ: "displacementZ" }, label: "Shell results" }), r.addBinding(s.deformedShape, "val", { label: "Deformed shape" });
+    r.addBinding(s.nodeResults, "val", { options: { none: "none", deformations: "deformations", reactions: "reactions" }, label: "Node results" }), r.addBinding(s.frameResults, "val", { options: { none: "none", normals: "normals", shearsY: "shearsY", shearsZ: "shearsZ", torsions: "torsions", bendingsY: "bendingsY", bendingsZ: "bendingsZ" }, label: "Frame results" }), r.addBinding(s.shellResults, "val", { options: { none: "none", displacementZ: "displacementZ" }, label: "Shell results" }), r.addBinding(s.deformedShape, "val", { label: "Deformed shape" });
   }
   return t && n.addBinding(s.solids, "val", { label: "Solids" }), i;
 }
@@ -17339,7 +17339,7 @@ function FM(s, e) {
     n.bendingXX = "bendingXX", n.bendingYY = "bendingYY", n.bendingXY = "bendingXY", n.displacementZ = "displacementZ";
   })(i || (i = {})), Ae.derive(() => {
     var _a2, _b2, _c2, _d2;
-    const n = { bendingXX: [(_a2 = s.analyzeOutputs) == null ? void 0 : _a2.val.bendingXX, 1], bendingYY: [(_b2 = s.analyzeOutputs) == null ? void 0 : _b2.val.bendingYY, 0], bendingXY: [(_c2 = s.analyzeOutputs) == null ? void 0 : _c2.val.bendingXY, 0], displacementZ: [(_d2 = s.deformOutputs) == null ? void 0 : _d2.val.deformations, 2] }, r = [];
+    const n = { bendingXX: [(_a2 = s.analyzeOutputs) == null ? void 0 : _a2.val.bendingXX, 0], bendingYY: [(_b2 = s.analyzeOutputs) == null ? void 0 : _b2.val.bendingYY, 0], bendingXY: [(_c2 = s.analyzeOutputs) == null ? void 0 : _c2.val.bendingXY, 0], displacementZ: [(_d2 = s.deformOutputs) == null ? void 0 : _d2.val.deformations, 2] }, r = [];
     s.nodes.val.forEach((o, a) => {
       const l = n[e.shellResults.val];
       l && r.push(l[0].get(a)[l[1]]);

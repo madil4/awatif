@@ -1,8 +1,7 @@
-import { v as e, l, g as p, m as c } from "./styles-C4Vy4UV0.js";
-import { g as d } from "./getParameters-6uvs3hTe.js";
-import { g } from "./getToolbar-DWV7GZPM.js";
-import { g as u, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
-import { n as b, s as v } from "./pureFunctionsAny.generated-Dh3LO6N2.js";
+import { v as e, g as n } from "./styles-CcZBryOO.js";
+import { g as r } from "./getParameters-wBkc0XBG.js";
+import { g as i } from "./getToolbar-BsSk1QiP.js";
+import { g as l, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
@@ -13,23 +12,17 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const i = {
+  const t = {
     boundary: {
-      value: e.state(10),
+      value: e.state(5),
       min: 1,
       max: 10,
       step: 0.1,
       label: "Boundary point"
     }
-  }, a = e.state([]), m = e.state([]), r = e.state([]), n = e.state([
-    l(a, m, r)
-  ]);
+  }, o = e.state([]), a = e.state([]);
   e.derive(() => {
-    const t = [
-      i.boundary.value.val,
-      0,
-      3
-    ], { nodes: o, elements: s } = u({
+    const { nodes: s, elements: m } = l({
       points: [
         [
           0,
@@ -41,7 +34,11 @@ Promise.all([
           0,
           0
         ],
-        t,
+        [
+          t.boundary.value.val,
+          0,
+          3
+        ],
         [
           8,
           0,
@@ -88,24 +85,17 @@ Promise.all([
         6,
         7,
         8
-      ],
-      maxMeshSize: 1
+      ]
     });
-    a.val = o, m.val = s, r.val = h(t, a.val), n.val = [
-      ...n.rawVal
-    ];
+    o.val = s, a.val = m;
   });
-  document.body.append(d(i), p({
+  document.body.append(r(t), n({
     mesh: {
-      nodes: a,
-      elements: m
-    },
-    objects3D: n
-  }), c(r), g({
-    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/color-map/main.ts",
-    author: "https://www.linkedin.com/in/siu-kai-cheung/"
+      nodes: o,
+      elements: a
+    }
+  }), i({
+    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/2d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/"
   }));
-  function h(t, o) {
-    return o.map((s) => b(v(s, t)));
-  }
 });
