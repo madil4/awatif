@@ -343,9 +343,10 @@ document.body.append(
       nodes: false,
       loads: false,
       deformedShape: true,
+      solids: false
     },
   }),
-  getSnapTip(),
+  // getSnapTip(),
   getDrawingToolbar({ onToolbarClick, onClearPoints }),
   getToolbar({
     sourceCode:
