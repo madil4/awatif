@@ -1,8 +1,9 @@
-import { v as e, e as w, x as s, a as $, g as x } from "./styles-BHEEcEe8.js";
-import { a as y } from "./analyze-D7gYJmBX.js";
-import { d as z, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
-import { g as T } from "./getParameters-DUGbK7gy.js";
-import { g as S } from "./getDialog-pZ-ca67x.js";
+import { v as e, d as w, x as s, g as $ } from "./styles-CcZBryOO.js";
+import { a as x } from "./analyze-0pMPybQW.js";
+import { d as y, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
+import { g as z } from "./getParameters-wBkc0XBG.js";
+import { g as T } from "./getToolbar-BsSk1QiP.js";
+import { g as S } from "./getDialog-CgmQbszm.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -12,13 +13,13 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function F({ template: i, data: n }) {
+  function F({ template: i, data: r }) {
     const l = document.createElement("div");
     return e.derive(() => {
-      w(i(n), l);
+      w(i(r), l);
     }), l;
   }
-  function B({ nodes: i, nodeInputs: n, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
+  function B({ nodes: i, nodeInputs: r, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
     return s`
     <br />
     <header class="header">
@@ -107,7 +108,7 @@ Promise.all([
         <th>mz</th>
       </tr>
       ${[
-      ...n.val.supports
+      ...r.val.supports
     ].map(([a, t]) => s`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
@@ -199,7 +200,7 @@ Promise.all([
     <br /><br /><br />
   `;
   }
-  const r = {
+  const n = {
     xPosition: {
       value: e.state(600),
       min: 0,
@@ -226,9 +227,9 @@ Promise.all([
         0
       ],
       [
-        r.xPosition.value.val,
+        n.xPosition.value.val,
         0,
-        r.zPosition.value.val
+        n.zPosition.value.val
       ],
       [
         250,
@@ -303,7 +304,7 @@ Promise.all([
           100
         ]
       ])
-    }, h.val = z(o.val, d.val, v.val, c.val), m.val = y(o.val, d.val, c.val, h.val);
+    }, h.val = y(o.val, d.val, v.val, c.val), m.val = x(o.val, d.val, c.val, h.val);
   });
   const p = e.state(""), b = e.state(void 0);
   e.derive(() => {
@@ -312,7 +313,7 @@ Promise.all([
       data: u
     }));
   });
-  document.body.append($({
+  document.body.append(T({
     clickedButton: p,
     buttons: [
       "Report"
@@ -321,7 +322,7 @@ Promise.all([
     author: "https://www.linkedin.com/in/cal-mense/"
   }), S({
     dialogBody: b
-  }), T(r), x({
+  }), z(n), $({
     mesh: u,
     settingsObj: {
       gridSize: 1e3

@@ -5,6 +5,7 @@ import { Building } from "./data-model";
 import { getMesh } from "./getMesh";
 import { getBase, getBaseGeometry } from "./getBase";
 import { getSolids, getSolidsGeometry } from "./getSolids";
+import { column } from "mathjs";
 
 const parameters: Parameters = {
   stories: { value: van.state(2), min: 1, max: 5, step: 1 },
@@ -25,6 +26,7 @@ const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   nodeInputs: van.state({}),
+  elementInputs: van.state({}),
 };
 
 const slabSample: number[][] = [
@@ -57,6 +59,7 @@ van.derive(() => {
   const columns: Building["columns"]["val"] = [];
   const columnsByStory: Building["columnsByStory"]["val"] = new Map();
   const slabsByStory: Building["slabsByStory"]["val"] = new Map();
+  const columnData: Building["columnData"]["val"] = new Map();
   const slabData: Building["slabData"]["val"] = new Map();
 
   for (let j = 0; j < parameters.stories.value.val; j++) {
@@ -104,6 +107,18 @@ van.derive(() => {
       newColumnsIndices.push(columns.length - 1);
     }
 
+    // fixed supports for ground level columns
+    if (j === 0) {
+      const initialNumColumns = columns.length - columnsSample.length;
+      for (let i = 0; i < columnsSample.length; i++) {
+        columnData.set(initialNumColumns + i, {
+          analysisInput: {
+            support: [true, true, true, true, true, true],
+          },
+        });
+      }
+    }
+
     columnsByStory.set(j, newColumnsIndices);
   }
 
@@ -114,23 +129,26 @@ van.derive(() => {
   building.columns.val = columns;
   building.columnsByStory.val = columnsByStory;
   building.slabsByStory.val = slabsByStory;
+  building.columnData.val = columnData;
   building.slabData.val = slabData;
 });
 
 // When building data model changes, update base and solids geometry
 van.derive(() => {
-  const { nodes, elements, nodeInputs } = getMesh(
+  const { nodes, elements, nodeInputs, elementInputs } = getMesh(
     building.points.val,
     building.stories.val,
     building.columns.val,
     building.slabs.val,
     building.columnsByStory.val,
     building.slabsByStory.val,
+    building.columnData.val,
     building.slabData.val
   );
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
+  mesh.elementInputs.val = elementInputs;
 
   base.geometry = getBaseGeometry(
     building.points.val,

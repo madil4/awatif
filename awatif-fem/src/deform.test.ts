@@ -220,4 +220,107 @@ describe("deform", () => {
       ]),
     });
   });
+
+  test("Rectangular Plate", () => {
+    // Plate dimensions and material properties - matching analytical.py
+    const a = 10.0; // m (length in x direction)
+    const b = 10.0; // m (length in y direction)
+    const h = 0.15; // m (thickness)
+    const p0 = 1000.0; // N/m² (pressure)
+    const E_x = 1.0e10; // Pa (Young's modulus in x direction)
+    const E_y = 1.0e10; // Pa (Young's modulus in y direction)
+    const nu_xy = 0.25; // Poisson's ratio
+    const G_xy = (0.5 * E_x) / (1 + nu_xy); // = 4.0e9 Pa
+
+    // Generate nodes in a 5x5 grid
+    const meshNodes: Node[] = [];
+    const numDivisions = 5;
+    for (let j = 0; j < numDivisions; j++) {
+      for (let i = 0; i < numDivisions; i++) {
+        meshNodes.push([
+          (i * a) / (numDivisions - 1),
+          (j * b) / (numDivisions - 1),
+          0,
+        ]);
+      }
+    }
+
+    // Generate triangular elements
+    const meshElements: Element[] = [];
+    for (let j = 0; j < numDivisions - 1; j++) {
+      for (let i = 0; i < numDivisions - 1; i++) {
+        // Calculate node indices for this grid cell
+        const bottomLeft = j * numDivisions + i;
+        const bottomRight = bottomLeft + 1;
+        const topLeft = (j + 1) * numDivisions + i;
+        const topRight = topLeft + 1;
+
+        // Add two triangles for each grid cell
+        meshElements.push([bottomLeft, bottomRight, topLeft]);
+        meshElements.push([bottomRight, topRight, topLeft]);
+      }
+    }
+
+    // Identify boundary nodes (nodes on the edges of the plate)
+    const boundaryIndices: number[] = [];
+    for (let i = 0; i < meshNodes.length; i++) {
+      const [x, y] = meshNodes[i];
+      if (x === 0 || x === a || y === 0 || y === b) {
+        boundaryIndices.push(i);
+      }
+    }
+
+    // Setup node inputs (supports and loads)
+    const nodeInputs2: NodeInputs = {
+      supports: new Map<
+        number,
+        [boolean, boolean, boolean, boolean, boolean, boolean]
+      >(),
+      loads: new Map<
+        number,
+        [number, number, number, number, number, number]
+      >(),
+    };
+
+    // Apply fixed supports at boundary nodes
+    boundaryIndices.forEach((i) => {
+      nodeInputs2.supports!.set(i, [true, true, true, false, false, false]);
+    });
+
+    // Setup element inputs
+    const elementInputs2: ElementInputs = {
+      elasticities: new Map<number, number>(),
+      elasticitiesOrthogonal: new Map<number, number>(),
+      shearModuli: new Map<number, number>(),
+      poissonsRatios: new Map<number, number>(),
+      thicknesses: new Map<number, number>(),
+    };
+
+    // Apply material properties to all elements
+    meshElements.forEach((_, i) => {
+      elementInputs2.elasticities!.set(i, E_x);
+      elementInputs2.elasticitiesOrthogonal!.set(i, E_y);
+      elementInputs2.shearModuli!.set(i, G_xy);
+      elementInputs2.poissonsRatios!.set(i, nu_xy);
+      elementInputs2.thicknesses!.set(i, h);
+    });
+
+    // Run deformation analysis
+    const deformOutputs = deform(
+      meshNodes,
+      meshElements,
+      nodeInputs2,
+      elementInputs2
+    );
+
+    // Calculate maximum displacement
+    let maxZDisplacement = 0;
+    deformOutputs!.deformations!.forEach((deformation) => {
+      const dz = deformation[2]; // Z-axis displacement
+      const absDz = Math.abs(dz);
+      maxZDisplacement = Math.max(maxZDisplacement, absDz);
+    });
+
+    expect(maxZDisplacement * 1000).toBeCloseTo(13.541176, 6);
+  });
 });

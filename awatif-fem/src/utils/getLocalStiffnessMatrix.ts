@@ -191,7 +191,7 @@ function getLocalStiffnessMatrixPlate(
   }
 
   // 6) return as a 2D array
-  return mapK9x9ToK18x18(K.toArray() as number[][]);
+  return expandStiffnessMatrix(K.toArray() as number[][]);
 
   // Utils
   function buildEdgeCoeffs(
@@ -391,31 +391,43 @@ function getLocalStiffnessMatrixPlate(
     return matrix(data);
   }
 
-  function mapK9x9ToK18x18(k9: number[][]): number[][] {
-    // prettier-ignore
-    const k18 = [
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0][0], k9[0][2], k9[0][1], 0    , 0, 0, k9[0][0+3], k9[0][2+3], k9[0][1+3], 0,     0, 0, k9[0][0+6], k9[0][2+6], k9[0][1+6], 0],
-      [0, 0, k9[2][0], k9[2][2], k9[2][1], 0    , 0, 0, k9[2][0+3], k9[2][2+3], k9[2][1+3], 0,     0, 0, k9[2][0+6], k9[2][2+6], k9[2][1+6], 0],
-      [0, 0, k9[1][0], k9[1][2], k9[1][1], 0    , 0, 0, k9[1][0+3], k9[1][2+3], k9[1][1+3], 0,     0, 0, k9[1][0+6], k9[1][2+6], k9[1][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+  /**
+   * Expand the 9x9 DKT stiffness matrix to a full 18x18 matrix with all 6 DOFs per node
+   * @param {Array<Array<number>>} K9 - The 9x9 DKT stiffness matrix
+   * @returns {Array<Array<number>>} The expanded 18x18 stiffness matrix
+   */
+  function expandStiffnessMatrix(K9) {
+    // Initialize 18x18 matrix with zeros
+    const K18 = Array(18)
+      .fill(0)
+      .map(() => Array(18).fill(0));
 
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0+3][0], k9[0+3][2], k9[0+3][1], 0    , 0, 0, k9[0+3][0+3], k9[0+3][2+3], k9[0+3][1+3], 0,     0, 0, k9[0+3][0+6], k9[0+3][2+6], k9[0+3][1+6], 0],
-      [0, 0, k9[2+3][0], k9[2+3][2], k9[2+3][1], 0    , 0, 0, k9[2+3][0+3], k9[2+3][2+3], k9[2+3][1+3], 0,     0, 0, k9[2+3][0+6], k9[2+3][2+6], k9[2+3][1+6], 0],
-      [0, 0, k9[1+3][0], k9[1+3][2], k9[1+3][1], 0    , 0, 0, k9[1+3][0+3], k9[1+3][2+3], k9[1+3][1+3], 0,     0, 0, k9[1+3][0+6], k9[1+3][2+6], k9[1+3][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+    // Mapping from 9x9 to 18x18
+    // Original DOF order: [Node1-DZ, Node1-DRX, Node1-DRY, Node2-DZ, Node2-DRX, Node2-DRY, Node3-DZ, Node3-DRX, Node3-DRY]
+    // New DOF order: [Node1-DX, Node1-DY, Node1-DZ, Node1-DRX, Node1-DRY, Node1-DRZ,
+    //                 Node2-DX, Node2-DY, Node2-DZ, Node2-DRX, Node2-DRY, Node2-DRZ,
+    //                 Node3-DX, Node3-DY, Node3-DZ, Node3-DRX, Node3-DRY, Node3-DRZ]
 
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
-      [0, 0, k9[0+6][0], k9[0+6][2], k9[0+6][1], 0    , 0, 0, k9[0+6][0+3], k9[0+6][2+3], k9[0+6][1+3], 0,     0, 0, k9[0+6][0+6], k9[0+6][2+6], k9[0+6][1+6], 0],
-      [0, 0, k9[2+6][0], k9[2+6][2], k9[2+6][1], 0    , 0, 0, k9[2+6][0+3], k9[2+6][2+3], k9[2+6][1+3], 0,     0, 0, k9[2+6][0+6], k9[2+6][2+6], k9[2+6][1+6], 0],
-      [0, 0, k9[1+6][0], k9[1+6][2], k9[1+6][1], 0    , 0, 0, k9[1+6][0+3], k9[1+6][2+3], k9[1+6][1+3], 0,     0, 0, k9[1+6][0+6], k9[1+6][2+6], k9[1+6][1+6], 0],
-      [0, 0, 0, 0, 0, 0    , 0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0],
+    // Create mapping from old indices to new indices
+    const mapping = [
+      2, // Node1-DZ  -> index 2
+      3, // Node1-DRX -> index 3
+      4, // Node1-DRY -> index 4
+      8, // Node2-DZ  -> index 8
+      9, // Node2-DRX -> index 9
+      10, // Node2-DRY -> index 10
+      14, // Node3-DZ  -> index 14
+      15, // Node3-DRX -> index 15
+      16, // Node3-DRY -> index 16
     ];
 
-    return k18;
+    // Copy values from K9 to K18 using the mapping
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        K18[mapping[i]][mapping[j]] = K9[i][j];
+      }
+    }
+
+    return K18;
   }
 }

@@ -134,15 +134,6 @@ export function getViewer({
 
   // Optional inputs
   if (mesh) {
-    // Color map
-    const colorMapValues = getColorMapValues(mesh, settings);
-
-    const legend = getLegend(colorMapValues);
-    van.derive(() => {
-      legend.hidden = settings.shellResults.val == "none";
-    });
-    viewerElm.appendChild(legend);
-
     // 3D objects
     scene.add(
       nodes(settings, derivedNodes, derivedDisplayScale),
@@ -153,9 +144,26 @@ export function getViewer({
       loads(mesh, settings, derivedNodes, derivedDisplayScale),
       orientations(mesh, settings, derivedNodes, derivedDisplayScale),
       nodeResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      frameResults(mesh, settings, derivedNodes, derivedDisplayScale),
-      shellResults(mesh, settings, derivedNodes, colorMapValues)
+      frameResults(mesh, settings, derivedNodes, derivedDisplayScale)
     );
+
+    // Color map
+    const colorMapValues = getColorMapValues(mesh, settings);
+    const shellResultsObj = shellResults(
+      mesh,
+      settings,
+      derivedNodes,
+      colorMapValues
+    );
+    const legend = getLegend(colorMapValues);
+
+    scene.add(shellResultsObj);
+    viewerElm.appendChild(legend);
+
+    van.derive(() => {
+      legend.hidden = settings.shellResults.val == "none";
+      shellResultsObj.visible = settings.shellResults.val != "none";
+    });
   }
 
   if (solids) {
@@ -261,15 +269,16 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
   // On resultMapper, nodes, settings.shellResults change: get new values
   van.derive(() => {
     const resultMapper = {
-      [ResultType.bendingXX]: [mesh.analyzeOutputs.val.bendingXX, 1],
-      [ResultType.bendingYY]: [mesh.analyzeOutputs.val.bendingYY, 0],
-      [ResultType.bendingXY]: [mesh.analyzeOutputs.val.bendingXY, 0],
-      [ResultType.displacementZ]: [mesh.deformOutputs.val.deformations, 2],
+      [ResultType.bendingXX]: [mesh.analyzeOutputs?.val.bendingXX, 0],
+      [ResultType.bendingYY]: [mesh.analyzeOutputs?.val.bendingYY, 0],
+      [ResultType.bendingXY]: [mesh.analyzeOutputs?.val.bendingXY, 0],
+      [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
     };
 
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
       const resultMap = resultMapper[settings.shellResults.val];
+      if (!resultMap) return;
       values.push(resultMap[0].get(i)[resultMap[1]]);
     });
 

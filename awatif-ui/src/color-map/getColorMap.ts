@@ -24,6 +24,7 @@ export function getColorMap(
   // Update
   lut.setColorMap("rainbow");
   colorMap.renderOrder = -1; // to ensure that it always set behind the mesh
+  colorMap.frustumCulled = false;
 
   // Events
   // When nodes, elements or values change, update the color map
@@ -34,7 +35,10 @@ export function getColorMap(
       new THREE.Float32BufferAttribute(nodes.val.flat(), 3)
     );
     colorMap.geometry.setIndex(
-      new THREE.Uint16BufferAttribute(elements.val.flat(), 1)
+      new THREE.Uint16BufferAttribute(
+        elements.val.filter((e) => e.length != 2).flat(), // we only want triangles and quads
+        1
+      )
     );
 
     colorMap.geometry.setAttribute(
