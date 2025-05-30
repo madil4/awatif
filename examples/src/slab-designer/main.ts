@@ -104,6 +104,50 @@ function onToolbarClick(floor: DrawingStory) {
       : drawingSlabPolylines.val;
 }
 
+function onClearPoints() {
+  // Clear drawing data based on active story
+  if (activeStory === DrawingStory.first) {
+    drawingColumnPoints.val = [];
+    drawingColumnPolylines.val = [];
+  } else {
+    drawingSlabPoints.val = [];
+    drawingSlabPolylines.val = [];
+  }
+
+  // Clear total drawing data
+  totalDrawingPoints.val = [];
+  totalDrawingPolylines.val = [];
+
+  // Clear building model data
+  building.points.val = [];
+  building.columns.val = [];
+  building.slabs.val = [];
+  building.columnsByStory.val = new Map();
+  building.slabsByStory.val = new Map();
+  building.columnData.val = new Map();
+  building.slabData.val = new Map();
+
+  // Clear mesh data
+  mesh.nodes.val = [];
+  mesh.elements.val = [];
+  mesh.nodeInputs.val = {};
+
+
+  base.geometry = getBaseGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
+
+  solidsMesh.geometry = getSolidsGeometry(
+    building.points.val,
+    building.slabs.val,
+    building.columns.val
+  );
+  
+  objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
+}
+
 // When drawings' data change, update story's data
 van.derive(() => {
   if (activeStory == DrawingStory.first) {
@@ -302,7 +346,7 @@ document.body.append(
     },
   }),
   getSnapTip(),
-  getDrawingToolbar({ onToolbarClick }),
+  getDrawingToolbar({ onToolbarClick, onClearPoints }),
   getToolbar({
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
