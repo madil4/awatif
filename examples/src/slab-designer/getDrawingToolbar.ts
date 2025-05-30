@@ -4,8 +4,10 @@ import "./styles.css";
 
 export function getDrawingToolbar({
   onToolbarClick,
+  onClearPoints,
 }: {
   onToolbarClick: (floor: string) => void;
+  onClearPoints: () => void;
 }): HTMLElement {
   const container = document.createElement("div");
   container.id = "drawing-toolbar";
@@ -27,9 +29,21 @@ export function getDrawingToolbar({
         text: "Slab",
         tooltip: "Create Slab",
       },
+      { type: "break" },
+      {
+        type: "button",
+        id: "clear-points",
+        text: "Clear Points",
+        tooltip: "Remove all points of selected level",
+        icon: "w2ui-icon-cross",
+      },
     ],
     onClick(event) {
-      onToolbarClick(event.target);
+      if (event.target === "clear-points") {
+        onClearPoints();
+      } else {
+        onToolbarClick(event.target);
+      }
     },
   });
 
