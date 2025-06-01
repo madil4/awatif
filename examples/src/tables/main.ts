@@ -14,7 +14,6 @@ const lines = new THREE.Line(
   new THREE.LineBasicMaterial()
 );
 const objects3D = van.state([lines]);
-
 const tables = new Map();
 
 // Update

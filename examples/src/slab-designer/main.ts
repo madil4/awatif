@@ -1,5 +1,5 @@
 import van from "vanjs-core";
-import { getToolbar, getViewer, Drawing } from "awatif-ui";
+import { getToolbar, getViewer, Drawing, getTables, getDialog } from "awatif-ui";
 import { Mesh } from "awatif-fem";
 import { Building } from "../building/data-model.js";
 import { getBase, getBaseGeometry } from "../building/getBase.js";
@@ -57,16 +57,51 @@ const sampleSlabPoints = [
   [12, 6, 4],
   [12, 2, 4],
 ] as [number, number, number][];
+
+// tables
+const sampleColumnPointsData = van.state<[number, number, number][]>([]);
+const sampleSlabPointsData = van.state<[number, number, number][]>([]);
+
+for (let i = 0; i < sampleColumnPoints.length; i++) {
+  sampleColumnPointsData.val.push(sampleColumnPoints[i]);
+}
+
+for (let i = 0; i < sampleSlabPoints.length; i++) {
+  sampleSlabPointsData.val.push(sampleSlabPoints[i]);
+}
+
+const tables = new Map();
+
+// Update
+tables.set("columns", {
+  text: "Columns",
+  fields: [
+    { field: "A", text: "x-Coordinate" },
+    { field: "B", text: "y-Coordinate"},
+    { field: "C", text: "z-Coordinate"},
+  ],
+  data: sampleColumnPointsData,
+});
+
+tables.set("slabs", {
+  text: "Slabs",
+  fields: [
+    { field: "A", text: "x-Coordinate" },
+    { field: "B", text: "y-Coordinate"},
+    { field: "C", text: "z-Coordinate"},
+  ],
+  data: sampleSlabPointsData,
+});
+
 const sampleSlabPolylines = [[0, 1, 2, 3, 4, 5], []];
 
 const drawingColumnPoints: Drawing["points"] = van.state([]);
 const drawingColumnPolylines: Drawing["polylines"] = van.state([]);
 
-const drawingSlabPoints: Drawing["points"] = van.state(sampleSlabPoints);
-const drawingSlabPolylines: Drawing["polylines"] =
-  van.state(sampleSlabPolylines);
+const drawingSlabPoints: Drawing["points"] = sampleSlabPointsData;
+const drawingSlabPolylines: Drawing["polylines"] = van.state(sampleSlabPolylines);
 
-const totalDrawingPoints: Drawing["points"] = van.state(sampleColumnPoints);
+const totalDrawingPoints: Drawing["points"] = sampleColumnPointsData;
 const totalDrawingPolylines: Drawing["polylines"] = van.state([]);
 
 const gridTarget = van.state({
@@ -77,6 +112,7 @@ const gridTarget = van.state({
 const FLOOR_HEIGHT: number = 4;
 
 let activeStory: DrawingStory = DrawingStory.first;
+
 
 // Events
 // On toolbar click, update grid target and points
@@ -214,6 +250,13 @@ van.derive(() => {
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
 });
 
+// dialog
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+van.derive(() => {
+  if (clickedButton.val === "Tables") dialogBody.val = getTables({ tables });
+});
+
 document.body.append(
   getViewer({
     objects3D,
@@ -231,8 +274,12 @@ document.body.append(
   getSnapTip(),
   getDrawingToolbar({ onToolbarClick }),
   getToolbar({
+    clickedButton,
+    buttons: ["Tables"],
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
-  })
+  }),
+  getDialog({ dialogBody }),
 );
+
