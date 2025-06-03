@@ -1,5 +1,4 @@
-import van from "vanjs-core";
-import { getToolbar, getViewer, Drawing } from "awatif-ui";
+import { getViewer, Parameters, getParameters, getToolbar, getReport, getDialog, getColorMap, getLegend, getTables, Drawing } from "awatif-ui";
 import { deform, Mesh } from "awatif-fem";
 import { Building } from "../building/data-model.js";
 import { getBase, getBaseGeometry } from "../building/getBase.js";
@@ -7,6 +6,21 @@ import { getSolids, getSolidsGeometry } from "../building/getSolids.js";
 import { getDrawingToolbar } from "./getDrawingToolbar.js";
 import { getSnapTip } from "./getSnapTip.js";
 import { getMesh } from "../building/getMesh.js";
+import { setupThreeCanvas, template } from "./utils/template";
+import {
+  Node,
+  Element,
+  NodeInputs,
+  ElementInputs,
+  DeformOutputs,
+  AnalyzeOutputs,
+} from "awatif-fem";
+import van, { State } from "vanjs-core";
+import { cltBendingDesign, Glulam } from "./utils/clt-design";
+import { createNodes, createText } from "./utils/threejsUtils";
+import "./styles.css";
+
+
 
 // Todo: Review reactive calls (.val vs .rawVal)
 // Enums and Types
@@ -29,8 +43,20 @@ const building: Building = {
 
 const solidsMesh = getSolids();
 const base = getBase();
-const objects3D = van.state([base]);
 const solids = van.state([solidsMesh]);
+const nodes: State<Node[]> = van.state([]);
+const elements: State<Element[]> = van.state([]);
+const nodeInputs: State<NodeInputs> = van.state({});
+const elementInputs: State<ElementInputs> = van.state({});
+const deformOutputs: State<DeformOutputs> = van.state({});
+const analyzeOutputs: State<AnalyzeOutputs> = van.state({});
+const objects3D = van.state([]);
+const distances = van.state([]);
+const moments = van.state<number[]>([]);
+const minMoment = van.state<number>(0);
+const result = van.state();
+const etaBendingMax = van.state([]);
+const glulam: Glulam = { grade: "GL24h", f_mk: 24, E_mean: 11500 };
 
 const mesh: Mesh = {
   nodes: van.state([]),
@@ -76,9 +102,45 @@ const gridTarget = van.state({
   rotation: [Math.PI / 2, 0, 0] as [number, number, number],
 });
 
+// tables
+const sampleColumnPointsData = van.state<[number, number, number][]>([]);
+const sampleSlabPointsData = van.state<[number, number, number][]>([]);
+
+
+for (let i = 0; i < sampleColumnPoints.length; i++) {
+  sampleColumnPointsData.val.push(sampleColumnPoints[i]);
+}
+
+for (let i = 0; i < sampleSlabPoints.length; i++) {
+  sampleSlabPointsData.val.push(sampleSlabPoints[i]);
+}
+
 const FLOOR_HEIGHT: number = 4;
 
 let activeStory: DrawingStory = DrawingStory.first;
+
+const tables = new Map();
+
+// Update
+tables.set("columns", {
+  text: "Columns",
+  fields: [
+    { field: "A", text: "x-Coordinate" },
+    { field: "B", text: "y-Coordinate"},
+    { field: "C", text: "z-Coordinate"},
+  ],
+  data: sampleColumnPointsData,
+});
+
+tables.set("slabs", {
+  text: "Slabs",
+  fields: [
+    { field: "A", text: "x-Coordinate" },
+    { field: "B", text: "y-Coordinate"},
+    { field: "C", text: "z-Coordinate"},
+  ],
+  data: sampleSlabPointsData,
+});
 
 // Events
 // On toolbar click, update grid target and points
@@ -231,6 +293,42 @@ van.derive(() => {
   mesh.elements.val = elements;
   mesh.nodeInputs.val = nodeInputs;
   mesh.elementInputs.val = elementInputs;
+
+  moments.val = [];       // clear old moments
+  minMoment.val = Infinity; // reset before pushing new values
+
+  // calc moments as deformations
+  for (const value of mesh.deformOutputs.val.deformations.values()) {
+    moments.val.push(value[2] * 10); 
+  }
+  
+  minMoment.val = Math.min(...moments.val);
+
+  // clt design 
+  result.val = cltBendingDesign(glulam, 20, 3, 20, Math.abs(minMoment.val), 0.8);
+});
+
+
+// Report
+const reportInput = {
+  glulam, 
+  nodes,
+  minMoment,
+  result,
+  analyzeOutputs
+};
+
+// dialog
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
+van.derive(() => {
+  if (clickedButton.val === "Tables") dialogBody.val = getTables({ tables });
+  if (clickedButton.val === "Report") {
+    dialogBody.val = getReport({ template, data: reportInput });
+    setTimeout(() => {
+      setupThreeCanvas();
+    }, 0);
+  }
 });
 
 document.body.append(
@@ -252,8 +350,12 @@ document.body.append(
   getSnapTip(),
   getDrawingToolbar({ onToolbarClick }),
   getToolbar({
+    clickedButton,
+    buttons: ["Tables", "Report"],
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
-  })
+  }),
+  getDialog({ dialogBody }),
+
 );
