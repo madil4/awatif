@@ -60,14 +60,6 @@ export function drawing({
   indicationPoint.frustumCulled = false;
   scene.add(indicationPoint);
 
-  // Current polyline outline points
-  const lastPolylinePoints = new THREE.Points(
-    new THREE.BufferGeometry(),
-    new THREE.PointsMaterial({ color: "orange" })
-  );
-  lastPolylinePoints.frustumCulled = false;
-  scene.add(lastPolylinePoints);
-
   // Match initial grid position and rotation
   plane.position.set(0.5 * gridSize, 0.5 * gridSize, 0);
   plane.rotateX(Math.PI / 2);
@@ -118,42 +110,6 @@ export function drawing({
     raycaster.params.Points.threshold = 0.4 * size;
   });
 
-  // On new slab outline drawn
-  van.derive(() => {
-    const allPoints = drawingObj.points.val;
-    const polylines = drawingObj.polylines?.val ?? [];
-  
-    const lastPolyline = polylines[polylines.length - 1] ?? [];
-  
-    const lastPoints: number[] = [];
-    const otherPoints: number[] = [];
-  
-    for (let i = 0; i < allPoints.length; i++) {
-      const coords = allPoints[i];
-      const flat = [coords[0], coords[1], coords[2]];
-      if (lastPolyline.includes(i)) {
-        lastPoints.push(...flat);
-      } else {
-        otherPoints.push(...flat);
-      }
-    }
-  
-    // White for normal points
-    points.material = new THREE.PointsMaterial({ color: "white" });
-    points.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(otherPoints, 3)
-    );
-    points.geometry.computeBoundingSphere();
-  
-    // Orange for active (last polyline) points
-    lastPolylinePoints.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(lastPoints, 3)
-    );
-    lastPolylinePoints.geometry.computeBoundingSphere();
-  });
-
   // Pointer events
   let pointerdown = false;
   let pointerDownAndMovedCount = 0;
@@ -195,10 +151,7 @@ export function drawing({
         );
       }
 
-      drawingObj.points.val = [
-        ...drawingObj.points.rawVal,
-        point.toArray(),
-      ];
+      drawingObj.points.val = [...drawingObj.points.rawVal, point.toArray()];
 
       if (drawingObj.polylines) {
         drawingObj.polylines.val = [
@@ -218,7 +171,8 @@ export function drawing({
   window.addEventListener("contextmenu", () => {
     if (
       !drawingObj.polylines ||
-      drawingObj.polylines.rawVal[drawingObj.polylines.rawVal.length - 1].length === 0
+      drawingObj.polylines.rawVal[drawingObj.polylines.rawVal.length - 1]
+        .length === 0
     )
       return;
 
@@ -315,9 +269,9 @@ export function drawing({
     if (pointerDownAndMovedCount % 2 !== 0) return; // slow movements for (parametric) performance opt 5
 
     const newPoints = [...drawingObj.points.rawVal];
-    if (pointIndex !== undefined){
+    if (pointIndex !== undefined) {
       let newPosition = intersectWithPlane[0].point;
-      
+
       if (event.ctrlKey || event.metaKey) {
         newPosition = new THREE.Vector3(
           Math.round(newPosition.x),
@@ -325,7 +279,7 @@ export function drawing({
           Math.round(newPosition.z)
         );
       }
-      
+
       newPoints[pointIndex] = newPosition.toArray();
       // newPoints[pointIndex] = intersectWithPlane[0].point.toArray();
     }
