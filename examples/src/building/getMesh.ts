@@ -84,7 +84,7 @@ export function getMesh(
         ...columnPointsNext,
       ]);
 
-      const slabPoints = mergeUniquePoints(
+      const slabPoints = getUniqueSlabPoints(
         boundaryPoints,
         Array.from(columnPoints.values())
       ); // more stable
@@ -325,7 +325,11 @@ function getNodalLoadsFromSlabAreaLoad(
 }
 
 // Utils
-function mergeUniquePoints(boundaryPts: Node[], columnPts: Node[], tol = 1e-2) {
+function getUniqueSlabPoints(
+  boundaryPts: Node[],
+  columnPts: Node[],
+  tol = 1e-2
+): Node[] {
   const tol2 = tol * tol;
   // Copy boundary points into the result
   const slabPts = boundaryPts.slice();
@@ -344,7 +348,7 @@ function mergeUniquePoints(boundaryPts: Node[], columnPts: Node[], tol = 1e-2) {
       }
     }
 
-    if (!isDuplicate) {
+    if (!isDuplicate && isNodeInPolygon(pt, boundaryPts)) {
       slabPts.push(pt);
     }
   }
@@ -372,4 +376,29 @@ function getColumnNodeIndex(
   }
 
   return null;
+}
+
+/**
+ * Ray-casting algorithm to check if a node is inside a polygon
+ **/
+function isNodeInPolygon(node: Node, polygon: Node[]): boolean {
+  let intersections = 0;
+  const x = node[0];
+  const y = node[1];
+
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i][0];
+    const yi = polygon[i][1];
+    const xj = polygon[j][0];
+    const yj = polygon[j][1];
+
+    const intersect =
+      yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+
+    if (intersect) {
+      intersections++;
+    }
+  }
+
+  return intersections % 2 !== 0;
 }
