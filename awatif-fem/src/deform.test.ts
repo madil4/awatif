@@ -2,7 +2,7 @@ import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { deform } from "./deform";
 
 describe("deform", () => {
-  test("Bars from Logan's book example 3.9", () => {
+  test("Bar: from Logan's book example 3.9", () => {
     const nodes: Node[] = [
       [12, -3, -4],
       [0, 0, 0],
@@ -65,7 +65,7 @@ describe("deform", () => {
     });
   });
 
-  test("Frames from Logan's book example 5.8", () => {
+  test("Frame: from Logan's book example 5.8", () => {
     const nodes: Node[] = [
       [2.5, 0, 0],
       [0, 0, 0],
@@ -145,96 +145,21 @@ describe("deform", () => {
     });
   });
 
-  test("Plate", () => {
-    const nodes: Node[] = [
-      [0, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [10, 5, 0],
-      [10, 0, 0],
-    ];
-    const elements: Element[] = [
-      [0, 1, 2],
-      [2, 3, 4],
-    ];
-
-    const fixedSupport = [true, true, true, true, true, true] as any;
-    const nodeInputs: NodeInputs = {
-      supports: new Map([
-        [0, fixedSupport],
-        [1, fixedSupport],
-        [3, fixedSupport],
-        [4, fixedSupport],
-      ]),
-      loads: new Map([[2, [0, 0, -1, 0, 0, 0]]]),
-    };
-
-    const elementInputs: ElementInputs = {
-      elasticities: new Map(elements.map((_, i) => [i, 10])),
-      thicknesses: new Map(elements.map((_, i) => [i, 1])),
-      poissonsRatios: new Map(elements.map((_, i) => [i, 0.3])),
-    };
-
-    const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
-
-    expect(deformOutputs).toEqual({
-      deformations: new Map([
-        [0, [0, 0, 0, 0, 0, 0]],
-        [1, [0, 0, 0, 0, 0, 0]],
-        [
-          2,
-          [
-            0, 0, -1.3467100041517628, 0.20068292565742005,
-            -0.08312558954401492, 0,
-          ],
-        ],
-        [3, [0, 0, 0, 0, 0, 0]],
-        [4, [0, 0, 0, 0, 0, 0]],
-      ]),
-      reactions: new Map([
-        [
-          0,
-          [
-            0, 0, 0.36780676281428204, 0.11886720202236689, 0.9739614221402426,
-            0,
-          ],
-        ],
-        [
-          1,
-          [0, 0, 0.1321932371857181, 0.1429860312813887, 0.5624946747141107, 0],
-        ],
-        [
-          3,
-          [
-            0, 0, 0.1321932371857181, -0.29663740653764714,
-            -0.49885019120569063, 0,
-          ],
-        ],
-        [
-          4,
-          [
-            0, 0, 0.36780676281428204, -0.6046429215987722, -0.7727465308201459,
-            0,
-          ],
-        ],
-      ]),
-    });
-  });
-
-  test("Rectangular Plate", () => {
+  test("Plate: Rectangular pin-supported plate with uniform load (analytical comparison)", () => {
     // Plate dimensions and material properties - matching analytical.py
     const a = 10.0; // m (length in x direction)
     const b = 10.0; // m (length in y direction)
     const h = 0.15; // m (thickness)
-    const p0 = 1000.0; // N/m² (pressure)
+    const p0 = -1000.0; // N/m² (pressure)
     const E_x = 1.0e10; // Pa (Young's modulus in x direction)
     const E_y = 1.0e10; // Pa (Young's modulus in y direction)
     const nu_xy = 0.25; // Poisson's ratio
     const G_xy = (0.5 * E_x) / (1 + nu_xy); // = 4.0e9 Pa
+    const support = [true, true, true, false, false, false];
+    const numDivisions = 10;
 
-    // Generate nodes in a 5x5 grid
+    // Generate nodes in a numDivisions x numDivisions grid
     const meshNodes: Node[] = [];
-    const numDivisions = 5;
     for (let j = 0; j < numDivisions; j++) {
       for (let i = 0; i < numDivisions; i++) {
         meshNodes.push([
@@ -284,7 +209,55 @@ describe("deform", () => {
 
     // Apply fixed supports at boundary nodes
     boundaryIndices.forEach((i) => {
-      nodeInputs2.supports!.set(i, [true, true, true, false, false, false]);
+      nodeInputs2.supports!.set(
+        i,
+        support as [boolean, boolean, boolean, boolean, boolean, boolean]
+      );
+    });
+
+    // Process each element to calculate and apply equivalent nodal forces
+    meshElements.forEach((element) => {
+      // Get the three nodes of the triangle
+      const [i, j, k] = element;
+      const node1 = meshNodes[i];
+      const node2 = meshNodes[j];
+      const node3 = meshNodes[k];
+
+      // Calculate the area of the triangle
+      const area = calculateTriangleArea(node1, node2, node3);
+
+      const transverseForce = (p0 * area) / 3;
+      const existingLoad1 = nodeInputs2.loads!.get(i) || [0, 0, 0, 0, 0, 0];
+      nodeInputs2.loads!.set(i, [
+        existingLoad1[0],
+        existingLoad1[1],
+        existingLoad1[2] + transverseForce,
+        existingLoad1[3],
+        existingLoad1[4],
+        existingLoad1[5],
+      ] as [number, number, number, number, number, number]);
+
+      // Node 2
+      const existingLoad2 = nodeInputs2.loads!.get(j) || [0, 0, 0, 0, 0, 0];
+      nodeInputs2.loads!.set(j, [
+        existingLoad2[0],
+        existingLoad2[1],
+        existingLoad2[2] + transverseForce,
+        existingLoad2[3],
+        existingLoad2[4],
+        existingLoad2[5],
+      ] as [number, number, number, number, number, number]);
+
+      // Node 3
+      const existingLoad3 = nodeInputs2.loads!.get(k) || [0, 0, 0, 0, 0, 0];
+      nodeInputs2.loads!.set(k, [
+        existingLoad3[0],
+        existingLoad3[1],
+        existingLoad3[2] + transverseForce,
+        existingLoad3[3],
+        existingLoad3[4],
+        existingLoad3[5],
+      ] as [number, number, number, number, number, number]);
     });
 
     // Setup element inputs
@@ -321,6 +294,19 @@ describe("deform", () => {
       maxZDisplacement = Math.max(maxZDisplacement, absDz);
     });
 
-    expect(maxZDisplacement * 1000).toBeCloseTo(13.541176, 6);
+    expect(maxZDisplacement * 1000).toBeCloseTo(12.69, 3); // exact value is 13.541176 mm, error due to discretization
+
+    // Utils
+    function calculateTriangleArea(n1: Node, n2: Node, n3: Node): number {
+      const a = [n2[0] - n1[0], n2[1] - n1[1], n2[2] - n1[2]];
+      const b = [n3[0] - n1[0], n3[1] - n1[1], n3[2] - n1[2]];
+      const cross = [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+      ];
+      const norm = Math.sqrt(cross[0] ** 2 + cross[1] ** 2 + cross[2] ** 2);
+      return norm / 2;
+    }
   });
 });

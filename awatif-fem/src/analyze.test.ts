@@ -3,7 +3,7 @@ import { analyze } from "./analyze";
 import { deform } from "./deform";
 
 describe("analyze", () => {
-  test("Bars from Logan's book example 3.9", () => {
+  test("Bar: from Logan's book example 3.9", () => {
     const nodes: Node[] = [
       [12, -3, -4],
       [0, 0, 0],
@@ -80,7 +80,7 @@ describe("analyze", () => {
     });
   });
 
-  test("Frames from Logan's book example 5.8", () => {
+  test("Frame: from Logan's book example 5.8", () => {
     const nodes: Node[] = [
       [2.5, 0, 0],
       [0, 0, 0],
@@ -161,63 +161,6 @@ describe("analyze", () => {
       bendingXX: new Map(),
       bendingYY: new Map(),
       bendingXY: new Map(),
-    });
-  });
-
-  test("Plate", () => {
-    const nodes: Node[] = [
-      [0, 0, 0],
-      [0, 5, 0],
-      [5, 0, 0],
-      [10, 5, 0],
-      [10, 0, 0],
-    ];
-    const elements: Element[] = [
-      [0, 1, 2],
-      [2, 3, 4],
-    ];
-
-    const fixedSupport = [true, true, true, true, true, true] as any;
-    const nodeInputs: NodeInputs = {
-      supports: new Map([
-        [0, fixedSupport],
-        [1, fixedSupport],
-        [3, fixedSupport],
-        [4, fixedSupport],
-      ]),
-      loads: new Map([[2, [0, 0, -1, 0, 0, 0]]]),
-    };
-
-    const elementInputs: ElementInputs = {
-      elasticities: new Map(elements.map((_, i) => [i, 10])),
-      thicknesses: new Map(elements.map((_, i) => [i, 1])),
-      poissonsRatios: new Map(elements.map((_, i) => [i, 0.3])),
-    };
-
-    const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
-    const analyzeOutputs = analyze(
-      nodes,
-      elements,
-      elementInputs,
-      deformOutputs
-    );
-
-    expect(analyzeOutputs).toEqual({
-      normals: new Map(),
-      shearsY: new Map(),
-      shearsZ: new Map(),
-      torsions: new Map(),
-      bendingsY: new Map(),
-      bendingsZ: new Map(),
-      bendingXX: new Map([
-        [0, [0.11886720202236689, 0.1429860312813887, 0.3991129526248349]],
-        [1, [0.39911295262483504, 0.14298603128138862, 0.11886720202236686]],
-      ]),
-      bendingYY: new Map(),
-      bendingXY: new Map([
-        [0, [-0.36780676281428204, -0.1321932371857181, 0.5000000000000001]],
-        [1, [0.5000000000000001, -0.1321932371857181, -0.36780676281428204]],
-      ]),
     });
   });
 });

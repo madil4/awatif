@@ -1,8 +1,7 @@
-import { v as s, g as I } from "./styles-CcZBryOO.js";
-import { a as b } from "./analyze-0pMPybQW.js";
-import { d as k, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
-import { g as S } from "./getParameters-wBkc0XBG.js";
-import { g as A } from "./getToolbar-BsSk1QiP.js";
+import { v as s, g as I, a as b } from "./styles-mlbNSh70.js";
+import { a as k } from "./analyze-Cs9rWxlE.js";
+import { d as S, __tla as __tla_0 } from "./deformCpp-KFfSa4yH.js";
+import { g as A } from "./getParameters-BGfoeuVt.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -12,7 +11,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const p = {
+  const m = {
     meshDensity: {
       value: s.state(7),
       min: 1,
@@ -35,30 +34,30 @@ Promise.all([
       min: 0,
       max: 20
     }
-  }, h = s.state([]), c = s.state([]), v = s.state({}), y = s.state({}), g = s.state({}), f = s.state({});
+  }, h = s.state([]), c = s.state([]), v = s.state({}), y = s.state({}), g = s.state({}), w = s.state({});
   s.derive(() => {
-    const o = [], t = [], m = p.meshDensity.value.val, r = p.height.value.val, l = p.span.value.val, w = p.load.value.val;
+    const o = [], t = [], p = m.meshDensity.value.val, r = m.height.value.val, l = m.span.value.val, f = m.load.value.val;
     o.push(...[
-      ...Array(m + 1).keys()
+      ...Array(p + 1).keys()
     ].map((e) => [
       0,
       0,
-      r / m * e
+      r / p * e
     ])), t.push(...[
-      ...Array(m).keys()
+      ...Array(p).keys()
     ].map((e) => [
       e,
       e + 1
     ]));
     let n = o.length;
     o.push(...[
-      ...Array(m).keys()
+      ...Array(p).keys()
     ].map((e) => [
-      l / m * (e + 1),
+      l / p * (e + 1),
       0,
       r
     ])), t.push(...[
-      ...Array(m - 1).keys()
+      ...Array(p - 1).keys()
     ].map((e) => [
       n + e,
       n + e + 1
@@ -68,13 +67,13 @@ Promise.all([
     ]), n = o.length;
     const M = n - 1;
     o.push(...[
-      ...Array(m).keys()
+      ...Array(p).keys()
     ].map((e) => [
       l,
       0,
-      r - r / m * (e + 1)
+      r - r / p * (e + 1)
     ])), t.push(...[
-      ...Array(m - 1).keys()
+      ...Array(p - 1).keys()
     ].map((e) => [
       n + e,
       n + e + 1
@@ -111,7 +110,7 @@ Promise.all([
         [
           M,
           [
-            w,
+            f,
             0,
             0,
             0,
@@ -145,22 +144,22 @@ Promise.all([
         a,
         10
       ]))
-    }, d = k(o, t, i, u), O = b(o, t, u, d);
-    h.val = o, c.val = t, v.val = i, y.val = u, g.val = d, f.val = O;
+    }, d = S(o, t, i, u), O = k(o, t, u, d);
+    h.val = o, c.val = t, v.val = i, y.val = u, g.val = d, w.val = O;
   });
-  document.body.append(S(p), I({
+  document.body.append(A(m), I({
     mesh: {
       nodes: h,
       elements: c,
       nodeInputs: v,
       elementInputs: y,
       deformOutputs: g,
-      analyzeOutputs: f
+      analyzeOutputs: w
     },
     settingsObj: {
       deformedShape: true
     }
-  }), A({
+  }), b({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/1d-mesh/main.ts",
     author: "https://www.linkedin.com/in/madil4/"
   }));

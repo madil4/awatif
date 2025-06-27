@@ -1,8 +1,7 @@
-import { v as a, g as I } from "./styles-CcZBryOO.js";
-import { a as z } from "./analyze-0pMPybQW.js";
-import { d as M, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
-import { g as C } from "./getParameters-wBkc0XBG.js";
-import { g as _ } from "./getToolbar-BsSk1QiP.js";
+import { v as a, g as I, a as z } from "./styles-mlbNSh70.js";
+import { a as M } from "./analyze-Cs9rWxlE.js";
+import { d as C, __tla as __tla_0 } from "./deformCpp-KFfSa4yH.js";
+import { g as _ } from "./getParameters-BGfoeuVt.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -54,9 +53,9 @@ Promise.all([
       step: 1,
       label: "load (kN)"
     }
-  }, c = a.state([]), d = a.state([]), v = a.state({}), h = a.state({}), f = a.state({}), g = a.state({});
+  }, c = a.state([]), d = a.state([]), v = a.state({}), h = a.state({}), f = a.state({}), b = a.state({});
   a.derive(() => {
-    const b = n.span.value.val, e = n.divisions.value.val, w = n.height.value.val, y = n.elasticity.value.val * 1e6, x = n.area.value.val * 1e-4, O = n.load.value.val, l = [], s = [], i = b / e, p = [];
+    const g = n.span.value.val, e = n.divisions.value.val, w = n.height.value.val, y = n.elasticity.value.val * 1e6, x = n.area.value.val * 1e-4, O = n.load.value.val, l = [], s = [], i = g / e, p = [];
     for (let t = 0; t <= e; t++) {
       const o = [
         i * t,
@@ -134,22 +133,22 @@ Promise.all([
         o,
         x
       ]))
-    }, m = M(l, s, r, u), S = z(l, s, u, m);
-    c.val = l, d.val = s, v.val = r, h.val = u, f.val = m, g.val = S;
+    }, m = C(l, s, r, u), S = M(l, s, u, m);
+    c.val = l, d.val = s, v.val = r, h.val = u, f.val = m, b.val = S;
   });
-  document.body.append(C(n), I({
+  document.body.append(_(n), I({
     mesh: {
       nodes: c,
       elements: d,
       nodeInputs: v,
       elementInputs: h,
       deformOutputs: f,
-      analyzeOutputs: g
+      analyzeOutputs: b
     },
     settingsObj: {
       deformedShape: true
     }
-  }), _({
+  }), z({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/truss/main.ts",
     author: "https://www.linkedin.com/in/madil4/"
   }));
