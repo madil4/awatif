@@ -22,92 +22,28 @@ export function getLocalStiffnessMatrix(
     return getLocalStiffnessMatrixPlate(nodes, elementInputs, index);
 }
 
-function getLocalStiffnessMatrixFrame(
-  nodes: Node[],
-  elementInputs: ElementInputs,
-  index: number
-): number[][] {
-  const Iz = elementInputs?.momentsOfInertiaZ?.get(index) ?? 0;
-  const Iy = elementInputs?.momentsOfInertiaY?.get(index) ?? 0;
-  const E = elementInputs?.elasticities?.get(index) ?? 0;
-  const A = elementInputs?.areas?.get(index) ?? 0;
-  const G = elementInputs?.shearModuli?.get(index) ?? 0;
-  const J = elementInputs?.torsionalConstants?.get(index) ?? 0;
-  const L = norm(subtract(nodes[0], nodes[1])) as number;
-
-  const EA = (E * A) / L;
-  const EIz = (E * Iz) / L ** 3;
-  const EIy = (E * Iy) / L ** 3;
-  const GJ = (G * J) / L;
-
-  return [
-    [EA, 0, 0, 0, 0, 0, -EA, 0, 0, 0, 0, 0],
-    [0, 12 * EIz, 0, 0, 0, 6 * L * EIz, 0, -12 * EIz, 0, 0, 0, 6 * L * EIz],
-    [0, 0, 12 * EIy, 0, -6 * L * EIy, 0, 0, 0, -12 * EIy, 0, -6 * L * EIy, 0],
-    [0, 0, 0, GJ, 0, 0, 0, 0, 0, -GJ, 0, 0],
-    [
-      0,
-      0,
-      -6 * L * EIy,
-      0,
-      4 * EIy * L ** 2,
-      0,
-      0,
-      0,
-      6 * L * EIy,
-      0,
-      2 * EIy * L ** 2,
-      0,
-    ],
-    [
-      0,
-      6 * L * EIz,
-      0,
-      0,
-      0,
-      4 * EIz * L ** 2,
-      0,
-      -6 * L * EIz,
-      0,
-      0,
-      0,
-      2 * EIz * L ** 2,
-    ],
-    [-EA, 0, 0, 0, 0, 0, EA, 0, 0, 0, 0, 0],
-    [0, -12 * EIz, 0, 0, 0, -6 * EIz * L, 0, 12 * EIz, 0, 0, 0, -6 * EIz * L],
-    [0, 0, -12 * EIy, 0, 6 * L * EIy, 0, 0, 0, 12 * EIy, 0, 6 * L * EIy, 0],
-    [0, 0, 0, -GJ, 0, 0, 0, 0, 0, GJ, 0, 0],
-    [
-      0,
-      0,
-      -6 * L * EIy,
-      0,
-      2 * EIy * L ** 2,
-      0,
-      0,
-      0,
-      6 * L * EIy,
-      0,
-      4 * EIy * L ** 2,
-      0,
-    ],
-    [
-      0,
-      6 * L * EIz,
-      0,
-      0,
-      0,
-      2 * EIz * L ** 2,
-      0,
-      -6 * L * EIz,
-      0,
-      0,
-      0,
-      4 * EIz * L ** 2,
-    ],
-  ];
+/** Isotropic bending stiffness Db */
+export function buildIsoDb(E: number, nu: number, t: number): Matrix {
+  const q1 = E / (1 - nu * nu);
+  const Q = matrix([
+    [q1, q1 * nu, 0],
+    [q1 * nu, q1, 0],
+    [0, 0, (q1 * (1 - nu)) / 2],
+  ]);
+  return multiply(t ** 3 / 12, Q) as Matrix;
 }
 
+/** Isotropic shear stiffness Ds */
+export function buildIsoDs(E: number, nu: number, t: number): Matrix {
+  const k_s = 5 / 6;
+  const q_s = E / (2 * (1 + nu));
+  return matrix([
+    [k_s * q_s * t, 0],
+    [0, k_s * q_s * t],
+  ]);
+}
+
+/** Orthotropic bending stiffness Db */
 export function buildOrthotropicDb(
   Ex: number,
   Ey: number,
@@ -115,319 +51,204 @@ export function buildOrthotropicDb(
   nu_xy: number,
   t: number
 ): Matrix {
-  // reciprocal Poisson
   const nu_yx = (Ey * nu_xy) / Ex;
   const denom = 1 - nu_xy * nu_yx;
-
-  // reduced stiffnesses
   const Q11 = Ex / denom;
   const Q22 = Ey / denom;
   const Q12 = (nu_xy * Ey) / denom;
   const Q66 = Gxy;
-
-  // base Q matrix
-  let Q = matrix([
+  const Q = matrix([
     [Q11, Q12, 0],
     [Q12, Q22, 0],
     [0, 0, Q66],
   ]);
-
   return multiply(t ** 3 / 12, Q) as Matrix;
 }
 
-function getLocalStiffnessMatrixPlate(
+/** Orthotropic shear stiffness Ds */
+export function buildOrthotropicDs(Gxy: number, t: number): Matrix {
+  const k_s = 5 / 6;
+  return matrix([
+    [k_s * Gxy * t, 0],
+    [0, k_s * Gxy * t],
+  ]);
+}
+
+/**
+ * Cell-smoothing subroutine: returns [bs1, bs2, bs3, Ai]
+ */
+function computeCS(
+  X: number[],
+  Y: number[]
+): [number[][], number[][], number[][], number] {
+  const bs1 = (zeros(2, 6) as Matrix).toArray() as number[][];
+  const bs2 = (zeros(2, 6) as Matrix).toArray() as number[][];
+  const bs3 = (zeros(2, 6) as Matrix).toArray() as number[][];
+
+  const x21 = X[1] - X[0];
+  const x13 = X[0] - X[2];
+  const y31 = Y[2] - Y[0];
+  const y12 = Y[0] - Y[1];
+  const x32 = X[2] - X[1];
+  const y23 = Y[1] - Y[2];
+
+  const Ae = 0.5 * (x21 * y31 - x13 * y12);
+  const a1 = 0.5 * y12 * x13;
+  const a2 = 0.5 * y31 * x21;
+  const a3 = 0.5 * x21 * x13;
+  const a4 = 0.5 * y12 * y31;
+
+  // bs1
+  bs1[0][2] = (0.5 * x32) / Ae;
+  bs1[0][3] = -0.5;
+  bs1[1][2] = (0.5 * y23) / Ae;
+  bs1[1][4] = 0.5;
+
+  // bs2
+  bs2[0][2] = (0.5 * x13) / Ae;
+  bs2[0][3] = (0.5 * a1) / Ae;
+  bs2[0][4] = (0.5 * a3) / Ae;
+  bs2[1][2] = (0.5 * y31) / Ae;
+  bs2[1][3] = (0.5 * a4) / Ae;
+  bs2[1][4] = (0.5 * a2) / Ae;
+
+  // bs3
+  bs3[0][2] = (0.5 * x21) / Ae;
+  bs3[0][3] = (-0.5 * a2) / Ae;
+  bs3[0][4] = (-0.5 * a3) / Ae;
+  bs3[1][2] = (0.5 * y12) / Ae;
+  bs3[1][3] = (-0.5 * a4) / Ae;
+  bs3[1][4] = (-0.5 * a1) / Ae;
+
+  return [bs1, bs2, bs3, Ae];
+}
+
+/** Compute the 2×18 shear-strain displacement matrix Bs */
+function computeBs(X: number[][]): number[][] {
+  const Bs = (zeros(2, 18) as Matrix).toArray() as number[][];
+  const x1 = X[0][0],
+    x2 = X[1][0],
+    x3 = X[2][0];
+  const y1 = X[0][1],
+    y2 = X[1][1],
+    y3 = X[2][1];
+
+  const Ae = 0.5 * ((x2 - x1) * (y3 - y1) - (x3 - x1) * -(y1 - y2));
+  const x0 = (x1 + x2 + x3) / 3;
+  const y0 = (y1 + y2 + y3) / 3;
+
+  const X1 = [x0, x1, x2],
+    Y1 = [y0, y1, y2];
+  const X2 = [x0, x2, x3],
+    Y2 = [y0, y2, y3];
+  const X3 = [x0, x3, x1],
+    Y3 = [y0, y3, y1];
+
+  const a3 = 1 / 3;
+
+  const [bs1_1, bs2_1, bs3_1, Ai1] = computeCS(X1, Y1);
+  const [bs1_2, bs2_2, bs3_2, Ai2] = computeCS(X2, Y2);
+  const [bs1_3, bs2_3, bs3_3, Ai3] = computeCS(X3, Y3);
+
+  const B1 = (zeros(2, 18) as Matrix).toArray() as number[][];
+  const B2 = (zeros(2, 18) as Matrix).toArray() as number[][];
+  const B3 = (zeros(2, 18) as Matrix).toArray() as number[][];
+
+  // assemble B1, B2, B3
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 6; j++) {
+      B1[i][j] = a3 * bs1_1[i][j] + bs2_1[i][j];
+      B1[i][j + 6] = a3 * bs1_1[i][j] + bs3_1[i][j];
+      B1[i][j + 12] = a3 * bs1_1[i][j];
+
+      B2[i][j] = a3 * bs1_2[i][j];
+      B2[i][j + 6] = a3 * bs1_2[i][j] + bs2_2[i][j];
+      B2[i][j + 12] = a3 * bs1_2[i][j] + bs3_2[i][j];
+
+      B3[i][j] = a3 * bs1_3[i][j] + bs3_3[i][j];
+      B3[i][j + 6] = a3 * bs1_3[i][j];
+      B3[i][j + 12] = a3 * bs1_3[i][j] + bs2_3[i][j];
+    }
+  }
+  // scale by sub‐areas
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 18; j++) {
+      B1[i][j] *= Ai1;
+      B2[i][j] *= Ai2;
+      B3[i][j] *= Ai3;
+      Bs[i][j] = (B1[i][j] + B2[i][j] + B3[i][j]) / Ae;
+    }
+  }
+
+  return Bs;
+}
+
+/** Compute the 3×18 bending-strain displacement matrix Bb */
+function computeBb(X: number[][]): number[][] {
+  const bb = (zeros(3, 18) as Matrix).toArray() as number[][];
+  const x21 = X[1][0] - X[0][0];
+  const x31 = X[2][0] - X[0][0];
+  const x32 = X[2][0] - X[1][0];
+  const y23 = X[1][1] - X[2][1];
+  const y31 = X[2][1] - X[0][1];
+  const y12 = X[0][1] - X[1][1];
+
+  const Ae = 0.5 * (x21 * y31 - x31 * -y12);
+
+  const dNdx1 = y23 / (2 * Ae);
+  const dNdy1 = x32 / (2 * Ae);
+  const dNdx2 = y31 / (2 * Ae);
+  const dNdy2 = -x31 / (2 * Ae);
+  const dNdx3 = y12 / (2 * Ae);
+  const dNdy3 = x21 / (2 * Ae);
+
+  bb[0][4] = dNdx1;
+  bb[0][10] = dNdx2;
+  bb[0][16] = dNdx3;
+
+  bb[1][3] = -dNdy1;
+  bb[1][9] = -dNdy2;
+  bb[1][15] = -dNdy3;
+
+  bb[2][3] = -dNdx1;
+  bb[2][4] = dNdy1;
+  bb[2][9] = -dNdx2;
+  bb[2][10] = dNdy2;
+  bb[2][15] = -dNdx3;
+  bb[2][16] = dNdy3;
+
+  return bb;
+}
+
+/** 3-node plate element local stiffness (18×18) */
+export function getLocalStiffnessMatrixPlate(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
 ): number[][] {
-  // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 4.4
-  // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
-
-  const E = elementInputs?.elasticities?.get(index) ?? 0;
+  const E = elementInputs.elasticities?.get(index) ?? 0;
   const Eo = elementInputs.elasticitiesOrthogonal?.get(index) ?? 0;
-  const nu = elementInputs?.poissonsRatios?.get(index) ?? 0;
+  const nu = elementInputs.poissonsRatios?.get(index) ?? 0;
   const Gxy = elementInputs.shearModuli?.get(index) ?? 0;
-  const thickness = elementInputs?.thicknesses?.get(index) ?? 0;
+  const t = elementInputs.thicknesses?.get(index) ?? 0;
 
-  let Db: Matrix;
-  if (Eo) {
-    Db = buildOrthotropicDb(E, Eo, Gxy, nu, thickness);
-  } else {
-    Db = buildIsoDb(E, nu, thickness);
-  }
+  const Db = Eo ? buildOrthotropicDb(E, Eo, Gxy, nu, t) : buildIsoDb(E, nu, t);
 
-  // 1) extract coords
-  const [x1, y1] = [nodes[0][0], nodes[0][1]];
-  const [x2, y2] = [nodes[1][0], nodes[1][1]];
-  const [x3, y3] = [nodes[2][0], nodes[2][1]];
+  const Ds = Eo ? buildOrthotropicDs(Gxy, t) : buildIsoDs(E, nu, t);
 
-  // 3) area factor
-  const twoA = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
-  const A = 0.5 * Math.abs(twoA);
+  const X = nodes.map(([x, y]) => [x, y]) as number[][];
+  const x21 = X[1][0] - X[0][0];
+  const x31 = X[2][0] - X[0][0];
+  const y12 = X[0][1] - X[1][1];
+  const y31 = X[2][1] - X[0][1];
+  const Ae = 0.5 * (x21 * y31 - x31 * -y12);
 
-  // 4) 3 integration points, each with weight=1/3 (over ref triangle area=1/2)
-  //    => The factor will be 2A * w in the integral
-  const gaussPoints: Array<[number, number, number]> = [
-    [0.5, 0.0, 1 / 3],
-    [0.0, 0.5, 1 / 3],
-    [0.5, 0.5, 1 / 3],
-  ];
+  const Bs = computeBs(X);
+  const Bb = computeBb(X);
 
-  // 5) assemble K
-  let K = zeros(9, 9) as Matrix;
+  const shearTerm = multiply(multiply(transpose(Bs), Ds), Bs);
+  const bendTerm = multiply(multiply(transpose(Bb), Db), Bb);
+  const Kp = multiply(add(shearTerm, bendTerm), Ae) as Matrix;
 
-  for (const [k, e, w] of gaussPoints) {
-    // build B at (k,e)
-    const B = buildBMatrix(k, e, x1, y1, x2, y2, x3, y3);
-    const Bt = transpose(B) as Matrix;
-
-    const factor = 2 * A * w; // "2A" because the reference triangle has area=1/2
-
-    // B^T * Db * B
-    const BtDb = multiply(Bt, Db) as Matrix; // (9x3)
-    const BtDbB = multiply(BtDb, B) as Matrix; // (9x9)
-    const stiffPart = multiply(factor, BtDbB) as Matrix;
-    K = add(K, stiffPart) as Matrix;
-  }
-
-  // 6) return as a 2D array
-  return expandStiffnessMatrix(K.toArray() as number[][]);
-
-  // Utils
-  function buildEdgeCoeffs(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number
-  ) {
-    // side vectors
-    const x12 = x1 - x2,
-      y12 = y1 - y2;
-    const x23 = x2 - x3,
-      y23 = y2 - y3;
-    const x31 = x3 - x1,
-      y31 = y3 - y1;
-
-    // squared lengths
-    const l12 = x12 * x12 + y12 * y12;
-    const l23 = x23 * x23 + y23 * y23;
-    const l31 = x31 * x31 + y31 * y31;
-
-    // P4..P6, q4..q6, r4..r6, t4..t6
-    const P4 = (-6 * x23) / l23;
-    const P5 = (-6 * x31) / l31;
-    const P6 = (-6 * x12) / l12;
-
-    const q4 = (3 * x23 * y23) / l23;
-    const q5 = (3 * x31 * y31) / l31;
-    const q6 = (3 * x12 * y12) / l12;
-
-    const r4 = (3 * (y23 * y23)) / l23;
-    const r5 = (3 * (y31 * y31)) / l31;
-    const r6 = (3 * (y12 * y12)) / l12;
-
-    const t4 = (-6 * y23) / l23;
-    const t5 = (-6 * y31) / l31;
-    const t6 = (-6 * y12) / l12;
-
-    return {
-      x12,
-      y12,
-      x23,
-      y23,
-      x31,
-      y31,
-      l12,
-      l23,
-      l31,
-      P4,
-      P5,
-      P6,
-      q4,
-      q5,
-      q6,
-      r4,
-      r5,
-      r6,
-      t4,
-      t5,
-      t6,
-    };
-  }
-
-  function buildHxk(
-    k: number,
-    e: number,
-    ec: ReturnType<typeof buildEdgeCoeffs>
-  ): number[] {
-    const { P5, P6, q5, q6, r5, r6 } = ec;
-    // directly transcribe from snippet
-    // Hxk(9 entries):
-    return [
-      P6 * (1 - 2 * k) + (P5 - P6) * e,
-      q6 * (1 - 2 * k) - (q5 + q6) * e,
-      -4 + 6 * (k + e) + r6 * (1 - 2 * k) - e * (r5 + r6),
-      -P6 * (1 - 2 * k) + e * (ec.P4 + P6),
-      q6 * (1 - 2 * k) - e * (q6 - ec.q4),
-      -2 + 6 * k + r6 * (1 - 2 * k) + e * (ec.r4 - r6),
-      -e * (P5 + ec.P4),
-      e * (ec.q4 - q5),
-      -e * (r5 - ec.r4),
-    ];
-  }
-
-  function buildHyk(
-    k: number,
-    e: number,
-    ec: ReturnType<typeof buildEdgeCoeffs>
-  ): number[] {
-    const { t5, t6, r5, r6, q5, q6 } = ec;
-    return [
-      t6 * (1 - 2 * k) + e * (t5 - t6),
-      1 + r6 * (1 - 2 * k) - e * (r5 + r6),
-      -q6 * (1 - 2 * k) + e * (q5 + q6),
-      -t6 * (1 - 2 * k) + e * (ec.t4 + t6),
-      -1 + r6 * (1 - 2 * k) + e * (ec.r4 - r6),
-      -q6 * (1 - 2 * k) - e * (ec.q4 - q6),
-      -e * (ec.t4 + t5),
-      e * (ec.r4 - r5),
-      -e * (ec.q4 - q5),
-    ];
-  }
-
-  function buildHxe(
-    k: number,
-    e: number,
-    ec: ReturnType<typeof buildEdgeCoeffs>
-  ): number[] {
-    const { P4, P5, P6, q4, q5, q6, r4, r5, r6 } = ec;
-    return [
-      -P5 * (1 - 2 * e) - k * (P6 - P5),
-      q5 * (1 - 2 * e) - k * (q5 + q6),
-      -4 + 6 * (k + e) + r5 * (1 - 2 * e) - k * (r5 + r6),
-      k * (P4 + P6),
-      k * (q4 - q6),
-      -k * (r6 - r4),
-      P5 * (1 - 2 * e) - k * (P4 + P5),
-      q5 * (1 - 2 * e) + k * (q4 - q5),
-      -2 + 6 * e + r5 * (1 - 2 * e) + k * (r4 - r5),
-    ];
-  }
-
-  function buildHye(
-    k: number,
-    e: number,
-    ec: ReturnType<typeof buildEdgeCoeffs>
-  ): number[] {
-    const { t4, t5, t6, r4, r5, r6, q4, q5, q6 } = ec;
-    return [
-      -t5 * (1 - 2 * e) - k * (t6 - t5),
-      1 + r5 * (1 - 2 * e) - k * (r5 + r6),
-      -q5 * (1 - 2 * e) + k * (q5 + q6),
-      k * (t4 + t6),
-      k * (r4 - r6),
-      -k * (q4 - q6),
-      t5 * (1 - 2 * e) - k * (t4 + t5),
-      -1 + r5 * (1 - 2 * e) + k * (r4 - r5),
-      -q5 * (1 - 2 * e) - k * (q4 - q5),
-    ];
-  }
-
-  function buildBMatrix(
-    k: number,
-    e: number,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    x3: number,
-    y3: number
-  ): Matrix {
-    // 1) signed 2*Area
-    const twoA = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
-
-    // 2) gather edge coefficients (P4..P6, q4..q6, etc.)
-    const ec = buildEdgeCoeffs(x1, y1, x2, y2, x3, y3);
-
-    // 3) build partial arrays
-    const Hxk = buildHxk(k, e, ec);
-    const Hxe = buildHxe(k, e, ec);
-    const Hyk = buildHyk(k, e, ec);
-    const Hye = buildHye(k, e, ec);
-
-    // 4) geometry pairs
-    const { x31, y31, x12, y12 } = ec;
-
-    // 5) assemble B
-    let B = zeros(3, 9) as Matrix;
-
-    for (let i = 0; i < 9; i++) {
-      // row 0 => kappa_x
-      const val0 = (y31 * Hxk[i] + y12 * Hxe[i]) / twoA;
-      B.set([0, i], val0);
-
-      // row 1 => kappa_y
-      const val1 = (-x31 * Hyk[i] - x12 * Hye[i]) / twoA;
-      B.set([1, i], val1);
-
-      // row 2 => kappa_xy
-      const val2 =
-        (-x31 * Hxk[i] - x12 * Hxe[i] + y31 * Hyk[i] + y12 * Hye[i]) / twoA;
-      B.set([2, i], val2);
-    }
-
-    return B;
-  }
-
-  function buildIsoDb(E: number, nu: number, t: number): Matrix {
-    const factor = (E * t ** 3) / (12 * (1 - nu * nu));
-    const data = [
-      [1, nu, 0],
-      [nu, 1, 0],
-      [0, 0, (1 - nu) / 2],
-    ].map((row) => row.map((val) => val * factor));
-    return matrix(data);
-  }
-
-  /**
-   * Expand the 9x9 DKT stiffness matrix to a full 18x18 matrix with all 6 DOFs per node
-   * @param {Array<Array<number>>} K9 - The 9x9 DKT stiffness matrix
-   * @returns {Array<Array<number>>} The expanded 18x18 stiffness matrix
-   */
-  function expandStiffnessMatrix(K9) {
-    // Initialize 18x18 matrix with zeros
-    const K18 = Array(18)
-      .fill(0)
-      .map(() => Array(18).fill(0));
-
-    // Mapping from 9x9 to 18x18
-    // Original DOF order: [Node1-DZ, Node1-DRX, Node1-DRY, Node2-DZ, Node2-DRX, Node2-DRY, Node3-DZ, Node3-DRX, Node3-DRY]
-    // New DOF order: [Node1-DX, Node1-DY, Node1-DZ, Node1-DRX, Node1-DRY, Node1-DRZ,
-    //                 Node2-DX, Node2-DY, Node2-DZ, Node2-DRX, Node2-DRY, Node2-DRZ,
-    //                 Node3-DX, Node3-DY, Node3-DZ, Node3-DRX, Node3-DRY, Node3-DRZ]
-
-    // Create mapping from old indices to new indices
-    const mapping = [
-      2, // Node1-DZ  -> index 2
-      3, // Node1-DRX -> index 3
-      4, // Node1-DRY -> index 4
-      8, // Node2-DZ  -> index 8
-      9, // Node2-DRX -> index 9
-      10, // Node2-DRY -> index 10
-      14, // Node3-DZ  -> index 14
-      15, // Node3-DRX -> index 15
-      16, // Node3-DRY -> index 16
-    ];
-
-    // Copy values from K9 to K18 using the mapping
-    for (let i = 0; i < 9; i++) {
-      for (let j = 0; j < 9; j++) {
-        K18[mapping[i]][mapping[j]] = K9[i][j];
-      }
-    }
-
-    return K18;
-  }
+  return Kp.toArray() as number[][];
 }
