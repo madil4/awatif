@@ -22,6 +22,92 @@ export function getLocalStiffnessMatrix(
     return getLocalStiffnessMatrixPlate(nodes, elementInputs, index);
 }
 
+function getLocalStiffnessMatrixFrame(
+  nodes: Node[],
+  elementInputs: ElementInputs,
+  index: number
+): number[][] {
+  const Iz = elementInputs?.momentsOfInertiaZ?.get(index) ?? 0;
+  const Iy = elementInputs?.momentsOfInertiaY?.get(index) ?? 0;
+  const E = elementInputs?.elasticities?.get(index) ?? 0;
+  const A = elementInputs?.areas?.get(index) ?? 0;
+  const G = elementInputs?.shearModuli?.get(index) ?? 0;
+  const J = elementInputs?.torsionalConstants?.get(index) ?? 0;
+  const L = norm(subtract(nodes[0], nodes[1])) as number;
+
+  const EA = (E * A) / L;
+  const EIz = (E * Iz) / L ** 3;
+  const EIy = (E * Iy) / L ** 3;
+  const GJ = (G * J) / L;
+
+  return [
+    [EA, 0, 0, 0, 0, 0, -EA, 0, 0, 0, 0, 0],
+    [0, 12 * EIz, 0, 0, 0, 6 * L * EIz, 0, -12 * EIz, 0, 0, 0, 6 * L * EIz],
+    [0, 0, 12 * EIy, 0, -6 * L * EIy, 0, 0, 0, -12 * EIy, 0, -6 * L * EIy, 0],
+    [0, 0, 0, GJ, 0, 0, 0, 0, 0, -GJ, 0, 0],
+    [
+      0,
+      0,
+      -6 * L * EIy,
+      0,
+      4 * EIy * L ** 2,
+      0,
+      0,
+      0,
+      6 * L * EIy,
+      0,
+      2 * EIy * L ** 2,
+      0,
+    ],
+    [
+      0,
+      6 * L * EIz,
+      0,
+      0,
+      0,
+      4 * EIz * L ** 2,
+      0,
+      -6 * L * EIz,
+      0,
+      0,
+      0,
+      2 * EIz * L ** 2,
+    ],
+    [-EA, 0, 0, 0, 0, 0, EA, 0, 0, 0, 0, 0],
+    [0, -12 * EIz, 0, 0, 0, -6 * EIz * L, 0, 12 * EIz, 0, 0, 0, -6 * EIz * L],
+    [0, 0, -12 * EIy, 0, 6 * L * EIy, 0, 0, 0, 12 * EIy, 0, 6 * L * EIy, 0],
+    [0, 0, 0, -GJ, 0, 0, 0, 0, 0, GJ, 0, 0],
+    [
+      0,
+      0,
+      -6 * L * EIy,
+      0,
+      2 * EIy * L ** 2,
+      0,
+      0,
+      0,
+      6 * L * EIy,
+      0,
+      4 * EIy * L ** 2,
+      0,
+    ],
+    [
+      0,
+      6 * L * EIz,
+      0,
+      0,
+      0,
+      2 * EIz * L ** 2,
+      0,
+      -6 * L * EIz,
+      0,
+      0,
+      0,
+      4 * EIz * L ** 2,
+    ],
+  ];
+}
+
 /** Isotropic bending stiffness Db */
 export function buildIsoDb(E: number, nu: number, t: number): Matrix {
   const q1 = E / (1 - nu * nu);
@@ -251,4 +337,277 @@ export function getLocalStiffnessMatrixPlate(
   const Kp = multiply(add(shearTerm, bendTerm), Ae) as Matrix;
 
   return Kp.toArray() as number[][];
+}
+
+/** Isotropic in-plane constitutive matrix Qin */
+export function buildIsoQin(E: number, nu: number): Matrix {
+  const q1 = E / (1 - nu * nu);
+  return matrix([
+    [q1, q1 * nu, 0],
+    [q1 * nu, q1, 0],
+    [0, 0, (q1 * (1 - nu)) / 2],
+  ]) as Matrix;
+}
+
+/** Orthotropic in-plane constitutive matrix Qin */
+export function buildOrthotropicQin(
+  Ex: number,
+  Ey: number,
+  Gxy: number,
+  nu_xy: number
+): Matrix {
+  const nu_yx = (Ey * nu_xy) / Ex;
+  const denom = 1 - nu_xy * nu_yx;
+  const Q11 = Ex / denom;
+  const Q22 = Ey / denom;
+  const Q12 = (nu_xy * Ey) / denom;
+  const Q66 = Gxy;
+  return matrix([
+    [Q11, Q12, 0],
+    [Q12, Q22, 0],
+    [0, 0, Q66],
+  ]) as Matrix;
+}
+
+/** 3-node shell element local stiffness (18×18) */
+export function getLocalStiffnessMatrixShell(
+  nodes: Node[],
+  elementInputs: ElementInputs,
+  index: number
+): number[][] {
+  const E = elementInputs.elasticities?.get(index) ?? 0;
+  const Eo = elementInputs.elasticitiesOrthogonal?.get(index) ?? 0;
+  const nu = elementInputs.poissonsRatios?.get(index) ?? 0;
+  const Gxy = elementInputs.shearModuli?.get(index) ?? 0;
+  const h = elementInputs.thicknesses?.get(index) ?? 0;
+
+  const Qin = Eo ? buildOrthotropicQin(E, Eo, Gxy, nu) : buildIsoQin(E, nu);
+
+  let K = (zeros(18, 18) as Matrix).toArray() as number[][];
+  let Km = (zeros(9, 9) as Matrix).toArray() as number[][];
+  let Kh = (zeros(9, 9) as Matrix).toArray() as number[][];
+  let Kb = (zeros(9, 9) as Matrix).toArray() as number[][];
+  let L = (zeros(9, 3) as Matrix).toArray() as number[][];
+  let T0 = (zeros(3, 9) as Matrix).toArray() as number[][];
+  let Te = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q1 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q2 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q3 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q4 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q5 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let Q6 = (zeros(3, 3) as Matrix).toArray() as number[][];
+  let KO = (zeros(3, 3) as Matrix).toArray() as number[][];
+
+  const alpha = 1 / 8;
+  const ab = alpha / 6;
+  const b0 = alpha ** 2 / 4;
+  const b1 = 1;
+  const b2 = 2;
+  const b3 = 1;
+  const b4 = 0;
+  const b5 = 1;
+  const b6 = -1;
+  const b7 = -1;
+  const b8 = -1;
+  const b9 = -2;
+
+  const x1 = nodes[0][0],
+    y1 = nodes[0][1];
+  const x2 = nodes[1][0],
+    y2 = nodes[1][1];
+  const x3 = nodes[2][0],
+    y3 = nodes[2][1];
+
+  const x12 = x1 - x2;
+  const x23 = x2 - x3;
+  const x31 = x3 - x1;
+  const y12 = y1 - y2;
+  const y23 = y2 - y3;
+  const y31 = y3 - y1;
+  const x21 = -x12;
+  const x32 = -x23;
+  const x13 = -x31;
+  const y21 = -y12;
+  const y32 = -y23;
+  const y13 = -y31;
+
+  const Ae = 0.5 * (x21 * y31 - x31 * -y12);
+  const A2 = 2 * Ae;
+  const A4 = 4 * Ae;
+  const h2 = 0.5 * h;
+  const V = Ae * h;
+
+  const LL21 = x21 ** 2 + y21 ** 2;
+  const LL32 = x32 ** 2 + y32 ** 2;
+  const LL13 = x13 ** 2 + y13 ** 2;
+
+  // lumping matrix
+  L[0][0] = h2 * y23;
+  L[0][2] = h2 * x32;
+  L[1][1] = h2 * x32;
+  L[1][2] = h2 * y23;
+  L[2][0] = h2 * y23 * (y13 - y21) * ab;
+  L[2][1] = h2 * x32 * (x31 - x12) * ab;
+  L[2][2] = h2 * (x31 * y13 - x12 * y21) * 2 * ab;
+
+  L[3][0] = h2 * y31;
+  L[3][2] = h2 * x13;
+  L[4][1] = h2 * x13;
+  L[4][2] = h2 * y31;
+  L[5][0] = h2 * y31 * (y21 - y32) * ab;
+  L[5][1] = h2 * x13 * (x12 - x23) * ab;
+  L[5][2] = h2 * (x12 * y21 - x23 * y32) * 2 * ab;
+
+  L[6][0] = h2 * y12;
+  L[6][2] = h2 * x21;
+  L[7][1] = h2 * x21;
+  L[7][2] = h2 * y12;
+  L[8][0] = h2 * y12 * (y32 - y13) * ab;
+  L[8][1] = h2 * x21 * (x23 - x31) * ab;
+  L[8][2] = h2 * (x23 * y32 - x31 * y13) * 2 * ab;
+
+  // basic stiffness
+  Kb = (
+    multiply(multiply(matrix(L), Qin), transpose(matrix(L))) as Matrix
+  ).toArray() as number[][];
+  Kb = (multiply(matrix(Kb), 1 / V) as Matrix).toArray() as number[][];
+
+  // transformation hierarchical rotations
+  T0[0][0] = x32 / A4;
+  T0[0][1] = y32 / A4;
+  T0[0][2] = 1;
+  T0[0][3] = x13 / A4;
+  T0[0][4] = y13 / A4;
+  T0[0][6] = x21 / A4;
+  T0[0][7] = y21 / A4;
+
+  T0[1][0] = x32 / A4;
+  T0[1][1] = y32 / A4;
+  T0[1][3] = x13 / A4;
+  T0[1][4] = y13 / A4;
+  T0[1][5] = 1;
+  T0[1][6] = x21 / A4;
+  T0[1][7] = y21 / A4;
+
+  T0[2][0] = x32 / A4;
+  T0[2][1] = y32 / A4;
+  T0[2][3] = x13 / A4;
+  T0[2][4] = y13 / A4;
+  T0[2][6] = x21 / A4;
+  T0[2][7] = y21 / A4;
+  T0[2][8] = 1;
+
+  // transformation natural pattern
+  const A14 = 1 / (Ae * A4);
+  Te[0][0] = A14 * y23 * y13 * LL21;
+  Te[0][1] = A14 * y31 * y21 * LL32;
+  Te[0][2] = A14 * y12 * y32 * LL13;
+  Te[1][0] = A14 * x23 * x13 * LL21;
+  Te[1][1] = A14 * x31 * x21 * LL32;
+  Te[1][2] = A14 * x12 * x32 * LL13;
+  Te[2][0] = A14 * (y23 * x31 + x32 * y13) * LL21;
+  Te[2][1] = A14 * (y31 * x12 + x13 * y21) * LL32;
+  Te[2][2] = A14 * (y12 * x23 + x21 * y32) * LL13;
+
+  const A14b = A2 / 3;
+
+  // nodal strain-displ.-matrix
+  Q1[0][0] = (A14b * b1) / LL21;
+  Q1[0][1] = (A14b * b2) / LL21;
+  Q1[0][2] = (A14b * b3) / LL21;
+  Q1[1][0] = (A14b * b4) / LL32;
+  Q1[1][1] = (A14b * b5) / LL32;
+  Q1[1][2] = (A14b * b6) / LL32;
+  Q1[2][0] = (A14b * b7) / LL13;
+  Q1[2][1] = (A14b * b8) / LL13;
+  Q1[2][2] = (A14b * b9) / LL13;
+
+  Q2[0][0] = (A14b * b9) / LL21;
+  Q2[0][1] = (A14b * b7) / LL21;
+  Q2[0][2] = (A14b * b8) / LL21;
+  Q2[1][0] = (A14b * b3) / LL32;
+  Q2[1][1] = (A14b * b1) / LL32;
+  Q2[1][2] = (A14b * b2) / LL32;
+  Q2[2][0] = (A14b * b6) / LL13;
+  Q2[2][1] = (A14b * b4) / LL13;
+  Q2[2][2] = (A14b * b5) / LL13;
+
+  Q3[0][0] = (A14b * b5) / LL21;
+  Q3[0][1] = (A14b * b6) / LL21;
+  Q3[0][2] = (A14b * b4) / LL21;
+  Q3[1][0] = (A14b * b8) / LL32;
+  Q3[1][1] = (A14b * b9) / LL32;
+  Q3[1][2] = (A14b * b7) / LL32;
+  Q3[2][0] = (A14b * b2) / LL13;
+  Q3[2][1] = (A14b * b3) / LL13;
+  Q3[2][2] = (A14b * b1) / LL13;
+
+  Q4 = (
+    multiply(add(matrix(Q1), matrix(Q2)), 0.5) as Matrix
+  ).toArray() as number[][];
+  Q5 = (
+    multiply(add(matrix(Q2), matrix(Q3)), 0.5) as Matrix
+  ).toArray() as number[][];
+  Q6 = (
+    multiply(add(matrix(Q3), matrix(Q1)), 0.5) as Matrix
+  ).toArray() as number[][];
+
+  const Enat = multiply(
+    multiply(transpose(matrix(Te)), Qin),
+    matrix(Te)
+  ) as Matrix;
+
+  // higher stiffness with respect to hier...rots
+  KO = (
+    add(
+      add(
+        multiply(multiply(transpose(matrix(Q4)), Enat), matrix(Q4)),
+        multiply(multiply(transpose(matrix(Q5)), Enat), matrix(Q5))
+      ),
+      multiply(multiply(transpose(matrix(Q6)), Enat), matrix(Q6))
+    ) as Matrix
+  ).toArray() as number[][];
+  KO = (
+    multiply(matrix(KO), (3 / 4) * b0 * V) as Matrix
+  ).toArray() as number[][];
+
+  // higher stiffness [18x18)
+  Kh = (
+    multiply(multiply(transpose(matrix(T0)), matrix(KO)), matrix(T0)) as Matrix
+  ).toArray() as number[][];
+  Km = (add(matrix(Kb), matrix(Kh)) as Matrix).toArray() as number[][];
+
+  for (let i = 0; i < 3; i++) {
+    K[0 + i * 6][0] = Km[0 + i * 3][0];
+    K[0 + i * 6][1] = Km[0 + i * 3][1];
+    K[0 + i * 6][5] = Km[0 + i * 3][2];
+    K[0 + i * 6][6] = Km[0 + i * 3][3];
+    K[0 + i * 6][7] = Km[0 + i * 3][4];
+    K[0 + i * 6][11] = Km[0 + i * 3][5];
+    K[0 + i * 6][12] = Km[0 + i * 3][6];
+    K[0 + i * 6][13] = Km[0 + i * 3][7];
+    K[0 + i * 6][17] = Km[0 + i * 3][8];
+
+    K[1 + i * 6][0] = Km[1 + i * 3][0];
+    K[1 + i * 6][1] = Km[1 + i * 3][1];
+    K[1 + i * 6][5] = Km[1 + i * 3][2];
+    K[1 + i * 6][6] = Km[1 + i * 3][3];
+    K[1 + i * 6][7] = Km[1 + i * 3][4];
+    K[1 + i * 6][11] = Km[1 + i * 3][5];
+    K[1 + i * 6][12] = Km[1 + i * 3][6];
+    K[1 + i * 6][13] = Km[1 + i * 3][7];
+    K[1 + i * 6][17] = Km[1 + i * 3][8];
+
+    K[5 + i * 6][0] = Km[2 + i * 3][0];
+    K[5 + i * 6][1] = Km[2 + i * 3][1];
+    K[5 + i * 6][5] = Km[2 + i * 3][2];
+    K[5 + i * 6][6] = Km[2 + i * 3][3];
+    K[5 + i * 6][7] = Km[2 + i * 3][4];
+    K[5 + i * 6][11] = Km[2 + i * 3][5];
+    K[5 + i * 6][12] = Km[2 + i * 3][6];
+    K[5 + i * 6][13] = Km[2 + i * 3][7];
+    K[5 + i * 6][17] = Km[2 + i * 3][8];
+  }
+
+  return K;
 }
