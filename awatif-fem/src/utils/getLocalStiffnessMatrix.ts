@@ -370,7 +370,7 @@ export function buildOrthotropicQin(
 }
 
 /** 3-node shell element local stiffness (18×18) */
-export function getLocalStiffnessMatrixShell(
+export function getLocalStiffnessMatrixMembrane(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
