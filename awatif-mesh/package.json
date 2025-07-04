@@ -1,6 +1,6 @@
 {
   "name": "awatif-mesh",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Awatif Mesh",
   "type": "module",
   "main": "src/index.ts",
