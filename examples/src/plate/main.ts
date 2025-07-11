@@ -6,7 +6,7 @@ import { getMesh } from "awatif-mesh";
 // Init
 const parameters: Parameters = {
   xPosition: { value: van.state(15), min: 5, max: 20 },
-  load: { value: van.state(-50), min: -100, max: 100, step: 1 },
+  load: { value: van.state(-3), min: -10, max: 10, step: 1 },
 };
 
 const mesh: Mesh = {
@@ -68,6 +68,7 @@ document.body.append(
   getViewer({
     mesh,
     settingsObj: {
+      nodes: false,
       deformedShape: true,
       loads: false,
       shellResults: "displacementZ",
