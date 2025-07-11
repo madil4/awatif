@@ -1,5 +1,5 @@
 import { Node, Element, ElementInputs } from "../data-model";
-import { e, multiply, transpose } from "mathjs";
+import { multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
 
