@@ -1,8 +1,7 @@
-import { v as e, g as y } from "./styles-CcZBryOO.js";
-import { a as z } from "./analyze-0pMPybQW.js";
-import { d as S, __tla as __tla_0 } from "./deformCpp-wF9UoRJI.js";
-import { g as O } from "./getParameters-wBkc0XBG.js";
-import { g as I } from "./getToolbar-BsSk1QiP.js";
+import { v as e, g as y, a as z } from "./styles-mlbNSh70.js";
+import { a as S } from "./analyze-Cs9rWxlE.js";
+import { d as O, __tla as __tla_0 } from "./deformCpp-KFfSa4yH.js";
+import { g as I } from "./getParameters-BGfoeuVt.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -106,7 +105,7 @@ Promise.all([
       t + 1,
       t + 6
     ]);
-    const m = [
+    const u = [
       true,
       true,
       true,
@@ -117,19 +116,19 @@ Promise.all([
       supports: /* @__PURE__ */ new Map([
         [
           0,
-          m
+          u
         ],
         [
           1,
-          m
+          u
         ],
         [
           2,
-          m
+          u
         ],
         [
           3,
-          m
+          u
         ]
       ]),
       loads: /* @__PURE__ */ new Map([
@@ -145,7 +144,7 @@ Promise.all([
           ]
         ]
       ])
-    }, u = {
+    }, m = {
       elasticities: new Map(a.map((t, p) => [
         p,
         100
@@ -154,10 +153,10 @@ Promise.all([
         p,
         10
       ]))
-    }, v = S(s, a, r, u), w = z(s, a, u, v);
-    c.val = s, f.val = a, h.val = r, x.val = u, b.val = v, g.val = w;
+    }, v = O(s, a, r, m), w = S(s, a, m, v);
+    c.val = s, f.val = a, h.val = r, x.val = m, b.val = v, g.val = w;
   });
-  document.body.append(O(n), y({
+  document.body.append(I(n), y({
     mesh: {
       nodes: c,
       elements: f,
@@ -170,7 +169,7 @@ Promise.all([
       deformedShape: true,
       gridSize: 15
     }
-  }), I({
+  }), z({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/3d-structure/main.ts",
     author: "https://www.linkedin.com/in/madil4/"
   }));

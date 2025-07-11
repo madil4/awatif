@@ -172,7 +172,7 @@ describe("deformCpp", () => {
     const a = 10.0; // m (length in x direction)
     const b = 10.0; // m (length in y direction)
     const h = 0.15; // m (thickness)
-    const p0 = 1000.0; // N/m² (pressure)
+    const p0 = -1000.0; // N/m² (pressure)
     const E_x = 1.0e10; // Pa (Young's modulus in x direction)
     const E_y = 1.0e10; // Pa (Young's modulus in y direction)
     const nu_xy = 0.25; // Poisson's ratio
@@ -253,7 +253,7 @@ describe("deformCpp", () => {
       nodeInputs2.loads!.set(i, [
         existingLoad1[0],
         existingLoad1[1],
-        existingLoad1[2] - transverseForce, // Negative for downward force
+        existingLoad1[2] + transverseForce,
         existingLoad1[3],
         existingLoad1[4],
         existingLoad1[5],
@@ -264,7 +264,7 @@ describe("deformCpp", () => {
       nodeInputs2.loads!.set(j, [
         existingLoad2[0],
         existingLoad2[1],
-        existingLoad2[2] - transverseForce, // Negative for downward force
+        existingLoad2[2] + transverseForce,
         existingLoad2[3],
         existingLoad2[4],
         existingLoad2[5],
@@ -275,7 +275,7 @@ describe("deformCpp", () => {
       nodeInputs2.loads!.set(k, [
         existingLoad3[0],
         existingLoad3[1],
-        existingLoad3[2] - transverseForce, // Negative for downward force
+        existingLoad3[2] + transverseForce,
         existingLoad3[3],
         existingLoad3[4],
         existingLoad3[5],

@@ -1,7 +1,6 @@
-import { v as a, g as D } from "./styles-CcZBryOO.js";
-import { g as O } from "./getParameters-wBkc0XBG.js";
-import { g as L } from "./getToolbar-BsSk1QiP.js";
-import { g as x, a as G, b as H, c as j, d as C, __tla as __tla_0 } from "./getSolids-DrUSOh1U.js";
+import { v as a, g as D, a as O } from "./styles-mlbNSh70.js";
+import { g as L } from "./getParameters-BGfoeuVt.js";
+import { g as x, a as G, b as H, c as j, d as C, __tla as __tla_0 } from "./getSolids-CxkkYqiW.js";
 import { __tla as __tla_1 } from "./getMesh-BFRjMVyf.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
@@ -20,7 +19,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const S = {
+  const f = {
     stories: {
       value: a.state(2),
       min: 1,
@@ -105,7 +104,7 @@ Promise.all([
   ]);
   a.derive(() => {
     const o = [], m = [], c = [], n = [], b = /* @__PURE__ */ new Map(), d = /* @__PURE__ */ new Map(), g = /* @__PURE__ */ new Map(), h = /* @__PURE__ */ new Map();
-    for (let e = 0; e < S.stories.value.val; e++) {
+    for (let e = 0; e < f.stories.value.val; e++) {
       const u = [], y = 4 * e;
       for (let t = 0; t < p.length; t++) u.push([
         p[t][0],
@@ -113,9 +112,9 @@ Promise.all([
         p[t][2] + y
       ]);
       const w = [];
-      let f = o.length;
-      for (let t = 0; t < u.length; t++) o.push(u[t]), w.push(t + f);
-      c.push(w), m.push(f), d.set(e, [
+      let I = o.length;
+      for (let t = 0; t < u.length; t++) o.push(u[t]), w.push(t + I);
+      c.push(w), m.push(I), d.set(e, [
         e
       ]), h.set(e, {
         analysisInput: {
@@ -123,14 +122,14 @@ Promise.all([
           isOpening: false
         }
       });
-      const I = [];
+      const S = [];
       for (let t = 0; t < l.length; t++) {
         const r = o.length;
         o.push([
           l[t][0],
           l[t][1],
           l[t][2] + y
-        ]), n.push(r), I.push(n.length - 1);
+        ]), n.push(r), S.push(n.length - 1);
       }
       if (e === 0) {
         const t = n.length - l.length;
@@ -147,7 +146,7 @@ Promise.all([
           }
         });
       }
-      b.set(e, I);
+      b.set(e, S);
     }
     s.points.val = o, s.stories.val = m, s.slabs.val = c, s.columns.val = n, s.columnsByStory.val = b, s.slabsByStory.val = d, s.columnData.val = g, s.slabData.val = h;
   });
@@ -157,7 +156,7 @@ Promise.all([
       ...v.rawVal
     ];
   });
-  document.body.append(O(S), D({
+  document.body.append(L(f), D({
     objects3D: v,
     solids: T,
     mesh: i,
@@ -165,7 +164,7 @@ Promise.all([
       nodes: false,
       loads: false
     }
-  }), L({
+  }), O({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/building/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/"
   }));

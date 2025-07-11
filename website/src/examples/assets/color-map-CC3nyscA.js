@@ -1,7 +1,6 @@
-import { v as e, l, g as p, m as c } from "./styles-CcZBryOO.js";
-import { g as d } from "./getParameters-wBkc0XBG.js";
-import { g } from "./getToolbar-BsSk1QiP.js";
-import { g as u, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
+import { v as e, m as l, g as c, n as p, a as d } from "./styles-mlbNSh70.js";
+import { g as u } from "./getParameters-BGfoeuVt.js";
+import { g, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
 import { n as b, s as v } from "./pureFunctionsAny.generated-Dh3LO6N2.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
@@ -29,7 +28,7 @@ Promise.all([
       i.boundary.value.val,
       0,
       3
-    ], { nodes: o, elements: s } = u({
+    ], { nodes: s, elements: o } = g({
       points: [
         [
           0,
@@ -91,21 +90,21 @@ Promise.all([
       ],
       maxMeshSize: 1
     });
-    a.val = o, m.val = s, r.val = h(t, a.val), n.val = [
+    a.val = s, m.val = o, r.val = h(t, a.val), n.val = [
       ...n.rawVal
     ];
   });
-  document.body.append(d(i), p({
+  document.body.append(u(i), c({
     mesh: {
       nodes: a,
       elements: m
     },
     objects3D: n
-  }), c(r), g({
+  }), p(r), d({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/color-map/main.ts",
     author: "https://www.linkedin.com/in/siu-kai-cheung/"
   }));
-  function h(t, o) {
-    return o.map((s) => b(v(s, t)));
+  function h(t, s) {
+    return s.map((o) => b(v(o, t)));
   }
 });
