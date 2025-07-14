@@ -1,11 +1,10 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Node } from "awatif-fem";
-import { Structure, Element } from "awatif-fem";
+import { Mesh, Element, Node } from "awatif-fem";
 import { Settings } from "../settings/getSettings";
 
 export function elements(
-  structure: Structure,
+  mesh: Mesh,
   settings: Settings,
   derivedNodes: State<Node[]>
 ): THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial> {
@@ -14,7 +13,6 @@ export function elements(
     new THREE.LineBasicMaterial()
   );
   lines.frustumCulled = false;
-  lines.material.depthTest = false; // don't know why but is solves the rendering order issue
 
   // on nodes, elements, and deformedShape update visuals
   van.derive(() => {
@@ -22,7 +20,7 @@ export function elements(
 
     if (!settings.elements.val) return;
 
-    const buffer = structure.elements?.val
+    const buffer = mesh.elements?.val
       .map((e) =>
         elementToEdges(e)
           .map((edge) => [
