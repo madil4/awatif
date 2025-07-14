@@ -1,4 +1,4 @@
-import { o as c } from "./styles-mlbNSh70.js";
+import { o as c } from "./styles-yIfTpVE2.js";
 function a(o) {
   const t = document.createElement("div"), n = new c({ title: "Parameters", container: t }), d = r(o), s = /* @__PURE__ */ new Map();
   return t.setAttribute("id", "parameters"), s.set("root", n), Object.entries(o).forEach(([l, e]) => {

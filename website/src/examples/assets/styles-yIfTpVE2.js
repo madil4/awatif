@@ -16838,7 +16838,7 @@ function pM(s, e, t) {
 }
 function fM(s, e, t) {
   const i = new Mc(new ft(), new mn());
-  return i.frustumCulled = false, i.material.depthTest = false, Ae.derive(() => {
+  return i.frustumCulled = false, Ae.derive(() => {
     var _a2;
     if (e.deformedShape.val, !e.elements.val) return;
     const n = (_a2 = s.elements) == null ? void 0 : _a2.val.map((r) => mM(r).map((o) => [...t.val[o[0]], ...t.val[o[1]]]).flat()).flat();
