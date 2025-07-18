@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <Eigen/Cholesky>
 #include <iostream>
 #include <stdexcept>
 
@@ -109,13 +108,12 @@ extern "C"
         Eigen::SparseMatrix<double> K_reduced = getReducedMatrix(K_global, reducedIndices);
         Eigen::VectorXd F_reduced = getReducedVector(F_global, reducedIndices);
 
-        Eigen::SimplicialLLT<Eigen::SparseMatrix<double>> solver; // Use Cholesky (LLT) for symmetric positive definite matrices
+        Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Lower | Eigen::Upper> solver;
         solver.compute(K_reduced);
 
         if (solver.info() != Eigen::Success)
         {
             std::cerr << "Error: Matrix decomposition failed during solve." << std::endl;
-            // Handle error: maybe return empty results or throw?
             *deformations_data_ptr_out = nullptr;
             *deformations_size_out = 0;
             *reactions_data_ptr_out = nullptr;
