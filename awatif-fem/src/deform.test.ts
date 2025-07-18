@@ -309,4 +309,129 @@ describe("deform", () => {
       return norm / 2;
     }
   });
+
+  // --- Test 4: Orthotropic Plate Bending ---
+  test("Plate: Rectangular pin-supported plate with orthotropic material", () => {
+    // Same geometry and mesh as Test 3
+    const a = 10.0;
+    const b = 10.0;
+    const h = 0.15;
+    const p0 = -1000.0;
+
+    // Orthotropic properties
+    const E_x = 1.0e10;
+    const E_y = 0.5e10;
+    const nu_xy = 0.25;
+    const G_xy = (0.5 * E_x) / (1 + nu_xy);
+    const support = [true, true, true, false, false, false];
+    const numDivisions = 30;
+
+    // Generate nodes
+    const meshNodes: Node[] = [];
+    for (let j = 0; j < numDivisions; j++) {
+      for (let i = 0; i < numDivisions; i++) {
+        meshNodes.push([
+          (i * a) / (numDivisions - 1),
+          (j * b) / (numDivisions - 1),
+          0,
+        ]);
+      }
+    }
+
+    // Generate triangular elements
+    const meshElements: Element[] = [];
+    for (let j = 0; j < numDivisions - 1; j++) {
+      for (let i = 0; i < numDivisions - 1; i++) {
+        const bl = j * numDivisions + i;
+        const br = bl + 1;
+        const tl = (j + 1) * numDivisions + i;
+        const tr = tl + 1;
+        meshElements.push([bl, br, tl]);
+        meshElements.push([br, tr, tl]);
+      }
+    }
+
+    // Setup node inputs
+    const nodeInputs: NodeInputs = {
+      supports: new Map<
+        number,
+        [boolean, boolean, boolean, boolean, boolean, boolean]
+      >(),
+      loads: new Map<
+        number,
+        [number, number, number, number, number, number]
+      >(),
+    };
+    meshNodes.forEach((node, idx) => {
+      const [x, y] = node;
+      if (x === 0 || x === a || y === 0 || y === b) {
+        nodeInputs.supports.set(
+          idx,
+          support as [boolean, boolean, boolean, boolean, boolean, boolean]
+        );
+      }
+    });
+
+    // Distribute pressure loads
+    meshElements.forEach((el) => {
+      const [i, j, k] = el;
+      const n1 = meshNodes[i],
+        n2 = meshNodes[j],
+        n3 = meshNodes[k];
+      // Calculate triangle area
+      const area =
+        (((n2[1] - n1[1]) * (n3[2] - n1[2]) -
+          (n2[2] - n1[2]) * (n3[1] - n1[1])) **
+          2 +
+          ((n2[2] - n1[2]) * (n3[0] - n1[0]) -
+            (n2[0] - n1[0]) * (n3[2] - n1[2])) **
+            2 +
+          ((n2[0] - n1[0]) * (n3[1] - n1[1]) -
+            (n2[1] - n1[1]) * (n3[0] - n1[0])) **
+            2) **
+          0.5 /
+        2;
+      const fNode = (p0 * area) / 3;
+      [i, j, k].forEach((nd) => {
+        const existing = nodeInputs.loads.get(nd) || [0, 0, 0, 0, 0, 0];
+        nodeInputs.loads.set(nd, [
+          existing[0],
+          existing[1],
+          existing[2] + fNode,
+          0,
+          0,
+          0,
+        ]);
+      });
+    });
+
+    // Setup element inputs for orthotropic plate
+    const elementInputs: ElementInputs = {
+      elasticities: new Map<number, number>(),
+      elasticitiesOrthogonal: new Map<number, number>(),
+      shearModuli: new Map<number, number>(),
+      poissonsRatios: new Map<number, number>(),
+      thicknesses: new Map<number, number>(),
+    };
+    meshElements.forEach((_, idx) => {
+      elementInputs.elasticities.set(idx, E_x);
+      elementInputs.elasticitiesOrthogonal!.set(idx, E_y);
+      elementInputs.shearModuli!.set(idx, G_xy);
+      elementInputs.poissonsRatios!.set(idx, nu_xy);
+      elementInputs.thicknesses!.set(idx, h);
+    });
+
+    // Run deformation
+    const { deformations } = deform(
+      meshNodes,
+      meshElements,
+      nodeInputs,
+      elementInputs
+    );
+    let maxZ = 0;
+    deformations.forEach((d) => (maxZ = Math.max(maxZ, Math.abs(d[2]))));
+
+    // Orthotropic should deflect more in the weaker direction
+    expect(maxZ * 1000).toBeCloseTo(16.903575, 1);
+  });
 });
