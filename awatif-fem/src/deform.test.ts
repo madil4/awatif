@@ -434,4 +434,59 @@ describe("deform", () => {
     // Orthotropic should deflect more in the weaker direction
     expect(maxZ * 1000).toBeCloseTo(16.903575, 1);
   });
+
+  test("Membrane: unit square under uniform edge tension", () => {
+    // MacNeal & Harder (1985)
+    // 1 m × 1 m square triangulated into two CST elements
+    const nodes: Node[] = [
+      [0, 0, 0],
+      [1, 0, 0],
+      [1, 1, 0],
+      [0, 1, 0],
+    ];
+    const elements: Element[] = [
+      [0, 1, 2],
+      [0, 2, 3],
+    ];
+
+    const E = 1e6;
+    const nu = 0.3;
+    const t = 0.01; // m
+    const q = 1; // N/m (edge traction on x = 1)
+    const F = q * 0.5; // 0.5 N per node (1 & 2)
+
+    const nodeInputs: NodeInputs = { supports: new Map(), loads: new Map() };
+    nodeInputs.loads.set(1, [F, 0, 0, 0, 0, 0]);
+    nodeInputs.loads.set(2, [F, 0, 0, 0, 0, 0]);
+    nodeInputs.supports.set(0, [true, true, false, true, true, false]);
+    nodeInputs.supports.set(3, [true, false, false, true, true, false]);
+
+    const elementInputs: ElementInputs = {
+      elasticities: new Map(),
+      poissonsRatios: new Map(),
+      thicknesses: new Map(),
+    };
+    elements.forEach((_, i) => {
+      elementInputs.elasticities.set(i, E);
+      elementInputs.poissonsRatios!.set(i, nu);
+      elementInputs.thicknesses!.set(i, t);
+    });
+
+    const { deformations, reactions } = deform(
+      nodes,
+      elements,
+      nodeInputs,
+      elementInputs
+    );
+
+    const expectedGrad = q / (E * t); // εx analytically
+    const ux0 = deformations.get(0)![0];
+    const ux1 = deformations.get(1)![0];
+    const grad = ux1 - ux0; // Δx = 1 m
+    expect(grad).toBeCloseTo(expectedGrad, 4);
+
+    let Rx = 0;
+    reactions.forEach((r) => (Rx += r[0]));
+    expect(Rx).toBeCloseTo(-2 * F, 6);
+  });
 });
