@@ -81,10 +81,10 @@ Promise.all([
     slabsByStory: a.state(/* @__PURE__ */ new Map()),
     columnData: a.state(/* @__PURE__ */ new Map()),
     slabData: a.state(/* @__PURE__ */ new Map())
-  }, f = O(), P = x(), m = a.state([
+  }, w = O(), P = x(), m = a.state([
     P
   ]), j = a.state([
-    f
+    w
   ]), r = {
     nodes: a.state([]),
     elements: a.state([]),
@@ -201,7 +201,7 @@ Promise.all([
     }, d.val = s === "1st-floor" ? p.val : i.val, u.val = s === "1st-floor" ? h.val : v.val;
   }
   function z() {
-    b === "1st-floor" ? (p.val = [], h.val = []) : (i.val = [], v.val = []), d.val = [], u.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, P.geometry = V(t.points.val, t.slabs.val, t.columns.val), f.geometry = C(t.points.val, t.slabs.val, t.columns.val), m.val = [
+    b === "1st-floor" ? (p.val = [], h.val = []) : (i.val = [], v.val = []), d.val = [], u.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, P.geometry = V(t.points.val, t.slabs.val, t.columns.val), w.geometry = C(t.points.val, t.slabs.val, t.columns.val), m.val = [
       ...m.rawVal
     ];
   }
@@ -209,7 +209,7 @@ Promise.all([
     b == "1st-floor" && (p.val = d.val, h.val = u.val), b == "2nd-floor" && (i.val = d.val, v.val = u.val);
   });
   a.derive(() => {
-    const s = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), l = [], g = [], B = [], w = [];
+    const s = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), l = [], g = [], B = [], f = [];
     if (l.length, i.val.length > 0) for (let e = 0; e < i.val.length; e++) B.push([
       i.val[e][0],
       i.val[e][1],
@@ -220,14 +220,14 @@ Promise.all([
       y
     ]);
     n.set(0, Array.from(v.rawVal.keys()));
-    const S = 10;
+    const S = -1;
     o.set(0, {
       analysisInput: {
         areaLoad: S,
         isOpening: false,
         thickness: 1,
         material: {
-          elasticity: 100,
+          elasticity: 300,
           poissonsRatio: 0.3
         }
       }
@@ -238,7 +238,7 @@ Promise.all([
           isOpening: false,
           thickness: 1,
           material: {
-            elasticity: 100,
+            elasticity: 300,
             poissonsRatio: 0.3
           }
         }
@@ -248,7 +248,7 @@ Promise.all([
     if (p.val.length > 0) {
       for (let e = 0; e < p.val.length; e++) {
         const c = p.val[e];
-        w.push([
+        f.push([
           [
             c[0],
             c[1],
@@ -256,16 +256,16 @@ Promise.all([
           ]
         ]);
       }
-      for (let e = 0; e < w.length; e++) {
+      for (let e = 0; e < f.length; e++) {
         const c = l.length;
-        l.push(...w[e]), g.push(c), M.push(g.length - 1);
+        l.push(...f[e]), g.push(c), M.push(g.length - 1);
       }
     }
     s.set(0, M), t.points.val = l, t.columns.val = g, t.slabs.val = v.val, t.columnsByStory.val = s, t.slabsByStory.val = n, t.slabData.val = o;
   });
   a.derive(() => {
     const { nodes: s, elements: n, nodeInputs: o, elementInputs: l } = E(t.points.val, t.stories.val, t.columns.val, t.slabs.val, t.columnsByStory.val, t.slabsByStory.val, t.columnData.val, t.slabData.val);
-    r.deformOutputs.val = L(s, n, o, l), f.geometry = C(t.points.val, t.slabs.val, t.columns.val), m.val = [
+    r.deformOutputs.val = L(s, n, o, l), w.geometry = C(t.points.val, t.slabs.val, t.columns.val), m.val = [
       ...m.rawVal
     ], r.nodes.val = s, r.elements.val = n, r.nodeInputs.val = o, r.elementInputs.val = l;
   });
@@ -281,7 +281,8 @@ Promise.all([
     settingsObj: {
       nodes: false,
       loads: false,
-      deformedShape: true
+      deformedShape: true,
+      solids: false
     }
   }), R(), H({
     onToolbarClick: _,
