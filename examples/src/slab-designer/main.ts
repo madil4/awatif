@@ -191,13 +191,13 @@ van.derive(() => {
 
   slabsByStory.set(0, Array.from(drawingSlabPolylines.rawVal.keys()));
 
-  const slabLoad: number = 10;
+  const slabLoad: number = -1;
   slabData.set(0, {
     analysisInput: {
       areaLoad: slabLoad,
       isOpening: false,
       thickness: 1,
-      material: { elasticity: 100, poissonsRatio: 0.3 },
+      material: { elasticity: 300, poissonsRatio: 0.3 },
     },
   });
   drawingSlabPolylines.rawVal.forEach((_, k) => {
@@ -206,7 +206,7 @@ van.derive(() => {
         areaLoad: slabLoad,
         isOpening: false,
         thickness: 1,
-        material: { elasticity: 100, poissonsRatio: 0.3 },
+        material: { elasticity: 300, poissonsRatio: 0.3 },
       },
     });
   });
@@ -291,6 +291,7 @@ document.body.append(
       nodes: false,
       loads: false,
       deformedShape: true,
+      solids: false,
     },
   }),
   getSnapTip(),
