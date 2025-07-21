@@ -255,12 +255,11 @@ van.derive(() => {
 
   mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
 
-  // The base geometry is not used in this example, but can be uncommented if needed
-  // base.geometry = getBaseGeometry(
-  //   building.points.val,
-  //   building.slabs.val,
-  //   building.columns.val
-  // );
+  base.geometry = getBaseGeometry(
+    building.points.val,
+    [], // Hide slabs
+    building.columns.val
+  );
 
   solidsMesh.geometry = getSolidsGeometry(
     building.points.val,
