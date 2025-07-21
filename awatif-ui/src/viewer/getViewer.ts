@@ -229,6 +229,7 @@ export function getViewer({
       controls,
       gridSize,
       derivedDisplayScale,
+      rendererElm: renderer.domElement,
       viewerRender,
     });
 

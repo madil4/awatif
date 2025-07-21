@@ -20,6 +20,7 @@ export function drawing({
   controls,
   gridSize,
   derivedDisplayScale,
+  rendererElm,
   viewerRender,
 }: {
   drawingObj: Drawing;
@@ -29,6 +30,7 @@ export function drawing({
   controls: THREE.Controls<any>;
   gridSize: number;
   derivedDisplayScale: State<number>;
+  rendererElm: HTMLCanvasElement;
   viewerRender: () => void;
 }) {
   // Init
@@ -115,20 +117,20 @@ export function drawing({
   let pointerDownAndMovedCount = 0;
 
   // Compute pointerDownAndMovedCount (dragging)
-  window.addEventListener("pointerdown", () => {
+  rendererElm.addEventListener("pointerdown", () => {
     pointerdown = true;
   });
 
-  window.addEventListener("pointerup", () => {
+  rendererElm.addEventListener("pointerup", () => {
     pointerdown = false;
   });
 
-  window.addEventListener("pointermove", () => {
+  rendererElm.addEventListener("pointermove", () => {
     if (pointerdown) pointerDownAndMovedCount++;
   });
 
   // On pointer click, add a point and polyline
-  window.addEventListener("click", (event: PointerEvent) => {
+  rendererElm.addEventListener("click", (event: PointerEvent) => {
     // handle when rotation and click happen together
     if (pointerDownAndMovedCount > 5) {
       pointerDownAndMovedCount = 0;
@@ -168,7 +170,7 @@ export function drawing({
   });
 
   // On contextmenu, add a new empty polyline
-  window.addEventListener("contextmenu", () => {
+  rendererElm.addEventListener("contextmenu", () => {
     if (
       !drawingObj.polylines ||
       drawingObj.polylines.rawVal[drawingObj.polylines.rawVal.length - 1]
@@ -180,7 +182,7 @@ export function drawing({
   });
 
   // On pointer move and intersection with plan, show indication point
-  window.addEventListener("pointermove", (event: PointerEvent) => {
+  rendererElm.addEventListener("pointermove", (event: PointerEvent) => {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
@@ -209,7 +211,7 @@ export function drawing({
   });
 
   // On pointer move and intersection with a point, hide indication point
-  window.addEventListener("pointermove", (event: PointerEvent) => {
+  rendererElm.addEventListener("pointermove", (event: PointerEvent) => {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
@@ -235,7 +237,7 @@ export function drawing({
   // On pointer drag and intersection with a point and plane, update point position
   let isPointInPlaneWithoutControl = false;
   let pointIndex: number | undefined;
-  window.addEventListener("pointermove", (event: PointerEvent) => {
+  rendererElm.addEventListener("pointermove", (event: PointerEvent) => {
     if (!pointerDownAndMovedCount) return;
 
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -286,13 +288,13 @@ export function drawing({
     drawingObj.points.val = newPoints;
   });
 
-  window.addEventListener("pointerup", () => {
+  rendererElm.addEventListener("pointerup", () => {
     controls.enabled = true;
     isPointInPlaneWithoutControl = false;
   });
 
   // On contextmenu move and point in the plane, delete the point and update polyline
-  window.addEventListener("contextmenu", (event: PointerEvent) => {
+  rendererElm.addEventListener("contextmenu", (event: PointerEvent) => {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
