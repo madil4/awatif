@@ -57,3 +57,9 @@ export function analyze(
 
   return analyzeOutputs;
 }
+
+// 1. getting bending stiffness matrix [D]
+// 2. get shape function derivative matrix
+// 3. multiple the rotations and displacements with the above matrices to get the stress resultants
+// 4. divide the stress resultants by the length to get the stress
+// 5. transform the stress to the global coordinate system
