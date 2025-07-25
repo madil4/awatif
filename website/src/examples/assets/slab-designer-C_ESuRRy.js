@@ -209,7 +209,7 @@ Promise.all([
         0,
         0
       ]
-    }, d.val = s === "1st-floor" ? p.val : i.val, b.val = v.val;
+    }, d.val = s === "1st-floor" ? p.val : i.val, b.val = s === "1st-floor" ? [] : v.val;
   }
   function _() {
     y === "1st-floor" ? p.val = [] : (i.val = [], v.val = []), d.val = [], b.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, h.geometry = C(t.points.val, t.slabs.val, t.columns.val), w.geometry = I(t.points.val, t.slabs.val, t.columns.val), m.val = [
