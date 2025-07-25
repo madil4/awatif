@@ -91,7 +91,7 @@ export function getMesh(
       const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
-        maxMeshSize: 0.2,
+        maxMeshSize: 0.5,
       });
 
       const numExistingNodes = nodes.length;
@@ -300,7 +300,7 @@ function getNodalLoadsFromSlabAreaLoad(
     const nodalLoad = (areaLoad * elementArea) / 3;
     e.forEach((n) => {
       if (slabsNodeIndices.includes(n)) {
-        const loadVector = [0, 0, -nodalLoad, 0, 0, 0] as [
+        const loadVector = [0, 0, nodalLoad, 0, 0, 0] as [
           number,
           number,
           number,
