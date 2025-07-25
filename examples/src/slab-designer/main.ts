@@ -99,7 +99,9 @@ function onToolbarClick(floor: DrawingStory) {
     floor === DrawingStory.first
       ? drawingColumnPoints.val
       : drawingSlabPoints.val;
-  totalDrawingPolylines.val = drawingSlabPolylines.val;
+
+  totalDrawingPolylines.val =
+    floor === DrawingStory.first ? [] : drawingSlabPolylines.val;
 }
 
 function onClearPoints() {
@@ -148,6 +150,7 @@ function onClearPoints() {
 van.derive(() => {
   if (activeStory == DrawingStory.first) {
     drawingColumnPoints.val = totalDrawingPoints.val;
+    // drawingSlabPolylines.val = totalDrawingPolylines.val;
   }
   if (activeStory == DrawingStory.second) {
     drawingSlabPoints.val = totalDrawingPoints.val;
