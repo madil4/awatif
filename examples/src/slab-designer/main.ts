@@ -52,17 +52,18 @@ const sampleColumnPoints = [
   [3, 6, 0],
 ] as [number, number, number][];
 const sampleSlabPoints = [
-  [3, 2, 4],
-  [3, 11, 4],
-  [18, 11, 4],
-  [18, 6, 4],
-  [12, 6, 4],
-  [12, 2, 4],
+  [3, 2, 0],
+  [3, 11, 0],
+  [12, 11, 0],
+  [18, 11, 0],
+  [18, 6, 0],
+  [12, 6, 0],
+  [12, 2, 0],
+  [3, 6, 0],
 ] as [number, number, number][];
-const sampleSlabPolylines = [[0, 1, 2, 3, 4, 5], []];
+const sampleSlabPolylines = [[0, 1, 2, 3, 4, 5, 6], []];
 
 const drawingColumnPoints: Drawing["points"] = van.state([]);
-const drawingColumnPolylines: Drawing["polylines"] = van.state([]);
 
 const drawingSlabPoints: Drawing["points"] = van.state(sampleSlabPoints);
 const drawingSlabPolylines: Drawing["polylines"] =
@@ -98,17 +99,13 @@ function onToolbarClick(floor: DrawingStory) {
     floor === DrawingStory.first
       ? drawingColumnPoints.val
       : drawingSlabPoints.val;
-  totalDrawingPolylines.val =
-    floor === DrawingStory.first
-      ? drawingColumnPolylines.val
-      : drawingSlabPolylines.val;
+  totalDrawingPolylines.val = drawingSlabPolylines.val;
 }
 
 function onClearPoints() {
   // Clear drawing data based on active story
   if (activeStory === DrawingStory.first) {
     drawingColumnPoints.val = [];
-    drawingColumnPolylines.val = [];
   } else {
     drawingSlabPoints.val = [];
     drawingSlabPolylines.val = [];
@@ -151,7 +148,6 @@ function onClearPoints() {
 van.derive(() => {
   if (activeStory == DrawingStory.first) {
     drawingColumnPoints.val = totalDrawingPoints.val;
-    drawingColumnPolylines.val = totalDrawingPolylines.val;
   }
   if (activeStory == DrawingStory.second) {
     drawingSlabPoints.val = totalDrawingPoints.val;
@@ -291,6 +287,7 @@ document.body.append(
       loads: false,
       deformedShape: true,
       solids: false,
+      shellResults: "displacementZ",
     },
   }),
   getSnapTip(),

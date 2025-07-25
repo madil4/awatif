@@ -1,6 +1,7 @@
 import {
   cross,
   divide,
+  dot,
   MathCollection,
   multiply,
   norm,
@@ -29,18 +30,19 @@ export function getMesh({
   elements: Element[];
   boundaryIndices: number[];
 } {
-  if (!points[2] || !polygon[2])
+  if (points.length < 3 || polygon.length < 3)
     return { nodes: [], elements: [], boundaryIndices: [] };
 
-  const transformationMatrix = getTransformationMatrix(
-    points[0],
-    points[1],
-    points[2]
-  );
+  const firstThreePoints = points.slice(0, 3);
+  if (getSignedArea(polygon, points) > 0) firstThreePoints.reverse(); // Ensure counter-clockwise order
+
+  const transformationMatrix = getTransformationMatrix(firstThreePoints);
+
   const points2D = points
     .map((p) => multiply(transpose(transformationMatrix), p))
     .map((p) => [p[0], p[1]]);
 
+  // Triangulate using triangle.js
   const triInputs = triangle.makeIO({
     pointlist: points2D.flat(),
     // @ts-ignore
@@ -50,6 +52,7 @@ export function getMesh({
 
   triangle.triangulate(`pzQOq30a${maxMeshSize}`, triInputs, triOutputs);
 
+  // Convert the outputs to nodes and elements
   const { nodes: meshNodes, boundaryIndices } = toNodesAndBoundaryIndices(
     triOutputs.pointlist,
     triOutputs.pointmarkerlist
@@ -60,6 +63,7 @@ export function getMesh({
   );
   const elements = toElements(triOutputs.trianglelist);
 
+  // Free the memory
   triangle.freeIO(triInputs, true);
   triangle.freeIO(triOutputs);
 
@@ -81,6 +85,16 @@ function toSegments(polygon: number[]): number[] {
   return segments;
 }
 
+function toElements(trianglelist: number[]): number[][] {
+  const elements = [];
+
+  for (let i = 0; i < trianglelist.length; i += 3) {
+    elements.push([trianglelist[i], trianglelist[i + 1], trianglelist[i + 2]]);
+  }
+
+  return elements;
+}
+
 function toNodesAndBoundaryIndices( // combine Node and boundaryIndices to loop once only on pointlist
   pointlist: number[],
   pointmarkerlist: number[]
@@ -100,43 +114,35 @@ function toNodesAndBoundaryIndices( // combine Node and boundaryIndices to loop 
   return { nodes, boundaryIndices };
 }
 
-function toElements(trianglelist: number[]): number[][] {
-  const elements = [];
+function getTransformationMatrix([n1, n2, n3]: Node[]): number[][] {
+  const v1 = subtract(n2, n1);
+  const v2 = subtract(n3, n1);
 
-  for (let i = 0; i < trianglelist.length; i += 3) {
-    elements.push([trianglelist[i], trianglelist[i + 1], trianglelist[i + 2]]);
+  const x = divide(v1, norm(v1)) as MathCollection;
+  let z = divide(cross(v1, v2), norm(cross(v1, v2))) as MathCollection;
+
+  // Fix z-direction to align with reference (e.g., global Z+)
+  const referenceZ: Node = [0, 0, 1];
+  if (dot(z, referenceZ) < 0) {
+    z = multiply(z, -1) as MathCollection;
   }
 
-  return elements;
-}
-
-// from global 3D to local 2D
-function getTransformationMatrix(n1: Node, n2: Node, n3: Node): number[][] {
-  // Based on thesis: Development of Membrane, Plate and Flat Shell Elements in Java Chapter 5.4
-  // https://vtechworks.lib.vt.edu/server/api/core/bitstreams/edb7e2db-eebf-43e9-aa1f-cfca4b8a46e9/content
-
-  const j = getAverage([n2, n3]);
-  const k = getAverage([n1, n3]);
-  const i = getAverage([n1, n2]);
-  const x = divide(subtract(j, k), norm(subtract(j, k))) as MathCollection;
-  const r = divide(subtract(n3, i), norm(subtract(j, k))) as MathCollection;
-  const z = divide(cross(x, r), norm(cross(x, r))) as MathCollection;
-  const y = divide(cross(z, x), norm(cross(z, x)));
+  const y = cross(z, x) as MathCollection;
 
   return [
     [x[0], y[0], z[0]],
     [x[1], y[1], z[1]],
     [x[2], y[2], z[2]],
   ];
+}
 
-  // utils
-  function getAverage(Nodes: Node[]): Node {
-    const sum = Nodes.reduce(
-      (acc, n) => [acc[0] + n[0], acc[1] + n[1], acc[2] + n[2]],
-      [0, 0, 0]
-    );
-
-    const count = Nodes.length;
-    return [sum[0] / count, sum[1] / count, sum[2] / count];
+function getSignedArea(polyline: number[], points: number[][]): number {
+  let area = 0;
+  const n = polyline.length;
+  for (let i = 0; i < n; i++) {
+    const [x1, y1] = points[polyline[i]];
+    const [x2, y2] = points[polyline[(i + 1) % n]];
+    area += x1 * y2 - x2 * y1;
   }
+  return area / 2;
 }
