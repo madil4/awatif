@@ -1,7 +1,6 @@
-import { v as e, m as l, g as c, n as p, a as d } from "./styles-DC0SXaq4.js";
-import { g as u } from "./getParameters-B4liUM_S.js";
-import { g, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
-import { n as b, s as v } from "./pureFunctionsAny.generated-Dh3LO6N2.js";
+import { v as e, g as n, a as r } from "./styles-DC0SXaq4.js";
+import { g as i } from "./getParameters-B4liUM_S.js";
+import { g as l, __tla as __tla_0 } from "./getMesh-DmUdekin.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
@@ -12,23 +11,17 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const i = {
+  const t = {
     boundary: {
-      value: e.state(10),
+      value: e.state(5),
       min: 1,
       max: 10,
       step: 0.1,
       label: "Boundary point"
     }
-  }, a = e.state([]), m = e.state([]), r = e.state([]), n = e.state([
-    l(a, m, r)
-  ]);
+  }, a = e.state([]), s = e.state([]);
   e.derive(() => {
-    const t = [
-      i.boundary.value.val,
-      0,
-      3
-    ], { nodes: s, elements: o } = g({
+    const { nodes: o, elements: m } = l({
       points: [
         [
           0,
@@ -40,7 +33,11 @@ Promise.all([
           0,
           0
         ],
-        t,
+        [
+          t.boundary.value.val,
+          0,
+          3
+        ],
         [
           8,
           0,
@@ -87,24 +84,17 @@ Promise.all([
         6,
         7,
         8
-      ],
-      maxMeshSize: 1
+      ]
     });
-    a.val = s, m.val = o, r.val = h(t, a.val), n.val = [
-      ...n.rawVal
-    ];
+    a.val = o, s.val = m;
   });
-  document.body.append(u(i), c({
+  document.body.append(i(t), n({
     mesh: {
       nodes: a,
-      elements: m
-    },
-    objects3D: n
-  }), p(r), d({
-    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/color-map/main.ts",
-    author: "https://www.linkedin.com/in/siu-kai-cheung/"
+      elements: s
+    }
+  }), r({
+    sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/2d-mesh/main.ts",
+    author: "https://www.linkedin.com/in/madil4/"
   }));
-  function h(t, s) {
-    return s.map((o) => b(v(o, t)));
-  }
 });

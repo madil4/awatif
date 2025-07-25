@@ -1,4 +1,4 @@
-import { g as D, __tla as __tla_0 } from "./getMesh-BFRjMVyf.js";
+import { g as D, __tla as __tla_0 } from "./getMesh-DmUdekin.js";
 import { a as X, s as O, n as ee, c as te, d as ne, m as se } from "./pureFunctionsAny.generated-Dh3LO6N2.js";
 import { f as oe, B as C, c as re, F as ie, h as Z, M as le, i as ae, S as V, P as ue, j as W, k as j, l as _ } from "./styles-DC0SXaq4.js";
 let Me, we, Ee, xe, Ae;
@@ -47,7 +47,7 @@ let __tla = Promise.all([
         ]), U = he(b, Array.from(E.values())), { nodes: P, elements: H } = D({
           points: U,
           polygon: w,
-          maxMeshSize: 0.2
+          maxMeshSize: 0.5
         }), v = n.length, k = c.length, I = H.map((M) => M.map((A) => A + v)), G = P.map((M, A) => A + v), q = H.map((M, A) => A + k);
         n = [
           ...n,
@@ -157,7 +157,7 @@ let __tla = Promise.all([
           const r = [
             0,
             0,
-            -s,
+            s,
             0,
             0,
             0
