@@ -51,7 +51,7 @@ export type AnalyzeOutputs = {
   bendingXY?: Map<number, [number, number, number]>;
   membraneXX?: Map<number, [number, number, number]>;
   membraneYY?: Map<number, [number, number, number]>;
-  membranceXY?: Map<number, [number, number, number]>;
+  membraneXY?: Map<number, [number, number, number]>;
   tranverseShearX?: Map<number, [number, number, number]>;
   tranverseShearY?: Map<number, [number, number, number]>;
 };
