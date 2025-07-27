@@ -76,7 +76,10 @@ export function analyze(
 
       const stressTransformationMatrix =
         getStressTransformationMatrix(elmNodes);
-      const fGlobal = multiply(stressTransformationMatrix, fLocal);
+      const fGlobal = multiply(
+        stressTransformationMatrix,
+        fLocal
+      ).toArray() as number[][];
 
       // Plate element
       const thickness = elementInputs.thicknesses?.get(i) ?? 1;
