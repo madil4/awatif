@@ -114,10 +114,9 @@ export function getSettings(
     outputs.addBinding(settings.shellResults, "val", {
       options: {
         none: "none",
-        // Todo: Uncomment when implemented
-        // bendingXX: "bendingXX",
-        // bendingYY: "bendingYY",
-        // bendingXY: "bendingXY",
+        bendingXX: "bendingXX",
+        bendingYY: "bendingYY",
+        bendingXY: "bendingXY",
         displacementZ: "displacementZ",
       },
       label: "Shell results",
