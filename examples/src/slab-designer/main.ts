@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { getToolbar, getViewer, Drawing } from "awatif-ui";
-import { deform, Mesh } from "awatif-fem";
+import { deform, Mesh, analyze } from "awatif-fem";
 import { Building } from "../building/data-model.js";
 import { getBase, getBaseGeometry } from "../building/getBase.js";
 import { getSolids, getSolidsGeometry } from "../building/getSolids.js";
@@ -38,6 +38,7 @@ const mesh: Mesh = {
   nodeInputs: van.state({}),
   elementInputs: van.state({}),
   deformOutputs: van.state({}),
+  analyzeOutputs: van.state({}),
 };
 
 //* Drawing Data (Points - Polylines)
@@ -254,7 +255,12 @@ van.derive(() => {
   );
 
   mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
-
+  mesh.analyzeOutputs.val = analyze(
+    nodes,
+    elements,
+    elementInputs,
+    mesh.deformOutputs.val
+  );
   base.geometry = getBaseGeometry(
     building.points.val,
     [], // Hide slabs
