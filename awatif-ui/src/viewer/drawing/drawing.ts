@@ -51,6 +51,12 @@ export function drawing({
     new THREE.PointsMaterial({ color: "gray" })
   );
 
+  const activePoints = new THREE.Points(
+    new THREE.BufferGeometry(),
+    new THREE.PointsMaterial({ color: "orange", size: 0.8 })
+  );
+  scene.add(activePoints);
+
   // Update
   points.geometry.setAttribute(
     "position",
@@ -110,6 +116,28 @@ export function drawing({
 
     indicationPoint.material.size = size;
     raycaster.params.Points.threshold = 0.4 * size;
+  });
+
+  van.derive(() => {
+    const allPoints = drawingObj.points.val ?? [];
+    const polylines = drawingObj.polylines?.val ?? [];
+    const lastPolyline = polylines.at(-1) ?? [];
+  
+    const posArray: number[] = [];
+  
+    for (const i of lastPolyline) {
+      const [x, y, z] = allPoints[i];
+      posArray.push(x, y, z);
+    }
+  
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(posArray, 3)
+    );
+  
+    activePoints.geometry.dispose();
+    activePoints.geometry = geometry;
   });
 
   // Pointer events
