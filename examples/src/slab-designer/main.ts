@@ -52,14 +52,14 @@ const sampleColumnPoints = [
   [3, 6, 0],
 ] as [number, number, number][];
 const sampleSlabPoints = [
-  [3, 2, 0],
-  [3, 11, 0],
-  [12, 11, 0],
-  [18, 11, 0],
-  [18, 6, 0],
-  [12, 6, 0],
-  [12, 2, 0],
-  [3, 6, 0],
+  [3, 2, 4],
+  [3, 11, 4],
+  [12, 11, 4],
+  [18, 11, 4],
+  [18, 6, 4],
+  [12, 6, 4],
+  [12, 2, 4],
+  [3, 6, 4],
 ] as [number, number, number][];
 const sampleSlabPolylines = [[0, 1, 2, 3, 4, 5, 6], []];
 
