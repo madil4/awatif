@@ -1,6 +1,6 @@
-import { d as D, v as a, g as k, a as T } from "./styles-DC0SXaq4.js";
+import { d as D, v as a, g as k, a as T } from "./styles-BDRoOi4N.js";
 import { d as L, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as O, a as x, b as E, c as C, d as I, __tla as __tla_1 } from "./getSolids-DZNy58sj.js";
+import { g as O, a as x, b as E, c as C, d as I, __tla as __tla_1 } from "./getSolids-DtCo3I9H.js";
 import { __tla as __tla_2 } from "./getMesh-DmUdekin.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
 import "./complex-i8qiIvCl.js";
@@ -136,42 +136,42 @@ Promise.all([
     [
       3,
       2,
-      0
+      4
     ],
     [
       3,
       11,
-      0
+      4
     ],
     [
       12,
       11,
-      0
+      4
     ],
     [
       18,
       11,
-      0
+      4
     ],
     [
       18,
       6,
-      0
+      4
     ],
     [
       12,
       6,
-      0
+      4
     ],
     [
       12,
       2,
-      0
+      4
     ],
     [
       3,
       6,
-      0
+      4
     ]
   ], A = [
     [

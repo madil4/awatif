@@ -1,7 +1,7 @@
-import { v as t, g as l, a as u } from "./styles-DC0SXaq4.js";
-import { a as r } from "./analyze-BYwPRdme.js";
-import { d as i, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as d } from "./getParameters-B4liUM_S.js";
+import { v as t, g as p, a as u } from "./styles-BDRoOi4N.js";
+import { a as i } from "./analyze-BYwPRdme.js";
+import { d as r, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
+import { g as d } from "./getParameters-BSkeYnZ1.js";
 import { g as v, __tla as __tla_1 } from "./getMesh-DmUdekin.js";
 import "./complex-i8qiIvCl.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
@@ -19,11 +19,21 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const m = {
+  const o = {
     xPosition: {
       value: t.state(15),
       min: 5,
       max: 20
+    },
+    Ex: {
+      value: t.state(100),
+      min: 50,
+      max: 500
+    },
+    Ey: {
+      value: t.state(100),
+      min: 50,
+      max: 500
     },
     load: {
       value: t.state(-3),
@@ -31,7 +41,7 @@ Promise.all([
       max: 10,
       step: 1
     }
-  }, e = {
+  }, a = {
     nodes: t.state([]),
     elements: t.state([]),
     nodeInputs: t.state({}),
@@ -40,7 +50,7 @@ Promise.all([
     analyzeOutputs: t.state({})
   };
   t.derive(() => {
-    const { nodes: n, elements: s, boundaryIndices: p } = v({
+    const { nodes: l, elements: s, boundaryIndices: m } = v({
       points: [
         [
           0,
@@ -53,7 +63,7 @@ Promise.all([
           0
         ],
         [
-          m.xPosition.value.val,
+          o.xPosition.value.val,
           10,
           0
         ],
@@ -71,9 +81,9 @@ Promise.all([
       ],
       maxMeshSize: 0.5
     });
-    e.nodeInputs.val = {
-      supports: new Map(p.map((o) => [
-        o,
+    a.nodeInputs.val = {
+      supports: new Map(m.map((n) => [
+        n,
         [
           true,
           true,
@@ -83,34 +93,42 @@ Promise.all([
           true
         ]
       ])),
-      loads: new Map(n.map((o, a) => [
-        a,
+      loads: new Map(l.map((n, e) => [
+        e,
         [
           0,
           0,
-          m.load.value.val,
+          o.load.value.val,
           0,
           0,
           0
         ]
       ]))
-    }, e.nodes.val = n, e.elements.val = s, e.elementInputs.val = {
-      elasticities: new Map(s.map((o, a) => [
-        a,
-        100
+    }, a.nodes.val = l, a.elements.val = s, a.elementInputs.val = {
+      elasticities: new Map(s.map((n, e) => [
+        e,
+        o.Ex.value.val
       ])),
-      thicknesses: new Map(s.map((o, a) => [
-        a,
+      elasticitiesOrthogonal: new Map(s.map((n, e) => [
+        e,
+        o.Ey.value.val
+      ])),
+      thicknesses: new Map(s.map((n, e) => [
+        e,
         1
       ])),
-      poissonsRatios: new Map(s.map((o, a) => [
-        a,
+      poissonsRatios: new Map(s.map((n, e) => [
+        e,
         0.3
+      ])),
+      shearModuli: new Map(s.map((n, e) => [
+        e,
+        100
       ]))
-    }, e.deformOutputs.val = i(n, s, e.nodeInputs.val, e.elementInputs.val), e.analyzeOutputs.val = r(n, s, e.elementInputs.val, e.deformOutputs.val);
+    }, a.deformOutputs.val = r(l, s, a.nodeInputs.val, a.elementInputs.val), a.analyzeOutputs.val = i(l, s, a.elementInputs.val, a.deformOutputs.val);
   });
-  document.body.append(d(m), l({
-    mesh: e,
+  document.body.append(d(o), p({
+    mesh: a,
     settingsObj: {
       nodes: false,
       deformedShape: true,
