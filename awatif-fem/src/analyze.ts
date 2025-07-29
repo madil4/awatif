@@ -147,18 +147,10 @@ function getLinearFieldMatrix3x6(nodeCoordinates: Node[]): Matrix {
 }
 
 function getDisplacementMatrix6x2(dxLocal: number[]): Matrix {
-  const [u1, u2, u3] = [dxLocal[0], dxLocal[3], dxLocal[6]];
-  const [v1, v2, v3] = [dxLocal[1], dxLocal[4], dxLocal[7]];
-  const [theta_y1, theta_y2, theta_y3] = [
-    dxLocal[11],
-    dxLocal[14],
-    dxLocal[17],
-  ];
-  const [theta_x1, theta_x2, theta_x3] = [
-    dxLocal[10],
-    dxLocal[13],
-    dxLocal[16],
-  ];
+  const [u1, u2, u3] = [dxLocal[0], dxLocal[6], dxLocal[12]];
+  const [v1, v2, v3] = [dxLocal[1], dxLocal[7], dxLocal[13]];
+  const [theta_y1, theta_y2, theta_y3] = [dxLocal[4], dxLocal[10], dxLocal[16]];
+  const [theta_x1, theta_x2, theta_x3] = [dxLocal[3], dxLocal[9], dxLocal[15]];
   return matrix([
     [u1, -theta_y1],
     [u2, -theta_y2],
