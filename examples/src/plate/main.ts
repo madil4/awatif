@@ -6,6 +6,8 @@ import { getMesh } from "awatif-mesh";
 // Init
 const parameters: Parameters = {
   xPosition: { value: van.state(15), min: 5, max: 20 },
+  Ex: { value: van.state(100), min: 50, max: 500 },
+  Ey: { value: van.state(100), min: 50, max: 500 },
   load: { value: van.state(-3), min: -10, max: 10, step: 1 },
 };
 
@@ -43,9 +45,13 @@ van.derive(() => {
   mesh.elements.val = elements;
 
   mesh.elementInputs.val = {
-    elasticities: new Map(elements.map((_, i) => [i, 100])),
+    elasticities: new Map(elements.map((_, i) => [i, parameters.Ex.value.val])),
+    elasticitiesOrthogonal: new Map(
+      elements.map((_, i) => [i, parameters.Ey.value.val])
+    ),
     thicknesses: new Map(elements.map((_, i) => [i, 1])),
     poissonsRatios: new Map(elements.map((_, i) => [i, 0.3])),
+    shearModuli: new Map(elements.map((_, i) => [i, 100])),
   };
 
   mesh.deformOutputs.val = deform(
