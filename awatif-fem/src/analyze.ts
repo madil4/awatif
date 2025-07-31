@@ -85,12 +85,7 @@ export function analyze(
         )
       );
 
-      const stressTransformationMatrix =
-        getStressTransformationMatrix(elmNodes);
-      const fGlobal = multiply(
-        stressTransformationMatrix,
-        fLocal
-      ).toArray() as number[][];
+      const fGlobal = fLocal.toArray() as number[][];
 
       // Plate element
       const thickness = elementInputs.thicknesses?.get(i) ?? 1;
@@ -245,12 +240,6 @@ function getElementArea(nodeCoordinates: Node[]) {
   const y12 = y1 - y2;
 
   return 0.5 * (x21 * y31 - x31 * -y12);
-}
-
-    [cosTheta ** 2, sinTheta ** 2, 2 * sinTheta * cosTheta],
-    [sinTheta ** 2, cosTheta ** 2, -2 * sinTheta * cosTheta],
-    [-sinTheta * cosTheta, sinTheta * cosTheta, cosTheta ** 2 - sinTheta ** 2],
-  ]);
 }
 
 function getCentroidsMaps(
