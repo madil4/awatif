@@ -247,16 +247,6 @@ function getElementArea(nodeCoordinates: Node[]) {
   return 0.5 * (x21 * y31 - x31 * -y12);
 }
 
-function getStressTransformationMatrix(nodeCoordinates: Node[]): Matrix {
-  const [x1, y1] = nodeCoordinates[0];
-  const [x2, y2] = nodeCoordinates[1];
-  const [x3, y3] = nodeCoordinates[2];
-
-  const theta = Math.atan2(y2 - y1, x2 - x1);
-  const cosTheta = Math.cos(theta);
-  const sinTheta = Math.sin(theta);
-
-  return matrix([
     [cosTheta ** 2, sinTheta ** 2, 2 * sinTheta * cosTheta],
     [sinTheta ** 2, cosTheta ** 2, -2 * sinTheta * cosTheta],
     [-sinTheta * cosTheta, sinTheta * cosTheta, cosTheta ** 2 - sinTheta ** 2],
