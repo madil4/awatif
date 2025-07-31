@@ -1,4 +1,4 @@
-import { multiply, matrix, Matrix } from "mathjs";
+import { multiply, matrix, Matrix, mean } from "mathjs";
 import {
   Node,
   Element,
@@ -26,6 +26,17 @@ export function analyze(
     torsions: new Map(),
     bendingsY: new Map(),
     bendingsZ: new Map(),
+    bendingXX: new Map(),
+    bendingYY: new Map(),
+    bendingXY: new Map(),
+    membraneXX: new Map(),
+    membraneYY: new Map(),
+    membraneXY: new Map(),
+    tranverseShearX: new Map(),
+    tranverseShearY: new Map(),
+  };
+
+  const analyzeOutputsElements = {
     bendingXX: new Map(),
     bendingYY: new Map(),
     bendingXY: new Map(),
@@ -92,13 +103,75 @@ export function analyze(
       const My = fGlobal[1][1] * (thickness ** 3 / 12);
       const Mxy = fGlobal[2][1] * (thickness ** 3 / 12);
 
-      analyzeOutputs.membraneXX.set(i, [Nx, Nx, Nx]);
-      analyzeOutputs.membraneYY.set(i, [Ny, Ny, Ny]);
-      analyzeOutputs.membraneXY.set(i, [Nxy, Nxy, Nxy]);
-      analyzeOutputs.bendingXX.set(i, [Mx, Mx, Mx]);
-      analyzeOutputs.bendingYY.set(i, [My, My, My]);
-      analyzeOutputs.bendingXY.set(i, [Mxy, Mxy, Mxy]);
+      analyzeOutputsElements.membraneXX.set(i, Nx);
+      analyzeOutputsElements.membraneYY.set(i, Ny);
+      analyzeOutputsElements.membraneXY.set(i, Nxy);
+      analyzeOutputsElements.bendingXX.set(i, Mx);
+      analyzeOutputsElements.bendingYY.set(i, My);
+      analyzeOutputsElements.bendingXY.set(i, Mxy);
     }
+  });
+
+  const { nodeToCentroidNodesMap, nodeToCentroidElementIndiciesMap } =
+    getCentroidsMaps(nodes, elements);
+
+  elements.forEach((element, elementIndex) => {
+    let membraneXXs: [number, number, number] = [0, 0, 0];
+    let membraneYYs: [number, number, number] = [0, 0, 0];
+    let membraneXYs: [number, number, number] = [0, 0, 0];
+    let bendingXXs: [number, number, number] = [0, 0, 0];
+    let bendingYYs: [number, number, number] = [0, 0, 0];
+    let bendingXYs: [number, number, number] = [0, 0, 0];
+
+    element.forEach((nodeIndex, pos) => {
+      const centroidNodes = nodeToCentroidNodesMap.get(nodeIndex) || [];
+      const elementIndicies =
+        nodeToCentroidElementIndiciesMap.get(nodeIndex) || [];
+
+      membraneXXs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.membraneXX.get(elementIndex) ?? 0
+        )
+      );
+      membraneYYs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.membraneYY.get(elementIndex) ?? 0
+        )
+      );
+      membraneXYs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.membraneXY.get(elementIndex) ?? 0
+        )
+      );
+      bendingXXs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.bendingXX.get(elementIndex) ?? 0
+        )
+      );
+      bendingYYs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.bendingYY.get(elementIndex) ?? 0
+        )
+      );
+      bendingXYs[pos] = mean(
+        elementIndicies.map(
+          (elementIndex) =>
+            analyzeOutputsElements.bendingXY.get(elementIndex) ?? 0
+        )
+      );
+    });
+
+    analyzeOutputs.membraneXX.set(elementIndex, membraneXXs);
+    analyzeOutputs.membraneYY.set(elementIndex, membraneYYs);
+    analyzeOutputs.membraneXY.set(elementIndex, membraneXYs);
+    analyzeOutputs.bendingXX.set(elementIndex, bendingXXs);
+    analyzeOutputs.bendingYY.set(elementIndex, bendingYYs);
+    analyzeOutputs.bendingXY.set(elementIndex, bendingXYs);
   });
 
   return analyzeOutputs;
@@ -188,4 +261,70 @@ function getStressTransformationMatrix(nodeCoordinates: Node[]): Matrix {
     [sinTheta ** 2, cosTheta ** 2, -2 * sinTheta * cosTheta],
     [-sinTheta * cosTheta, sinTheta * cosTheta, cosTheta ** 2 - sinTheta ** 2],
   ]);
+}
+
+function getCentroidsMaps(
+  nodes: Node[],
+  elements: Element[]
+): {
+  nodeToCentroidNodesMap: Map<number, Node[]>;
+  nodeToCentroidElementIndiciesMap: Map<number, number[]>;
+} {
+  const nodeToCentroidNodesMap: Map<number, Node[]> = new Map();
+  const nodeToCentroidElementIndiciesMap: Map<number, number[]> = new Map();
+  elements.forEach((element, elementIndex) => {
+    const elmNodes = element.map((index) => nodes[index]);
+    const centroidNode = getCentroidFromNodes(elmNodes) as Node;
+    element.forEach((nodeIndex) => {
+      if (!nodeToCentroidNodesMap.has(nodeIndex)) {
+        nodeToCentroidNodesMap.set(nodeIndex, []);
+      }
+      nodeToCentroidNodesMap.get(nodeIndex)?.push(centroidNode);
+
+      if (!nodeToCentroidElementIndiciesMap.has(nodeIndex)) {
+        nodeToCentroidElementIndiciesMap.set(nodeIndex, []);
+      }
+      nodeToCentroidElementIndiciesMap.get(nodeIndex)?.push(elementIndex);
+    });
+  });
+  return {
+    nodeToCentroidNodesMap: nodeToCentroidNodesMap,
+    nodeToCentroidElementIndiciesMap: nodeToCentroidElementIndiciesMap,
+  };
+}
+
+function getCentroidFromNodes(
+  nodeCoordinates: Node[]
+): [number, number, number] {
+  const x =
+    nodeCoordinates.reduce((sum, n) => sum + n[0], 0) / nodeCoordinates.length;
+  const y =
+    nodeCoordinates.reduce((sum, n) => sum + n[1], 0) / nodeCoordinates.length;
+  const z =
+    nodeCoordinates.reduce((sum, n) => sum + n[2], 0) / nodeCoordinates.length;
+  return [x, y, z];
+}
+
+function getLinearlyInterpolatedValueInTriangle(
+  targetNode: Node,
+  n1: Node,
+  n2: Node,
+  n3: Node,
+  f1: number,
+  f2: number,
+  f3: number
+): number {
+  // Compute barycentric coordinates for targetNode in triangle (n1, n2, n3)
+  const [x, y] = targetNode;
+  const [x1, y1] = n1;
+  const [x2, y2] = n2;
+  const [x3, y3] = n3;
+
+  const denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+  const lambda1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denominator;
+  const lambda2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denominator;
+  const lambda3 = 1 - lambda1 - lambda2;
+
+  // Interpolate value using barycentric coordinates
+  return lambda1 * f1 + lambda2 * f2 + lambda3 * f3;
 }
