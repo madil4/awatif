@@ -74,7 +74,7 @@ export function analyze(
         i
       );
       const linearFieldMatrix3x6 = getLinearFieldMatrix3x6(elmNodes);
-      const displacmentMattrix6x2 = getDisplacementMatrix6x2(dxLocal);
+      const displacmentMattrix6x2 = getDisplacementMatrix6x2(dxGlobal);
       const elementArea = getElementArea(elmNodes);
 
       const fLocal = multiply(
