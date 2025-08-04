@@ -111,6 +111,7 @@ export function analyze(
     getCentroidsMaps(nodes, elements);
 
   elements.forEach((element, elementIndex) => {
+    if (element.length !== 3) return;
     let membraneXXs: [number, number, number] = [0, 0, 0];
     let membraneYYs: [number, number, number] = [0, 0, 0];
     let membraneXYs: [number, number, number] = [0, 0, 0];
