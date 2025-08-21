@@ -1,7 +1,6 @@
-import { v as a, g as I, a as z } from "./styles-BDRoOi4N.js";
-import { a as M } from "./analyze-BYwPRdme.js";
-import { d as C, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as _ } from "./getParameters-BSkeYnZ1.js";
+import { v as a, g as I, a as z } from "./styles-Ds8R4iPS.js";
+import { d as M, a as C, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as _ } from "./getParameters-BzC4JByW.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -11,7 +10,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const n = {
+  const o = {
     span: {
       value: a.state(15),
       min: 5,
@@ -55,14 +54,14 @@ Promise.all([
     }
   }, c = a.state([]), d = a.state([]), v = a.state({}), h = a.state({}), f = a.state({}), b = a.state({});
   a.derive(() => {
-    const g = n.span.value.val, e = n.divisions.value.val, w = n.height.value.val, y = n.elasticity.value.val * 1e6, x = n.area.value.val * 1e-4, O = n.load.value.val, l = [], s = [], i = g / e, p = [];
+    const g = o.span.value.val, e = o.divisions.value.val, w = o.height.value.val, y = o.elasticity.value.val * 1e6, x = o.area.value.val * 1e-4, O = o.load.value.val, l = [], s = [], i = g / e, p = [];
     for (let t = 0; t <= e; t++) {
-      const o = [
+      const n = [
         i * t,
         0,
         0
       ];
-      l.push(o), p.push(o);
+      l.push(n), p.push(n);
     }
     for (let t = 0; t <= e; t++) l.push([
       i * t,
@@ -113,8 +112,8 @@ Promise.all([
           ]
         ]
       ]),
-      loads: new Map(p.map((t, o) => [
-        o,
+      loads: new Map(p.map((t, n) => [
+        n,
         [
           0,
           0,
@@ -125,18 +124,18 @@ Promise.all([
         ]
       ]))
     }, u = {
-      elasticities: new Map(s.map((t, o) => [
-        o,
+      elasticities: new Map(s.map((t, n) => [
+        n,
         y
       ])),
-      areas: new Map(s.map((t, o) => [
-        o,
+      areas: new Map(s.map((t, n) => [
+        n,
         x
       ]))
-    }, m = C(l, s, r, u), S = M(l, s, u, m);
+    }, m = M(l, s, r, u), S = C(l, s, u, m);
     c.val = l, d.val = s, v.val = r, h.val = u, f.val = m, b.val = S;
   });
-  document.body.append(_(n), I({
+  document.body.append(_(o), I({
     mesh: {
       nodes: c,
       elements: d,

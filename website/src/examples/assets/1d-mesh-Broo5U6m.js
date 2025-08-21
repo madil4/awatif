@@ -1,7 +1,6 @@
-import { v as s, g as I, a as b } from "./styles-BDRoOi4N.js";
-import { a as k } from "./analyze-BYwPRdme.js";
-import { d as S, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as A } from "./getParameters-BSkeYnZ1.js";
+import { v as s, g as I, a as b } from "./styles-Ds8R4iPS.js";
+import { d as k, a as S, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as A } from "./getParameters-BzC4JByW.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -36,13 +35,13 @@ Promise.all([
     }
   }, h = s.state([]), c = s.state([]), v = s.state({}), y = s.state({}), g = s.state({}), w = s.state({});
   s.derive(() => {
-    const o = [], t = [], p = m.meshDensity.value.val, r = m.height.value.val, l = m.span.value.val, f = m.load.value.val;
+    const o = [], t = [], p = m.meshDensity.value.val, u = m.height.value.val, l = m.span.value.val, f = m.load.value.val;
     o.push(...[
       ...Array(p + 1).keys()
     ].map((e) => [
       0,
       0,
-      r / p * e
+      u / p * e
     ])), t.push(...[
       ...Array(p).keys()
     ].map((e) => [
@@ -55,7 +54,7 @@ Promise.all([
     ].map((e) => [
       l / p * (e + 1),
       0,
-      r
+      u
     ])), t.push(...[
       ...Array(p - 1).keys()
     ].map((e) => [
@@ -71,7 +70,7 @@ Promise.all([
     ].map((e) => [
       l,
       0,
-      r - r / p * (e + 1)
+      u - u / p * (e + 1)
     ])), t.push(...[
       ...Array(p - 1).keys()
     ].map((e) => [
@@ -81,7 +80,7 @@ Promise.all([
       n - 1,
       n
     ]);
-    const i = {
+    const d = {
       supports: /* @__PURE__ */ new Map([
         [
           0,
@@ -119,7 +118,7 @@ Promise.all([
           ]
         ]
       ])
-    }, u = {
+    }, r = {
       elasticities: new Map(t.map((e, a) => [
         a,
         10
@@ -144,8 +143,8 @@ Promise.all([
         a,
         10
       ]))
-    }, d = S(o, t, i, u), O = k(o, t, u, d);
-    h.val = o, c.val = t, v.val = i, y.val = u, g.val = d, w.val = O;
+    }, i = k(o, t, d, r), O = S(o, t, r, i);
+    h.val = o, c.val = t, v.val = d, y.val = r, g.val = i, w.val = O;
   });
   document.body.append(A(m), I({
     mesh: {

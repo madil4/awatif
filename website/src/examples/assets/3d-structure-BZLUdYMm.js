@@ -1,7 +1,6 @@
-import { v as e, g as y, a as z } from "./styles-BDRoOi4N.js";
-import { a as S } from "./analyze-BYwPRdme.js";
-import { d as O, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as I } from "./getParameters-BSkeYnZ1.js";
+import { v as e, g as y, a as z } from "./styles-Ds8R4iPS.js";
+import { d as S, a as O, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as I } from "./getParameters-BzC4JByW.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -48,31 +47,31 @@ Promise.all([
     }
   }, c = e.state([]), f = e.state([]), h = e.state({}), x = e.state({}), b = e.state({}), g = e.state({});
   e.derive(() => {
-    const d = n.dx.value.val, i = n.dy.value.val, o = n.dz.value.val, l = n.divisions.value.val;
+    const d = n.dx.value.val, i = n.dy.value.val, l = n.dz.value.val, o = n.divisions.value.val;
     let s = [], a = [];
-    for (let t = 0; t <= l; t++) s.push([
+    for (let t = 0; t <= o; t++) s.push([
       0,
       0,
-      o * t
+      l * t
     ], [
       d,
       0,
-      o * t
+      l * t
     ], [
       d,
       i,
-      o * t
+      l * t
     ], [
       0,
       i,
-      o * t
+      l * t
     ]);
     s = s.map((t) => [
       6 + t[0],
       6 + t[1],
       t[2]
     ]);
-    for (let t = 0; t < l * 4; ) t += 4, a.push([
+    for (let t = 0; t < o * 4; ) t += 4, a.push([
       t,
       t + 1
     ], [
@@ -88,11 +87,11 @@ Promise.all([
       t,
       t + 2
     ]);
-    for (let t = 0; t < l * 4; t++) a.push([
+    for (let t = 0; t < o * 4; t++) a.push([
       t,
       t + 4
     ]);
-    for (let t = 0; t < l * 4; t += 4) a.push([
+    for (let t = 0; t < o * 4; t += 4) a.push([
       t,
       t + 5
     ], [
@@ -153,7 +152,7 @@ Promise.all([
         p,
         10
       ]))
-    }, v = O(s, a, r, m), w = S(s, a, m, v);
+    }, v = S(s, a, r, m), w = O(s, a, m, v);
     c.val = s, f.val = a, h.val = r, x.val = m, b.val = v, g.val = w;
   });
   document.body.append(I(n), y({

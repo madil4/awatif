@@ -1,9 +1,9 @@
-import { d as D, v as a, g as k, a as T } from "./styles-BDRoOi4N.js";
-import { d as L, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as O, a as x, b as E, c as C, d as I, __tla as __tla_1 } from "./getSolids-DtCo3I9H.js";
+import { d as D, v as a, g as O, a as k } from "./styles-Ds8R4iPS.js";
+import { d as T, a as L, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as x, a as E, b as R, c as C, d as I, __tla as __tla_1 } from "./getSolids-DZKZg9hQ.js";
+import "./complex-i8qiIvCl.js";
 import { __tla as __tla_2 } from "./getMesh-DmUdekin.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
-import "./complex-i8qiIvCl.js";
 import "./pureFunctionsAny.generated-Dh3LO6N2.js";
 Promise.all([
   (() => {
@@ -25,11 +25,11 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function R({ onToolbarClick: s, onClearPoints: n }) {
-    const o = document.createElement("div");
-    return o.id = "drawing-toolbar", new D({
+  function V({ onToolbarClick: s, onClearPoints: i }) {
+    const l = document.createElement("div");
+    return l.id = "drawing-toolbar", new D({
       name: "toolbar",
-      box: o,
+      box: l,
       items: [
         {
           type: "radio",
@@ -55,19 +55,19 @@ Promise.all([
           icon: "w2ui-icon-cross"
         }
       ],
-      onClick(l) {
-        l.target === "clear-points" ? n() : s(l.target);
+      onClick(o) {
+        o.target === "clear-points" ? i() : s(o.target);
       }
-    }), o;
+    }), l;
   }
-  function V() {
-    const s = document.createElement("div"), n = navigator.userAgent.includes("Macintosh");
+  function z() {
+    const s = document.createElement("div"), i = navigator.userAgent.includes("Macintosh");
     return s.className = "snap-tip", s.innerHTML = `
       <span>Tip: Hold</span>
-      <span class="key">${n ? "Cmd" : "Ctrl"}</span>
+      <span class="key">${i ? "Cmd" : "Ctrl"}</span>
       <span>to snap to grid points</span>
-    `, s.classList.add("show"), document.addEventListener("keydown", (o) => {
-      (o.ctrlKey || o.metaKey) && s.classList.remove("show");
+    `, s.classList.add("show"), document.addEventListener("keydown", (l) => {
+      (l.ctrlKey || l.metaKey) && s.classList.remove("show");
     }), s;
   }
   const t = {
@@ -81,16 +81,17 @@ Promise.all([
     slabsByStory: a.state(/* @__PURE__ */ new Map()),
     columnData: a.state(/* @__PURE__ */ new Map()),
     slabData: a.state(/* @__PURE__ */ new Map())
-  }, w = O(), h = x(), m = a.state([
+  }, w = x(), h = E(), m = a.state([
     h
   ]), H = a.state([
     w
-  ]), r = {
+  ]), n = {
     nodes: a.state([]),
     elements: a.state([]),
     nodeInputs: a.state({}),
     elementInputs: a.state({}),
-    deformOutputs: a.state({})
+    deformOutputs: a.state({}),
+    analyzeOutputs: a.state({})
   }, j = [
     [
       3,
@@ -184,7 +185,7 @@ Promise.all([
       6
     ],
     []
-  ], p = a.state([]), i = a.state(G), v = a.state(A), d = a.state(j), b = a.state([]), P = a.state({
+  ], p = a.state([]), r = a.state(G), v = a.state(A), d = a.state(j), b = a.state([]), P = a.state({
     position: [
       10,
       10,
@@ -209,30 +210,30 @@ Promise.all([
         0,
         0
       ]
-    }, d.val = s === "1st-floor" ? p.val : i.val, b.val = s === "1st-floor" ? [] : v.val;
+    }, d.val = s === "1st-floor" ? p.val : r.val, b.val = s === "1st-floor" ? [] : v.val;
   }
   function _() {
-    y === "1st-floor" ? p.val = [] : (i.val = [], v.val = []), d.val = [], b.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, h.geometry = C(t.points.val, t.slabs.val, t.columns.val), w.geometry = I(t.points.val, t.slabs.val, t.columns.val), m.val = [
+    y === "1st-floor" ? p.val = [] : (r.val = [], v.val = []), d.val = [], b.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), n.nodes.val = [], n.elements.val = [], n.nodeInputs.val = {}, h.geometry = C(t.points.val, t.slabs.val, t.columns.val), w.geometry = I(t.points.val, t.slabs.val, t.columns.val), m.val = [
       ...m.rawVal
     ];
   }
   a.derive(() => {
-    y == "1st-floor" && (p.val = d.val), y == "2nd-floor" && (i.val = d.val, v.val = b.val);
+    y == "1st-floor" && (p.val = d.val), y == "2nd-floor" && (r.val = d.val, v.val = b.val);
   });
   a.derive(() => {
-    const s = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), l = [], g = [], B = [], f = [];
-    if (l.length, i.val.length > 0) for (let e = 0; e < i.val.length; e++) B.push([
-      i.val[e][0],
-      i.val[e][1],
+    const s = /* @__PURE__ */ new Map(), i = /* @__PURE__ */ new Map(), l = /* @__PURE__ */ new Map(), o = [], g = [], B = [], f = [];
+    if (o.length, r.val.length > 0) for (let e = 0; e < r.val.length; e++) B.push([
+      r.val[e][0],
+      r.val[e][1],
       u
-    ]), l.push([
-      i.val[e][0],
-      i.val[e][1],
+    ]), o.push([
+      r.val[e][0],
+      r.val[e][1],
       u
     ]);
-    n.set(0, Array.from(v.rawVal.keys()));
+    i.set(0, Array.from(v.rawVal.keys()));
     const S = -1;
-    o.set(0, {
+    l.set(0, {
       analysisInput: {
         areaLoad: S,
         isOpening: false,
@@ -243,7 +244,7 @@ Promise.all([
         }
       }
     }), v.rawVal.forEach((e, c) => {
-      o.set(c, {
+      l.set(c, {
         analysisInput: {
           areaLoad: S,
           isOpening: false,
@@ -268,22 +269,22 @@ Promise.all([
         ]);
       }
       for (let e = 0; e < f.length; e++) {
-        const c = l.length;
-        l.push(...f[e]), g.push(c), M.push(g.length - 1);
+        const c = o.length;
+        o.push(...f[e]), g.push(c), M.push(g.length - 1);
       }
     }
-    s.set(0, M), t.points.val = l, t.columns.val = g, t.slabs.val = v.val, t.columnsByStory.val = s, t.slabsByStory.val = n, t.slabData.val = o;
+    s.set(0, M), t.points.val = o, t.columns.val = g, t.slabs.val = v.val, t.columnsByStory.val = s, t.slabsByStory.val = i, t.slabData.val = l;
   });
   a.derive(() => {
-    const { nodes: s, elements: n, nodeInputs: o, elementInputs: l } = E(t.points.val, t.stories.val, t.columns.val, t.slabs.val, t.columnsByStory.val, t.slabsByStory.val, t.columnData.val, t.slabData.val);
-    r.deformOutputs.val = L(s, n, o, l), h.geometry = C(t.points.val, [], t.columns.val), w.geometry = I(t.points.val, t.slabs.val, t.columns.val), m.val = [
+    const { nodes: s, elements: i, nodeInputs: l, elementInputs: o } = R(t.points.val, t.stories.val, t.columns.val, t.slabs.val, t.columnsByStory.val, t.slabsByStory.val, t.columnData.val, t.slabData.val);
+    n.deformOutputs.val = T(s, i, l, o), n.analyzeOutputs.val = L(s, i, o, n.deformOutputs.val), h.geometry = C(t.points.val, [], t.columns.val), w.geometry = I(t.points.val, t.slabs.val, t.columns.val), m.val = [
       ...m.rawVal
-    ], r.nodes.val = s, r.elements.val = n, r.nodeInputs.val = o, r.elementInputs.val = l;
+    ], n.nodes.val = s, n.elements.val = i, n.nodeInputs.val = l, n.elementInputs.val = o;
   });
-  document.body.append(k({
+  document.body.append(O({
     objects3D: m,
     solids: H,
-    mesh: r,
+    mesh: n,
     drawingObj: {
       points: d,
       polylines: b,
@@ -296,10 +297,10 @@ Promise.all([
       solids: false,
       shellResults: "displacementZ"
     }
-  }), V(), R({
+  }), z(), V({
     onToolbarClick: K,
     onClearPoints: _
-  }), T({
+  }), k({
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/"
   }));

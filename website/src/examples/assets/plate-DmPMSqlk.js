@@ -1,7 +1,6 @@
-import { v as t, g as p, a as u } from "./styles-BDRoOi4N.js";
-import { a as i } from "./analyze-BYwPRdme.js";
-import { d as r, __tla as __tla_0 } from "./deformCpp-CS-wCYO-.js";
-import { g as d } from "./getParameters-BSkeYnZ1.js";
+import { v as t, g as p, a as u } from "./styles-Ds8R4iPS.js";
+import { d as i, a as r, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as d } from "./getParameters-BzC4JByW.js";
 import { g as v, __tla as __tla_1 } from "./getMesh-DmUdekin.js";
 import "./complex-i8qiIvCl.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
@@ -125,7 +124,7 @@ Promise.all([
         e,
         100
       ]))
-    }, a.deformOutputs.val = r(l, s, a.nodeInputs.val, a.elementInputs.val), a.analyzeOutputs.val = i(l, s, a.elementInputs.val, a.deformOutputs.val);
+    }, a.deformOutputs.val = i(l, s, a.nodeInputs.val, a.elementInputs.val), a.analyzeOutputs.val = r(l, s, a.elementInputs.val, a.deformOutputs.val);
   });
   document.body.append(d(o), p({
     mesh: a,
