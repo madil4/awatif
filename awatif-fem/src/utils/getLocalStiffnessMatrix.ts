@@ -438,37 +438,6 @@ function getLocalStiffnessMatrixShell(
     return bendingMatrix;
   }
 
-  function getIsotropicInPlaneConstitutiveMatrix(
-    E: number,
-    nu: number
-  ): Matrix {
-    const q1 = E / (1 - nu * nu);
-    return matrix([
-      [q1, q1 * nu, 0],
-      [q1 * nu, q1, 0],
-      [0, 0, (q1 * (1 - nu)) / 2],
-    ]) as Matrix;
-  }
-
-  function getOrthotropicInPlaneConstitutiveMatrix(
-    Ex: number,
-    Ey: number,
-    Gxy: number,
-    nu_xy: number
-  ): Matrix {
-    const nu_yx = (Ey * nu_xy) / Ex;
-    const denominator = 1 - nu_xy * nu_yx;
-    const Q11 = Ex / denominator;
-    const Q22 = Ey / denominator;
-    const Q12 = (nu_xy * Ey) / denominator;
-    const Q66 = Gxy;
-    return matrix([
-      [Q11, Q12, 0],
-      [Q12, Q22, 0],
-      [0, 0, Q66],
-    ]) as Matrix;
-  }
-
   function getMembraneStiffnessMatrix(
     nodeCoordinates: number[][],
     inPlaneConstitutiveMatrix: Matrix,
@@ -687,4 +656,35 @@ function getLocalStiffnessMatrixShell(
 
     return Km;
   }
+}
+
+export function getIsotropicInPlaneConstitutiveMatrix(
+  E: number,
+  nu: number
+): Matrix {
+  const q1 = E / (1 - nu * nu);
+  return matrix([
+    [q1, q1 * nu, 0],
+    [q1 * nu, q1, 0],
+    [0, 0, (q1 * (1 - nu)) / 2],
+  ]) as Matrix;
+}
+
+export function getOrthotropicInPlaneConstitutiveMatrix(
+  Ex: number,
+  Ey: number,
+  Gxy: number,
+  nu_xy: number
+): Matrix {
+  const nu_yx = (Ey * nu_xy) / Ex;
+  const denominator = 1 - nu_xy * nu_yx;
+  const Q11 = Ex / denominator;
+  const Q22 = Ey / denominator;
+  const Q12 = (nu_xy * Ey) / denominator;
+  const Q66 = Gxy;
+  return matrix([
+    [Q11, Q12, 0],
+    [Q12, Q22, 0],
+    [0, 0, Q66],
+  ]) as Matrix;
 }

@@ -1,6 +1,7 @@
 import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { analyze } from "./analyze";
 import { deform } from "./deform";
+import { mean, matrix } from "mathjs";
 
 describe("analyze", () => {
   test("Bar: from Logan's book example 3.9", () => {
@@ -77,6 +78,11 @@ describe("analyze", () => {
       bendingXX: new Map(),
       bendingYY: new Map(),
       bendingXY: new Map(),
+      membraneXX: new Map(),
+      membraneYY: new Map(),
+      membraneXY: new Map(),
+      tranverseShearX: new Map(),
+      tranverseShearY: new Map(),
     });
   });
 
@@ -161,6 +167,93 @@ describe("analyze", () => {
       bendingXX: new Map(),
       bendingYY: new Map(),
       bendingXY: new Map(),
+      membraneXX: new Map(),
+      membraneYY: new Map(),
+      membraneXY: new Map(),
+      tranverseShearX: new Map(),
+      tranverseShearY: new Map(),
     });
+  });
+
+  test("Plate: Simply Supported Beam", () => {
+    // Geometry parameters
+    const a = 5;
+    const b = 1;
+    const p0 = -10;
+
+    const numDivisionsA = 30;
+    const numDivisionsB = 5;
+
+    // Generate nodes
+    const nodes: Node[] = [];
+    for (let j = 0; j < numDivisionsB; j++) {
+      for (let i = 0; i < numDivisionsA; i++) {
+        nodes.push([
+          (i * a) / (numDivisionsA - 1),
+          (j * b) / (numDivisionsB - 1),
+          0,
+        ]);
+      }
+    }
+
+    // Generate triangular elements
+    const elements: Element[] = [];
+    for (let j = 0; j < numDivisionsB - 1; j++) {
+      for (let i = 0; i < numDivisionsA - 1; i++) {
+        const bl = j * numDivisionsA + i;
+        const br = bl + 1;
+        const tl = (j + 1) * numDivisionsA + i;
+        const tr = tl + 1;
+        elements.push([bl, br, tl]);
+        elements.push([br, tr, tl]);
+      }
+    }
+
+    const nodeIndices = nodes.map((_, i) => i);
+    const nodeInputs: NodeInputs = {
+      supports: new Map(
+        nodeIndices
+          .filter((i) => nodes[i][0] == 0 || nodes[i][0] == a)
+          .map((i) => [i, [true, true, true, false, false, false]])
+      ),
+      loads: new Map([
+        [getCenterNodeIndex([a / 2, b / 2, 0], nodes), [0, 0, p0, 0, 0, 0]],
+      ]),
+    };
+    const elementInputs: ElementInputs = {
+      elasticities: new Map(elements.map((_, i) => [i, 100])),
+      thicknesses: new Map(elements.map((_, i) => [i, 1])),
+      poissonsRatios: new Map(elements.map((_, i) => [i, 0.3])),
+    };
+
+    const deformOutputs = deform(nodes, elements, nodeInputs, elementInputs);
+    const analyzeOutputs = analyze(
+      nodes,
+      elements,
+      elementInputs,
+      deformOutputs
+    );
+
+    let maxBendingXX = 0;
+    analyzeOutputs.bendingXX.forEach((values) => {
+      maxBendingXX = Math.max(maxBendingXX, ...values);
+    });
+
+    expect(maxBendingXX).toBeCloseTo(-(p0 * a) / 4 / b, 1);
+
+    function getCenterNodeIndex(centroid: Node, nodes: Node[]): number {
+      let minDist = Infinity;
+      let minIdx = -1;
+      nodes.forEach((node, idx) => {
+        const dist = Math.sqrt(
+          node.reduce((sum, val, i) => sum + (val - centroid[i]) ** 2, 0)
+        );
+        if (dist < minDist) {
+          minDist = dist;
+          minIdx = idx;
+        }
+      });
+      return minIdx;
+    }
   });
 });

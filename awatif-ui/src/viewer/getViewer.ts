@@ -269,10 +269,32 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
   // Events
   // On resultMapper, nodes, settings.shellResults change: get new values
   van.derive(() => {
+    const nodeBendingXX = new Map<number, number[]>();
+    const nodeBendingYY = new Map<number, number[]>();
+    const nodeBendingXY = new Map<number, number[]>();
+
+    mesh.analyzeOutputs?.val.bendingXX.forEach((vals, elementIndex) => {
+      nodeBendingXX.set(mesh.elements.val[elementIndex][0], [vals[0]]);
+      nodeBendingXX.set(mesh.elements.val[elementIndex][1], [vals[1]]);
+      nodeBendingXX.set(mesh.elements.val[elementIndex][2], [vals[2]]);
+    });
+
+    mesh.analyzeOutputs?.val.bendingYY.forEach((vals, elementIndex) => {
+      nodeBendingYY.set(mesh.elements.val[elementIndex][0], [vals[0]]);
+      nodeBendingYY.set(mesh.elements.val[elementIndex][1], [vals[1]]);
+      nodeBendingYY.set(mesh.elements.val[elementIndex][2], [vals[2]]);
+    });
+
+    mesh.analyzeOutputs?.val.bendingXY.forEach((vals, elementIndex) => {
+      nodeBendingXY.set(mesh.elements.val[elementIndex][0], [vals[0]]);
+      nodeBendingXY.set(mesh.elements.val[elementIndex][1], [vals[1]]);
+      nodeBendingXY.set(mesh.elements.val[elementIndex][2], [vals[2]]);
+    });
+
     const resultMapper = {
-      [ResultType.bendingXX]: [mesh.analyzeOutputs?.val.bendingXX, 0],
-      [ResultType.bendingYY]: [mesh.analyzeOutputs?.val.bendingYY, 0],
-      [ResultType.bendingXY]: [mesh.analyzeOutputs?.val.bendingXY, 0],
+      [ResultType.bendingXX]: [nodeBendingXX, 0],
+      [ResultType.bendingYY]: [nodeBendingYY, 0],
+      [ResultType.bendingXY]: [nodeBendingXY, 0],
       [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
     };
 
@@ -280,6 +302,10 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
     mesh.nodes.val.forEach((_, i) => {
       const resultMap = resultMapper[settings.shellResults.val];
       if (!resultMap) return;
+      if (!resultMap[0].has(i)) {
+        values.push(0);
+        return;
+      }
       values.push(resultMap[0].get(i)[resultMap[1]]);
     });
 
