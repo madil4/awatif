@@ -1,0 +1,131 @@
+#report div {
+  font-family: "Arial", sans-serif;
+  color: #28292e;
+}
+
+#report h1 {
+  font-family: "Arial", sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: #2e5368;
+  margin-bottom: 0px;
+  margin-top: 2px;
+  margin-left: 10px;
+}
+
+#report h2 {
+  font-family: "Arial", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2e5368;
+  margin: 0px 0;
+  margin-left: 10px;
+}
+
+#report h3 {
+  font-size: 15px;
+  color: #2e5368;
+  margin-left: 10px;
+  margin-top: 16px;
+}
+
+#report .p1 {
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+#report .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Center elements vertically */
+  padding: 15px 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  min-height: 60px; /* Ensures enough height for vertical centering */
+}
+
+/* Left Side (Text) */
+#report .header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
+}
+
+#report .header-title {
+  font-size: 20px;
+  color: #2e5368;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+
+#report .header-link {
+  font-size: 14px;
+  color: #666; /* More visible link */
+  text-decoration: none;
+}
+
+#report .header-link:hover {
+  text-decoration: underline;
+}
+
+#report .header-date {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Right Side (Logo) */
+#report .header-right {
+  display: flex;
+  align-items: center;
+}
+
+#headerLogo {
+  max-height: 50px; /* Ensures the logo stays within limits */
+  width: auto;
+  opacity: 0.9;
+}
+
+#report table {
+  font-family: "Arial";
+  border-collapse: collapse;
+  border: 1px solid rgb(0, 0, 0);
+  font-size: 11px;
+  margin-left: 10px;
+  width: 600px; /* Set a fixed width (adjust as needed) */
+}
+
+#report th {
+  border: 1px solid rgb(188, 188, 188);
+  padding: 8px;
+  background-color: rgb(225, 225, 225);
+  font-size: 12px;
+  text-align: center; /* Centers text horizontally */
+}
+
+#report td {
+  border: 1px solid rgb(188, 188, 188);
+  padding: 8px;
+  font-size: 12px;
+  font-size: 12px;
+  text-align: center; /* Centers text horizontally */
+}
+
+#report .caption {
+  font-family: "Arial";
+  font-size: 13px; /* Adjust size */
+  color: #666; /* Example color */
+  margin-left: 10px;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+#report img#threeCanvas {
+  display: block;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 10px;
+}

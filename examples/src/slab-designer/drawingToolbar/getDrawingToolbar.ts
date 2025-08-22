@@ -1,6 +1,6 @@
 import { w2toolbar } from "w2ui";
 import "w2ui/w2ui-2.0.min.css";
-import "./styles.css";
+import "./drawingToolbar.css";
 
 export function getDrawingToolbar({
   onToolbarClick,
