@@ -1,5 +1,11 @@
 import van from "vanjs-core";
-import { getToolbar, getViewer, Drawing } from "awatif-ui";
+import {
+  getToolbar,
+  getViewer,
+  Drawing,
+  getDialog,
+  getTables,
+} from "awatif-ui";
 import { deform, Mesh, analyze } from "awatif-fem";
 import { Building } from "../building/data-model.js";
 import { getBase, getBaseGeometry } from "../building/getBase.js";
@@ -77,6 +83,9 @@ const gridTarget = van.state({
   position: [10, 10, 0] as [number, number, number],
   rotation: [Math.PI / 2, 0, 0] as [number, number, number],
 });
+
+const clickedButton = van.state("");
+const dialogBody = van.state(undefined);
 
 const FLOOR_HEIGHT: number = 4;
 
@@ -281,6 +290,39 @@ van.derive(() => {
   mesh.elementInputs.val = elementInputs;
 });
 
+// When clickedButton changes, update dialog body
+van.derive(() => {
+  if (clickedButton.val === "Tables")
+    dialogBody.val = getTables({
+      tables: new Map([
+        [
+          "columns",
+          {
+            text: "Columns",
+            fields: [
+              { field: "A", text: "x-Coordinate" },
+              { field: "B", text: "y-Coordinate" },
+              { field: "C", text: "z-Coordinate" },
+            ],
+            data: drawingColumnPoints,
+          },
+        ],
+        [
+          "slabs",
+          {
+            text: "Slabs",
+            fields: [
+              { field: "A", text: "x-Coordinate" },
+              { field: "B", text: "y-Coordinate" },
+              { field: "C", text: "z-Coordinate" },
+            ],
+            data: drawingSlabPoints,
+          },
+        ],
+      ]),
+    });
+});
+
 document.body.append(
   getViewer({
     objects3D,
@@ -302,8 +344,11 @@ document.body.append(
   getSnapTip(),
   getDrawingToolbar({ onToolbarClick, onClearPoints }),
   getToolbar({
+    clickedButton,
+    buttons: ["Tables"],
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
-  })
+  }),
+  getDialog({ dialogBody })
 );
