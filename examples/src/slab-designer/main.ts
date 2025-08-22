@@ -5,14 +5,17 @@ import {
   Drawing,
   getDialog,
   getTables,
+  getReport,
 } from "awatif-ui";
 import { deform, Mesh, analyze } from "awatif-fem";
-import { Building } from "../building/data-model.js";
-import { getBase, getBaseGeometry } from "../building/getBase.js";
-import { getSolids, getSolidsGeometry } from "../building/getSolids.js";
-import { getDrawingToolbar } from "./getDrawingToolbar.js";
-import { getSnapTip } from "./getSnapTip.js";
-import { getMesh } from "../building/getMesh.js";
+import { Building } from "../building/data-model";
+import { getBase, getBaseGeometry } from "../building/getBase";
+import { getSolids, getSolidsGeometry } from "../building/getSolids";
+import { getDrawingToolbar } from "./drawingToolbar/getDrawingToolbar";
+import { getSnapTip } from "./getSnapTip";
+import { getMesh } from "../building/getMesh";
+import { getDesign } from "./design/getDesign";
+import { getTemplate } from "./design/getTemplate";
 
 // Todo: Review reactive calls (.val vs .rawVal)
 // Enums and Types
@@ -46,6 +49,9 @@ const mesh: Mesh = {
   deformOutputs: van.state({}),
   analyzeOutputs: van.state({}),
 };
+
+const designMomentInput = van.state(10);
+const designOutputs = van.state();
 
 //* Drawing Data (Points - Polylines)
 const sampleColumnPoints = [
@@ -249,7 +255,7 @@ van.derive(() => {
   building.slabData.val = slabData;
 });
 
-// When building data model changes, update base and solids geometry
+// When building data model changes, analyze, update base and solids geometry
 van.derive(() => {
   const { nodes, elements, nodeInputs, elementInputs } = getMesh(
     building.points.val,
@@ -262,13 +268,6 @@ van.derive(() => {
     building.slabData.val
   );
 
-  mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
-  mesh.analyzeOutputs.val = analyze(
-    nodes,
-    elements,
-    elementInputs,
-    mesh.deformOutputs.val
-  );
   base.geometry = getBaseGeometry(
     building.points.val,
     [], // Hide slabs
@@ -282,6 +281,29 @@ van.derive(() => {
   );
 
   objects3D.val = [...objects3D.rawVal]; // just to trigger re-rendering
+
+  // Analyze
+  mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
+  mesh.analyzeOutputs.val = analyze(
+    nodes,
+    elements,
+    elementInputs,
+    mesh.deformOutputs.val
+  );
+
+  // Design
+  designMomentInput.val = Math.max(
+    ...Array.from(mesh.analyzeOutputs.val.bendingXX.values()).flat()
+  );
+
+  designOutputs.val = getDesign(
+    { grade: "GL24h", f_mk: 24, E_mean: 11500 },
+    20,
+    3,
+    20,
+    designMomentInput.val,
+    0.8
+  );
 
   // Update state
   mesh.nodes.val = nodes;
@@ -321,6 +343,16 @@ van.derive(() => {
         ],
       ]),
     });
+
+  if (clickedButton.val === "Report") {
+    dialogBody.val = getReport({
+      template: getTemplate,
+      data: {
+        designMomentInput,
+        designOutputs,
+      },
+    });
+  }
 });
 
 document.body.append(
@@ -345,7 +377,7 @@ document.body.append(
   getDrawingToolbar({ onToolbarClick, onClearPoints }),
   getToolbar({
     clickedButton,
-    buttons: ["Tables"],
+    buttons: ["Tables", "Report"],
     sourceCode:
       "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/",
