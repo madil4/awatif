@@ -1,7 +1,8 @@
-import { v as e, c as w, x as s, a as $, g as x } from "./styles-BpMgv57_.js";
-import { d as y, a as z, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
-import { g as T } from "./getParameters-Re3o8RL-.js";
-import { g as S } from "./getDialog-DnXaRX0f.js";
+import { x as s, v as e, a as w, g as $ } from "./styles-CKPX8ULl.js";
+import { d as x, a as y, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { g as z } from "./getParameters-CASxf6Ar.js";
+import { g as T } from "./getDialog-C1i1LSZM.js";
+import { g as S } from "./getReport-bCddiobF.js";
 import "./complex-i8qiIvCl.js";
 Promise.all([
   (() => {
@@ -11,13 +12,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function F({ template: i, data: n }) {
-    const l = document.createElement("div");
-    return e.derive(() => {
-      w(i(n), l);
-    }), l;
-  }
-  function B({ nodes: i, nodeInputs: n, elementInputs: l, deformOutputs: g, analyzeOutputs: f }) {
+  function F({ nodes: u, nodeInputs: p, elementInputs: b, deformOutputs: g, analyzeOutputs: f }) {
     return s`
     <br />
     <header class="header">
@@ -71,7 +66,7 @@ Promise.all([
         <th>yCoord</th>
         <th>zCoord</th>
       </tr>
-      ${i.val.map((a, t) => s`
+      ${u.val.map((a, t) => s`
           <tr>
             <td><div class="custom-cell-content">${t}</div></td>
             <td>
@@ -106,7 +101,7 @@ Promise.all([
         <th>mz</th>
       </tr>
       ${[
-      ...n.val.supports
+      ...p.val.supports
     ].map(([a, t]) => s`
           <tr>
             <td><div class="custom-cell-content">${a}</div></td>
@@ -186,7 +181,7 @@ Promise.all([
             <td><div class="custom-cell-content">${a}</div></td>
             <td>
               <div class="custom-cell-content">
-                ${l.val.areas.get(a)}
+                ${b.val.areas.get(a)}
               </div>
             </td>
             <td>
@@ -198,7 +193,7 @@ Promise.all([
     <br /><br /><br />
   `;
   }
-  const r = {
+  const c = {
     xPosition: {
       value: e.state(600),
       min: 0,
@@ -209,32 +204,32 @@ Promise.all([
       min: 0,
       max: 500
     }
-  }, o = e.state([]), d = e.state([]), v = e.state({}), c = e.state({}), h = e.state({}), m = e.state({}), u = {
-    nodes: o,
-    elements: d,
-    nodeInputs: v,
-    elementInputs: c,
-    deformOutputs: h,
-    analyzeOutputs: m
+  }, l = e.state([]), o = e.state([]), i = e.state({}), d = e.state({}), r = e.state({}), n = e.state({}), v = {
+    nodes: l,
+    elements: o,
+    nodeInputs: i,
+    elementInputs: d,
+    deformOutputs: r,
+    analyzeOutputs: n
   };
   e.derive(() => {
-    o.val = [
+    l.val = [
       [
         250,
         0,
         0
       ],
       [
-        r.xPosition.value.val,
+        c.xPosition.value.val,
         0,
-        r.zPosition.value.val
+        c.zPosition.value.val
       ],
       [
         250,
         0,
         400
       ]
-    ], d.val = [
+    ], o.val = [
       [
         0,
         1
@@ -243,7 +238,7 @@ Promise.all([
         1,
         2
       ]
-    ], v.val = {
+    ], i.val = {
       supports: /* @__PURE__ */ new Map([
         [
           0,
@@ -281,7 +276,7 @@ Promise.all([
           ]
         ]
       ])
-    }, c.val = {
+    }, d.val = {
       elasticities: /* @__PURE__ */ new Map([
         [
           0,
@@ -302,26 +297,26 @@ Promise.all([
           100
         ]
       ])
-    }, h.val = y(o.val, d.val, v.val, c.val), m.val = z(o.val, d.val, c.val, h.val);
+    }, r.val = x(l.val, o.val, i.val, d.val), n.val = y(l.val, o.val, d.val, r.val);
   });
-  const p = e.state(""), b = e.state(void 0);
+  const h = e.state(""), m = e.state(void 0);
   e.derive(() => {
-    p.val === "Report" && (b.val = F({
-      template: B,
-      data: u
+    h.val === "Report" && (m.val = S({
+      template: F,
+      data: v
     }));
   });
-  document.body.append($({
-    clickedButton: p,
+  document.body.append(w({
+    clickedButton: h,
     buttons: [
       "Report"
     ],
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/report/main.ts",
     author: "https://www.linkedin.com/in/cal-mense/"
-  }), S({
-    dialogBody: b
-  }), T(r), x({
-    mesh: u,
+  }), T({
+    dialogBody: m
+  }), z(c), $({
+    mesh: v,
     settingsObj: {
       gridSize: 1e3
     }
