@@ -112,7 +112,7 @@ Promise.all([
           >
         </div>
         <div class="header-right">
-          <img src="${it}" id="headerLogo" alt="Logo" />
+          <img src="${it}" id="headerLogo" />
         </div>
       </header>
 
@@ -210,10 +210,10 @@ Promise.all([
     slabsByStory: a.state(/* @__PURE__ */ new Map()),
     columnData: a.state(/* @__PURE__ */ new Map()),
     slabData: a.state(/* @__PURE__ */ new Map())
-  }, D = at(), R = et(), g = a.state([
+  }, L = at(), R = et(), g = a.state([
     R
   ]), mt = a.state([
-    D
+    L
   ]), r = {
     nodes: a.state([]),
     elements: a.state([]),
@@ -325,7 +325,7 @@ Promise.all([
       0,
       0
     ]
-  }), I = a.state(""), L = a.state(void 0), w = 4;
+  }), I = a.state(""), D = a.state(void 0), w = 4;
   let x = "1st-floor";
   function ht(e) {
     x = e, O.val = {
@@ -342,7 +342,7 @@ Promise.all([
     }, f.val = e === "1st-floor" ? p.val : m.val, S.val = e === "1st-floor" ? [] : h.val;
   }
   function bt() {
-    x === "1st-floor" ? p.val = [] : (m.val = [], h.val = []), f.val = [], S.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, R.geometry = N(t.points.val, t.slabs.val, t.columns.val), D.geometry = A(t.points.val, t.slabs.val, t.columns.val), g.val = [
+    x === "1st-floor" ? p.val = [] : (m.val = [], h.val = []), f.val = [], S.val = [], t.points.val = [], t.columns.val = [], t.slabs.val = [], t.columnsByStory.val = /* @__PURE__ */ new Map(), t.slabsByStory.val = /* @__PURE__ */ new Map(), t.columnData.val = /* @__PURE__ */ new Map(), t.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, R.geometry = N(t.points.val, t.slabs.val, t.columns.val), L.geometry = A(t.points.val, t.slabs.val, t.columns.val), g.val = [
       ...g.rawVal
     ];
   }
@@ -406,14 +406,14 @@ Promise.all([
   });
   a.derive(() => {
     const { nodes: e, elements: s, nodeInputs: o, elementInputs: l } = st(t.points.val, t.stories.val, t.columns.val, t.slabs.val, t.columnsByStory.val, t.slabsByStory.val, t.columnData.val, t.slabData.val);
-    R.geometry = N(t.points.val, [], t.columns.val), D.geometry = A(t.points.val, t.slabs.val, t.columns.val), g.val = [
+    R.geometry = N(t.points.val, [], t.columns.val), L.geometry = A(t.points.val, t.slabs.val, t.columns.val), g.val = [
       ...g.rawVal
     ], r.deformOutputs.val = Y(e, s, o, l), r.analyzeOutputs.val = tt(e, s, l, r.deformOutputs.val), k.val = Math.max(...Array.from(r.analyzeOutputs.val.bendingXX.values()).flat()), H.val = nt({
       f_mk: 24
     }, 20, 3, 20, k.val, 0.8), r.nodes.val = e, r.elements.val = s, r.nodeInputs.val = o, r.elementInputs.val = l;
   });
   a.derive(() => {
-    I.val === "Tables" && (L.val = q({
+    I.val === "Tables" && (D.val = q({
       tables: /* @__PURE__ */ new Map([
         [
           "columns",
@@ -458,7 +458,7 @@ Promise.all([
           }
         ]
       ])
-    })), I.val === "Report" && (L.val = W({
+    })), I.val === "Report" && (D.val = W({
       template: dt,
       data: {
         designMomentInput: k,
@@ -494,6 +494,6 @@ Promise.all([
     sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/slab-designer/main.ts",
     author: "https://www.linkedin.com/in/abderrahmane-mazri-4638a81b8/"
   }), Q({
-    dialogBody: L
+    dialogBody: D
   }));
 });

@@ -18,7 +18,7 @@ export const getTemplate = ({ designMomentInput, designOutputs }) =>
           >
         </div>
         <div class="header-right">
-          <img src="${logo}" id="headerLogo" alt="Logo" />
+          <img src="${logo}" id="headerLogo" />
         </div>
       </header>
 
