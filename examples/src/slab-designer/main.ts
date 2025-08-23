@@ -27,12 +27,12 @@ enum DrawingStory {
 }
 
 const parameters: Parameters = {
-  density: {
+  meshSize: {
     value: van.state(0.5),
     min: 0.5,
     max: 2,
     step: 0.1,
-    label: "mesh density",
+    label: "mesh size (m)",
   },
   loads: {
     value: van.state(30),
@@ -247,7 +247,7 @@ van.derive(() => {
   drawingSlabPolylines.rawVal.forEach((_, k) => {
     slabData.set(k, {
       analysisInput: {
-        meshDensity: parameters.density.value.val,
+        meshSize: parameters.meshSize.value.val,
         areaLoad: -parameters.loads.value.val * 1e3, // Convert kN/m² to N/m²
         isOpening: false,
         thickness: parameters.thickness.value.val,

@@ -57,7 +57,7 @@ export type SlabData = {
 // TODO: update depending the slab design function requirements
 export type SlabAnalysisInput = {
   areaLoad: number;
-  meshDensity: number;
+  meshSize: number;
   isOpening: boolean;
   thickness?: number;
   material?: SlabMaterial;

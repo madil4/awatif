@@ -84,8 +84,8 @@ export function getMesh(
         ...columnPointsNext,
       ]);
 
-      const meshDensity =
-        slabData.get(slabIndex)["analysisInput"]?.meshDensity ?? 0.5;
+      const meshSize =
+        slabData.get(slabIndex)["analysisInput"]?.meshSize ?? 0.5;
       const slabPoints = getUniqueSlabPoints(
         boundaryPoints,
         Array.from(columnPoints.values())
@@ -93,7 +93,7 @@ export function getMesh(
       const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
-        maxMeshSize: meshDensity,
+        maxMeshSize: meshSize,
       });
 
       const numExistingNodes = nodes.length;
