@@ -6,6 +6,8 @@ import {
   getDialog,
   getTables,
   getReport,
+  getParameters,
+  Parameters,
 } from "awatif-ui";
 import { deform, Mesh, analyze } from "awatif-fem";
 import { Building } from "../building/data-model";
@@ -18,13 +20,49 @@ import { getDesign } from "./design/getDesign";
 import { getTemplate } from "./design/getTemplate";
 
 // Todo: Review reactive calls (.val vs .rawVal)
-// Enums and Types
+// Init
 enum DrawingStory {
   first = "1st-floor",
   second = "2nd-floor",
 }
 
-// Init
+const parameters: Parameters = {
+  density: {
+    value: van.state(0.5),
+    min: 0.5,
+    max: 2,
+    step: 0.1,
+    label: "mesh density",
+  },
+  loads: {
+    value: van.state(30),
+    min: 0,
+    max: 100,
+    label: "Load (kN/m²)",
+  },
+  elasticity: {
+    value: van.state(1000),
+    min: 100,
+    max: 50000,
+    step: 100,
+    label: "elasticity (mpa)",
+  },
+  poisson: {
+    value: van.state(0.3),
+    min: 0.1,
+    max: 0.5,
+    step: 0.05,
+    label: "poisson's ratio",
+  },
+  thickness: {
+    value: van.state(0.2),
+    min: 0.1,
+    max: 0.5,
+    step: 0.05,
+    label: "thickness (m)",
+  },
+};
+
 const building: Building = {
   points: van.state([]),
   stories: van.state([0]), // only one story
@@ -206,22 +244,17 @@ van.derive(() => {
 
   slabsByStory.set(0, Array.from(drawingSlabPolylines.rawVal.keys()));
 
-  const slabLoad: number = -1;
-  slabData.set(0, {
-    analysisInput: {
-      areaLoad: slabLoad,
-      isOpening: false,
-      thickness: 1,
-      material: { elasticity: 300, poissonsRatio: 0.3 },
-    },
-  });
   drawingSlabPolylines.rawVal.forEach((_, k) => {
     slabData.set(k, {
       analysisInput: {
-        areaLoad: slabLoad,
+        meshDensity: parameters.density.value.val,
+        areaLoad: -parameters.loads.value.val * 1e3, // Convert kN/m² to N/m²
         isOpening: false,
-        thickness: 1,
-        material: { elasticity: 300, poissonsRatio: 0.3 },
+        thickness: parameters.thickness.value.val,
+        material: {
+          elasticity: parameters.elasticity.value.val * 1e6, // Convert mpa to N/m²
+          poissonsRatio: parameters.poisson.value.val,
+        },
       },
     });
   });
@@ -356,6 +389,7 @@ van.derive(() => {
 });
 
 document.body.append(
+  getParameters(parameters),
   getViewer({
     objects3D,
     solids,
