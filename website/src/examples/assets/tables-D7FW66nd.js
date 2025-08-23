@@ -1,6 +1,6 @@
-import { L as n, B as d, b as r, v as e, F as c, a as b, g as f } from "./styles-CKPX8ULl.js";
-import { g as m } from "./getTables-DwSfcE-A.js";
-import { g as p } from "./getDialog-C1i1LSZM.js";
+import { L as n, B as d, b as r, v as e, F as c, a as b, g as f } from "./styles-BA3vS4f7.js";
+import { g as m } from "./getTables-DA0Kiof3.js";
+import { g as p } from "./getDialog-1X-VCjrH.js";
 const a = e.state([[0, 0, 0], [5, 0, 5], [10, 0, 0]]), i = new n(new d(), new r()), t = e.state([i]), o = /* @__PURE__ */ new Map();
 o.set("polyline", { text: "Polyline", fields: [{ field: "A", text: "X-coordinate", min: "25", editable: { type: "float" } }, { field: "B", text: "Y-coordinate", editable: { type: "float" } }, { field: "C", text: "Z-coordinate", editable: { type: "float" } }], data: a });
 e.derive(() => a.val = o.get("polyline").data.val);
