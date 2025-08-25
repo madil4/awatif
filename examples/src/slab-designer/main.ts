@@ -325,13 +325,13 @@ van.derive(() => {
   );
 
   // Design
-  designMomentInput.val = Math.max(
-    ...Array.from(mesh.analyzeOutputs.val.bendingXX.values()).flat()
-  );
+  designMomentInput.val =
+    Math.max(...Array.from(mesh.analyzeOutputs.val.bendingXX.values()).flat()) *
+    1e-3; // Convert Nm to kNm
 
   designOutputs.val = getDesign(
     { grade: "GL24h", f_mk: 24, E_mean: 11500 },
-    20,
+    55,
     3,
     20,
     designMomentInput.val,

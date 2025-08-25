@@ -20,5 +20,16 @@ export function getSnapTip(): HTMLDivElement {
     if (e.ctrlKey || e.metaKey) snapTip.classList.remove("show");
   });
 
+  // Add this CSS dynamically or include it in your stylesheet
+  const style = document.createElement("style");
+  style.textContent = `
+  @media (max-width: 600px) {
+    .snap-tip {
+      display: none;
+    }
+  }
+`;
+  document.head.appendChild(style);
+
   return snapTip;
 }
