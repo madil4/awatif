@@ -1,4 +1,4 @@
-import { c as g, v as h, d as v } from "./styles-BA3vS4f7.js";
+import { c as g, v as h, d as v } from "./styles-TTVwA2D3.js";
 function E({ fields: o, data: l }) {
   const n = document.createElement("div"), e = new g({ name: Math.random().toString().substring(2), box: n, selectType: "cell", recordHeight: 26, show: { columnMenu: false, lineNumbers: true }, columns: w(o), records: b(l.rawVal, o) });
   return n.setAttribute("id", "table"), new ResizeObserver(() => e.refresh()).observe(n), e.onChange = (s) => {
