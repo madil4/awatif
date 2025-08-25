@@ -1,9 +1,9 @@
-import { w as J, x as E, v as t, g as Z, a as q } from "./styles-BA3vS4f7.js";
+import { w as J, x as N, v as t, g as Z, a as q } from "./styles-BA3vS4f7.js";
 import { g as Q } from "./getParameters-CKiR9xFE.js";
 import { g as W } from "./getTables-DA0Kiof3.js";
 import { g as Y } from "./getDialog-1X-VCjrH.js";
 import { g as tt } from "./getReport-DL7Re914.js";
-import { d as at, a as et, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
+import { d as et, a as at, __tla as __tla_0 } from "./deformCpp-BprT8Kg9.js";
 import { g as st, a as lt, b as ot, c as A, d as H, __tla as __tla_1 } from "./getSolids-DklpZAp_.js";
 import "./complex-i8qiIvCl.js";
 import { __tla as __tla_2 } from "./getMesh-DmUdekin.js";
@@ -29,7 +29,7 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  function nt({ onToolbarClick: e, onClearPoints: s }) {
+  function nt({ onToolbarClick: a, onClearPoints: s }) {
     const n = document.createElement("div");
     return n.id = "drawing-toolbar", new J({
       name: "toolbar",
@@ -59,40 +59,48 @@ Promise.all([
           icon: "w2ui-icon-cross"
         }
       ],
-      onClick(o) {
-        o.target === "clear-points" ? s() : e(o.target);
+      onClick(l) {
+        l.target === "clear-points" ? s() : a(l.target);
       }
     }), n;
   }
   function it() {
-    const e = document.createElement("div"), s = navigator.userAgent.includes("Macintosh");
-    return e.className = "snap-tip", e.innerHTML = `
+    const a = document.createElement("div"), s = navigator.userAgent.includes("Macintosh");
+    a.className = "snap-tip", a.innerHTML = `
       <span>Tip: Hold</span>
       <span class="key">${s ? "Cmd" : "Ctrl"}</span>
       <span>to snap to grid points</span>
-    `, e.classList.add("show"), document.addEventListener("keydown", (n) => {
-      (n.ctrlKey || n.metaKey) && e.classList.remove("show");
-    }), e;
+    `, a.classList.add("show"), document.addEventListener("keydown", (l) => {
+      (l.ctrlKey || l.metaKey) && a.classList.remove("show");
+    });
+    const n = document.createElement("style");
+    return n.textContent = `
+  @media (max-width: 600px) {
+    .snap-tip {
+      display: none;
+    }
   }
-  function rt(e, s, n, o, u, C) {
-    const p = n - 1, b = s * n + o * p, l = Array.from({
+`, document.head.appendChild(n), a;
+  }
+  function rt(a, s, n, l, u, C) {
+    const p = n - 1, b = s * n + l * p, o = Array.from({
       length: n + p
-    }, (i, y) => y % 2 === 0 ? s : o);
+    }, (i, y) => y % 2 === 0 ? s : l);
     let d = [
       0
     ], P = 0;
-    for (let i of l) P += i, d.push(P);
+    for (let i of o) P += i, d.push(P);
     const M = d.map((i) => i - b / 2);
     let B = 0, R = [];
     const $ = 1e3;
-    for (let i = 0; i < l.length; i++) {
-      let y = l[i], G = $ * y ** 3 / 12, K = $ * y, X = M[i + 1], N = G + K * X ** 2;
-      R.push(N), B += N;
+    for (let i = 0; i < o.length; i++) {
+      let y = o[i], G = $ * y ** 3 / 12, K = $ * y, X = M[i + 1], E = G + K * X ** 2;
+      R.push(E), B += E;
     }
-    const k = M.map((i) => Number((u * 1e6 * i / B).toFixed(2))), O = Math.max(...k), F = e.f_mk * C, _ = k.map((i) => Number((i / F).toFixed(2))), j = Math.max(..._);
+    const k = M.map((i) => Number((u * 1e6 * i / B).toFixed(2))), O = Math.max(...k), F = a.f_mk * C, _ = k.map((i) => Number((i / F).toFixed(2))), j = Math.max(..._);
     return {
       slabHeight: b,
-      thicknesses: l,
+      thicknesses: o,
       zCordsFromMid: M,
       inertiaList: R,
       inertia: B,
@@ -103,7 +111,7 @@ Promise.all([
       etaMax: j
     };
   }
-  const dt = "" + new URL("awatif-logo-DnnuEFJ2.png", import.meta.url).href, mt = "" + new URL("clt-bending-stress-DvR3Ux1R.png", import.meta.url).href, ct = ({ designMomentInput: e, designOutputs: s }) => E`
+  const dt = "" + new URL("awatif-logo-DnnuEFJ2.png", import.meta.url).href, mt = "" + new URL("clt-bending-stress-DvR3Ux1R.png", import.meta.url).href, ct = ({ designMomentInput: a, designOutputs: s }) => N`
     <div id="report">
       <header class="header">
         <div class="header-left">
@@ -145,7 +153,7 @@ Promise.all([
         </tr>
         <tr>
           <td>Bending Moment</td>
-          <td>${e.val.toFixed(1)}</td>
+          <td>${a.val.toFixed(1)}</td>
           <td>kNm</td>
         </tr>
         <tr>
@@ -176,12 +184,12 @@ Promise.all([
           <th>Utilization Ratio</th>
         </tr>
         <tbody id="stressTable">
-          ${s.val.bendingStresses.map((n, o) => E`
+          ${s.val.bendingStresses.map((n, l) => N`
               <tr>
-                <td>Layer ${o + 1}</td>
-                <td>${s.val.zCordsFromMid[o]} mm</td>
+                <td>Layer ${l + 1}</td>
+                <td>${s.val.zCordsFromMid[l]} mm</td>
                 <td>${n.toFixed(2)} N/mm²</td>
-                <td>${(s.val.eta[o] * 100).toFixed(0)}%</td>
+                <td>${(s.val.eta[l] * 100).toFixed(0)}%</td>
               </tr>
             `)}
         </tbody>
@@ -235,7 +243,7 @@ Promise.all([
       step: 0.05,
       label: "thickness (m)"
     }
-  }, a = {
+  }, e = {
     points: t.state([]),
     stories: t.state([
       0
@@ -363,22 +371,22 @@ Promise.all([
     ]
   }), z = t.state(""), D = t.state(void 0), w = 4;
   let x = "1st-floor";
-  function bt(e) {
-    x = e, V.val = {
+  function bt(a) {
+    x = a, V.val = {
       position: [
         10,
         10,
-        e == "1st-floor" ? 0 : w
+        a == "1st-floor" ? 0 : w
       ],
       rotation: [
         Math.PI / 2,
         0,
         0
       ]
-    }, f.val = e === "1st-floor" ? c.val : m.val, S.val = e === "1st-floor" ? [] : h.val;
+    }, f.val = a === "1st-floor" ? c.val : m.val, S.val = a === "1st-floor" ? [] : h.val;
   }
   function gt() {
-    x === "1st-floor" ? c.val = [] : (m.val = [], h.val = []), f.val = [], S.val = [], a.points.val = [], a.columns.val = [], a.slabs.val = [], a.columnsByStory.val = /* @__PURE__ */ new Map(), a.slabsByStory.val = /* @__PURE__ */ new Map(), a.columnData.val = /* @__PURE__ */ new Map(), a.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, L.geometry = A(a.points.val, a.slabs.val, a.columns.val), I.geometry = H(a.points.val, a.slabs.val, a.columns.val), g.val = [
+    x === "1st-floor" ? c.val = [] : (m.val = [], h.val = []), f.val = [], S.val = [], e.points.val = [], e.columns.val = [], e.slabs.val = [], e.columnsByStory.val = /* @__PURE__ */ new Map(), e.slabsByStory.val = /* @__PURE__ */ new Map(), e.columnData.val = /* @__PURE__ */ new Map(), e.slabData.val = /* @__PURE__ */ new Map(), r.nodes.val = [], r.elements.val = [], r.nodeInputs.val = {}, L.geometry = A(e.points.val, e.slabs.val, e.columns.val), I.geometry = H(e.points.val, e.slabs.val, e.columns.val), g.val = [
       ...g.rawVal
     ];
   }
@@ -386,17 +394,17 @@ Promise.all([
     x == "1st-floor" && (c.val = f.val), x == "2nd-floor" && (m.val = f.val, h.val = S.val);
   });
   t.derive(() => {
-    const e = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), o = [], u = [], C = [], p = [];
-    if (o.length, m.val.length > 0) for (let l = 0; l < m.val.length; l++) C.push([
-      m.val[l][0],
-      m.val[l][1],
+    const a = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map(), l = [], u = [], C = [], p = [];
+    if (l.length, m.val.length > 0) for (let o = 0; o < m.val.length; o++) C.push([
+      m.val[o][0],
+      m.val[o][1],
       w
-    ]), o.push([
-      m.val[l][0],
-      m.val[l][1],
+    ]), l.push([
+      m.val[o][0],
+      m.val[o][1],
       w
     ]);
-    s.set(0, Array.from(h.rawVal.keys())), h.rawVal.forEach((l, d) => {
+    s.set(0, Array.from(h.rawVal.keys())), h.rawVal.forEach((o, d) => {
       n.set(d, {
         analysisInput: {
           meshSize: v.meshSize.value.val,
@@ -412,8 +420,8 @@ Promise.all([
     });
     const b = [];
     if (c.val.length > 0) {
-      for (let l = 0; l < c.val.length; l++) {
-        const d = c.val[l];
+      for (let o = 0; o < c.val.length; o++) {
+        const d = c.val[o];
         p.push([
           [
             d[0],
@@ -422,20 +430,20 @@ Promise.all([
           ]
         ]);
       }
-      for (let l = 0; l < p.length; l++) {
-        const d = o.length;
-        o.push(...p[l]), u.push(d), b.push(u.length - 1);
+      for (let o = 0; o < p.length; o++) {
+        const d = l.length;
+        l.push(...p[o]), u.push(d), b.push(u.length - 1);
       }
     }
-    e.set(0, b), a.points.val = o, a.columns.val = u, a.slabs.val = h.val, a.columnsByStory.val = e, a.slabsByStory.val = s, a.slabData.val = n;
+    a.set(0, b), e.points.val = l, e.columns.val = u, e.slabs.val = h.val, e.columnsByStory.val = a, e.slabsByStory.val = s, e.slabData.val = n;
   });
   t.derive(() => {
-    const { nodes: e, elements: s, nodeInputs: n, elementInputs: o } = ot(a.points.val, a.stories.val, a.columns.val, a.slabs.val, a.columnsByStory.val, a.slabsByStory.val, a.columnData.val, a.slabData.val);
-    L.geometry = A(a.points.val, [], a.columns.val), I.geometry = H(a.points.val, a.slabs.val, a.columns.val), g.val = [
+    const { nodes: a, elements: s, nodeInputs: n, elementInputs: l } = ot(e.points.val, e.stories.val, e.columns.val, e.slabs.val, e.columnsByStory.val, e.slabsByStory.val, e.columnData.val, e.slabData.val);
+    L.geometry = A(e.points.val, [], e.columns.val), I.geometry = H(e.points.val, e.slabs.val, e.columns.val), g.val = [
       ...g.rawVal
-    ], r.deformOutputs.val = at(e, s, n, o), r.analyzeOutputs.val = et(e, s, o, r.deformOutputs.val), T.val = Math.max(...Array.from(r.analyzeOutputs.val.bendingXX.values()).flat()), U.val = rt({
+    ], r.deformOutputs.val = et(a, s, n, l), r.analyzeOutputs.val = at(a, s, l, r.deformOutputs.val), T.val = Math.max(...Array.from(r.analyzeOutputs.val.bendingXX.values()).flat()) * 1e-3, U.val = rt({
       f_mk: 24
-    }, 20, 3, 20, T.val, 0.8), r.nodes.val = e, r.elements.val = s, r.nodeInputs.val = n, r.elementInputs.val = o;
+    }, 55, 3, 20, T.val, 0.8), r.nodes.val = a, r.elements.val = s, r.nodeInputs.val = n, r.elementInputs.val = l;
   });
   t.derive(() => {
     z.val === "Tables" && (D.val = W({
