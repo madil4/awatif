@@ -17041,10 +17041,10 @@ function CM(s, e, t, i) {
   const n = new Vt(), r = 0.05 * e.gridSize.rawVal, o = { normals: To, shearsY: To, shearsZ: To, torsions: To, bendingsY: tu, bendingsZ: tu };
   return Te.derive(() => {
     var _a2, _b2;
-    if (e.deformedShape.val, e.frameResults.val == "none") return;
+    if (e.deformedShape.val, t.val, e.frameResults.val == "none") return;
     n.children.forEach((l) => l.dispose()), n.clear();
     const a = lf[e.frameResults.rawVal];
-    (_b2 = (_a2 = s.analyzeOutputs) == null ? void 0 : _a2.val[a]) == null ? void 0 : _b2.forEach((l, c) => {
+    (_b2 = (_a2 = s.analyzeOutputs) == null ? void 0 : _a2.rawVal[a]) == null ? void 0 : _b2.forEach((l, c) => {
       var _a3, _b3;
       const h = ((_a3 = s.elements) == null ? void 0 : _a3.rawVal[c]) ?? [0, 1], d = t.rawVal[h[0]], u = t.rawVal[h[1]], f = new I(...u).distanceTo(new I(...d)), m = TM((_b3 = s.analyzeOutputs) == null ? void 0 : _b3.rawVal[a]), _ = l == null ? void 0 : l.map((E) => E / (m === 0 ? 1 : m)), g = af(d, u), v = new o[a](d, u, f, g, l ?? [0, 0], _ ?? [0, 0], !!["normals", "shearsZ", "torsions", "bendingsY"].includes(a));
       v.updateScale(r * i.rawVal), n.add(v);
