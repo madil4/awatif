@@ -39,6 +39,7 @@ export function frameResults(
   // on settings.elementResults & deformedShape, model clear and create visuals
   van.derive(() => {
     settings.deformedShape.val; // triggers update
+    derivedNodes.val; // triggers update
 
     if (settings.frameResults.val == "none") return;
 
@@ -48,7 +49,7 @@ export function frameResults(
     const resultType =
       ResultType[settings.frameResults.rawVal as keyof typeof ResultType];
 
-    mesh.analyzeOutputs?.val[resultType]?.forEach((result, index) => {
+    mesh.analyzeOutputs?.rawVal[resultType]?.forEach((result, index) => {
       const element = mesh.elements?.rawVal[index] ?? [0, 1]; // TODO: improve this
       const node1 = derivedNodes.rawVal[element[0]];
       const node2 = derivedNodes.rawVal[element[1]];
