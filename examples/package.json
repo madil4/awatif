@@ -1,0 +1,17 @@
+{
+  "name": "examples",
+  "description": "Awatif Examples",
+  "version": "3.0.0",
+  "author": "Mohamed Adil",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "vite": "^7.1.9"
+  }
+}
