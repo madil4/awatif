@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "ES2015",
-    "module": "ES2015",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "esModuleInterop": true // required by Jest
-  }
-}

@@ -1,7 +1,0 @@
-#parameters {
-  position: absolute;
-  bottom: 0px;
-  right: 8px;
-  width: 300px;
-  z-index: 3; /* On top of the viewer and drawingToolBar */
-}

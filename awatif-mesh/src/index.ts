@@ -1,1 +1,0 @@
-export { getMesh } from "./getMesh";
