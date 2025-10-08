@@ -15,6 +15,7 @@
     "vite": "^7.1.9"
   },
   "dependencies": {
-    "three": "^0.180.0"
+    "three": "^0.180.0",
+    "vanjs-core": "^1.6.0"
   }
 }

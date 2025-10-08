@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif UI - Viewer - Grid</title>
+  </head>
+  <body>
+    <script type="module">
+      import vanjs from "vanjs-core";
+      import { getViewer } from "../../getViewer.ts";
+      import { getGrid } from "./getGrid.ts";
+
+      const gridInput = {
+        size: vanjs.state(25),
+        division: vanjs.state(10),
+      };
+
+      setTimeout(() => {
+        gridInput.size.val = 10;
+        gridInput.division.val = 2;
+      }, 1000);
+
+      document.body.append(getViewer({ gridInput }));
+    </script>
+  </body>
+</html>
