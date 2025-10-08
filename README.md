@@ -16,6 +16,28 @@ npm install
 npm run dev:examples
 ```
 
+## Coding Style
+
+- Keep it simple. Focus on core features and minimum viable product. The system is already complex—avoid adding more.
+- Use types. Functions should fully describe inputs and outputs.
+- Avoid global state. If unavoidable, use reactive objects with the signal approach.
+- Structure functions in three blocks:
+
+```typescript
+function mesh({ polygon }: { polygon: number[] }): { elements: number[][] } {
+  // Init
+  const elements = [];
+
+  // Update
+  elements.push([1, 2, 3]);
+
+  // Events
+  van.drive(() => render(elements.val));
+
+  return { elements };
+}
+```
+
 ## Code Formatting
 
 Install the [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for automatic code formatting with default settings.
