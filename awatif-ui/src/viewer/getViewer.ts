@@ -1,8 +1,14 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { getGrid, GridInput } from "./objects/grid/getGrid";
 
 import "./style.css";
 
-export function getViewer(): HTMLDivElement {
+export function getViewer({
+  gridInput,
+}: {
+  gridInput?: GridInput;
+}): HTMLDivElement {
   // Init
   const container = document.createElement("div");
   const scene = new THREE.Scene();
@@ -13,16 +19,23 @@ export function getViewer(): HTMLDivElement {
     1000
   );
   const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  const render = () => renderer.render(scene, camera);
 
   // Update
   container.id = "viewer";
   container.appendChild(renderer.domElement);
 
-  camera.position.z = 5;
+  camera.position.set(10, 10, 10);
+  camera.lookAt(0, 0, 0);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.render(scene, camera);
+
+  scene.add(getGrid({ gridInput, render }));
+
+  render();
 
   // Events
   window.addEventListener("resize", () => {
@@ -30,8 +43,10 @@ export function getViewer(): HTMLDivElement {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    renderer.render(scene, camera);
+    render();
   });
+
+  controls.addEventListener("change", render);
 
   return container;
 }
