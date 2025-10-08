@@ -6,6 +6,10 @@
     <title>Awatif UI - Viewer</title>
   </head>
   <body>
-    <script type="module" src="./main.ts"></script>
+    <script type="module">
+      import { getViewer } from "./getViewer.ts";
+
+      document.body.append(getViewer());
+    </script>
   </body>
 </html>
