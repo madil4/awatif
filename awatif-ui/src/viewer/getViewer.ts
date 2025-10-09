@@ -10,6 +10,8 @@ export function getViewer({
   gridInput?: GridInput;
 }): HTMLDivElement {
   // Init
+  THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
+
   const container = document.createElement("div");
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
@@ -27,8 +29,7 @@ export function getViewer({
   container.id = "viewer";
   container.appendChild(renderer.domElement);
 
-  camera.position.set(10, 10, 10);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(0, 0, 20);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
