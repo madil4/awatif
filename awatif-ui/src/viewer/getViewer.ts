@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getGrid, GridInput } from "./objects/grid/getGrid";
 import { DrawingInput, drawing } from "./drawing/drawings";
@@ -28,6 +29,11 @@ export function getViewer({
 
   const render = () => renderer.render(scene, camera);
 
+  const normalizedGridInput: GridInput = {
+    size: gridInput?.size ?? van.state(10),
+    division: gridInput?.division ?? van.state(10),
+  };
+
   // Update
   container.id = "viewer";
   container.appendChild(renderer.domElement);
@@ -37,12 +43,19 @@ export function getViewer({
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  scene.add(getGrid({ gridInput, render }));
+  scene.add(getGrid({ gridInput: normalizedGridInput, render }));
 
   render();
 
   if (drawingInput)
-    drawing({ drawingInput, gridInput, scene, camera, renderer, render });
+    drawing({
+      drawingInput,
+      gridInput: normalizedGridInput,
+      scene,
+      camera,
+      renderer,
+      render,
+    });
 
   // Events
   window.addEventListener("resize", () => {

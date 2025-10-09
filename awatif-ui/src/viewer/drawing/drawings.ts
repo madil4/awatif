@@ -15,7 +15,7 @@ export function drawing({
   render,
 }: {
   drawingInput: DrawingInput;
-  gridInput?: GridInput;
+  gridInput: GridInput;
   scene: THREE.Scene;
   camera: THREE.Camera;
   renderer: THREE.WebGLRenderer;
@@ -25,9 +25,10 @@ export function drawing({
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
 
-  const gridSize = gridInput?.size?.val ?? 25;
-  const gridDivisions = gridInput?.division?.val ?? 20;
-  const ratio = gridDivisions / gridSize;
+  const gridSize = gridInput.size.rawVal;
+  const gridDivisions = gridInput.division.rawVal;
+  const step = gridSize / gridDivisions;
+  const offset = -gridSize / 2;
   const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
 
   const marker = new THREE.Mesh(
@@ -49,11 +50,10 @@ export function drawing({
 
     const hits = raycaster.intersectObject(grid, false);
     if (hits.length) {
-      const roundedPoint = new THREE.Vector3(
-        Math.round(hits[0].point.x * ratio) / ratio,
-        Math.round(hits[0].point.y * ratio) / ratio,
-        Math.round(hits[0].point.z * ratio) / ratio
-      );
+      const p = hits[0].point;
+      const snap = (v: number) =>
+        Math.round((v - offset) / step) * step + offset;
+      const roundedPoint = new THREE.Vector3(snap(p.x), snap(p.y), p.z);
 
       marker.position.copy(roundedPoint);
       marker.visible = true;

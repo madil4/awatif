@@ -10,7 +10,7 @@ export function getGrid({
   gridInput,
   render,
 }: {
-  gridInput?: GridInput;
+  gridInput: GridInput;
   render: () => void;
 }): THREE.Group {
   // Init
@@ -23,8 +23,8 @@ export function getGrid({
     group.clear();
 
     grid = new THREE.GridHelper(
-      gridInput?.size?.val ?? 25,
-      gridInput?.division?.val ?? 20,
+      gridInput.size.val,
+      gridInput.division.val,
       0x404040,
       0x404040
     );
