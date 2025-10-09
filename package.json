@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev:ui": "npm run dev -w awatif-ui",
-    "dev:examples": "npm run dev -w examples"
+    "dev:examples": "npm run dev -w examples",
+    "deploy:examples": "npm run deploy -w examples"
   },
   "workspaces": [
     "awatif-ui",

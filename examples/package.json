@@ -6,7 +6,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name awatif"
   },
   "engines": {
     "node": ">=22"

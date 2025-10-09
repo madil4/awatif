@@ -6,4 +6,13 @@ export default defineConfig({
     port: 4600,
     open: "drawing/index.html",
   },
+  build: {
+    outDir: "../dist",
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        drawing: "./src/drawing/index.html",
+      },
+    },
+  },
 });
