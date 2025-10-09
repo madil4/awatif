@@ -24,7 +24,7 @@ export function getGrid({
 
     grid = new THREE.GridHelper(
       gridInput?.size?.val ?? 25,
-      gridInput?.division?.val ?? 15,
+      gridInput?.division?.val ?? 20,
       0x404040,
       0x404040
     );

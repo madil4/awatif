@@ -37,12 +37,12 @@ export function getViewer({
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  const grid = getGrid({ gridInput, render });
-  scene.add(grid);
+  scene.add(getGrid({ gridInput, render }));
 
   render();
 
-  if (drawingInput) drawing({ drawingInput, grid });
+  if (drawingInput)
+    drawing({ drawingInput, gridInput, scene, camera, renderer, render });
 
   // Events
   window.addEventListener("resize", () => {
