@@ -23,11 +23,12 @@ export function getGrid({
     group.clear();
 
     grid = new THREE.GridHelper(
-      gridInput?.size?.val ?? 20,
-      gridInput?.division?.val ?? 10,
+      gridInput?.size?.val ?? 25,
+      gridInput?.division?.val ?? 15,
       0x404040,
       0x404040
     );
+    grid.rotateX(Math.PI / 2);
 
     group.add(grid);
 
