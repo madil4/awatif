@@ -1,13 +1,16 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getGrid, GridInput } from "./objects/grid/getGrid";
+import { DrawingInput, drawing } from "./drawing/drawings";
 
 import "./style.css";
 
 export function getViewer({
   gridInput,
+  drawingInput,
 }: {
   gridInput?: GridInput;
+  drawingInput?: DrawingInput;
 }): HTMLDivElement {
   // Init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -34,9 +37,12 @@ export function getViewer({
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  scene.add(getGrid({ gridInput, render }));
+  const grid = getGrid({ gridInput, render });
+  scene.add(grid);
 
   render();
+
+  if (drawingInput) drawing({ drawingInput, grid });
 
   // Events
   window.addEventListener("resize", () => {
