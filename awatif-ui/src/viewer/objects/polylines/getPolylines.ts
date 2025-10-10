@@ -6,7 +6,7 @@ export type Polylines = Map<
   number,
   {
     points: State<[number, number, number][]>;
-    polylines: number[][];
+    branches: State<number[][]>;
   }
 >;
 
@@ -26,6 +26,33 @@ export function getPolylines({
   // Init
   const group = new THREE.Group();
   const hitPoint = van.state<THREE.Vector3 | null>(null);
+
+  // Events: render lines when polylines changes
+  const lines = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial()
+  );
+  group.add(lines);
+
+  van.derive(() => {
+    const points = polylines.get(0)?.points.rawVal ?? [];
+    const branches = polylines.get(0)?.branches.rawVal ?? [];
+    const branch = branches[1];
+
+    const buffer = branch
+      .map((_, i) =>
+        i != branch.length - 1 ? [points[branch[i]], points[branch[i + 1]]] : []
+      )
+      .flat()
+      .flat();
+
+    lines.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(buffer, 3)
+    );
+
+    render();
+  });
 
   // Events: update hitPoint when mouse intersect grid
   const pointer = new THREE.Vector2();
@@ -58,7 +85,7 @@ export function getPolylines({
 
   // Events: add marker when hitPoint change
   const marker = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 16, 16),
+    new THREE.SphereGeometry(0.1, 16, 16),
     new THREE.MeshBasicMaterial({ color: "gray" })
   );
   marker.visible = false;
