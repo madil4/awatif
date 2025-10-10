@@ -155,15 +155,6 @@ export function getPolylines({
     } else newPoint.val = null;
   });
 
-  // setup appendMode
-  const appendMode = van.state<number | null>(null);
-  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
-    if (activePolyline.val === null) return; // only in edit mode
-
-    const pointHits = raycaster.intersectObject(points, false);
-    if (pointHits.length) appendMode.val = pointHits[0].index ?? null;
-  });
-
   // Deselect a polyline
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     if (activePolyline.val === null) return; // only in edit mode
@@ -173,7 +164,17 @@ export function getPolylines({
     appendMode.val = null;
   });
 
+  // setup appendMode
+  const appendMode = van.state<number | null>(null);
+  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (activePolyline.val === null) return; // only in edit mode
+
+    const pointHits = raycaster.intersectObject(points, false);
+    if (pointHits.length) appendMode.val = pointHits[0].index ?? null;
+  });
+
   /* ---- appendMode behavior ---- */
+
   // Add marker
   const marker = new THREE.Points(
     new THREE.BufferGeometry().setAttribute(
@@ -198,7 +199,7 @@ export function getPolylines({
     render();
   });
 
-  // Add a new point with branching
+  // Add a new point without branching
   renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (appendMode.val === null || activePolyline.val === null) return; // only in append mode
     if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
@@ -209,12 +210,10 @@ export function getPolylines({
 
     const branch = poly.branches.rawVal[0] ?? [];
 
-    const nextPoints = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
-    poly.points.val = nextPoints;
-    const newIdx = nextPoints.length - 1;
+    poly.points.val = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
 
     const nextBranches = [...poly.branches.rawVal];
-    nextBranches[0] = [...branch, newIdx];
+    nextBranches[0] = [...branch, poly.points.rawVal.length - 1];
     poly.branches.val = nextBranches;
   });
 
