@@ -2,16 +2,16 @@ import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getGrid, GridInput } from "./objects/grid/getGrid";
-import { DrawingInput, drawing } from "./drawing/drawings";
+import { Polylines, getPolylines } from "./objects/polylines/getPolylines";
 
 import "./style.css";
 
 export function getViewer({
   gridInput,
-  drawingInput,
+  polylines,
 }: {
   gridInput?: GridInput;
-  drawingInput?: DrawingInput;
+  polylines?: Polylines;
 }): HTMLDivElement {
   // Init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -29,11 +29,6 @@ export function getViewer({
 
   const render = () => renderer.render(scene, camera);
 
-  const normalizedGridInput: GridInput = {
-    size: gridInput?.size ?? van.state(10),
-    division: gridInput?.division ?? van.state(10),
-  };
-
   // Update
   container.id = "viewer";
   container.appendChild(renderer.domElement);
@@ -43,19 +38,26 @@ export function getViewer({
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  scene.add(getGrid({ gridInput: normalizedGridInput, render }));
+  // Update: add objects
+  gridInput = {
+    size: gridInput?.size ?? van.state(20),
+    division: gridInput?.division ?? van.state(10),
+  };
+
+  scene.add(getGrid({ gridInput, render }));
+
+  if (polylines)
+    scene.add(
+      getPolylines({
+        polylines,
+        gridInput,
+        camera,
+        renderer,
+        render,
+      })
+    );
 
   render();
-
-  if (drawingInput)
-    drawing({
-      drawingInput,
-      gridInput: normalizedGridInput,
-      scene,
-      camera,
-      renderer,
-      render,
-    });
 
   // Events
   window.addEventListener("resize", () => {
