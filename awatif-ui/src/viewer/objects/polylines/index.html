@@ -10,6 +10,12 @@
       import van from "vanjs-core";
       import { getViewer } from "../../getViewer.ts";
 
+      /* Manual Test cases
+        1. Draw a polyline
+        
+
+      */
+
       const polylines = new Map([
         [
           0,
@@ -20,10 +26,7 @@
               [4, 0, 0],
               [5, 1, 0],
             ]),
-            branches: van.state([
-              [0, 1, 2, 3],
-              [0, 2, 3],
-            ]),
+            branches: van.state([[0, 1]]),
           },
         ],
       ]);

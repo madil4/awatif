@@ -5,7 +5,7 @@ import { GridInput } from "../grid/getGrid";
 export type Polylines = Map<
   number,
   {
-    points: State<[number, number, number][]>;
+    points: State<number[][]>;
     branches: State<number[][]>;
   }
 >;
@@ -27,12 +27,13 @@ export function getPolylines({
   const group = new THREE.Group();
   const hitPoint = van.state<THREE.Vector3 | null>(null);
 
-  // Events: render lines when polylines changes
+  // Events: render a single polyline when polylines changes
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: "red" })
+    new THREE.LineBasicMaterial({ color: "red", depthTest: false })
   );
-  const toSegments = (branch: number[], points: [number, number, number][]) =>
+  group.add(lines);
+  const toSegments = (branch: number[], points: number[][]) =>
     branch
       .map((_, i) =>
         i != branch.length - 1 ? [points[branch[i]], points[branch[i + 1]]] : []
@@ -40,11 +41,9 @@ export function getPolylines({
       .flat()
       .flat();
 
-  group.add(lines);
-
   van.derive(() => {
-    const points = polylines.get(0)?.points.rawVal ?? [];
-    const branches = polylines.get(0)?.branches.rawVal ?? [];
+    const points = polylines.get(0)?.points.val ?? [];
+    const branches = polylines.get(0)?.branches.val ?? [];
     const branch = branches[0];
 
     const buffer = toSegments(branch, points);
@@ -101,6 +100,19 @@ export function getPolylines({
     } else marker.visible = false;
 
     render();
+  });
+
+  // Events: extend a single-branch of a single polyline on pointerdown
+  renderer.domElement.addEventListener("pointerdown", () => {
+    const hp = hitPoint.rawVal;
+    const poly = polylines.get(0);
+    if (!hp || !poly) return;
+
+    poly.points.val = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
+    poly.branches.val[0] = [
+      ...poly.branches.rawVal[0],
+      poly.points.rawVal.length - 1,
+    ];
   });
 
   return group;
