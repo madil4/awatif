@@ -2,9 +2,13 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { GridInput } from "../grid/getGrid";
 
-export type Polylines = {
-  points?: State<[number, number, number][]>;
-};
+export type Polylines = Map<
+  number,
+  {
+    points: State<[number, number, number][]>;
+    polylines: number[][];
+  }
+>;
 
 export function getPolylines({
   polylines,
@@ -55,14 +59,12 @@ export function getPolylines({
   // Events: add marker when hitPoint change
   const marker = new THREE.Mesh(
     new THREE.SphereGeometry(0.2, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0xff5555 })
+    new THREE.MeshBasicMaterial({ color: "gray" })
   );
   marker.visible = false;
   group.add(marker);
 
   van.derive(() => {
-    console.log(hitPoint.val);
-
     if (hitPoint.val) {
       marker.position.copy(hitPoint.val);
       marker.visible = true;
