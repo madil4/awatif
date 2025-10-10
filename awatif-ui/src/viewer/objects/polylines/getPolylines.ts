@@ -1,27 +1,26 @@
 import * as THREE from "three";
 import { State } from "vanjs-core";
-import { GridInput } from "../objects/grid/getGrid";
+import { GridInput } from "../grid/getGrid";
 
-export type DrawingInput = {
+export type Polylines = {
   points?: State<[number, number, number][]>;
 };
 
-export function drawing({
-  drawingInput,
+export function getPolylines({
+  polylines,
   gridInput,
   camera,
-  scene,
   renderer,
   render,
 }: {
-  drawingInput: DrawingInput;
+  polylines: Polylines;
   gridInput: GridInput;
-  scene: THREE.Scene;
   camera: THREE.Camera;
   renderer: THREE.WebGLRenderer;
   render: () => void;
-}): void {
+}): THREE.Group {
   // Init
+  const group = new THREE.Group();
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
 
@@ -38,7 +37,7 @@ export function drawing({
 
   // Update
   marker.visible = false;
-  scene.add(marker);
+  group.add(marker);
 
   // Events
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
@@ -63,4 +62,6 @@ export function drawing({
 
     render();
   });
+
+  return group;
 }
