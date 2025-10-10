@@ -123,10 +123,13 @@ export function getPolylines({
     render();
   });
 
-  // Edit a single-branch of a single polyline
+  // Edit a single-branch of a single polyline: add points
   renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+    if (activePolyline.val === null) return;
+
     const hp = hitPoint.rawVal;
-    const poly = polylines.get(0);
+    const poly = polylines.get(activePolyline.val);
     if (!hp || !poly) return;
 
     poly.points.val = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
@@ -142,7 +145,7 @@ export function getPolylines({
     if (hits.length) {
       const key = hits[0].object.userData.polyline;
       if (key != undefined) activePolyline.val = key;
-    } else activePolyline.val = null;
+    }
   });
 
   // Deselect a polyline
