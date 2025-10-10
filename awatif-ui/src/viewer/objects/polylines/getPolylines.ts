@@ -23,7 +23,6 @@ export function getPolylines({
   renderer: THREE.WebGLRenderer;
   render: () => void;
 }): THREE.Group {
-  // Init
   const group = new THREE.Group();
   const hitPoint = van.state<THREE.Vector3 | null>(null);
 

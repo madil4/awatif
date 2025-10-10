@@ -13,9 +13,8 @@ export function getGrid({
   gridInput: GridInput;
   render: () => void;
 }): THREE.Group {
-  // Init
-  const group = new THREE.Group();
   let grid: THREE.GridHelper;
+  const group = new THREE.Group();
 
   // Events
   van.derive(() => {

@@ -16,31 +16,30 @@ export function getViewer({
   // Init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
 
-  const container = document.createElement("div");
   const scene = new THREE.Scene();
+
   const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
   );
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enabled = false;
+  camera.position.set(0, 0, 10);
 
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
   const render = () => renderer.render(scene, camera);
 
-  // Update
+  const container = document.createElement("div");
   container.id = "viewer";
   container.appendChild(renderer.domElement);
 
-  camera.position.set(0, 0, 10);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enabled = false;
   controls.update();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  // Update: add objects
+  // Add objects
   gridInput = {
     size: gridInput?.size ?? van.state(10),
     division: gridInput?.division ?? van.state(10),
