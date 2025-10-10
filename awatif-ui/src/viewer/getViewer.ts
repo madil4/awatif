@@ -33,7 +33,7 @@ export function getViewer({
   container.id = "viewer";
   container.appendChild(renderer.domElement);
 
-  camera.position.set(0, 0, 20);
+  camera.position.set(0, 0, 10);
   controls.update();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,7 +41,7 @@ export function getViewer({
 
   // Update: add objects
   gridInput = {
-    size: gridInput?.size ?? van.state(20),
+    size: gridInput?.size ?? van.state(10),
     division: gridInput?.division ?? van.state(10),
   };
 
