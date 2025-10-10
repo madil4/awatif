@@ -12,8 +12,11 @@
 
       /* Manual Test cases
       1- Select a polyline by clicking on it
-      2- Deselect a polyline by clicking right-mouse
-      3- Edit a selected polyline: adding points
+      2- Deselect a polyline by clicking right-click
+      3- Add new points without branching by click on the end of the polyline
+      4- Remove a point by right-click on it
+      5- Move a point by click and drag it
+      6- Add a new point with branching by click on the middle of the polyline
       */
 
       const polylines = new Map([
@@ -26,7 +29,7 @@
               [4, 0, 0],
               [5, 1, 0],
             ]),
-            branches: van.state([[0, 1]]),
+            branches: van.state([[0, 1, 2]]),
           },
         ],
       ]);
