@@ -26,6 +26,7 @@ export function getViewer({
   );
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enabled = false;
 
   const render = () => renderer.render(scene, camera);
 
