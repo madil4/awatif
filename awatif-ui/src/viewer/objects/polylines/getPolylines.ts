@@ -109,7 +109,11 @@ export function getPolylines({
   group.add(marker);
 
   van.derive(() => {
-    if (activePolyline.val === null) return;
+    if (activePolyline.val === null) {
+      marker.visible = false;
+      render();
+      return;
+    }
 
     if (hitPoint.val) {
       marker.position.copy(hitPoint.val);
@@ -139,6 +143,12 @@ export function getPolylines({
       const key = hits[0].object.userData.polyline;
       if (key != undefined) activePolyline.val = key;
     } else activePolyline.val = null;
+  });
+
+  // Deselect a polyline
+  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+    e.preventDefault();
+    activePolyline.val = null;
   });
 
   return group;
