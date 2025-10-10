@@ -25,16 +25,16 @@ export function getPolylines({
 }): THREE.Group {
   const group = new THREE.Group();
   const hitPoint = van.state<THREE.Vector3 | null>(null);
+  const activePolyline = van.state<number | null>(null);
 
-  // Events: render a single polyline when polylines changes
-
+  // Render a single polyline
   const DEFAULT_COLOR = new THREE.Color("red");
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
   );
+  lines.userData.polyline = 0;
   group.add(lines);
-
   const toSegments = (branch: number[], points: number[][]) =>
     branch
       .map((_, i) =>
@@ -47,9 +47,7 @@ export function getPolylines({
     const points = polylines.get(0)?.points.val ?? [];
     const branches = polylines.get(0)?.branches.val ?? [];
     const branch = branches[0];
-
     const buffer = toSegments(branch, points);
-
     lines.geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(buffer, 3)
@@ -59,7 +57,7 @@ export function getPolylines({
     render();
   });
 
-  // Events: update hitPoint when mouse intersect grid
+  // Update hitPoint when mouse intersect grid
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
   raycaster.params.Line = { threshold: 0.15 };
@@ -90,7 +88,7 @@ export function getPolylines({
     } else hitPoint.val = null;
   });
 
-  // Events: update line color when mouse intersect lines
+  // Update line color when mouse intersect lines
   raycaster.params.Line = { threshold: 0.15 };
   const HOVER_COLOR = new THREE.Color("yellow");
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
@@ -102,7 +100,7 @@ export function getPolylines({
     render();
   });
 
-  // Events: add marker when hitPoint change
+  // Add marker
   const marker = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
     new THREE.MeshBasicMaterial({ color: "gray" })
@@ -111,6 +109,8 @@ export function getPolylines({
   group.add(marker);
 
   van.derive(() => {
+    if (activePolyline.val === null) return;
+
     if (hitPoint.val) {
       marker.position.copy(hitPoint.val);
       marker.visible = true;
@@ -119,8 +119,8 @@ export function getPolylines({
     render();
   });
 
-  // Events: edit a single-branch of a single polyline on pointerdown
-  renderer.domElement.addEventListener("pointerdown", () => {
+  // Edit a single-branch of a single polyline
+  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     const hp = hitPoint.rawVal;
     const poly = polylines.get(0);
     if (!hp || !poly) return;
@@ -130,6 +130,15 @@ export function getPolylines({
       ...poly.branches.rawVal[0],
       poly.points.rawVal.length - 1,
     ];
+  });
+
+  // Select a polyline
+  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    const hits = raycaster.intersectObject(lines, false);
+    if (hits.length) {
+      const key = hits[0].object.userData.polyline;
+      if (key != undefined) activePolyline.val = key;
+    } else activePolyline.val = null;
   });
 
   return group;
