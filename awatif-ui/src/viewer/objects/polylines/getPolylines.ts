@@ -30,21 +30,24 @@ export function getPolylines({
   // Events: render lines when polylines changes
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial()
+    new THREE.LineBasicMaterial({ color: "red" })
   );
-  group.add(lines);
-
-  van.derive(() => {
-    const points = polylines.get(0)?.points.rawVal ?? [];
-    const branches = polylines.get(0)?.branches.rawVal ?? [];
-    const branch = branches[1];
-
-    const buffer = branch
+  const toSegments = (branch: number[], points: [number, number, number][]) =>
+    branch
       .map((_, i) =>
         i != branch.length - 1 ? [points[branch[i]], points[branch[i + 1]]] : []
       )
       .flat()
       .flat();
+
+  group.add(lines);
+
+  van.derive(() => {
+    const points = polylines.get(0)?.points.rawVal ?? [];
+    const branches = polylines.get(0)?.branches.rawVal ?? [];
+    const branch = branches[0];
+
+    const buffer = toSegments(branch, points);
 
     lines.geometry.setAttribute(
       "position",
