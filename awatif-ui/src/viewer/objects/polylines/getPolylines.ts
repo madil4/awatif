@@ -100,6 +100,7 @@ export function getPolylines({
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
   raycaster.params.Line = { threshold: 0.15 };
+  raycaster.params.Points = { threshold: 0.2 };
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -154,52 +155,68 @@ export function getPolylines({
     } else newPoint.val = null;
   });
 
+  // setup appendMode
+  const appendMode = van.state<number | null>(null);
+  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (activePolyline.val === null) return; // only in edit mode
+
+    const pointHits = raycaster.intersectObject(points, false);
+    if (pointHits.length) appendMode.val = pointHits[0].index ?? null;
+  });
+
   // Deselect a polyline
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     if (activePolyline.val === null) return; // only in edit mode
 
     e.preventDefault();
     activePolyline.val = null;
+    appendMode.val = null;
   });
 
-  // // Add marker
-  // const marker = new THREE.Mesh(
-  //   new THREE.SphereGeometry(0.1, 16, 16),
-  //   new THREE.MeshBasicMaterial({ color: "gray" })
-  // );
-  // marker.visible = false;
-  // group.add(marker);
+  /* ---- appendMode behavior ---- */
+  // Add marker
+  const marker = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute([0, 0, 0], 3)
+    ),
+    new THREE.PointsMaterial({
+      color: ACTIVE_COLOR,
+      size: 8,
+      sizeAttenuation: false,
+      depthTest: false,
+    })
+  );
+  marker.visible = false;
+  group.add(marker);
+  van.derive(() => {
+    if (!newPoint.val) return;
 
-  // van.derive(() => {
-  //   if (activePolyline.val === null) {
-  //     marker.visible = false;
-  //     render();
-  //     return;
-  //   }
+    marker.position.copy(newPoint.val);
+    marker.visible = appendMode.val !== null;
 
-  //   if (hitPoint.val) {
-  //     marker.position.copy(hitPoint.val);
-  //     marker.visible = true;
-  //   } else marker.visible = false;
+    render();
+  });
 
-  //   render();
-  // });
+  // Add a new point with branching
+  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (appendMode.val === null || activePolyline.val === null) return; // only in append mode
+    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
 
-  // // Edit a single-branch of a single polyline: add points
-  // renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
-  //   if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
-  //   if (activePolyline.val === null) return;
+    const poly = polylines.get(activePolyline.val);
+    const hp = newPoint.rawVal;
+    if (!poly || !hp) return;
 
-  //   const hp = newPoint.rawVal;
-  //   const poly = polylines.get(activePolyline.val);
-  //   if (!hp || !poly) return;
+    const branch = poly.branches.rawVal[0] ?? [];
 
-  //   poly.points.val = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
-  //   poly.branches.val[0] = [
-  //     ...poly.branches.rawVal[0],
-  //     poly.points.rawVal.length - 1,
-  //   ];
-  // });
+    const nextPoints = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
+    poly.points.val = nextPoints;
+    const newIdx = nextPoints.length - 1;
+
+    const nextBranches = [...poly.branches.rawVal];
+    nextBranches[0] = [...branch, newIdx];
+    poly.branches.val = nextBranches;
+  });
 
   return group;
 }
