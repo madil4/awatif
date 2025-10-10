@@ -27,11 +27,14 @@ export function getPolylines({
   const hitPoint = van.state<THREE.Vector3 | null>(null);
 
   // Events: render a single polyline when polylines changes
+
+  const DEFAULT_COLOR = new THREE.Color("red");
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: "red", depthTest: false })
+    new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
   );
   group.add(lines);
+
   const toSegments = (branch: number[], points: number[][]) =>
     branch
       .map((_, i) =>
@@ -51,6 +54,7 @@ export function getPolylines({
       "position",
       new THREE.Float32BufferAttribute(buffer, 3)
     );
+    lines.geometry.computeBoundingSphere();
 
     render();
   });
@@ -58,6 +62,8 @@ export function getPolylines({
   // Events: update hitPoint when mouse intersect grid
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
+  raycaster.params.Line = { threshold: 0.15 };
+
   const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
   const gridDivisions = gridInput.division.rawVal;
   const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
@@ -84,6 +90,18 @@ export function getPolylines({
     } else hitPoint.val = null;
   });
 
+  // Events: update line color when mouse intersect lines
+  raycaster.params.Line = { threshold: 0.15 };
+  const HOVER_COLOR = new THREE.Color("yellow");
+  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
+    const mat = lines.material as THREE.LineBasicMaterial;
+    const hits = raycaster.intersectObject(lines, false);
+    if (hits.length) mat.color.copy(HOVER_COLOR);
+    else mat.color.copy(DEFAULT_COLOR);
+
+    render();
+  });
+
   // Events: add marker when hitPoint change
   const marker = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
@@ -101,7 +119,7 @@ export function getPolylines({
     render();
   });
 
-  // Events: extend a single-branch of a single polyline on pointerdown
+  // Events: edit a single-branch of a single polyline on pointerdown
   renderer.domElement.addEventListener("pointerdown", () => {
     const hp = hitPoint.rawVal;
     const poly = polylines.get(0);
