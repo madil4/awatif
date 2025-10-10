@@ -10,14 +10,18 @@
       import van from "vanjs-core";
       import { getViewer } from "../../getViewer.ts";
 
-      const polylines = {
-        points: van.state([
-          [0, 0, 0],
-          [1, 0, 0],
-          [1, 1, 0],
-          [0, 1, 0],
-        ]),
-      };
+      const polylines = new Map([
+        [
+          0,
+          {
+            points: van.state([
+              [0, 0, 0],
+              [3, 0, 0],
+              [3, 3, 0],
+            ]),
+          },
+        ],
+      ]);
 
       document.body.append(getViewer({ polylines }));
     </script>
