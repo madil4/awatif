@@ -49,13 +49,18 @@ export function getPolylines({
 
     const hits = raycaster.intersectObject(grid, false);
     if (hits.length) {
-      const p = hits[0].point;
+      const hitPoint = hits[0].point;
       const snap = (v: number) =>
         Math.round((v - offset) / step) * step + offset;
-      const roundedPoint = new THREE.Vector3(snap(p.x), snap(p.y), p.z);
+      const roundedPoint = new THREE.Vector3(
+        snap(hitPoint.x),
+        snap(hitPoint.y),
+        hitPoint.z
+      );
 
       marker.position.copy(roundedPoint);
       marker.visible = true;
+      console.log(roundedPoint);
     } else {
       marker.visible = false;
     }
