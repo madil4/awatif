@@ -27,14 +27,16 @@ export function getPolylines({
   const hitPoint = van.state<THREE.Vector3 | null>(null);
   const activePolyline = van.state<number | null>(null);
 
-  // Render a single polyline
   const DEFAULT_COLOR = new THREE.Color("red");
+  const ACTIVE_COLOR = new THREE.Color("yellow");
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
   );
   lines.userData.polyline = 0;
   group.add(lines);
+
+  // Render a single polyline
   const toSegments = (branch: number[], points: number[][]) =>
     branch
       .map((_, i) =>
@@ -88,14 +90,22 @@ export function getPolylines({
     } else hitPoint.val = null;
   });
 
-  // Update line color when mouse intersect lines
+  // Show active color when hovering
   raycaster.params.Line = { threshold: 0.15 };
-  const HOVER_COLOR = new THREE.Color("yellow");
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    const mat = lines.material as THREE.LineBasicMaterial;
+    if (activePolyline.val != null) return;
+
     const hits = raycaster.intersectObject(lines, false);
-    if (hits.length) mat.color.copy(HOVER_COLOR);
-    else mat.color.copy(DEFAULT_COLOR);
+    if (hits.length) lines.material.color.copy(ACTIVE_COLOR);
+    else lines.material.color.copy(DEFAULT_COLOR);
+
+    render();
+  });
+
+  // Update line color based on active state
+  van.derive(() => {
+    const isActive = activePolyline.val !== null;
+    lines.material.color.copy(isActive ? ACTIVE_COLOR : DEFAULT_COLOR);
 
     render();
   });
