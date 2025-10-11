@@ -134,7 +134,7 @@ export function getPolylines({
   /* ---- Non-Active Mode ---- */
 
   // Select polyline
-  renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (activePolyline.val !== null) return; // only in non-active mode
 
     const hits = raycaster.intersectObject(lines, false);
@@ -200,6 +200,8 @@ export function getPolylines({
 
     const pointHits = raycaster.intersectObject(points, false);
     if (pointHits.length) dragPoint.val = pointHits[0].index ?? null;
+
+    if (pointHits.length) console.log("drag", dragPoint.val);
   });
   renderer.domElement.addEventListener("pointerup", () => {
     pointerdown = false;
@@ -229,14 +231,17 @@ export function getPolylines({
 
   /* ---- Append Mode  ---- */
 
-  // // Setup appendMode
-  // const appendMode = van.state<number | null>(null);
-  // renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
-  //   if (activePolyline.val === null) return; // only in edit mode
+  // Setup appendPoint
+  const appendPoint = van.state<number | null>(null);
+  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
+    if (activePolyline.val === null) return; // only in edit mode
+    if (dragPoint.val !== null) return; // avoid drag and append at the same time
 
-  //   const pointHits = raycaster.intersectObject(points, false);
-  //   if (pointHits.length) appendMode.val = pointHits[0].index ?? null;
-  // });
+    const hits = raycaster.intersectObject(points, false);
+    if (hits.length) appendPoint.val = hits[0].index ?? null;
+
+    if (hits.length) console.log("append", appendPoint.val);
+  });
 
   // // Add marker
   // const marker = new THREE.Points(
