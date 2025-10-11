@@ -42,6 +42,7 @@ export function getPolylines({
       )
       .flat()
       .flat();
+
   van.derive(() => {
     const points = polylines.get(0)?.points.val ?? [];
     const branches = polylines.get(0)?.branches.val ?? [];
@@ -116,6 +117,7 @@ export function getPolylines({
   const offset = -gridSize / 2;
   const step = gridSize / gridDivisions;
   const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
+
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
     if (activePolyline.rawVal === null) return; // only in edit mode
 
@@ -160,7 +162,7 @@ export function getPolylines({
     e.preventDefault();
 
     if (activePolyline.rawVal === null) return; // only in active mode
-    if (raycaster.intersectObject(points, false).length) return; // removing a point not deselecting polyline
+    if (raycaster.intersectObject(points, false).length) return; // this is for removing a point not deselecting polyline
 
     activePolyline.val = null;
   });
@@ -179,12 +181,12 @@ export function getPolylines({
     const pointIdx = hits[0].index ?? null;
     if (pointIdx === null) return;
 
-    // if point is at the end of branch
-    if (pointIdx === branch.length - 1) {
-      const nextBranches = [...poly.branches.rawVal];
-      nextBranches[0] = branch.slice(0, -1);
-      poly.branches.val = nextBranches;
-    }
+    // if point is not at the end of branch
+    if (pointIdx !== branch.length - 1) return;
+
+    const nextBranches = [...poly.branches.rawVal];
+    nextBranches[0] = branch.slice(0, -1);
+    poly.branches.val = nextBranches;
   });
 
   /* ---- Dragging Mode ---- */
