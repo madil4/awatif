@@ -117,7 +117,7 @@ export function getPolylines({
   const step = gridSize / gridDivisions;
   const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (activePolyline.val === null) return; // only in edit mode
+    if (activePolyline.rawVal === null) return; // only in edit mode
 
     const hits = raycaster.intersectObject(grid, false);
     if (hits.length) {
@@ -135,15 +135,16 @@ export function getPolylines({
 
   // Select polyline
   renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (activePolyline.val !== null) return; // only in non-active mode
+    if (activePolyline.rawVal !== null) return; // only in non-active mode
 
     const hits = raycaster.intersectObject(lines, false);
-    if (hits.length) activePolyline.val = hits[0].object.userData.polyline;
+    if (hits.length)
+      setTimeout(() => (activePolyline.val = hits[0].object.userData.polyline)); // Set append point first then select polyline
   });
 
   // Show active color when hovering
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (activePolyline.val != null) return; // only in non-active mode
+    if (activePolyline.rawVal != null) return; // only in non-active mode
 
     const hits = raycaster.intersectObject(lines, false);
     if (hits.length) lines.material.color.copy(ACTIVE_COLOR);
@@ -158,7 +159,7 @@ export function getPolylines({
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     e.preventDefault();
 
-    if (activePolyline.val === null) return; // only in active mode
+    if (activePolyline.rawVal === null) return; // only in active mode
     if (raycaster.intersectObject(points, false).length) return; // removing a point not deselecting polyline
 
     activePolyline.val = null;
@@ -166,12 +167,12 @@ export function getPolylines({
 
   // Remove point from end of branch
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-    if (activePolyline.val === null) return; // only in active mode
+    if (activePolyline.rawVal === null) return; // only in active mode
 
     const hits = raycaster.intersectObject(points, false);
     if (!hits.length) return;
 
-    const poly = polylines.get(activePolyline.val);
+    const poly = polylines.get(activePolyline.rawVal);
     if (!poly) return;
 
     const branch = poly.branches.rawVal[0] ?? [];
@@ -195,17 +196,15 @@ export function getPolylines({
     pointerdown = true;
   });
   renderer.domElement.addEventListener("pointermove", () => {
-    if (activePolyline.val === null) return; // only in active mode
+    if (activePolyline.rawVal === null) return; // only in active mode
     if (!pointerdown) return;
 
     const pointHits = raycaster.intersectObject(points, false);
     if (pointHits.length) dragPoint.val = pointHits[0].index ?? null;
-
-    if (pointHits.length) console.log("drag", dragPoint.val);
   });
   renderer.domElement.addEventListener("pointerup", () => {
     pointerdown = false;
-    dragPoint.val = null;
+    setTimeout(() => (dragPoint.val = null)); // Set append point 1st then remove drag point
   });
 
   // Drag the point
@@ -234,13 +233,11 @@ export function getPolylines({
   // Setup appendPoint
   const appendPoint = van.state<number | null>(null);
   renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (activePolyline.val === null) return; // only in edit mode
-    if (dragPoint.val !== null) return; // avoid drag and append at the same time
+    if (activePolyline.rawVal === null) return; // only in edit mode
+    if (dragPoint.rawVal !== null) return; // not in drag mode
 
     const hits = raycaster.intersectObject(points, false);
     if (hits.length) appendPoint.val = hits[0].index ?? null;
-
-    if (hits.length) console.log("append", appendPoint.val);
   });
 
   // // Add marker
