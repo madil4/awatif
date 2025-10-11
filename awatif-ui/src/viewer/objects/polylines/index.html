@@ -11,18 +11,20 @@
       import { getViewer } from "../../getViewer.ts";
 
       /* Manual Test cases
-      1- Select a polyline by clicking on it
-      2- Deselect a polyline by clicking right-click
-      3- Move a point by click and drag it
-      
-      4- Add new points without branching by click on the end of the polyline
-      5- Remove a point by right-click on it without branching
-      6- Add a new point with branching by click on the middle of the polyline on a point
-      8- Add a new point with branching by click on the middle of the polyline on a line (splitting)
-      9- Remove branching point by right-click on it
+      1- Select a polyline
+      2- Deselect a polyline
+      3- Move a point
 
-      10- Do it all with multiple polylines 
-      11- Add a new polyline from scratch by clicking on the canvas
+      4- Remove a point from end of a branch
+      5- Add new points from end of branch
+
+      6- Add a new point from middle (point)
+      7- Remove point from middle
+
+      8- Add a new point from middle (line)
+
+      9- Do it all with multiple polylines 
+      10- Add a new polyline from scratch by clicking on the canvas
       */
 
       const polylines = new Map([
