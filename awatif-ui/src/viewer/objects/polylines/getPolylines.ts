@@ -133,7 +133,7 @@ export function getPolylines({
 
   /* ---- Non-Active Mode ---- */
 
-  // Trigger active mode
+  // Select polyline
   renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (activePolyline.val !== null) return; // only in non-active mode
 
@@ -154,10 +154,36 @@ export function getPolylines({
 
   /* ---- Active Mode ---- */
 
-  // Trigger non-active mode
+  // Deselect polyline
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     e.preventDefault();
+
+    if (activePolyline.val === null) return; // only in active mode
+    if (raycaster.intersectObject(points, false).length) return; // removing a point not deselecting polyline
+
     activePolyline.val = null;
+  });
+
+  // Remove point from end of branch
+  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+    if (activePolyline.val === null) return; // only in active mode
+
+    const hits = raycaster.intersectObject(points, false);
+    if (!hits.length) return;
+
+    const poly = polylines.get(activePolyline.val);
+    if (!poly) return;
+
+    const branch = poly.branches.rawVal[0] ?? [];
+    const pointIdx = hits[0].index ?? null;
+    if (pointIdx === null) return;
+
+    // if point is at the end of branch
+    if (pointIdx === branch.length - 1) {
+      const nextBranches = [...poly.branches.rawVal];
+      nextBranches[0] = branch.slice(0, -1);
+      poly.branches.val = nextBranches;
+    }
   });
 
   /* ---- Dragging Mode ---- */
