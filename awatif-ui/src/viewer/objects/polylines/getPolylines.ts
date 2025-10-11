@@ -24,11 +24,82 @@ export function getPolylines({
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
-  const activePolyline = van.state<number | null>(null);
+
+  /* ---- Modes ---- */
+  enum Mode {
+    SELECT,
+    EDIT,
+    DRAG,
+    APPEND,
+  }
+  const mode = van.state<Mode>(Mode.SELECT);
+
+  // Setup raycaster
+  const pointer = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster();
+  raycaster.params.Line = { threshold: 0.15 };
+  raycaster.params.Points = { threshold: 0.2 };
+  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    raycaster.setFromCamera(pointer, camera);
+  });
+
+  // Set Select mode
+  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+    e.preventDefault();
+
+    if (mode.val === Mode.APPEND) mode.val = Mode.EDIT;
+    else mode.val = Mode.SELECT;
+  });
+
+  // Set Edit mode
+  const editPolyline = van.state<number | null>(null);
+  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
+    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+    const hits = raycaster.intersectObject(lines, false);
+    if (!hits.length) return;
+
+    mode.val = Mode.EDIT;
+    editPolyline.val = hits[0].object.userData.polyline;
+  });
+
+  // Set Drag mode
+  let pointerdown = false;
+  let previousMode: Mode = mode.val;
+  renderer.domElement.addEventListener("pointerdown", () => {
+    previousMode = mode.val;
+    pointerdown = true;
+  });
+  renderer.domElement.addEventListener("pointermove", () => {
+    if (!pointerdown) return;
+    mode.val = Mode.DRAG;
+  });
+  renderer.domElement.addEventListener("pointerup", () => {
+    if (mode.val === Mode.DRAG) mode.val = previousMode;
+    pointerdown = false;
+  });
+
+  // Set Append mode
+  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
+    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+    if (mode.val !== Mode.EDIT) return;
+
+    const hits = raycaster.intersectObject(points, false);
+    if (hits.length) mode.val = Mode.APPEND;
+  });
+
+  renderer.domElement.addEventListener("pointermove", () => {
+    console.log(Mode[mode.val]);
+  });
+
+  /* ---- Rendering ---- */
   const DEFAULT_COLOR = new THREE.Color("red");
   const ACTIVE_COLOR = new THREE.Color("yellow");
 
   // Render lines
+  const editLike = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
@@ -54,7 +125,7 @@ export function getPolylines({
     lines.geometry.computeBoundingSphere();
 
     lines.material.color.copy(
-      activePolyline.val !== null ? ACTIVE_COLOR : DEFAULT_COLOR
+      editLike.includes(mode.val) ? ACTIVE_COLOR : DEFAULT_COLOR
     );
 
     render();
@@ -74,10 +145,9 @@ export function getPolylines({
   group.add(points);
 
   van.derive(() => {
-    const isActive = activePolyline.val !== null;
-    points.visible = isActive;
+    points.visible = editLike.includes(mode.val) && editPolyline.val !== null;
 
-    if (isActive) {
+    if (points.visible) {
       const pts = polylines.get(0)?.points.val ?? [];
       const branches = polylines.get(0)?.branches.val ?? [];
       const branch = branches[0] ?? [];
@@ -96,57 +166,9 @@ export function getPolylines({
     render();
   });
 
-  // Setup raycaster
-  const pointer = new THREE.Vector2();
-  const raycaster = new THREE.Raycaster();
-  raycaster.params.Line = { threshold: 0.15 };
-  raycaster.params.Points = { threshold: 0.2 };
+  // SelectMode: Show active color when hovering
   renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    const rect = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-    raycaster.setFromCamera(pointer, camera);
-  });
-
-  // setup hitPoint
-  const hitPoint = van.state<THREE.Vector3 | null>(null);
-
-  const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
-  const gridDivisions = gridInput.division.rawVal;
-  const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
-  const offset = -gridSize / 2;
-  const step = gridSize / gridDivisions;
-  const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
-
-  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (activePolyline.rawVal === null) return; // only in edit mode
-
-    const hits = raycaster.intersectObject(grid, false);
-    if (hits.length) {
-      const px = snap(hits[0].point.x);
-      const py = snap(hits[0].point.y);
-      const pz = snap(hits[0].point.z);
-      const curr = hitPoint.rawVal;
-      if (!curr || curr.x !== px || curr.y !== py || curr.z !== pz) {
-        hitPoint.val = new THREE.Vector3(px, py, pz);
-      }
-    } else hitPoint.val = null;
-  });
-
-  /* ---- Non-Active Mode ---- */
-
-  // Select polyline
-  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (activePolyline.rawVal !== null) return; // only in non-active mode
-
-    const hits = raycaster.intersectObject(lines, false);
-    if (hits.length)
-      setTimeout(() => (activePolyline.val = hits[0].object.userData.polyline)); // Set append point first then select polyline
-  });
-
-  // Show active color when hovering
-  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (activePolyline.rawVal != null) return; // only in non-active mode
+    if (mode.val !== Mode.SELECT) return;
 
     const hits = raycaster.intersectObject(lines, false);
     if (hits.length) lines.material.color.copy(ACTIVE_COLOR);
@@ -155,92 +177,102 @@ export function getPolylines({
     render();
   });
 
-  /* ---- Active Mode ---- */
-
-  // Deselect polyline
+  // EditMode: Deselect polyline
   renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-    e.preventDefault();
+    if (mode.val !== Mode.EDIT) return;
 
-    if (activePolyline.rawVal === null) return; // only in active mode
-    if (raycaster.intersectObject(points, false).length) return; // this is for removing a point not deselecting polyline
-
-    activePolyline.val = null;
+    editPolyline.val = null;
   });
 
-  // Remove point from end of branch
-  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-    if (activePolyline.rawVal === null) return; // only in active mode
+  // // setup hitPoint
+  // const hitPoint = van.state<THREE.Vector3 | null>(null);
 
-    const hits = raycaster.intersectObject(points, false);
-    if (!hits.length) return;
+  // const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
+  // const gridDivisions = gridInput.division.rawVal;
+  // const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
+  // const offset = -gridSize / 2;
+  // const step = gridSize / gridDivisions;
+  // const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
 
-    const poly = polylines.get(activePolyline.rawVal);
-    if (!poly) return;
+  // renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
+  //   if (editPolyline.rawVal === null) return; // only in edit mode
 
-    const branch = poly.branches.rawVal[0] ?? [];
-    const pointIdx = hits[0].index ?? null;
-    if (pointIdx === null) return;
+  //   const hits = raycaster.intersectObject(grid, false);
+  //   if (hits.length) {
+  //     const px = snap(hits[0].point.x);
+  //     const py = snap(hits[0].point.y);
+  //     const pz = snap(hits[0].point.z);
+  //     const curr = hitPoint.rawVal;
+  //     if (!curr || curr.x !== px || curr.y !== py || curr.z !== pz) {
+  //       hitPoint.val = new THREE.Vector3(px, py, pz);
+  //     }
+  //   } else hitPoint.val = null;
+  // });
 
-    // if point is not at the end of branch
-    if (pointIdx !== branch.length - 1) return;
+  // // Remove point from end of branch
+  // renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+  //   if (activePolyline.rawVal === null) return; // only in active mode
 
-    const nextBranches = [...poly.branches.rawVal];
-    nextBranches[0] = branch.slice(0, -1);
-    poly.branches.val = nextBranches;
-  });
+  //   const hits = raycaster.intersectObject(points, false);
+  //   if (!hits.length) return;
+
+  //   const poly = polylines.get(activePolyline.rawVal);
+  //   if (!poly) return;
+
+  //   const branch = poly.branches.rawVal[0] ?? [];
+  //   const pointIdx = hits[0].index ?? null;
+  //   if (pointIdx === null) return;
+
+  //   // if point is not at the end of branch
+  //   if (pointIdx !== branch.length - 1) return;
+
+  //   const nextBranches = [...poly.branches.rawVal];
+  //   nextBranches[0] = branch.slice(0, -1);
+  //   poly.branches.val = nextBranches;
+  // });
 
   /* ---- Dragging Mode ---- */
 
   // Setup dragPoint
-  const dragPoint = van.state<number | null>(null);
-  let pointerdown = false;
-  renderer.domElement.addEventListener("pointerdown", () => {
-    pointerdown = true;
-  });
-  renderer.domElement.addEventListener("pointermove", () => {
-    if (activePolyline.rawVal === null) return; // only in active mode
-    if (!pointerdown) return;
+  // const dragPoint = van.state<number | null>(null);
+  // let pointerdown = false;
+  // renderer.domElement.addEventListener("pointerdown", () => {
+  //   pointerdown = true;
+  // });
+  // renderer.domElement.addEventListener("pointermove", () => {
+  //   if (activePolyline.rawVal === null) return; // only in active mode
+  //   if (!pointerdown) return;
 
-    const pointHits = raycaster.intersectObject(points, false);
-    if (pointHits.length) dragPoint.val = pointHits[0].index ?? null;
-  });
-  renderer.domElement.addEventListener("pointerup", () => {
-    pointerdown = false;
-    setTimeout(() => (dragPoint.val = null)); // Set append point 1st then remove drag point
-  });
+  //   const pointHits = raycaster.intersectObject(points, false);
+  //   if (pointHits.length) dragPoint.val = pointHits[0].index ?? null;
+  // });
+  // renderer.domElement.addEventListener("pointerup", () => {
+  //   pointerdown = false;
+  //   setTimeout(() => (dragPoint.val = null)); // Set append point 1st then remove drag point
+  // });
 
-  // Drag the point
-  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (dragPoint.rawVal === null) return; // only in drag mode
+  // // Drag the point
+  // renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
+  //   if (dragPoint.rawVal === null) return; // only in drag mode
 
-    const poly = polylines.get(activePolyline.rawVal!); // activePolyline is not null because dragPoint is not null
-    const hp = hitPoint.rawVal;
-    if (!poly || !hp) return;
+  //   const poly = polylines.get(activePolyline.rawVal!); // activePolyline is not null because dragPoint is not null
+  //   const hp = hitPoint.rawVal;
+  //   if (!poly || !hp) return;
 
-    const existing = poly.points.rawVal[dragPoint.rawVal];
-    if (
-      !existing ||
-      existing[0] !== hp.x ||
-      existing[1] !== hp.y ||
-      existing[2] !== hp.z
-    ) {
-      const nextPts = [...poly.points.rawVal];
-      nextPts[dragPoint.rawVal] = [hp.x, hp.y, hp.z];
-      poly.points.val = nextPts;
-    }
-  });
+  //   const existing = poly.points.rawVal[dragPoint.rawVal];
+  //   if (
+  //     !existing ||
+  //     existing[0] !== hp.x ||
+  //     existing[1] !== hp.y ||
+  //     existing[2] !== hp.z
+  //   ) {
+  //     const nextPts = [...poly.points.rawVal];
+  //     nextPts[dragPoint.rawVal] = [hp.x, hp.y, hp.z];
+  //     poly.points.val = nextPts;
+  //   }
+  // });
 
   /* ---- Append Mode  ---- */
-
-  // Setup appendPoint
-  const appendPoint = van.state<number | null>(null);
-  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (activePolyline.rawVal === null) return; // only in edit mode
-    if (dragPoint.rawVal !== null) return; // not in drag mode
-
-    const hits = raycaster.intersectObject(points, false);
-    if (hits.length) appendPoint.val = hits[0].index ?? null;
-  });
 
   // // Add marker
   // const marker = new THREE.Points(
