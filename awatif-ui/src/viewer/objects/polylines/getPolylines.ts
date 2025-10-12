@@ -33,6 +33,7 @@ export function getPolylines({
     APPEND,
   }
   const mode = van.state<Mode>(Mode.SELECT);
+  const editModes = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
 
   // Setup raycaster
   const pointer = new THREE.Vector2();
@@ -47,7 +48,7 @@ export function getPolylines({
   });
 
   // Set edit and append mode together because they depend on each other
-  const editPolyline = van.state<number | null>(null);
+  let editPolyline: number | null = null;
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return; // avoid right-click
 
@@ -55,7 +56,7 @@ export function getPolylines({
       const lineHits = raycaster.intersectObject(lines, false);
       if (lineHits.length) {
         mode.val = Mode.EDIT;
-        editPolyline.val = lineHits[0].object.userData.polyline;
+        editPolyline = lineHits[0].object.userData.polyline;
       }
     } else if (mode.val === Mode.EDIT) {
       const pointHits = raycaster.intersectObject(points, false);
@@ -98,8 +99,6 @@ export function getPolylines({
   const EDIT_COLOR = new THREE.Color("yellow");
 
   // Render lines
-  const editModes = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
-
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
@@ -166,7 +165,7 @@ export function getPolylines({
     render();
   });
 
-  /* ---- Interactions ---- */
+  /* ---- Interactions without hit points ---- */
   // Show active color when hovering
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
     if (mode.val !== Mode.SELECT) return;
@@ -182,33 +181,66 @@ export function getPolylines({
   domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     if (mode.val !== Mode.EDIT) return;
 
-    editPolyline.val = null;
+    editPolyline = null;
   });
 
-  // setup hitPoint
-  // const hitPoint = van.state<THREE.Vector3 | null>(null);
+  /* ---- Interactions with hit points ---- */
 
-  // const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
-  // const gridDivisions = gridInput.division.rawVal;
-  // const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
-  // const offset = -gridSize / 2;
-  // const step = gridSize / gridDivisions;
-  // const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
+  // Setup hitPoint
+  const hitPoint = van.state<THREE.Vector3 | null>(null);
+  const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
+  const gridDivisions = gridInput.division.rawVal;
+  const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
+  const offset = -gridSize / 2;
+  const step = gridSize / gridDivisions;
+  const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
+  domElement.addEventListener("pointermove", (e: PointerEvent) => {
+    if (!editModes.includes(mode.val)) return;
 
-  // renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-  //   if (editPolyline.rawVal === null) return; // only in edit mode
+    const hits = raycaster.intersectObject(grid, false);
+    if (hits.length) {
+      const px = snap(hits[0].point.x);
+      const py = snap(hits[0].point.y);
+      const pz = snap(hits[0].point.z);
+      const curr = hitPoint.rawVal;
+      if (!curr || curr.x !== px || curr.y !== py || curr.z !== pz) {
+        hitPoint.val = new THREE.Vector3(px, py, pz);
+      }
+    } else hitPoint.val = null;
+  });
 
-  //   const hits = raycaster.intersectObject(grid, false);
-  //   if (hits.length) {
-  //     const px = snap(hits[0].point.x);
-  //     const py = snap(hits[0].point.y);
-  //     const pz = snap(hits[0].point.z);
-  //     const curr = hitPoint.rawVal;
-  //     if (!curr || curr.x !== px || curr.y !== py || curr.z !== pz) {
-  //       hitPoint.val = new THREE.Vector3(px, py, pz);
-  //     }
-  //   } else hitPoint.val = null;
-  // });
+  // Setup dragPoint
+  let dragPoint: number | null = null;
+  domElement.addEventListener("pointerdown", () => {
+    if (mode.val !== Mode.EDIT) return;
+    const hits = raycaster.intersectObject(points, false);
+    if (hits.length) dragPoint = hits[0].index ?? null;
+  });
+  domElement.addEventListener("pointerup", () => {
+    if (mode.val !== Mode.EDIT) return;
+    dragPoint = null;
+  });
+
+  // Drag the point
+  van.derive(() => {
+    if (
+      mode.val !== Mode.DRAG ||
+      editPolyline === null ||
+      dragPoint === null ||
+      hitPoint.val === null
+    )
+      return;
+
+    const hp = hitPoint.val;
+    const polyline = polylines.get(editPolyline);
+    if (!hp || !polyline) return;
+
+    const polyPoints = polyline.points.rawVal;
+    if (polyPoints[dragPoint].every((val, i) => val === hp[i])) return;
+
+    polyPoints[dragPoint] = [hp.x, hp.y, hp.z];
+    polyline.points.val = [...polyPoints];
+  });
 
   // // Remove point from end of branch
   // renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
@@ -230,47 +262,6 @@ export function getPolylines({
   //   const nextBranches = [...poly.branches.rawVal];
   //   nextBranches[0] = branch.slice(0, -1);
   //   poly.branches.val = nextBranches;
-  // });
-
-  /* ---- Dragging Mode ---- */
-
-  // Setup dragPoint
-  // const dragPoint = van.state<number | null>(null);
-  // let pointerdown = false;
-  // renderer.domElement.addEventListener("pointerdown", () => {
-  //   pointerdown = true;
-  // });
-  // renderer.domElement.addEventListener("pointermove", () => {
-  //   if (activePolyline.rawVal === null) return; // only in active mode
-  //   if (!pointerdown) return;
-
-  //   const pointHits = raycaster.intersectObject(points, false);
-  //   if (pointHits.length) dragPoint.val = pointHits[0].index ?? null;
-  // });
-  // renderer.domElement.addEventListener("pointerup", () => {
-  //   pointerdown = false;
-  //   setTimeout(() => (dragPoint.val = null)); // Set append point 1st then remove drag point
-  // });
-
-  // // Drag the point
-  // renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-  //   if (dragPoint.rawVal === null) return; // only in drag mode
-
-  //   const poly = polylines.get(activePolyline.rawVal!); // activePolyline is not null because dragPoint is not null
-  //   const hp = hitPoint.rawVal;
-  //   if (!poly || !hp) return;
-
-  //   const existing = poly.points.rawVal[dragPoint.rawVal];
-  //   if (
-  //     !existing ||
-  //     existing[0] !== hp.x ||
-  //     existing[1] !== hp.y ||
-  //     existing[2] !== hp.z
-  //   ) {
-  //     const nextPts = [...poly.points.rawVal];
-  //     nextPts[dragPoint.rawVal] = [hp.x, hp.y, hp.z];
-  //     poly.points.val = nextPts;
-  //   }
   // });
 
   /* ---- Append Mode  ---- */
