@@ -14,13 +14,13 @@ export function getPolylines({
   polylines,
   gridInput,
   camera,
-  renderer,
+  domElement,
   render,
 }: {
   polylines: Polylines;
   gridInput: GridInput;
   camera: THREE.Camera;
-  renderer: THREE.WebGLRenderer;
+  domElement: HTMLCanvasElement;
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
@@ -39,25 +39,18 @@ export function getPolylines({
   const raycaster = new THREE.Raycaster();
   raycaster.params.Line = { threshold: 0.15 };
   raycaster.params.Points = { threshold: 0.2 };
-  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    const rect = renderer.domElement.getBoundingClientRect();
+  domElement.addEventListener("pointermove", (e: PointerEvent) => {
+    const rect = domElement.getBoundingClientRect();
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     raycaster.setFromCamera(pointer, camera);
   });
 
-  // Set Select mode
-  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-    e.preventDefault();
-
-    if (mode.val === Mode.APPEND) mode.val = Mode.EDIT;
-    else mode.val = Mode.SELECT;
-  });
-
   // Set Edit mode
   const editPolyline = van.state<number | null>(null);
-  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+  domElement.addEventListener("pointerup", (e: PointerEvent) => {
+    if (e.button !== 0) return; // avoid right-click
+
     const hits = raycaster.intersectObject(lines, false);
     if (!hits.length) return;
 
@@ -65,41 +58,51 @@ export function getPolylines({
     editPolyline.val = hits[0].object.userData.polyline;
   });
 
-  // Set Drag mode
-  let pointerdown = false;
-  let previousMode: Mode = mode.val;
-  renderer.domElement.addEventListener("pointerdown", () => {
-    previousMode = mode.val;
-    pointerdown = true;
-  });
-  renderer.domElement.addEventListener("pointermove", () => {
-    if (!pointerdown) return;
-    mode.val = Mode.DRAG;
-  });
-  renderer.domElement.addEventListener("pointerup", () => {
-    if (mode.val === Mode.DRAG) mode.val = previousMode;
-    pointerdown = false;
-  });
-
   // Set Append mode
-  renderer.domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+  domElement.addEventListener("pointerup", (e: PointerEvent) => {
+    if (e.button !== 0) return; // avoid right-click
+
     if (mode.val !== Mode.EDIT) return;
 
     const hits = raycaster.intersectObject(points, false);
     if (hits.length) mode.val = Mode.APPEND;
   });
 
-  renderer.domElement.addEventListener("pointermove", () => {
+  // Set Drag mode
+  let pointerdown = false;
+  let previousMode: Mode = mode.val;
+  domElement.addEventListener("pointerdown", () => {
+    previousMode = mode.val;
+    pointerdown = true;
+  });
+  domElement.addEventListener("pointermove", () => {
+    if (!pointerdown) return;
+    mode.val = Mode.DRAG;
+  });
+  domElement.addEventListener("pointerup", () => {
+    if (mode.val === Mode.DRAG) mode.val = previousMode;
+    pointerdown = false;
+  });
+
+  // Revert back to edit or select modes
+  domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+    e.preventDefault();
+
+    if (mode.val === Mode.APPEND) mode.val = Mode.EDIT;
+    else mode.val = Mode.SELECT;
+  });
+
+  domElement.addEventListener("pointermove", () => {
     console.log(Mode[mode.val]);
   });
 
   /* ---- Rendering ---- */
   const DEFAULT_COLOR = new THREE.Color("red");
-  const ACTIVE_COLOR = new THREE.Color("yellow");
+  const EDIT_COLOR = new THREE.Color("yellow");
 
   // Render lines
-  const editLike = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
+  const editModes = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
+
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
@@ -125,7 +128,7 @@ export function getPolylines({
     lines.geometry.computeBoundingSphere();
 
     lines.material.color.copy(
-      editLike.includes(mode.val) ? ACTIVE_COLOR : DEFAULT_COLOR
+      editModes.includes(mode.val) ? EDIT_COLOR : DEFAULT_COLOR
     );
 
     render();
@@ -135,7 +138,7 @@ export function getPolylines({
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
-      color: ACTIVE_COLOR,
+      color: EDIT_COLOR,
       size: 8,
       sizeAttenuation: false,
       depthTest: false,
@@ -145,7 +148,7 @@ export function getPolylines({
   group.add(points);
 
   van.derive(() => {
-    points.visible = editLike.includes(mode.val) && editPolyline.val !== null;
+    points.visible = editModes.includes(mode.val);
 
     if (points.visible) {
       const pts = polylines.get(0)?.points.val ?? [];
@@ -166,25 +169,26 @@ export function getPolylines({
     render();
   });
 
-  // SelectMode: Show active color when hovering
-  renderer.domElement.addEventListener("pointermove", (e: PointerEvent) => {
+  /* ---- Interactions ---- */
+  // Show active color when hovering
+  domElement.addEventListener("pointermove", (e: PointerEvent) => {
     if (mode.val !== Mode.SELECT) return;
 
     const hits = raycaster.intersectObject(lines, false);
-    if (hits.length) lines.material.color.copy(ACTIVE_COLOR);
+    if (hits.length) lines.material.color.copy(EDIT_COLOR);
     else lines.material.color.copy(DEFAULT_COLOR);
 
     render();
   });
 
-  // EditMode: Deselect polyline
-  renderer.domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+  // Deselect a polyline
+  domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     if (mode.val !== Mode.EDIT) return;
 
     editPolyline.val = null;
   });
 
-  // // setup hitPoint
+  // setup hitPoint
   // const hitPoint = van.state<THREE.Vector3 | null>(null);
 
   // const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed

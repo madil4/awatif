@@ -27,7 +27,7 @@ export function getGrid({
       0x404040,
       0x404040
     );
-    grid.rotateX(Math.PI / 2); // because the helper is based on y is the normal axis
+    grid.rotateX(Math.PI / 2); // because the helper is based on y as the normal axis
 
     group.add(grid);
 
