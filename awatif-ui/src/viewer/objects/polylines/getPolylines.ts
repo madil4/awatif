@@ -46,26 +46,21 @@ export function getPolylines({
     raycaster.setFromCamera(pointer, camera);
   });
 
-  // Set Edit mode
+  // Set edit and append mode together because they depend on each other
   const editPolyline = van.state<number | null>(null);
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return; // avoid right-click
 
-    const hits = raycaster.intersectObject(lines, false);
-    if (!hits.length) return;
-
-    mode.val = Mode.EDIT;
-    editPolyline.val = hits[0].object.userData.polyline;
-  });
-
-  // Set Append mode
-  domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (e.button !== 0) return; // avoid right-click
-
-    if (mode.val !== Mode.EDIT) return;
-
-    const hits = raycaster.intersectObject(points, false);
-    if (hits.length) mode.val = Mode.APPEND;
+    if (mode.val === Mode.SELECT) {
+      const lineHits = raycaster.intersectObject(lines, false);
+      if (lineHits.length) {
+        mode.val = Mode.EDIT;
+        editPolyline.val = lineHits[0].object.userData.polyline;
+      }
+    } else if (mode.val === Mode.EDIT) {
+      const pointHits = raycaster.intersectObject(points, false);
+      if (pointHits.length) mode.val = Mode.APPEND;
+    }
   });
 
   // Set Drag mode
