@@ -13,9 +13,7 @@ export function getViewer({
   gridInput?: GridInput;
   polylines?: Polylines;
 }): HTMLDivElement {
-  // Init
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
-
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(
@@ -35,11 +33,20 @@ export function getViewer({
   container.id = "viewer";
   container.appendChild(renderer.domElement);
 
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    render();
+  });
+
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enabled = false;
   controls.update();
+  controls.addEventListener("change", render);
 
-  // Add objects
+  // Objects
   gridInput = {
     size: gridInput?.size ?? van.state(10),
     division: gridInput?.division ?? van.state(10),
@@ -53,23 +60,12 @@ export function getViewer({
         polylines,
         gridInput,
         camera,
-        renderer,
+        domElement: renderer.domElement,
         render,
       })
     );
 
   render();
-
-  // Events
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    render();
-  });
-
-  controls.addEventListener("change", render);
 
   return container;
 }
