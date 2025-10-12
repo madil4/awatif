@@ -76,6 +76,7 @@ export function getPolylines({
     pointerdown = true;
   });
   domElement.addEventListener("pointermove", () => {
+    if (mode.val !== Mode.EDIT) return; // only in edit mode
     if (!pointerdown) return;
     mode.val = Mode.DRAG;
   });
@@ -92,9 +93,10 @@ export function getPolylines({
     else mode.val = Mode.SELECT;
   });
 
-  domElement.addEventListener("pointermove", () => {
-    console.log(Mode[mode.val]);
-  });
+  domElement.addEventListener("pointermove", () => console.log(Mode[mode.val]));
+  domElement.addEventListener("pointerdown", () => console.log(Mode[mode.val]));
+  domElement.addEventListener("pointerup", () => console.log(Mode[mode.val]));
+  domElement.addEventListener("contextmenu", () => console.log(Mode[mode.val]));
 
   /* ---- Rendering ---- */
   const DEFAULT_COLOR = new THREE.Color("red");
