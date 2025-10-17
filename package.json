@@ -1,11 +1,10 @@
 {
-  "name": "@awatif",
+  "name": "awatif-workspace",
   "description": "The First Open-source Structural Analysis and Design Software",
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
   "workspaces": [
-    "awatif-ui",
-    "examples"
+    "/*"
   ]
 }
