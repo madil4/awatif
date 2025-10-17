@@ -1,14 +1,9 @@
 {
-  "name": "awatif",
+  "name": "@awatif",
   "description": "The First Open-source Structural Analysis and Design Software",
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
-  "scripts": {
-    "dev:ui": "npm run dev -w awatif-ui",
-    "dev:examples": "npm run dev -w examples",
-    "deploy:examples": "npm run deploy -w examples"
-  },
   "workspaces": [
     "awatif-ui",
     "examples"
