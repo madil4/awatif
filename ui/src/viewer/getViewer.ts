@@ -1,16 +1,16 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { getGrid, GridInput } from "./objects/grid/getGrid";
+import { getGrid, Grid } from "./objects/grid/getGrid";
 import { Polylines, getPolylines } from "./objects/polylines/getPolylines";
 
 import "./style.css";
 
 export function getViewer({
-  gridInput,
+  grid,
   polylines,
 }: {
-  gridInput?: GridInput;
+  grid?: Grid;
   polylines?: Polylines;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -47,18 +47,18 @@ export function getViewer({
   controls.addEventListener("change", render);
 
   // Objects
-  gridInput = {
-    size: gridInput?.size ?? van.state(10),
-    division: gridInput?.division ?? van.state(10),
+  grid = {
+    size: grid?.size ?? van.state(10),
+    division: grid?.division ?? van.state(10),
   };
 
-  scene.add(getGrid({ gridInput, render }));
+  scene.add(getGrid({ grid, render }));
 
   if (polylines)
     scene.add(
       getPolylines({
         polylines,
-        gridInput,
+        grid,
         camera,
         domElement: renderer.domElement,
         render,

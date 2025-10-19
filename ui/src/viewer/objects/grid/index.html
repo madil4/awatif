@@ -11,17 +11,17 @@
       import { getViewer } from "../../getViewer.ts";
       import { getGrid } from "./getGrid.ts";
 
-      const gridInput = {
+      const grid = {
         size: vanjs.state(10),
         division: vanjs.state(10),
       };
 
       setTimeout(() => {
-        gridInput.size.val = 10;
-        gridInput.division.val = 2;
+        grid.size.val = 10;
+        grid.division.val = 2;
       }, 1000);
 
-      document.body.append(getViewer({ gridInput }));
+      document.body.append(getViewer({ grid }));
     </script>
   </body>
 </html>
