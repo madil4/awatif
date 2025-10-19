@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { getGrid, Grid } from "./objects/grid/getGrid";
-import { Polylines, getPolylines } from "./objects/polylines/getPolylines";
+import { getGrid, Grid } from "./grid/getGrid";
+import { Polylines, getPolylines } from "./polylines/getPolylines";
 
 import "./style.css";
 
