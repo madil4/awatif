@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { GridInput } from "../grid/getGrid";
+import { Grid } from "../grid/getGrid";
 
 export type Polylines = Map<
   number,
@@ -12,13 +12,13 @@ export type Polylines = Map<
 
 export function getPolylines({
   polylines,
-  gridInput,
+  grid,
   camera,
   domElement,
   render,
 }: {
   polylines: Polylines;
-  gridInput: GridInput;
+  grid: Grid;
   camera: THREE.Camera;
   domElement: HTMLCanvasElement;
   render: () => void;
@@ -205,16 +205,16 @@ export function getPolylines({
 
   // Setup hitPoint
   const hitPoint = van.state<THREE.Vector3 | null>(null);
-  const gridSize = gridInput.size.rawVal; // Todo: make it reactive when needed
-  const gridDivisions = gridInput.division.rawVal;
-  const grid = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
+  const gridSize = grid.size.rawVal; // Todo: make it reactive when needed
+  const gridDivisions = grid.division.rawVal;
+  const gridObj = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
   const offset = -gridSize / 2;
   const step = gridSize / gridDivisions;
   const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
     if (!editModes.includes(mode.val)) return;
 
-    const hits = raycaster.intersectObject(grid, false);
+    const hits = raycaster.intersectObject(gridObj, false);
     if (hits.length) {
       const px = snap(hits[0].point.x);
       const py = snap(hits[0].point.y);

@@ -1,35 +1,35 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 
-export type GridInput = {
+export type Grid = {
   size: State<number>;
   division: State<number>;
 };
 
 export function getGrid({
-  gridInput,
+  grid,
   render,
 }: {
-  gridInput: GridInput;
+  grid: Grid;
   render: () => void;
 }): THREE.Group {
-  let grid: THREE.GridHelper;
+  let gridObj: THREE.GridHelper;
   const group = new THREE.Group();
 
   // Events
   van.derive(() => {
-    grid?.dispose();
+    gridObj?.dispose();
     group.clear();
 
-    grid = new THREE.GridHelper(
-      gridInput.size.val,
-      gridInput.division.val,
+    gridObj = new THREE.GridHelper(
+      grid.size.val,
+      grid.division.val,
       0x404040,
       0x404040
     );
-    grid.rotateX(Math.PI / 2); // because the helper is based on y as the normal axis
+    gridObj.rotateX(Math.PI / 2); // because the helper is based on y as the normal axis
 
-    group.add(grid);
+    group.add(gridObj);
 
     render();
   });
