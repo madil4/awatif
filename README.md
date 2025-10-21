@@ -18,7 +18,7 @@ npm run dev -w examples
 
 ## Coding Style
 
-- Keep it simple. Focus on core features and minimum viable product. The system is already complex—avoid adding more.
+- Keep it simple. Focus on core features and minimum viable product. The system is already complex
 - Use types. Functions should fully describe inputs and outputs.
 - Avoid global state. If unavoidable, use reactive objects with the signal approach.
 
