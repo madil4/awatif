@@ -6,7 +6,7 @@ export type Polylines = Map<
   number,
   {
     points: State<number[][]>;
-    branches: State<number[][]>;
+    segments: State<number[][]>;
   }
 >;
 
@@ -45,21 +45,20 @@ export function getPolylines({
   );
   lines.userData.polyline = 0;
   group.add(lines);
-  const toSegments = (branch: number[], points: number[][]) =>
-    branch
-      .map((_, i) =>
-        i != branch.length - 1 ? [points[branch[i]], points[branch[i + 1]]] : []
-      )
-      .flat()
-      .flat();
 
   van.derive(() => {
     const points = polylines.get(0)?.points.val ?? [];
-    const branches = polylines.get(0)?.branches.val ?? [];
+    const segments = polylines.get(0)?.segments.val ?? [];
 
     lines.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(toSegments(branches[0], points), 3)
+      new THREE.Float32BufferAttribute(
+        segments
+          .map(([n1, n2]) => [points[n1], points[n2]])
+          .flat()
+          .flat(),
+        3
+      )
     );
     lines.geometry.computeBoundingSphere();
 
@@ -87,17 +86,17 @@ export function getPolylines({
     points.visible = editModes.includes(mode.val);
 
     if (points.visible) {
-      const pts = polylines.get(0)?.points.val ?? [];
-      const branches = polylines.get(0)?.branches.val ?? [];
-      const branch = branches[0] ?? [];
-      const pointBuffer = branch
-        .map((idx) => pts[idx])
-        .filter((p): p is number[] => Array.isArray(p))
-        .flat();
+      const polyPoints = polylines.get(0)?.points.val ?? [];
+      const segments = polylines.get(0)?.segments.val ?? [];
+
+      const segPoints = Array.from(new Set(segments.flat()));
 
       points.geometry.setAttribute(
         "position",
-        new THREE.Float32BufferAttribute(pointBuffer, 3)
+        new THREE.Float32BufferAttribute(
+          segPoints.map((i) => polyPoints[i]).flat(),
+          3
+        )
       );
       points.geometry.computeBoundingSphere();
     }
@@ -179,27 +178,27 @@ export function getPolylines({
     render();
   });
 
-  // Remove point from end of branch
-  domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-    if (mode.val !== Mode.EDIT || editPolyline === null) return;
+  // // Remove point from end of branch
+  // domElement.addEventListener("contextmenu", (e: MouseEvent) => {
+  //   if (mode.val !== Mode.EDIT || editPolyline === null) return;
 
-    const hits = raycaster.intersectObject(points, false);
-    if (!hits.length) return;
+  //   const hits = raycaster.intersectObject(points, false);
+  //   if (!hits.length) return;
 
-    const poly = polylines.get(editPolyline);
-    if (!poly) return;
+  //   const poly = polylines.get(editPolyline);
+  //   if (!poly) return;
 
-    const branchIdx = 0;
-    const branch = poly.branches.val[branchIdx] ?? [];
-    const pointIdx = hits[0].index ?? null;
-    if (pointIdx === null) return;
+  //   const branchIdx = 0;
+  //   const branch = poly.branches.val[branchIdx] ?? [];
+  //   const pointIdx = hits[0].index ?? null;
+  //   if (pointIdx === null) return;
 
-    if (pointIdx !== branch.length - 1) return; // if point is not at the end of branch
+  //   if (pointIdx !== branch.length - 1) return; // if point is not at the end of branch
 
-    const newBranches = [...poly.branches.val];
-    newBranches[branchIdx] = branch.slice(0, -1);
-    poly.branches.val = newBranches;
-  });
+  //   const newBranches = [...poly.branches.val];
+  //   newBranches[branchIdx] = branch.slice(0, -1);
+  //   poly.branches.val = newBranches;
+  // });
 
   /* ---- Interactions with hit points ---- */
 
