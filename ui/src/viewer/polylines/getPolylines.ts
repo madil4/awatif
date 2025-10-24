@@ -116,9 +116,34 @@ export function getPolylines({
     raycaster.setFromCamera(pointer, camera);
   });
 
-  // Set edit and append mode together because they depend on each other
+  // Set modes
   let editPolyline: number | null = null;
+  let dragPoint: number | null = null;
   let appendPoint: number | null = null;
+  let pointerdown = false;
+  domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (e.button !== 0) return; // avoid right-click
+
+    if (mode.val !== Mode.EDIT) return;
+
+    const hits = raycaster.intersectObject(points, false);
+    if (!hits.length) return;
+
+    pointerdown = true;
+    dragPoint = hits[0].index ?? null;
+  });
+
+  domElement.addEventListener("pointermove", () => {
+    if (!pointerdown) return;
+
+    if (mode.val !== Mode.EDIT) return;
+
+    const hits = raycaster.intersectObject(points, false);
+    if (hits.length) return;
+
+    mode.val = Mode.DRAG;
+  });
+
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return; // avoid right-click
 
@@ -134,27 +159,14 @@ export function getPolylines({
         mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
       }
+    } else if (mode.val === Mode.DRAG) {
+      mode.val = Mode.EDIT;
+      dragPoint = null;
     }
-  });
 
-  // Set Drag mode
-  let pointerdown = false;
-  let previousMode: Mode = mode.val;
-  domElement.addEventListener("pointerdown", () => {
-    previousMode = mode.val;
-    pointerdown = true;
-  });
-  domElement.addEventListener("pointermove", () => {
-    if (mode.val !== Mode.EDIT) return;
-    if (!pointerdown) return;
-    mode.val = Mode.DRAG;
-  });
-  domElement.addEventListener("pointerup", () => {
-    if (mode.val === Mode.DRAG) mode.val = previousMode;
     pointerdown = false;
   });
 
-  // Revert back to edit or select modes
   domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     e.preventDefault();
 
@@ -162,12 +174,12 @@ export function getPolylines({
 
     if (mode.val === Mode.APPEND) {
       mode.val = Mode.EDIT;
-      appendPoint = null;
     } else {
       mode.val = Mode.SELECT;
       editPolyline = null;
-      appendPoint = null;
     }
+
+    appendPoint = null;
   });
 
   /* ---- Interactions without hit points ---- */
@@ -183,27 +195,7 @@ export function getPolylines({
     render();
   });
 
-  // // Remove point from end of branch
-  // domElement.addEventListener("contextmenu", (e: MouseEvent) => {
-  //   if (mode.val !== Mode.EDIT || editPolyline === null) return;
-
-  //   const hits = raycaster.intersectObject(points, false);
-  //   if (!hits.length) return;
-
-  //   const poly = polylines.get(editPolyline);
-  //   if (!poly) return;
-
-  //   const branchIdx = 0;
-  //   const branch = poly.branches.val[branchIdx] ?? [];
-  //   const pointIdx = hits[0].index ?? null;
-  //   if (pointIdx === null) return;
-
-  //   if (pointIdx !== branch.length - 1) return; // if point is not at the end of branch
-
-  //   const newBranches = [...poly.branches.val];
-  //   newBranches[branchIdx] = branch.slice(0, -1);
-  //   poly.branches.val = newBranches;
-  // });
+  // remove point
 
   /* ---- Interactions with hit points ---- */
 
@@ -228,18 +220,6 @@ export function getPolylines({
         hitPoint.val = [px, py, pz];
       }
     } else hitPoint.val = null;
-  });
-
-  // Setup dragPoint
-  let dragPoint: number | null = null;
-  domElement.addEventListener("pointerdown", () => {
-    if (mode.val !== Mode.EDIT) return;
-    const hits = raycaster.intersectObject(points, false);
-    if (hits.length) dragPoint = hits[0].index ?? null;
-  });
-  domElement.addEventListener("pointerup", () => {
-    if (mode.val !== Mode.EDIT) return;
-    dragPoint = null;
   });
 
   // Drag the point
@@ -290,12 +270,15 @@ export function getPolylines({
 
   // Append point
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (mode.val !== Mode.APPEND || editPolyline === null) return;
-    if (e.button !== 0 || e.ctrlKey) return;
+    if (e.button !== 0) return; // avoid right-click
+
+    if (mode.val !== Mode.APPEND) return;
+
+    if (editPolyline === null || appendPoint === null) return;
 
     const hp = hitPoint.rawVal;
     const polyline = polylines.get(editPolyline);
-    if (!hp || !polyline || appendPoint === null) return;
+    if (!hp || !polyline) return;
 
     const nextPoints = [...polyline.points.rawVal, hp];
     polyline.points.val = nextPoints;
