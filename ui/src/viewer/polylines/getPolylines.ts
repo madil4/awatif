@@ -191,6 +191,51 @@ export function getPolylines({
   });
 
   // remove point
+  domElement.addEventListener("contextmenu", (e: PointerEvent) => {
+    e.preventDefault();
+    if (mode.val !== Mode.EDIT) return;
+
+    const hits = raycaster.intersectObject(points, false);
+    if (!hits.length) return;
+
+    const polyline = polylines.get(editPolyline!);
+    if (!polyline) return;
+
+    const polyPoints = polyline.points.rawVal;
+    const segments = polyline.segments.rawVal;
+
+    const i = hits[0].index ?? null;
+    if (i === null) return;
+
+    const newPoints = polyPoints.filter((_, idx) => idx !== i);
+    const newSegments = segments
+      .filter(([a, b]) => a !== i && b !== i)
+      .map(
+        ([a, b]) => [a > i ? a - 1 : a, b > i ? b - 1 : b] as [number, number]
+      );
+
+    if (!newSegments.length) {
+      polyline.points.val = [];
+      polyline.segments.val = [];
+      return;
+    }
+
+    const used = new Set<number>(newSegments.flat());
+    const indexMap = new Map<number, number>();
+    const compactPoints: number[][] = [];
+    newPoints.forEach((p, idx) => {
+      if (used.has(idx)) {
+        indexMap.set(idx, compactPoints.length);
+        compactPoints.push(p);
+      }
+    });
+
+    polyline.points.val = compactPoints;
+    polyline.segments.val = newSegments.map(([a, b]) => [
+      indexMap.get(a)!,
+      indexMap.get(b)!,
+    ]);
+  });
 
   /* ---- Interactions with hit points ---- */
 
