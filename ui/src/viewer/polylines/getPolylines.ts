@@ -270,20 +270,25 @@ export function getPolylines({
 
   // Append point
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (e.button !== 0) return; // avoid right-click
-
-    if (mode.val !== Mode.APPEND) return;
-
-    if (editPolyline === null || appendPoint === null) return;
+    if (
+      e.button !== 0 ||
+      mode.val !== Mode.APPEND ||
+      editPolyline === null ||
+      appendPoint === null
+    )
+      return;
 
     const hp = hitPoint.rawVal;
     const polyline = polylines.get(editPolyline);
     if (!hp || !polyline) return;
 
-    const nextPoints = [...polyline.points.rawVal, hp];
-    polyline.points.val = nextPoints;
+    const currentPoint = polyline.points.rawVal[appendPoint];
+    if (currentPoint && currentPoint.every((val, i) => val === hp[i])) return;
 
-    const newIndex = nextPoints.length - 1;
+    const newPoints = [...polyline.points.rawVal, hp];
+    polyline.points.val = newPoints;
+
+    const newIndex = newPoints.length - 1;
     polyline.segments.val = [
       ...polyline.segments.rawVal,
       [appendPoint, newIndex],
