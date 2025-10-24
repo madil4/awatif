@@ -120,6 +120,7 @@ export function getPolylines({
 
   // Set edit and append mode together because they depend on each other
   let editPolyline: number | null = null;
+  let appendPoint: number | null = null;
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return; // avoid right-click
 
@@ -131,7 +132,10 @@ export function getPolylines({
       }
     } else if (mode.val === Mode.EDIT) {
       const pointHits = raycaster.intersectObject(points, false);
-      if (pointHits.length) mode.val = Mode.APPEND;
+      if (pointHits.length) {
+        appendPoint = pointHits[0].index ?? null;
+        if (appendPoint !== null) mode.val = Mode.APPEND;
+      }
     }
   });
 
@@ -158,10 +162,13 @@ export function getPolylines({
 
     if (raycaster.intersectObject(points, false).length) return; // reserved for deleting points
 
-    if (mode.val === Mode.APPEND) mode.val = Mode.EDIT;
-    else {
+    if (mode.val === Mode.APPEND) {
+      mode.val = Mode.EDIT;
+      appendPoint = null;
+    } else {
       mode.val = Mode.SELECT;
       editPolyline = null;
+      appendPoint = null;
     }
   });
 
@@ -259,48 +266,50 @@ export function getPolylines({
   });
 
   /* ---- Append Mode  ---- */
+  // Add append marker
+  const marker = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute([0, 0, 0], 3)
+    ),
+    new THREE.PointsMaterial({
+      color: EDIT_COLOR,
+      size: 8,
+      sizeAttenuation: false,
+      depthTest: false,
+    })
+  );
+  marker.visible = false;
+  group.add(marker);
+  van.derive(() => {
+    if (!hitPoint.val) return;
 
-  // // Add marker
-  // const marker = new THREE.Points(
-  //   new THREE.BufferGeometry().setAttribute(
-  //     "position",
-  //     new THREE.Float32BufferAttribute([0, 0, 0], 3)
-  //   ),
-  //   new THREE.PointsMaterial({
-  //     color: ACTIVE_COLOR,
-  //     size: 8,
-  //     sizeAttenuation: false,
-  //     depthTest: false,
-  //   })
-  // );
-  // marker.visible = false;
-  // group.add(marker);
-  // van.derive(() => {
-  //   if (!hitPoint.val) return;
+    marker.position.set(...(hitPoint.val as [number, number, number]));
+    marker.visible = mode.val === Mode.APPEND;
 
-  //   marker.position.copy(hitPoint.val);
-  //   marker.visible = appendMode.val !== null;
+    render();
+  });
 
-  //   render();
-  // });
+  // Append point
+  domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (mode.val !== Mode.APPEND || editPolyline === null) return;
+    if (e.button !== 0 || e.ctrlKey) return;
 
-  // // Add a new point without branching
-  // renderer.domElement.addEventListener("pointerdown", (e: PointerEvent) => {
-  //   if (appendMode.val === null || activePolyline.val === null) return; // only in append mode
-  //   if (e.button !== 0 || e.ctrlKey) return; // avoid right-click and ctrl+click
+    const hp = hitPoint.rawVal;
+    const polyline = polylines.get(editPolyline);
+    if (!hp || !polyline || appendPoint === null) return;
 
-  //   const poly = polylines.get(activePolyline.val);
-  //   const hp = hitPoint.rawVal;
-  //   if (!poly || !hp) return;
+    const nextPoints = [...polyline.points.rawVal, hp];
+    polyline.points.val = nextPoints;
 
-  //   const branch = poly.branches.rawVal[0] ?? [];
+    const newIndex = nextPoints.length - 1;
+    polyline.segments.val = [
+      ...polyline.segments.rawVal,
+      [appendPoint, newIndex],
+    ];
 
-  //   poly.points.val = [...poly.points.rawVal, [hp.x, hp.y, hp.z]];
-
-  //   const nextBranches = [...poly.branches.rawVal];
-  //   nextBranches[0] = [...branch, poly.points.rawVal.length - 1];
-  //   poly.branches.val = nextBranches;
-  // });
+    appendPoint = newIndex;
+  });
 
   return group;
 }
