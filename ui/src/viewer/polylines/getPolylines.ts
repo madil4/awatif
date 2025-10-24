@@ -291,15 +291,15 @@ export function getPolylines({
       size: 8,
       sizeAttenuation: false,
       depthTest: false,
+      visible: false,
     })
   );
-  marker.visible = false;
   group.add(marker);
   van.derive(() => {
     if (!hitPoint.val) return;
 
+    marker.material.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
     marker.position.set(...(hitPoint.val as [number, number, number]));
-    marker.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
 
     render();
   });
