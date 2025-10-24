@@ -87,14 +87,9 @@ export function getPolylines({
 
     if (points.visible) {
       const polyPoints = polylines.get(0)?.points.val ?? [];
-      const segments = polylines.get(0)?.segments.val ?? [];
-
-      const buffer = Array.from(new Set(segments.flat()))
-        .map((i) => polyPoints[i])
-        .flat();
       points.geometry.setAttribute(
         "position",
-        new THREE.Float32BufferAttribute(buffer, 3)
+        new THREE.Float32BufferAttribute(polyPoints.flat(), 3)
       );
       points.geometry.computeBoundingSphere();
     }
