@@ -17,40 +17,34 @@
       4- Remove a point
       5- Add a new point & connect existing points
       6- Add a polyline
-      
+
       Todo
-      1- Split a segment 
+      1- Split a segment
       */
 
-      const polylines = new Map([
-        [
-          0,
-          {
-            points: van.state([
-              [0, 0, 0],
-              [2, 2, 0],
-              [4, 0, 0],
-            ]),
-            segments: van.state([
-              [0, 1],
-              [1, 2],
-            ]),
-          },
-        ],
-        [
-          1,
-          {
-            points: van.state([
-              [-2, 0, 0],
-              [-2, -2, 0],
-              [0, -4, 0],
-            ]),
-            segments: van.state([
-              [0, 1],
-              [1, 2],
-            ]),
-          },
-        ],
+      const polylines = van.state([
+        {
+          points: van.state([
+            [0, 0, 0],
+            [2, 2, 0],
+            [4, 0, 0],
+          ]),
+          segments: van.state([
+            [0, 1],
+            [1, 2],
+          ]),
+        },
+        {
+          points: van.state([
+            [-2, 0, 0],
+            [-2, -2, 0],
+            [0, -4, 0],
+          ]),
+          segments: van.state([
+            [0, 1],
+            [1, 2],
+          ]),
+        },
       ]);
 
       document.body.append(getViewer({ polylines }));
