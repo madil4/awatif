@@ -39,34 +39,35 @@ export function getPolylines({
   const EDIT_COLOR = new THREE.Color("yellow");
 
   // Render lines
-  const lines = new THREE.LineSegments(
-    new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
-  );
-  lines.userData.polyline = 0;
-  group.add(lines);
-
-  van.derive(() => {
-    const points = polylines.get(0)?.points.val ?? [];
-    const segments = polylines.get(0)?.segments.val ?? [];
-
-    lines.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(
-        segments
-          .map(([n1, n2]) => [points[n1], points[n2]])
-          .flat()
-          .flat(),
-        3
-      )
+  const linesGroup = new THREE.Group();
+  group.add(linesGroup);
+  polylines.forEach(({ points, segments }, idx) => {
+    const lines = new THREE.LineSegments(
+      new THREE.BufferGeometry(),
+      new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
     );
-    lines.geometry.computeBoundingSphere();
+    lines.userData.polyline = idx;
+    linesGroup.add(lines);
 
-    lines.material.color.copy(
-      editModes.includes(mode.val) ? EDIT_COLOR : DEFAULT_COLOR
-    );
+    van.derive(() => {
+      lines.geometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(
+          segments.val
+            .map(([n1, n2]) => [points.val[n1], points.val[n2]])
+            .flat()
+            .flat(),
+          3
+        )
+      );
+      lines.geometry.computeBoundingSphere();
 
-    render();
+      lines.material.color.copy(
+        editModes.includes(mode.val) ? EDIT_COLOR : DEFAULT_COLOR
+      );
+
+      render();
+    });
   });
 
   // Render points
@@ -143,7 +144,7 @@ export function getPolylines({
     if (e.button !== 0) return; // avoid right-click
 
     if (mode.val === Mode.SELECT) {
-      const lineHits = raycaster.intersectObject(lines, false);
+      const lineHits = raycaster.intersectObject(linesGroup, false);
       if (lineHits.length) {
         mode.val = Mode.EDIT;
         editPolyline = lineHits[0].object.userData.polyline;
@@ -183,9 +184,12 @@ export function getPolylines({
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
     if (mode.val !== Mode.SELECT) return;
 
-    const hits = raycaster.intersectObject(lines, false);
-    if (hits.length) lines.material.color.copy(EDIT_COLOR);
-    else lines.material.color.copy(DEFAULT_COLOR);
+    const hits = raycaster.intersectObject(linesGroup);
+    if (hits.length) (hits[0].object as any).material!.color.copy(EDIT_COLOR);
+    else
+      linesGroup.children.forEach((l) =>
+        (l as any).material.color.copy(DEFAULT_COLOR)
+      );
 
     render();
   });
