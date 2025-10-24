@@ -89,14 +89,12 @@ export function getPolylines({
       const polyPoints = polylines.get(0)?.points.val ?? [];
       const segments = polylines.get(0)?.segments.val ?? [];
 
-      const segPoints = Array.from(new Set(segments.flat()));
-
+      const buffer = Array.from(new Set(segments.flat()))
+        .map((i) => polyPoints[i])
+        .flat();
       points.geometry.setAttribute(
         "position",
-        new THREE.Float32BufferAttribute(
-          segPoints.map((i) => polyPoints[i]).flat(),
-          3
-        )
+        new THREE.Float32BufferAttribute(buffer, 3)
       );
       points.geometry.computeBoundingSphere();
     }
@@ -133,8 +131,8 @@ export function getPolylines({
     } else if (mode.val === Mode.EDIT) {
       const pointHits = raycaster.intersectObject(points, false);
       if (pointHits.length) {
+        mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
-        if (appendPoint !== null) mode.val = Mode.APPEND;
       }
     }
   });
@@ -160,7 +158,7 @@ export function getPolylines({
   domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     e.preventDefault();
 
-    if (raycaster.intersectObject(points, false).length) return; // reserved for deleting points
+    if (raycaster.intersectObject(points, false).length) return; // reserved for removing points
 
     if (mode.val === Mode.APPEND) {
       mode.val = Mode.EDIT;
@@ -291,7 +289,7 @@ export function getPolylines({
   });
 
   // Append point
-  domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+  domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (mode.val !== Mode.APPEND || editPolyline === null) return;
     if (e.button !== 0 || e.ctrlKey) return;
 
