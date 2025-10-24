@@ -204,7 +204,7 @@ export function getPolylines({
   /* ---- Interactions with hit points ---- */
 
   // Setup hitPoint
-  const hitPoint = van.state<THREE.Vector3 | null>(null);
+  const hitPoint = van.state<number[] | null>(null);
   const gridSize = grid.size.rawVal; // Todo: make it reactive when needed
   const gridDivisions = grid.division.rawVal;
   const gridObj = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
@@ -220,8 +220,8 @@ export function getPolylines({
       const py = snap(hits[0].point.y);
       const pz = snap(hits[0].point.z);
       const curr = hitPoint.rawVal;
-      if (!curr || curr.x !== px || curr.y !== py || curr.z !== pz) {
-        hitPoint.val = new THREE.Vector3(px, py, pz);
+      if (!curr || curr[0] !== px || curr[1] !== py || curr[2] !== pz) {
+        hitPoint.val = [px, py, pz];
       }
     } else hitPoint.val = null;
   });
@@ -255,7 +255,7 @@ export function getPolylines({
     const polyPoints = polyline.points.rawVal;
     if (polyPoints[dragPoint].every((val, i) => val === hp[i])) return;
 
-    polyPoints[dragPoint] = [hp.x, hp.y, hp.z];
+    polyPoints[dragPoint] = hp;
     polyline.points.val = [...polyPoints];
   });
 
