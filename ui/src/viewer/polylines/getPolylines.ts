@@ -322,19 +322,34 @@ export function getPolylines({
     const polyline = polylines.get(editPolyline);
     if (!hp || !polyline) return;
 
+    // If hit is exactly the same as the current append point, do nothing
     const currentPoint = polyline.points.rawVal[appendPoint];
     if (currentPoint && currentPoint.every((val, i) => val === hp[i])) return;
 
-    const newPoints = [...polyline.points.rawVal, hp];
-    polyline.points.val = newPoints;
+    // Try to find an existing point with identical coordinates to reuse its index
+    const polyPoints = polyline.points.rawVal;
+    const matchIndex = polyPoints.findIndex(
+      (p) => p && p.every((val, i) => val === hp[i])
+    );
 
-    const newIndex = newPoints.length - 1;
+    // Resolve the index we will connect to: reuse existing or create a new one
+    let targetIndex: number;
+    if (matchIndex !== -1) {
+      // Reuse existing point index
+      targetIndex = matchIndex;
+    } else {
+      // Add a new point and use its index
+      const newPoints = [...polyPoints, hp];
+      polyline.points.val = newPoints;
+      targetIndex = newPoints.length - 1;
+    }
+
     polyline.segments.val = [
       ...polyline.segments.rawVal,
-      [appendPoint, newIndex],
+      [appendPoint, targetIndex],
     ];
 
-    appendPoint = newIndex;
+    appendPoint = targetIndex;
   });
 
   return group;
