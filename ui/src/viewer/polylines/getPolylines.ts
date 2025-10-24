@@ -38,6 +38,8 @@ export function getPolylines({
   const DEFAULT_COLOR = new THREE.Color("red");
   const EDIT_COLOR = new THREE.Color("yellow");
 
+  let editPolyline: number | null = null;
+
   // Render lines
   const linesGroup = new THREE.Group();
   group.add(linesGroup);
@@ -63,15 +65,17 @@ export function getPolylines({
       lines.geometry.computeBoundingSphere();
 
       lines.material.color.copy(
-        editModes.includes(mode.val) ? EDIT_COLOR : DEFAULT_COLOR
+        editModes.includes(mode.val) && editPolyline === idx
+          ? EDIT_COLOR
+          : DEFAULT_COLOR
       );
 
       render();
     });
   });
 
-  // Render points
-  const points = new THREE.Points(
+  // Render edit points
+  const editPoints = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
       color: EDIT_COLOR,
@@ -80,19 +84,19 @@ export function getPolylines({
       depthTest: false,
     })
   );
-  points.visible = false;
-  group.add(points);
+  editPoints.visible = false;
+  group.add(editPoints);
 
   van.derive(() => {
-    points.visible = editModes.includes(mode.val);
+    editPoints.visible = editModes.includes(mode.val);
 
-    if (points.visible) {
-      const polyPoints = polylines.get(0)?.points.val ?? [];
-      points.geometry.setAttribute(
+    if (editPoints.visible && editPolyline != null) {
+      const polyPoints = polylines.get(editPolyline)?.points.val ?? [];
+      editPoints.geometry.setAttribute(
         "position",
         new THREE.Float32BufferAttribute(polyPoints.flat(), 3)
       );
-      points.geometry.computeBoundingSphere();
+      editPoints.geometry.computeBoundingSphere();
     }
 
     render();
@@ -113,7 +117,6 @@ export function getPolylines({
   });
 
   // Set modes
-  let editPolyline: number | null = null;
   let dragPoint: number | null = null;
   let appendPoint: number | null = null;
   let pointerdown = false;
@@ -122,7 +125,7 @@ export function getPolylines({
 
     if (mode.val !== Mode.EDIT) return;
 
-    const hits = raycaster.intersectObject(points, false);
+    const hits = raycaster.intersectObject(editPoints, false);
     if (!hits.length) return;
 
     pointerdown = true;
@@ -134,7 +137,7 @@ export function getPolylines({
 
     if (mode.val !== Mode.EDIT) return;
 
-    const hits = raycaster.intersectObject(points, false);
+    const hits = raycaster.intersectObject(editPoints, false);
     if (hits.length) return;
 
     mode.val = Mode.DRAG;
@@ -144,13 +147,13 @@ export function getPolylines({
     if (e.button !== 0) return; // avoid right-click
 
     if (mode.val === Mode.SELECT) {
-      const lineHits = raycaster.intersectObject(linesGroup, false);
+      const lineHits = raycaster.intersectObject(linesGroup);
       if (lineHits.length) {
         mode.val = Mode.EDIT;
         editPolyline = lineHits[0].object.userData.polyline;
       }
     } else if (mode.val === Mode.EDIT) {
-      const pointHits = raycaster.intersectObject(points, false);
+      const pointHits = raycaster.intersectObject(editPoints, false);
       if (pointHits.length) {
         mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
@@ -166,7 +169,7 @@ export function getPolylines({
   domElement.addEventListener("contextmenu", (e: MouseEvent) => {
     e.preventDefault();
 
-    if (raycaster.intersectObject(points, false).length) return; // reserved for removing points
+    if (raycaster.intersectObject(editPoints, false).length) return; // reserved for removing points
 
     if (mode.val === Mode.APPEND) {
       mode.val = Mode.EDIT;
@@ -199,7 +202,7 @@ export function getPolylines({
     e.preventDefault();
     if (mode.val !== Mode.EDIT) return;
 
-    const hits = raycaster.intersectObject(points, false);
+    const hits = raycaster.intersectObject(editPoints, false);
     if (!hits.length) return;
 
     const polyline = polylines.get(editPolyline!);
@@ -221,6 +224,10 @@ export function getPolylines({
     if (!newSegments.length) {
       polyline.points.val = [];
       polyline.segments.val = [];
+
+      mode.val = Mode.SELECT;
+      editPolyline = null;
+
       return;
     }
 
