@@ -27,6 +27,7 @@ export function getPolylines({
   /* ---- Constants ---- */
   const DEFAULT_COLOR = new THREE.Color("red");
   const EDIT_COLOR = new THREE.Color("yellow");
+  const POINT_SIZE = 5;
 
   enum Mode {
     NEW,
@@ -88,7 +89,7 @@ export function getPolylines({
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
       color: EDIT_COLOR,
-      size: 8,
+      size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -372,7 +373,7 @@ export function getPolylines({
     ),
     new THREE.PointsMaterial({
       color: EDIT_COLOR,
-      size: 8,
+      size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
       visible: false,
@@ -381,7 +382,10 @@ export function getPolylines({
   group.add(marker);
 
   van.derive(() => {
-    if (!hitPoint.val) return;
+    if (!hitPoint.val) {
+      marker.material.visible = false;
+      return;
+    }
 
     marker.material.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
     marker.position.set(...(hitPoint.val as [number, number, number]));
