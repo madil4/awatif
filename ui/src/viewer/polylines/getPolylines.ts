@@ -392,5 +392,52 @@ export function getPolylines({
     render();
   });
 
+  // Preview line for append mode
+  const previewLine = new THREE.Line(
+    new THREE.BufferGeometry(),
+    new THREE.LineDashedMaterial({
+      color: EDIT_COLOR,
+      dashSize: POINT_SIZE * 0.025,
+      gapSize: POINT_SIZE * 0.025,
+      depthTest: false,
+    })
+  );
+  group.add(previewLine);
+
+  van.derive(() => {
+    if (
+      mode.val !== Mode.APPEND ||
+      appendPoint === null ||
+      editPolyline === null ||
+      !hitPoint.val
+    ) {
+      previewLine.visible = false;
+      return;
+    }
+
+    const polyline = polylines.val[editPolyline];
+    if (!polyline) {
+      previewLine.visible = false;
+      return;
+    }
+
+    const fromPoint = polyline.points.rawVal[appendPoint];
+    const toPoint = hitPoint.val;
+
+    if (!fromPoint || !toPoint) {
+      previewLine.visible = false;
+      return;
+    }
+
+    previewLine.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute([...fromPoint, ...toPoint], 3)
+    );
+    previewLine.computeLineDistances();
+    previewLine.visible = true;
+
+    render();
+  });
+
   return group;
 }
