@@ -25,9 +25,9 @@ export function getPolylines({
   const group = new THREE.Group();
 
   /* ---- Constants ---- */
+  const POINT_SIZE = grid.size.val * 0.7;
   const DEFAULT_COLOR = new THREE.Color("red");
   const EDIT_COLOR = new THREE.Color("yellow");
-  const POINT_SIZE = 7;
 
   enum Mode {
     NEW,
