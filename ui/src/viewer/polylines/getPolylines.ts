@@ -180,7 +180,7 @@ export function getPolylines({
         linesGroup.children.forEach((l) =>
           (l as any).material.color.copy(DEFAULT_COLOR)
         );
-        marker.visible = true;
+        marker.visible = hitPoint.val !== null;
       }
       render();
     }
@@ -383,6 +383,7 @@ export function getPolylines({
   van.derive(() => {
     if (!hitPoint.val) {
       marker.visible = false;
+      render();
       return;
     }
 
