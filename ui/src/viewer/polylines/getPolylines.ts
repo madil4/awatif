@@ -27,7 +27,7 @@ export function getPolylines({
   /* ---- Constants ---- */
   const DEFAULT_COLOR = new THREE.Color("red");
   const EDIT_COLOR = new THREE.Color("yellow");
-  const POINT_SIZE = 5;
+  const POINT_SIZE = 7;
 
   enum Mode {
     NEW,
