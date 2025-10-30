@@ -95,7 +95,6 @@ export function getPolylines({
     })
   );
   group.add(points);
-
   van.derive(() => {
     points.visible = editModes.includes(mode.val);
 
@@ -190,18 +189,18 @@ export function getPolylines({
     if (e.button !== 0) return;
 
     if (mode.val === Mode.NEW) {
-      handleNewPolylineClick();
+      const lineHits = raycaster.intersectObject(linesGroup);
+      if (lineHits.length) {
+        mode.val = Mode.EDIT;
+        editPolyline = lineHits[0].object.userData.polyline;
+      } else {
+        handleNewPolylineClick();
+      }
     } else if (mode.val === Mode.EDIT) {
       const pointHits = raycaster.intersectObject(points, false);
       if (pointHits.length) {
         mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
-      } else {
-        const lineHits = raycaster.intersectObject(linesGroup);
-        if (lineHits.length) {
-          mode.val = Mode.EDIT;
-          editPolyline = lineHits[0].object.userData.polyline;
-        }
       }
     } else if (mode.val === Mode.DRAG) {
       mode.val = Mode.EDIT;
@@ -365,7 +364,7 @@ export function getPolylines({
     polyline.points.val = [...polyPoints];
   });
 
-  /* ---- Visual Markers ---- */
+  // Marker
   const marker = new THREE.Points(
     new THREE.BufferGeometry().setAttribute(
       "position",
@@ -379,7 +378,6 @@ export function getPolylines({
     })
   );
   group.add(marker);
-
   van.derive(() => {
     if (!hitPoint.val) {
       marker.visible = false;
@@ -393,7 +391,7 @@ export function getPolylines({
     render();
   });
 
-  // Preview line for append mode
+  // Preview line
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
@@ -404,7 +402,6 @@ export function getPolylines({
     })
   );
   group.add(previewLine);
-
   van.derive(() => {
     if (
       mode.val !== Mode.APPEND ||
