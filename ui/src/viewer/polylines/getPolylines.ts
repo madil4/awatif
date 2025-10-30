@@ -376,18 +376,17 @@ export function getPolylines({
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
-      visible: false,
     })
   );
   group.add(marker);
 
   van.derive(() => {
     if (!hitPoint.val) {
-      marker.material.visible = false;
+      marker.visible = false;
       return;
     }
 
-    marker.material.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
+    marker.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
     marker.position.set(...(hitPoint.val as [number, number, number]));
 
     render();
