@@ -110,20 +110,12 @@ export function getPolylines({
     render();
   });
 
-  /* ---- Raycaster Setup ---- */
+  /* ---- Mouse Events ---- */
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
   raycaster.params.Line = { threshold: 0.15 };
   raycaster.params.Points = { threshold: 0.2 };
 
-  function updatePointer(e: PointerEvent) {
-    const rect = domElement.getBoundingClientRect();
-    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-    raycaster.setFromCamera(pointer, camera);
-  }
-
-  /* ---- Grid & Hit Detection ---- */
   const hitPoint = van.state<number[] | null>(null);
   const gridSize = grid.size.rawVal;
   const gridDivisions = grid.division.rawVal;
@@ -132,7 +124,6 @@ export function getPolylines({
   const step = gridSize / gridDivisions;
   const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
 
-  /* ---- Mode Management & Event Handlers ---- */
   domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
     if (mode.val !== Mode.EDIT) return;
@@ -145,7 +136,11 @@ export function getPolylines({
   });
 
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    updatePointer(e);
+    // Update pointer position
+    const rect = domElement.getBoundingClientRect();
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    raycaster.setFromCamera(pointer, camera);
 
     // Update hit point on grid
     const gridHits = raycaster.intersectObject(gridObj, false);
@@ -194,7 +189,7 @@ export function getPolylines({
         mode.val = Mode.EDIT;
         editPolyline = lineHits[0].object.userData.polyline;
       } else {
-        handleNewPolylineClick();
+        handleNewPolyline();
       }
     } else if (mode.val === Mode.EDIT) {
       const pointHits = raycaster.intersectObject(points, false);
@@ -209,13 +204,13 @@ export function getPolylines({
       handleAppendPoint();
     }
 
-    pointerdown = false;
+    pointerdown = false; // important to be at this level
   });
 
   domElement.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
 
-    // Remove point if right-clicking on edit point
+    // Remove point
     if (mode.val === Mode.EDIT) {
       const hits = raycaster.intersectObject(points, false);
       if (hits.length) {
@@ -236,7 +231,6 @@ export function getPolylines({
     appendPoint = null;
   });
 
-  /* ---- Point Operations ---- */
   function handleRemovePoint(pointIndex: number | null) {
     if (pointIndex === null || editPolyline === null) return;
 
@@ -318,31 +312,25 @@ export function getPolylines({
     appendPoint = targetIndex;
   }
 
-  function handleNewPolylineClick() {
+  function handleNewPolyline() {
     const hp = hitPoint.rawVal;
     if (!hp) return;
 
-    const lineHits = raycaster.intersectObject(linesGroup);
-    if (lineHits.length) {
-      mode.val = Mode.EDIT;
-      editPolyline = lineHits[0].object.userData.polyline;
-      return;
-    }
-
-    const newPoints = [hp];
-    const newSegments: [number, number][] = [];
-    const newPolyline = {
-      points: van.state(newPoints),
-      segments: van.state(newSegments),
-    };
-    polylines.val = [...polylines.val, newPolyline];
+    polylines.val = [
+      ...polylines.val,
+      {
+        points: van.state([hp]),
+        segments: van.state([]),
+      },
+    ];
 
     mode.val = Mode.APPEND;
     appendPoint = 0;
     editPolyline = polylines.val.length - 1;
   }
 
-  // Reactive drag point update
+  /* ---- Reactive Updates ---- */
+  // Drag point
   van.derive(() => {
     if (
       mode.val !== Mode.DRAG ||
@@ -364,7 +352,7 @@ export function getPolylines({
     polyline.points.val = [...polyPoints];
   });
 
-  // Marker
+  // Show marker
   const marker = new THREE.Points(
     new THREE.BufferGeometry().setAttribute(
       "position",
@@ -391,7 +379,7 @@ export function getPolylines({
     render();
   });
 
-  // Preview line
+  // Show preview line
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
@@ -410,22 +398,17 @@ export function getPolylines({
       !hitPoint.val
     ) {
       previewLine.visible = false;
+      render();
       return;
     }
 
     const polyline = polylines.val[editPolyline];
-    if (!polyline) {
-      previewLine.visible = false;
-      return;
-    }
+    if (!polyline) return;
 
     const fromPoint = polyline.points.rawVal[appendPoint];
     const toPoint = hitPoint.val;
 
-    if (!fromPoint || !toPoint) {
-      previewLine.visible = false;
-      return;
-    }
+    if (!fromPoint || !toPoint) return;
 
     previewLine.geometry.setAttribute(
       "position",
