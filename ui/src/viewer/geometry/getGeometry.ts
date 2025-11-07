@@ -2,29 +2,29 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Grid } from "../grid/getGrid";
 
-export type Polylines = {
+export type Geometry = {
   points: State<number[][]>;
-  segments: State<number[][]>;
+  lines: State<number[][]>;
 };
 
-export function getPolylines({
-  polylines,
+export function getGeometry({
+  geometry,
   grid,
   camera,
-  domElement,
+  rendererElm: domElement,
   render,
 }: {
-  polylines: Polylines;
+  geometry: Geometry;
   grid: Grid;
   camera: THREE.Camera;
-  domElement: HTMLCanvasElement;
+  rendererElm: HTMLCanvasElement;
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
 
   /* ---- Constants ---- */
   const POINT_SIZE = grid.size.val * 0.7;
-  const POLYLINE_COLOR = new THREE.Color("yellow");
+  const GEOMETRY_COLOR = new THREE.Color("yellow");
 
   enum Mode {
     EDIT,
@@ -43,17 +43,17 @@ export function getPolylines({
   // Render lines
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: POLYLINE_COLOR, depthTest: false })
+    new THREE.LineBasicMaterial({ color: GEOMETRY_COLOR, depthTest: false })
   );
   group.add(lines);
   van.derive(() => {
-    const segments = polylines.segments.val;
-    const polyPoints = polylines.points.val;
+    const lineIndices = geometry.lines.val;
+    const geometryPoints = geometry.points.val;
     const positions: number[] = [];
 
-    segments.forEach(([startIndex, endIndex]) => {
-      const start = polyPoints[startIndex];
-      const end = polyPoints[endIndex];
+    lineIndices.forEach(([startIndex, endIndex]) => {
+      const start = geometryPoints[startIndex];
+      const end = geometryPoints[endIndex];
       if (start && end) {
         positions.push(...start, ...end);
       }
@@ -72,7 +72,7 @@ export function getPolylines({
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
-      color: POLYLINE_COLOR,
+      color: GEOMETRY_COLOR,
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
@@ -80,10 +80,10 @@ export function getPolylines({
   );
   group.add(points);
   van.derive(() => {
-    const polyPoints = polylines.points.val.flat();
+    const geometryPoints = geometry.points.val.flat();
     points.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(polyPoints, 3)
+      new THREE.Float32BufferAttribute(geometryPoints, 3)
     );
     points.geometry.computeBoundingSphere();
 
@@ -155,7 +155,7 @@ export function getPolylines({
         mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
       } else {
-        handleNewPolyline();
+        handleNewGeometry();
       }
     } else if (mode.val === Mode.DRAG) {
       mode.val = Mode.EDIT;
@@ -193,13 +193,15 @@ export function getPolylines({
   function handleRemovePoint(pointIndex: number | null) {
     if (pointIndex === null) return;
 
-    const polyPoints = polylines.points.rawVal;
-    const polySegments = polylines.segments.rawVal;
+    const geometryPoints = geometry.points.rawVal;
+    const geometryLines = geometry.lines.rawVal;
 
-    if (!polyPoints[pointIndex]) return;
+    if (!geometryPoints[pointIndex]) return;
 
-    const remainingPoints = polyPoints.filter((_, idx) => idx !== pointIndex);
-    const adjustedSegments = polySegments
+    const remainingPoints = geometryPoints.filter(
+      (_, idx) => idx !== pointIndex
+    );
+    const adjustedLines = geometryLines
       .filter(([a, b]) => a !== pointIndex && b !== pointIndex)
       .map(
         ([a, b]) =>
@@ -209,15 +211,15 @@ export function getPolylines({
           ]
       );
 
-    if (!adjustedSegments.length) {
-      polylines.points.val = [];
-      polylines.segments.val = [];
+    if (!adjustedLines.length) {
+      geometry.points.val = [];
+      geometry.lines.val = [];
       appendPoint = null;
       mode.val = Mode.EDIT;
       return;
     }
 
-    const used = new Set<number>(adjustedSegments.flat());
+    const used = new Set<number>(adjustedLines.flat());
     const indexMap = new Map<number, number>();
     const compactPoints: number[][] = [];
     remainingPoints.forEach((p, idx) => {
@@ -227,8 +229,8 @@ export function getPolylines({
       }
     });
 
-    polylines.points.val = compactPoints;
-    polylines.segments.val = adjustedSegments.map(([a, b]) => [
+    geometry.points.val = compactPoints;
+    geometry.lines.val = adjustedLines.map(([a, b]) => [
       indexMap.get(a)!,
       indexMap.get(b)!,
     ]);
@@ -247,15 +249,15 @@ export function getPolylines({
     const hp = hitPoint.rawVal;
     if (!hp) return;
 
-    const polyPoints = polylines.points.rawVal;
-    const polySegments = polylines.segments.rawVal;
+    const geometryPoints = geometry.points.rawVal;
+    const geometryLines = geometry.lines.rawVal;
 
-    const currentPoint = polyPoints[appendPoint];
+    const currentPoint = geometryPoints[appendPoint];
     if (!currentPoint) return;
 
     if (currentPoint.every((val: number, i: number) => val === hp[i])) return;
 
-    const matchIndex = polyPoints.findIndex(
+    const matchIndex = geometryPoints.findIndex(
       (p: number[]) => p && p.every((val: number, i: number) => val === hp[i])
     );
 
@@ -263,21 +265,21 @@ export function getPolylines({
     if (matchIndex !== -1) {
       targetIndex = matchIndex;
     } else {
-      polylines.points.val = [...polyPoints, hp];
-      targetIndex = polylines.points.rawVal.length - 1;
+      geometry.points.val = [...geometryPoints, hp];
+      targetIndex = geometry.points.rawVal.length - 1;
     }
 
-    polylines.segments.val = [...polySegments, [appendPoint, targetIndex]];
+    geometry.lines.val = [...geometryLines, [appendPoint, targetIndex]];
 
     appendPoint = targetIndex;
   }
 
-  function handleNewPolyline() {
+  function handleNewGeometry() {
     const hp = hitPoint.rawVal;
     if (!hp) return;
 
     mode.val = Mode.APPEND;
-    const existingIndex = polylines.points.rawVal.findIndex((p) =>
+    const existingIndex = geometry.points.rawVal.findIndex((p) =>
       p.every((val: number, i: number) => val === hp[i])
     );
 
@@ -286,15 +288,15 @@ export function getPolylines({
       return;
     }
 
-    polylines.points.val = [...polylines.points.rawVal, hp];
-    appendPoint = polylines.points.rawVal.length - 1;
+    geometry.points.val = [...geometry.points.rawVal, hp];
+    appendPoint = geometry.points.rawVal.length - 1;
   }
 
   function removeOrphanAppendPoint() {
     if (appendPoint === null) return;
 
-    const segments = polylines.segments.rawVal;
-    const isUsed = segments.some(
+    const lines = geometry.lines.rawVal;
+    const isUsed = lines.some(
       ([a, b]) => a === appendPoint || b === appendPoint
     );
 
@@ -310,14 +312,16 @@ export function getPolylines({
       return;
 
     const hp = hitPoint.val;
-    const polyPoints = polylines.points.rawVal;
-    if (!hp || !polyPoints[dragPoint]) return;
+    const geometryPoints = geometry.points.rawVal;
+    if (!hp || !geometryPoints[dragPoint]) return;
 
-    if (polyPoints[dragPoint].every((val: number, i: number) => val === hp[i]))
+    if (
+      geometryPoints[dragPoint].every((val: number, i: number) => val === hp[i])
+    )
       return;
 
-    polyPoints[dragPoint] = hp;
-    polylines.points.val = [...polyPoints];
+    geometryPoints[dragPoint] = hp;
+    geometry.points.val = [...geometryPoints];
   });
 
   // Show marker
@@ -327,7 +331,7 @@ export function getPolylines({
       new THREE.Float32BufferAttribute([0, 0, 0], 3)
     ),
     new THREE.PointsMaterial({
-      color: POLYLINE_COLOR,
+      color: GEOMETRY_COLOR,
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
@@ -351,7 +355,7 @@ export function getPolylines({
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
-      color: POLYLINE_COLOR,
+      color: GEOMETRY_COLOR,
       dashSize: POINT_SIZE * 0.025,
       gapSize: POINT_SIZE * 0.025,
       depthTest: false,
@@ -365,7 +369,7 @@ export function getPolylines({
       return;
     }
 
-    const fromPoint = polylines.points.rawVal[appendPoint];
+    const fromPoint = geometry.points.rawVal[appendPoint];
     const toPoint = hitPoint.val;
 
     if (!fromPoint || !toPoint) {

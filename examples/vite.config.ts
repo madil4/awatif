@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     port: 4600,
-    open: "polylines/index.html",
+    open: "geometry/index.html",
   },
   root: "./src",
   build: {
@@ -11,7 +11,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        polylines: "./src/polylines/index.html",
+        geometry: "./src/geometry/index.html",
       },
     },
   },
