@@ -11,12 +11,10 @@
       import { getViewer } from "../getViewer.ts";
 
       /* Manual Test cases
-      1- Select a polyline
-      2- Deselect a polyline
-      3- Drag a point
-      4- Remove a point
-      5- Add a new point & connect existing points
-      6- Add a polyline
+      1- Drag a point
+      2- Remove a point
+      3- Add a new point & connect existing points
+      4- Add a polyline
 
       Todo:
       1- Split a segment
@@ -25,30 +23,22 @@
       4- Fix zooming
       */
 
-      const polylines = van.state([
-        {
-          points: van.state([
-            [0, 0, 0],
-            [2, 2, 0],
-            [4, 0, 0],
-          ]),
-          segments: van.state([
-            [0, 1],
-            [1, 2],
-          ]),
-        },
-        {
-          points: van.state([
-            [-2, 0, 0],
-            [-2, -2, 0],
-            [0, -4, 0],
-          ]),
-          segments: van.state([
-            [0, 1],
-            [1, 2],
-          ]),
-        },
-      ]);
+      const polylines = {
+        points: van.state([
+          [0, 0, 0],
+          [2, 2, 0],
+          [4, 0, 0],
+          [-2, 0, 0],
+          [-2, -2, 0],
+          [0, -4, 0],
+        ]),
+        segments: van.state([
+          [0, 1],
+          [1, 2],
+          [3, 4],
+          [4, 5],
+        ]),
+      };
 
       document.body.append(getViewer({ polylines }));
     </script>
