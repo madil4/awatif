@@ -184,6 +184,7 @@ export function getPolylines({
     if (pointHits.length) return;
 
     if (mode.val === Mode.APPEND) {
+      removeOrphanAppendPoint();
       mode.val = Mode.EDIT;
     }
     appendPoint = null;
@@ -287,6 +288,19 @@ export function getPolylines({
 
     polylines.points.val = [...polylines.points.rawVal, hp];
     appendPoint = polylines.points.rawVal.length - 1;
+  }
+
+  function removeOrphanAppendPoint() {
+    if (appendPoint === null) return;
+
+    const segments = polylines.segments.rawVal;
+    const isUsed = segments.some(
+      ([a, b]) => a === appendPoint || b === appendPoint
+    );
+
+    if (!isUsed) {
+      handleRemovePoint(appendPoint);
+    }
   }
 
   /* ---- Reactive Updates ---- */
