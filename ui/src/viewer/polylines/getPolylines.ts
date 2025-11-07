@@ -2,12 +2,10 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Grid } from "../grid/getGrid";
 
-export type Polylines = State<
-  {
-    points: State<number[][]>;
-    segments: State<number[][]>;
-  }[]
->;
+export type Polylines = {
+  points: State<number[][]>;
+  segments: State<number[][]>;
+};
 
 export function getPolylines({
   polylines,
@@ -26,69 +24,55 @@ export function getPolylines({
 
   /* ---- Constants ---- */
   const POINT_SIZE = grid.size.val * 0.7;
-  const DEFAULT_COLOR = new THREE.Color("red");
-  const EDIT_COLOR = new THREE.Color("yellow");
+  const POLYLINE_COLOR = new THREE.Color("yellow");
 
   enum Mode {
-    NEW,
     EDIT,
     DRAG,
     APPEND,
   }
-  const editModes = [Mode.EDIT, Mode.APPEND, Mode.DRAG];
 
   /* ---- State Management ---- */
-  const mode = van.state<Mode>(Mode.NEW);
-  let editPolyline: number | null = null;
+  const mode = van.state<Mode>(Mode.EDIT);
   let dragPoint: number | null = null;
   let appendPoint: number | null = null;
-  let pointerdown = false;
+  let isPointerDown = false;
 
   /* ---- Rendering ---- */
 
   // Render lines
-  const linesGroup = new THREE.Group();
-  group.add(linesGroup);
+  const lines = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({ color: POLYLINE_COLOR, depthTest: false })
+  );
+  group.add(lines);
   van.derive(() => {
-    linesGroup.clear();
+    const segments = polylines.segments.val;
+    const polyPoints = polylines.points.val;
+    const positions: number[] = [];
 
-    polylines.val.forEach(({ points, segments }, idx) => {
-      const lines = new THREE.LineSegments(
-        new THREE.BufferGeometry(),
-        new THREE.LineBasicMaterial({ color: DEFAULT_COLOR, depthTest: false })
-      );
-      lines.userData.polyline = idx;
-      linesGroup.add(lines);
-
-      van.derive(() => {
-        lines.geometry.setAttribute(
-          "position",
-          new THREE.Float32BufferAttribute(
-            segments.val
-              .map((seg: number[]) => [points.val[seg[0]], points.val[seg[1]]])
-              .flat()
-              .flat(),
-            3
-          )
-        );
-        lines.geometry.computeBoundingSphere();
-
-        lines.material.color.copy(
-          editModes.includes(mode.val) && editPolyline === idx
-            ? EDIT_COLOR
-            : DEFAULT_COLOR
-        );
-
-        render();
-      });
+    segments.forEach(([startIndex, endIndex]) => {
+      const start = polyPoints[startIndex];
+      const end = polyPoints[endIndex];
+      if (start && end) {
+        positions.push(...start, ...end);
+      }
     });
+
+    lines.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    lines.geometry.computeBoundingSphere();
+
+    render();
   });
 
   // Render points
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
-      color: EDIT_COLOR,
+      color: POLYLINE_COLOR,
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
@@ -96,16 +80,12 @@ export function getPolylines({
   );
   group.add(points);
   van.derive(() => {
-    points.visible = editModes.includes(mode.val);
-
-    if (points.visible && editPolyline != null) {
-      const polyPoints = polylines.val[editPolyline]?.points.val ?? [];
-      points.geometry.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(polyPoints.flat(), 3)
-      );
-      points.geometry.computeBoundingSphere();
-    }
+    const polyPoints = polylines.points.val.flat();
+    points.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(polyPoints, 3)
+    );
+    points.geometry.computeBoundingSphere();
 
     render();
   });
@@ -126,12 +106,12 @@ export function getPolylines({
 
   domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
-    if (mode.val !== Mode.EDIT) return;
+    if (mode.val !== Mode.EDIT && mode.val !== Mode.APPEND) return;
 
     const hits = raycaster.intersectObject(points, false);
     if (!hits.length) return;
 
-    pointerdown = true;
+    isPointerDown = true;
     dragPoint = hits[0].index ?? null;
   });
 
@@ -157,45 +137,25 @@ export function getPolylines({
     }
 
     // Handle drag mode transition
-    if (pointerdown && mode.val === Mode.EDIT) {
+    if (isPointerDown && (mode.val === Mode.EDIT || mode.val === Mode.APPEND)) {
       const hits = raycaster.intersectObject(points, false);
       if (!hits.length) {
         mode.val = Mode.DRAG;
       }
-    }
-
-    // Show hover effect in NEW mode
-    if (mode.val === Mode.NEW) {
-      const hits = raycaster.intersectObject(linesGroup);
-      if (hits.length) {
-        (hits[0].object as any).material!.color.copy(EDIT_COLOR);
-        marker.visible = false;
-      } else {
-        linesGroup.children.forEach((l) =>
-          (l as any).material.color.copy(DEFAULT_COLOR)
-        );
-        marker.visible = hitPoint.val !== null;
-      }
-      render();
     }
   });
 
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return;
 
-    if (mode.val === Mode.NEW) {
-      const lineHits = raycaster.intersectObject(linesGroup);
-      if (lineHits.length) {
-        mode.val = Mode.EDIT;
-        editPolyline = lineHits[0].object.userData.polyline;
-      } else {
-        handleNewPolyline();
-      }
-    } else if (mode.val === Mode.EDIT) {
-      const pointHits = raycaster.intersectObject(points, false);
+    const pointHits = raycaster.intersectObject(points, false);
+
+    if (mode.val === Mode.EDIT) {
       if (pointHits.length) {
         mode.val = Mode.APPEND;
         appendPoint = pointHits[0].index ?? null;
+      } else {
+        handleNewPolyline();
       }
     } else if (mode.val === Mode.DRAG) {
       mode.val = Mode.EDIT;
@@ -204,44 +164,41 @@ export function getPolylines({
       handleAppendPoint();
     }
 
-    pointerdown = false; // important to be at this level
+    isPointerDown = false; // important to be at this level
   });
 
   domElement.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
 
+    const pointHits = raycaster.intersectObject(points, false);
+
     // Remove point
-    if (mode.val === Mode.EDIT) {
-      const hits = raycaster.intersectObject(points, false);
-      if (hits.length) {
-        handleRemovePoint(hits[0].index ?? null);
+    if (mode.val === Mode.EDIT || mode.val === Mode.APPEND) {
+      if (pointHits.length) {
+        handleRemovePoint(pointHits[0].index ?? null);
         return;
       }
     }
 
     // Exit modes
-    if (raycaster.intersectObject(points, false).length) return;
+    if (pointHits.length) return;
 
     if (mode.val === Mode.APPEND) {
       mode.val = Mode.EDIT;
-    } else {
-      mode.val = Mode.NEW;
-      editPolyline = null;
     }
     appendPoint = null;
   });
 
   function handleRemovePoint(pointIndex: number | null) {
-    if (pointIndex === null || editPolyline === null) return;
+    if (pointIndex === null) return;
 
-    const polyline = polylines.val[editPolyline];
-    if (!polyline) return;
+    const polyPoints = polylines.points.rawVal;
+    const polySegments = polylines.segments.rawVal;
 
-    const polyPoints = polyline.points.rawVal;
-    const segments = polyline.segments.rawVal;
+    if (!polyPoints[pointIndex]) return;
 
-    const newPoints = polyPoints.filter((_, idx) => idx !== pointIndex);
-    const newSegments = segments
+    const remainingPoints = polyPoints.filter((_, idx) => idx !== pointIndex);
+    const adjustedSegments = polySegments
       .filter(([a, b]) => a !== pointIndex && b !== pointIndex)
       .map(
         ([a, b]) =>
@@ -251,46 +208,52 @@ export function getPolylines({
           ]
       );
 
-    if (!newSegments.length) {
-      polyline.points.val = [];
-      polyline.segments.val = [];
-      mode.val = Mode.NEW;
-      editPolyline = null;
+    if (!adjustedSegments.length) {
+      polylines.points.val = [];
+      polylines.segments.val = [];
+      appendPoint = null;
+      mode.val = Mode.EDIT;
       return;
     }
 
-    const used = new Set<number>(newSegments.flat());
+    const used = new Set<number>(adjustedSegments.flat());
     const indexMap = new Map<number, number>();
     const compactPoints: number[][] = [];
-    newPoints.forEach((p, idx) => {
+    remainingPoints.forEach((p, idx) => {
       if (used.has(idx)) {
         indexMap.set(idx, compactPoints.length);
         compactPoints.push(p);
       }
     });
 
-    polyline.points.val = compactPoints;
-    polyline.segments.val = newSegments.map(([a, b]) => [
+    polylines.points.val = compactPoints;
+    polylines.segments.val = adjustedSegments.map(([a, b]) => [
       indexMap.get(a)!,
       indexMap.get(b)!,
     ]);
+
+    if (appendPoint !== null) {
+      const adjustedAppend =
+        appendPoint > pointIndex ? appendPoint - 1 : appendPoint;
+      appendPoint = indexMap.get(adjustedAppend) ?? null;
+      if (appendPoint === null) mode.val = Mode.EDIT;
+    }
   }
 
   function handleAppendPoint() {
-    if (editPolyline === null || appendPoint === null) return;
+    if (appendPoint === null) return;
 
     const hp = hitPoint.rawVal;
-    const polyline = polylines.val[editPolyline];
-    if (!hp || !polyline) return;
+    if (!hp) return;
 
-    const currentPoint = polyline.points.rawVal[appendPoint];
-    if (
-      currentPoint &&
-      currentPoint.every((val: number, i: number) => val === hp[i])
-    )
-      return;
+    const polyPoints = polylines.points.rawVal;
+    const polySegments = polylines.segments.rawVal;
 
-    const polyPoints = polyline.points.rawVal;
+    const currentPoint = polyPoints[appendPoint];
+    if (!currentPoint) return;
+
+    if (currentPoint.every((val: number, i: number) => val === hp[i])) return;
+
     const matchIndex = polyPoints.findIndex(
       (p: number[]) => p && p.every((val: number, i: number) => val === hp[i])
     );
@@ -299,15 +262,11 @@ export function getPolylines({
     if (matchIndex !== -1) {
       targetIndex = matchIndex;
     } else {
-      const newPoints = [...polyPoints, hp];
-      polyline.points.val = newPoints;
-      targetIndex = newPoints.length - 1;
+      polylines.points.val = [...polyPoints, hp];
+      targetIndex = polylines.points.rawVal.length - 1;
     }
 
-    polyline.segments.val = [
-      ...polyline.segments.rawVal,
-      [appendPoint, targetIndex],
-    ];
+    polylines.segments.val = [...polySegments, [appendPoint, targetIndex]];
 
     appendPoint = targetIndex;
   }
@@ -316,40 +275,35 @@ export function getPolylines({
     const hp = hitPoint.rawVal;
     if (!hp) return;
 
-    polylines.val = [
-      ...polylines.val,
-      {
-        points: van.state([hp]),
-        segments: van.state([]),
-      },
-    ];
-
     mode.val = Mode.APPEND;
-    appendPoint = 0;
-    editPolyline = polylines.val.length - 1;
+    const existingIndex = polylines.points.rawVal.findIndex((p) =>
+      p.every((val: number, i: number) => val === hp[i])
+    );
+
+    if (existingIndex !== -1) {
+      appendPoint = existingIndex;
+      return;
+    }
+
+    polylines.points.val = [...polylines.points.rawVal, hp];
+    appendPoint = polylines.points.rawVal.length - 1;
   }
 
   /* ---- Reactive Updates ---- */
   // Drag point
   van.derive(() => {
-    if (
-      mode.val !== Mode.DRAG ||
-      editPolyline === null ||
-      dragPoint === null ||
-      hitPoint.val === null
-    )
+    if (mode.val !== Mode.DRAG || dragPoint === null || hitPoint.val === null)
       return;
 
     const hp = hitPoint.val;
-    const polyline = polylines.val[editPolyline];
-    if (!hp || !polyline) return;
+    const polyPoints = polylines.points.rawVal;
+    if (!hp || !polyPoints[dragPoint]) return;
 
-    const polyPoints = polyline.points.rawVal;
     if (polyPoints[dragPoint].every((val: number, i: number) => val === hp[i]))
       return;
 
     polyPoints[dragPoint] = hp;
-    polyline.points.val = [...polyPoints];
+    polylines.points.val = [...polyPoints];
   });
 
   // Show marker
@@ -359,7 +313,7 @@ export function getPolylines({
       new THREE.Float32BufferAttribute([0, 0, 0], 3)
     ),
     new THREE.PointsMaterial({
-      color: EDIT_COLOR,
+      color: POLYLINE_COLOR,
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
@@ -373,7 +327,7 @@ export function getPolylines({
       return;
     }
 
-    marker.visible = mode.val === Mode.APPEND || mode.val === Mode.NEW;
+    marker.visible = mode.val === Mode.APPEND || mode.val === Mode.EDIT;
     marker.position.set(...(hitPoint.val as [number, number, number]));
 
     render();
@@ -383,7 +337,7 @@ export function getPolylines({
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
-      color: EDIT_COLOR,
+      color: POLYLINE_COLOR,
       dashSize: POINT_SIZE * 0.025,
       gapSize: POINT_SIZE * 0.025,
       depthTest: false,
@@ -391,24 +345,20 @@ export function getPolylines({
   );
   group.add(previewLine);
   van.derive(() => {
-    if (
-      mode.val !== Mode.APPEND ||
-      appendPoint === null ||
-      editPolyline === null ||
-      !hitPoint.val
-    ) {
+    if (mode.val !== Mode.APPEND || appendPoint === null || !hitPoint.val) {
       previewLine.visible = false;
       render();
       return;
     }
 
-    const polyline = polylines.val[editPolyline];
-    if (!polyline) return;
-
-    const fromPoint = polyline.points.rawVal[appendPoint];
+    const fromPoint = polylines.points.rawVal[appendPoint];
     const toPoint = hitPoint.val;
 
-    if (!fromPoint || !toPoint) return;
+    if (!fromPoint || !toPoint) {
+      previewLine.visible = false;
+      render();
+      return;
+    }
 
     previewLine.geometry.setAttribute(
       "position",
