@@ -2,16 +2,16 @@ import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getGrid, Grid } from "./grid/getGrid";
-import { Polylines, getPolylines } from "./polylines/getPolylines";
+import { Geometry, getGeometry } from "./geometry/getGeometry";
 
 import "./style.css";
 
 export function getViewer({
   grid,
-  polylines,
+  geometry,
 }: {
   grid?: Grid;
-  polylines?: Polylines;
+  geometry?: Geometry;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -54,13 +54,13 @@ export function getViewer({
 
   scene.add(getGrid({ grid, render }));
 
-  if (polylines)
+  if (geometry)
     scene.add(
-      getPolylines({
-        polylines,
+      getGeometry({
+        geometry,
         grid,
         camera,
-        domElement: renderer.domElement,
+        rendererElm: renderer.domElement,
         render,
       })
     );

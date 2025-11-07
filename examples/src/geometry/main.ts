@@ -1,9 +1,9 @@
 import van from "vanjs-core";
 import { getViewer } from "@awatif/ui";
 
-const polylines = {
+const geometry = {
   points: van.state([]),
-  segments: van.state([]),
+  lines: van.state([]),
 };
 
-document.body.append(getViewer({ polylines }));
+document.body.append(getViewer({ geometry }));
