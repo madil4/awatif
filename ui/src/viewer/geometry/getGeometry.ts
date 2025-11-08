@@ -173,11 +173,9 @@ export function getGeometry({
     const pointHits = raycaster.intersectObject(points, false);
 
     // Remove point
-    if (mode.val === Mode.EDIT || mode.val === Mode.APPEND) {
-      if (pointHits.length) {
-        handleRemovePoint(pointHits[0].index ?? null);
-        return;
-      }
+    if (pointHits.length) {
+      if (mode.val === Mode.EDIT) handleRemovePoint(pointHits[0].index ?? null);
+      return;
     }
 
     // Exit modes
