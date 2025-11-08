@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Awatif UI - Layout</title>
+  </head>
+  <body>
+    <script type="module">
+      import { getLayout } from "./getLayout.ts";
+
+      const header = (document.createElement("div").textContent =
+        "The Next-generation Structural Engineering Software");
+      const display = (document.createElement("div").textContent =
+        "The First Open-source Structural Analysis and Design Software");
+      const footer = (document.createElement("div").textContent =
+        "The Next-generation Structural Engineering Software");
+
+      document.body.append(getLayout({ header, display, footer }));
+    </script>
+  </body>
+</html>
