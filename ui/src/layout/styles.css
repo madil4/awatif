@@ -1,16 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
 #layout {
   min-height: 100vh;
   display: flex;
@@ -34,4 +21,9 @@ body {
 #layout .footer {
   margin-top: auto;
   background: #d1c4e9;
+}
+
+/* Only for testing */
+body {
+  margin: 0;
 }

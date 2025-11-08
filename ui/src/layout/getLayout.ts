@@ -7,9 +7,9 @@ export function getLayout({
   display,
   footer,
 }: {
-  header: HTMLElement;
-  display: HTMLElement;
-  footer: HTMLElement;
+  header?: HTMLElement;
+  display?: HTMLElement;
+  footer?: HTMLElement;
 }): HTMLElement {
   const container = document.createElement("div");
 
