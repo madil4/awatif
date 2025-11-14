@@ -9,3 +9,18 @@
   cursor: pointer;
   background: #d8d8d8;
 }
+
+.display-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 8px;
+}
+
+.display-item label {
+  margin-right: auto;
+}
+
+.display-item input {
+  width: 50px;
+}

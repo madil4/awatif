@@ -6,9 +6,13 @@ export function getDisplay(): HTMLElement {
   const container = document.createElement("div");
 
   const template = html`
-    <details id="display">
+    <details id="display" open>
       <summary>Display</summary>
-      Something small enough to escape casual notice.
+      <div class="display-item">
+        <label>Grid size & division</label>
+        <input type="number" />
+        <input type="number" />
+      </div>
     </details>
   `;
 
