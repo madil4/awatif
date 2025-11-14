@@ -45,7 +45,7 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
   `;
 
   van.derive(() => {
-    render(template(), container); // template is a function to be reactive
+    render(template(), container);
   });
 
   return container.firstElementChild as HTMLElement;

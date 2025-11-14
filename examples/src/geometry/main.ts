@@ -28,7 +28,7 @@ const geometry: Geometry = {
   enabled: van.state(true),
 };
 
-const toolbarMode = van.state(ToolbarMode.ANALYSIS);
+const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) {
