@@ -23,8 +23,8 @@ export function getGeometry({
   const group = new THREE.Group();
 
   /* ---- Constants ---- */
-  const POINT_SIZE = grid.size.val * 0.7;
   const GEOMETRY_COLOR = new THREE.Color("yellow");
+  const POINT_SIZE = van.derive(() => grid.size.val * 0.7);
 
   enum Mode {
     EDIT,
@@ -73,12 +73,13 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
       color: GEOMETRY_COLOR,
-      size: POINT_SIZE,
+      size: POINT_SIZE.rawVal,
       sizeAttenuation: false,
       depthTest: false,
     })
   );
   group.add(points);
+
   van.derive(() => {
     const geometryPoints = geometry.points.val.flat();
     points.geometry.setAttribute(
@@ -89,6 +90,10 @@ export function getGeometry({
 
     render();
   });
+  van.derive(() => {
+    (points.material as THREE.PointsMaterial).size = POINT_SIZE.val;
+    render();
+  });
 
   /* ---- Mouse Events ---- */
   const pointer = new THREE.Vector2();
@@ -97,12 +102,20 @@ export function getGeometry({
   raycaster.params.Points = { threshold: 0.2 };
 
   const hitPoint = van.state<number[] | null>(null);
-  const gridSize = grid.size.rawVal;
-  const gridDivisions = grid.division.rawVal;
-  const gridObj = new THREE.Mesh(new THREE.PlaneGeometry(gridSize, gridSize));
-  const offset = -gridSize / 2;
-  const step = gridSize / gridDivisions;
-  const snap = (v: number) => Math.round((v - offset) / step) * step + offset;
+  const gridObj = new THREE.Mesh(
+    new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal)
+  );
+  van.derive(() => {
+    const gridSize = grid.size.val;
+    gridObj.geometry.dispose();
+    gridObj.geometry = new THREE.PlaneGeometry(gridSize, gridSize);
+  });
+  const getSnapFunction = () => {
+    const gridSize = grid.size.rawVal;
+    const offset = -gridSize / 2;
+    const step = gridSize / grid.division.rawVal;
+    return (v: number) => Math.round((v - offset) / step) * step + offset;
+  };
 
   domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
@@ -125,6 +138,7 @@ export function getGeometry({
     // Update hit point on grid
     const gridHits = raycaster.intersectObject(gridObj, false);
     if (gridHits.length) {
+      const snap = getSnapFunction();
       const px = snap(gridHits[0].point.x);
       const py = snap(gridHits[0].point.y);
       const pz = snap(gridHits[0].point.z);
@@ -330,12 +344,13 @@ export function getGeometry({
     ),
     new THREE.PointsMaterial({
       color: GEOMETRY_COLOR,
-      size: POINT_SIZE,
+      size: POINT_SIZE.rawVal,
       sizeAttenuation: false,
       depthTest: false,
     })
   );
   group.add(marker);
+
   van.derive(() => {
     if (!hitPoint.val) {
       marker.visible = false;
@@ -348,18 +363,23 @@ export function getGeometry({
 
     render();
   });
+  van.derive(() => {
+    (marker.material as THREE.PointsMaterial).size = POINT_SIZE.val;
+    render();
+  });
 
   // Show preview line
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
       color: GEOMETRY_COLOR,
-      dashSize: POINT_SIZE * 0.025,
-      gapSize: POINT_SIZE * 0.025,
+      dashSize: POINT_SIZE.rawVal * 0.025,
+      gapSize: POINT_SIZE.rawVal * 0.025,
       depthTest: false,
     })
   );
   group.add(previewLine);
+
   van.derive(() => {
     if (mode.val !== Mode.APPEND || appendPoint === null || !hitPoint.val) {
       previewLine.visible = false;
@@ -383,6 +403,13 @@ export function getGeometry({
     previewLine.computeLineDistances();
     previewLine.visible = true;
 
+    render();
+  });
+  van.derive(() => {
+    const material = previewLine.material as THREE.LineDashedMaterial;
+    material.dashSize = POINT_SIZE.val * 0.025;
+    material.gapSize = POINT_SIZE.val * 0.025;
+    previewLine.computeLineDistances();
     render();
   });
 
