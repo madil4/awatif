@@ -6,12 +6,14 @@ export function getLayout({
   viewer,
   header,
   display,
-  footer,
+  inputs,
+  parameters,
 }: {
   viewer?: HTMLElement;
   header?: HTMLElement;
   display?: HTMLElement;
-  footer?: HTMLElement;
+  inputs?: HTMLElement;
+  parameters?: HTMLElement;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -22,7 +24,10 @@ export function getLayout({
         <div class="display">${display}</div>
         <div class="header">${header}</div>
       </div>
-      <div class="footer">${footer}</div>
+      <div class="bottom">
+        <div class="inputs">${inputs}</div>
+        <div class="parameters">${parameters}</div>
+      </div>
     </div>
   `;
 
