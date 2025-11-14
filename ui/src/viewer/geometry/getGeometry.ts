@@ -427,5 +427,10 @@ export function getGeometry({
     removeOrphanAppendPoint();
   });
 
+  // When enable geometry make it visible
+  van.derive(() => {
+    if (geometry.enabled.val) geometry.visible.val = true;
+  });
+
   return group;
 }
