@@ -1,0 +1,11 @@
+#display {
+  width: 300px;
+  margin-left: 10px;
+  background: #e7e7e7;
+}
+
+#display summary {
+  padding: 4px 8px;
+  cursor: pointer;
+  background: #d8d8d8;
+}
