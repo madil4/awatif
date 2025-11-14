@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Awatif UI - Layout</title>
     <style>
+      #layout .viewer {
+        background: #fcfff7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       #layout .display {
         background: #9ad0f5;
       }
@@ -14,11 +21,11 @@
       #layout .footer {
         background: #d1c4e9;
       }
-      #layout .viewer {
-        background: #fcfff7;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      #layout .inputs {
+        background: #f5e79d;
+      }
+      #layout .parameters {
+        background: #9ad0f5;
       }
     </style>
   </head>
@@ -32,10 +39,14 @@
         "Header Element");
       const display = (document.createElement("div").textContent =
         "Display Element");
-      const footer = (document.createElement("div").textContent =
-        "Footer Element");
+      const inputs = (document.createElement("div").textContent =
+        "Inputs Element");
+      const parameters = (document.createElement("div").textContent =
+        "Parameters Element");
 
-      document.body.append(getLayout({ viewer, header, display, footer }));
+      document.body.append(
+        getLayout({ viewer, header, display, inputs, parameters })
+      );
     </script>
   </body>
 </html>

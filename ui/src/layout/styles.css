@@ -37,8 +37,14 @@ body {
   margin-left: auto;
 }
 
-#layout .footer {
-  margin-top: auto;
+#layout .bottom {
+  display: flex;
+  flex-wrap: wrap;
   position: relative;
   z-index: 1;
+  margin-top: auto;
+}
+
+#layout .parameters {
+  margin-left: auto;
 }
