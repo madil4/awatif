@@ -33,6 +33,7 @@ const toolbarMode = van.state(ToolbarMode.ANALYSIS);
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) {
     geometry.enabled.val = true;
+    geometry.visible.val = true;
   } else {
     geometry.enabled.val = false;
   }

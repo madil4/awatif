@@ -424,12 +424,21 @@ export function getGeometry({
     if (geometry.enabled.val) return;
 
     hitPoint.val = null;
+    appendPoint = null;
+    mode.val = Mode.EDIT;
     removeOrphanAppendPoint();
   });
 
-  // When enable geometry make it visible
+  // When geometry is hidden, disable it
+  let previousEnabled = false;
   van.derive(() => {
-    if (geometry.enabled.val) geometry.visible.val = true;
+    if (geometry.enabled.val && !geometry.visible.val) {
+      geometry.enabled.val = false;
+      previousEnabled = true;
+    } else if (previousEnabled && geometry.visible.val) {
+      geometry.enabled.val = true;
+      previousEnabled = false;
+    }
   });
 
   return group;

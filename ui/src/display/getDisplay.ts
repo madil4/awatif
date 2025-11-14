@@ -45,7 +45,7 @@ export function getDisplay({
             <label>Geometry</label>
             <input
               type="checkbox"
-              ?checked=${geometry.visible.val}
+              .checked=${geometry.visible.val}
               @change=${(e: Event) =>
                 (geometry.visible.val = (e.target as HTMLInputElement).checked)}
             />
