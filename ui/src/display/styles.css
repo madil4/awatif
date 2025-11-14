@@ -14,17 +14,17 @@
   -ms-user-select: none;
 }
 
-.display-item {
+#display .display-item {
   display: flex;
   align-items: center;
   padding: 4px 8px;
   gap: 8px;
 }
 
-.display-item label {
+#display .display-item label {
   margin-right: auto;
 }
 
-.display-item input {
+#display .display-item input {
   width: 50px;
 }

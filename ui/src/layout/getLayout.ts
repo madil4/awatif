@@ -3,10 +3,12 @@ import { html, render } from "lit-html";
 import "./styles.css";
 
 export function getLayout({
+  viewer,
   header,
   display,
   footer,
 }: {
+  viewer?: HTMLElement;
   header?: HTMLElement;
   display?: HTMLElement;
   footer?: HTMLElement;
@@ -15,6 +17,7 @@ export function getLayout({
 
   const template = html`
     <div id="layout">
+      <div class="viewer">${viewer}</div>
       <div class="top">
         <div class="display">${display}</div>
         <div class="header">${header}</div>
