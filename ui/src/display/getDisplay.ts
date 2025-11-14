@@ -1,3 +1,4 @@
+import van from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { Geometry } from "../viewer/geometry/getGeometry";
@@ -13,7 +14,7 @@ export function getDisplay({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  const template = html`
+  const template = () => html`
     <details id="display">
       <summary>Display</summary>
       ${grid
@@ -44,7 +45,7 @@ export function getDisplay({
             <label>Geometry</label>
             <input
               type="checkbox"
-              checked=${geometry.visible.val}
+              ?checked=${geometry.visible.val}
               @change=${(e: Event) =>
                 (geometry.visible.val = (e.target as HTMLInputElement).checked)}
             />
@@ -53,7 +54,9 @@ export function getDisplay({
     </details>
   `;
 
-  render(template, container);
+  van.derive(() => {
+    render(template(), container);
+  });
 
   return container.firstElementChild as HTMLElement;
 }
