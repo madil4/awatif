@@ -28,6 +28,7 @@ export function getGrid({
       0x404040
     );
     gridObj.rotateX(Math.PI / 2); // because the helper is based on y as the normal axis
+    gridObj.renderOrder = 0; // Ensure grid renders before geometry
 
     group.add(gridObj);
 
