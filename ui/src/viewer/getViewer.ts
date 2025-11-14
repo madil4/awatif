@@ -22,7 +22,7 @@ export function getViewer({
     0.1,
     1000
   );
-  camera.position.set(0, 0, 10);
+  camera.position.set(0, 0, 7);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -42,7 +42,7 @@ export function getViewer({
   });
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enabled = false;
+  controls.enableRotate = false;
   controls.update();
   controls.addEventListener("change", render);
 

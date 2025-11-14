@@ -24,7 +24,7 @@ export function getGeometry({
 
   /* ---- Constants ---- */
   const GEOMETRY_COLOR = new THREE.Color("yellow");
-  const POINT_SIZE = van.derive(() => grid.size.val * 0.7);
+  const POINT_SIZE = 7;
 
   enum Mode {
     EDIT,
@@ -74,7 +74,7 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
       color: GEOMETRY_COLOR,
-      size: POINT_SIZE.rawVal,
+      size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -89,10 +89,6 @@ export function getGeometry({
     );
     points.geometry.computeBoundingSphere();
 
-    render();
-  });
-  van.derive(() => {
-    (points.material as THREE.PointsMaterial).size = POINT_SIZE.val;
     render();
   });
 
@@ -345,7 +341,7 @@ export function getGeometry({
     ),
     new THREE.PointsMaterial({
       color: GEOMETRY_COLOR,
-      size: POINT_SIZE.rawVal,
+      size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -364,18 +360,14 @@ export function getGeometry({
 
     render();
   });
-  van.derive(() => {
-    (marker.material as THREE.PointsMaterial).size = POINT_SIZE.val;
-    render();
-  });
 
   // Show preview line
   const previewLine = new THREE.Line(
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
       color: GEOMETRY_COLOR,
-      dashSize: POINT_SIZE.rawVal * 0.025,
-      gapSize: POINT_SIZE.rawVal * 0.025,
+      dashSize: POINT_SIZE * 0.025,
+      gapSize: POINT_SIZE * 0.025,
       depthTest: false,
     })
   );
@@ -404,15 +396,6 @@ export function getGeometry({
     );
     previewLine.computeLineDistances();
     previewLine.visible = true;
-
-    render();
-  });
-  van.derive(() => {
-    const material = previewLine.material as THREE.LineDashedMaterial;
-    material.dashSize = POINT_SIZE.val * 0.025;
-    material.gapSize = POINT_SIZE.val * 0.025;
-    if (previewLine.geometry.attributes.position)
-      previewLine.computeLineDistances();
 
     render();
   });

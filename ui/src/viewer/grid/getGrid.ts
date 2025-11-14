@@ -16,7 +16,6 @@ export function getGrid({
   const group = new THREE.Group();
   let gridObj: THREE.GridHelper;
 
-  // Events
   van.derive(() => {
     gridObj?.dispose();
     group.clear();
