@@ -1,0 +1,25 @@
+#toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 5px;
+  background: #e7e7e7;
+  max-width: 600px;
+  border-radius: 3px;
+  margin-bottom: 20px; /* TODO: remove this when implementing tooltip */
+}
+
+#toolbar .toolbar-button {
+  padding: 6px 12px;
+  cursor: pointer;
+  background: #bbbbbb;
+  border: none;
+  border-radius: 3px;
+}
+
+#toolbar .toolbar-button:hover {
+  background: #aaaaaa;
+}
+
+#toolbar .toolbar-button.active {
+  background: #ffd0d0;
+}
