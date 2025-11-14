@@ -5,6 +5,7 @@ import { Grid } from "../grid/getGrid";
 export type Geometry = {
   points: State<number[][]>;
   lines: State<number[][]>;
+  visible: State<boolean>;
 };
 
 export function getGeometry({
@@ -48,6 +49,8 @@ export function getGeometry({
   lines.renderOrder = 1; // Ensure segment lines render on top of grid
   group.add(lines);
   van.derive(() => {
+    if (!geometry.visible.val) return;
+
     const lineIndices = geometry.lines.val;
     const geometryPoints = geometry.points.val;
     const positions: number[] = [];
@@ -65,6 +68,11 @@ export function getGeometry({
       new THREE.Float32BufferAttribute(positions, 3)
     );
     lines.geometry.computeBoundingSphere();
+
+    render();
+  });
+  van.derive(() => {
+    lines.visible = geometry.visible.val;
 
     render();
   });
@@ -88,6 +96,11 @@ export function getGeometry({
       new THREE.Float32BufferAttribute(geometryPoints, 3)
     );
     points.geometry.computeBoundingSphere();
+
+    render();
+  });
+  van.derive(() => {
+    points.visible = geometry.visible.val;
 
     render();
   });

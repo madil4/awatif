@@ -2,16 +2,17 @@
   width: 300px;
   margin-left: 10px;
   background: #e7e7e7;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 #display summary {
   padding: 4px 8px;
   cursor: pointer;
-  background: #d8d8d8;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+  background: #bbbbbb;
 }
 
 #display .display-item {
@@ -26,5 +27,5 @@
 }
 
 #display .display-item input {
-  width: 50px;
+  max-width: 50px;
 }

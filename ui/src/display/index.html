@@ -20,10 +20,20 @@
         division: van.state(20),
       };
 
-      // Test reactive update
-      van.derive(() => console.log("grid", grid.size.val, grid.division.val));
+      const geometry = {
+        points: van.state([
+          [0, 0, 0],
+          [2, 2, 0],
+          [4, 0, 0],
+        ]),
+        lines: van.state([
+          [0, 1],
+          [1, 2],
+        ]),
+        visible: van.state(true),
+      };
 
-      document.body.append(getDisplay({ grid }));
+      document.body.append(getDisplay({ grid, geometry }));
     </script>
   </body>
 </html>

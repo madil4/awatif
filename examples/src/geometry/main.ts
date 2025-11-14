@@ -1,12 +1,12 @@
 import van from "vanjs-core";
-import { getDisplay, getLayout, getViewer } from "@awatif/ui";
+import { getDisplay, getLayout, getViewer, Grid, Geometry } from "@awatif/ui";
 
-const grid = {
+const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
 };
 
-const geometry = {
+const geometry: Geometry = {
   points: van.state([
     [0, 0, 0],
     [2, 2, 0],
@@ -16,11 +16,12 @@ const geometry = {
     [0, 1],
     [1, 2],
   ]),
+  visible: van.state(true),
 };
 
 document.body.append(
   getLayout({
-    viewer: getViewer({ geometry, grid }),
-    display: getDisplay({ grid }),
+    viewer: getViewer({ grid, geometry }),
+    display: getDisplay({ grid, geometry }),
   })
 );
