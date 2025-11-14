@@ -45,6 +45,7 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: GEOMETRY_COLOR, depthTest: false })
   );
+  lines.renderOrder = 1; // Ensure segment lines render on top of grid
   group.add(lines);
   van.derive(() => {
     const lineIndices = geometry.lines.val;
@@ -378,6 +379,7 @@ export function getGeometry({
       depthTest: false,
     })
   );
+  previewLine.renderOrder = 1; // Ensure preview line renders on top of grid
   group.add(previewLine);
 
   van.derive(() => {
