@@ -411,7 +411,9 @@ export function getGeometry({
     const material = previewLine.material as THREE.LineDashedMaterial;
     material.dashSize = POINT_SIZE.val * 0.025;
     material.gapSize = POINT_SIZE.val * 0.025;
-    previewLine.computeLineDistances();
+    if (previewLine.geometry.attributes.position)
+      previewLine.computeLineDistances();
+
     render();
   });
 
