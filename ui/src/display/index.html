@@ -12,9 +12,18 @@
   </head>
   <body>
     <script type="module">
+      import van from "vanjs-core";
       import { getDisplay } from "./getDisplay.ts";
 
-      document.body.append(getDisplay());
+      const grid = {
+        size: van.state(10),
+        division: van.state(20),
+      };
+
+      // Test reactive update
+      van.derive(() => console.log("grid", grid.size.val, grid.division.val));
+
+      document.body.append(getDisplay({ grid }));
     </script>
   </body>
 </html>
