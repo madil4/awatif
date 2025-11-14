@@ -4,19 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Awatif UI - Layout</title>
+    <style>
+      #layout .display {
+        background: #9ad0f5;
+      }
+      #layout .header {
+        background: #ffc7c7;
+      }
+      #layout .footer {
+        background: #d1c4e9;
+      }
+      #layout .viewer {
+        background: #fcfff7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
   </head>
   <body>
     <script type="module">
       import { getLayout } from "./getLayout.ts";
 
+      const viewer = (document.createElement("div").textContent =
+        "Viewer Element");
       const header = (document.createElement("div").textContent =
-        "The First Open-source Structural Analysis and Design Software");
+        "Header Element");
       const display = (document.createElement("div").textContent =
-        "The First Open-source Structural Analysis and Design Software");
+        "Display Element");
       const footer = (document.createElement("div").textContent =
-        "The First Open-source Structural Analysis and Design Software");
+        "Footer Element");
 
-      document.body.append(getLayout({ header, display, footer }));
+      document.body.append(getLayout({ viewer, header, display, footer }));
     </script>
   </body>
 </html>
