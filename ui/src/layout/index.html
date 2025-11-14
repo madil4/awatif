@@ -21,7 +21,7 @@
       #layout .footer {
         background: #d1c4e9;
       }
-      #layout .inputs {
+      #layout .toolbar {
         background: #f5e79d;
       }
       #layout .parameters {
@@ -39,13 +39,13 @@
         "Header Element");
       const display = (document.createElement("div").textContent =
         "Display Element");
-      const inputs = (document.createElement("div").textContent =
-        "Inputs Element");
+      const toolbar = (document.createElement("div").textContent =
+        "Toolbar Element");
       const parameters = (document.createElement("div").textContent =
         "Parameters Element");
 
       document.body.append(
-        getLayout({ viewer, header, display, inputs, parameters })
+        getLayout({ viewer, header, display, toolbar, parameters })
       );
     </script>
   </body>

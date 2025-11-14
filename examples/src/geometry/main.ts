@@ -1,5 +1,13 @@
 import van from "vanjs-core";
-import { getDisplay, getLayout, getViewer, Grid, Geometry } from "@awatif/ui";
+import {
+  getDisplay,
+  getLayout,
+  getViewer,
+  Grid,
+  Geometry,
+  ToolbarMode,
+  getToolbar,
+} from "@awatif/ui";
 
 const grid: Grid = {
   size: van.state(10),
@@ -17,11 +25,23 @@ const geometry: Geometry = {
     [1, 2],
   ]),
   visible: van.state(true),
+  enabled: van.state(true),
 };
+
+const toolbarMode = van.state(ToolbarMode.ANALYSIS);
+
+van.derive(() => {
+  if (toolbarMode.val === ToolbarMode.GEOMETRY) {
+    geometry.enabled.val = true;
+  } else {
+    geometry.enabled.val = false;
+  }
+});
 
 document.body.append(
   getLayout({
     viewer: getViewer({ grid, geometry }),
     display: getDisplay({ grid, geometry }),
+    toolbar: getToolbar({ toolbarMode }),
   })
 );
