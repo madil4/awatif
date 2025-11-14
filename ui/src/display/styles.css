@@ -8,6 +8,10 @@
   padding: 4px 8px;
   cursor: pointer;
   background: #d8d8d8;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .display-item {
