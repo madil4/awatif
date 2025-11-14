@@ -21,17 +21,14 @@
       };
 
       const geometry = {
-        points: van.state([
-          [0, 0, 0],
-          [2, 2, 0],
-          [4, 0, 0],
-        ]),
-        lines: van.state([
-          [0, 1],
-          [1, 2],
-        ]),
         visible: van.state(true),
       };
+
+      setInterval(() => {
+        grid.size.val = 5;
+        grid.division.val = 7;
+        geometry.visible.val = false;
+      }, 3000);
 
       document.body.append(getDisplay({ grid, geometry }));
     </script>
