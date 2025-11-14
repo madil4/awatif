@@ -142,7 +142,7 @@ export function getGeometry({
       const snap = getSnapFunction();
       const px = snap(gridHits[0].point.x);
       const py = snap(gridHits[0].point.y);
-      const pz = snap(gridHits[0].point.z);
+      const pz = 0; // Grid is in XY plane, so Z should always be 0
       const curr = hitPoint.rawVal;
       if (!curr || curr[0] !== px || curr[1] !== py || curr[2] !== pz) {
         hitPoint.val = [px, py, pz];
