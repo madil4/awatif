@@ -43,8 +43,21 @@ body {
   position: relative;
   z-index: 1;
   margin-top: auto;
+  padding: 10px;
 }
 
 #layout .parameters {
   margin-left: auto;
+}
+
+/* Mobile-specific layout adjustments */
+@media (max-width: 768px) {
+  #layout .bottom {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  #layout .toolbar {
+    width: 100%;
+  }
 }
