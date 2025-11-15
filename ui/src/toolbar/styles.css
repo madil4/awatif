@@ -4,7 +4,7 @@
   padding: 5px;
   background: #e7e7e7;
   max-width: 600px;
-  border-radius: 3px;
+  margin-bottom: 30px; /* Remove when implementing tooltip */
 }
 
 #toolbar .toolbar-button {
