@@ -5,9 +5,6 @@
   background: #e7e7e7;
   max-width: 600px;
   border-radius: 3px;
-  /* TODO: remove this when implementing tooltip */
-  bottom: 20px;
-  position: relative;
 }
 
 #toolbar .toolbar-button {
