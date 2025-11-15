@@ -8,15 +8,11 @@
 }
 
 #toolbar .toolbar-button {
-  padding: 12px 20px;
+  padding: 6px 12px;
   cursor: pointer;
   background: #bbbbbb;
   border: none;
   border-radius: 3px;
-  font-size: 16px;
-  min-height: 44px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
 }
 
 #toolbar .toolbar-button:hover {
@@ -25,19 +21,4 @@
 
 #toolbar .toolbar-button.active {
   background: #ffd0d0;
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-  #toolbar {
-    gap: 10px;
-    padding: 8px;
-  }
-
-  #toolbar .toolbar-button {
-    padding: 14px 24px;
-    font-size: 18px;
-    min-height: 48px;
-    flex: 1;
-  }
 }
