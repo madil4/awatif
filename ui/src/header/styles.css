@@ -1,0 +1,9 @@
+#header {
+  display: flex;
+  padding: 4px 8px;
+
+  /* Looks */
+  color: #333;
+  background: #e7e7e7;
+  font-size: 0.875rem;
+}
