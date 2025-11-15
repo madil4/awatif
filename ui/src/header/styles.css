@@ -1,9 +1,25 @@
 #header {
   display: flex;
-  padding: 4px 8px;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 4px;
 
   /* Looks */
-  color: #333;
-  background: #e7e7e7;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
   font-size: 0.875rem;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+#header a {
+  /* Looks */
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+#header a:hover {
+  /* Looks */
+  color: var(--accent-hover);
 }
