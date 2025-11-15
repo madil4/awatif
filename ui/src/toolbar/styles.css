@@ -1,27 +1,27 @@
 #toolbar {
   display: flex;
-  gap: 8px;
-  padding: 8px;
+  gap: 6px;
+  padding: 6px;
   max-width: 600px;
   margin-bottom: 30px; /* Remove when implementing tooltip */
 
   /* Looks */
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid var(--border);
-  box-shadow: 0 2px 8px var(--shadow);
+  box-shadow: 0 1px 4px var(--shadow);
 }
 
 #toolbar .toolbar-button {
-  padding: 8px 16px;
+  padding: 6px 12px;
 
   /* Looks */
   cursor: pointer;
   background: var(--bg-tertiary);
   color: var(--text-primary);
   border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: 0.875rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
   font-weight: 500;
   transition: all 0.2s ease;
 }
@@ -38,5 +38,5 @@
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--accent);
+  box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
 }

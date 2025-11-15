@@ -1,13 +1,13 @@
 #display {
   /* Layout */
-  width: 300px;
-  margin-left: 10px;
+  width: 280px;
+  margin-left: 8px;
 
   /* Looks */
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px var(--shadow);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px var(--shadow);
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -16,14 +16,14 @@
 }
 
 #display summary {
-  padding: 8px 12px;
+  padding: 6px 10px;
 
   /* Looks */
   cursor: pointer;
   background: var(--bg-tertiary);
   color: var(--text-primary);
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid var(--border);
   transition: background 0.2s ease;
 }
@@ -41,8 +41,8 @@
 #display .display-item {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  gap: 8px;
+  padding: 6px 10px;
+  gap: 6px;
 
   /* Looks */
   border-bottom: 1px solid var(--border);
@@ -64,19 +64,19 @@
 
   /* Looks */
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
 #display .display-item input {
   max-width: 50px;
-  padding: 4px 8px;
+  padding: 3px 6px;
 
   /* Looks */
   background: var(--bg-primary);
   color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: 3px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   transition: border-color 0.2s ease;
 }
 

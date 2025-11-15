@@ -7,7 +7,7 @@ export function getHeader(): HTMLElement {
 
   const template = html`
     <div id="header">
-      This app is under construction. Join our newsletter to be posted&nbsp;
+      App is under construction. Join our newsletter:
       <a href="https://awatif.co" target="_blank" rel="noopener noreferrer"
         >awatif.co</a
       >
