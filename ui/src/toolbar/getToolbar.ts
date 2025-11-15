@@ -5,6 +5,7 @@ import "./styles.css";
 
 export enum ToolbarMode {
   GEOMETRY,
+  SOON,
 }
 
 export type Toolbar = {
@@ -16,6 +17,16 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
 
   const template = () => html`
     <div id="toolbar">
+      <button
+        class="toolbar-button ${toolbarMode.val === ToolbarMode.SOON
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (toolbarMode.val =
+            toolbarMode.val === ToolbarMode.SOON ? null : ToolbarMode.SOON)}
+      >
+        Soon
+      </button>
       <button
         class="toolbar-button ${toolbarMode.val === ToolbarMode.GEOMETRY
           ? "active"
