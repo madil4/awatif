@@ -4,7 +4,6 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 
 export enum ToolbarMode {
-  ANALYSIS,
   GEOMETRY,
 }
 
@@ -17,18 +16,6 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
 
   const template = () => html`
     <div id="toolbar">
-      <button
-        class="toolbar-button ${toolbarMode.val === ToolbarMode.ANALYSIS
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (toolbarMode.val =
-            toolbarMode.val === ToolbarMode.ANALYSIS
-              ? null
-              : ToolbarMode.ANALYSIS)}
-      >
-        Analysis
-      </button>
       <button
         class="toolbar-button ${toolbarMode.val === ToolbarMode.GEOMETRY
           ? "active"

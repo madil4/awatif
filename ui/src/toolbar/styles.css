@@ -2,13 +2,17 @@
   display: flex;
   gap: 8px;
   padding: 5px;
-  background: #e7e7e7;
   max-width: 600px;
   margin-bottom: 30px; /* Remove when implementing tooltip */
+
+  /* Looks */
+  background: #e7e7e7;
 }
 
 #toolbar .toolbar-button {
   padding: 6px 12px;
+
+  /* Looks */
   cursor: pointer;
   background: #bbbbbb;
   border: none;
@@ -16,9 +20,11 @@
 }
 
 #toolbar .toolbar-button:hover {
+  /* Looks */
   background: #aaaaaa;
 }
 
 #toolbar .toolbar-button.active {
+  /* Looks */
   background: #ffd0d0;
 }

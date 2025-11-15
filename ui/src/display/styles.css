@@ -1,8 +1,10 @@
 #display {
+  /* Layout */
   width: 300px;
   margin-left: 10px;
-  background: #e7e7e7;
 
+  /* Looks */
+  background: #e7e7e7;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -11,6 +13,8 @@
 
 #display summary {
   padding: 4px 8px;
+
+  /* Looks */
   cursor: pointer;
   background: #bbbbbb;
 }
