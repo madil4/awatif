@@ -2,8 +2,9 @@
   display: flex;
   gap: 6px;
   padding: 6px;
+  width: fit-content;
   max-width: 600px;
-  margin-bottom: 30px; /* Remove when implementing tooltip */
+  margin-bottom: 10px;
 
   /* Looks */
   background: var(--bg-secondary);

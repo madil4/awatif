@@ -1,7 +1,7 @@
 import van from "vanjs-core";
 import {
   getDisplay,
-  getHeader,
+  getTooltips,
   getLayout,
   getViewer,
   Grid,
@@ -56,7 +56,7 @@ van.derive(() => {
 document.body.append(
   getLayout({
     viewer: getViewer({ grid, geometry }),
-    header: getHeader(),
+    tooltips: getTooltips(),
     display: getDisplay({ grid, geometry }),
     toolbar: getToolbar({ toolbarMode }),
   })

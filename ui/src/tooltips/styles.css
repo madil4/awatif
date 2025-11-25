@@ -1,25 +1,23 @@
-#header {
+#tooltips {
   display: flex;
   align-items: center;
   padding: 4px 10px;
   gap: 4px;
+  margin-bottom: 10px;
 
   /* Looks */
   color: var(--text-secondary);
-  background: var(--bg-secondary);
   font-size: 0.8rem;
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 2px var(--shadow);
 }
 
-#header a {
+#tooltips a {
   /* Looks */
   color: var(--accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-#header a:hover {
+#tooltips a:hover {
   /* Looks */
   color: var(--accent-hover);
 }

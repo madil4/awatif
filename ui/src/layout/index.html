@@ -24,6 +24,9 @@
       #layout .toolbar {
         background: #4a4a3a;
       }
+      #layout .tooltips {
+        background: #5a4a4a;
+      }
       #layout .parameters {
         background: #3a4a5a;
       }
@@ -34,18 +37,20 @@
       import { getLayout } from "./getLayout.ts";
 
       const viewer = (document.createElement("div").textContent =
-        "Viewer Element");
+        "--------- Viewer Element ------------");
       const header = (document.createElement("div").textContent =
-        "Header Element");
+        "--------- Header Element ------------");
       const display = (document.createElement("div").textContent =
-        "Display Element");
+        "--------- Display Element ------------");
       const toolbar = (document.createElement("div").textContent =
-        "Toolbar Element");
+        "--------- Toolbar Element ------------");
+      const tooltips = (document.createElement("div").textContent =
+        "--------- Tooltips Element ------------");
       const parameters = (document.createElement("div").textContent =
-        "Parameters Element");
+        "--------- Parameters Element ------------");
 
       document.body.append(
-        getLayout({ viewer, header, display, toolbar, parameters })
+        getLayout({ viewer, header, display, toolbar, tooltips, parameters })
       );
     </script>
   </body>
