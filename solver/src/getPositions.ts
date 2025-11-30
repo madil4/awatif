@@ -38,7 +38,15 @@ export function getPositions(
     flatten(deformationFree)
   );
 
-  const positions = add(originalPositions, deformations) as number[];
+  const displacements = nodes
+    .map((_, i) => [
+      deformations[i * 6],
+      deformations[i * 6 + 1],
+      deformations[i * 6 + 2],
+    ])
+    .flat();
+
+  const positions = add(originalPositions, displacements) as number[];
 
   return positions;
 }
