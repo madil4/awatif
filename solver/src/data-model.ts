@@ -13,7 +13,13 @@ export type Mesh = {
   // Element properties
   elementsProps?: Map<
     number,
-    { elasticity: number; area: number; momentInertia?: number }
+    {
+      elasticity: number;
+      area: number;
+      momentInertia?: number;
+      shearModulus?: number;
+      torsionalConstant?: number;
+    }
   >;
 
   // Outputs
