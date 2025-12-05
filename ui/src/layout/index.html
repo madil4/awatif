@@ -38,8 +38,10 @@
 
       const viewer = (document.createElement("div").textContent =
         "--------- Viewer Element ------------");
-      const header = (document.createElement("div").textContent =
-        "--------- Header Element ------------");
+      const header1 = (document.createElement("div").textContent =
+        "--------- Header Element 1 ------------");
+      const header2 = (document.createElement("div").textContent =
+        "--------- Header Element 2 ------------");
       const display = (document.createElement("div").textContent =
         "--------- Display Element ------------");
       const toolbar = (document.createElement("div").textContent =
@@ -50,7 +52,14 @@
         "--------- Parameters Element ------------");
 
       document.body.append(
-        getLayout({ viewer, header, display, toolbar, tooltips, parameters })
+        getLayout({
+          viewer,
+          header: [header1, header2],
+          display,
+          toolbar,
+          tooltips,
+          parameters,
+        })
       );
     </script>
   </body>
