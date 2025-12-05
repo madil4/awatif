@@ -11,7 +11,7 @@ export function getLayout({
   parameters,
 }: {
   viewer?: HTMLElement;
-  header?: HTMLElement;
+  header?: HTMLElement[];
   display?: HTMLElement;
   toolbar?: HTMLElement;
   tooltips?: HTMLElement;
