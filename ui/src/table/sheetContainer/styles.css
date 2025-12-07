@@ -1,0 +1,112 @@
+.sheet-grid-container {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  grid-template-rows: 32px 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  background-color: var(--bg-primary);
+  overflow: hidden;
+  max-height: 600px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+.sheet-corner {
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.sheet-col-headers {
+  display: flex;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.sheet-col-headers::-webkit-scrollbar {
+  display: none;
+}
+
+.sheet-col-header {
+  flex: 0 0 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border);
+  user-select: none;
+  background-color: var(--bg-secondary);
+}
+
+.sheet-col-header:last-child {
+  border-right: none;
+}
+
+.sheet-row-headers {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.sheet-row-headers::-webkit-scrollbar {
+  display: none;
+}
+
+.sheet-row-header {
+  flex: 0 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+  background-color: var(--bg-secondary);
+  min-height: 28px;
+}
+
+.sheet-row-header:last-child {
+  border-bottom: none;
+}
+
+.sheet-content {
+  overflow: auto;
+  background-color: var(--bg-primary);
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) var(--bg-primary);
+}
+
+.sheet-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sheet-content::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.sheet-content::-webkit-scrollbar-thumb {
+  background-color: var(--bg-tertiary);
+  border-radius: 4px;
+  border: 2px solid var(--bg-primary);
+}
+
+.sheet-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bg-hover);
+}
