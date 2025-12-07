@@ -4,17 +4,20 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 
 export type Cell = {
-  value: State<string | number>;
+  values: State<any[][]>;
   isEditMode: State<boolean>;
-  id: State<string>;
+  colIndex: State<number>;
+  rowIndex: State<number>;
 };
 
 export function getCell(cell: Cell): HTMLElement {
   const container = document.createElement("div");
 
+  const id = `cell-${cell.rowIndex.val}-${cell.colIndex.val}`;
+
   const onClickOutsideInputHandler = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (target?.id !== cell.id.val) {
+    if (target?.id !== id) {
       cell.isEditMode.val = false;
     }
   };
@@ -25,19 +28,21 @@ export function getCell(cell: Cell): HTMLElement {
     return cell.isEditMode.val
       ? html`<input
           type="text"
-          id=${cell.id.val}
-          value=${cell.value.val}
+          id=${id}
+          value=${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
           @input="${(e: Event) => {
-            cell.value.val = (e.target as HTMLInputElement).value;
+            cell.values.val[cell.rowIndex.val][cell.colIndex.val] = (
+              e.target as HTMLInputElement
+            ).value;
           }}"
         />`
       : html`<div
-          id=${cell.id.val}
+          id=${id}
           @click=${() => {
             cell.isEditMode.val = true;
           }}
         >
-          ${cell.value.val}
+          ${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
         </div>`;
   };
 

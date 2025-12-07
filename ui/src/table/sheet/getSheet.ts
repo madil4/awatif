@@ -4,13 +4,22 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 import { getRow } from "../row/getRow";
 
-export function getSheet(): HTMLElement {
+export type Sheet = {
+  values: State<any[][]>;
+};
+
+export function getSheet(sheet: Sheet): HTMLElement {
   const container = document.createElement("div");
 
   const template = () => {
     return html` <table>
       <tbody>
-        ${getRow()}
+        ${sheet.values.val.map((rowValues, rowIndex) =>
+          getRow({
+            index: van.state(rowIndex),
+            values: van.state(rowValues),
+          })
+        )}
       </tbody>
     </table>`;
   };
