@@ -14,10 +14,10 @@ export function getSheet(sheet: Sheet): HTMLElement {
   const template = () => {
     return html` <table>
       <tbody>
-        ${sheet.values.val.map((rowValues, rowIndex) =>
+        ${sheet.values.val.map((_, rowIndex) =>
           getRow({
             index: van.state(rowIndex),
-            values: van.state(rowValues),
+            values: sheet.values,
           })
         )}
       </tbody>
