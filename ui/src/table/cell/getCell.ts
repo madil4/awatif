@@ -26,16 +26,18 @@ export function getCell(cell: Cell): HTMLElement {
 
   const template = () => {
     return cell.isEditMode.val
-      ? html`<input
-          type="text"
-          id=${id}
-          value=${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
-          @input="${(e: Event) => {
-            cell.values.val[cell.rowIndex.val][cell.colIndex.val] = (
-              e.target as HTMLInputElement
-            ).value;
-          }}"
-        />`
+      ? html`<div id=${id}>
+          <input
+            type="text"
+            id=${id}
+            value=${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
+            @input="${(e: Event) => {
+              cell.values.val[cell.rowIndex.val][cell.colIndex.val] = (
+                e.target as HTMLInputElement
+              ).value;
+            }}"
+          />
+        </div>`
       : html`<div
           id=${id}
           @click=${() => {

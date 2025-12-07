@@ -3,30 +3,30 @@
   grid-template-columns: 50px 1fr;
   grid-template-rows: 32px 1fr;
   gap: 0;
-  border: 1px solid var(--border);
-  background-color: var(--bg-primary);
+  border: 1px solid #000;
+  background-color: #fff;
   overflow: hidden;
   max-height: 600px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px var(--shadow);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .sheet-corner {
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  background-color: #c8e6c9;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  color: #000;
 }
 
 .sheet-col-headers {
   display: flex;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
+  background-color: #c8e6c9;
+  border-bottom: 1px solid #000;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -42,11 +42,11 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  border-right: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: #000;
+  border-right: 1px solid #000;
   user-select: none;
-  background-color: var(--bg-secondary);
+  background-color: #c8e6c9;
 }
 
 .sheet-col-header:last-child {
@@ -56,8 +56,8 @@
 .sheet-row-headers {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border);
+  background-color: #c8e6c9;
+  border-right: 1px solid #000;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
@@ -68,17 +68,17 @@
 }
 
 .sheet-row-header {
-  flex: 0 0 28px;
+  flex: 0 0 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: #000;
+  border-bottom: 1px solid #000;
   user-select: none;
-  background-color: var(--bg-secondary);
-  min-height: 28px;
+  background-color: #c8e6c9;
+  min-height: 32px;
 }
 
 .sheet-row-header:last-child {
@@ -87,9 +87,9 @@
 
 .sheet-content {
   overflow: auto;
-  background-color: var(--bg-primary);
+  background-color: #fff;
   scrollbar-width: thin;
-  scrollbar-color: var(--bg-tertiary) var(--bg-primary);
+  scrollbar-color: #ccc #fff;
 }
 
 .sheet-content::-webkit-scrollbar {
@@ -98,15 +98,15 @@
 }
 
 .sheet-content::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: #fff;
 }
 
 .sheet-content::-webkit-scrollbar-thumb {
-  background-color: var(--bg-tertiary);
+  background-color: #ccc;
   border-radius: 4px;
-  border: 2px solid var(--bg-primary);
+  border: 2px solid #fff;
 }
 
 .sheet-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--bg-hover);
+  background-color: #999;
 }
