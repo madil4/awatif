@@ -2,16 +2,16 @@ tr {
   display: contents;
 }
 
-/* Zebra striping for rows */
+/* Zebra striping for rows - white and light gray */
 tr:nth-child(odd) div[id] {
-  background-color: var(--bg-primary);
+  background-color: #fff;
 }
 
 tr:nth-child(even) div[id] {
-  background-color: var(--bg-secondary);
+  background-color: #f9f9f9;
 }
 
 tr:hover div[id] {
-  background-color: var(--bg-hover);
+  background-color: #e8f4f8;
   transition: background-color 0.15s ease;
 }

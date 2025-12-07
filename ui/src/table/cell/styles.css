@@ -1,18 +1,19 @@
 /* Cell container - grid item */
 div[id] {
   width: 100px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  min-height: 28px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  min-height: 32px;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
   cursor: text;
   user-select: none;
-  color: var(--text-primary);
+  color: #000;
   box-sizing: border-box;
-  background-color: var(--bg-primary);
+  background-color: #fff;
   transition: background-color 0.15s ease;
+  font-size: 0.9rem;
 }
 
 /* Remove right border from last column */
@@ -22,26 +23,27 @@ td:last-child div[id] {
 
 /* Hover state */
 div[id]:hover {
-  background-color: var(--bg-active);
+  background-color: #f0f0f0;
 }
 
 /* Edit mode - input field */
 input {
   width: 100%;
   padding: 6px 10px;
-  border: 2px solid var(--accent);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 0.8rem;
+  border: 2px solid #4a9eff;
+  background-color: #fff;
+  color: #000;
+  font-size: 0.9rem;
   border-radius: 2px;
   font-family: inherit;
+  align-items: center;
   box-sizing: border-box;
   outline: none;
   margin: -6px -10px;
-  height: 16px;
+  height: 20px;
 }
 
 input:focus {
-  border-color: var(--accent-hover);
+  border-color: #6ab0ff;
   box-shadow: 0 0 4px rgba(74, 158, 255, 0.3);
 }
