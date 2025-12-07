@@ -1,0 +1,17 @@
+tr {
+  display: contents;
+}
+
+/* Zebra striping for rows */
+tr:nth-child(odd) div[id] {
+  background-color: var(--bg-primary);
+}
+
+tr:nth-child(even) div[id] {
+  background-color: var(--bg-secondary);
+}
+
+tr:hover div[id] {
+  background-color: var(--bg-hover);
+  transition: background-color 0.15s ease;
+}

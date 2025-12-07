@@ -1,0 +1,47 @@
+/* Cell container - grid item */
+div[id] {
+  width: 100px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  cursor: text;
+  user-select: none;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  transition: background-color 0.15s ease;
+}
+
+/* Remove right border from last column */
+td:last-child div[id] {
+  border-right: none;
+}
+
+/* Hover state */
+div[id]:hover {
+  background-color: var(--bg-active);
+}
+
+/* Edit mode - input field */
+input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 2px solid var(--accent);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  border-radius: 2px;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  margin: -6px -10px;
+  height: 16px;
+}
+
+input:focus {
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 4px rgba(74, 158, 255, 0.3);
+}
