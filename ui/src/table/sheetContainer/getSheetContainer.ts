@@ -4,16 +4,6 @@ import { getSheet } from "../sheet/getSheet";
 
 import "./styles.css";
 
-function getColumnHeader(colIndex: number): string {
-  let header = "";
-  let index = colIndex;
-  while (index >= 0) {
-    header = String.fromCharCode(65 + (index % 26)) + header;
-    index = Math.floor(index / 26) - 1;
-  }
-  return header;
-}
-
 export function getSheetContainter(): HTMLElement {
   const container = document.createElement("div");
   const sheetData = van.state([
@@ -40,8 +30,8 @@ export function getSheetContainter(): HTMLElement {
 
         <div class="sheet-content">
           ${getSheet({
-            values: sheetData,
-          })}
+      values: sheetData,
+    })}
         </div>
       </div>
     `;
