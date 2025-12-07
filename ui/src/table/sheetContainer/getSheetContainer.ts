@@ -17,8 +17,16 @@ function getColumnHeader(colIndex: number): string {
 export function getSheetContainter(): HTMLElement {
   const container = document.createElement("div");
   const sheetData = van.state([
-    ["hi", "this"],
-    ["is", "awatif"],
+    ["hi", "this", "is", "a", "test"],
+    ["is", "awatif", "sheet", "with", "five"],
+    ["hi", "this", "is", "a", "test"],
+    ["is", "awatif", "sheet", "with", "five"],
+    ["hi", "this", "is", "a", "test"],
+    ["is", "awatif", "sheet", "with", "five"],
+    ["hi", "this", "is", "a", "test"],
+    ["is", "awatif", "sheet", "with", "five"],
+    ["hi", "this", "is", "a", "test"],
+    ["is", "awatif", "sheet", "with", "five"],
   ]);
 
   const template = () => {
@@ -29,23 +37,6 @@ export function getSheetContainter(): HTMLElement {
       <div class="sheet-grid-container">
         <!-- Corner cell -->
         <div class="sheet-corner"></div>
-
-        <!-- Column headers -->
-        <div class="sheet-col-headers">
-          ${Array.from(
-            { length: colCount },
-            (_, i) =>
-              html`<div class="sheet-col-header">${getColumnHeader(i)}</div>`
-          )}
-        </div>
-
-        <!-- Row headers and sheet -->
-        <div class="sheet-row-headers">
-          ${Array.from(
-            { length: rowCount },
-            (_, i) => html`<div class="sheet-row-header">${i + 1}</div>`
-          )}
-        </div>
 
         <div class="sheet-content">
           ${getSheet({

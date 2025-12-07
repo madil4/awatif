@@ -1,49 +1,39 @@
-/* Cell container - grid item */
-div[id] {
-  width: 100px;
-  padding: 8px 10px;
+/* Ensure the wrapper div fills the td */
+td > div {
+  height: 100%;
+  width: 100%;
+}
+
+/* The content div */
+div[id^="cell-"] {
+  height: 100%;
+  padding: 0 6px;
   display: flex;
   align-items: center;
-  min-height: 32px;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
-  cursor: text;
-  user-select: none;
-  color: #000;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: cell;
   box-sizing: border-box;
-  background-color: #fff;
-  transition: background-color 0.15s ease;
-  font-size: 0.9rem;
 }
 
-/* Remove right border from last column */
-td:last-child div[id] {
-  border-right: none;
-}
-
-/* Hover state */
-div[id]:hover {
-  background-color: #f0f0f0;
-}
-
-/* Edit mode - input field */
+/* Input styling for edit mode */
 input {
   width: 100%;
-  padding: 6px 10px;
-  border: 2px solid #4a9eff;
-  background-color: #fff;
-  color: #000;
-  font-size: 0.9rem;
-  border-radius: 2px;
-  font-family: inherit;
-  align-items: center;
-  box-sizing: border-box;
+  height: 100%; /* Check if 21px + border works well */
+  border: 2px solid #1a73e8;
+  border-radius: 0;
   outline: none;
-  margin: -6px -10px;
-  height: 20px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
 }
 
-input:focus {
-  border-color: #6ab0ff;
-  box-shadow: 0 0 4px rgba(74, 158, 255, 0.3);
+/* When editing, remove padding so input fills the cell completely */
+div[id^="cell-"]:has(input) {
+  padding: 0;
+  overflow: visible;
+  z-index: 10; /* Bring above boundaries */
+  position: relative;
 }

@@ -16,13 +16,14 @@ export function getRow(rowProps: Row): HTMLElement {
 
   const template = () => {
     return html`
+      <th class="row-header">${rowProps.index.val + 1}</th>
       ${rowValues.map((_, colIndex) =>
-        getColumn({
-          colIndex: van.state(colIndex),
-          rowIndex: rowProps.index,
-          values: rowProps.values,
-        })
-      )}
+      getColumn({
+        colIndex: van.state(colIndex),
+        rowIndex: rowProps.index,
+        values: rowProps.values,
+      })
+    )}
     `;
   };
 
