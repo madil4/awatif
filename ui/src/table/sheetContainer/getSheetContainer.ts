@@ -8,7 +8,12 @@ export function getSheetContainter(): HTMLElement {
   const container = document.createElement("div");
 
   const template = () => {
-    return html`${getSheet()}`;
+    return html`${getSheet({
+      values: van.state([
+        ["hi", "this"],
+        ["is", "awatif"],
+      ]),
+    })}`;
   };
 
   van.derive(() => {

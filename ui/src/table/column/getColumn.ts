@@ -4,14 +4,21 @@ import { getCell } from "../cell/getCell";
 
 import "./styles.css";
 
-export function getColumn(): HTMLElement {
+export type Column = {
+  colIndex: State<number>;
+  rowIndex: State<number>;
+  values: State<any[][]>;
+};
+
+export function getColumn(col: Column): HTMLElement {
   const container = document.createElement("td");
 
   const template = () => {
     return html`
       ${getCell({
-        value: van.state("hello"),
-        id: van.state("A1"),
+        values: col.values,
+        colIndex: col.colIndex,
+        rowIndex: col.rowIndex,
         isEditMode: van.state(false),
       })}
     `;
