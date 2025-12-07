@@ -1,12 +1,42 @@
 table {
-  display: grid;
-  grid-template-columns: 100px 100px;
-  width: fit-content;
-  background-color: var(--bg-primary);
-  font-size: 0.8rem;
   border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #000;
+  cursor: default;
 }
 
-tbody {
-  display: contents;
+/* Headers (both column and row) */
+th {
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  color: #5f6368;
+  font-weight: bold;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Column Headers (A, B, C...) */
+th.column-header {
+  height: 24px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Row Headers (1, 2, 3...) */
+th.row-header {
+  width: 46px;
+  text-align: center;
+}
+
+/* Corner placeholder */
+th.row-header-placeholder {
+  width: 46px;
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  z-index: 2;
+}
+
+tbody tr {
+  height: 21px;
 }
