@@ -1,0 +1,12 @@
+table {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  width: fit-content;
+  background-color: var(--bg-primary);
+  font-size: 0.8rem;
+  border-collapse: collapse;
+}
+
+tbody {
+  display: contents;
+}
