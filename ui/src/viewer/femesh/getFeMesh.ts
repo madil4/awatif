@@ -26,7 +26,7 @@ export function getFeMesh({
       depthTest: false,
     })
   );
-  points.renderOrder = 3; // Render nodes on top of edges
+  points.renderOrder = 2; // Render mesh nodes above mesh lines
   group.add(points);
 
   van.derive(() => {
@@ -50,7 +50,7 @@ export function getFeMesh({
       depthTest: false,
     })
   );
-  lines.renderOrder = 2; // Ensure mesh renders on top of grid and geometry
+  lines.renderOrder = 1; // Render mesh lines above grid
   group.add(lines);
 
   van.derive(() => {

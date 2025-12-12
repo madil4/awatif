@@ -47,7 +47,7 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({ color: GEOMETRY_COLOR, depthTest: false })
   );
-  lines.renderOrder = 1; // Ensure segment lines render on top of grid
+  lines.renderOrder = 3; // Ensure geometry lines render on top of mesh
   group.add(lines);
   van.derive(() => {
     if (!geometry.visible.val) return;
@@ -88,6 +88,7 @@ export function getGeometry({
       depthTest: false,
     })
   );
+  points.renderOrder = 4; // Render geometry points on top of everything
   group.add(points);
 
   van.derive(() => {

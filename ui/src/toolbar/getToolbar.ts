@@ -4,8 +4,9 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 
 export enum ToolbarMode {
-  GEOMETRY,
   SOON,
+  GEOMETRY,
+  MESH,
 }
 
 export type Toolbar = {
@@ -38,6 +39,16 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
               : ToolbarMode.GEOMETRY)}
       >
         Geometry
+      </button>
+      <button
+        class="toolbar-button ${toolbarMode.val === ToolbarMode.MESH
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (toolbarMode.val =
+            toolbarMode.val === ToolbarMode.MESH ? null : ToolbarMode.MESH)}
+      >
+        Mesh
       </button>
     </div>
   `;
