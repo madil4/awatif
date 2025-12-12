@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Awatif UI - Viewer - FeMesh</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import van from "vanjs-core";
+      import { getViewer } from "../getViewer.ts";
+
+      const feMesh = {
+        nodes: van.state([
+          [-3, 0, 0],
+          [-1, 2, 0],
+          [1, -1, 0],
+          [3, 1, 0],
+        ]),
+        elements: van.state([[0, 1, 2, 3]]),
+        visible: van.state(true),
+      };
+
+      document.body.append(getViewer({ feMesh }));
+    </script>
+  </body>
+</html>
