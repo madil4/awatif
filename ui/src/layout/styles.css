@@ -72,3 +72,18 @@ body {
   margin-left: auto;
   margin-top: auto;
 }
+
+/* Pointer events: wrappers pass through, content elements capture */
+#layout .top,
+#layout .bottom,
+#layout .bottom-group {
+  pointer-events: none;
+}
+
+#layout .display,
+#layout .header,
+#layout .toolbar,
+#layout .tooltips,
+#layout .parameters {
+  pointer-events: auto;
+}
