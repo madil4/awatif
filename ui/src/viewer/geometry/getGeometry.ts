@@ -6,7 +6,6 @@ export type Geometry = {
   points: State<number[][]>;
   lines: State<number[][]>;
   visible: State<boolean>;
-  enabled: State<boolean>;
 };
 
 export function getGeometry({
@@ -130,7 +129,6 @@ export function getGeometry({
   };
 
   domElement.addEventListener("pointerdown", (e: PointerEvent) => {
-    if (!geometry.enabled.val) return;
     if (e.button !== 0) return;
     if (mode.val !== Mode.EDIT && mode.val !== Mode.APPEND) return;
 
@@ -142,8 +140,6 @@ export function getGeometry({
   });
 
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
-    if (!geometry.enabled.val) return;
-
     // Update pointer position
     const rect = domElement.getBoundingClientRect();
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -175,7 +171,6 @@ export function getGeometry({
   });
 
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
-    if (!geometry.enabled.val) return;
     if (e.button !== 0) return;
 
     const pointHits = raycaster.intersectObject(points, false);
@@ -198,7 +193,6 @@ export function getGeometry({
   });
 
   domElement.addEventListener("contextmenu", (e: PointerEvent) => {
-    if (!geometry.enabled.val) return;
     e.preventDefault();
 
     const pointHits = raycaster.intersectObject(points, false);
@@ -418,28 +412,6 @@ export function getGeometry({
     previewLine.visible = true;
 
     render();
-  });
-
-  // Reset state when geometry is disabled
-  van.derive(() => {
-    if (geometry.enabled.val) return;
-
-    hitPoint.val = null;
-    appendPoint = null;
-    mode.val = Mode.EDIT;
-    removeOrphanAppendPoint();
-  });
-
-  // When geometry is hidden, disable it
-  let previousEnabled = false;
-  van.derive(() => {
-    if (geometry.enabled.val && !geometry.visible.val) {
-      geometry.enabled.val = false;
-      previousEnabled = true;
-    } else if (previousEnabled && geometry.visible.val) {
-      geometry.enabled.val = true;
-      previousEnabled = false;
-    }
   });
 
   return group;

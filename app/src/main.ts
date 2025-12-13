@@ -42,7 +42,6 @@ const geometry: Geometry = {
     [2, 6],
   ]),
   visible: van.state(true),
-  enabled: van.state(true),
 };
 
 const feMesh: FeMesh = {
@@ -54,13 +53,6 @@ const feMesh: FeMesh = {
 // Events
 // Sync toolbar mode with geometry and mesh visibility
 van.derive(() => {
-  if (toolbarMode.val === ToolbarMode.GEOMETRY) {
-    geometry.enabled.val = true;
-    geometry.visible.val = true;
-  } else {
-    geometry.enabled.val = false;
-  }
-
   if (toolbarMode.val === ToolbarMode.MESH) feMesh.visible.val = true;
   else feMesh.visible.val = false;
 });
