@@ -9,7 +9,12 @@ import {
   FeMesh,
   ToolbarMode,
   getToolbar,
+  getUser,
+  getUpgrade,
 } from "@awatif/ui";
+import type { User } from "@supabase/supabase-js";
+
+const user = van.state<User | null>();
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
@@ -68,6 +73,7 @@ document.body.append(
   getLayout({
     viewer: getViewer({ grid, geometry, feMesh }),
     tooltips: getTooltips(),
+    header: [getUpgrade({ user }), getUser({ user })],
     display: getDisplay({ grid, geometry, feMesh }),
     toolbar: getToolbar({ toolbarMode }),
   })

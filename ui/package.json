@@ -18,7 +18,8 @@
     "vite": "^7.1.9"
   },
   "dependencies": {
-    "lit-html": "^3.2.1",
+    "@supabase/supabase-js": "^2.81.1",
+    "lit-html": "^3.3.1",
     "three": "^0.180.0",
     "vanjs-core": "^1.6.0"
   }
