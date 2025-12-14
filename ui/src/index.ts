@@ -8,3 +8,6 @@ export { getDisplay } from "./display/getDisplay";
 export { getTooltips } from "./tooltips/getTooltips";
 export { getToolbar } from "./toolbar/getToolbar";
 export { ToolbarMode } from "./toolbar/getToolbar";
+
+export { getUser } from "./user/getUser";
+export { getUpgrade } from "./upgrade/getUpgrade";
