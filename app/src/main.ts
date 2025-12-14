@@ -58,6 +58,8 @@ const feMesh: FeMesh = {
 // Events
 // Sync toolbar mode with geometry and mesh visibility
 van.derive(() => {
+  if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
+
   if (toolbarMode.val === ToolbarMode.MESH) feMesh.visible.val = true;
   else feMesh.visible.val = false;
 });
