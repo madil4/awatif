@@ -20,9 +20,6 @@ export function getSheetContainter(): HTMLElement {
   ]);
 
   const template = () => {
-    const colCount = sheetData.val[0]?.length || 0;
-    const rowCount = sheetData.val.length;
-
     return html`
       <div class="sheet-grid-container">
         <!-- Corner cell -->
