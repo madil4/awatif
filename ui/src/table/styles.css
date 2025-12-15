@@ -1,0 +1,94 @@
+table {
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #000;
+  cursor: default;
+}
+
+/* Headers (both column and row) */
+th {
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  color: #5f6368;
+  font-weight: bold;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Column Headers (A, B, C...) */
+th.column-header {
+  height: 24px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Row Headers (1, 2, 3...) */
+th.row-header {
+  width: 46px;
+  text-align: center;
+}
+
+/* Corner placeholder */
+th.row-header-placeholder {
+  width: 46px;
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  z-index: 2;
+}
+
+tbody tr {
+  height: 21px;
+}
+
+td {
+  border: 1px solid #e2e3e3;
+  padding: 0;
+  min-width: 100px;
+  box-sizing: border-box;
+  height: 21px; /* Ensure logical height */
+}
+
+/* Ensure the wrapper div fills the td */
+td > div {
+  height: 100%;
+  width: 100%;
+}
+
+/* The content div */
+div[id^="cell-"] {
+  height: 100%;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: cell;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Input styling for edit mode */
+input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #1a73e8;
+  border-radius: 0;
+  outline: none;
+  padding: 0 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  z-index: 2;
+}
+
+/* When editing, remove padding so input fills the cell completely */
+div[id^="cell-"]:has(input) {
+  padding: 0;
+  overflow: visible;
+  z-index: 10; /* Bring above boundaries */
+}

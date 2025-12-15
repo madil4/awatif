@@ -1,7 +1,0 @@
-td {
-  border: 1px solid #e2e3e3;
-  padding: 0;
-  min-width: 100px;
-  box-sizing: border-box;
-  height: 21px; /* Ensure logical height */
-}
