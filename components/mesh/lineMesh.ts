@@ -3,39 +3,47 @@ import { html } from "lit-html";
 import { MeshComponent } from "./data-model";
 
 type LineMeshParams = {
-  length: number;
+  divisions: number;
 };
 
-export const LineMesh: MeshComponent<LineMeshParams> = {
+export const lineMesh: MeshComponent<LineMeshParams> = {
   name: "Line Mesh",
 
   params: van.state({
-    length: 10,
+    divisions: 3,
   }),
 
   getTemplate: ({ params }) => {
     return html`<div>
-      <label>Length:</label>
+      <label>Divisions:</label>
       <input
         type="number"
-        .value=${params.val.length}
+        .value=${params.val.divisions}
         @input=${(e: Event) =>
           (params.val = {
             ...params.val,
-            length: Number((e.target as HTMLInputElement).value),
+            divisions: Number((e.target as HTMLInputElement).value),
           })}
       />
     </div>`;
   },
 
   getMesh: ({ params }) => {
-    const length = params.val.length;
+    const { divisions } = params.val;
+    const nodes: number[][] = [];
+    const elements: number[][] = [];
 
-    const nodes = [
-      [0, 0, 0],
-      [length, 0, 0],
-    ];
-    const elements = [[1, 2]];
+    // Create parametric nodes (t values from 0 to 1)
+    const numNodes = divisions + 1;
+    for (let i = 0; i < numNodes; i++) {
+      const t = i / divisions;
+      nodes.push([t]); // Store parametric value
+    }
+
+    // Create line elements
+    for (let i = 0; i < divisions; i++) {
+      elements.push([i, i + 1]);
+    }
 
     return { nodes, elements };
   },
