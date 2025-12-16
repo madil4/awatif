@@ -5,5 +5,4 @@ export default defineConfig({
     port: 4600,
     open: "viewer/geometry/index.html",
   },
-  root: "./src",
 });

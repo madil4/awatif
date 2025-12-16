@@ -5,8 +5,8 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "type": "module",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
   "scripts": {
     "dev": "vite"
   },
