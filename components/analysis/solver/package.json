@@ -1,0 +1,14 @@
+{
+  "name": "@awatif/solver",
+  "type": "module",
+  "scripts": {
+    "dev": "vitest"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0",
+    "mathjs": "^14.4.0"
+  }
+}
