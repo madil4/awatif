@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { createRef, ref } from "lit-html/directives/ref.js";
-import { supabase } from "../common/supabase";
+import { supabase } from "../backend/supabase";
 import type { User } from "@supabase/supabase-js";
 
 import "./styles.css";
