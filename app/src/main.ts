@@ -10,6 +10,9 @@ import {
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
+import { Mesh } from "../../components/mesh/data-model";
+import { lineMesh } from "../../components/mesh/lineMesh";
+import { getFeMesh } from "../../components/mesh/getFeMesh";
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
@@ -50,6 +53,18 @@ const feMesh: FeMesh = {
   visible: van.state(false),
 };
 
+const mesh: Mesh = new Map([
+  [
+    1,
+    {
+      ...lineMesh,
+      params: van.state({
+        divisions: 3,
+      }),
+    },
+  ],
+]);
+
 // Events
 // Sync toolbar mode with geometry and mesh visibility
 van.derive(() => {
@@ -59,9 +74,9 @@ van.derive(() => {
   else feMesh.visible.val = false;
 });
 
-// Update FE mesh when geometry changes
+// Update FE mesh when mesh components change
 van.derive(() => {
-  const meshData = getFeMesh(geometry);
+  const meshData = getFeMesh(mesh, geometry);
   feMesh.nodes.val = meshData.nodes;
   feMesh.elements.val = meshData.elements;
 });
@@ -74,38 +89,3 @@ document.body.append(
     toolbar: getToolbar({ toolbarMode }),
   })
 );
-
-// Utils
-function getFeMesh(geometry: Geometry): {
-  nodes: number[][];
-  elements: number[][];
-} {
-  const nodes: number[][] = [];
-  const elements: number[][] = [];
-  let nodeIndex = 0;
-
-  geometry.lines.val.forEach(([startIdx, endIdx]) => {
-    const start = geometry.points.val[startIdx];
-    const end = geometry.points.val[endIdx];
-
-    // Create 4 nodes along the line (3 divisions)
-    const lineNodes: number[] = [];
-    for (let i = 0; i < 4; i++) {
-      const t = i / 3; // 0, 1/3, 2/3, 1
-      const node = [
-        start[0] + t * (end[0] - start[0]),
-        start[1] + t * (end[1] - start[1]),
-        start[2] + t * (end[2] - start[2]),
-      ];
-      nodes.push(node);
-      lineNodes.push(nodeIndex++);
-    }
-
-    // Create 3 line elements
-    for (let i = 0; i < 3; i++) {
-      elements.push([lineNodes[i], lineNodes[i + 1]]);
-    }
-  });
-
-  return { nodes, elements };
-}
