@@ -5,9 +5,8 @@ export default defineConfig({
     port: 4600,
     open: true,
   },
-  root: "./src",
   build: {
-    outDir: "../dist",
+    outDir: "./dist",
     emptyOutDir: true,
   },
 });

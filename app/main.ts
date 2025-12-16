@@ -10,9 +10,9 @@ import {
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
-import { Mesh } from "../../components/mesh/data-model";
-import { lineMesh } from "../../components/mesh/lineMesh";
-import { getFeMesh } from "../../components/mesh/getFeMesh";
+import { Mesh } from "../components/mesh/data-model";
+import { lineMesh } from "../components/mesh/lineMesh";
+import { getFeMesh } from "../components/mesh/getFeMesh";
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
