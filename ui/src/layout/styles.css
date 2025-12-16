@@ -90,4 +90,5 @@ body {
 #layout .tooltips,
 #layout .parameters {
   pointer-events: auto;
+  width: fit-content;
 }
