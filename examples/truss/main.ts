@@ -12,8 +12,6 @@ import {
 } from "@awatif/ui";
 import { MeshComponents, lineMesh, getMesh } from "@awatif/components";
 
-const toolbarMode = van.state(ToolbarMode.GEOMETRY);
-
 const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
@@ -51,12 +49,9 @@ const mesh: Mesh = {
   visible: van.state(false),
 };
 
-const meshComponents: MeshComponents = new Map(
-  geometry.lines.val.map((_, i) => [i, lineMesh])
-);
+const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
 // Events
-// Sync toolbar mode with geometry and mesh visibility
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
 
@@ -64,8 +59,11 @@ van.derive(() => {
   else mesh.visible.val = false;
 });
 
-// Update mesh when mesh components change
 van.derive(() => {
+  const meshComponents: MeshComponents = new Map(
+    geometry.lines.val.map((_, i) => [i, lineMesh])
+  );
+
   const meshData = getMesh(meshComponents, geometry);
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
