@@ -3,18 +3,18 @@ import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getGrid, Grid } from "./grid/getGrid";
 import { Geometry, getGeometry } from "./geometry/getGeometry";
-import { FeMesh, getFeMesh } from "./femesh/getFeMesh";
+import { Mesh, getMesh } from "./mesh/getMesh";
 
 import "./style.css";
 
 export function getViewer({
   grid,
   geometry,
-  feMesh,
+  mesh,
 }: {
   grid?: Grid;
   geometry?: Geometry;
-  feMesh?: FeMesh;
+  mesh?: Mesh;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -68,10 +68,10 @@ export function getViewer({
       })
     );
 
-  if (feMesh)
+  if (mesh)
     scene.add(
-      getFeMesh({
-        feMesh,
+      getMesh({
+        mesh,
         render,
       })
     );

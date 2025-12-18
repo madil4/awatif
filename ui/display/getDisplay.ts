@@ -2,18 +2,18 @@ import van from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { Geometry } from "../viewer/geometry/getGeometry";
-import { FeMesh } from "../viewer/femesh/getFeMesh";
+import { Mesh } from "../viewer/mesh/getMesh";
 
 import "./styles.css";
 
 export function getDisplay({
   grid,
   geometry,
-  feMesh,
+  mesh,
 }: {
   grid?: Grid;
   geometry?: Geometry;
-  feMesh?: FeMesh;
+  mesh?: Mesh;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -54,14 +54,14 @@ export function getDisplay({
             />
           </div>`
         : ""}
-      ${feMesh
+      ${mesh
         ? html` <div class="display-item">
             <label>Mesh</label>
             <input
               type="checkbox"
-              .checked=${feMesh.visible.val}
+              .checked=${mesh.visible.val}
               @change=${(e: Event) =>
-                (feMesh.visible.val = (e.target as HTMLInputElement).checked)}
+                (mesh.visible.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}

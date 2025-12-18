@@ -1,6 +1,6 @@
 export type { Grid } from "./viewer/grid/getGrid";
 export type { Geometry } from "./viewer/geometry/getGeometry";
-export type { FeMesh } from "./viewer/femesh/getFeMesh";
+export type { Mesh } from "./viewer/mesh/getMesh";
 
 export { getLayout } from "./layout/getLayout";
 export { getViewer } from "./viewer/getViewer";

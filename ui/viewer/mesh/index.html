@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Awatif UI - Viewer - FeMesh</title>
+    <title>Awatif UI - Viewer - Mesh</title>
     <style>
       body {
         margin: 0;
@@ -15,7 +15,7 @@
       import van from "vanjs-core";
       import { getViewer } from "../getViewer.ts";
 
-      const feMesh = {
+      const mesh = {
         nodes: van.state([
           [-3, 0, 0],
           [-1, 2, 0],
@@ -26,7 +26,7 @@
         visible: van.state(true),
       };
 
-      document.body.append(getViewer({ feMesh }));
+      document.body.append(getViewer({ mesh }));
     </script>
   </body>
 </html>

@@ -6,13 +6,11 @@ import {
   getViewer,
   Grid,
   Geometry,
-  FeMesh,
+  Mesh,
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
-import { Mesh, lineMesh, getFeMesh } from "@awatif/components";
-
-const toolbarMode = van.state(ToolbarMode.GEOMETRY);
+import { MeshComponents, lineMesh, getMesh } from "@awatif/components";
 
 const grid: Grid = {
   size: van.state(10),
@@ -45,35 +43,37 @@ const geometry: Geometry = {
   visible: van.state(true),
 };
 
-const feMesh: FeMesh = {
+const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   visible: van.state(false),
 };
 
-const mesh: Mesh = new Map(geometry.lines.val.map((_, i) => [i, lineMesh]));
+const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
 // Events
-// Sync toolbar mode with geometry and mesh visibility
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
 
-  if (toolbarMode.val === ToolbarMode.MESH) feMesh.visible.val = true;
-  else feMesh.visible.val = false;
+  if (toolbarMode.val === ToolbarMode.MESH) mesh.visible.val = true;
+  else mesh.visible.val = false;
 });
 
-// Update FE mesh when mesh components change
 van.derive(() => {
-  const meshData = getFeMesh(mesh, geometry);
-  feMesh.nodes.val = meshData.nodes;
-  feMesh.elements.val = meshData.elements;
+  const meshComponents: MeshComponents = new Map(
+    geometry.lines.val.map((_, i) => [i, lineMesh])
+  );
+
+  const meshData = getMesh(meshComponents, geometry);
+  mesh.nodes.val = meshData.nodes;
+  mesh.elements.val = meshData.elements;
 });
 
 document.body.append(
   getLayout({
-    viewer: getViewer({ grid, geometry, feMesh }),
+    viewer: getViewer({ grid, geometry, mesh }),
     tooltips: getTooltips(),
-    display: getDisplay({ grid, geometry, feMesh }),
+    display: getDisplay({ grid, geometry, mesh }),
     toolbar: getToolbar({ toolbarMode }),
   })
 );
