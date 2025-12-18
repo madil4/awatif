@@ -10,9 +10,9 @@ import {
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
-import { Mesh } from "../components/mesh/data-model";
-import { lineMesh } from "../components/mesh/lineMesh";
-import { getFeMesh } from "../components/mesh/getFeMesh";
+// import { Mesh } from "../components/mesh/data-model";
+// import { lineMesh } from "../components/mesh/lineMesh";
+// import { getFeMesh } from "../components/mesh/getFeMesh";
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
@@ -53,17 +53,17 @@ const feMesh: FeMesh = {
   visible: van.state(false),
 };
 
-const mesh: Mesh = new Map([
-  [
-    1,
-    {
-      ...lineMesh,
-      params: van.state({
-        divisions: 3,
-      }),
-    },
-  ],
-]);
+// const mesh: Mesh = new Map([
+//   [
+//     1,
+//     {
+//       ...lineMesh,
+//       params: van.state({
+//         divisions: 3,
+//       }),
+//     },
+//   ],
+// ]);
 
 // Events
 // Sync toolbar mode with geometry and mesh visibility
@@ -75,11 +75,11 @@ van.derive(() => {
 });
 
 // Update FE mesh when mesh components change
-van.derive(() => {
-  const meshData = getFeMesh(mesh, geometry);
-  feMesh.nodes.val = meshData.nodes;
-  feMesh.elements.val = meshData.elements;
-});
+// van.derive(() => {
+//   const meshData = getFeMesh(mesh, geometry);
+//   feMesh.nodes.val = meshData.nodes;
+//   feMesh.elements.val = meshData.elements;
+// });
 
 document.body.append(
   getLayout({
