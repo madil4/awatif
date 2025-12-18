@@ -1,12 +1,12 @@
-import { Mesh, MeshOutput } from "./data-model";
+import { MeshComponents, MeshOutput } from "./data-model";
 
 type Geometry = {
   points: { val: number[][] };
   lines: { val: number[][] };
 };
 
-export function getFeMesh(
-  meshComponents: Mesh,
+export function getMesh(
+  meshComponents: MeshComponents,
   geometry: Geometry
 ): MeshOutput {
   const allNodes: number[][] = [];

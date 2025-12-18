@@ -1,17 +1,17 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 
-export type FeMesh = {
+export type Mesh = {
   nodes: State<number[][]>;
   elements: State<number[][]>;
   visible: State<boolean>;
 };
 
-export function getFeMesh({
-  feMesh,
+export function getMesh({
+  mesh,
   render,
 }: {
-  feMesh: FeMesh;
+  mesh: Mesh;
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
@@ -30,9 +30,9 @@ export function getFeMesh({
   group.add(points);
 
   van.derive(() => {
-    if (!feMesh.visible.val) return;
+    if (!mesh.visible.val) return;
 
-    const nodes = feMesh.nodes.val.flat();
+    const nodes = mesh.nodes.val.flat();
     points.geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(nodes, 3)
@@ -54,10 +54,10 @@ export function getFeMesh({
   group.add(lines);
 
   van.derive(() => {
-    if (!feMesh.visible.val) return;
+    if (!mesh.visible.val) return;
 
-    const elementIndices = feMesh.elements.val;
-    const nodes = feMesh.nodes.val;
+    const elementIndices = mesh.elements.val;
+    const nodes = mesh.nodes.val;
     const positions: number[] = [];
 
     // For each element, create edges between consecutive nodes
@@ -85,8 +85,8 @@ export function getFeMesh({
 
   // Handle visibility changes
   van.derive(() => {
-    lines.visible = feMesh.visible.val;
-    points.visible = feMesh.visible.val;
+    lines.visible = mesh.visible.val;
+    points.visible = mesh.visible.val;
 
     render();
   });

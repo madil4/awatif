@@ -1,4 +1,8 @@
-export type { Mesh, MeshComponent, MeshOutput } from "./mesh/data-model";
+export type {
+  MeshComponents,
+  MeshComponent,
+  MeshOutput,
+} from "./mesh/data-model";
 
 export { lineMesh } from "./mesh/line-mesh/lineMesh";
-export { getFeMesh } from "./mesh/getFeMesh";
+export { getMesh } from "./mesh/getMesh";
