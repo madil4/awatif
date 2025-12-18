@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Awatif Components - Line Mesh</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        border-radius: 8px;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import van from "vanjs-core";
+      import { render } from "lit-html";
+      import { lineMesh } from "./lineMesh.ts";
+      import { getViewer } from "../../../ui/viewer/getViewer.ts";
+
+      van.derive(() => console.log(lineMesh.params.val));
+
+      // Create controls
+      const controls = document.createElement("div");
+      controls.id = "controls";
+      van.derive(() => {
+        render(lineMesh.getTemplate({ params: lineMesh.params }), controls);
+      });
+
+      // Create FeMesh state
+      const feMesh = {
+        nodes: van.state([]),
+        elements: van.state([]),
+        visible: van.state(true),
+      };
+
+      // Update FeMesh when lineMesh params change
+      van.derive(() => {
+        const mesh = lineMesh.getMesh({ params: lineMesh.params });
+
+        // Map parametric nodes to 3D positions (line from [-5,0,0] to [5,0,0])
+        const nodes = mesh.nodes.map(([t]) => [
+          -5 + t * 10, // x: -5 to 5
+          0, // y: 0
+          0, // z: 0
+        ]);
+
+        feMesh.nodes.val = nodes;
+        feMesh.elements.val = mesh.elements;
+      });
+
+      // Create viewer
+      const viewer = getViewer({ feMesh });
+
+      document.body.append(viewer, controls);
+    </script>
+  </body>
+</html>

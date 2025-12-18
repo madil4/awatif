@@ -5,6 +5,6 @@
   "author": "Mohamed Adil",
   "license": "MIT",
   "workspaces": [
-    "/*"
+    "*"
   ]
 }
