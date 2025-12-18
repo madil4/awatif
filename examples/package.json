@@ -1,6 +1,6 @@
 {
-  "name": "@awatif/app",
-  "description": "Awatif App",
+  "name": "@awatif/examples",
+  "description": "Awatif Examples",
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
