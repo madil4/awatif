@@ -1,19 +1,21 @@
 {
-  "name": "examples",
+  "name": "@awatif/examples",
   "description": "Awatif Examples",
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "vite --open truss/index.html"
   },
-  "engines": {
-    "node": ">=22"
+  "dependencies": {
+    "vanjs-core": "^1.6.0",
+    "@awatif/ui": "*"
   },
   "devDependencies": {
     "vite": "^7.1.9"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

@@ -1,6 +1,6 @@
 import van from "vanjs-core";
 import { html } from "lit-html";
-import { MeshComponent } from "./data-model";
+import { MeshComponent } from "../data-model";
 
 type LineMeshParams = {
   divisions: number;
