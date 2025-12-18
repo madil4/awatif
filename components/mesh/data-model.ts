@@ -1,7 +1,7 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 
-export type Mesh = Map<number, MeshComponent<any>>;
+export type MeshComponents = Map<number, MeshComponent<any>>;
 
 export type MeshComponent<Params extends object> = {
   name: string;
