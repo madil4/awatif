@@ -1,4 +1,4 @@
-import { Node } from ".././data-model";
+import { Node } from "../data-model";
 import {
   cross,
   dot,

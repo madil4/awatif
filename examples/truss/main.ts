@@ -10,9 +10,7 @@ import {
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
-import { Mesh } from "../components/mesh/data-model";
-import { lineMesh } from "../components/mesh/lineMesh";
-import { getFeMesh } from "../components/mesh/getFeMesh";
+import { Mesh, lineMesh, getFeMesh } from "@awatif/components";
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
@@ -53,17 +51,7 @@ const feMesh: FeMesh = {
   visible: van.state(false),
 };
 
-const mesh: Mesh = new Map([
-  [
-    1,
-    {
-      ...lineMesh,
-      params: van.state({
-        divisions: 3,
-      }),
-    },
-  ],
-]);
+const mesh: Mesh = new Map(geometry.lines.val.map((_, i) => [i, lineMesh]));
 
 // Events
 // Sync toolbar mode with geometry and mesh visibility

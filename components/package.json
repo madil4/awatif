@@ -1,6 +1,6 @@
 {
-  "name": "@awatif/ui",
-  "description": "Awatif User Interface",
+  "name": "@awatif/components",
+  "description": "Awatif Components",
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
@@ -8,16 +8,17 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "dev": "vite --open viewer/geometry/index.html"
+    "dev": "vite --open mesh/line-mesh/index.html",
+    "test": "vitest"
   },
   "dependencies": {
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.2.1",
-    "three": "^0.180.0"
+    "mathjs": "^14.4.0"
   },
   "devDependencies": {
     "vite": "^7.1.9",
-    "@types/three": "^0.180.0"
+    "vitest": "^2.0.0"
   },
   "engines": {
     "node": ">=22"

@@ -13,7 +13,7 @@ Requirements: Node.js 22+
 git clone https://github.com/madil4/awatif.git
 cd awatif
 npm install
-npm run dev -w app
+npm run dev -w examples
 ```
 
 ## Coding Style
