@@ -19,7 +19,8 @@ type Cell = {
 };
 
 export function getTable(table: Table): HTMLElement {
-  const container = document.createElement("table");
+  const container = document.createElement("div");
+  container.classList.add("modal");
 
   /* Helper to generate column headers (A, B, ... Z, AA, AB, ...) */
   function getColumnHeader(colIndex: number): string {
@@ -36,23 +37,27 @@ export function getTable(table: Table): HTMLElement {
     const colCount = table.values.val[0]?.length || 0;
 
     return html`
-      <thead>
-        <tr>
-          <th class="row-header-placeholder"></th>
-          ${Array.from({ length: colCount }).map(
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <table>
+          <thead>
+            <tr>
+              <th class="row-header-placeholder"></th>
+              ${Array.from({ length: colCount }).map(
       (_, i) => html`<th class="column-header">${getColumnHeader(i)}</th>`
     )}
-        </tr>
-      </thead>
-      <tbody>
-        ${table.values.val.map((_, rowIndex) =>
+            </tr>
+          </thead>
+          <tbody>
+            ${table.values.val.map((_, rowIndex) =>
       getRow({
         index: van.state(rowIndex),
         values: table.values,
       })
     )}
-      </tbody>
-    `;
+          </tbody>
+        </table>
+      </div>`;
   };
 
   van.derive(() => {
