@@ -4,13 +4,15 @@ import "./styles.css";
 
 import { getTable, Table } from "./getTable.ts";
 
-export type Tables = {
-    tables: State<Map<string, Table>>;
-};
+export type Tables = State<Map<string, Table>>;
 
-export function getTables({ tables }: Tables): HTMLElement {
+type ActiveTable = State<string | null>;
+
+export function getTables(tables: Tables): HTMLElement {
     const container = document.createElement("div");
     container.classList.add("modal");
+
+    const activeTable: ActiveTable = van.state(tables.val.keys().next().value ?? null);
 
     let startX = 0;
     let startY = 0;
@@ -51,6 +53,8 @@ export function getTables({ tables }: Tables): HTMLElement {
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
+    const defaultTable: Table = { values: van.state([[]]) };
+
     const template = () => {
         return html`
         <div class="modal-content">
@@ -64,9 +68,28 @@ export function getTables({ tables }: Tables): HTMLElement {
                     >&times;</span
                 >
             </div>
-            ${[...tables.val.entries()].map(([key, table]) => getTable(table))}
+            ${getTable(tables.val.get(activeTable.val || "") ?? defaultTable)}
+            ${getTabs([...tables.val.keys()], activeTable)}
         </div>`;
     };
+    van.derive(() => {
+        render(template(), container);
+    });
+
+    return container as HTMLElement;
+}
+
+function getTabs(tabs: string[], activeTable: ActiveTable): HTMLElement {
+    const container = document.createElement("div");
+    container.classList.add("tab");
+
+    const template = () => {
+        return html`
+        <div class="tab">
+            ${tabs.map((tab) => html`<button class="tablinks" @click=${() => activeTable.val = tab}>${tab}</button>`)}
+        </div>`;
+    };
+
     van.derive(() => {
         render(template(), container);
     });
