@@ -86,7 +86,13 @@ function getTabs(tabs: string[], activeTable: ActiveTable): HTMLElement {
     const template = () => {
         return html`
         <div class="tab">
-            ${tabs.map((tab) => html`<button class="tablinks" @click=${() => activeTable.val = tab}>${tab}</button>`)}
+            ${tabs.map((tab) => html`
+            <button 
+                class="tablinks ${tab === activeTable.val ? "active" : ""}" 
+                @click=${() => activeTable.val = tab}
+            >
+                ${tab}
+            </button>`)}
         </div>`;
     };
 
