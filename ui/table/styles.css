@@ -1,0 +1,210 @@
+table {
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #000;
+  cursor: default;
+}
+
+/* Headers (both column and row) */
+th {
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  color: #5f6368;
+  font-weight: bold;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Column Headers (A, B, C...) */
+th.column-header {
+  height: 24px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Row Headers (1, 2, 3...) */
+th.row-header {
+  width: 46px;
+  text-align: center;
+}
+
+/* Corner placeholder */
+th.row-header-placeholder {
+  width: 46px;
+  background-color: #f8f9fa;
+  border: 1px solid #c0c0c0;
+  z-index: 2;
+}
+
+tbody tr {
+  height: 21px;
+}
+
+td {
+  border: 1px solid #e2e3e3;
+  padding: 0;
+  min-width: 100px;
+  box-sizing: border-box;
+  height: 21px; /* Ensure logical height */
+}
+
+/* Ensure the wrapper div fills the td */
+td > div {
+  height: 100%;
+  width: 100%;
+}
+
+/* The content div */
+div[id^="cell-"] {
+  height: 100%;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: cell;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Input styling for edit mode */
+input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #1a73e8;
+  border-radius: 0;
+  outline: none;
+  padding: 0 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  z-index: 2;
+}
+
+/* When editing, remove padding so input fills the cell completely */
+div[id^="cell-"]:has(input) {
+  padding: 0;
+  overflow: visible;
+  z-index: 10; /* Bring above boundaries */
+}
+
+/* The Modal (background) */
+.modal {
+  display: block; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: hidden; /* Prevent body scroll */
+  pointer-events: none; /* Allow clicks through if needed, but usually modal blocks. Let's keep interaction on content */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  position: absolute; /* Allow dragging */
+  top: 100px;
+  left: 100px;
+  width: 600px;
+  height: 400px;
+  border: 1px solid #c0c0c0;
+  border-radius: 8px; /* Slightly smaller radius */
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden; /* Required for resize */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  pointer-events: auto; /* Re-enable pointer events */
+}
+
+/* Header for dragging */
+.modal-header {
+  height: 40px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: move;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+/* Scrollable container for the table */
+.table-container {
+  overflow: auto;
+  padding: 10px;
+  flex-grow: 1;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Style the tab */
+.tab {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  height: 36px;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0 16px;
+  height: 28px;
+  border-radius: 14px; /* Pill shape */
+  margin-right: 4px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #5f6368;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #e8eaed;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  font-weight: bold;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
