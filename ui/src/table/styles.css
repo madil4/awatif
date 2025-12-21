@@ -98,30 +98,56 @@ div[id^="cell-"]:has(input) {
   display: block; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
+  overflow: hidden; /* Prevent body scroll */
+  pointer-events: none; /* Allow clicks through if needed, but usually modal blocks. Let's keep interaction on content */
 }
 
 /* Modal Content */
 .modal-content {
   background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border-radius: 15px;
-  width: 80%;
+  position: absolute; /* Allow dragging */
+  top: 100px;
+  left: 100px;
+  width: 600px;
+  height: 400px;
   border: 1px solid #c0c0c0;
+  border-radius: 8px; /* Slightly smaller radius */
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: hidden; /* Required for resize */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  pointer-events: auto; /* Re-enable pointer events */
+}
+
+/* Header for dragging */
+.modal-header {
+  height: 40px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: move;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 10px;
+}
+
+/* Scrollable container for the table */
+.table-container {
+  overflow: auto;
+  padding: 10px;
 }
 
 /* The Close Button */
 .close {
   color: #aaaaaa;
-  float: right;
   font-size: 28px;
   font-weight: bold;
+  line-height: 1;
 }
 
 .close:hover,
