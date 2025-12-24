@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Awatif UI - Table</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import van from "vanjs-core";
+    import { getTables } from "./getTables.ts";
+
+    document.body.append(getTables(
+      van.state(new Map([
+        ["Table 1", {
+          values: van.state([
+            ["Table 1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+          ]),
+        }],
+        ["Table 2", {
+          values: van.state([
+            ["Table 2", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+            ["A1", "B1", "C1"],
+            ["A2", "B2", "C2"],
+            ["A3", "B3", "C3"],
+            ["A4", "B4", "C4"],
+            ["A5", "B5", "C5"],
+          ]),
+        }]
+      ]))
+    ));
+  </script>
+</body>
+
+</html>
