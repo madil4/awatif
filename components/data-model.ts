@@ -1,16 +1,15 @@
-export type Mesh = {
-  // Geometry
-  nodes?: number[][]; // [[x, y, z], [x, y, z], ...]
-  elements?: number[][]; // [[node1, node2], ...]
+import type { State } from "vanjs-core";
 
-  // Boundary conditions
+export type Mesh = {
+  nodes?: State<number[][]>; // [[x, y, z], [x, y, z], ...]
+  elements?: State<number[][]>; // [[node1, node2], ...]
+
   supports?: Map<
     number,
     [boolean, boolean, boolean, boolean, boolean, boolean]
   >;
   loads?: Map<number, [number, number, number, number, number, number]>;
 
-  // Element properties
   elementsProps?: Map<
     number,
     {
@@ -22,6 +21,10 @@ export type Mesh = {
     }
   >;
 
-  // Outputs
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
+
+  visible: State<boolean>;
 };
+
+export type Nodes = NonNullable<Mesh["nodes"]>["val"];
+export type Elements = NonNullable<Mesh["elements"]>["val"];
