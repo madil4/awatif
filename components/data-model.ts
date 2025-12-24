@@ -1,6 +1,6 @@
 export type Mesh = {
   // Geometry
-  nodes?: [number, number, number][]; // [[x, y, z], [x, y, z], ...]
+  nodes?: number[][]; // [[x, y, z], [x, y, z], ...]
   elements?: number[][]; // [[node1, node2], ...]
 
   // Boundary conditions
