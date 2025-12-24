@@ -8,7 +8,7 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "dev": "vite --open viewer/geometry/index.html"
+    "dev": "vite --open viewer/geometry/index.html --port 4600"
   },
   "dependencies": {
     "vanjs-core": "^1.6.0",

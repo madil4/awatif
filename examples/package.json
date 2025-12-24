@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite --open truss/index.html"
+    "dev": "vite --open truss/index.html --port 4600"
   },
   "dependencies": {
     "vanjs-core": "^1.6.0",
