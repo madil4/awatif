@@ -1,4 +1,5 @@
-import { MeshComponents, MeshOutput } from "./data-model";
+import { Mesh } from "../data-model";
+import { MeshComponents } from "./data-model";
 
 type Geometry = {
   points: { val: number[][] };
@@ -8,7 +9,7 @@ type Geometry = {
 export function getMesh(
   meshComponents: MeshComponents,
   geometry: Geometry
-): MeshOutput {
+): Required<Pick<Mesh, "nodes" | "elements">> {
   const allNodes: number[][] = [];
   const allElements: number[][] = [];
   let nodeOffset = 0;

@@ -1,4 +1,4 @@
-import { Node } from "../data-model";
+import { Mesh } from "../../../data-model";
 import {
   cross,
   dot,
@@ -12,12 +12,16 @@ import {
 } from "mathjs";
 
 // from global to local
-export function getTransformationMatrix(nodes: Node[]): number[][] {
+export function getTransformationMatrix(
+  nodes: NonNullable<Mesh["nodes"]>
+): number[][] {
   if (nodes.length === 2) return getTransformationMatrixFrame(nodes);
-  if (nodes.length === 3) return getTransformationMatrixShell(nodes);
+  else return getTransformationMatrixShell(nodes);
 }
 
-function getTransformationMatrixFrame(nodes: Node[]): number[][] {
+function getTransformationMatrixFrame(
+  nodes: NonNullable<Mesh["nodes"]>
+): number[][] {
   const vector = subtract(nodes[1], nodes[0]) as number[];
   const length = norm(vector) as number;
   const l = dot(vector, [1, 0, 0]) / length;
@@ -49,7 +53,9 @@ function getTransformationMatrixFrame(nodes: Node[]): number[][] {
   return kron(identity(4) as MathCollection, lambda).toArray() as number[][];
 }
 
-function getTransformationMatrixShell(nodes: Node[]): number[][] {
+function getTransformationMatrixShell(
+  nodes: NonNullable<Mesh["nodes"]>
+): number[][] {
   const nodesCount = 3;
   const dimensions = 3;
   const dof = 6;
