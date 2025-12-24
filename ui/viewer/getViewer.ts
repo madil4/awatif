@@ -1,9 +1,10 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Mesh } from "@awatif/components";
 import { getGrid, Grid } from "./grid/getGrid";
 import { Geometry, getGeometry } from "./geometry/getGeometry";
-import { Mesh, getMesh } from "./mesh/getMesh";
+import { getMesh } from "./mesh/getMesh";
 
 import "./style.css";
 

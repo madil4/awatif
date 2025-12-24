@@ -1,16 +1,16 @@
 import { describe, test, expect } from "vitest";
 import { getPositions } from "./getPositions";
-import type { Mesh } from "../../data-model";
+import type { Elements, Mesh, Nodes } from "../../data-model";
 
 describe("deform", () => {
   test("Bar: from Logan's book example 3.9", () => {
-    const nodes: Mesh["nodes"] = [
+    const nodes: Nodes = [
       [12, -3, -4],
       [0, 0, 0],
       [12, -3, -7],
       [14, 6, 0],
     ];
-    const elements: Mesh["elements"] = [
+    const elements: Elements = [
       [1, 0],
       [2, 0],
       [3, 0],
@@ -43,13 +43,13 @@ describe("deform", () => {
   });
 
   test("Frame: from Logan's book example 5.8", () => {
-    const nodes: Mesh["nodes"] = [
+    const nodes: Nodes = [
       [2.5, 0, 0],
       [0, 0, 0],
       [2.5, 0, -2.5],
       [2.5, -2.5, 0],
     ];
-    const elements: Mesh["elements"] = [
+    const elements: Elements = [
       [1, 0],
       [2, 0],
       [3, 0],

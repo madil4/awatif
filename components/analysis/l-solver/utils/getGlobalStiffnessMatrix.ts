@@ -1,11 +1,11 @@
 import { multiply, transpose } from "mathjs";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
-import { Mesh } from "../../../data-model";
+import { Elements, Mesh, Nodes } from "../../../data-model";
 
 export function getGlobalStiffnessMatrix(
-  nodes: Mesh["nodes"],
-  elements: Mesh["elements"],
+  nodes: Nodes,
+  elements: Elements,
   elementsProps: Mesh["elementsProps"],
   dof: number
 ): number[][] {
