@@ -7,12 +7,10 @@ export type MeshComponent<Params extends object> = {
   params: State<Params>;
 
   getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
-  getMesh: ({ params }: { params: State<Params> }) => MeshOutput;
-};
-
-export type MeshOutput = {
-  nodes: Nodes;
-  elements: Elements;
+  getMesh: ({ params }: { params: State<Params> }) => {
+    nodes: Nodes;
+    elements: Elements;
+  };
 };
 
 export type MeshComponents = Map<number, MeshComponent<any>>;

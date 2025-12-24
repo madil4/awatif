@@ -5,12 +5,16 @@ import {
   getLayout,
   getViewer,
   Grid,
-  Geometry,
-  Mesh,
   ToolbarMode,
   getToolbar,
 } from "@awatif/ui";
-import { MeshComponents, lineMesh, getMesh } from "@awatif/components";
+import {
+  MeshComponents,
+  lineMesh,
+  getMesh,
+  Geometry,
+  Mesh,
+} from "@awatif/components";
 
 const grid: Grid = {
   size: van.state(10),
@@ -64,7 +68,7 @@ van.derive(() => {
     geometry.lines.val.map((_, i) => [i, lineMesh])
   );
 
-  const meshData = getMesh(meshComponents, geometry);
+  const meshData = getMesh({ geometry, meshComponents });
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
 });
