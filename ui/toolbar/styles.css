@@ -39,5 +39,7 @@
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
+  box-shadow:
+    0 0 0 1px var(--bg-secondary),
+    0 0 0 3px var(--accent);
 }

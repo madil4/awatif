@@ -230,7 +230,7 @@ export function getGeometry({
         ([a, b]) =>
           [a > pointIndex ? a - 1 : a, b > pointIndex ? b - 1 : b] as [
             number,
-            number
+            number,
           ]
       );
 
