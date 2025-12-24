@@ -8,7 +8,7 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
-    "dev": "vite --open mesh/line-mesh/index.html",
+    "dev": "vite --open mesh/line-mesh/index.html --port 4600",
     "test": "vitest"
   },
   "dependencies": {
