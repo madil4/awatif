@@ -1,12 +1,7 @@
 import * as THREE from "three";
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import { Grid } from "../grid/getGrid";
-
-export type Geometry = {
-  points: State<number[][]>;
-  lines: State<number[][]>;
-  visible: State<boolean>;
-};
+import { Geometry } from "@awatif/components";
 
 export function getGeometry({
   geometry,
@@ -230,7 +225,7 @@ export function getGeometry({
         ([a, b]) =>
           [a > pointIndex ? a - 1 : a, b > pointIndex ? b - 1 : b] as [
             number,
-            number,
+            number
           ]
       );
 

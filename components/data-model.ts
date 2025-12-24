@@ -1,8 +1,14 @@
 import type { State } from "vanjs-core";
 
+export type Geometry = {
+  points: State<number[][]>;
+  lines: State<number[][]>;
+  visible: State<boolean>;
+};
+
 export type Mesh = {
-  nodes?: State<number[][]>; // [[x, y, z], [x, y, z], ...]
-  elements?: State<number[][]>; // [[node1, node2], ...]
+  nodes: State<number[][]>; // [[x, y, z], [x, y, z], ...]
+  elements: State<number[][]>; // [[node1, node2], ...]
 
   supports?: Map<
     number,

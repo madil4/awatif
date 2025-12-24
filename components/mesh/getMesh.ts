@@ -1,14 +1,13 @@
-import { MeshComponents, MeshOutput } from "./data-model";
+import { MeshComponents } from "./data-model";
+import { Geometry } from "../data-model";
 
-type Geometry = {
-  points: { val: number[][] };
-  lines: { val: number[][] };
-};
-
-export function getMesh(
-  meshComponents: MeshComponents,
-  geometry: Geometry
-): MeshOutput {
+export function getMesh({
+  geometry,
+  meshComponents,
+}: {
+  geometry: Geometry;
+  meshComponents: MeshComponents;
+}): { nodes: number[][]; elements: number[][] } {
   const allNodes: number[][] = [];
   const allElements: number[][] = [];
   let nodeOffset = 0;
