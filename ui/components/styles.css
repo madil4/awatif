@@ -78,3 +78,30 @@
 #components .components-divider:hover {
   background: var(--bg-tertiary);
 }
+
+#components .components-copy-btn {
+  padding: 2px 8px;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+#components .components-item.template:hover .components-copy-btn {
+  opacity: 1;
+}
+
+#components .components-copy-btn:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: scale(1.1);
+}
+
+#components .components-copy-btn:active {
+  transform: scale(0.95);
+}

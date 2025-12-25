@@ -1,4 +1,4 @@
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { lineMesh } from "@awatif/components";
 
@@ -9,16 +9,16 @@ export function getComponents(): HTMLElement {
 
   const templateComponents = [lineMesh];
 
-  const components = [
+  const components = van.state([
     { name: "Component 1" },
     { name: "Component 2" },
     { name: "Component 3" },
-  ];
+  ]);
 
   const template = () => html`
     <details id="components">
       <summary>Components</summary>
-      ${components.map(
+      ${components.val.map(
         (component) => html`
           <div class="components-item">
             <label>${component.name}</label>
@@ -30,8 +30,15 @@ export function getComponents(): HTMLElement {
           <summary class="components-divider">templates</summary>
           ${templateComponents.map(
             (component) => html`
-              <div class="components-item">
+              <div class="components-item template">
                 <label>${component.name}</label>
+                <button
+                  class="components-copy-btn"
+                  @click=${() => copyTemplate(components, component.name)}
+                  title="Copy template"
+                >
+                  +
+                </button>
               </div>
             `
           )}
@@ -45,4 +52,23 @@ export function getComponents(): HTMLElement {
   });
 
   return container.firstElementChild as HTMLElement;
+}
+
+// Utils
+function copyTemplate(components: State<{ name: string }[]>, baseName: string) {
+  const existingNames = components.val.map((c) => c.name);
+
+  let newName = baseName;
+
+  if (existingNames.includes(baseName)) {
+    newName = `${baseName} copy`;
+    let counter = 2;
+
+    while (existingNames.includes(newName)) {
+      newName = `${baseName} copy ${counter}`;
+      counter++;
+    }
+  }
+
+  components.val = [...components.val, { name: newName }];
 }
