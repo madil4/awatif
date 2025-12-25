@@ -1,6 +1,8 @@
 #components {
   width: 200px;
   margin-left: 8px;
+  max-height: 400px;
+  overflow-y: auto;
 
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -10,27 +12,10 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  overflow: hidden;
 }
 
-#components summary {
-  padding: 6px 10px;
-
-  cursor: pointer;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: 0.8rem;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.2s ease;
-}
-
-#components summary:hover {
-  background: var(--bg-hover);
-}
-
-#components details[open] summary {
-  background: var(--bg-hover);
+#components > summary {
+  display: none;
 }
 
 #components .components-item {

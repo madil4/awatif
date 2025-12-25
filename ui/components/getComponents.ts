@@ -16,7 +16,7 @@ export function getComponents(): HTMLElement {
   ]);
 
   const template = () => html`
-    <details id="components">
+    <details id="components" open>
       <summary>Components</summary>
       ${components.val.map(
         (component) => html`
