@@ -5,8 +5,11 @@ export function getMesh({
   geometry,
   meshComponents,
 }: {
-  geometry: Geometry;
-  meshComponents: MeshComponents;
+  geometry: {
+    points: Geometry["points"]["val"];
+    lines: Geometry["lines"]["val"];
+  };
+  meshComponents: MeshComponents["val"];
 }): { nodes: number[][]; elements: number[][] } {
   const allNodes: number[][] = [];
   const allElements: number[][] = [];
@@ -14,9 +17,9 @@ export function getMesh({
 
   meshComponents.forEach((component, lineIndex) => {
     // Get the line from geometry using the Map key
-    const [startIdx, endIdx] = geometry.lines.val[lineIndex];
-    const startPoint = geometry.points.val[startIdx];
-    const endPoint = geometry.points.val[endIdx];
+    const [startIdx, endIdx] = geometry.lines[lineIndex];
+    const startPoint = geometry.points[startIdx];
+    const endPoint = geometry.points[endIdx];
 
     // Get parametric mesh from component
     const { nodes: parametricNodes, elements } = component.getMesh({
