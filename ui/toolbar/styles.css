@@ -6,7 +6,6 @@
   max-width: 600px;
   margin-bottom: 10px;
 
-  /* Looks */
   background: var(--bg-secondary);
   border-radius: 0 4px 4px 0;
   border: 1px solid var(--border);
@@ -16,7 +15,6 @@
 #toolbar .toolbar-button {
   padding: 6px 12px;
 
-  /* Looks */
   cursor: pointer;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -28,18 +26,14 @@
 }
 
 #toolbar .toolbar-button:hover {
-  /* Looks */
   background: var(--bg-hover);
   border-color: var(--accent);
   transform: translateY(-1px);
 }
 
 #toolbar .toolbar-button.active {
-  /* Looks */
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-  box-shadow:
-    0 0 0 1px var(--bg-secondary),
-    0 0 0 3px var(--accent);
+  box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
 }
