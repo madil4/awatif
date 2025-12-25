@@ -60,6 +60,19 @@
 
   color: var(--text-secondary);
   font-size: 0.8rem;
+  cursor: pointer;
+}
+
+#components .components-rename-input {
+  margin-right: auto;
+  padding: 2px 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  outline: none;
+  width: 100%;
 }
 
 #components .components-templates {

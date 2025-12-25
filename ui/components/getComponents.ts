@@ -15,13 +15,47 @@ export function getComponents(): HTMLElement {
     { name: "Component 3" },
   ]);
 
+  const editingIndex = van.state<number | null>(null);
+
   const template = () => html`
     <details id="components" open>
       <summary>Components</summary>
       ${components.val.map(
         (component, index) => html`
           <div class="components-item">
-            <label>${component.name}</label>
+            ${editingIndex.val === index
+              ? html`
+                  <input
+                    class="components-rename-input"
+                    type="text"
+                    .value=${component.name}
+                    @blur=${(e: Event) =>
+                      renameComponent(
+                        components,
+                        editingIndex,
+                        index,
+                        (e.target as HTMLInputElement).value
+                      )}
+                    @keydown=${(e: KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        renameComponent(
+                          components,
+                          editingIndex,
+                          index,
+                          (e.target as HTMLInputElement).value
+                        );
+                      } else if (e.key === "Escape") {
+                        editingIndex.val = null;
+                      }
+                    }}
+                    @input=${(e: Event) => e.stopPropagation()}
+                  />
+                `
+              : html`
+                  <label @dblclick=${() => (editingIndex.val = index)}
+                    >${component.name}</label
+                  >
+                `}
             <button
               class="components-delete-btn"
               @click=${() => deleteComponent(components, index)}
@@ -62,6 +96,21 @@ export function getComponents(): HTMLElement {
 }
 
 // Utils
+function renameComponent(
+  components: State<{ name: string }[]>,
+  editingIndex: State<number | null>,
+  index: number,
+  newName: string
+) {
+  const trimmedName = newName.trim();
+  if (trimmedName && trimmedName !== components.val[index].name) {
+    components.val = components.val.map((comp, i) =>
+      i === index ? { ...comp, name: trimmedName } : comp
+    );
+  }
+  editingIndex.val = null;
+}
+
 function deleteComponent(components: State<{ name: string }[]>, index: number) {
   components.val = components.val.filter((_, i) => i !== index);
 }
