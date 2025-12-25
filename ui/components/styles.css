@@ -57,3 +57,15 @@
   color: var(--text-secondary);
   font-size: 0.8rem;
 }
+
+#components .components-divider {
+  padding: 6px 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
