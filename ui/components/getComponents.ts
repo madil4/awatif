@@ -10,9 +10,9 @@ export function getComponents(): HTMLElement {
   const templateComponents = [lineMesh];
 
   const components = van.state([
-    { name: "Component 1" },
-    { name: "Component 2" },
-    { name: "Component 3" },
+    { name: "Component 1", templateIndex: 0 },
+    { name: "Component 2", templateIndex: 0 },
+    { name: "Component 3", templateIndex: 0 },
   ]);
 
   const editingIndex = van.state<number | null>(null);
@@ -70,12 +70,13 @@ export function getComponents(): HTMLElement {
         <details class="components-templates" open>
           <summary class="components-divider">templates</summary>
           ${templateComponents.map(
-            (component) => html`
+            (component, templateIndex) => html`
               <div class="components-item template">
                 <label>${component.name}</label>
                 <button
                   class="components-copy-btn"
-                  @click=${() => copyTemplate(components, component.name)}
+                  @click=${() =>
+                    copyTemplate(components, component.name, templateIndex)}
                   title="Copy template"
                 >
                   +
@@ -115,7 +116,11 @@ function deleteComponent(components: State<{ name: string }[]>, index: number) {
   components.val = components.val.filter((_, i) => i !== index);
 }
 
-function copyTemplate(components: State<{ name: string }[]>, baseName: string) {
+function copyTemplate(
+  components: State<{ name: string; templateIndex?: number }[]>,
+  baseName: string,
+  templateIndex: number
+) {
   const existingNames = components.val.map((c) => c.name);
 
   let newName = baseName;
@@ -130,5 +135,5 @@ function copyTemplate(components: State<{ name: string }[]>, baseName: string) {
     }
   }
 
-  components.val = [...components.val, { name: newName }];
+  components.val = [...components.val, { name: newName, templateIndex }];
 }
