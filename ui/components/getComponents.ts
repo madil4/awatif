@@ -1,13 +1,16 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { lineMesh, MeshComponents } from "@awatif/components";
+import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getComponents({
   meshComponents,
+  toolbarMode,
 }: {
   meshComponents: MeshComponents;
+  toolbarMode: State<ToolbarMode>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -34,7 +37,7 @@ export function getComponents({
   const editingIndex = van.state<number | null>(null);
 
   const template = () => html`
-    <details id="components" open>
+    <details id="components" ?open=${toolbarMode.val === ToolbarMode.MESH}>
       <summary>Components</summary>
       ${components.val.map(
         (component, index) => html`
