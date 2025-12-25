@@ -24,20 +24,18 @@ export function getComponents(): HTMLElement {
           </div>
         `
       )}
-      ${templateComponents.length > 0
-        ? html`
-            <details class="components-templates" open>
-              <summary class="components-divider">templates</summary>
-              ${templateComponents.map(
-                (component) => html`
-                  <div class="components-item">
-                    <label>${component.name}</label>
-                  </div>
-                `
-              )}
-            </details>
-          `
-        : ""}
+      ${html`
+        <details class="components-templates" open>
+          <summary class="components-divider">templates</summary>
+          ${templateComponents.map(
+            (component) => html`
+              <div class="components-item">
+                <label>${component.name}</label>
+              </div>
+            `
+          )}
+        </details>
+      `}
     </details>
   `;
 
