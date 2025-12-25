@@ -150,7 +150,12 @@ function renameComponent(
       i === index ? { ...comp, name: trimmedName } : comp
     );
   }
-  editingIndex.val = null;
+
+  requestAnimationFrame(() => {
+    if (editingIndex.val === index) {
+      editingIndex.val = null;
+    }
+  });
 }
 
 function deleteComponent(components: State<{ name: string }[]>, index: number) {
