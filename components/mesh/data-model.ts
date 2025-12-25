@@ -13,4 +13,4 @@ export type MeshComponent<Params extends object> = {
   };
 };
 
-export type MeshComponents = Map<number, MeshComponent<any>>;
+export type MeshComponents = State<Map<number, MeshComponent<any>>>;
