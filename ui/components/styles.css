@@ -3,6 +3,8 @@
   margin-left: 8px;
   max-height: 400px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
 
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -12,6 +14,23 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+
+#components::-webkit-scrollbar {
+  width: 8px;
+}
+
+#components::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+#components::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+#components::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
 
 #components > summary {
