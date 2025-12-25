@@ -1,19 +1,35 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { lineMesh } from "@awatif/components";
+import { lineMesh, MeshComponents } from "@awatif/components";
 
 import "./styles.css";
 
-export function getComponents(): HTMLElement {
+export function getComponents({
+  meshComponents,
+}: {
+  meshComponents: MeshComponents;
+}): HTMLElement {
   const container = document.createElement("div");
 
-  const templateComponents = [lineMesh];
-
+  const templates = [lineMesh];
   const components = van.state([
-    { name: "Component 1", templateIndex: 0 },
-    { name: "Component 2", templateIndex: 0 },
-    { name: "Component 3", templateIndex: 0 },
+    { name: "Component 1", templateIndex: 0, geometry: [1, 2, 3] },
+    { name: "Component 2", templateIndex: 0, geometry: [3, 4, 5] },
+    { name: "Component 3", templateIndex: 0, geometry: [6, 7, 8] },
   ]);
+
+  // meshComponents
+  van.derive(() => {
+    const newMeshComponents = new Map();
+
+    components.val?.forEach((comp) => {
+      comp.geometry?.forEach((index) =>
+        newMeshComponents.set(index, templates[comp.templateIndex])
+      );
+    });
+
+    meshComponents.val = newMeshComponents;
+  });
 
   const editingIndex = van.state<number | null>(null);
 
@@ -69,7 +85,7 @@ export function getComponents(): HTMLElement {
       ${html`
         <details class="components-templates" open>
           <summary class="components-divider">templates</summary>
-          ${templateComponents.map(
+          ${templates.map(
             (component, templateIndex) => html`
               <div class="components-item template">
                 <label>${component.name}</label>

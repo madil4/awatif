@@ -55,6 +55,7 @@ const grid: Grid = {
 };
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
+const meshComponents: MeshComponents = van.state(new Map([[0, lineMesh]]));
 
 // Toolbar events
 van.derive(() => {
@@ -66,11 +67,14 @@ van.derive(() => {
 
 // Mesh events
 van.derive(() => {
-  const meshComponents: MeshComponents = new Map(
-    geometry.lines.val.map((_, i) => [i, lineMesh])
-  );
+  const meshData = getMesh({
+    geometry: {
+      points: geometry.points.val,
+      lines: geometry.lines.val,
+    },
+    meshComponents: meshComponents.val,
+  });
 
-  const meshData = getMesh({ geometry, meshComponents });
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
 });
@@ -80,7 +84,7 @@ document.body.append(
     viewer: getViewer({ grid, geometry, mesh }),
     tooltips: getTooltips(),
     display: getDisplay({ grid, geometry, mesh }),
-    components: getComponents(),
+    components: getComponents({ meshComponents }),
     toolbar: getToolbar({ toolbarMode }),
   })
 );
