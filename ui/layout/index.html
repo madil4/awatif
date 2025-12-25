@@ -21,6 +21,9 @@
       #layout .footer {
         background: #3a3a4a;
       }
+      #layout .components {
+        background: #5a3a5a;
+      }
       #layout .toolbar {
         background: #4a4a3a;
       }
@@ -44,6 +47,8 @@
         "--------- Header Element 2 ------------");
       const display = (document.createElement("div").textContent =
         "--------- Display Element ------------");
+      const components = (document.createElement("div").textContent =
+        "--------- Components Element ------------");
       const toolbar = (document.createElement("div").textContent =
         "--------- Toolbar Element ------------");
       const tooltips = (document.createElement("div").textContent =
@@ -56,6 +61,7 @@
           viewer,
           header: [header1, header2],
           display,
+          components,
           toolbar,
           tooltips,
           parameters,
