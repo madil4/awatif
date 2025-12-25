@@ -6,18 +6,37 @@ import "./styles.css";
 export function getComponents(): HTMLElement {
   const container = document.createElement("div");
 
-  const componentsList = ["component 1", "component 2", "component 3"];
+  const componentsList = [
+    { name: "component 1", isTemplate: false },
+    { name: "component 2", isTemplate: false },
+    { name: "component 3", isTemplate: true },
+  ];
+
+  const normalComponents = componentsList.filter((c) => !c.isTemplate);
+  const templateComponents = componentsList.filter((c) => c.isTemplate);
 
   const template = () => html`
     <details id="components">
       <summary>Components</summary>
-      ${componentsList.map(
+      ${normalComponents.map(
         (component) => html`
           <div class="components-item">
-            <label>${component}</label>
+            <label>${component.name}</label>
           </div>
         `
       )}
+      ${templateComponents.length > 0
+        ? html`
+            <div class="components-divider">templates</div>
+            ${templateComponents.map(
+              (component) => html`
+                <div class="components-item">
+                  <label>${component.name}</label>
+                </div>
+              `
+            )}
+          `
+        : ""}
     </details>
   `;
 
