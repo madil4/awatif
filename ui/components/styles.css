@@ -109,3 +109,31 @@
 #components .components-copy-btn:active {
   transform: scale(0.95);
 }
+
+#components .components-delete-btn {
+  padding: 0 6px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+#components .components-item:hover .components-delete-btn {
+  opacity: 1;
+}
+
+#components .components-delete-btn:hover {
+  background: var(--accent-active);
+  color: #fff;
+  border-color: var(--accent-active);
+}
+
+#components .components-delete-btn:active {
+  transform: scale(0.95);
+}

@@ -19,9 +19,16 @@ export function getComponents(): HTMLElement {
     <details id="components" open>
       <summary>Components</summary>
       ${components.val.map(
-        (component) => html`
+        (component, index) => html`
           <div class="components-item">
             <label>${component.name}</label>
+            <button
+              class="components-delete-btn"
+              @click=${() => deleteComponent(components, index)}
+              title="Delete component"
+            >
+              ×
+            </button>
           </div>
         `
       )}
@@ -55,6 +62,10 @@ export function getComponents(): HTMLElement {
 }
 
 // Utils
+function deleteComponent(components: State<{ name: string }[]>, index: number) {
+  components.val = components.val.filter((_, i) => i !== index);
+}
+
 function copyTemplate(components: State<{ name: string }[]>, baseName: string) {
   const existingNames = components.val.map((c) => c.name);
 
