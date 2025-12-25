@@ -1,24 +1,23 @@
 import van from "vanjs-core";
 import { html, render } from "lit-html";
+import { lineMesh } from "@awatif/components";
 
 import "./styles.css";
 
 export function getComponents(): HTMLElement {
   const container = document.createElement("div");
 
-  const componentsList = [
-    { name: "component 1", isTemplate: false },
-    { name: "component 2", isTemplate: false },
-    { name: "component 3", isTemplate: true },
+  const components = [
+    { name: "Component 1" },
+    { name: "Component 2" },
+    { name: "Component 3" },
   ];
-
-  const normalComponents = componentsList.filter((c) => !c.isTemplate);
-  const templateComponents = componentsList.filter((c) => c.isTemplate);
+  const templateComponents = [lineMesh];
 
   const template = () => html`
     <details id="components">
       <summary>Components</summary>
-      ${normalComponents.map(
+      ${components.map(
         (component) => html`
           <div class="components-item">
             <label>${component.name}</label>
