@@ -84,7 +84,7 @@ document.body.append(
     viewer: getViewer({ grid, geometry, mesh }),
     tooltips: getTooltips(),
     display: getDisplay({ grid, geometry, mesh }),
-    components: getComponents({ meshComponents }),
+    components: getComponents({ meshComponents, toolbarMode }),
     toolbar: getToolbar({ toolbarMode }),
   })
 );
