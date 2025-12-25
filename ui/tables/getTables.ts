@@ -1,8 +1,8 @@
 import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
-import "./styles.css";
-
 import { getTable, Table } from "./getTable.ts";
+
+import "./styles.css";
 
 export type Tables = State<Map<string, Table>>;
 

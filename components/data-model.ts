@@ -9,6 +9,7 @@ export type Geometry = {
 export type Mesh = {
   nodes: State<number[][]>; // [[x, y, z], [x, y, z], ...]
   elements: State<number[][]>; // [[node1, node2], ...]
+  visible: State<boolean>;
 
   supports?: Map<
     number,
@@ -28,8 +29,6 @@ export type Mesh = {
   >;
 
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
-
-  visible: State<boolean>;
 };
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];

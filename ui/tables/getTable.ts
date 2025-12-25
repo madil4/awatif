@@ -30,17 +30,18 @@ export function getTable(table: Table): HTMLElement {
           <tr>
             <th class="row-header-placeholder"></th>
             ${Array.from({ length: colCount }).map(
-      (_, i) => html`<th class="column-header">${getColumnHeader(i)}</th>`
-    )}
+              (_, i) =>
+                html`<th class="column-header">${getColumnHeader(i)}</th>`
+            )}
           </tr>
         </thead>
         <tbody>
           ${table.values.val.map((_, rowIndex) =>
-      getRow({
-        index: van.state(rowIndex),
-        values: table.values,
-      })
-    )}
+            getRow({
+              index: van.state(rowIndex),
+              values: table.values,
+            })
+          )}
         </tbody>
       </table>
     `;
@@ -69,16 +70,18 @@ function getRow(rowProps: Row): HTMLElement {
   const rowValues = rowProps.values.val[rowProps.index.val];
 
   const template = () => {
-    return html`
-      <th class="row-header">${rowProps.index.val + 1}</th>
-      ${rowValues.map((_, colIndex) =>
-      html`<td>${getCell({
-        colIndex: van.state(colIndex),
-        rowIndex: rowProps.index,
-        values: rowProps.values,
-        isEditMode: van.state(false),
-      })}</td>`
-    )}`;
+    return html` <th class="row-header">${rowProps.index.val + 1}</th>
+      ${rowValues.map(
+        (_, colIndex) =>
+          html`<td>
+            ${getCell({
+              colIndex: van.state(colIndex),
+              rowIndex: rowProps.index,
+              values: rowProps.values,
+              isEditMode: van.state(false),
+            })}
+          </td>`
+      )}`;
   };
 
   van.derive(() => {
@@ -105,22 +108,22 @@ function getCell(cell: Cell): HTMLElement {
   const template = () => {
     return cell.isEditMode.val
       ? html`<div id=${id}>
-        <input
-          type="text"
-          id=${id}
-          value=${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
-          @input="${(e: Event) => {
-          cell.values.val[cell.rowIndex.val][cell.colIndex.val] = (
-            e.target as HTMLInputElement
-          ).value;
-        }}"
-        />
+          <input
+            type="text"
+            id=${id}
+            value=${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
+            @input="${(e: Event) => {
+              cell.values.val[cell.rowIndex.val][cell.colIndex.val] = (
+                e.target as HTMLInputElement
+              ).value;
+            }}"
+          />
         </div>`
       : html`<div
           id=${id}
           @click=${() => {
-          cell.isEditMode.val = true;
-        }}
+            cell.isEditMode.val = true;
+          }}
         >
           ${cell.values.val[cell.rowIndex.val][cell.colIndex.val]}
         </div>`;

@@ -1,8 +1,7 @@
 import van from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
-import { Geometry } from "../viewer/geometry/getGeometry";
-import { Mesh } from "../viewer/mesh/getMesh";
+import type { Geometry, Mesh } from "@awatif/components";
 
 import "./styles.css";
 
