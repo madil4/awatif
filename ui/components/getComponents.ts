@@ -27,14 +27,16 @@ export function getComponents(): HTMLElement {
       )}
       ${templateComponents.length > 0
         ? html`
-            <div class="components-divider">templates</div>
-            ${templateComponents.map(
-              (component) => html`
-                <div class="components-item">
-                  <label>${component.name}</label>
-                </div>
-              `
-            )}
+            <details class="components-templates" open>
+              <summary class="components-divider">templates</summary>
+              ${templateComponents.map(
+                (component) => html`
+                  <div class="components-item">
+                    <label>${component.name}</label>
+                  </div>
+                `
+              )}
+            </details>
           `
         : ""}
     </details>
