@@ -7,12 +7,13 @@ import "./styles.css";
 export function getComponents(): HTMLElement {
   const container = document.createElement("div");
 
+  const templateComponents = [lineMesh];
+
   const components = [
     { name: "Component 1" },
     { name: "Component 2" },
     { name: "Component 3" },
   ];
-  const templateComponents = [lineMesh];
 
   const template = () => html`
     <details id="components">
