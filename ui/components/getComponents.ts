@@ -97,25 +97,6 @@ export function getComponents(): HTMLElement {
 }
 
 // Utils
-function renameComponent(
-  components: State<{ name: string }[]>,
-  editingIndex: State<number | null>,
-  index: number,
-  newName: string
-) {
-  const trimmedName = newName.trim();
-  if (trimmedName && trimmedName !== components.val[index].name) {
-    components.val = components.val.map((comp, i) =>
-      i === index ? { ...comp, name: trimmedName } : comp
-    );
-  }
-  editingIndex.val = null;
-}
-
-function deleteComponent(components: State<{ name: string }[]>, index: number) {
-  components.val = components.val.filter((_, i) => i !== index);
-}
-
 function copyTemplate(
   components: State<{ name: string; templateIndex?: number }[]>,
   baseName: string,
@@ -136,4 +117,23 @@ function copyTemplate(
   }
 
   components.val = [...components.val, { name: newName, templateIndex }];
+}
+
+function renameComponent(
+  components: State<{ name: string }[]>,
+  editingIndex: State<number | null>,
+  index: number,
+  newName: string
+) {
+  const trimmedName = newName.trim();
+  if (trimmedName && trimmedName !== components.val[index].name) {
+    components.val = components.val.map((comp, i) =>
+      i === index ? { ...comp, name: trimmedName } : comp
+    );
+  }
+  editingIndex.val = null;
+}
+
+function deleteComponent(components: State<{ name: string }[]>, index: number) {
+  components.val = components.val.filter((_, i) => i !== index);
 }
