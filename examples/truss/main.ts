@@ -16,11 +16,6 @@ import {
   Mesh,
 } from "@awatif/components";
 
-const grid: Grid = {
-  size: van.state(10),
-  division: van.state(20),
-};
-
 const geometry: Geometry = {
   points: van.state([
     [-3, 0, 0],
@@ -53,9 +48,14 @@ const mesh: Mesh = {
   visible: van.state(false),
 };
 
+const grid: Grid = {
+  size: van.state(10),
+  division: van.state(20),
+};
+
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 
-// Events
+// Toolbar events
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
 
@@ -63,6 +63,7 @@ van.derive(() => {
   else mesh.visible.val = false;
 });
 
+// Mesh events
 van.derive(() => {
   const meshComponents: MeshComponents = new Map(
     geometry.lines.val.map((_, i) => [i, lineMesh])
