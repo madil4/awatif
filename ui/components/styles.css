@@ -14,6 +14,39 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: bottom left;
+}
+
+#components[open] {
+  animation: slideIn 0.3s ease forwards;
+}
+
+#components:not([open]) {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
 }
 
 #components::-webkit-scrollbar {
