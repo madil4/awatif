@@ -1,9 +1,7 @@
 #components {
-  /* Layout */
   width: 280px;
   margin-left: 8px;
 
-  /* Looks */
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 0 0 4px 4px;
@@ -18,7 +16,6 @@
 #components summary {
   padding: 6px 10px;
 
-  /* Looks */
   cursor: pointer;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -29,12 +26,10 @@
 }
 
 #components summary:hover {
-  /* Looks */
   background: var(--bg-hover);
 }
 
 #components details[open] summary {
-  /* Looks */
   background: var(--bg-hover);
 }
 
@@ -44,25 +39,21 @@
   padding: 6px 10px;
   gap: 6px;
 
-  /* Looks */
   border-bottom: 1px solid var(--border);
   transition: background 0.15s ease;
 }
 
 #components .components-item:last-child {
-  /* Looks */
   border-bottom: none;
 }
 
 #components .components-item:hover {
-  /* Looks */
   background: var(--bg-tertiary);
 }
 
 #components .components-item label {
   margin-right: auto;
 
-  /* Looks */
   color: var(--text-secondary);
   font-size: 0.8rem;
 }
