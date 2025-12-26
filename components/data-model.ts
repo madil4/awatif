@@ -1,14 +1,12 @@
 import type { State } from "vanjs-core";
 
-export type Point = {
-  id: number;
-  position: [number, number, number];
-};
+// Point is just the position coordinates [x, y, z]
+// The ID is the Map key
+export type Point = [number, number, number];
 
-export type Line = {
-  id: number;
-  points: [number, number]; // [startPointId, endPointId]
-};
+// Line is just the point IDs [startPointId, endPointId]
+// The ID is the Map key
+export type Line = [number, number];
 
 export type Geometry = {
   points: State<Map<number, Point>>;
