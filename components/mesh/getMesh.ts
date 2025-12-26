@@ -15,9 +15,12 @@ export function getMesh({
   const allElements: Elements = [];
   let nodeOffset = 0;
 
-  meshComponents.forEach((component, lineIndex) => {
-    // Get the line from geometry using the Map key
-    const [startId, endId] = geometry.lines[lineIndex];
+  meshComponents.forEach((component, lineId) => {
+    // Get the line from geometry using the line ID
+    const line = geometry.lines.get(lineId);
+    if (!line) return;
+
+    const [startId, endId] = line.points;
     const startPoint = geometry.points.get(startId);
     const endPoint = geometry.points.get(endId);
 
@@ -30,9 +33,12 @@ export function getMesh({
 
     // Map parametric nodes to 3D positions
     const nodes = parametricNodes.map(([t]) => [
-      startPoint.position[0] + t * (endPoint.position[0] - startPoint.position[0]),
-      startPoint.position[1] + t * (endPoint.position[1] - startPoint.position[1]),
-      startPoint.position[2] + t * (endPoint.position[2] - startPoint.position[2]),
+      startPoint.position[0] +
+        t * (endPoint.position[0] - startPoint.position[0]),
+      startPoint.position[1] +
+        t * (endPoint.position[1] - startPoint.position[1]),
+      startPoint.position[2] +
+        t * (endPoint.position[2] - startPoint.position[2]),
     ]);
 
     // Add nodes

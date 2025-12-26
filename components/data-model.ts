@@ -1,14 +1,19 @@
 import type { State } from "vanjs-core";
 
-export type Geometry = {
-  points: State<Map<number, Point>>;
-  lines: State<number[][]>; // Array of [pointId1, pointId2] pairs
-  visible: State<boolean>;
-};
-
-type Point = {
+export type Point = {
   id: number;
   position: [number, number, number];
+};
+
+export type Line = {
+  id: number;
+  points: [number, number]; // [startPointId, endPointId]
+};
+
+export type Geometry = {
+  points: State<Map<number, Point>>;
+  lines: State<Map<number, Line>>;
+  visible: State<boolean>;
 };
 
 export type Mesh = {

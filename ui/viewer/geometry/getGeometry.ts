@@ -42,6 +42,14 @@ export function getGeometry({
   };
   let nextPointId = getNextPointId();
 
+  // Initialize nextLineId based on existing lines
+  const getNextLineId = () => {
+    const lines = geometry.lines.rawVal;
+    if (lines.size === 0) return 1;
+    return Math.max(...lines.keys()) + 1;
+  };
+  let nextLineId = getNextLineId();
+
   /* ---- Rendering ---- */
 
   // Render lines
@@ -54,11 +62,12 @@ export function getGeometry({
   van.derive(() => {
     if (!geometry.visible.val) return;
 
-    const lineIndices = geometry.lines.val;
+    const linesMap = geometry.lines.val;
     const pointsMap = geometry.points.val;
     const positions: number[] = [];
 
-    lineIndices.forEach(([startId, endId]) => {
+    linesMap.forEach((line) => {
+      const [startId, endId] = line.points;
       const start = pointsMap.get(startId);
       const end = pointsMap.get(endId);
       if (start && end) {
@@ -245,7 +254,7 @@ export function getGeometry({
     if (pointId === null) return;
 
     const pointsMap = new Map(geometry.points.rawVal);
-    const geometryLines = geometry.lines.rawVal;
+    const linesMap = geometry.lines.rawVal;
 
     if (!pointsMap.has(pointId)) return;
 
@@ -253,21 +262,34 @@ export function getGeometry({
     pointsMap.delete(pointId);
 
     // Filter out lines that reference this point
-    const adjustedLines = geometryLines.filter(
-      ([a, b]) => a !== pointId && b !== pointId
-    );
+    const adjustedLines = new Map<
+      number,
+      { id: number; points: [number, number] }
+    >();
+    linesMap.forEach((line, id) => {
+      if (line.points[0] !== pointId && line.points[1] !== pointId) {
+        adjustedLines.set(id, line);
+      }
+    });
 
-    if (!adjustedLines.length) {
+    if (adjustedLines.size === 0) {
       geometry.points.val = new Map();
-      geometry.lines.val = [];
+      geometry.lines.val = new Map();
       appendPoint = null;
       mode.val = Mode.EDIT;
       return;
     }
 
     // Remove unused points
-    const usedPointIds = new Set<number>(adjustedLines.flat());
-    const compactPoints = new Map<number, { id: number; position: [number, number, number] }>();
+    const usedPointIds = new Set<number>();
+    adjustedLines.forEach((line) => {
+      usedPointIds.add(line.points[0]);
+      usedPointIds.add(line.points[1]);
+    });
+    const compactPoints = new Map<
+      number,
+      { id: number; position: [number, number, number] }
+    >();
     pointsMap.forEach((point, id) => {
       if (usedPointIds.has(id)) {
         compactPoints.set(id, point);
@@ -290,12 +312,13 @@ export function getGeometry({
     if (!hp) return;
 
     const pointsMap = geometry.points.rawVal;
-    const geometryLines = geometry.lines.rawVal;
+    const linesMap = geometry.lines.rawVal;
 
     const currentPoint = pointsMap.get(appendPoint);
     if (!currentPoint) return;
 
-    if (currentPoint.position.every((val: number, i: number) => val === hp[i])) return;
+    if (currentPoint.position.every((val: number, i: number) => val === hp[i]))
+      return;
 
     // Check if a point with this position already exists
     let targetId: number | null = null;
@@ -310,11 +333,21 @@ export function getGeometry({
       // Create new point
       targetId = nextPointId++;
       const newPointsMap = new Map(pointsMap);
-      newPointsMap.set(targetId, { id: targetId, position: hp as [number, number, number] });
+      newPointsMap.set(targetId, {
+        id: targetId,
+        position: hp as [number, number, number],
+      });
       geometry.points.val = newPointsMap;
     }
 
-    geometry.lines.val = [...geometryLines, [appendPoint, targetId]];
+    // Create new line
+    const newLineId = nextLineId++;
+    const newLinesMap = new Map(linesMap);
+    newLinesMap.set(newLineId, {
+      id: newLineId,
+      points: [appendPoint, targetId],
+    });
+    geometry.lines.val = newLinesMap;
 
     appendPoint = targetId;
   }
@@ -337,7 +370,10 @@ export function getGeometry({
     // Create new point
     const newId = nextPointId++;
     const newPointsMap = new Map(pointsMap);
-    newPointsMap.set(newId, { id: newId, position: hp as [number, number, number] });
+    newPointsMap.set(newId, {
+      id: newId,
+      position: hp as [number, number, number],
+    });
     geometry.points.val = newPointsMap;
     appendPoint = newId;
   }
@@ -345,10 +381,14 @@ export function getGeometry({
   function removeOrphanAppendPoint() {
     if (appendPoint === null) return;
 
-    const lines = geometry.lines.rawVal;
-    const isUsed = lines.some(
-      ([a, b]) => a === appendPoint || b === appendPoint
-    );
+    const linesMap = geometry.lines.rawVal;
+    let isUsed = false;
+    for (const line of linesMap.values()) {
+      if (line.points[0] === appendPoint || line.points[1] === appendPoint) {
+        isUsed = true;
+        break;
+      }
+    }
 
     if (!isUsed) {
       handleRemovePoint(appendPoint);
@@ -366,11 +406,13 @@ export function getGeometry({
     const point = pointsMap.get(dragPoint);
     if (!hp || !point) return;
 
-    if (point.position.every((val: number, i: number) => val === hp[i]))
-      return;
+    if (point.position.every((val: number, i: number) => val === hp[i])) return;
 
     const newPointsMap = new Map(pointsMap);
-    newPointsMap.set(dragPoint, { id: dragPoint, position: hp as [number, number, number] });
+    newPointsMap.set(dragPoint, {
+      id: dragPoint,
+      position: hp as [number, number, number],
+    });
     geometry.points.val = newPointsMap;
   });
 
