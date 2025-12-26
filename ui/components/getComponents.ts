@@ -16,9 +16,9 @@ export function getComponents({
 
   const templates = [lineMesh];
   const components = van.state([
-    { name: "Component 1", templateIndex: 0, geometry: [1, 2, 3] },
-    { name: "Component 2", templateIndex: 0, geometry: [3, 4, 5] },
-    { name: "Component 3", templateIndex: 0, geometry: [6, 7, 8] },
+    { name: "Line Mesh", templateIndex: 0, geometry: [1, 2, 3] },
+    { name: "Line Mesh 2", templateIndex: 0, geometry: [3, 4, 5] },
+    { name: "Line Mesh 3", templateIndex: 0, geometry: [6, 7, 8] },
   ]);
 
   // meshComponents
