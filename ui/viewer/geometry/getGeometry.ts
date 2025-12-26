@@ -7,7 +7,7 @@ export function getGeometry({
   geometry,
   grid,
   camera,
-  rendererElm: domElement,
+  rendererElm,
   render,
 }: {
   geometry: Geometry;
@@ -189,7 +189,7 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
       color: SELECTION_COLOR,
-      size: POINT_SIZE + 4,
+      size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -247,7 +247,7 @@ export function getGeometry({
     return (v: number) => Math.round((v - offset) / step) * step + offset;
   };
 
-  domElement.addEventListener("pointerdown", (e: PointerEvent) => {
+  rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
 
     // Selection mode: only when selection is not null
@@ -277,9 +277,9 @@ export function getGeometry({
     }
   });
 
-  domElement.addEventListener("pointermove", (e: PointerEvent) => {
+  rendererElm.addEventListener("pointermove", (e: PointerEvent) => {
     // Update pointer position
-    const rect = domElement.getBoundingClientRect();
+    const rect = rendererElm.getBoundingClientRect();
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     raycaster.setFromCamera(pointer, camera);
@@ -335,10 +335,21 @@ export function getGeometry({
     selectionBox.style.display = "block";
   }
 
-  domElement.addEventListener("pointerup", (e: PointerEvent) => {
+  rendererElm.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return;
 
     const pointHits = raycaster.intersectObject(points, false);
+
+    // In Select mode, only handle selection - no editing or dragging
+    if (geometry.selection.rawVal !== null) {
+      handleSelection();
+      selectionStart = null;
+      selectionEnd = null;
+      selectionBox.style.display = "none";
+      mode.val = Mode.EDIT;
+      isPointerDown = false;
+      return;
+    }
 
     if (mode.val === Mode.SELECT) {
       handleSelection();
@@ -375,7 +386,7 @@ export function getGeometry({
   } {
     const vec = new THREE.Vector3(...point);
     vec.project(camera);
-    const rect = domElement.getBoundingClientRect();
+    const rect = rendererElm.getBoundingClientRect();
     return {
       x: ((vec.x + 1) / 2) * rect.width + rect.left,
       y: ((-vec.y + 1) / 2) * rect.height + rect.top,
@@ -490,8 +501,11 @@ export function getGeometry({
     }
   }
 
-  domElement.addEventListener("contextmenu", (e: PointerEvent) => {
+  rendererElm.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
+
+    // In Select mode, don't allow editing
+    if (geometry.selection.rawVal !== null) return;
 
     const pointHits = raycaster.intersectObject(points, false);
 
@@ -699,8 +713,8 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
       color: GEOMETRY_COLOR,
-      dashSize: POINT_SIZE * 0.025,
-      gapSize: POINT_SIZE * 0.025,
+      dashSize: POINT_SIZE,
+      gapSize: POINT_SIZE,
       depthTest: false,
     })
   );
