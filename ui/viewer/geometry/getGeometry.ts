@@ -30,9 +30,17 @@ export function getGeometry({
 
   /* ---- State Management ---- */
   const mode = van.state<Mode>(Mode.EDIT);
-  let dragPoint: number | null = null;
-  let appendPoint: number | null = null;
+  let dragPoint: number | null = null; // Point ID
+  let appendPoint: number | null = null; // Point ID
   let isPointerDown = false;
+
+  // Initialize nextPointId based on existing points
+  const getNextPointId = () => {
+    const points = geometry.points.rawVal;
+    if (points.size === 0) return 1;
+    return Math.max(...points.keys()) + 1;
+  };
+  let nextPointId = getNextPointId();
 
   /* ---- Rendering ---- */
 
@@ -47,14 +55,14 @@ export function getGeometry({
     if (!geometry.visible.val) return;
 
     const lineIndices = geometry.lines.val;
-    const geometryPoints = geometry.points.val;
+    const pointsMap = geometry.points.val;
     const positions: number[] = [];
 
-    lineIndices.forEach(([startIndex, endIndex]) => {
-      const start = geometryPoints[startIndex];
-      const end = geometryPoints[endIndex];
+    lineIndices.forEach(([startId, endId]) => {
+      const start = pointsMap.get(startId);
+      const end = pointsMap.get(endId);
       if (start && end) {
-        positions.push(...start, ...end);
+        positions.push(...start.position, ...end.position);
       }
     });
 
@@ -86,10 +94,14 @@ export function getGeometry({
   group.add(points);
 
   van.derive(() => {
-    const geometryPoints = geometry.points.val.flat();
+    const pointsMap = geometry.points.val;
+    const flatPositions: number[] = [];
+    pointsMap.forEach((point) => {
+      flatPositions.push(...point.position);
+    });
     points.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(geometryPoints, 3)
+      new THREE.Float32BufferAttribute(flatPositions, 3)
     );
     points.geometry.computeBoundingSphere();
 
@@ -131,7 +143,14 @@ export function getGeometry({
     if (!hits.length) return;
 
     isPointerDown = true;
-    dragPoint = hits[0].index ?? null;
+    // Convert hit index to point ID
+    const hitIndex = hits[0].index ?? null;
+    if (hitIndex !== null) {
+      const pointsArray = Array.from(geometry.points.val.values());
+      if (hitIndex < pointsArray.length) {
+        dragPoint = pointsArray[hitIndex].id;
+      }
+    }
   });
 
   domElement.addEventListener("pointermove", (e: PointerEvent) => {
@@ -173,7 +192,13 @@ export function getGeometry({
     if (mode.val === Mode.EDIT) {
       if (pointHits.length) {
         mode.val = Mode.APPEND;
-        appendPoint = pointHits[0].index ?? null;
+        const hitIndex = pointHits[0].index ?? null;
+        if (hitIndex !== null) {
+          const pointsArray = Array.from(geometry.points.val.values());
+          if (hitIndex < pointsArray.length) {
+            appendPoint = pointsArray[hitIndex].id;
+          }
+        }
       } else {
         handleNewGeometry();
       }
@@ -194,7 +219,15 @@ export function getGeometry({
 
     // Remove point
     if (pointHits.length) {
-      if (mode.val === Mode.EDIT) handleRemovePoint(pointHits[0].index ?? null);
+      if (mode.val === Mode.EDIT) {
+        const hitIndex = pointHits[0].index ?? null;
+        if (hitIndex !== null) {
+          const pointsArray = Array.from(geometry.points.val.values());
+          if (hitIndex < pointsArray.length) {
+            handleRemovePoint(pointsArray[hitIndex].id);
+          }
+        }
+      }
       return;
     }
 
@@ -208,56 +241,45 @@ export function getGeometry({
     appendPoint = null;
   });
 
-  function handleRemovePoint(pointIndex: number | null) {
-    if (pointIndex === null) return;
+  function handleRemovePoint(pointId: number | null) {
+    if (pointId === null) return;
 
-    const geometryPoints = geometry.points.rawVal;
+    const pointsMap = new Map(geometry.points.rawVal);
     const geometryLines = geometry.lines.rawVal;
 
-    if (!geometryPoints[pointIndex]) return;
+    if (!pointsMap.has(pointId)) return;
 
-    const remainingPoints = geometryPoints.filter(
-      (_, idx) => idx !== pointIndex
+    // Remove the point
+    pointsMap.delete(pointId);
+
+    // Filter out lines that reference this point
+    const adjustedLines = geometryLines.filter(
+      ([a, b]) => a !== pointId && b !== pointId
     );
-    const adjustedLines = geometryLines
-      .filter(([a, b]) => a !== pointIndex && b !== pointIndex)
-      .map(
-        ([a, b]) =>
-          [a > pointIndex ? a - 1 : a, b > pointIndex ? b - 1 : b] as [
-            number,
-            number
-          ]
-      );
 
     if (!adjustedLines.length) {
-      geometry.points.val = [];
+      geometry.points.val = new Map();
       geometry.lines.val = [];
       appendPoint = null;
       mode.val = Mode.EDIT;
       return;
     }
 
-    const used = new Set<number>(adjustedLines.flat());
-    const indexMap = new Map<number, number>();
-    const compactPoints: number[][] = [];
-    remainingPoints.forEach((p, idx) => {
-      if (used.has(idx)) {
-        indexMap.set(idx, compactPoints.length);
-        compactPoints.push(p);
+    // Remove unused points
+    const usedPointIds = new Set<number>(adjustedLines.flat());
+    const compactPoints = new Map<number, { id: number; position: [number, number, number] }>();
+    pointsMap.forEach((point, id) => {
+      if (usedPointIds.has(id)) {
+        compactPoints.set(id, point);
       }
     });
 
     geometry.points.val = compactPoints;
-    geometry.lines.val = adjustedLines.map(([a, b]) => [
-      indexMap.get(a)!,
-      indexMap.get(b)!,
-    ]);
+    geometry.lines.val = adjustedLines;
 
-    if (appendPoint !== null) {
-      const adjustedAppend =
-        appendPoint > pointIndex ? appendPoint - 1 : appendPoint;
-      appendPoint = indexMap.get(adjustedAppend) ?? null;
-      if (appendPoint === null) mode.val = Mode.EDIT;
+    if (appendPoint === pointId) {
+      appendPoint = null;
+      mode.val = Mode.EDIT;
     }
   }
 
@@ -267,29 +289,34 @@ export function getGeometry({
     const hp = hitPoint.rawVal;
     if (!hp) return;
 
-    const geometryPoints = geometry.points.rawVal;
+    const pointsMap = geometry.points.rawVal;
     const geometryLines = geometry.lines.rawVal;
 
-    const currentPoint = geometryPoints[appendPoint];
+    const currentPoint = pointsMap.get(appendPoint);
     if (!currentPoint) return;
 
-    if (currentPoint.every((val: number, i: number) => val === hp[i])) return;
+    if (currentPoint.position.every((val: number, i: number) => val === hp[i])) return;
 
-    const matchIndex = geometryPoints.findIndex(
-      (p: number[]) => p && p.every((val: number, i: number) => val === hp[i])
-    );
-
-    let targetIndex: number;
-    if (matchIndex !== -1) {
-      targetIndex = matchIndex;
-    } else {
-      geometry.points.val = [...geometryPoints, hp];
-      targetIndex = geometry.points.rawVal.length - 1;
+    // Check if a point with this position already exists
+    let targetId: number | null = null;
+    for (const [id, point] of pointsMap) {
+      if (point.position.every((val: number, i: number) => val === hp[i])) {
+        targetId = id;
+        break;
+      }
     }
 
-    geometry.lines.val = [...geometryLines, [appendPoint, targetIndex]];
+    if (targetId === null) {
+      // Create new point
+      targetId = nextPointId++;
+      const newPointsMap = new Map(pointsMap);
+      newPointsMap.set(targetId, { id: targetId, position: hp as [number, number, number] });
+      geometry.points.val = newPointsMap;
+    }
 
-    appendPoint = targetIndex;
+    geometry.lines.val = [...geometryLines, [appendPoint, targetId]];
+
+    appendPoint = targetId;
   }
 
   function handleNewGeometry() {
@@ -297,17 +324,22 @@ export function getGeometry({
     if (!hp) return;
 
     mode.val = Mode.APPEND;
-    const existingIndex = geometry.points.rawVal.findIndex((p) =>
-      p.every((val: number, i: number) => val === hp[i])
-    );
+    const pointsMap = geometry.points.rawVal;
 
-    if (existingIndex !== -1) {
-      appendPoint = existingIndex;
-      return;
+    // Check if a point with this position already exists
+    for (const [id, point] of pointsMap) {
+      if (point.position.every((val: number, i: number) => val === hp[i])) {
+        appendPoint = id;
+        return;
+      }
     }
 
-    geometry.points.val = [...geometry.points.rawVal, hp];
-    appendPoint = geometry.points.rawVal.length - 1;
+    // Create new point
+    const newId = nextPointId++;
+    const newPointsMap = new Map(pointsMap);
+    newPointsMap.set(newId, { id: newId, position: hp as [number, number, number] });
+    geometry.points.val = newPointsMap;
+    appendPoint = newId;
   }
 
   function removeOrphanAppendPoint() {
@@ -330,16 +362,16 @@ export function getGeometry({
       return;
 
     const hp = hitPoint.val;
-    const geometryPoints = geometry.points.rawVal;
-    if (!hp || !geometryPoints[dragPoint]) return;
+    const pointsMap = geometry.points.rawVal;
+    const point = pointsMap.get(dragPoint);
+    if (!hp || !point) return;
 
-    if (
-      geometryPoints[dragPoint].every((val: number, i: number) => val === hp[i])
-    )
+    if (point.position.every((val: number, i: number) => val === hp[i]))
       return;
 
-    geometryPoints[dragPoint] = hp;
-    geometry.points.val = [...geometryPoints];
+    const newPointsMap = new Map(pointsMap);
+    newPointsMap.set(dragPoint, { id: dragPoint, position: hp as [number, number, number] });
+    geometry.points.val = newPointsMap;
   });
 
   // Show marker
@@ -390,7 +422,7 @@ export function getGeometry({
       return;
     }
 
-    const fromPoint = geometry.points.rawVal[appendPoint];
+    const fromPoint = geometry.points.rawVal.get(appendPoint);
     const toPoint = hitPoint.val;
 
     if (!fromPoint || !toPoint) {
@@ -401,7 +433,7 @@ export function getGeometry({
 
     previewLine.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute([...fromPoint, ...toPoint], 3)
+      new THREE.Float32BufferAttribute([...fromPoint.position, ...toPoint], 3)
     );
     previewLine.computeLineDistances();
     previewLine.visible = true;

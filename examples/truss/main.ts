@@ -18,27 +18,29 @@ import {
 } from "@awatif/components";
 
 const geometry: Geometry = {
-  points: van.state([
-    [-3, 0, 0],
-    [-1, 0, 0],
-    [1, 0, 0],
-    [3, 0, 0],
-    [-2.0, 1.5, 0],
-    [0.0, 1.5, 0],
-    [2.0, 1.5, 0],
-  ]),
+  points: van.state(
+    new Map([
+      [1, { id: 1, position: [-3, 0, 0] }],
+      [2, { id: 2, position: [-1, 0, 0] }],
+      [3, { id: 3, position: [1, 0, 0] }],
+      [4, { id: 4, position: [3, 0, 0] }],
+      [5, { id: 5, position: [-2.0, 1.5, 0] }],
+      [6, { id: 6, position: [0.0, 1.5, 0] }],
+      [7, { id: 7, position: [2.0, 1.5, 0] }],
+    ])
+  ),
   lines: van.state([
-    [0, 1],
     [1, 2],
     [2, 3],
-    [4, 5],
+    [3, 4],
     [5, 6],
-    [0, 4],
-    [6, 3],
-    [4, 1],
+    [6, 7],
     [1, 5],
+    [7, 4],
     [5, 2],
     [2, 6],
+    [6, 3],
+    [3, 7],
   ]),
   visible: van.state(true),
 };
