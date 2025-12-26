@@ -29,19 +29,21 @@ const geometry: Geometry = {
       [7, { id: 7, position: [2.0, 1.5, 0] }],
     ])
   ),
-  lines: van.state([
-    [1, 2],
-    [2, 3],
-    [3, 4],
-    [5, 6],
-    [6, 7],
-    [1, 5],
-    [7, 4],
-    [5, 2],
-    [2, 6],
-    [6, 3],
-    [3, 7],
-  ]),
+  lines: van.state(
+    new Map([
+      [1, { id: 1, points: [1, 2] }],
+      [2, { id: 2, points: [2, 3] }],
+      [3, { id: 3, points: [3, 4] }],
+      [4, { id: 4, points: [5, 6] }],
+      [5, { id: 5, points: [6, 7] }],
+      [6, { id: 6, points: [1, 5] }],
+      [7, { id: 7, points: [7, 4] }],
+      [8, { id: 8, points: [5, 2] }],
+      [9, { id: 9, points: [2, 6] }],
+      [10, { id: 10, points: [6, 3] }],
+      [11, { id: 11, points: [3, 7] }],
+    ])
+  ),
   visible: van.state(true),
 };
 
