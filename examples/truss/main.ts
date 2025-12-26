@@ -53,7 +53,6 @@ const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
 };
-
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 const meshComponents: MeshComponents = van.state(new Map([[0, lineMesh]]));
 
