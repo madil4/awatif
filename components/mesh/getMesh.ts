@@ -1,5 +1,5 @@
-import { MeshComponents } from "./data-model";
 import { Geometry } from "../data-model";
+import { Elements, MeshComponents, Nodes } from "./data-model";
 
 export function getMesh({
   geometry,
@@ -10,9 +10,9 @@ export function getMesh({
     lines: Geometry["lines"]["val"];
   };
   meshComponents: MeshComponents["val"];
-}): { nodes: number[][]; elements: number[][] } {
-  const allNodes: number[][] = [];
-  const allElements: number[][] = [];
+}): { nodes: Nodes; elements: Elements } {
+  const allNodes: Nodes = [];
+  const allElements: Elements = [];
   let nodeOffset = 0;
 
   meshComponents.forEach((component, lineIndex) => {
