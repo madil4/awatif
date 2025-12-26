@@ -26,6 +26,7 @@ export function getGeometry({
     EDIT,
     DRAG,
     APPEND,
+    SELECT,
   }
 
   /* ---- State Management ---- */
@@ -33,6 +34,21 @@ export function getGeometry({
   let dragPoint: number | null = null; // Point ID
   let appendPoint: number | null = null; // Point ID
   let isPointerDown = false;
+
+  // Selection box state
+  let selectionStart: { x: number; y: number } | null = null;
+  let selectionEnd: { x: number; y: number } | null = null;
+
+  // Selection box DOM element
+  const selectionBox = document.createElement("div");
+  selectionBox.style.cssText = `
+    position: fixed;
+    border: 1px solid yellow;
+    background: rgba(255, 255, 0, 0.1);
+    pointer-events: none;
+    display: none;
+  `;
+  document.body.appendChild(selectionBox);
 
   // Initialize nextPointId based on existing points
   const getNextPointId = () => {
@@ -122,6 +138,93 @@ export function getGeometry({
     render();
   });
 
+  // Render selected lines highlight
+  const SELECTION_COLOR = new THREE.Color("cyan");
+  const selectedLines = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({
+      color: SELECTION_COLOR,
+      depthTest: false,
+      linewidth: 2,
+    })
+  );
+  selectedLines.renderOrder = 5; // Render on top of everything
+  group.add(selectedLines);
+
+  van.derive(() => {
+    const selection = geometry.selection.val;
+    if (!selection || selection.lines.length === 0) {
+      selectedLines.visible = false;
+      render();
+      return;
+    }
+
+    const linesMap = geometry.lines.rawVal;
+    const pointsMap = geometry.points.rawVal;
+    const positions: number[] = [];
+
+    for (const lineId of selection.lines) {
+      const line = linesMap.get(lineId);
+      if (!line) continue;
+      const [startId, endId] = line;
+      const start = pointsMap.get(startId);
+      const end = pointsMap.get(endId);
+      if (start && end) {
+        positions.push(...start, ...end);
+      }
+    }
+
+    selectedLines.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    selectedLines.geometry.computeBoundingSphere();
+    selectedLines.visible = true;
+
+    render();
+  });
+
+  // Render selected points highlight
+  const selectedPoints = new THREE.Points(
+    new THREE.BufferGeometry(),
+    new THREE.PointsMaterial({
+      color: SELECTION_COLOR,
+      size: POINT_SIZE + 4,
+      sizeAttenuation: false,
+      depthTest: false,
+    })
+  );
+  selectedPoints.renderOrder = 6; // Render on top of everything
+  group.add(selectedPoints);
+
+  van.derive(() => {
+    const selection = geometry.selection.val;
+    if (!selection || selection.points.length === 0) {
+      selectedPoints.visible = false;
+      render();
+      return;
+    }
+
+    const pointsMap = geometry.points.rawVal;
+    const positions: number[] = [];
+
+    for (const pointId of selection.points) {
+      const point = pointsMap.get(pointId);
+      if (point) {
+        positions.push(...point);
+      }
+    }
+
+    selectedPoints.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    selectedPoints.geometry.computeBoundingSphere();
+    selectedPoints.visible = true;
+
+    render();
+  });
+
   /* ---- Mouse Events ---- */
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
@@ -146,10 +249,22 @@ export function getGeometry({
 
   domElement.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
+
+    // Selection mode: only when selection is not null
+    if (geometry.selection.rawVal !== null) {
+      selectionStart = { x: e.clientX, y: e.clientY };
+      selectionEnd = { x: e.clientX, y: e.clientY };
+      isPointerDown = true;
+      return;
+    }
+
     if (mode.val !== Mode.EDIT && mode.val !== Mode.APPEND) return;
 
     const hits = raycaster.intersectObject(points, false);
-    if (!hits.length) return;
+    if (!hits.length) {
+      isPointerDown = true;
+      return;
+    }
 
     isPointerDown = true;
     // Convert hit index to point ID
@@ -184,6 +299,14 @@ export function getGeometry({
       hitPoint.val = null;
     }
 
+    // Handle selection box update (only when selection is not null)
+    if (isPointerDown && selectionStart && geometry.selection.rawVal !== null) {
+      selectionEnd = { x: e.clientX, y: e.clientY };
+      mode.val = Mode.SELECT;
+      updateSelectionBox();
+      return;
+    }
+
     // Handle drag mode transition
     if (isPointerDown && (mode.val === Mode.EDIT || mode.val === Mode.APPEND)) {
       const hits = raycaster.intersectObject(points, false);
@@ -193,12 +316,37 @@ export function getGeometry({
     }
   });
 
+  function updateSelectionBox() {
+    if (!selectionStart || !selectionEnd) {
+      selectionBox.style.display = "none";
+      return;
+    }
+    const left = Math.min(selectionStart.x, selectionEnd.x);
+    const top = Math.min(selectionStart.y, selectionEnd.y);
+    const width = Math.abs(selectionEnd.x - selectionStart.x);
+    const height = Math.abs(selectionEnd.y - selectionStart.y);
+    const isAddMode = selectionEnd.x >= selectionStart.x;
+
+    selectionBox.style.left = `${left}px`;
+    selectionBox.style.top = `${top}px`;
+    selectionBox.style.width = `${width}px`;
+    selectionBox.style.height = `${height}px`;
+    selectionBox.style.borderStyle = isAddMode ? "solid" : "dashed";
+    selectionBox.style.display = "block";
+  }
+
   domElement.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return;
 
     const pointHits = raycaster.intersectObject(points, false);
 
-    if (mode.val === Mode.EDIT) {
+    if (mode.val === Mode.SELECT) {
+      handleSelection();
+      selectionStart = null;
+      selectionEnd = null;
+      selectionBox.style.display = "none";
+      mode.val = Mode.EDIT;
+    } else if (mode.val === Mode.EDIT) {
       if (pointHits.length) {
         mode.val = Mode.APPEND;
         const hitIndex = pointHits[0].index ?? null;
@@ -220,6 +368,127 @@ export function getGeometry({
 
     isPointerDown = false; // important to be at this level
   });
+
+  function toScreenCoords(point: [number, number, number]): {
+    x: number;
+    y: number;
+  } {
+    const vec = new THREE.Vector3(...point);
+    vec.project(camera);
+    const rect = domElement.getBoundingClientRect();
+    return {
+      x: ((vec.x + 1) / 2) * rect.width + rect.left,
+      y: ((-vec.y + 1) / 2) * rect.height + rect.top,
+    };
+  }
+
+  function lineIntersectsBox(
+    p1: { x: number; y: number },
+    p2: { x: number; y: number },
+    left: number,
+    top: number,
+    right: number,
+    bottom: number
+  ): boolean {
+    // Check if either endpoint is inside the box
+    const p1InBox =
+      p1.x >= left && p1.x <= right && p1.y >= top && p1.y <= bottom;
+    const p2InBox =
+      p2.x >= left && p2.x <= right && p2.y >= top && p2.y <= bottom;
+    if (p1InBox || p2InBox) return true;
+
+    // Check if line crosses any edge of the box
+    const edges: [number, number, number, number][] = [
+      [left, top, right, top], // top
+      [left, bottom, right, bottom], // bottom
+      [left, top, left, bottom], // left
+      [right, top, right, bottom], // right
+    ];
+
+    for (const [x1, y1, x2, y2] of edges) {
+      if (segmentsIntersect(p1.x, p1.y, p2.x, p2.y, x1, y1, x2, y2)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function segmentsIntersect(
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number,
+    cx: number,
+    cy: number,
+    dx: number,
+    dy: number
+  ): boolean {
+    const d = (bx - ax) * (dy - cy) - (by - ay) * (dx - cx);
+    if (d === 0) return false;
+
+    const t = ((cx - ax) * (dy - cy) - (cy - ay) * (dx - cx)) / d;
+    const u = ((cx - ax) * (by - ay) - (cy - ay) * (bx - ax)) / d;
+
+    return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+  }
+
+  function handleSelection() {
+    if (!selectionStart || !selectionEnd) return;
+
+    const left = Math.min(selectionStart.x, selectionEnd.x);
+    const right = Math.max(selectionStart.x, selectionEnd.x);
+    const top = Math.min(selectionStart.y, selectionEnd.y);
+    const bottom = Math.max(selectionStart.y, selectionEnd.y);
+
+    const isAddMode = selectionEnd.x >= selectionStart.x; // Left-to-right = add
+    const pointsMap = geometry.points.rawVal;
+    const linesMap = geometry.lines.rawVal;
+
+    // Find points in box
+    const pointsInBox: number[] = [];
+    pointsMap.forEach((point, pointId) => {
+      const screen = toScreenCoords(point);
+      if (
+        screen.x >= left &&
+        screen.x <= right &&
+        screen.y >= top &&
+        screen.y <= bottom
+      ) {
+        pointsInBox.push(pointId);
+      }
+    });
+
+    // Find lines in box
+    const linesInBox: number[] = [];
+    linesMap.forEach((line, lineId) => {
+      const [startId, endId] = line;
+      const start = pointsMap.get(startId);
+      const end = pointsMap.get(endId);
+      if (!start || !end) return;
+
+      const startScreen = toScreenCoords(start);
+      const endScreen = toScreenCoords(end);
+
+      if (lineIntersectsBox(startScreen, endScreen, left, top, right, bottom)) {
+        linesInBox.push(lineId);
+      }
+    });
+
+    const currentPoints = geometry.selection.rawVal?.points ?? [];
+    const currentLines = geometry.selection.rawVal?.lines ?? [];
+
+    if (isAddMode) {
+      // Add to selection
+      const newPoints = [...new Set([...currentPoints, ...pointsInBox])];
+      const newLines = [...new Set([...currentLines, ...linesInBox])];
+      geometry.selection.val = { points: newPoints, lines: newLines };
+    } else {
+      // Remove from selection
+      const newPoints = currentPoints.filter((id) => !pointsInBox.includes(id));
+      const newLines = currentLines.filter((id) => !linesInBox.includes(id));
+      geometry.selection.val = { points: newPoints, lines: newLines };
+    }
+  }
 
   domElement.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
@@ -413,7 +682,7 @@ export function getGeometry({
   group.add(marker);
 
   van.derive(() => {
-    if (!hitPoint.val) {
+    if (!hitPoint.val || geometry.selection.val !== null) {
       marker.visible = false;
       render();
       return;

@@ -47,7 +47,16 @@
           ])
         ),
         visible: van.state(true),
+        selection: van.state({
+          points: [],
+          lines: [],
+        }),
       };
+
+      // Log selection changes for testing
+      van.derive(() => {
+        console.log("Selection:", geometry.selection.val);
+      });
 
       document.body.append(getViewer({ geometry }));
     </script>
