@@ -34,6 +34,7 @@ export function getComponents({
     meshComponents.val = newMeshComponents;
   });
 
+  // Template
   const editingIndex = van.state<number | null>(null);
 
   const template = () => html`
