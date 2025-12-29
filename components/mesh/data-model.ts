@@ -6,10 +6,9 @@ export type MeshComponents = State<MeshComponent[]>;
 
 type MeshComponent = {
   name: string;
-  templateIdx: number;
-  geometry: number[] 
+  templateIndex: number;
+  geometry: number[];
 };
-
 
 export type MeshTemplate<Params extends object> = {
   name: string;

@@ -17,9 +17,9 @@ export function getComponents({
   const container = document.createElement("div");
 
   meshComponents.val = [
-    { name: "Top Chords", templateIdx: 0, geometry: [4, 5] },
-    { name: "Bottom Chords", templateIdx: 0, geometry: [1, 2, 3] },
-    { name: "Webs", templateIdx: 0, geometry: [6, 7, 8, 9, 10, 11] },
+    { name: "Top Chords", templateIndex: 0, geometry: [4, 5] },
+    { name: "Bottom Chords", templateIndex: 0, geometry: [1, 2, 3] },
+    { name: "Webs", templateIndex: 0, geometry: [6, 7, 8, 9, 10, 11] },
   ];
 
   const activeIndex = van.state<number | null>(null);
