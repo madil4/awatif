@@ -73,6 +73,12 @@ export function getComponents({
     }
   });
 
+  van.derive(() => {
+    if (activeIndex.val !== null)
+      geometry.selection.val = { points: [], lines: [] };
+    else geometry.selection.val = null;
+  });
+
   const template = () => html`
     <details id="components" ?open=${toolbarMode.val === ToolbarMode.MESH}>
       <summary>Components</summary>
