@@ -8,6 +8,7 @@ type LineMeshParams = {
 
 export const lineMesh: MeshComponent<LineMeshParams> = {
   name: "Line Mesh",
+  geometry: [],
 
   params: van.state({
     divisions: 3,
