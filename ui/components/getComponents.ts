@@ -1,20 +1,22 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { MeshComponents, templates } from "@awatif/components";
+import { Geometry, MeshComponents, templates } from "@awatif/components";
 import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getComponents({
   toolbarMode,
+  geometry,
   meshComponents,
 }: {
   toolbarMode: State<ToolbarMode>;
+  geometry: Geometry;
   meshComponents: MeshComponents;
 }): HTMLElement {
   const container = document.createElement("div");
 
-  const components:MeshComponents = van.state([
+  const components: MeshComponents = van.state([
     { name: "Line Mesh", templateIdx: 0, geometry: [1, 2, 3] },
     { name: "Line Mesh 2", templateIdx: 0, geometry: [3, 4, 5] },
     { name: "Line Mesh 3", templateIdx: 0, geometry: [6, 7, 8] },
@@ -22,28 +24,34 @@ export function getComponents({
 
   // meshComponents
   van.derive(() => {
-    const newMeshComponents:MeshComponents["val"] = [];
+    const newMeshComponents: MeshComponents["val"] = [];
 
     components.val?.forEach((comp) => {
       newMeshComponents.push({
         name: comp.name,
         templateIdx: comp.templateIdx,
-        geometry: comp.geometry,
+        geometry: geometry.selection.val?.lines ?? [],
       });
     });
 
     meshComponents.val = newMeshComponents;
+
+    console.log(meshComponents.val);
   });
 
   // Template
   const editingIndex = van.state<number | null>(null);
+  const activeIndex = van.state<number | null>(null);
 
   const template = () => html`
     <details id="components" ?open=${toolbarMode.val === ToolbarMode.MESH}>
       <summary>Components</summary>
       ${components.val.map(
         (component, index) => html`
-          <div class="components-item">
+          <div
+            class="components-item ${activeIndex.val === index ? "active" : ""}"
+            @click=${() => (activeIndex.val = index)}
+          >
             ${editingIndex.val === index
               ? html`
                   <input
@@ -79,7 +87,7 @@ export function getComponents({
                 `}
             <button
               class="components-delete-btn"
-              @click=${() => deleteComponent(components, index)}
+              @click=${() => deleteComponent(components, activeIndex, index)}
               title="Delete component"
             >
               ×
@@ -160,6 +168,19 @@ function renameComponent(
   });
 }
 
-function deleteComponent(components: State<{ name: string }[]>, index: number) {
+function deleteComponent(
+  components: State<{ name: string }[]>,
+  activeIndex: State<number | null>,
+  index: number
+) {
+  // Clear active state if we're deleting the active component
+  if (activeIndex.val === index) {
+    activeIndex.val = null;
+  }
+  // Adjust active index if the deleted component is before the active one
+  else if (activeIndex.val !== null && activeIndex.val > index) {
+    activeIndex.val = activeIndex.val - 1;
+  }
+
   components.val = components.val.filter((_, i) => i !== index);
 }
