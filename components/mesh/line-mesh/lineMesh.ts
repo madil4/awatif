@@ -1,15 +1,13 @@
 import van from "vanjs-core";
 import { html } from "lit-html";
-import { MeshComponent } from "../data-model";
+import { MeshTemplate } from "../data-model";
 
 type LineMeshParams = {
   divisions: number;
 };
 
-export const lineMesh: MeshComponent<LineMeshParams> = {
+export const lineMesh: MeshTemplate<LineMeshParams> = {
   name: "Line Mesh",
-  geometry: [],
-
   params: van.state({
     divisions: 3,
   }),

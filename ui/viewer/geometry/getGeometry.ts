@@ -47,6 +47,7 @@ export function getGeometry({
     background: rgba(255, 255, 0, 0.1);
     pointer-events: none;
     display: none;
+    z-index: 1000; // TODO:put a logical number
   `;
   document.body.appendChild(selectionBox);
 
