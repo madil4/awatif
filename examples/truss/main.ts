@@ -48,12 +48,18 @@ const mesh: Mesh = {
   visible: van.state(false),
 };
 
+const meshComponents: MeshComponents = van.state([
+  { name: "Top Chords", templateIndex: 0, geometry: [4, 5] },
+  { name: "Bottom Chords", templateIndex: 0, geometry: [1, 2, 3] },
+  { name: "Webs", templateIndex: 0, geometry: [6, 7, 8, 9, 10, 11] },
+]);
+
 const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
 };
+
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
-const meshComponents: MeshComponents = van.state([]);
 
 // Toolbar events
 van.derive(() => {
