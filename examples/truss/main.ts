@@ -65,13 +65,8 @@ const toolbarMode = van.state(ToolbarMode.GEOMETRY);
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
 
-  if (toolbarMode.val === ToolbarMode.MESH) {
-    mesh.visible.val = true;
-    geometry.selection.val = { points: [], lines: [] };
-  } else {
-    mesh.visible.val = false;
-    geometry.selection.val = null;
-  }
+  if (toolbarMode.val === ToolbarMode.MESH) mesh.visible.val = true;
+  else mesh.visible.val = false;
 });
 
 // Mesh events
