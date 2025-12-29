@@ -16,12 +16,6 @@ export function getComponents({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  meshComponents.val = [
-    { name: "Top Chords", templateIndex: 0, geometry: [4, 5] },
-    { name: "Bottom Chords", templateIndex: 0, geometry: [1, 2, 3] },
-    { name: "Webs", templateIndex: 0, geometry: [6, 7, 8, 9, 10, 11] },
-  ];
-
   const activeIndex = van.state<number | null>(null);
   const editingIndex = van.state<number | null>(null);
 
@@ -164,11 +158,11 @@ export function getComponents({
 
 // Utils
 function copyTemplate(
-  components: State<{ name: string; templateIndex?: number }[]>,
+  meshComponents: MeshComponents,
   baseName: string,
   templateIndex: number
 ) {
-  const existingNames = components.val.map((c) => c.name);
+  const existingNames = meshComponents.val.map((c) => c.name);
 
   let newName = baseName;
 
@@ -182,18 +176,21 @@ function copyTemplate(
     }
   }
 
-  components.val = [...components.val, { name: newName, templateIndex }];
+  meshComponents.val = [
+    ...meshComponents.val,
+    { name: newName, templateIndex, geometry: [] },
+  ];
 }
 
 function renameComponent(
-  components: State<{ name: string }[]>,
+  meshComponents: MeshComponents,
   editingIndex: State<number | null>,
   index: number,
   newName: string
 ) {
   const trimmedName = newName.trim();
-  if (trimmedName && trimmedName !== components.val[index].name) {
-    components.val = components.val.map((comp, i) =>
+  if (trimmedName && trimmedName !== meshComponents.val[index].name) {
+    meshComponents.val = meshComponents.val.map((comp, i) =>
       i === index ? { ...comp, name: trimmedName } : comp
     );
   }
@@ -206,7 +203,7 @@ function renameComponent(
 }
 
 function deleteComponent(
-  components: State<{ name: string }[]>,
+  meshComponents: MeshComponents,
   activeIndex: State<number | null>,
   index: number
 ) {
@@ -219,5 +216,5 @@ function deleteComponent(
     activeIndex.val = activeIndex.val - 1;
   }
 
-  components.val = components.val.filter((_, i) => i !== index);
+  meshComponents.val = meshComponents.val.filter((_, i) => i !== index);
 }
