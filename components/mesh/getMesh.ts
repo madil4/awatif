@@ -17,8 +17,8 @@ export function getMesh({
   let nodeOffset = 0;
 
   meshComponents.forEach((component) => {
-    // Get the template using templateIdx
-    const template = templates[component.templateIdx];
+    // Get the template using templateIndex
+    const template = templates[component.templateIndex];
     if (!template) return;
 
     // Iterate over each line index in the component's geometry
