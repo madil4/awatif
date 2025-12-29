@@ -16,37 +16,73 @@ export function getComponents({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  const components: MeshComponents = van.state([
-    { name: "Line Mesh", templateIdx: 0, geometry: [1, 2, 3] },
-    { name: "Line Mesh 2", templateIdx: 0, geometry: [3, 4, 5] },
-    { name: "Line Mesh 3", templateIdx: 0, geometry: [6, 7, 8] },
-  ]);
+  meshComponents.val = [
+    { name: "Top Chords", templateIdx: 0, geometry: [4, 5] },
+    { name: "Bottom Chords", templateIdx: 0, geometry: [1, 2, 3] },
+    { name: "Webs", templateIdx: 0, geometry: [6, 7, 8, 9, 10, 11] },
+  ];
 
-  // meshComponents
+  const activeIndex = van.state<number | null>(null);
+  const editingIndex = van.state<number | null>(null);
+
+  // Flag to prevent infinite sync loops
+  let isSyncing = false;
+
+  // Sync 1: When activeIndex changes, update geometry.selection to show component's geometry
   van.derive(() => {
-    const newMeshComponents: MeshComponents["val"] = [];
+    const idx = activeIndex.val;
+    if (idx === null) {
+      // No active component - clear selection
+      if (!isSyncing && geometry.selection.val !== null) {
+        isSyncing = true;
+        geometry.selection.val = null;
+        isSyncing = false;
+      }
+      return;
+    }
 
-    components.val?.forEach((comp) => {
-      newMeshComponents.push({
-        name: comp.name,
-        templateIdx: comp.templateIdx,
-        geometry: geometry.selection.val?.lines ?? [],
-      });
-    });
+    const component = meshComponents.val[idx];
+    if (!component) return;
 
-    meshComponents.val = newMeshComponents;
+    const componentLines = component.geometry ?? [];
 
-    console.log(meshComponents.val);
+    // Update selection to reflect the active component's geometry
+    isSyncing = true;
+    geometry.selection.val = { points: [], lines: componentLines };
+    isSyncing = false;
   });
 
-  // Template
-  const editingIndex = van.state<number | null>(null);
-  const activeIndex = van.state<number | null>(null);
+  // Sync 2: When geometry.selection.lines changes, update active component's geometry
+  van.derive(() => {
+    const selection = geometry.selection.val;
+    const idx = activeIndex.val;
+
+    // Skip if syncing or no active component
+    if (isSyncing || idx === null) return;
+
+    const selectedLines = selection?.lines ?? [];
+
+    // Update the active component's geometry with the new selection
+    const currentComponent = meshComponents.val[idx];
+    if (!currentComponent) return;
+
+    // Only update if the geometry actually changed
+    const currentGeometry = currentComponent.geometry ?? [];
+    const isSame =
+      currentGeometry.length === selectedLines.length &&
+      currentGeometry.every((line, i) => line === selectedLines[i]);
+
+    if (!isSame) {
+      meshComponents.val = meshComponents.val.map((comp, i) =>
+        i === idx ? { ...comp, geometry: [...selectedLines] } : comp
+      );
+    }
+  });
 
   const template = () => html`
     <details id="components" ?open=${toolbarMode.val === ToolbarMode.MESH}>
       <summary>Components</summary>
-      ${components.val.map(
+      ${meshComponents.val.map(
         (component, index) => html`
           <div
             class="components-item ${activeIndex.val === index ? "active" : ""}"
@@ -60,7 +96,7 @@ export function getComponents({
                     .value=${component.name}
                     @blur=${(e: Event) =>
                       renameComponent(
-                        components,
+                        meshComponents,
                         editingIndex,
                         index,
                         (e.target as HTMLInputElement).value
@@ -68,7 +104,7 @@ export function getComponents({
                     @keydown=${(e: KeyboardEvent) => {
                       if (e.key === "Enter") {
                         renameComponent(
-                          components,
+                          meshComponents,
                           editingIndex,
                           index,
                           (e.target as HTMLInputElement).value
@@ -87,7 +123,8 @@ export function getComponents({
                 `}
             <button
               class="components-delete-btn"
-              @click=${() => deleteComponent(components, activeIndex, index)}
+              @click=${() =>
+                deleteComponent(meshComponents, activeIndex, index)}
               title="Delete component"
             >
               ×
@@ -105,7 +142,7 @@ export function getComponents({
                 <button
                   class="components-copy-btn"
                   @click=${() =>
-                    copyTemplate(components, component.name, templateIndex)}
+                    copyTemplate(meshComponents, component.name, templateIndex)}
                   title="Copy template"
                 >
                   +
