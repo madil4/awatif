@@ -80,7 +80,8 @@ export function getComponents({
         (component, index) => html`
           <div
             class="components-item ${activeIndex.val === index ? "active" : ""}"
-            @click=${() => (activeIndex.val = index)}
+            @click=${() =>
+              (activeIndex.val = activeIndex.val === index ? null : index)}
           >
             ${editingIndex.val === index
               ? html`
