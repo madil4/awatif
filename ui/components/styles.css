@@ -88,6 +88,17 @@
   background: var(--bg-tertiary);
 }
 
+#components .components-item.active {
+  background: var(--bg-tertiary);
+  border-left: 3px solid var(--accent);
+  padding-left: 7px; /* Adjust padding to account for the border */
+}
+
+#components .components-item.active label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 #components .components-item label {
   margin-right: auto;
 
