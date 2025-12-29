@@ -9,12 +9,7 @@ import {
   getToolbar,
   getComponents,
 } from "@awatif/ui";
-import {
-  getMesh,
-  Geometry,
-  Mesh,
-  MeshComponents,
-} from "@awatif/components";
+import { getMesh, Geometry, Mesh, MeshComponents } from "@awatif/components";
 
 const geometry: Geometry = {
   points: van.state(
@@ -66,26 +61,26 @@ van.derive(() => {
 
   if (toolbarMode.val === ToolbarMode.MESH) {
     mesh.visible.val = true;
-    geometry.selection.val = {points: [],lines:[]};
+    geometry.selection.val = { points: [], lines: [] };
   } else {
-    mesh.visible.val = false
+    mesh.visible.val = false;
     geometry.selection.val = null;
   }
 });
 
 // Mesh events
-// van.derive(() => {
-//   const meshData = getMesh({
-//     geometry: {
-//       points: geometry.points.val,
-//       lines: geometry.lines.val,
-//     },
-//     meshComponents: meshComponents.val,
-//   });
+van.derive(() => {
+  const meshData = getMesh({
+    geometry: {
+      points: geometry.points.val,
+      lines: geometry.lines.val,
+    },
+    meshComponents: meshComponents.val,
+  });
 
-//   mesh.nodes.val = meshData.nodes;
-//   mesh.elements.val = meshData.elements;
-// });
+  mesh.nodes.val = meshData.nodes;
+  mesh.elements.val = meshData.elements;
+});
 
 document.body.append(
   getLayout({

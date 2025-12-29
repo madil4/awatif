@@ -1,5 +1,6 @@
 import { Geometry } from "../data-model";
 import { Elements, MeshComponents, Nodes } from "./data-model";
+import { templates } from "./templates";
 
 export function getMesh({
   geometry,
@@ -15,39 +16,46 @@ export function getMesh({
   const allElements: Elements = [];
   let nodeOffset = 0;
 
-  meshComponents.forEach((component, lineId) => {
-    // Get the line from geometry using the line ID
-    const line = geometry.lines.get(lineId);
-    if (!line) return;
+  meshComponents.forEach((component) => {
+    // Get the template using templateIdx
+    const template = templates[component.templateIdx];
+    if (!template) return;
 
-    const [startId, endId] = line;
-    const startPoint = geometry.points.get(startId);
-    const endPoint = geometry.points.get(endId);
+    // Iterate over each line index in the component's geometry
+    component.geometry.forEach((lineId) => {
+      // Get the line from geometry using the line ID
+      const line = geometry.lines.get(lineId);
+      if (!line) return;
 
-    if (!startPoint || !endPoint) return;
+      const [startId, endId] = line;
+      const startPoint = geometry.points.get(startId);
+      const endPoint = geometry.points.get(endId);
 
-    // Get parametric mesh from component
-    const { nodes: parametricNodes, elements } = component.getMesh({
-      params: component.params,
+      if (!startPoint || !endPoint) return;
+
+      // Get parametric mesh from template
+      const { nodes: parametricNodes, elements } = template.getMesh({
+        params: template.params,
+      });
+
+      // Map parametric nodes to 3D positions
+      const nodes = parametricNodes.map(([t]) => [
+        startPoint[0] + t * (endPoint[0] - startPoint[0]),
+        startPoint[1] + t * (endPoint[1] - startPoint[1]),
+        startPoint[2] + t * (endPoint[2] - startPoint[2]),
+      ]);
+
+      // Add nodes
+      allNodes.push(...nodes);
+
+      // Adjust element indices and add elements
+      const adjustedElements = elements.map((element) =>
+        element.map((idx) => idx + nodeOffset)
+      );
+      allElements.push(...adjustedElements);
+
+      nodeOffset += nodes.length;
     });
-
-    // Map parametric nodes to 3D positions
-    const nodes = parametricNodes.map(([t]) => [
-      startPoint[0] + t * (endPoint[0] - startPoint[0]),
-      startPoint[1] + t * (endPoint[1] - startPoint[1]),
-      startPoint[2] + t * (endPoint[2] - startPoint[2]),
-    ]);
-
-    // Add nodes
-    allNodes.push(...nodes);
-
-    // Adjust element indices and add elements
-    const adjustedElements = elements.map((element) =>
-      element.map((idx) => idx + nodeOffset)
-    );
-    allElements.push(...adjustedElements);
-
-    nodeOffset += nodes.length;
   });
 
   return { nodes: allNodes, elements: allElements };
