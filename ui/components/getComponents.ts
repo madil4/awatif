@@ -1,34 +1,35 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { lineMesh, MeshComponents } from "@awatif/components";
+import { MeshComponents, templates } from "@awatif/components";
 import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getComponents({
-  meshComponents,
   toolbarMode,
+  meshComponents,
 }: {
-  meshComponents: MeshComponents;
   toolbarMode: State<ToolbarMode>;
+  meshComponents: MeshComponents;
 }): HTMLElement {
   const container = document.createElement("div");
 
-  const templates = [lineMesh];
-  const components = van.state([
-    { name: "Line Mesh", templateIndex: 0, geometry: [1, 2, 3] },
-    { name: "Line Mesh 2", templateIndex: 0, geometry: [3, 4, 5] },
-    { name: "Line Mesh 3", templateIndex: 0, geometry: [6, 7, 8] },
+  const components:MeshComponents = van.state([
+    { name: "Line Mesh", templateIdx: 0, geometry: [1, 2, 3] },
+    { name: "Line Mesh 2", templateIdx: 0, geometry: [3, 4, 5] },
+    { name: "Line Mesh 3", templateIdx: 0, geometry: [6, 7, 8] },
   ]);
 
   // meshComponents
   van.derive(() => {
-    const newMeshComponents = new Map();
+    const newMeshComponents:MeshComponents["val"] = [];
 
     components.val?.forEach((comp) => {
-      comp.geometry?.forEach((index) =>
-        newMeshComponents.set(index, templates[comp.templateIndex])
-      );
+      newMeshComponents.push({
+        name: comp.name,
+        templateIdx: comp.templateIdx,
+        geometry: comp.geometry,
+      });
     });
 
     meshComponents.val = newMeshComponents;
