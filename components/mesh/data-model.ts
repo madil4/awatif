@@ -2,11 +2,10 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import type { Mesh } from "../data-model.js";
 
-export type MeshComponents = State<Map<number, MeshComponent<any>>>;
-
 export type MeshComponent<Params extends object> = {
   name: string;
   params: State<Params>;
+  geometry: number[] 
 
   getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
   getMesh: ({ params }: { params: State<Params> }) => {
