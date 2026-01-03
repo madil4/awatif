@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
-import type { Mesh } from "../data-model.js";
+import type { Nodes, Elements } from "../data-model.js";
 
 export type MeshComponents = State<MeshComponent[]>;
 
@@ -20,6 +20,3 @@ export type MeshTemplate<Params extends object> = {
     elements: Elements;
   };
 };
-
-export type Nodes = NonNullable<Mesh["nodes"]>["val"];
-export type Elements = NonNullable<Mesh["elements"]>["val"];

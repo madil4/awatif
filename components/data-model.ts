@@ -34,3 +34,6 @@ export type Mesh = {
 
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
 };
+
+export type Nodes = NonNullable<Mesh["nodes"]>["val"];
+export type Elements = NonNullable<Mesh["elements"]>["val"];
