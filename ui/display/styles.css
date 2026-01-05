@@ -29,7 +29,7 @@
   background: var(--bg-hover);
 }
 
-#display details[open] summary {
+#display[open] summary {
   background: var(--bg-hover);
 }
 
