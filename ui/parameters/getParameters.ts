@@ -13,39 +13,63 @@ export function getParameters({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  // Local reactive state for the active component's params
-  const localParams = van.state<Record<string, unknown>>({});
+  // Map to store separate param states for each component by index
+  const componentParamsMap = new Map<number, State<Record<string, unknown>>>();
 
-  // Track which component we're currently editing to detect changes
-  let currentComponentIndex: number | null = null;
+  // Get or create a param state for a specific component
+  const getComponentParams = (
+    idx: number,
+    initialParams: Record<string, unknown>
+  ): State<Record<string, unknown>> => {
+    if (!componentParamsMap.has(idx)) {
+      const paramState = van.state<Record<string, unknown>>({
+        ...initialParams,
+      });
+      componentParamsMap.set(idx, paramState);
 
-  // Sync local params changes back to meshComponents
+      // Set up a derive for this specific component to sync params back
+      van.derive(() => {
+        const params = paramState.val;
+        const currentIdx = activeComponent.val;
+
+        // Only sync if this is the active component
+        if (currentIdx !== idx) return;
+
+        const component = meshComponents.val[idx];
+        if (!component) return;
+
+        // Only update if params actually changed
+        const currentParams = component.params;
+        const hasChanges = Object.keys(params).some(
+          (key) => params[key] !== currentParams[key]
+        );
+
+        if (hasChanges) {
+          meshComponents.val = meshComponents.val.map((comp, i) =>
+            i === idx ? { ...comp, params: { ...params } } : comp
+          );
+        }
+      });
+    }
+    return componentParamsMap.get(idx)!;
+  };
+
+  // Clean up param states when components are removed
   van.derive(() => {
-    const params = localParams.val;
-    const idx = activeComponent.val;
+    const currentComponents = meshComponents.val;
+    const currentIndices = new Set(currentComponents.map((_, i) => i));
 
-    if (idx === null) return;
-
-    const component = meshComponents.val[idx];
-    if (!component) return;
-
-    // Only update if params actually changed
-    const currentParams = component.params;
-    const hasChanges = Object.keys(params).some(
-      (key) => params[key] !== currentParams[key]
-    );
-
-    if (hasChanges) {
-      meshComponents.val = meshComponents.val.map((comp, i) =>
-        i === idx ? { ...comp, params: { ...params } } : comp
-      );
+    // Remove param states for components that no longer exist
+    for (const [idx] of componentParamsMap) {
+      if (!currentIndices.has(idx)) {
+        componentParamsMap.delete(idx);
+      }
     }
   });
 
   const getTemplateContent = (): TemplateResult | null => {
     const idx = activeComponent.val;
     if (idx === null) {
-      currentComponentIndex = null;
       return null;
     }
 
@@ -55,10 +79,20 @@ export function getParameters({
     const meshTemplate = meshTemplates[component.templateIndex];
     if (!meshTemplate) return null;
 
-    // If we switched to a different component, load its params
-    if (currentComponentIndex !== idx) {
-      currentComponentIndex = idx;
-      localParams.val = { ...component.params };
+    // Get or create the param state for this component
+    const localParams = getComponentParams(idx, component.params);
+
+    // Update the local params if the component's params changed externally
+    const currentParams = component.params;
+    const localParamsVal = localParams.val;
+    const needsUpdate =
+      Object.keys(currentParams).some(
+        (key) => currentParams[key] !== localParamsVal[key]
+      ) ||
+      Object.keys(localParamsVal).length !== Object.keys(currentParams).length;
+
+    if (needsUpdate) {
+      localParams.val = { ...currentParams };
     }
 
     return meshTemplate.getTemplate({
