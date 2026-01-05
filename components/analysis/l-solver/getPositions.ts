@@ -1,6 +1,7 @@
 import { index, subset, add, sparse, lup, lusolve, flatten } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
-import type { Elements, Mesh, Nodes } from "../../data-model";
+import type { Mesh } from "../../data-model.js";
+import { Elements, Nodes } from "../../mesh/data-model.js";
 
 export function getPositions(
   nodes: Nodes,

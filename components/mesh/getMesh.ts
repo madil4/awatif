@@ -1,6 +1,6 @@
 import { Geometry } from "../data-model";
 import { Elements, MeshComponents, Nodes } from "./data-model";
-import { templates } from "./templates";
+import { meshTemplates } from "./templates";
 
 export function getMesh({
   geometry,
@@ -17,13 +17,10 @@ export function getMesh({
   let nodeOffset = 0;
 
   meshComponents.forEach((component) => {
-    // Get the template using templateIndex
-    const template = templates[component.templateIndex];
+    const template = meshTemplates[component.templateIndex];
     if (!template) return;
 
-    // Iterate over each line index in the component's geometry
     component.geometry.forEach((lineId) => {
-      // Get the line from geometry using the line ID
       const line = geometry.lines.get(lineId);
       if (!line) return;
 
@@ -33,7 +30,6 @@ export function getMesh({
 
       if (!startPoint || !endPoint) return;
 
-      // Get parametric mesh from template using component's params
       const { nodes: parametricNodes, elements } = template.getMesh({
         params: component.params as Parameters<
           typeof template.getMesh
@@ -47,7 +43,6 @@ export function getMesh({
         startPoint[2] + t * (endPoint[2] - startPoint[2]),
       ]);
 
-      // Add nodes
       allNodes.push(...nodes);
 
       // Adjust element indices and add elements

@@ -1,5 +1,6 @@
-export { getMesh } from "./mesh/getMesh";
-export { templates } from "./mesh/templates";
-
 export type { Geometry, Mesh } from "./data-model";
-export type { MeshComponents, MeshComponent } from "./mesh/data-model";
+
+// mesh
+export { meshTemplates } from "./mesh/templates";
+export type { MeshComponents } from "./mesh/data-model";
+export { getMesh } from "./mesh/getMesh";

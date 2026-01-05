@@ -2,16 +2,8 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import type { Mesh } from "../data-model.js";
 
-export type MeshComponents = State<MeshComponent[]>;
-
-export type MeshComponent = {
-  name: string;
-  templateIndex: number;
-  geometry: number[];
-  params: Record<string, unknown>;
-};
-
-export type MeshTemplate<Params extends object> = {
+// template
+export type MeshTemplate<Params extends Record<string, unknown>> = {
   name: string;
   defaultParams: Params;
 
@@ -24,3 +16,13 @@ export type MeshTemplate<Params extends object> = {
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];
 export type Elements = NonNullable<Mesh["elements"]>["val"];
+
+// components
+export type MeshComponents = State<MeshComponent[]>;
+
+type MeshComponent = {
+  name: string;
+  templateIndex: number;
+  geometry: number[];
+  params: Record<string, unknown>;
+};

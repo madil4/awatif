@@ -76,7 +76,7 @@ const grid: Grid = {
 };
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
-const activeComponentIndex = van.state<number | null>(null);
+const activeComponent = van.state<number | null>(null);
 
 // Toolbar events
 van.derive(() => {
@@ -109,12 +109,12 @@ document.body.append(
       toolbarMode,
       geometry,
       meshComponents,
-      activeIndex: activeComponentIndex,
+      activeComponent,
     }),
     toolbar: getToolbar({ toolbarMode }),
     parameters: getParameters({
-      activeIndex: activeComponentIndex,
       meshComponents,
+      activeComponent,
     }),
   })
 );
