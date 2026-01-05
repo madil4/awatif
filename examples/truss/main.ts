@@ -8,6 +8,7 @@ import {
   ToolbarMode,
   getToolbar,
   getComponents,
+  getParameters,
 } from "@awatif/ui";
 import { getMesh, Geometry, Mesh, MeshComponents } from "@awatif/components";
 
@@ -90,5 +91,6 @@ document.body.append(
     display: getDisplay({ grid, geometry, mesh }),
     components: getComponents({ toolbarMode, geometry, meshComponents }),
     toolbar: getToolbar({ toolbarMode }),
+    parameters: getParameters(),
   })
 );
