@@ -79,7 +79,16 @@ export function getComponents({
   });
 
   const template = () => html`
-    <details id="components" ?open=${toolbarMode.val === ToolbarMode.MESH}>
+    <details
+      id="components"
+      ?open=${toolbarMode.val === ToolbarMode.MESH}
+      @toggle=${(e: Event) => {
+        const details = e.target as HTMLDetailsElement;
+        if (!details.open) {
+          activeIndex.val = null;
+        }
+      }}
+    >
       <summary>Components</summary>
       ${meshComponents.val.map(
         (component, index) => html`
