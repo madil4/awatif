@@ -32,3 +32,53 @@
 #parameters[open] summary {
   background: var(--bg-hover);
 }
+
+#parameters .no-selection {
+  padding: 12px 10px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+  font-style: italic;
+}
+
+#parameters > div {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  gap: 6px;
+
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+#parameters > div:last-child {
+  border-bottom: none;
+}
+
+#parameters > div:hover {
+  background: var(--bg-tertiary);
+}
+
+#parameters label {
+  margin-right: auto;
+
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+#parameters input[type="number"] {
+  max-width: 80px;
+  padding: 3px 6px;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  transition: border-color 0.2s ease;
+}
+
+#parameters input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}

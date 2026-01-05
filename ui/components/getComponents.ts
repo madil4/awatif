@@ -9,14 +9,15 @@ export function getComponents({
   toolbarMode,
   geometry,
   meshComponents,
+  activeIndex,
 }: {
   toolbarMode: State<ToolbarMode>;
   geometry: Geometry;
   meshComponents: MeshComponents;
+  activeIndex: State<number | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
-  const activeIndex = van.state<number | null>(null);
   const editingIndex = van.state<number | null>(null);
 
   // Flag to prevent infinite sync loops
@@ -181,9 +182,13 @@ function copyTemplate(
     }
   }
 
+  // Get default params from the template
+  const template = templates[templateIndex];
+  const defaultParams = template ? { ...template.defaultParams } : {};
+
   meshComponents.val = [
     ...meshComponents.val,
-    { name: newName, templateIndex, geometry: [] },
+    { name: newName, templateIndex, geometry: [], params: defaultParams },
   ];
 }
 

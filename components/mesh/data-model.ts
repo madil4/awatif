@@ -4,18 +4,19 @@ import type { Mesh } from "../data-model.js";
 
 export type MeshComponents = State<MeshComponent[]>;
 
-type MeshComponent = {
+export type MeshComponent = {
   name: string;
   templateIndex: number;
   geometry: number[];
+  params: Record<string, unknown>;
 };
 
 export type MeshTemplate<Params extends object> = {
   name: string;
-  params: State<Params>;
+  defaultParams: Params;
 
   getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
-  getMesh: ({ params }: { params: State<Params> }) => {
+  getMesh: ({ params }: { params: Params }) => {
     nodes: Nodes;
     elements: Elements;
   };
