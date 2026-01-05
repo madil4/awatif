@@ -16,11 +16,18 @@ export function getMesh({
   const allElements: Elements = [];
   let nodeOffset = 0;
 
+  // Track which lines have been meshed to prevent duplicate meshing
+  const meshedLines = new Set<number>();
+
   meshComponents.forEach((component) => {
     const template = meshTemplates[component.templateIndex];
     if (!template) return;
 
     component.geometry.forEach((lineId) => {
+      // Skip if this line has already been meshed by another component
+      if (meshedLines.has(lineId)) return;
+      meshedLines.add(lineId);
+
       const line = geometry.lines.get(lineId);
       if (!line) return;
 
