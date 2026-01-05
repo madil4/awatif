@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { Geometry, MeshComponents, templates } from "@awatif/components";
+import { Geometry, MeshComponents, meshTemplates } from "@awatif/components";
 import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
@@ -9,12 +9,12 @@ export function getComponents({
   toolbarMode,
   geometry,
   meshComponents,
-  activeIndex,
+  activeComponent,
 }: {
   toolbarMode: State<ToolbarMode>;
   geometry: Geometry;
   meshComponents: MeshComponents;
-  activeIndex: State<number | null>;
+  activeComponent: State<number | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -25,7 +25,7 @@ export function getComponents({
 
   // Sync 1: When activeIndex changes, update geometry.selection to show component's geometry
   van.derive(() => {
-    const idx = activeIndex.val;
+    const idx = activeComponent.val;
     if (idx === null) {
       // No active component - clear selection
       if (!isSyncing && geometry.selection.val !== null) {
@@ -50,7 +50,7 @@ export function getComponents({
   // Sync 2: When geometry.selection.lines changes, update active component's geometry
   van.derive(() => {
     const selection = geometry.selection.val;
-    const idx = activeIndex.val;
+    const idx = activeComponent.val;
 
     // Skip if syncing or no active component
     if (isSyncing || idx === null) return;
@@ -75,7 +75,7 @@ export function getComponents({
   });
 
   van.derive(() => {
-    if (activeIndex.val === null) geometry.selection.val = null;
+    if (activeComponent.val === null) geometry.selection.val = null;
   });
 
   const template = () => html`
@@ -85,7 +85,7 @@ export function getComponents({
       @toggle=${(e: Event) => {
         const details = e.target as HTMLDetailsElement;
         if (!details.open) {
-          activeIndex.val = null;
+          activeComponent.val = null;
         }
       }}
     >
@@ -93,9 +93,12 @@ export function getComponents({
       ${meshComponents.val.map(
         (component, index) => html`
           <div
-            class="components-item ${activeIndex.val === index ? "active" : ""}"
+            class="components-item ${activeComponent.val === index
+              ? "active"
+              : ""}"
             @click=${() =>
-              (activeIndex.val = activeIndex.val === index ? null : index)}
+              (activeComponent.val =
+                activeComponent.val === index ? null : index)}
           >
             ${editingIndex.val === index
               ? html`
@@ -133,7 +136,7 @@ export function getComponents({
             <button
               class="components-delete-btn"
               @click=${() =>
-                deleteComponent(meshComponents, activeIndex, index)}
+                deleteComponent(meshComponents, activeComponent, index)}
               title="Delete component"
             >
               ×
@@ -144,7 +147,7 @@ export function getComponents({
       ${html`
         <details class="components-templates" open>
           <summary class="components-divider">templates</summary>
-          ${templates.map(
+          ${meshTemplates.map(
             (component, templateIndex) => html`
               <div class="components-item template">
                 <label>${component.name}</label>
@@ -192,7 +195,7 @@ function copyTemplate(
   }
 
   // Get default params from the template
-  const template = templates[templateIndex];
+  const template = meshTemplates[templateIndex];
   const defaultParams = template ? { ...template.defaultParams } : {};
 
   meshComponents.val = [
@@ -223,16 +226,16 @@ function renameComponent(
 
 function deleteComponent(
   meshComponents: MeshComponents,
-  activeIndex: State<number | null>,
+  activeComponent: State<number | null>,
   index: number
 ) {
   // Clear active state if we're deleting the active component
-  if (activeIndex.val === index) {
-    activeIndex.val = null;
+  if (activeComponent.val === index) {
+    activeComponent.val = null;
   }
   // Adjust active index if the deleted component is before the active one
-  else if (activeIndex.val !== null && activeIndex.val > index) {
-    activeIndex.val = activeIndex.val - 1;
+  else if (activeComponent.val !== null && activeComponent.val > index) {
+    activeComponent.val = activeComponent.val - 1;
   }
 
   meshComponents.val = meshComponents.val.filter((_, i) => i !== index);

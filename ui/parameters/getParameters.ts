@@ -1,14 +1,14 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
-import { MeshComponents, templates } from "@awatif/components";
+import { MeshComponents, meshTemplates } from "@awatif/components";
 
 import "./styles.css";
 
 export function getParameters({
-  activeIndex,
+  activeComponent,
   meshComponents,
 }: {
-  activeIndex: State<number | null>;
+  activeComponent: State<number | null>;
   meshComponents: MeshComponents;
 }): HTMLElement {
   const container = document.createElement("div");
@@ -22,7 +22,7 @@ export function getParameters({
   // Sync local params changes back to meshComponents
   van.derive(() => {
     const params = localParams.val;
-    const idx = currentComponentIndex;
+    const idx = activeComponent.val;
 
     if (idx === null) return;
 
@@ -43,7 +43,7 @@ export function getParameters({
   });
 
   const getTemplateContent = (): TemplateResult | null => {
-    const idx = activeIndex.val;
+    const idx = activeComponent.val;
     if (idx === null) {
       currentComponentIndex = null;
       return null;
@@ -52,7 +52,7 @@ export function getParameters({
     const component = meshComponents.val[idx];
     if (!component) return null;
 
-    const meshTemplate = templates[component.templateIndex];
+    const meshTemplate = meshTemplates[component.templateIndex];
     if (!meshTemplate) return null;
 
     // If we switched to a different component, load its params
@@ -67,7 +67,7 @@ export function getParameters({
   };
 
   const template = () => {
-    const idx = activeIndex.val;
+    const idx = activeComponent.val;
     const templateContent = getTemplateContent();
 
     return html`

@@ -27,41 +27,35 @@
       import { lineMesh } from "./lineMesh.ts";
       import { getViewer } from "../../../ui/viewer/getViewer.ts";
 
-      van.derive(() => console.log(lineMesh.params.val));
+      const params = van.state(lineMesh.defaultParams);
 
-      // Create controls
+      // Control
       const controls = document.createElement("div");
       controls.id = "controls";
+
       van.derive(() => {
-        render(lineMesh.getTemplate({ params: lineMesh.params }), controls);
+        render(lineMesh.getTemplate({ params }), controls);
       });
 
-      // Create Mesh state
+      // Mesh
       const mesh = {
         nodes: van.state([]),
         elements: van.state([]),
         visible: van.state(true),
       };
 
-      // Update mesh when lineMesh params change
       van.derive(() => {
-        const meshData = lineMesh.getMesh({ params: lineMesh.params });
+        const meshData = lineMesh.getMesh({
+          params: params.val,
+        });
 
-        // Map parametric nodes to 3D positions (line from [-5,0,0] to [5,0,0])
-        const nodes = meshData.nodes.map(([t]) => [
-          -5 + t * 10, // x: -5 to 5
-          0, // y: 0
-          0, // z: 0
-        ]);
+        const nodes = meshData.nodes.map(([t]) => [-5 + t * 10, 0, 0]);
 
         mesh.nodes.val = nodes;
         mesh.elements.val = meshData.elements;
       });
 
-      // Create viewer
-      const viewer = getViewer({ mesh });
-
-      document.body.append(viewer, controls);
+      document.body.append(getViewer({ mesh }), controls);
     </script>
   </body>
 </html>

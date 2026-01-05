@@ -3,6 +3,7 @@ import type { State } from "vanjs-core";
 export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
   lines: State<Map<number, [number, number]>>;
+
   visible: State<boolean>;
   selection: State<{
     points: number[];
