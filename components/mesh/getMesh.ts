@@ -33,9 +33,11 @@ export function getMesh({
 
       if (!startPoint || !endPoint) return;
 
-      // Get parametric mesh from template
+      // Get parametric mesh from template using component's params
       const { nodes: parametricNodes, elements } = template.getMesh({
-        params: template.params,
+        params: component.params as Parameters<
+          typeof template.getMesh
+        >[0]["params"],
       });
 
       // Map parametric nodes to 3D positions

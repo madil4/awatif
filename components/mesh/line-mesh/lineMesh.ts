@@ -1,4 +1,3 @@
-import van from "vanjs-core";
 import { html } from "lit-html";
 import { MeshTemplate } from "../data-model";
 
@@ -8,9 +7,9 @@ type LineMeshParams = {
 
 export const lineMesh: MeshTemplate<LineMeshParams> = {
   name: "Line Mesh",
-  params: van.state({
+  defaultParams: {
     divisions: 3,
-  }),
+  },
 
   getTemplate: ({ params }) => {
     return html`<div>
@@ -28,7 +27,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
   },
 
   getMesh: ({ params }) => {
-    const { divisions } = params.val;
+    const { divisions } = params;
     const nodes: number[][] = [];
     const elements: number[][] = [];
 

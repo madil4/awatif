@@ -50,9 +50,24 @@ const mesh: Mesh = {
 };
 
 const meshComponents: MeshComponents = van.state([
-  { name: "Top Chords", templateIndex: 0, geometry: [4, 5] },
-  { name: "Bottom Chords", templateIndex: 0, geometry: [1, 2, 3] },
-  { name: "Webs", templateIndex: 0, geometry: [6, 7, 8, 9, 10, 11] },
+  {
+    name: "Top Chords",
+    templateIndex: 0,
+    geometry: [4, 5],
+    params: { divisions: 3 },
+  },
+  {
+    name: "Bottom Chords",
+    templateIndex: 0,
+    geometry: [1, 2, 3],
+    params: { divisions: 3 },
+  },
+  {
+    name: "Webs",
+    templateIndex: 0,
+    geometry: [6, 7, 8, 9, 10, 11],
+    params: { divisions: 5 },
+  },
 ]);
 
 const grid: Grid = {
@@ -61,6 +76,7 @@ const grid: Grid = {
 };
 
 const toolbarMode = van.state(ToolbarMode.GEOMETRY);
+const activeComponentIndex = van.state<number | null>(null);
 
 // Toolbar events
 van.derive(() => {
@@ -89,8 +105,16 @@ document.body.append(
     viewer: getViewer({ grid, geometry, mesh }),
     tooltips: getTooltips(),
     display: getDisplay({ grid, geometry, mesh }),
-    components: getComponents({ toolbarMode, geometry, meshComponents }),
+    components: getComponents({
+      toolbarMode,
+      geometry,
+      meshComponents,
+      activeIndex: activeComponentIndex,
+    }),
     toolbar: getToolbar({ toolbarMode }),
-    parameters: getParameters(),
+    parameters: getParameters({
+      activeIndex: activeComponentIndex,
+      meshComponents,
+    }),
   })
 );
