@@ -20,7 +20,7 @@ export function getMesh({
   const meshedLines = new Set<number>();
 
   meshComponents.forEach((component) => {
-    const template = templates.get("mesh")?.[component.templateIndex];
+    const template = templates.get("MESH")?.[component.templateIndex];
     if (!template) return;
 
     component.geometry.forEach((lineId) => {

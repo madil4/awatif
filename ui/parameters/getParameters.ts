@@ -1,15 +1,18 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
 import { MeshComponents, templates } from "@awatif/components";
+import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getParameters({
   activeComponent,
   meshComponents,
+  toolbarMode,
 }: {
   activeComponent: State<number | null>;
   meshComponents: MeshComponents;
+  toolbarMode: State<ToolbarMode>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -76,7 +79,9 @@ export function getParameters({
     const component = meshComponents.val[idx];
     if (!component) return null;
 
-    const meshTemplate = templates.get("mesh")?.[component.templateIndex];
+    const meshTemplate = templates.get(ToolbarMode[toolbarMode.val])?.[
+      component.templateIndex
+    ];
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component

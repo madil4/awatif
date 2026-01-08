@@ -115,6 +115,7 @@ document.body.append(
     parameters: getParameters({
       meshComponents,
       activeComponent,
+      toolbarMode,
     }),
   })
 );
