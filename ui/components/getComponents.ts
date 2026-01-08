@@ -147,14 +147,19 @@ export function getComponents({
       ${html`
         <details class="components-templates" open>
           <summary class="components-divider">templates</summary>
-          ${templates.get("mesh")?.map(
+          ${templates.get(ToolbarMode[toolbarMode.val])?.map(
             (component, templateIndex) => html`
               <div class="components-item template">
                 <label>${component.name}</label>
                 <button
                   class="components-copy-btn"
                   @click=${() =>
-                    copyTemplate(meshComponents, component.name, templateIndex)}
+                    copyTemplate(
+                      meshComponents,
+                      toolbarMode,
+                      component.name,
+                      templateIndex
+                    )}
                   title="Copy template"
                 >
                   +
@@ -177,6 +182,7 @@ export function getComponents({
 // Utils
 function copyTemplate(
   meshComponents: MeshComponents,
+  toolbarMode: State<ToolbarMode>,
   baseName: string,
   templateIndex: number
 ) {
@@ -195,7 +201,7 @@ function copyTemplate(
   }
 
   // Get default params from the template
-  const template = templates.get("mesh")?.[templateIndex];
+  const template = templates.get(ToolbarMode[toolbarMode.val])?.[templateIndex];
   const defaultParams = template ? { ...template.defaultParams } : {};
 
   meshComponents.val = [
