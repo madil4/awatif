@@ -1,6 +1,6 @@
 import { Geometry } from "../data-model";
 import { Elements, MeshComponents, Nodes } from "./data-model";
-import { meshTemplates } from "./templates";
+import { templates } from "../templates";
 
 export function getMesh({
   geometry,
@@ -20,7 +20,7 @@ export function getMesh({
   const meshedLines = new Set<number>();
 
   meshComponents.forEach((component) => {
-    const template = meshTemplates[component.templateIndex];
+    const template = templates.get("mesh")?.[component.templateIndex];
     if (!template) return;
 
     component.geometry.forEach((lineId) => {

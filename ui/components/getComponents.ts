@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { Geometry, MeshComponents, meshTemplates } from "@awatif/components";
+import { Geometry, MeshComponents, templates } from "@awatif/components";
 import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
@@ -147,7 +147,7 @@ export function getComponents({
       ${html`
         <details class="components-templates" open>
           <summary class="components-divider">templates</summary>
-          ${meshTemplates.map(
+          ${templates.get("mesh")?.map(
             (component, templateIndex) => html`
               <div class="components-item template">
                 <label>${component.name}</label>
@@ -195,7 +195,7 @@ function copyTemplate(
   }
 
   // Get default params from the template
-  const template = meshTemplates[templateIndex];
+  const template = templates.get("mesh")?.[templateIndex];
   const defaultParams = template ? { ...template.defaultParams } : {};
 
   meshComponents.val = [

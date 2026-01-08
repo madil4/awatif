@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
-import { MeshComponents, meshTemplates } from "@awatif/components";
+import { MeshComponents, templates } from "@awatif/components";
 
 import "./styles.css";
 
@@ -76,7 +76,7 @@ export function getParameters({
     const component = meshComponents.val[idx];
     if (!component) return null;
 
-    const meshTemplate = meshTemplates[component.templateIndex];
+    const meshTemplate = templates.get("mesh")?.[component.templateIndex];
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component
