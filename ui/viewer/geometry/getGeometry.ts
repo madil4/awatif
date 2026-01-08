@@ -714,8 +714,8 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
       color: GEOMETRY_COLOR,
-      dashSize: POINT_SIZE,
-      gapSize: POINT_SIZE,
+      dashSize: POINT_SIZE * 0.01 * 2,
+      gapSize: POINT_SIZE * 0.01,
       depthTest: false,
     })
   );
