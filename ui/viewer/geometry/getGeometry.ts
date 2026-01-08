@@ -309,9 +309,9 @@ export function getGeometry({
     }
 
     // Handle drag mode transition
-    if (isPointerDown && (mode.val === Mode.EDIT || mode.val === Mode.APPEND)) {
+    if (isPointerDown && mode.val === Mode.EDIT) {
       const hits = raycaster.intersectObject(points, false);
-      if (!hits.length) {
+      if (hits.length) {
         mode.val = Mode.DRAG;
       }
     }
