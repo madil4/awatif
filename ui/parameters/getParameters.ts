@@ -1,17 +1,17 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
-import { MeshComponents, templates } from "@awatif/components";
+import { Components, templates } from "@awatif/components";
 import { ToolbarMode } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getParameters({
   activeComponent,
-  meshComponents,
+  components,
   toolbarMode,
 }: {
   activeComponent: State<number | null>;
-  meshComponents: MeshComponents;
+  components: Components;
   toolbarMode: State<ToolbarMode>;
 }): HTMLElement {
   const container = document.createElement("div");
@@ -38,7 +38,9 @@ export function getParameters({
         // Only sync if this is the active component
         if (currentIdx !== idx) return;
 
-        const component = meshComponents.val[idx];
+        const key = ToolbarMode[toolbarMode.val];
+        const currentComponents = components.val.get(key) ?? [];
+        const component = currentComponents[idx];
         if (!component) return;
 
         // Only update if params actually changed
@@ -48,9 +50,10 @@ export function getParameters({
         );
 
         if (hasChanges) {
-          meshComponents.val = meshComponents.val.map((comp, i) =>
+          const updatedComponents = currentComponents.map((comp, i) =>
             i === idx ? { ...comp, params: { ...params } } : comp
           );
+          components.val = new Map(components.val).set(key, updatedComponents);
         }
       });
     }
@@ -59,7 +62,8 @@ export function getParameters({
 
   // Clean up param states when components are removed
   van.derive(() => {
-    const currentComponents = meshComponents.val;
+    const key = ToolbarMode[toolbarMode.val];
+    const currentComponents = components.val.get(key) ?? [];
     const currentIndices = new Set(currentComponents.map((_, i) => i));
 
     // Remove param states for components that no longer exist
@@ -76,12 +80,12 @@ export function getParameters({
       return null;
     }
 
-    const component = meshComponents.val[idx];
+    const key = ToolbarMode[toolbarMode.val];
+    const currentComponents = components.val.get(key) ?? [];
+    const component = currentComponents[idx];
     if (!component) return null;
 
-    const meshTemplate = templates.get(ToolbarMode[toolbarMode.val])?.[
-      component.templateIndex
-    ];
+    const meshTemplate = templates.get(key)?.[component.templateIndex];
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component

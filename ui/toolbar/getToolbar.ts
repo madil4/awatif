@@ -7,6 +7,7 @@ export enum ToolbarMode {
   SOON,
   GEOMETRY,
   MESH,
+  LOADS,
 }
 
 export type Toolbar = {
@@ -49,6 +50,16 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
             toolbarMode.val === ToolbarMode.MESH ? null : ToolbarMode.MESH)}
       >
         Mesh
+      </button>
+      <button
+        class="toolbar-button ${toolbarMode.val === ToolbarMode.LOADS
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (toolbarMode.val =
+            toolbarMode.val === ToolbarMode.LOADS ? null : ToolbarMode.LOADS)}
+      >
+        Loads
       </button>
     </div>
   `;

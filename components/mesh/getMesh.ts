@@ -1,16 +1,16 @@
 import { Geometry } from "../data-model";
-import { Elements, MeshComponents, Nodes } from "./data-model";
+import { Elements, Components, Nodes } from "./data-model";
 import { templates } from "../templates";
 
 export function getMesh({
   geometry,
-  meshComponents,
+  components,
 }: {
   geometry: {
     points: Geometry["points"]["val"];
     lines: Geometry["lines"]["val"];
   };
-  meshComponents: MeshComponents["val"];
+  components: Components["val"];
 }): { nodes: Nodes; elements: Elements } {
   const allNodes: Nodes = [];
   const allElements: Elements = [];
@@ -19,6 +19,8 @@ export function getMesh({
   // Track which lines have been meshed to prevent duplicate meshing
   const meshedLines = new Set<number>();
 
+  const meshComponents = components.get("MESH") ?? [];
+  
   meshComponents.forEach((component) => {
     const template = templates.get("MESH")?.[component.templateIndex];
     if (!template) return;
