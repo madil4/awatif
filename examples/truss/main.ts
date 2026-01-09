@@ -10,7 +10,7 @@ import {
   getComponents,
   getParameters,
 } from "@awatif/ui";
-import { getMesh, Geometry, Mesh, MeshComponents } from "@awatif/components";
+import { getMesh, Geometry, Mesh, Components } from "@awatif/components";
 
 const geometry: Geometry = {
   points: van.state(
@@ -49,26 +49,33 @@ const mesh: Mesh = {
   visible: van.state(false),
 };
 
-const meshComponents: MeshComponents = van.state([
-  {
-    name: "Top Chords",
-    templateIndex: 0,
-    geometry: [4, 5],
-    params: { divisions: 3 },
-  },
-  {
-    name: "Bottom Chords",
-    templateIndex: 0,
-    geometry: [1, 2, 3],
-    params: { divisions: 3 },
-  },
-  {
-    name: "Webs",
-    templateIndex: 0,
-    geometry: [6, 7, 8, 9, 10, 11],
-    params: { divisions: 5 },
-  },
-]);
+const components: Components = van.state(
+  new Map([
+    [
+      "MESH",
+      [
+        {
+          name: "Top Chords",
+          templateIndex: 0,
+          geometry: [4, 5],
+          params: { divisions: 3 },
+        },
+        {
+          name: "Bottom Chords",
+          templateIndex: 0,
+          geometry: [1, 2, 3],
+          params: { divisions: 3 },
+        },
+        {
+          name: "Webs",
+          templateIndex: 0,
+          geometry: [6, 7, 8, 9, 10, 11],
+          params: { divisions: 5 },
+        },
+      ],
+    ],
+  ])
+);
 
 const grid: Grid = {
   size: van.state(10),
@@ -93,7 +100,7 @@ van.derive(() => {
       points: geometry.points.val,
       lines: geometry.lines.val,
     },
-    meshComponents: meshComponents.val,
+    components: components.val,
   });
 
   mesh.nodes.val = meshData.nodes;
@@ -108,12 +115,12 @@ document.body.append(
     components: getComponents({
       toolbarMode,
       geometry,
-      meshComponents,
+      components,
       activeComponent,
     }),
     toolbar: getToolbar({ toolbarMode }),
     parameters: getParameters({
-      meshComponents,
+      components,
       activeComponent,
       toolbarMode,
     }),
