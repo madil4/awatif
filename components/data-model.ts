@@ -15,6 +15,10 @@ export type Mesh = {
   nodes: State<number[][]>; // [[x, y, z], [x, y, z], ...]
   elements: State<number[][]>; // [[node1, node2], ...]
   visible: State<boolean>;
+  geometryMapping?: {
+    pointToNodes: Map<number, number[]>; // geometry point ID → mesh node indices
+    lineToElements: Map<number, number[]>; // geometry line ID → mesh element indices
+  };
 
   supports?: Map<
     number,

@@ -105,6 +105,7 @@ van.derive(() => {
 
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
+  mesh.geometryMapping = meshData.geometryMapping;
 });
 
 document.body.append(
