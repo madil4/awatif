@@ -218,7 +218,7 @@ export function getComponents({
     render(template(), container);
   });
 
-  return container.firstElementChild as HTMLElement;
+  return container;
 }
 
 // Utils
