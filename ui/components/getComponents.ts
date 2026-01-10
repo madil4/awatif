@@ -17,17 +17,19 @@ export function getComponents({
   activeComponent: State<number | null>;
 }): HTMLElement {
   const container = document.createElement("div");
-
   const editingIndex = van.state<number | null>(null);
-
-  // Flag to prevent infinite sync loops
   let isSyncing = false;
 
-  // Sync 1: When activeIndex changes, update geometry.selection to show component's geometry
+  const getKey = () => ToolbarMode[toolbarMode.val!];
+  const getList = () => components.val.get(getKey()) ?? [];
+  const usesPoints = () =>
+    toolbarMode.val === ToolbarMode.LOADS ||
+    toolbarMode.val === ToolbarMode.SUPPORTS;
+
+  // Sync activeComponent -> geometry.selection
   van.derive(() => {
     const idx = activeComponent.val;
     if (idx === null || toolbarMode.val === null) {
-      // No active component - clear selection
       if (!isSyncing && geometry.selection.val !== null) {
         isSyncing = true;
         geometry.selection.val = null;
@@ -36,267 +38,216 @@ export function getComponents({
       return;
     }
 
-    const currentComponents =
-      components.val.get(ToolbarMode[toolbarMode.val]) ?? [];
-    const component = currentComponents[idx];
-    if (!component) return;
-
-    const componentGeometry = component.geometry ?? [];
-
-    // Update selection to reflect the active component's geometry
-    // MESH mode uses lines, LOADS and SUPPORTS modes use points
+    const componentGeometry = getList()[idx]?.geometry ?? [];
     isSyncing = true;
-    if (
-      toolbarMode.val === ToolbarMode.LOADS ||
-      toolbarMode.val === ToolbarMode.SUPPORTS
-    ) {
-      geometry.selection.val = { points: componentGeometry, lines: [] };
-    } else {
-      geometry.selection.val = { points: [], lines: componentGeometry };
-    }
+    geometry.selection.val = usesPoints()
+      ? { points: componentGeometry, lines: [] }
+      : { points: [], lines: componentGeometry };
     isSyncing = false;
   });
 
-  // Sync 2: When geometry.selection changes, update active component's geometry
+  // Sync geometry.selection -> activeComponent's geometry
   van.derive(() => {
     const selection = geometry.selection.val;
     const idx = activeComponent.val;
-
-    // Skip if syncing or no active component
     if (isSyncing || idx === null || toolbarMode.val === null) return;
 
-    // MESH mode uses lines, LOADS and SUPPORTS modes use points
-    const selectedGeometry =
-      toolbarMode.val === ToolbarMode.LOADS ||
-      toolbarMode.val === ToolbarMode.SUPPORTS
-        ? selection?.points ?? []
-        : selection?.lines ?? [];
+    const selectedGeometry = usesPoints()
+      ? selection?.points ?? []
+      : selection?.lines ?? [];
 
-    const key = ToolbarMode[toolbarMode.val];
-    const currentComponents = components.val.get(key) ?? [];
-    const currentComponent = currentComponents[idx];
-    if (!currentComponent) return;
+    const list = getList();
+    const current = list[idx];
+    if (!current) return;
 
-    // Only update if the geometry actually changed
-    const currentGeometry = currentComponent.geometry ?? [];
-    const isSame =
+    const currentGeometry = current.geometry ?? [];
+    const unchanged =
       currentGeometry.length === selectedGeometry.length &&
-      currentGeometry.every((item, i) => item === selectedGeometry[i]);
+      currentGeometry.every((v, i) => v === selectedGeometry[i]);
 
-    if (!isSame) {
-      const updatedComponents = currentComponents.map((comp, i) =>
-        i === idx ? { ...comp, geometry: [...selectedGeometry] } : comp
-      );
-      components.val = new Map(components.val).set(key, updatedComponents);
+    if (!unchanged) {
+      // Create a set of the selected geometry indices for quick lookup
+      const selectedSet = new Set(selectedGeometry);
+
+      // Update all components: assign to active, remove from others in same category
+      const updated = list.map((c, i) => {
+        if (i === idx) {
+          // Active component gets the new selection
+          return { ...c, geometry: [...selectedGeometry] };
+        } else {
+          // Other components: remove any geometry that's now assigned to active
+          const filteredGeometry = (c.geometry ?? []).filter(
+            (g) => !selectedSet.has(g)
+          );
+          return { ...c, geometry: filteredGeometry };
+        }
+      });
+
+      components.val = new Map(components.val).set(getKey(), updated);
     }
   });
 
-  // Reset geometry selection when active component is null
-  van.derive(() => {
-    if (activeComponent.val === null) geometry.selection.val = null;
-  });
-
-  // Reset active component when toolbar mode changes
+  // Reset on toolbar mode change or when details closes
   van.derive(() => {
     toolbarMode.val;
     activeComponent.val = null;
   });
 
-  const template = () => {
-    if (toolbarMode.val === null) return html``;
+  van.derive(() => {
+    if (activeComponent.val === null) geometry.selection.val = null;
+  });
 
-    const currentComponents =
-      components.val.get(ToolbarMode[toolbarMode.val]) ?? [];
-
-    return html`
-      <details
-        id="components"
-        ?open=${toolbarMode.val === ToolbarMode.MESH ||
-        toolbarMode.val === ToolbarMode.LOADS ||
-        toolbarMode.val === ToolbarMode.SUPPORTS}
-        @toggle=${(e: Event) => {
-          const details = e.target as HTMLDetailsElement;
-          if (!details.open) {
-            activeComponent.val = null;
-          }
-        }}
-      >
-        <summary>Components</summary>
-        ${currentComponents.map(
-          (component, index) => html`
-            <div
-              class="components-item ${activeComponent.val === index
-                ? "active"
-                : ""}"
-              @click=${() =>
-                (activeComponent.val =
-                  activeComponent.val === index ? null : index)}
-            >
-              ${editingIndex.val === index
-                ? html`
-                    <input
-                      class="components-rename-input"
-                      type="text"
-                      .value=${component.name}
-                      @blur=${(e: Event) =>
-                        renameComponent(
-                          components,
-                          toolbarMode,
-                          editingIndex,
-                          index,
-                          (e.target as HTMLInputElement).value
-                        )}
-                      @keydown=${(e: KeyboardEvent) => {
-                        if (e.key === "Enter") {
-                          renameComponent(
-                            components,
-                            toolbarMode,
-                            editingIndex,
-                            index,
-                            (e.target as HTMLInputElement).value
-                          );
-                        } else if (e.key === "Escape") {
-                          editingIndex.val = null;
-                        }
-                      }}
-                      @input=${(e: Event) => e.stopPropagation()}
-                    />
-                  `
-                : html`
-                    <label @dblclick=${() => (editingIndex.val = index)}
-                      >${component.name}</label
-                    >
-                  `}
-              <button
-                class="components-delete-btn"
-                @click=${(e: Event) => {
-                  e.stopPropagation();
-                  deleteComponent(
-                    components,
-                    toolbarMode,
-                    activeComponent,
-                    index
-                  );
-                }}
-                title="Delete component"
-              >
-                ×
-              </button>
-            </div>
-          `
-        )}
-        ${html`
-          <details class="components-templates" open>
-            <summary class="components-divider">templates</summary>
-            ${templates.get(ToolbarMode[toolbarMode.val])?.map(
-              (component, templateIndex) => html`
-                <div class="components-item template">
-                  <label>${component.name}</label>
-                  <button
-                    class="components-copy-btn"
-                    @click=${() =>
-                      copyTemplate(
-                        components,
-                        toolbarMode,
-                        component.name,
-                        templateIndex
-                      )}
-                    title="Copy template"
-                  >
-                    +
-                  </button>
-                </div>
-              `
-            )}
-          </details>
-        `}
-      </details>
-    `;
-  };
-
+  // Render
   van.derive(() => {
     render(template(), container);
   });
 
+  function template() {
+    if (toolbarMode.val === null) return html``;
+
+    const list = getList();
+    const isOpen =
+      toolbarMode.val === ToolbarMode.MESH ||
+      toolbarMode.val === ToolbarMode.LOADS ||
+      toolbarMode.val === ToolbarMode.SUPPORTS;
+
+    return html`
+      <details
+        id="components"
+        ?open=${isOpen}
+        @toggle=${(e: Event) => {
+          if (!(e.target as HTMLDetailsElement).open)
+            activeComponent.val = null;
+        }}
+      >
+        <summary>Components</summary>
+        ${list.map((comp, i) => componentItem(comp, i))} ${templatesSection()}
+      </details>
+    `;
+  }
+
+  function componentItem(comp: { name: string }, index: number) {
+    const isActive = activeComponent.val === index;
+    const isEditing = editingIndex.val === index;
+
+    return html`
+      <div
+        class="components-item ${isActive ? "active" : ""}"
+        @click=${() => (activeComponent.val = isActive ? null : index)}
+      >
+        ${isEditing
+          ? renameInput(comp.name, index)
+          : nameLabel(comp.name, index)}
+        <button
+          class="components-delete-btn"
+          @click=${(e: Event) => {
+            e.stopPropagation();
+            deleteComponent(index);
+          }}
+          title="Delete component"
+        >
+          ×
+        </button>
+      </div>
+    `;
+  }
+
+  function renameInput(name: string, index: number) {
+    return html`
+      <input
+        class="components-rename-input"
+        type="text"
+        .value=${name}
+        @blur=${(e: Event) =>
+          commitRename(index, (e.target as HTMLInputElement).value)}
+        @keydown=${(e: KeyboardEvent) => {
+          if (e.key === "Enter")
+            commitRename(index, (e.target as HTMLInputElement).value);
+          else if (e.key === "Escape") editingIndex.val = null;
+        }}
+        @input=${(e: Event) => e.stopPropagation()}
+      />
+    `;
+  }
+
+  function nameLabel(name: string, index: number) {
+    return html`
+      <label @dblclick=${() => (editingIndex.val = index)}>${name}</label>
+    `;
+  }
+
+  function templatesSection() {
+    const list = templates.get(getKey()) ?? [];
+    return html`
+      <details class="components-templates" open>
+        <summary class="components-divider">templates</summary>
+        ${list.map(
+          (t, i) => html`
+            <div class="components-item template">
+              <label>${t.name}</label>
+              <button
+                class="components-copy-btn"
+                @click=${() => copyTemplate(t.name, i)}
+                title="Copy template"
+              >
+                +
+              </button>
+            </div>
+          `
+        )}
+      </details>
+    `;
+  }
+
+  // Actions
+  function copyTemplate(baseName: string, templateIndex: number) {
+    if (toolbarMode.val === null) return;
+
+    const list = getList();
+    const names = new Set(list.map((c) => c.name));
+    let name = baseName;
+
+    if (names.has(name)) {
+      name = `${baseName} copy`;
+      let n = 2;
+      while (names.has(name)) name = `${baseName} copy ${n++}`;
+    }
+
+    const defaultParams = {
+      ...templates.get(getKey())?.[templateIndex]?.defaultParams,
+    };
+    const updated = [
+      ...list,
+      { name, templateIndex, geometry: [], params: defaultParams },
+    ];
+    components.val = new Map(components.val).set(getKey(), updated);
+  }
+
+  function commitRename(index: number, newName: string) {
+    if (toolbarMode.val === null) return;
+
+    const list = getList();
+    const trimmed = newName.trim();
+
+    if (trimmed && trimmed !== list[index].name) {
+      const updated = list.map((c, i) =>
+        i === index ? { ...c, name: trimmed } : c
+      );
+      components.val = new Map(components.val).set(getKey(), updated);
+    }
+
+    requestAnimationFrame(() => {
+      if (editingIndex.val === index) editingIndex.val = null;
+    });
+  }
+
+  function deleteComponent(index: number) {
+    if (toolbarMode.val === null) return;
+    if (activeComponent.val === index) activeComponent.val = null;
+
+    const updated = getList().filter((_, i) => i !== index);
+    components.val = new Map(components.val).set(getKey(), updated);
+  }
+
   return container;
-}
-
-// Utils
-function copyTemplate(
-  components: Components,
-  toolbarMode: State<ToolbarMode | null>,
-  baseName: string,
-  templateIndex: number
-) {
-  if (toolbarMode.val === null) return;
-
-  const key = ToolbarMode[toolbarMode.val];
-  const currentComponents = components.val.get(key) ?? [];
-  const existingNames = currentComponents.map((c) => c.name);
-
-  let newName = baseName;
-
-  if (existingNames.includes(baseName)) {
-    newName = `${baseName} copy`;
-    let counter = 2;
-
-    while (existingNames.includes(newName)) {
-      newName = `${baseName} copy ${counter}`;
-      counter++;
-    }
-  }
-
-  // Get default params from the template
-  const template = templates.get(key)?.[templateIndex];
-  const defaultParams = template ? { ...template.defaultParams } : {};
-
-  const updatedComponents = [
-    ...currentComponents,
-    { name: newName, templateIndex, geometry: [], params: defaultParams },
-  ];
-
-  components.val = new Map(components.val).set(key, updatedComponents);
-}
-
-function renameComponent(
-  components: Components,
-  toolbarMode: State<ToolbarMode | null>,
-  editingIndex: State<number | null>,
-  index: number,
-  newName: string
-) {
-  if (toolbarMode.val === null) return;
-
-  const key = ToolbarMode[toolbarMode.val];
-  const currentComponents = components.val.get(key) ?? [];
-
-  const trimmedName = newName.trim();
-  if (trimmedName && trimmedName !== currentComponents[index].name) {
-    const updatedComponents = currentComponents.map((comp, i) =>
-      i === index ? { ...comp, name: trimmedName } : comp
-    );
-    components.val = new Map(components.val).set(key, updatedComponents);
-  }
-
-  requestAnimationFrame(() => {
-    if (editingIndex.val === index) {
-      editingIndex.val = null;
-    }
-  });
-}
-
-function deleteComponent(
-  components: Components,
-  toolbarMode: State<ToolbarMode | null>,
-  activeComponent: State<number | null>,
-  index: number
-) {
-  if (toolbarMode.val === null) return;
-
-  if (activeComponent.val === index) activeComponent.val = null;
-
-  const key = ToolbarMode[toolbarMode.val];
-  const currentComponents = components.val.get(key) ?? [];
-  const updatedComponents = currentComponents.filter((_, i) => i !== index);
-  components.val = new Map(components.val).set(key, updatedComponents);
 }
