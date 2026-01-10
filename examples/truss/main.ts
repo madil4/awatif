@@ -10,7 +10,13 @@ import {
   getComponents,
   getParameters,
 } from "@awatif/ui";
-import { getMesh, Geometry, Mesh, Components } from "@awatif/components";
+import {
+  getMesh,
+  getLoads,
+  Geometry,
+  Mesh,
+  Components,
+} from "@awatif/components";
 
 const geometry: Geometry = {
   points: van.state(
@@ -74,6 +80,29 @@ const components: Components = van.state(
         },
       ],
     ],
+    [
+      "LOADS",
+      [
+        {
+          name: "Point Load at Node 5",
+          templateIndex: 0,
+          geometry: [5],
+          params: { Fx: 0, Fy: 0, Fz: -1000, Mx: 0, My: 0, Mz: 0 },
+        },
+        {
+          name: "Point Load at Node 6",
+          templateIndex: 0,
+          geometry: [6],
+          params: { Fx: 0, Fy: 0, Fz: -1500, Mx: 0, My: 0, Mz: 0 },
+        },
+        {
+          name: "Point Load at Node 7",
+          templateIndex: 0,
+          geometry: [7],
+          params: { Fx: 0, Fy: 0, Fz: -1000, Mx: 0, My: 0, Mz: 0 },
+        },
+      ],
+    ],
   ])
 );
 
@@ -106,6 +135,21 @@ van.derive(() => {
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
   mesh.geometryMapping = meshData.geometryMapping;
+});
+
+// Loads events
+van.derive(() => {
+  if (!mesh.geometryMapping) return;
+
+  const loadsData = getLoads({
+    geometryMapping: mesh.geometryMapping,
+    components: components.val,
+  });
+
+  mesh.loads = loadsData.loads;
+
+  // Log loads for debugging
+  console.log("Applied loads:", loadsData.loads);
 });
 
 document.body.append(
