@@ -145,13 +145,15 @@ export function getComponents({
                   `}
               <button
                 class="components-delete-btn"
-                @click=${() =>
+                @click=${(e: Event) => {
+                  e.stopPropagation();
                   deleteComponent(
                     components,
                     toolbarMode,
                     activeComponent,
                     index
-                  )}
+                  );
+                }}
                 title="Delete component"
               >
                 ×
@@ -261,14 +263,7 @@ function deleteComponent(
   activeComponent: State<number | null>,
   index: number
 ) {
-  // Clear active state if we're deleting the active component
-  if (activeComponent.val === index) {
-    activeComponent.val = null;
-  }
-  // Adjust active index if the deleted component is before the active one
-  else if (activeComponent.val !== null && activeComponent.val > index) {
-    activeComponent.val = activeComponent.val - 1;
-  }
+  if (activeComponent.val === index) activeComponent.val = null;
 
   const key = ToolbarMode[toolbarMode.val];
   const currentComponents = components.val.get(key) ?? [];
