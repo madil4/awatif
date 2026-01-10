@@ -4,17 +4,19 @@ import { Grid } from "../viewer/grid/getGrid";
 
 import "./styles.css";
 
+export type Display = {
+  geometry: State<boolean>;
+  mesh: State<boolean>;
+  loads: State<boolean>;
+  supports: State<boolean>;
+};
+
 export function getDisplay({
   grid,
   display,
 }: {
   grid?: Grid;
-  display?: {
-    geometry: State<boolean>;
-    mesh: State<boolean>;
-    loads: State<boolean>;
-    supports: State<boolean>;
-  };
+  display?: Display;
 }): HTMLElement {
   const container = document.createElement("div");
 

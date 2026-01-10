@@ -1,5 +1,13 @@
 import van from "vanjs-core";
 import {
+  Components,
+  getMesh,
+  getLoads,
+  getSupports,
+  Geometry,
+  Mesh,
+} from "@awatif/components";
+import {
   getDisplay,
   getTooltips,
   getLayout,
@@ -9,15 +17,8 @@ import {
   getToolbar,
   getComponents,
   getParameters,
+  Display,
 } from "@awatif/ui";
-import {
-  getMesh,
-  getLoads,
-  getSupports,
-  Geometry,
-  Mesh,
-  Components,
-} from "@awatif/components";
 
 const geometry: Geometry = {
   points: van.state(
@@ -46,14 +47,16 @@ const geometry: Geometry = {
       [11, [3, 7]],
     ])
   ),
-  visible: van.state(true),
   selection: van.state(null),
 };
 
 const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
-  visible: van.state(false),
+  geometryMapping: {
+    pointToNodes: new Map(),
+    lineToElements: new Map(),
+  },
 };
 
 const components: Components = van.state(
@@ -88,19 +91,19 @@ const components: Components = van.state(
           name: "Point Load at Node 5",
           templateIndex: 0,
           geometry: [5],
-          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 500, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 6",
           templateIndex: 0,
           geometry: [6],
-          params: { Fx: 0, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 100, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 7",
           templateIndex: 0,
           geometry: [7],
-          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 200, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
       ],
     ],
@@ -125,7 +128,7 @@ const components: Components = van.state(
           templateIndex: 0,
           geometry: [4],
           params: {
-            Ux: true,
+            Ux: false,
             Uy: true,
             Uz: true,
             Rx: false,
@@ -143,15 +146,24 @@ const grid: Grid = {
   division: van.state(20),
 };
 
-const toolbarMode = van.state(ToolbarMode.GEOMETRY);
+const display: Display = {
+  geometry: van.state(true),
+  mesh: van.state(false),
+  loads: van.state(true),
+  supports: van.state(true),
+};
+
+const toolbarMode = van.state<ToolbarMode | null>(null);
 const activeComponent = van.state<number | null>(null);
 
 // Toolbar events
 van.derive(() => {
-  if (toolbarMode.val === ToolbarMode.GEOMETRY) geometry.visible.val = true;
-
-  if (toolbarMode.val === ToolbarMode.MESH) mesh.visible.val = true;
-  else mesh.visible.val = false;
+  if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
+  else display.mesh.val = false;
+  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
+  else display.supports.val = false;
+  if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
+  else display.loads.val = false;
 });
 
 // Mesh events
@@ -195,9 +207,7 @@ van.derive(() => {
 
 document.body.append(
   getLayout({
-    viewer: getViewer({ grid, geometry, mesh }),
-    tooltips: getTooltips(),
-    display: getDisplay({ grid, geometry, mesh }),
+    display: getDisplay({ grid, display }),
     components: getComponents({
       toolbarMode,
       geometry,
@@ -210,5 +220,7 @@ document.body.append(
       activeComponent,
       toolbarMode,
     }),
+    tooltips: getTooltips(),
+    viewer: getViewer({ grid, geometry, mesh, components, display }),
   })
 );
