@@ -1,5 +1,6 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
+import * as THREE from "three";
 
 // template
 export type SupportTemplate<Params extends Record<string, unknown>> = {
@@ -13,6 +14,14 @@ export type SupportTemplate<Params extends Record<string, unknown>> = {
     // Rx, Ry, Rz: Rotation restraints about x, y, z axes (true = restrained)
     support: [boolean, boolean, boolean, boolean, boolean, boolean];
   };
+
+  getObject3D?: ({
+    params,
+    position,
+  }: {
+    params: Params;
+    position: [number, number, number];
+  }) => THREE.Object3D;
 };
 
 // components

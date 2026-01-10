@@ -6,6 +6,7 @@ import { getGrid, Grid } from "./grid/getGrid";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
+import { getSupports } from "./supports/getSupports";
 
 import "./style.css";
 
@@ -24,6 +25,7 @@ export function getViewer({
     geometry: State<boolean>;
     mesh: State<boolean>;
     loads: State<boolean>;
+    supports: State<boolean>;
   };
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -88,7 +90,7 @@ export function getViewer({
       })
     );
 
-  if (components && geometry)
+  if (components && geometry) {
     scene.add(
       getLoads({
         geometry,
@@ -98,6 +100,17 @@ export function getViewer({
         display,
       })
     );
+
+    scene.add(
+      getSupports({
+        geometry,
+        components,
+        templates,
+        render,
+        display,
+      })
+    );
+  }
 
   render();
 

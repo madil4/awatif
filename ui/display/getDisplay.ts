@@ -13,6 +13,7 @@ export function getDisplay({
     geometry: State<boolean>;
     mesh: State<boolean>;
     loads: State<boolean>;
+    supports: State<boolean>;
   };
 }): HTMLElement {
   const container = document.createElement("div");
@@ -73,6 +74,17 @@ export function getDisplay({
               .checked=${display.loads.val}
               @change=${(e: Event) =>
                 (display.loads.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>`
+        : ""}
+      ${display?.supports
+        ? html` <div class="display-item">
+            <label>Supports</label>
+            <input
+              type="checkbox"
+              .checked=${display.supports.val}
+              @change=${(e: Event) =>
+                (display.supports.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}
