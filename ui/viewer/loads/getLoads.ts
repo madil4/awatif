@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import type {
   Geometry,
   Components,
@@ -11,13 +11,23 @@ export function getLoads({
   components,
   templates,
   render,
+  display,
 }: {
   geometry: Geometry;
   components: Components;
   templates: typeof Templates;
   render: () => void;
+  display?: { loads: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
+
+  // Add reactive visibility
+  if (display?.loads) {
+    van.derive(() => {
+      group.visible = display.loads.val;
+      render();
+    });
+  }
 
   // Use van.derive to reactively update when components or geometry changes
   van.derive(() => {
