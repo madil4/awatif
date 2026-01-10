@@ -4,7 +4,7 @@ export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
   lines: State<Map<number, [number, number]>>;
 
-  visible: State<boolean>;
+  visible?: State<boolean>;
   selection: State<{
     points: number[];
     lines: number[];
@@ -20,7 +20,7 @@ export type Mesh = {
     lineToElements: Map<number, number[]>; // geometry line ID → mesh element indices
   };
 
-  visible: State<boolean>;
+  visible?: State<boolean>;
 
   supports?: Map<
     number,

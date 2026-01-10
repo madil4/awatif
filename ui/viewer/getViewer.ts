@@ -20,7 +20,11 @@ export function getViewer({
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
-  display?: { loads: State<boolean> };
+  display?: {
+    geometry: State<boolean>;
+    mesh: State<boolean>;
+    loads: State<boolean>;
+  };
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -71,6 +75,7 @@ export function getViewer({
         camera,
         rendererElm: renderer.domElement,
         render,
+        display,
       })
     );
 
@@ -79,6 +84,7 @@ export function getViewer({
       getMesh({
         mesh,
         render,
+        display,
       })
     );
 

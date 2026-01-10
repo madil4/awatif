@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import { Grid } from "../grid/getGrid";
 import { Geometry } from "@awatif/components";
 
@@ -9,12 +9,14 @@ export function getGeometry({
   camera,
   rendererElm,
   render,
+  display,
 }: {
   geometry: Geometry;
   grid: Grid;
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
   render: () => void;
+  display?: { geometry: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -77,7 +79,7 @@ export function getGeometry({
   lines.renderOrder = 3; // Ensure geometry lines render on top of mesh
   group.add(lines);
   van.derive(() => {
-    if (!geometry.visible.val) return;
+    if (!display?.geometry || !display.geometry.val) return;
 
     const linesMap = geometry.lines.val;
     const pointsMap = geometry.points.val;
@@ -101,7 +103,8 @@ export function getGeometry({
     render();
   });
   van.derive(() => {
-    lines.visible = geometry.visible.val;
+    if (!display?.geometry) return;
+    lines.visible = display.geometry.val;
 
     render();
   });
@@ -134,7 +137,8 @@ export function getGeometry({
     render();
   });
   van.derive(() => {
-    points.visible = geometry.visible.val;
+    if (!display?.geometry) return;
+    points.visible = display.geometry.val;
 
     render();
   });

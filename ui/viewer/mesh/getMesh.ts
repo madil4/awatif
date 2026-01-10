@@ -1,13 +1,15 @@
 import * as THREE from "three";
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import type { Mesh } from "@awatif/components";
 
 export function getMesh({
   mesh,
   render,
+  display,
 }: {
   mesh: Mesh;
   render: () => void;
+  display?: { mesh: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -25,7 +27,7 @@ export function getMesh({
   group.add(points);
 
   van.derive(() => {
-    if (!mesh.visible || !mesh.visible.val || !mesh.nodes) return;
+    if (!display?.mesh || !display.mesh.val || !mesh.nodes) return;
 
     const nodes = mesh.nodes.val.flat();
     points.geometry.setAttribute(
@@ -49,7 +51,7 @@ export function getMesh({
   group.add(lines);
 
   van.derive(() => {
-    if (!mesh.visible || !mesh.visible.val || !mesh.elements || !mesh.nodes)
+    if (!display?.mesh || !display.mesh.val || !mesh.elements || !mesh.nodes)
       return;
 
     const elementIndices = mesh.elements.val;
@@ -81,10 +83,10 @@ export function getMesh({
 
   // Handle visibility changes
   van.derive(() => {
-    if (!mesh.visible) return;
+    if (!display?.mesh) return;
 
-    lines.visible = mesh.visible.val;
-    points.visible = mesh.visible.val;
+    lines.visible = display.mesh.val;
+    points.visible = display.mesh.val;
 
     render();
   });
