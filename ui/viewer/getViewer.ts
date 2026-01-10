@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import van from "vanjs-core";
+import van, { State } from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Geometry, Mesh, Components, templates } from "@awatif/components";
 import { getGrid, Grid } from "./grid/getGrid";
@@ -14,11 +14,13 @@ export function getViewer({
   geometry,
   mesh,
   components,
+  display,
 }: {
   grid?: Grid;
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
+  display?: { loads: State<boolean> };
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -87,6 +89,7 @@ export function getViewer({
         components,
         templates,
         render,
+        display,
       })
     );
 
