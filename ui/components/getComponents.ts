@@ -91,6 +91,7 @@ export function getComponents({
     }
   });
 
+  // Reset geometry selection when active component is null
   van.derive(() => {
     if (activeComponent.val === null) geometry.selection.val = null;
   });
