@@ -16,30 +16,32 @@ export function getParameters({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  // Map to store separate param states for each component by index
-  const componentParamsMap = new Map<number, State<Record<string, unknown>>>();
+  // Map to store separate param states for each component by mode and index
+  const componentParamsMap = new Map<string, State<Record<string, unknown>>>();
 
   // Get or create a param state for a specific component
   const getComponentParams = (
+    mode: string,
     idx: number,
     initialParams: Record<string, unknown>
   ): State<Record<string, unknown>> => {
-    if (!componentParamsMap.has(idx)) {
+    const key = `${mode}-${idx}`;
+    if (!componentParamsMap.has(key)) {
       const paramState = van.state<Record<string, unknown>>({
         ...initialParams,
       });
-      componentParamsMap.set(idx, paramState);
+      componentParamsMap.set(key, paramState);
 
       // Set up a derive for this specific component to sync params back
       van.derive(() => {
         const params = paramState.val;
         const currentIdx = activeComponent.val;
+        const currentMode = ToolbarMode[toolbarMode.val];
 
-        // Only sync if this is the active component
-        if (currentIdx !== idx) return;
+        // Only sync if this is the active component and mode
+        if (currentIdx !== idx || currentMode !== mode) return;
 
-        const key = ToolbarMode[toolbarMode.val];
-        const currentComponents = components.val.get(key) ?? [];
+        const currentComponents = components.val.get(currentMode) ?? [];
         const component = currentComponents[idx];
         if (!component) return;
 
@@ -53,23 +55,28 @@ export function getParameters({
           const updatedComponents = currentComponents.map((comp, i) =>
             i === idx ? { ...comp, params: { ...params } } : comp
           );
-          components.val = new Map(components.val).set(key, updatedComponents);
+          components.val = new Map(components.val).set(
+            currentMode,
+            updatedComponents
+          );
         }
       });
     }
-    return componentParamsMap.get(idx)!;
+    return componentParamsMap.get(key)!;
   };
 
   // Clean up param states when components are removed
   van.derive(() => {
-    const key = ToolbarMode[toolbarMode.val];
-    const currentComponents = components.val.get(key) ?? [];
-    const currentIndices = new Set(currentComponents.map((_, i) => i));
+    const mode = ToolbarMode[toolbarMode.val];
+    const currentComponents = components.val.get(mode) ?? [];
+    const currentKeys = new Set(
+      currentComponents.map((_, i) => `${mode}-${i}`)
+    );
 
-    // Remove param states for components that no longer exist
-    for (const [idx] of componentParamsMap) {
-      if (!currentIndices.has(idx)) {
-        componentParamsMap.delete(idx);
+    // Remove param states for components that no longer exist in current mode
+    for (const [key] of componentParamsMap) {
+      if (key.startsWith(`${mode}-`) && !currentKeys.has(key)) {
+        componentParamsMap.delete(key);
       }
     }
   });
@@ -89,7 +96,7 @@ export function getParameters({
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component
-    const localParams = getComponentParams(idx, component.params);
+    const localParams = getComponentParams(key, idx, component.params);
 
     // Update the local params if the component's params changed externally
     const currentParams = component.params;
@@ -105,7 +112,7 @@ export function getParameters({
     }
 
     return meshTemplate.getTemplate({
-      params: localParams as State<typeof meshTemplate.defaultParams>,
+      params: localParams as any,
     });
   };
 
