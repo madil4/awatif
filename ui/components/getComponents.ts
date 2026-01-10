@@ -11,7 +11,7 @@ export function getComponents({
   components,
   activeComponent,
 }: {
-  toolbarMode: State<ToolbarMode>;
+  toolbarMode: State<ToolbarMode | null>;
   geometry: Geometry;
   components: Components;
   activeComponent: State<number | null>;
@@ -26,7 +26,7 @@ export function getComponents({
   // Sync 1: When activeIndex changes, update geometry.selection to show component's geometry
   van.derive(() => {
     const idx = activeComponent.val;
-    if (idx === null) {
+    if (idx === null || toolbarMode.val === null) {
       // No active component - clear selection
       if (!isSyncing && geometry.selection.val !== null) {
         isSyncing = true;
@@ -63,7 +63,7 @@ export function getComponents({
     const idx = activeComponent.val;
 
     // Skip if syncing or no active component
-    if (isSyncing || idx === null) return;
+    if (isSyncing || idx === null || toolbarMode.val === null) return;
 
     // MESH mode uses lines, LOADS and SUPPORTS modes use points
     const selectedGeometry =
@@ -103,6 +103,8 @@ export function getComponents({
   });
 
   const template = () => {
+    if (toolbarMode.val === null) return html``;
+
     const currentComponents =
       components.val.get(ToolbarMode[toolbarMode.val]) ?? [];
 
@@ -222,10 +224,12 @@ export function getComponents({
 // Utils
 function copyTemplate(
   components: Components,
-  toolbarMode: State<ToolbarMode>,
+  toolbarMode: State<ToolbarMode | null>,
   baseName: string,
   templateIndex: number
 ) {
+  if (toolbarMode.val === null) return;
+
   const key = ToolbarMode[toolbarMode.val];
   const currentComponents = components.val.get(key) ?? [];
   const existingNames = currentComponents.map((c) => c.name);
@@ -256,11 +260,13 @@ function copyTemplate(
 
 function renameComponent(
   components: Components,
-  toolbarMode: State<ToolbarMode>,
+  toolbarMode: State<ToolbarMode | null>,
   editingIndex: State<number | null>,
   index: number,
   newName: string
 ) {
+  if (toolbarMode.val === null) return;
+
   const key = ToolbarMode[toolbarMode.val];
   const currentComponents = components.val.get(key) ?? [];
 
@@ -281,10 +287,12 @@ function renameComponent(
 
 function deleteComponent(
   components: Components,
-  toolbarMode: State<ToolbarMode>,
+  toolbarMode: State<ToolbarMode | null>,
   activeComponent: State<number | null>,
   index: number
 ) {
+  if (toolbarMode.val === null) return;
+
   if (activeComponent.val === index) activeComponent.val = null;
 
   const key = ToolbarMode[toolbarMode.val];
