@@ -179,9 +179,6 @@ van.derive(() => {
   });
 
   mesh.loads = loadsData.loads;
-
-  // Log loads for debugging
-  console.log("Applied loads:", loadsData.loads);
 });
 
 // Supports events
@@ -194,9 +191,6 @@ van.derive(() => {
   });
 
   mesh.supports = supportsData.supports;
-
-  // Log supports for debugging
-  console.log("Applied supports:", supportsData.supports);
 });
 
 document.body.append(
