@@ -60,9 +60,9 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     const { Fx, Fy } = params;
     const group = new THREE.Group();
 
-    const ARROW_LENGTH = 1 * 0.5;
-    const ARROW_HEAD_LENGTH = 0.3 * 0.5;
-    const ARROW_HEAD_WIDTH = 0.2 * 0.5;
+    const ARROW_LENGTH = 1 * 0.4;
+    const ARROW_HEAD_LENGTH = 0.3 * 0.4;
+    const ARROW_HEAD_WIDTH = 0.2 * 0.4;
     const COLOR_X = 0xff0000; // Red for X direction
     const COLOR_Y = 0x00ff00; // Green for Y direction
 
