@@ -83,21 +83,21 @@ body {
 /* Bottom */
 #layout .bottom {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   position: relative;
   z-index: 1; /* Above the viewer */
   margin-top: auto;
 }
 
-#layout .parameters {
-  margin-left: auto;
-  margin-top: auto;
+#layout .panels-row {
+  display: flex;
+  align-items: flex-end;
 }
 
 /* Pointer events: wrappers pass through, content elements capture */
 #layout .top,
 #layout .bottom,
-#layout .bottom-group {
+#layout .panels-row {
   pointer-events: none;
 }
 

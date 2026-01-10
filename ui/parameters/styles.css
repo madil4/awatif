@@ -1,11 +1,11 @@
 #parameters {
-  width: 280px;
-  margin-right: 8px;
+  width: 200px;
 
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 4px 4px 0 0;
-  box-shadow: 0 -1px 4px var(--shadow);
+  border-bottom: none;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -13,32 +13,8 @@
   overflow: hidden;
 }
 
-#parameters summary {
-  padding: 6px 10px;
-
-  cursor: pointer;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: 0.8rem;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.2s ease;
-}
-
-#parameters summary:hover {
-  background: var(--bg-hover);
-}
-
-#parameters[open] summary {
-  background: var(--bg-hover);
-}
-
-#parameters .no-selection {
-  padding: 12px 10px;
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  text-align: center;
-  font-style: italic;
+#parameters.hidden {
+  display: none;
 }
 
 #parameters > div {
@@ -81,4 +57,11 @@
 #parameters input[type="number"]:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+#parameters input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--accent);
 }
