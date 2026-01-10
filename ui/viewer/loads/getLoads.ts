@@ -1,0 +1,60 @@
+import * as THREE from "three";
+import van from "vanjs-core";
+import type {
+  Geometry,
+  Components,
+  templates as Templates,
+} from "@awatif/components";
+
+export function getLoads({
+  geometry,
+  components,
+  templates,
+  render,
+}: {
+  geometry: Geometry;
+  components: Components;
+  templates: typeof Templates;
+  render: () => void;
+}): THREE.Group {
+  const group = new THREE.Group();
+
+  // Use van.derive to reactively update when components or geometry changes
+  van.derive(() => {
+    // Clear existing load visualizations
+    while (group.children.length > 0) {
+      group.remove(group.children[0]);
+    }
+
+    const loadComponents = components.val.get("LOADS") ?? [];
+    const points = geometry.points.val;
+
+    loadComponents.forEach((component) => {
+      // Get the template for this component
+      const loadTemplates = templates.get("LOADS");
+      if (!loadTemplates) return;
+
+      const template = loadTemplates[component.templateIndex];
+      if (!template || !("getObject3D" in template)) return;
+
+      // For each geometry point in the component, create a visualization
+      component.geometry.forEach((pointId) => {
+        const position = points.get(pointId);
+        if (!position) return;
+
+        // Call the template's getObject3D function
+        const loadObject = template.getObject3D?.({
+          params: component.params as any,
+          position: position as [number, number, number],
+        });
+
+        // Add to the group
+        if (loadObject) group.add(loadObject);
+      });
+    });
+
+    render();
+  });
+
+  return group;
+}

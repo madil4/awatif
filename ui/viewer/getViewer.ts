@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Geometry, Mesh } from "@awatif/components";
+import { Geometry, Mesh, Components, templates } from "@awatif/components";
 import { getGrid, Grid } from "./grid/getGrid";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
+import { getLoads } from "./loads/getLoads";
 
 import "./style.css";
 
@@ -12,10 +13,12 @@ export function getViewer({
   grid,
   geometry,
   mesh,
+  components,
 }: {
   grid?: Grid;
   geometry?: Geometry;
   mesh?: Mesh;
+  components?: Components;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -73,6 +76,16 @@ export function getViewer({
     scene.add(
       getMesh({
         mesh,
+        render,
+      })
+    );
+
+  if (components && geometry)
+    scene.add(
+      getLoads({
+        geometry,
+        components,
+        templates,
         render,
       })
     );
