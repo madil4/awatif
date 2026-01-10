@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Point Load - Awatif</title>
+  </head>
+  <body>
+    <h1>Point Load Template</h1>
+    <p>
+      A point load template that allows users to apply concentrated forces and
+      moments at geometry points.
+    </p>
+
+    <h2>Parameters</h2>
+    <ul>
+      <li><strong>Fx</strong>: Force component in X direction</li>
+      <li><strong>Fy</strong>: Force component in Y direction</li>
+      <li><strong>Fz</strong>: Force component in Z direction</li>
+      <li><strong>Mx</strong>: Moment component about X axis</li>
+      <li><strong>My</strong>: Moment component about Y axis</li>
+      <li><strong>Mz</strong>: Moment component about Z axis</li>
+    </ul>
+
+    <h2>Usage</h2>
+    <p>
+      The point load is applied to geometry points. When a geometry point maps
+      to multiple mesh nodes (via geometryMapping), the load is applied to all
+      corresponding nodes.
+    </p>
+
+    <h2>Example</h2>
+    <pre><code>
+import { pointLoad } from "./pointLoad";
+
+// Create a point load with downward force of 1000N
+const load = pointLoad.getLoad({
+  params: {
+    Fx: 0,
+    Fy: 0,
+    Fz: -1000,
+    Mx: 0,
+    My: 0,
+    Mz: 0,
+  }
+});
+
+// Result: { load: [0, 0, -1000, 0, 0, 0] }
+    </code></pre>
+  </body>
+</html>

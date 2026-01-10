@@ -41,15 +41,20 @@ export function getComponents({
     const component = currentComponents[idx];
     if (!component) return;
 
-    const componentLines = component.geometry ?? [];
+    const componentGeometry = component.geometry ?? [];
 
     // Update selection to reflect the active component's geometry
+    // MESH mode uses lines, LOADS mode uses points
     isSyncing = true;
-    geometry.selection.val = { points: [], lines: componentLines };
+    if (toolbarMode.val === ToolbarMode.LOADS) {
+      geometry.selection.val = { points: componentGeometry, lines: [] };
+    } else {
+      geometry.selection.val = { points: [], lines: componentGeometry };
+    }
     isSyncing = false;
   });
 
-  // Sync 2: When geometry.selection.lines changes, update active component's geometry
+  // Sync 2: When geometry.selection changes, update active component's geometry
   van.derive(() => {
     const selection = geometry.selection.val;
     const idx = activeComponent.val;
@@ -57,7 +62,11 @@ export function getComponents({
     // Skip if syncing or no active component
     if (isSyncing || idx === null) return;
 
-    const selectedLines = selection?.lines ?? [];
+    // MESH mode uses lines, LOADS mode uses points
+    const selectedGeometry =
+      toolbarMode.val === ToolbarMode.LOADS
+        ? selection?.points ?? []
+        : selection?.lines ?? [];
 
     const key = ToolbarMode[toolbarMode.val];
     const currentComponents = components.val.get(key) ?? [];
@@ -67,12 +76,12 @@ export function getComponents({
     // Only update if the geometry actually changed
     const currentGeometry = currentComponent.geometry ?? [];
     const isSame =
-      currentGeometry.length === selectedLines.length &&
-      currentGeometry.every((line, i) => line === selectedLines[i]);
+      currentGeometry.length === selectedGeometry.length &&
+      currentGeometry.every((item, i) => item === selectedGeometry[i]);
 
     if (!isSame) {
       const updatedComponents = currentComponents.map((comp, i) =>
-        i === idx ? { ...comp, geometry: [...selectedLines] } : comp
+        i === idx ? { ...comp, geometry: [...selectedGeometry] } : comp
       );
       components.val = new Map(components.val).set(key, updatedComponents);
     }
@@ -89,7 +98,8 @@ export function getComponents({
     return html`
       <details
         id="components"
-        ?open=${toolbarMode.val === ToolbarMode.MESH}
+        ?open=${toolbarMode.val === ToolbarMode.MESH ||
+        toolbarMode.val === ToolbarMode.LOADS}
         @toggle=${(e: Event) => {
           const details = e.target as HTMLDetailsElement;
           if (!details.open) {
