@@ -95,6 +95,12 @@ export function getComponents({
     if (activeComponent.val === null) geometry.selection.val = null;
   });
 
+  // Reset active component when toolbar mode changes
+  van.derive(() => {
+    toolbarMode.val;
+    activeComponent.val = null;
+  });
+
   const template = () => {
     const currentComponents =
       components.val.get(ToolbarMode[toolbarMode.val]) ?? [];
