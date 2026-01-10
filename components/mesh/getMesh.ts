@@ -1,5 +1,5 @@
 import { Geometry } from "../data-model";
-import { Elements, Components, Nodes } from "./data-model";
+import { Elements, Components, Nodes, MeshTemplate } from "./data-model";
 import { templates } from "../templates";
 
 export function getMesh({
@@ -23,7 +23,6 @@ export function getMesh({
   const allElements: Elements = [];
   const pointToNodes = new Map<number, number[]>();
   const lineToElements = new Map<number, number[]>();
-  let nodeOffset = 0;
 
   // Track which lines have been meshed to prevent duplicate meshing
   const meshedLines = new Set<number>();
@@ -31,7 +30,9 @@ export function getMesh({
   const meshComponents = components.get("MESH") ?? [];
 
   meshComponents.forEach((component) => {
-    const template = templates.get("MESH")?.[component.templateIndex];
+    const template = templates.get("MESH")?.[
+      component.templateIndex
+    ] as MeshTemplate<any>;
     if (!template) return;
 
     component.geometry.forEach((lineId) => {
@@ -54,41 +55,59 @@ export function getMesh({
         >[0]["params"],
       });
 
-      // Map parametric nodes to 3D positions
-      const nodes = parametricNodes.map(([t]) => [
-        startPoint[0] + t * (endPoint[0] - startPoint[0]),
-        startPoint[1] + t * (endPoint[1] - startPoint[1]),
-        startPoint[2] + t * (endPoint[2] - startPoint[2]),
-      ]);
+      // Build local-to-global index mapping to reuse shared nodes
+      const localToGlobal = new Map<number, number>();
 
-      allNodes.push(...nodes);
+      parametricNodes.forEach(([t], localIdx) => {
+        const isStart = Math.abs(t) < 1e-10;
+        const isEnd = Math.abs(t - 1) < 1e-10;
 
-      // Track nodes created from start and end points
-      const startNodeIdx = nodeOffset;
-      const endNodeIdx = nodeOffset + nodes.length - 1;
+        // Check if we can reuse an existing node for shared geometry points
+        if (isStart && pointToNodes.has(startId)) {
+          localToGlobal.set(localIdx, pointToNodes.get(startId)![0]);
+          return;
+        }
 
-      if (!pointToNodes.has(startId)) pointToNodes.set(startId, []);
-      pointToNodes.get(startId)!.push(startNodeIdx);
+        if (isEnd && pointToNodes.has(endId)) {
+          localToGlobal.set(localIdx, pointToNodes.get(endId)![0]);
+          return;
+        }
 
-      if (!pointToNodes.has(endId)) pointToNodes.set(endId, []);
-      pointToNodes.get(endId)!.push(endNodeIdx);
+        // Create new node by mapping parametric position to 3D
+        const node: [number, number, number] = [
+          startPoint[0] + t * (endPoint[0] - startPoint[0]),
+          startPoint[1] + t * (endPoint[1] - startPoint[1]),
+          startPoint[2] + t * (endPoint[2] - startPoint[2]),
+        ];
 
-      // Adjust element indices and add elements
-      const adjustedElements = elements.map((element) =>
-        element.map((idx) => idx + nodeOffset)
+        const globalIdx = allNodes.length;
+        allNodes.push(node);
+        localToGlobal.set(localIdx, globalIdx);
+
+        // Track point-to-node mapping for endpoints
+        if (isStart) {
+          if (!pointToNodes.has(startId)) pointToNodes.set(startId, []);
+          pointToNodes.get(startId)!.push(globalIdx);
+        }
+        if (isEnd) {
+          if (!pointToNodes.has(endId)) pointToNodes.set(endId, []);
+          pointToNodes.get(endId)!.push(globalIdx);
+        }
+      });
+
+      // Remap element indices using the local-to-global mapping
+      const remappedElements = elements.map((element) =>
+        element.map((localIdx) => localToGlobal.get(localIdx)!)
       );
 
       const elementStartIdx = allElements.length;
-      allElements.push(...adjustedElements);
+      allElements.push(...remappedElements);
 
       // Map geometry line to its mesh elements
-      const elementIndices: number[] = [];
-      for (let i = 0; i < adjustedElements.length; i++) {
-        elementIndices.push(elementStartIdx + i);
-      }
-      lineToElements.set(lineId, elementIndices);
-
-      nodeOffset += nodes.length;
+      lineToElements.set(
+        lineId,
+        remappedElements.map((_, i) => elementStartIdx + i)
+      );
     });
   });
 
