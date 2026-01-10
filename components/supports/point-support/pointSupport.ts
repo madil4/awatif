@@ -34,7 +34,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
                 Ux: (e.target as HTMLInputElement).checked,
               })}
           />
-          Restrain Ux (Translation X)
+          Restrain Translation X
         </label>
       </div>
 
@@ -49,52 +49,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
                 Uy: (e.target as HTMLInputElement).checked,
               })}
           />
-          Restrain Uy (Translation Y)
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Uz}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Uz: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Uz (Translation Z)
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Rx}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Rx: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Rx (Rotation about X)
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Ry}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Ry: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Ry (Rotation about Y)
+          Restrain Translation Y
         </label>
       </div>
 
@@ -109,7 +64,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
                 Rz: (e.target as HTMLInputElement).checked,
               })}
           />
-          Restrain Rz (Rotation about Z)
+          Restrain Rotation about Z
         </label>
       </div>
     `;
