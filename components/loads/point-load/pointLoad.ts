@@ -60,16 +60,18 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     const { Fx, Fy } = params;
     const group = new THREE.Group();
 
-    const ARROW_LENGTH = 1.5 * 0.5;
+    const ARROW_LENGTH = 1 * 0.5;
     const ARROW_HEAD_LENGTH = 0.3 * 0.5;
     const ARROW_HEAD_WIDTH = 0.2 * 0.5;
     const COLOR_X = 0xff0000; // Red for X direction
     const COLOR_Y = 0x00ff00; // Green for Y direction
 
     group.position.set(position[0], position[1], position[2]);
-    group.renderOrder = 4;
+    group.renderOrder = 5;
 
     const OFFSET = 0.25; // Offset distance from the point
+
+    // Helper function to set material properties for visibility on top
 
     if (Fx !== 0) {
       const direction = new THREE.Vector3(Fx > 0 ? 1 : -1, 0, 0);
@@ -82,6 +84,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         ARROW_HEAD_LENGTH,
         ARROW_HEAD_WIDTH
       );
+      setMaterialOnTop(arrowX);
       group.add(arrowX);
     }
 
@@ -96,9 +99,20 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         ARROW_HEAD_LENGTH,
         ARROW_HEAD_WIDTH
       );
+      setMaterialOnTop(arrowY);
       group.add(arrowY);
     }
 
     return group;
   },
 };
+
+// Utils
+function setMaterialOnTop(object: THREE.Object3D) {
+  object.traverse((child) => {
+    if ((child as THREE.Mesh).material) {
+      const material = (child as THREE.Mesh).material as THREE.Material;
+      material.depthTest = false; // Disable depth testing so arrows always appear on top
+    }
+  });
+}
