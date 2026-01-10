@@ -13,6 +13,7 @@ import {
 import {
   getMesh,
   getLoads,
+  getSupports,
   Geometry,
   Mesh,
   Components,
@@ -103,6 +104,37 @@ const components: Components = van.state(
         },
       ],
     ],
+    [
+      "SUPPORTS",
+      [
+        {
+          name: "Left Support",
+          templateIndex: 0,
+          geometry: [1],
+          params: {
+            Ux: true,
+            Uy: true,
+            Uz: true,
+            Rx: false,
+            Ry: false,
+            Rz: false,
+          },
+        },
+        {
+          name: "Right Support",
+          templateIndex: 0,
+          geometry: [4],
+          params: {
+            Ux: true,
+            Uy: true,
+            Uz: true,
+            Rx: false,
+            Ry: false,
+            Rz: false,
+          },
+        },
+      ],
+    ],
   ])
 );
 
@@ -150,6 +182,21 @@ van.derive(() => {
 
   // Log loads for debugging
   console.log("Applied loads:", loadsData.loads);
+});
+
+// Supports events
+van.derive(() => {
+  if (!mesh.geometryMapping) return;
+
+  const supportsData = getSupports({
+    geometryMapping: mesh.geometryMapping,
+    components: components.val,
+  });
+
+  mesh.supports = supportsData.supports;
+
+  // Log supports for debugging
+  console.log("Applied supports:", supportsData.supports);
 });
 
 document.body.append(
