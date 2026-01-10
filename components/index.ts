@@ -11,3 +11,10 @@ export type {
   Component as LoadComponent,
 } from "./loads/data-model";
 export { getLoads } from "./loads/getLoads";
+
+// supports
+export type {
+  Components as SupportComponents,
+  Component as SupportComponent,
+} from "./supports/data-model";
+export { getSupports } from "./supports/getSupports";

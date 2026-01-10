@@ -44,9 +44,12 @@ export function getComponents({
     const componentGeometry = component.geometry ?? [];
 
     // Update selection to reflect the active component's geometry
-    // MESH mode uses lines, LOADS mode uses points
+    // MESH mode uses lines, LOADS and SUPPORTS modes use points
     isSyncing = true;
-    if (toolbarMode.val === ToolbarMode.LOADS) {
+    if (
+      toolbarMode.val === ToolbarMode.LOADS ||
+      toolbarMode.val === ToolbarMode.SUPPORTS
+    ) {
       geometry.selection.val = { points: componentGeometry, lines: [] };
     } else {
       geometry.selection.val = { points: [], lines: componentGeometry };
@@ -62,9 +65,10 @@ export function getComponents({
     // Skip if syncing or no active component
     if (isSyncing || idx === null) return;
 
-    // MESH mode uses lines, LOADS mode uses points
+    // MESH mode uses lines, LOADS and SUPPORTS modes use points
     const selectedGeometry =
-      toolbarMode.val === ToolbarMode.LOADS
+      toolbarMode.val === ToolbarMode.LOADS ||
+      toolbarMode.val === ToolbarMode.SUPPORTS
         ? selection?.points ?? []
         : selection?.lines ?? [];
 
@@ -99,7 +103,8 @@ export function getComponents({
       <details
         id="components"
         ?open=${toolbarMode.val === ToolbarMode.MESH ||
-        toolbarMode.val === ToolbarMode.LOADS}
+        toolbarMode.val === ToolbarMode.LOADS ||
+        toolbarMode.val === ToolbarMode.SUPPORTS}
         @toggle=${(e: Event) => {
           const details = e.target as HTMLDetailsElement;
           if (!details.open) {

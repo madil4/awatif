@@ -8,6 +8,7 @@ export enum ToolbarMode {
   GEOMETRY,
   MESH,
   LOADS,
+  SUPPORTS,
 }
 
 export type Toolbar = {
@@ -16,51 +17,24 @@ export type Toolbar = {
 
 export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
   const container = document.createElement("div");
+  const modes = getToolbarModes();
 
   const template = () => html`
     <div id="toolbar">
-      <button
-        class="toolbar-button ${toolbarMode.val === ToolbarMode.SOON
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (toolbarMode.val =
-            toolbarMode.val === ToolbarMode.SOON ? null : ToolbarMode.SOON)}
-      >
-        Soon
-      </button>
-      <button
-        class="toolbar-button ${toolbarMode.val === ToolbarMode.GEOMETRY
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (toolbarMode.val =
-            toolbarMode.val === ToolbarMode.GEOMETRY
-              ? null
-              : ToolbarMode.GEOMETRY)}
-      >
-        Geometry
-      </button>
-      <button
-        class="toolbar-button ${toolbarMode.val === ToolbarMode.MESH
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (toolbarMode.val =
-            toolbarMode.val === ToolbarMode.MESH ? null : ToolbarMode.MESH)}
-      >
-        Mesh
-      </button>
-      <button
-        class="toolbar-button ${toolbarMode.val === ToolbarMode.LOADS
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (toolbarMode.val =
-            toolbarMode.val === ToolbarMode.LOADS ? null : ToolbarMode.LOADS)}
-      >
-        Loads
-      </button>
+      ${modes.map(
+        (mode) => html`
+          <button
+            class="toolbar-button ${toolbarMode.val === mode.value
+              ? "active"
+              : ""}"
+            @click=${() =>
+              (toolbarMode.val =
+                toolbarMode.val === mode.value ? null : mode.value)}
+          >
+            ${mode.label}
+          </button>
+        `
+      )}
     </div>
   `;
 
@@ -69,4 +43,19 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
   });
 
   return container.firstElementChild as HTMLElement;
+}
+
+// Utils
+function getToolbarModes() {
+  return Object.keys(ToolbarMode)
+    .filter((key) => isNaN(Number(key)))
+    .map((key) => ({
+      key,
+      value: ToolbarMode[key as keyof typeof ToolbarMode],
+      label: getDisplayName(key),
+    }));
+
+  function getDisplayName(key: string): string {
+    return key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+  }
 }
