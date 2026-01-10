@@ -29,12 +29,12 @@ export function getLayout({
         <div class="header">${header}</div>
       </div>
       <div class="bottom">
-        <div class="bottom-group">
+        <div class="panels-row">
           <div class="components">${components}</div>
-          <div class="toolbar">${toolbar}</div>
-          <div class="tooltips">${tooltips}</div>
+          <div class="parameters">${parameters}</div>
         </div>
-        <div class="parameters">${parameters}</div>
+        <div class="toolbar">${toolbar}</div>
+        <div class="tooltips">${tooltips}</div>
       </div>
     </div>
   `;

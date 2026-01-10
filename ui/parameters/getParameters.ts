@@ -119,15 +119,12 @@ export function getParameters({
   };
 
   const template = () => {
-    const idx = activeComponent.val;
     const templateContent = getTemplateContent();
 
     return html`
-      <details id="parameters" ?open=${idx !== null}>
-        <summary>Parameters</summary>
-        ${templateContent ??
-        html`<div class="no-selection">Select a component</div>`}
-      </details>
+      <div id="parameters" class="${templateContent ? "visible" : "hidden"}">
+        ${templateContent}
+      </div>
     `;
   };
 
@@ -135,5 +132,5 @@ export function getParameters({
     render(template(), container);
   });
 
-  return container.firstElementChild as HTMLElement;
+  return container;
 }
