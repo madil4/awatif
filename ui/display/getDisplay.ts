@@ -1,20 +1,19 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
-import type { Geometry, Mesh } from "@awatif/components";
 
 import "./styles.css";
 
 export function getDisplay({
   grid,
-  geometry,
-  mesh,
   display,
 }: {
   grid?: Grid;
-  geometry?: Geometry;
-  mesh?: Mesh;
-  display?: { loads: State<boolean> };
+  display?: {
+    geometry: State<boolean>;
+    mesh: State<boolean>;
+    loads: State<boolean>;
+  };
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -44,25 +43,25 @@ export function getDisplay({
             />
           </div>`
         : ""}
-      ${geometry
+      ${display?.geometry
         ? html` <div class="display-item">
             <label>Geometry</label>
             <input
               type="checkbox"
-              .checked=${geometry.visible.val}
+              .checked=${display.geometry.val}
               @change=${(e: Event) =>
-                (geometry.visible.val = (e.target as HTMLInputElement).checked)}
+                (display.geometry.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}
-      ${mesh
+      ${display?.mesh
         ? html` <div class="display-item">
             <label>Mesh</label>
             <input
               type="checkbox"
-              .checked=${mesh.visible.val}
+              .checked=${display.mesh.val}
               @change=${(e: Event) =>
-                (mesh.visible.val = (e.target as HTMLInputElement).checked)}
+                (display.mesh.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}
