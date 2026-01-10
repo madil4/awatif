@@ -12,7 +12,7 @@ export function getParameters({
 }: {
   activeComponent: State<number | null>;
   components: Components;
-  toolbarMode: State<ToolbarMode>;
+  toolbarMode: State<ToolbarMode | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -36,6 +36,7 @@ export function getParameters({
       van.derive(() => {
         const params = paramState.val;
         const currentIdx = activeComponent.val;
+        if (toolbarMode.val === null) return;
         const currentMode = ToolbarMode[toolbarMode.val];
 
         // Only sync if this is the active component and mode
@@ -67,6 +68,7 @@ export function getParameters({
 
   // Clean up param states when components are removed
   van.derive(() => {
+    if (toolbarMode.val === null) return;
     const mode = ToolbarMode[toolbarMode.val];
     const currentComponents = components.val.get(mode) ?? [];
     const currentKeys = new Set(
@@ -83,7 +85,7 @@ export function getParameters({
 
   const getTemplateContent = (): TemplateResult | null => {
     const idx = activeComponent.val;
-    if (idx === null) {
+    if (idx === null || toolbarMode.val === null) {
       return null;
     }
 

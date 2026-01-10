@@ -4,8 +4,6 @@ import van, { State } from "vanjs-core";
 import "./styles.css";
 
 export enum ToolbarMode {
-  SOON,
-  GEOMETRY,
   MESH,
   LOADS,
   SUPPORTS,
