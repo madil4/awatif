@@ -3,8 +3,12 @@ import van, { State } from "vanjs-core";
 import { getText } from "../text/getText";
 
 export interface PointResultProps {
-  displacements?: State<Map<number, number[]>>;
-  reactions?: State<Map<number, number[]>>;
+  displacements?: State<
+    Map<number, [number, number, number, number, number, number]>
+  >;
+  reactions?: State<
+    Map<number, [number, number, number, number, number, number]>
+  >;
   display: State<string>;
   nodes: State<number[][]>;
   render: () => void;
