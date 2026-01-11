@@ -19,6 +19,11 @@ export function getPointResults({
 }: PointResultProps): THREE.Group {
   const group = new THREE.Group();
 
+  // Cached geometries and materials for performance
+  const sphereGeometry = new THREE.SphereGeometry(0.015, 16, 16);
+  const displacementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+
   van.derive(() => {
     // Clear previous objects
     while (group.children.length > 0) {
@@ -38,21 +43,16 @@ export function getPointResults({
           const uz = disp[2] || 0;
           const rz = disp[5] || 0; // Rotation about Z axis
 
-          // Draw deformed position as a sphere
-          const sphereGeometry = new THREE.SphereGeometry(0.015, 16, 16);
-          const sphereMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
-          });
-          const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+          // Draw deformed position as a sphere (use cached geometry/material)
+          const sphere = new THREE.Mesh(sphereGeometry, displacementMaterial);
           sphere.position.set(node[0] + ux, node[1] + uy, node[2] + uz);
           group.add(sphere);
 
-          // Draw a line from original to deformed position
+          // Draw a line from original to deformed position (use cached material)
           const lineGeometry = new THREE.BufferGeometry().setFromPoints([
             new THREE.Vector3(node[0], node[1], node[2]),
             new THREE.Vector3(node[0] + ux, node[1] + uy, node[2] + uz),
           ]);
-          const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
           const line = new THREE.Line(lineGeometry, lineMaterial);
           group.add(line);
 
