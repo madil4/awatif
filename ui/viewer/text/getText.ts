@@ -22,9 +22,9 @@ export function getText(
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d")!;
 
-    // Set canvas size for crisp text
+    // Set canvas size for crisp text (wide enough for long labels)
     const fontSize = 48;
-    canvas.width = 512;
+    canvas.width = 768;
     canvas.height = 128;
 
     // Clear canvas with transparent background
@@ -59,7 +59,7 @@ export function getText(
   sprite.position.set(position[0], position[1], position[2]);
 
   // Adjust sprite scale based on size parameter
-  const aspectRatio = 512 / 128;
+  const aspectRatio = 768 / 128;
   sprite.scale.set(size * aspectRatio, size, 1);
 
   sprite.renderOrder = 100; // Render on top
