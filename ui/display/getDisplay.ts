@@ -1,6 +1,7 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
+import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 
 import "./styles.css";
 
@@ -9,7 +10,7 @@ export type Display = {
   mesh: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
-  pointResult?: State<string>;
+  pointResult?: State<PointResultsDisplay>;
 };
 
 export function getDisplay({
@@ -97,9 +98,8 @@ export function getDisplay({
               <label>Point Results</label>
               <select
                 @change=${(e: Event) =>
-                  (display.pointResult!.val = (
-                    e.target as HTMLSelectElement
-                  ).value)}
+                  (display.pointResult!.val = (e.target as HTMLSelectElement)
+                    .value as PointResultsDisplay)}
               >
                 <option
                   value="None"
