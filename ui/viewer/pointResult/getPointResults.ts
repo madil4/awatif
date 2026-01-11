@@ -5,15 +5,16 @@ import { getText } from "../text/getText";
 // Configuration constants
 const CONFIG = {
   SPHERE_RADIUS: 0.015,
+  CONE_RADIUS: 0.04,
+  CONE_HEIGHT: 0.08,
   ARROW_SCALE: 0.5,
-  ARROW_HEAD_LENGTH: 0.08,
-  ARROW_HEAD_WIDTH: 0.04,
   LABEL_OFFSET: 0.1,
   LABEL_SIZE: 0.2,
   DISPLACEMENT_COLOR: 0x00ff00,
   REACTION_COLOR: 0xff0000,
-  MAX_INSTANCES: 10000, // Max nodes for InstancedMesh
-  MAX_TEXT_LABELS: 200, // Throttle text labels for performance
+  MAX_TEXT_LABELS: 50, // Top N labels by magnitude
+  INITIAL_CAPACITY: 1000, // Initial buffer capacity
+  GROWTH_FACTOR: 1.5, // Buffer growth factor when resizing
 };
 
 export interface PointResultProps {
@@ -28,6 +29,14 @@ export interface PointResultProps {
   render: () => void;
 }
 
+// Label candidate for priority-based labeling
+interface LabelCandidate {
+  magnitude: number;
+  position: [number, number, number];
+  text: string;
+  color: string;
+}
+
 export function getPointResults({
   displacements,
   reactions,
@@ -38,97 +47,225 @@ export function getPointResults({
   const group = new THREE.Group();
 
   // ============================================================
-  // INSTANCED MESH for displacement nodes (single draw call)
+  // DYNAMIC BUFFER STATE - grows as needed for enterprise scale
   // ============================================================
+  let currentCapacity = CONFIG.INITIAL_CAPACITY;
+
+  // Shared geometries (created once)
   const sphereGeometry = new THREE.SphereGeometry(CONFIG.SPHERE_RADIUS, 8, 8);
+  const coneGeometry = new THREE.ConeGeometry(
+    CONFIG.CONE_RADIUS,
+    CONFIG.CONE_HEIGHT,
+    8
+  );
+
+  // Materials (shared)
   const displacementMaterial = new THREE.MeshBasicMaterial({
     color: CONFIG.DISPLACEMENT_COLOR,
   });
-  const instancedMesh = new THREE.InstancedMesh(
+  const reactionMaterial = new THREE.MeshBasicMaterial({
+    color: CONFIG.REACTION_COLOR,
+  });
+  const displacementLineMaterial = new THREE.LineBasicMaterial({
+    color: CONFIG.DISPLACEMENT_COLOR,
+  });
+  const reactionLineMaterial = new THREE.LineBasicMaterial({
+    color: CONFIG.REACTION_COLOR,
+  });
+
+  // ============================================================
+  // DISPLACEMENT: InstancedMesh for nodes + LineSegments for lines
+  // ============================================================
+  let dispInstancedMesh = new THREE.InstancedMesh(
     sphereGeometry,
     displacementMaterial,
-    CONFIG.MAX_INSTANCES
+    currentCapacity
   );
-  instancedMesh.count = 0; // Start with zero visible instances
-  instancedMesh.visible = false;
-  group.add(instancedMesh);
+  dispInstancedMesh.count = 0;
+  dispInstancedMesh.visible = false;
+  group.add(dispInstancedMesh);
+
+  let dispLinePositions = new Float32Array(currentCapacity * 6);
+  let dispLineGeometry = new THREE.BufferGeometry();
+  dispLineGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(dispLinePositions, 3)
+  );
+  dispLineGeometry.setDrawRange(0, 0);
+  let dispLineSegments = new THREE.LineSegments(
+    dispLineGeometry,
+    displacementLineMaterial
+  );
+  dispLineSegments.visible = false;
+  group.add(dispLineSegments);
+
+  // ============================================================
+  // REACTION: InstancedMesh for cones + LineSegments for shafts
+  // ============================================================
+  let reactInstancedMesh = new THREE.InstancedMesh(
+    coneGeometry,
+    reactionMaterial,
+    currentCapacity
+  );
+  reactInstancedMesh.count = 0;
+  reactInstancedMesh.visible = false;
+  group.add(reactInstancedMesh);
+
+  let reactLinePositions = new Float32Array(currentCapacity * 6);
+  let reactLineGeometry = new THREE.BufferGeometry();
+  reactLineGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(reactLinePositions, 3)
+  );
+  reactLineGeometry.setDrawRange(0, 0);
+  let reactLineSegments = new THREE.LineSegments(
+    reactLineGeometry,
+    reactionLineMaterial
+  );
+  reactLineSegments.visible = false;
+  group.add(reactLineSegments);
 
   // Dummy object for matrix calculations (reused)
   const dummy = new THREE.Object3D();
+  const upVector = new THREE.Vector3(0, 1, 0);
+
+  // Container for text sprites (dynamic)
+  const textGroup = new THREE.Group();
+  group.add(textGroup);
 
   // ============================================================
-  // LINE SEGMENTS for displacement lines (single draw call)
+  // RESIZE BUFFERS - dynamic growth for enterprise scale
   // ============================================================
-  const linePositions = new Float32Array(CONFIG.MAX_INSTANCES * 2 * 3);
-  const lineGeometry = new THREE.BufferGeometry();
-  lineGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(linePositions, 3)
-  );
-  lineGeometry.setDrawRange(0, 0);
-  const lineMaterial = new THREE.LineBasicMaterial({
-    color: CONFIG.DISPLACEMENT_COLOR,
-  });
-  const lineSegments = new THREE.LineSegments(lineGeometry, lineMaterial);
-  lineSegments.visible = false;
-  group.add(lineSegments);
+  function resizeBuffers(requiredCapacity: number): void {
+    const newCapacity = Math.ceil(requiredCapacity * CONFIG.GROWTH_FACTOR);
+    console.log(
+      `Resizing buffers: ${currentCapacity} → ${newCapacity} (required: ${requiredCapacity})`
+    );
 
-  // ============================================================
-  // Container for text sprites and reaction arrows (dynamic)
-  // ============================================================
-  const dynamicGroup = new THREE.Group();
-  group.add(dynamicGroup);
+    // Dispose old displacement resources
+    group.remove(dispInstancedMesh);
+    dispInstancedMesh.dispose();
+    group.remove(dispLineSegments);
+    dispLineGeometry.dispose();
+
+    // Dispose old reaction resources
+    group.remove(reactInstancedMesh);
+    reactInstancedMesh.dispose();
+    group.remove(reactLineSegments);
+    reactLineGeometry.dispose();
+
+    // Update capacity
+    currentCapacity = newCapacity;
+
+    // Recreate displacement mesh and lines
+    dispInstancedMesh = new THREE.InstancedMesh(
+      sphereGeometry,
+      displacementMaterial,
+      currentCapacity
+    );
+    dispInstancedMesh.count = 0;
+    dispInstancedMesh.visible = false;
+    group.add(dispInstancedMesh);
+
+    dispLinePositions = new Float32Array(currentCapacity * 6);
+    dispLineGeometry = new THREE.BufferGeometry();
+    dispLineGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(dispLinePositions, 3)
+    );
+    dispLineGeometry.setDrawRange(0, 0);
+    dispLineSegments = new THREE.LineSegments(
+      dispLineGeometry,
+      displacementLineMaterial
+    );
+    dispLineSegments.visible = false;
+    group.add(dispLineSegments);
+
+    // Recreate reaction mesh and lines
+    reactInstancedMesh = new THREE.InstancedMesh(
+      coneGeometry,
+      reactionMaterial,
+      currentCapacity
+    );
+    reactInstancedMesh.count = 0;
+    reactInstancedMesh.visible = false;
+    group.add(reactInstancedMesh);
+
+    reactLinePositions = new Float32Array(currentCapacity * 6);
+    reactLineGeometry = new THREE.BufferGeometry();
+    reactLineGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(reactLinePositions, 3)
+    );
+    reactLineGeometry.setDrawRange(0, 0);
+    reactLineSegments = new THREE.LineSegments(
+      reactLineGeometry,
+      reactionLineMaterial
+    );
+    reactLineSegments.visible = false;
+    group.add(reactLineSegments);
+  }
 
   van.derive(() => {
-    // Clear dynamic objects with proper disposal
-    while (dynamicGroup.children.length > 0) {
-      const child = dynamicGroup.children[0];
-      if (child instanceof THREE.Sprite) {
-        child.material.map?.dispose();
-        child.material.dispose();
-      }
-      if (child instanceof THREE.ArrowHelper) {
-        // Dispose ArrowHelper internals
-        child.line.geometry.dispose();
-        child.cone.geometry.dispose();
-      }
-      dynamicGroup.remove(child);
+    // Clear text sprites with proper disposal
+    while (textGroup.children.length > 0) {
+      const child = textGroup.children[0] as THREE.Sprite;
+      child.material.map?.dispose();
+      child.material.dispose();
+      textGroup.remove(child);
     }
 
     const currentNodes = nodes.val;
     if (!currentNodes || currentNodes.length === 0) {
-      instancedMesh.visible = false;
-      lineSegments.visible = false;
+      dispInstancedMesh.visible = false;
+      dispLineSegments.visible = false;
+      reactInstancedMesh.visible = false;
+      reactLineSegments.visible = false;
       render();
       return;
+    }
+
+    // Check if buffer resize is needed
+    const maxRequired = Math.max(
+      displacements?.val?.size || 0,
+      reactions?.val?.size || 0
+    );
+    if (maxRequired > currentCapacity) {
+      resizeBuffers(maxRequired);
     }
 
     // ============================================================
     // DISPLACEMENTS MODE
     // ============================================================
     if (display.val === "Displacements" && displacements?.val) {
-      instancedMesh.visible = true;
-      lineSegments.visible = true;
+      dispInstancedMesh.visible = true;
+      dispLineSegments.visible = true;
+      reactInstancedMesh.visible = false;
+      reactLineSegments.visible = false;
 
       let instanceCount = 0;
       let lineIndex = 0;
-      const positionAttr = lineGeometry.attributes
+      const positionAttr = dispLineGeometry.attributes
         .position as THREE.BufferAttribute;
+      const labelCandidates: LabelCandidate[] = [];
 
       displacements.val.forEach((disp, nodeIndex) => {
         const node = currentNodes[nodeIndex];
-        if (node && instanceCount < CONFIG.MAX_INSTANCES) {
+        if (node) {
           const ux = disp[0] || 0;
           const uy = disp[1] || 0;
           const uz = disp[2] || 0;
           const rz = disp[5] || 0;
+          const magnitude = Math.sqrt(ux * ux + uy * uy + uz * uz);
 
           // Update instanced mesh matrix
           dummy.position.set(node[0] + ux, node[1] + uy, node[2] + uz);
+          dummy.scale.set(1, 1, 1);
+          dummy.rotation.set(0, 0, 0);
           dummy.updateMatrix();
-          instancedMesh.setMatrixAt(instanceCount, dummy.matrix);
+          dispInstancedMesh.setMatrixAt(instanceCount, dummy.matrix);
 
-          // Update line segment positions (original → deformed)
+          // Update line segment positions
           positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
           positionAttr.setXYZ(
             lineIndex++,
@@ -137,52 +274,59 @@ export function getPointResults({
             node[2] + uz
           );
 
-          // Add text label (throttled for performance)
-          if (instanceCount < CONFIG.MAX_TEXT_LABELS) {
-            const textLabel = `U: ${ux.toFixed(2)}, ${uy.toFixed(
-              2
-            )}, Rz: ${rz.toFixed(3)}`;
-            const textSprite = getText(
-              textLabel,
-              [
-                node[0] + ux + CONFIG.LABEL_OFFSET,
-                node[1] + uy + CONFIG.LABEL_OFFSET,
-                node[2] + uz,
-              ],
-              "#00ff00",
-              CONFIG.LABEL_SIZE
-            );
-            dynamicGroup.add(textSprite);
-          }
+          // Collect label candidate for priority sorting
+          labelCandidates.push({
+            magnitude,
+            position: [
+              node[0] + ux + CONFIG.LABEL_OFFSET,
+              node[1] + uy + CONFIG.LABEL_OFFSET,
+              node[2] + uz,
+            ],
+            text: `U: ${ux.toFixed(2)}, ${uy.toFixed(2)}, Rz: ${rz.toFixed(3)}`,
+            color: "#00ff00",
+          });
 
           instanceCount++;
         }
       });
 
-      // Warn if labels were suppressed
-      if (displacements.val.size > CONFIG.MAX_TEXT_LABELS) {
-        console.warn(
-          `Text labels suppressed: ${displacements.val.size} nodes exceeds ${CONFIG.MAX_TEXT_LABELS}`
-        );
-      }
-
       // Update instanced mesh
-      instancedMesh.count = instanceCount;
-      instancedMesh.instanceMatrix.needsUpdate = true;
+      dispInstancedMesh.count = instanceCount;
+      dispInstancedMesh.instanceMatrix.needsUpdate = true;
 
-      // Update line segments draw range
-      lineGeometry.setDrawRange(0, lineIndex);
+      // Update line segments
+      dispLineGeometry.setDrawRange(0, lineIndex);
       positionAttr.needsUpdate = true;
-    } else {
-      instancedMesh.visible = false;
-      lineSegments.visible = false;
+
+      // Smart labeling: render top N by magnitude
+      labelCandidates
+        .sort((a, b) => b.magnitude - a.magnitude)
+        .slice(0, CONFIG.MAX_TEXT_LABELS)
+        .forEach((item) => {
+          const sprite = getText(
+            item.text,
+            item.position,
+            item.color,
+            CONFIG.LABEL_SIZE
+          );
+          textGroup.add(sprite);
+        });
     }
 
     // ============================================================
-    // REACTIONS MODE
+    // REACTIONS MODE (InstancedMesh cones + LineSegments)
     // ============================================================
     if (display.val === "Reactions" && reactions?.val) {
-      let reactionCount = 0;
+      dispInstancedMesh.visible = false;
+      dispLineSegments.visible = false;
+      reactInstancedMesh.visible = true;
+      reactLineSegments.visible = true;
+
+      let instanceCount = 0;
+      let lineIndex = 0;
+      const positionAttr = reactLineGeometry.attributes
+        .position as THREE.BufferAttribute;
+      const labelCandidates: LabelCandidate[] = [];
 
       reactions.val.forEach((react, nodeIndex) => {
         const node = currentNodes[nodeIndex];
@@ -190,50 +334,83 @@ export function getPointResults({
           const fx = react[0] || 0;
           const fy = react[1] || 0;
           const fz = react[2] || 0;
+          const magnitude = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
-          const origin = new THREE.Vector3(node[0], node[1], node[2]);
-          const forceDir = new THREE.Vector3(fx, fy, fz);
-          const length = forceDir.length();
+          if (magnitude > 0) {
+            const forceDir = new THREE.Vector3(fx, fy, fz).normalize();
+            const scaledLength = magnitude * CONFIG.ARROW_SCALE;
 
-          if (length > 0) {
-            // Draw arrow for force
-            const arrowHelper = new THREE.ArrowHelper(
-              forceDir.clone().normalize(),
-              origin,
-              length * CONFIG.ARROW_SCALE,
-              CONFIG.REACTION_COLOR,
-              CONFIG.ARROW_HEAD_LENGTH,
-              CONFIG.ARROW_HEAD_WIDTH
+            // Tip position (where cone goes)
+            const tipX = node[0] + fx * CONFIG.ARROW_SCALE;
+            const tipY = node[1] + fy * CONFIG.ARROW_SCALE;
+            const tipZ = node[2] + fz * CONFIG.ARROW_SCALE;
+
+            // Position cone at tip, oriented along force direction
+            dummy.position.set(
+              tipX - forceDir.x * CONFIG.CONE_HEIGHT * 0.5,
+              tipY - forceDir.y * CONFIG.CONE_HEIGHT * 0.5,
+              tipZ - forceDir.z * CONFIG.CONE_HEIGHT * 0.5
             );
-            dynamicGroup.add(arrowHelper);
+            dummy.quaternion.setFromUnitVectors(upVector, forceDir);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
+            reactInstancedMesh.setMatrixAt(instanceCount, dummy.matrix);
 
-            // Add text label (throttled)
-            if (reactionCount < CONFIG.MAX_TEXT_LABELS) {
-              const textLabel = `R: ${fx.toFixed(2)}, ${fy.toFixed(2)}`;
-              const textSprite = getText(
-                textLabel,
-                [
-                  node[0] + CONFIG.LABEL_OFFSET * 3,
-                  node[1] + CONFIG.LABEL_OFFSET * 3,
-                  node[2],
-                ],
-                "#ff0000",
-                CONFIG.LABEL_SIZE
-              );
-              dynamicGroup.add(textSprite);
-            }
+            // Line from node origin to cone base
+            positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
+            positionAttr.setXYZ(
+              lineIndex++,
+              tipX - forceDir.x * CONFIG.CONE_HEIGHT,
+              tipY - forceDir.y * CONFIG.CONE_HEIGHT,
+              tipZ - forceDir.z * CONFIG.CONE_HEIGHT
+            );
 
-            reactionCount++;
+            // Collect label candidate
+            labelCandidates.push({
+              magnitude,
+              position: [
+                node[0] + CONFIG.LABEL_OFFSET * 3,
+                node[1] + CONFIG.LABEL_OFFSET * 3,
+                node[2],
+              ],
+              text: `R: ${fx.toFixed(2)}, ${fy.toFixed(2)}`,
+              color: "#ff0000",
+            });
+
+            instanceCount++;
           }
         }
       });
 
-      // Warn if labels were suppressed
-      if (reactions.val.size > CONFIG.MAX_TEXT_LABELS) {
-        console.warn(
-          `Reaction labels suppressed: ${reactions.val.size} nodes exceeds ${CONFIG.MAX_TEXT_LABELS}`
-        );
-      }
+      // Update instanced mesh
+      reactInstancedMesh.count = instanceCount;
+      reactInstancedMesh.instanceMatrix.needsUpdate = true;
+
+      // Update line segments
+      reactLineGeometry.setDrawRange(0, lineIndex);
+      positionAttr.needsUpdate = true;
+
+      // Smart labeling: render top N by magnitude
+      labelCandidates
+        .sort((a, b) => b.magnitude - a.magnitude)
+        .slice(0, CONFIG.MAX_TEXT_LABELS)
+        .forEach((item) => {
+          const sprite = getText(
+            item.text,
+            item.position,
+            item.color,
+            CONFIG.LABEL_SIZE
+          );
+          textGroup.add(sprite);
+        });
+    }
+
+    // Hide all if "None" selected
+    if (display.val === "None") {
+      dispInstancedMesh.visible = false;
+      dispLineSegments.visible = false;
+      reactInstancedMesh.visible = false;
+      reactLineSegments.visible = false;
     }
 
     render();
