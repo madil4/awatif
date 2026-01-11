@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Point Results Test Bench</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 100;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+      import van from "vanjs-core";
+      import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+      import { getPointResults } from "./getPointResults.ts";
+
+      THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(2, 2, 5);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      const render = () => renderer.render(scene, camera);
+      controls.addEventListener("change", render);
+
+      const nodes = van.state([
+        [0, 0, 0],
+        [2, 0, 0],
+        [2, 2, 0],
+        [0, 2, 0],
+      ]);
+
+      const displacements = van.state(
+        new Map([
+          [0, [0.2, 0.2, 0, 0, 0, 0]],
+          [1, [0.2, -0.2, 0, 0, 0, 0]],
+        ])
+      );
+
+      const reactions = van.state(
+        new Map([
+          [2, [0, 1, 0, 0, 0, 0]],
+          [3, [-1, 0, 0, 0, 0, 0]],
+        ])
+      );
+
+      const display = van.state("Displacements");
+
+      scene.add(
+        getPointResults({ displacements, reactions, display, nodes, render })
+      );
+
+      // Grid helper
+      const gridHelper = new THREE.GridHelper(10, 10);
+      gridHelper.rotateX(Math.PI / 2);
+      scene.add(gridHelper);
+
+      render();
+
+      // UI to toggle
+      const btn = document.createElement("button");
+      btn.innerText = "Current Display: Displacements";
+      btn.onclick = () => {
+        display.val =
+          display.val === "Displacements" ? "Reactions" : "Displacements";
+        btn.innerText = `Current Display: ${display.val}`;
+        render();
+      };
+      document.body.appendChild(btn);
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        render();
+      });
+    </script>
+  </body>
+</html>
