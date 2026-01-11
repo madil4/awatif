@@ -2,6 +2,18 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { getText } from "../text/getText";
 
+// Configuration constants
+const CONFIG = {
+  SPHERE_RADIUS: 0.015,
+  ARROW_SCALE: 0.5,
+  ARROW_HEAD_LENGTH: 0.08,
+  ARROW_HEAD_WIDTH: 0.04,
+  LABEL_OFFSET: 0.1,
+  LABEL_SIZE: 0.2,
+  DISPLACEMENT_COLOR: 0x00ff00,
+  REACTION_COLOR: 0xff0000,
+};
+
 export interface PointResultProps {
   displacements?: State<
     Map<number, [number, number, number, number, number, number]>
@@ -24,9 +36,13 @@ export function getPointResults({
   const group = new THREE.Group();
 
   // Cached geometries and materials for performance
-  const sphereGeometry = new THREE.SphereGeometry(0.015, 16, 16);
-  const displacementMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+  const sphereGeometry = new THREE.SphereGeometry(CONFIG.SPHERE_RADIUS, 16, 16);
+  const displacementMaterial = new THREE.MeshBasicMaterial({
+    color: CONFIG.DISPLACEMENT_COLOR,
+  });
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: CONFIG.DISPLACEMENT_COLOR,
+  });
 
   van.derive(() => {
     // Clear previous objects with proper disposal
@@ -74,9 +90,13 @@ export function getPointResults({
           )}, Rz: ${rz.toFixed(3)}`;
           const textSprite = getText(
             textLabel,
-            [node[0] + ux + 0.1, node[1] + uy + 0.1, node[2] + uz],
+            [
+              node[0] + ux + CONFIG.LABEL_OFFSET,
+              node[1] + uy + CONFIG.LABEL_OFFSET,
+              node[2] + uz,
+            ],
             "#00ff00",
-            0.2
+            CONFIG.LABEL_SIZE
           );
           group.add(textSprite);
         }
@@ -97,24 +117,28 @@ export function getPointResults({
           const length = forceDir.length();
 
           if (length > 0) {
-            // Draw arrow for force (reduced size)
+            // Draw arrow for force
             const arrowHelper = new THREE.ArrowHelper(
               forceDir.clone().normalize(),
               origin,
-              length * 0.5, // Reduced scale
-              0xff0000,
-              0.08,
-              0.04
+              length * CONFIG.ARROW_SCALE,
+              CONFIG.REACTION_COLOR,
+              CONFIG.ARROW_HEAD_LENGTH,
+              CONFIG.ARROW_HEAD_WIDTH
             );
             group.add(arrowHelper);
 
-            // Add text label with reaction values (consistent position: top-right)
+            // Add text label with reaction values
             const textLabel = `R: ${fx.toFixed(2)}, ${fy.toFixed(2)}`;
             const textSprite = getText(
               textLabel,
-              [node[0] + 0.3, node[1] + 0.3, node[2]],
+              [
+                node[0] + CONFIG.LABEL_OFFSET * 3,
+                node[1] + CONFIG.LABEL_OFFSET * 3,
+                node[2],
+              ],
               "#ff0000",
-              0.2
+              CONFIG.LABEL_SIZE
             );
             group.add(textSprite);
           }
