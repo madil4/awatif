@@ -29,9 +29,17 @@ export function getPointResults({
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
 
   van.derive(() => {
-    // Clear previous objects
+    // Clear previous objects with proper disposal
     while (group.children.length > 0) {
-      group.remove(group.children[0]);
+      const child = group.children[0];
+      if (child instanceof THREE.Line) {
+        child.geometry.dispose();
+      }
+      if (child instanceof THREE.Sprite) {
+        child.material.map?.dispose();
+        child.material.dispose();
+      }
+      group.remove(child);
     }
 
     const currentNodes = nodes.val;
