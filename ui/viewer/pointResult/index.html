@@ -8,91 +8,136 @@
       body {
         margin: 0;
       }
-      button {
-        position: absolute;
+      #controls {
+        position: fixed;
         top: 10px;
-        left: 10px;
-        z-index: 100;
-        padding: 8px 16px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        z-index: 1000;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+      }
+      #controls h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+      }
+      #controls button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px;
         cursor: pointer;
+      }
+      #controls select {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+      }
+      #status {
+        margin-top: 10px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
       }
     </style>
   </head>
   <body>
+    <div id="controls">
+      <h3>Point Results Test</h3>
+      <label>Display Mode:</label>
+      <select id="displayMode">
+        <option value="None">None</option>
+        <option value="Displacements" selected>Displacements</option>
+        <option value="Reactions">Reactions</option>
+      </select>
+      <button id="updateDisp">Update Displacements</button>
+      <button id="updateReact">Update Reactions</button>
+      <div id="status">Status: Ready</div>
+    </div>
+
     <script type="module">
-      import * as THREE from "three";
       import van from "vanjs-core";
-      import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-      import { getPointResults } from "./getPointResults.ts";
+      import { getViewer } from "../getViewer.ts";
 
-      THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(2, 2, 5);
-
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      const render = () => renderer.render(scene, camera);
-      controls.addEventListener("change", render);
-
-      const nodes = van.state([
-        [0, 0, 0],
-        [2, 0, 0],
-        [2, 2, 0],
-        [0, 2, 0],
-      ]);
-
-      const displacements = van.state(
-        new Map([
-          [0, [0.2, 0.2, 0, 0, 0, 0]],
-          [1, [0.2, -0.2, 0, 0, 0, 0]],
-        ])
-      );
-
-      const reactions = van.state(
-        new Map([
-          [2, [0, 1, 0, 0, 0, 0]],
-          [3, [-1, 0, 0, 0, 0, 0]],
-        ])
-      );
-
-      const display = van.state("Displacements");
-
-      scene.add(
-        getPointResults({ displacements, reactions, display, nodes, render })
-      );
-
-      // Grid helper
-      const gridHelper = new THREE.GridHelper(10, 10);
-      gridHelper.rotateX(Math.PI / 2);
-      scene.add(gridHelper);
-
-      render();
-
-      // UI to toggle
-      const btn = document.createElement("button");
-      btn.innerText = "Current Display: Displacements";
-      btn.onclick = () => {
-        display.val =
-          display.val === "Displacements" ? "Reactions" : "Displacements";
-        btn.innerText = `Current Display: ${display.val}`;
-        render();
+      const grid = {
+        size: van.state(10),
+        division: van.state(20),
       };
-      document.body.appendChild(btn);
 
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        render();
+      const display = {
+        geometry: van.state(false),
+        mesh: van.state(true),
+        loads: van.state(false),
+        supports: van.state(false),
+        pointResult: van.state("Displacements"),
+      };
+
+      const mesh = {
+        nodes: van.state([
+          [0, 0, 0],
+          [2, 0, 0],
+          [2, 2, 0],
+          [0, 2, 0],
+        ]),
+        elements: van.state([
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 0],
+        ]),
+        displacements: van.state(
+          new Map([
+            [0, [0.3, 0.3, 0, 0, 0, 0.05]],
+            [1, [0.3, -0.3, 0, 0, 0, -0.03]],
+          ])
+        ),
+        reactions: van.state(
+          new Map([
+            [2, [0, 1.0, 0, 0, 0, 0]],
+            [3, [-1.0, 0, 0, 0, 0, 0]],
+          ])
+        ),
+      };
+
+      document.body.append(
+        getViewer({
+          grid,
+          mesh,
+          display,
+        })
+      );
+
+      // Wire up controls
+      const displayModeSelect = document.getElementById("displayMode");
+      const statusDiv = document.getElementById("status");
+
+      displayModeSelect.addEventListener("change", (e) => {
+        display.pointResult.val = e.target.value;
+        statusDiv.textContent = `Status: Display mode changed to ${e.target.value}`;
+      });
+
+      document.getElementById("updateDisp").addEventListener("click", () => {
+        // Update displacements reactively
+        const newDisp = new Map([
+          [0, [Math.random() * 0.5, Math.random() * 0.5, 0, 0, 0, 0]],
+          [1, [Math.random() * 0.5, -Math.random() * 0.5, 0, 0, 0, 0]],
+          [2, [-Math.random() * 0.5, -Math.random() * 0.5, 0, 0, 0, 0]],
+        ]);
+        mesh.displacements.val = newDisp;
+        statusDiv.textContent = "Status: Displacements updated!";
+      });
+
+      document.getElementById("updateReact").addEventListener("click", () => {
+        // Update reactions reactively
+        const newReact = new Map([
+          [2, [0, Math.random() * 2, 0, 0, 0, 0]],
+          [3, [-Math.random() * 2, 0, 0, 0, 0, 0]],
+        ]);
+        mesh.reactions.val = newReact;
+        statusDiv.textContent = "Status: Reactions updated!";
       });
     </script>
   </body>

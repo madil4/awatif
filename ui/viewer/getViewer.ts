@@ -7,6 +7,7 @@ import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
 import { getSupports } from "./supports/getSupports";
+import { getPointResults } from "./pointResult/getPointResults";
 
 import "./style.css";
 
@@ -26,6 +27,7 @@ export function getViewer({
     mesh: State<boolean>;
     loads: State<boolean>;
     supports: State<boolean>;
+    pointResult?: State<string>;
   };
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
@@ -108,6 +110,18 @@ export function getViewer({
         templates,
         render,
         display,
+      })
+    );
+  }
+
+  if (mesh && display?.pointResult) {
+    scene.add(
+      getPointResults({
+        displacements: mesh.displacements,
+        reactions: mesh.reactions,
+        display: display.pointResult,
+        nodes: mesh.nodes,
+        render,
       })
     );
   }
