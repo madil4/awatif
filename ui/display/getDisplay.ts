@@ -9,6 +9,7 @@ export type Display = {
   mesh: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
+  pointResult?: State<string>;
 };
 
 export function getDisplay({
@@ -89,6 +90,38 @@ export function getDisplay({
                 (display.supports.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
+        : ""}
+      ${display?.pointResult
+        ? html`
+            <div class="display-item">
+              <label>Point Results</label>
+              <select
+                @change=${(e: Event) =>
+                  (display.pointResult!.val = (
+                    e.target as HTMLSelectElement
+                  ).value)}
+              >
+                <option
+                  value="None"
+                  ?selected=${display.pointResult.val === "None"}
+                >
+                  None
+                </option>
+                <option
+                  value="Displacements"
+                  ?selected=${display.pointResult.val === "Displacements"}
+                >
+                  Displacements
+                </option>
+                <option
+                  value="Reactions"
+                  ?selected=${display.pointResult.val === "Reactions"}
+                >
+                  Reactions
+                </option>
+              </select>
+            </div>
+          `
         : ""}
     </details>
   `;

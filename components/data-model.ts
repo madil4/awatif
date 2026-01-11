@@ -40,4 +40,15 @@ export type Mesh = {
   >;
 
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
+
+  // Post-processing results
+  displacements?: State<
+    Map<number, [number, number, number, number, number, number]>
+  >;
+  reactions?: State<
+    Map<number, [number, number, number, number, number, number]>
+  >;
+  normals?: State<Map<number, [number, number]>>;
+  shears?: State<Map<number, [number, number]>>;
+  bendings?: State<Map<number, [number, number]>>;
 };
