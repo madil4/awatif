@@ -4,7 +4,6 @@ import { getText } from "../text/getText";
 
 // Configuration constants
 const CONFIG = {
-  SPHERE_RADIUS: 0.015,
   CONE_RADIUS: 0.04,
   CONE_HEIGHT: 0.08,
   ARROW_SCALE: 0.5,
@@ -12,24 +11,29 @@ const CONFIG = {
   LABEL_SIZE: 0.2,
   DISPLACEMENT_COLOR: 0x00ff00,
   REACTION_COLOR: 0xff0000,
-  MAX_TEXT_LABELS: 50, // Top N labels by magnitude
-  INITIAL_CAPACITY: 1000, // Initial buffer capacity
-  GROWTH_FACTOR: 1.5, // Buffer growth factor when resizing
+  INITIAL_CAPACITY: 1000,
+  GROWTH_FACTOR: 1.5,
+  MAX_LABELS: 50, // Top N labels by magnitude
+  RZ_ARC_SEGMENTS: 24, // Segments for rotation arc
 };
 
-export interface PointResultProps {
+// Union type for display modes (P2: TYPE_DISPLAY_UNION)
+export type PointResultsDisplay = "None" | "Displacements" | "Reactions";
+
+interface PointResultProps {
   displacements?: State<
     Map<number, [number, number, number, number, number, number]>
   >;
   reactions?: State<
     Map<number, [number, number, number, number, number, number]>
   >;
-  display: State<string>;
+  display: State<PointResultsDisplay>;
   nodes: State<number[][]>;
   render: () => void;
+  resultsVersion?: State<number>; // P1: VANJS_MAP_REACTIVITY
 }
 
-// Label candidate for priority-based labeling
+// Label candidate for priority-based labeling (P1: LABELS_LIMIT_OR_POOL)
 interface LabelCandidate {
   magnitude: number;
   position: [number, number, number];
@@ -43,6 +47,7 @@ export function getPointResults({
   display,
   nodes,
   render,
+  resultsVersion,
 }: PointResultProps): THREE.Group {
   const group = new THREE.Group();
 
@@ -51,8 +56,7 @@ export function getPointResults({
   // ============================================================
   let currentCapacity = CONFIG.INITIAL_CAPACITY;
 
-  // Shared geometries (created once)
-  const sphereGeometry = new THREE.SphereGeometry(CONFIG.SPHERE_RADIUS, 8, 8);
+  // Shared geometry (created once)
   const coneGeometry = new THREE.ConeGeometry(
     CONFIG.CONE_RADIUS,
     CONFIG.CONE_HEIGHT,
@@ -73,24 +77,28 @@ export function getPointResults({
     color: CONFIG.REACTION_COLOR,
   });
 
+  // P0: REUSE_SCRATCH_VECTORS - reusable vectors for hot loops
+  const dir = new THREE.Vector3();
+  const tangentDir = new THREE.Vector3();
+
   // ============================================================
-  // DISPLACEMENT: InstancedMesh for nodes + LineSegments for lines
+  // DISPLACEMENT: InstancedMesh for cones + LineSegments for lines
   // ============================================================
   let dispInstancedMesh = new THREE.InstancedMesh(
-    sphereGeometry,
+    coneGeometry,
     displacementMaterial,
     currentCapacity
   );
   dispInstancedMesh.count = 0;
   dispInstancedMesh.visible = false;
+  dispInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // P1
   group.add(dispInstancedMesh);
 
   let dispLinePositions = new Float32Array(currentCapacity * 6);
   let dispLineGeometry = new THREE.BufferGeometry();
-  dispLineGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(dispLinePositions, 3)
-  );
+  const dispPosAttr = new THREE.BufferAttribute(dispLinePositions, 3);
+  dispPosAttr.setUsage(THREE.DynamicDrawUsage); // P1
+  dispLineGeometry.setAttribute("position", dispPosAttr);
   dispLineGeometry.setDrawRange(0, 0);
   let dispLineSegments = new THREE.LineSegments(
     dispLineGeometry,
@@ -109,14 +117,14 @@ export function getPointResults({
   );
   reactInstancedMesh.count = 0;
   reactInstancedMesh.visible = false;
+  reactInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // P1
   group.add(reactInstancedMesh);
 
   let reactLinePositions = new Float32Array(currentCapacity * 6);
   let reactLineGeometry = new THREE.BufferGeometry();
-  reactLineGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(reactLinePositions, 3)
-  );
+  const reactPosAttr = new THREE.BufferAttribute(reactLinePositions, 3);
+  reactPosAttr.setUsage(THREE.DynamicDrawUsage); // P1
+  reactLineGeometry.setAttribute("position", reactPosAttr);
   reactLineGeometry.setDrawRange(0, 0);
   let reactLineSegments = new THREE.LineSegments(
     reactLineGeometry,
@@ -132,6 +140,22 @@ export function getPointResults({
   // Container for text sprites (dynamic)
   const textGroup = new THREE.Group();
   group.add(textGroup);
+
+  // ============================================================
+  // P0: CAPACITY_CALC_REAL - compute required capacity from actual primitives
+  // ============================================================
+  function ensureCapacity(
+    requiredInstances: number,
+    requiredLineVertices: number
+  ): void {
+    // Line buffer: Float32Array(capacity*6) = capacity*2 vertices
+    const requiredLineCapacity = Math.ceil(requiredLineVertices / 2);
+    const requiredCapacity = Math.max(requiredInstances, requiredLineCapacity);
+
+    if (requiredCapacity > currentCapacity) {
+      resizeBuffers(requiredCapacity);
+    }
+  }
 
   // ============================================================
   // RESIZE BUFFERS - dynamic growth for enterprise scale
@@ -159,20 +183,20 @@ export function getPointResults({
 
     // Recreate displacement mesh and lines
     dispInstancedMesh = new THREE.InstancedMesh(
-      sphereGeometry,
+      coneGeometry,
       displacementMaterial,
       currentCapacity
     );
     dispInstancedMesh.count = 0;
     dispInstancedMesh.visible = false;
+    dispInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // P1
     group.add(dispInstancedMesh);
 
     dispLinePositions = new Float32Array(currentCapacity * 6);
     dispLineGeometry = new THREE.BufferGeometry();
-    dispLineGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(dispLinePositions, 3)
-    );
+    const newDispPosAttr = new THREE.BufferAttribute(dispLinePositions, 3);
+    newDispPosAttr.setUsage(THREE.DynamicDrawUsage); // P1
+    dispLineGeometry.setAttribute("position", newDispPosAttr);
     dispLineGeometry.setDrawRange(0, 0);
     dispLineSegments = new THREE.LineSegments(
       dispLineGeometry,
@@ -189,14 +213,14 @@ export function getPointResults({
     );
     reactInstancedMesh.count = 0;
     reactInstancedMesh.visible = false;
+    reactInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); // P1
     group.add(reactInstancedMesh);
 
     reactLinePositions = new Float32Array(currentCapacity * 6);
     reactLineGeometry = new THREE.BufferGeometry();
-    reactLineGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(reactLinePositions, 3)
-    );
+    const newReactPosAttr = new THREE.BufferAttribute(reactLinePositions, 3);
+    newReactPosAttr.setUsage(THREE.DynamicDrawUsage); // P1
+    reactLineGeometry.setAttribute("position", newReactPosAttr);
     reactLineGeometry.setDrawRange(0, 0);
     reactLineSegments = new THREE.LineSegments(
       reactLineGeometry,
@@ -206,14 +230,40 @@ export function getPointResults({
     group.add(reactLineSegments);
   }
 
-  van.derive(() => {
-    // Clear text sprites with proper disposal
+  // ============================================================
+  // P1: LABELS_LIMIT_OR_POOL - dispose labels only when needed
+  // ============================================================
+  function clearLabels(): void {
     while (textGroup.children.length > 0) {
       const child = textGroup.children[0] as THREE.Sprite;
       child.material.map?.dispose();
       child.material.dispose();
       textGroup.remove(child);
     }
+  }
+
+  function renderTopLabels(candidates: LabelCandidate[]): void {
+    // Sort by magnitude descending and take top N
+    candidates
+      .sort((a, b) => b.magnitude - a.magnitude)
+      .slice(0, CONFIG.MAX_LABELS)
+      .forEach((c) => {
+        const sprite = getText(
+          c.text,
+          c.position,
+          c.color,
+          CONFIG.LABEL_SIZE * 0.8
+        );
+        textGroup.add(sprite);
+      });
+  }
+
+  van.derive(() => {
+    // P1: VANJS_MAP_REACTIVITY - read version to create dependency
+    resultsVersion?.val;
+
+    // Clear old labels
+    clearLabels();
 
     const currentNodes = nodes.val;
     if (!currentNodes || currentNodes.length === 0) {
@@ -225,19 +275,32 @@ export function getPointResults({
       return;
     }
 
-    // Check if buffer resize is needed
-    const maxRequired = Math.max(
-      displacements?.val?.size || 0,
-      reactions?.val?.size || 0
-    );
-    if (maxRequired > currentCapacity) {
-      resizeBuffers(maxRequired);
-    }
-
     // ============================================================
-    // DISPLACEMENTS MODE
+    // DISPLACEMENTS MODE (Separate X, Y arrows + rotation arc)
     // ============================================================
     if (display.val === "Displacements" && displacements?.val) {
+      // P0: Pre-compute required capacity
+      let estInstances = 0;
+      let estLineVertices = 0;
+      displacements.val.forEach((disp) => {
+        const ux = disp[0] || 0;
+        const uy = disp[1] || 0;
+        const rz = disp[5] || 0;
+        if (Math.abs(ux) > 0.001) {
+          estInstances++;
+          estLineVertices += 2;
+        }
+        if (Math.abs(uy) > 0.001) {
+          estInstances++;
+          estLineVertices += 2;
+        }
+        if (Math.abs(rz) > 0.0001) {
+          estInstances++; // arrowhead cone
+          estLineVertices += CONFIG.RZ_ARC_SEGMENTS * 2; // arc segments
+        }
+      });
+      ensureCapacity(estInstances, estLineVertices);
+
       dispInstancedMesh.visible = true;
       dispLineSegments.visible = true;
       reactInstancedMesh.visible = false;
@@ -254,39 +317,140 @@ export function getPointResults({
         if (node) {
           const ux = disp[0] || 0;
           const uy = disp[1] || 0;
-          const uz = disp[2] || 0;
           const rz = disp[5] || 0;
-          const magnitude = Math.sqrt(ux * ux + uy * uy + uz * uz);
 
-          // Update instanced mesh matrix
-          dummy.position.set(node[0] + ux, node[1] + uy, node[2] + uz);
-          dummy.scale.set(1, 1, 1);
-          dummy.rotation.set(0, 0, 0);
-          dummy.updateMatrix();
-          dispInstancedMesh.setMatrixAt(instanceCount, dummy.matrix);
+          // Draw X displacement arrow if ux != 0
+          if (Math.abs(ux) > 0.001) {
+            dir.set(ux > 0 ? 1 : -1, 0, 0); // P0: reuse vector
+            const tipX = node[0] + ux;
 
-          // Update line segment positions
-          positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
-          positionAttr.setXYZ(
-            lineIndex++,
-            node[0] + ux,
-            node[1] + uy,
-            node[2] + uz
-          );
+            // Cone at tip
+            dummy.position.set(
+              tipX - dir.x * CONFIG.CONE_HEIGHT * 0.5,
+              node[1],
+              node[2]
+            );
+            dummy.quaternion.setFromUnitVectors(upVector, dir);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
+            dispInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
 
-          // Collect label candidate for priority sorting
-          labelCandidates.push({
-            magnitude,
-            position: [
-              node[0] + ux + CONFIG.LABEL_OFFSET,
-              node[1] + uy + CONFIG.LABEL_OFFSET,
-              node[2] + uz,
-            ],
-            text: `U: ${ux.toFixed(2)}, ${uy.toFixed(2)}, Rz: ${rz.toFixed(3)}`,
-            color: "#00ff00",
-          });
+            // Line from origin to cone base
+            positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
+            positionAttr.setXYZ(
+              lineIndex++,
+              tipX - dir.x * CONFIG.CONE_HEIGHT,
+              node[1],
+              node[2]
+            );
 
-          instanceCount++;
+            // Collect label candidate
+            const labelOffsetX = (ux > 0 ? 1 : -1) * CONFIG.LABEL_OFFSET * 1.5;
+            labelCandidates.push({
+              magnitude: Math.abs(ux),
+              position: [tipX + labelOffsetX, node[1], node[2]],
+              text: `Ux: ${ux.toFixed(2)}`,
+              color: "#00ff00",
+            });
+          }
+
+          // Draw Y displacement arrow if uy != 0
+          if (Math.abs(uy) > 0.001) {
+            dir.set(0, uy > 0 ? 1 : -1, 0); // P0: reuse vector
+            const tipY = node[1] + uy;
+
+            // Cone at tip
+            dummy.position.set(
+              node[0],
+              tipY - dir.y * CONFIG.CONE_HEIGHT * 0.5,
+              node[2]
+            );
+            dummy.quaternion.setFromUnitVectors(upVector, dir);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
+            dispInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
+
+            // Line from origin to cone base
+            positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
+            positionAttr.setXYZ(
+              lineIndex++,
+              node[0],
+              tipY - dir.y * CONFIG.CONE_HEIGHT,
+              node[2]
+            );
+
+            // Collect label candidate
+            const labelOffsetY = (uy > 0 ? 1 : -1) * CONFIG.LABEL_OFFSET * 1.5;
+            labelCandidates.push({
+              magnitude: Math.abs(uy),
+              position: [node[0], tipY + labelOffsetY, node[2]],
+              text: `Uy: ${uy.toFixed(2)}`,
+              color: "#00ff00",
+            });
+          }
+
+          // Draw rotation arc with arrowhead for Rz if rz != 0
+          if (Math.abs(rz) > 0.0001) {
+            const arcRadius = 0.08;
+            const arcAngle = Math.PI * 1.5; // 270 degrees
+            const segments = CONFIG.RZ_ARC_SEGMENTS;
+            const direction = rz > 0 ? 1 : -1;
+            const startAngle = Math.PI / 4;
+            const centerX = node[0];
+            const centerY = node[1];
+
+            // Generate arc points
+            for (let i = 0; i < segments; i++) {
+              const angle1 = startAngle + direction * (i / segments) * arcAngle;
+              const angle2 =
+                startAngle + direction * ((i + 1) / segments) * arcAngle;
+              positionAttr.setXYZ(
+                lineIndex++,
+                centerX + arcRadius * Math.cos(angle1),
+                centerY + arcRadius * Math.sin(angle1),
+                node[2]
+              );
+              positionAttr.setXYZ(
+                lineIndex++,
+                centerX + arcRadius * Math.cos(angle2),
+                centerY + arcRadius * Math.sin(angle2),
+                node[2]
+              );
+            }
+
+            // Arrowhead at the end of the arc
+            const endAngle = startAngle + direction * arcAngle;
+            const tipX = centerX + arcRadius * Math.cos(endAngle);
+            const tipY = centerY + arcRadius * Math.sin(endAngle);
+
+            // P0: Tangent direction (reuse vector)
+            tangentDir
+              .set(
+                -direction * Math.sin(endAngle),
+                direction * Math.cos(endAngle),
+                0
+              )
+              .normalize();
+
+            // Position cone at arc end, pointing along tangent
+            dummy.position.set(tipX, tipY, node[2]);
+            dummy.quaternion.setFromUnitVectors(upVector, tangentDir);
+            dummy.scale.set(0.3, 0.3, 0.3);
+            dummy.updateMatrix();
+            dispInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
+
+            // Collect label candidate
+            labelCandidates.push({
+              magnitude: Math.abs(rz),
+              position: [
+                centerX - arcRadius - CONFIG.LABEL_OFFSET,
+                centerY,
+                node[2],
+              ],
+              text: `Rz: ${rz.toFixed(3)}`,
+              color: "#00ff00",
+            });
+          }
         }
       });
 
@@ -298,25 +462,36 @@ export function getPointResults({
       dispLineGeometry.setDrawRange(0, lineIndex);
       positionAttr.needsUpdate = true;
 
-      // Smart labeling: render top N by magnitude
-      labelCandidates
-        .sort((a, b) => b.magnitude - a.magnitude)
-        .slice(0, CONFIG.MAX_TEXT_LABELS)
-        .forEach((item) => {
-          const sprite = getText(
-            item.text,
-            item.position,
-            item.color,
-            CONFIG.LABEL_SIZE
-          );
-          textGroup.add(sprite);
-        });
+      // Render top-N labels
+      renderTopLabels(labelCandidates);
     }
 
     // ============================================================
     // REACTIONS MODE (InstancedMesh cones + LineSegments)
     // ============================================================
     if (display.val === "Reactions" && reactions?.val) {
+      // P0: Pre-compute required capacity
+      let estInstances = 0;
+      let estLineVertices = 0;
+      reactions.val.forEach((react) => {
+        const fx = react[0] || 0;
+        const fy = react[1] || 0;
+        const mz = react[5] || 0;
+        if (Math.abs(fx) > 0.001) {
+          estInstances++;
+          estLineVertices += 2;
+        }
+        if (Math.abs(fy) > 0.001) {
+          estInstances++;
+          estLineVertices += 2;
+        }
+        if (Math.abs(mz) > 0.0001) {
+          estInstances++; // arrowhead cone
+          estLineVertices += CONFIG.RZ_ARC_SEGMENTS * 2; // arc segments
+        }
+      });
+      ensureCapacity(estInstances, estLineVertices);
+
       dispInstancedMesh.visible = false;
       dispLineSegments.visible = false;
       reactInstancedMesh.visible = true;
@@ -333,51 +508,138 @@ export function getPointResults({
         if (node) {
           const fx = react[0] || 0;
           const fy = react[1] || 0;
-          const fz = react[2] || 0;
-          const magnitude = Math.sqrt(fx * fx + fy * fy + fz * fz);
+          const mz = react[5] || 0;
 
-          if (magnitude > 0) {
-            const forceDir = new THREE.Vector3(fx, fy, fz).normalize();
-            const scaledLength = magnitude * CONFIG.ARROW_SCALE;
-
-            // Tip position (where cone goes)
+          // Draw separate X arrow if fx != 0
+          if (Math.abs(fx) > 0.001) {
+            dir.set(fx > 0 ? 1 : -1, 0, 0); // P0: reuse vector
             const tipX = node[0] + fx * CONFIG.ARROW_SCALE;
-            const tipY = node[1] + fy * CONFIG.ARROW_SCALE;
-            const tipZ = node[2] + fz * CONFIG.ARROW_SCALE;
 
-            // Position cone at tip, oriented along force direction
+            // Position cone at tip
             dummy.position.set(
-              tipX - forceDir.x * CONFIG.CONE_HEIGHT * 0.5,
-              tipY - forceDir.y * CONFIG.CONE_HEIGHT * 0.5,
-              tipZ - forceDir.z * CONFIG.CONE_HEIGHT * 0.5
+              tipX - dir.x * CONFIG.CONE_HEIGHT * 0.5,
+              node[1],
+              node[2]
             );
-            dummy.quaternion.setFromUnitVectors(upVector, forceDir);
+            dummy.quaternion.setFromUnitVectors(upVector, dir);
             dummy.scale.set(1, 1, 1);
             dummy.updateMatrix();
-            reactInstancedMesh.setMatrixAt(instanceCount, dummy.matrix);
+            reactInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
 
-            // Line from node origin to cone base
+            // Line from origin to cone base
             positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
             positionAttr.setXYZ(
               lineIndex++,
-              tipX - forceDir.x * CONFIG.CONE_HEIGHT,
-              tipY - forceDir.y * CONFIG.CONE_HEIGHT,
-              tipZ - forceDir.z * CONFIG.CONE_HEIGHT
+              tipX - dir.x * CONFIG.CONE_HEIGHT,
+              node[1],
+              node[2]
+            );
+
+            // Collect label candidate
+            const labelOffsetX = (fx > 0 ? 1 : -1) * CONFIG.LABEL_OFFSET * 1.5;
+            labelCandidates.push({
+              magnitude: Math.abs(fx),
+              position: [tipX + labelOffsetX, node[1], node[2]],
+              text: `Rx: ${fx.toFixed(2)}`,
+              color: "#ff0000",
+            });
+          }
+
+          // Draw separate Y arrow if fy != 0
+          if (Math.abs(fy) > 0.001) {
+            dir.set(0, fy > 0 ? 1 : -1, 0); // P0: reuse vector
+            const tipY = node[1] + fy * CONFIG.ARROW_SCALE;
+
+            // Position cone at tip
+            dummy.position.set(
+              node[0],
+              tipY - dir.y * CONFIG.CONE_HEIGHT * 0.5,
+              node[2]
+            );
+            dummy.quaternion.setFromUnitVectors(upVector, dir);
+            dummy.scale.set(1, 1, 1);
+            dummy.updateMatrix();
+            reactInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
+
+            // Line from origin to cone base
+            positionAttr.setXYZ(lineIndex++, node[0], node[1], node[2]);
+            positionAttr.setXYZ(
+              lineIndex++,
+              node[0],
+              tipY - dir.y * CONFIG.CONE_HEIGHT,
+              node[2]
             );
 
             // Collect label candidate
             labelCandidates.push({
-              magnitude,
-              position: [
-                node[0] + CONFIG.LABEL_OFFSET * 3,
-                node[1] + CONFIG.LABEL_OFFSET * 3,
-                node[2],
-              ],
-              text: `R: ${fx.toFixed(2)}, ${fy.toFixed(2)}`,
+              magnitude: Math.abs(fy),
+              position: [node[0], tipY + CONFIG.LABEL_OFFSET * 0.5, node[2]],
+              text: `Ry: ${fy.toFixed(2)}`,
               color: "#ff0000",
             });
+          }
 
-            instanceCount++;
+          // Draw rotation arc with arrowhead for Mz if mz != 0
+          if (Math.abs(mz) > 0.0001) {
+            const arcRadius = 0.08;
+            const arcAngle = Math.PI * 1.5; // 270 degrees
+            const segments = CONFIG.RZ_ARC_SEGMENTS;
+            const direction = mz > 0 ? 1 : -1;
+            const startAngle = Math.PI / 4;
+            const centerX = node[0];
+            const centerY = node[1];
+
+            // Generate arc points
+            for (let i = 0; i < segments; i++) {
+              const angle1 = startAngle + direction * (i / segments) * arcAngle;
+              const angle2 =
+                startAngle + direction * ((i + 1) / segments) * arcAngle;
+              positionAttr.setXYZ(
+                lineIndex++,
+                centerX + arcRadius * Math.cos(angle1),
+                centerY + arcRadius * Math.sin(angle1),
+                node[2]
+              );
+              positionAttr.setXYZ(
+                lineIndex++,
+                centerX + arcRadius * Math.cos(angle2),
+                centerY + arcRadius * Math.sin(angle2),
+                node[2]
+              );
+            }
+
+            // Arrowhead at the end of the arc
+            const endAngle = startAngle + direction * arcAngle;
+            const tipX = centerX + arcRadius * Math.cos(endAngle);
+            const tipY = centerY + arcRadius * Math.sin(endAngle);
+
+            // P0: Tangent direction (reuse vector)
+            tangentDir
+              .set(
+                -direction * Math.sin(endAngle),
+                direction * Math.cos(endAngle),
+                0
+              )
+              .normalize();
+
+            // Position cone at arc end, pointing along tangent
+            dummy.position.set(tipX, tipY, node[2]);
+            dummy.quaternion.setFromUnitVectors(upVector, tangentDir);
+            dummy.scale.set(0.3, 0.3, 0.3);
+            dummy.updateMatrix();
+            reactInstancedMesh.setMatrixAt(instanceCount++, dummy.matrix);
+
+            // Collect label candidate
+            labelCandidates.push({
+              magnitude: Math.abs(mz),
+              position: [
+                centerX - arcRadius - CONFIG.LABEL_OFFSET,
+                centerY,
+                node[2],
+              ],
+              text: `Mz: ${mz.toFixed(3)}`,
+              color: "#ff0000",
+            });
           }
         }
       });
@@ -390,19 +652,8 @@ export function getPointResults({
       reactLineGeometry.setDrawRange(0, lineIndex);
       positionAttr.needsUpdate = true;
 
-      // Smart labeling: render top N by magnitude
-      labelCandidates
-        .sort((a, b) => b.magnitude - a.magnitude)
-        .slice(0, CONFIG.MAX_TEXT_LABELS)
-        .forEach((item) => {
-          const sprite = getText(
-            item.text,
-            item.position,
-            item.color,
-            CONFIG.LABEL_SIZE
-          );
-          textGroup.add(sprite);
-        });
+      // Render top-N labels
+      renderTopLabels(labelCandidates);
     }
 
     // Hide all if "None" selected
@@ -415,6 +666,29 @@ export function getPointResults({
 
     render();
   });
+
+  // ============================================================
+  // P2: DISPOSE_HOOK - cleanup for GPU resources
+  // ============================================================
+  group.userData.dispose = () => {
+    // Dispose instanced meshes
+    dispInstancedMesh.dispose();
+    reactInstancedMesh.dispose();
+
+    // Dispose geometries
+    coneGeometry.dispose();
+    dispLineGeometry.dispose();
+    reactLineGeometry.dispose();
+
+    // Dispose materials
+    displacementMaterial.dispose();
+    reactionMaterial.dispose();
+    displacementLineMaterial.dispose();
+    reactionLineMaterial.dispose();
+
+    // Dispose labels
+    clearLabels();
+  };
 
   return group;
 }
