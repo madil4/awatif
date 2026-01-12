@@ -18,3 +18,6 @@ export type {
   Component as SupportComponent,
 } from "./supports/data-model";
 export { getSupports } from "./supports/getSupports";
+
+// analysis
+export { getPositions } from "./analysis/l-solver/getPositions";
