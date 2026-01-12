@@ -160,8 +160,6 @@ export const activeComponent = van.state<number | null>(null);
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
   else display.mesh.val = false;
-  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
-  else display.supports.val = false;
   if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
   else display.loads.val = false;
 });
