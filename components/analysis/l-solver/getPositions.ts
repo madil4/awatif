@@ -52,6 +52,7 @@ export function getPositions(
   return positions;
 }
 
+// Utils
 function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
   const toRemove: number[] = [];
   supports?.forEach((support, index) => {
