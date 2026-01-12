@@ -20,7 +20,7 @@ import {
   Display,
 } from "@awatif/ui";
 
-const geometry: Geometry = {
+export const geometry: Geometry = {
   points: van.state(
     new Map([
       [1, [-3, 0, 0]],
@@ -50,7 +50,7 @@ const geometry: Geometry = {
   selection: van.state(null),
 };
 
-const mesh: Mesh = {
+export const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   geometryMapping: {
@@ -59,7 +59,7 @@ const mesh: Mesh = {
   },
 };
 
-const components: Components = van.state(
+export const components: Components = van.state(
   new Map([
     [
       "MESH",
@@ -141,20 +141,20 @@ const components: Components = van.state(
   ])
 );
 
-const grid: Grid = {
+export const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
 };
 
-const display: Display = {
+export const display: Display = {
   geometry: van.state(true),
   mesh: van.state(false),
   loads: van.state(true),
   supports: van.state(true),
 };
 
-const toolbarMode = van.state<ToolbarMode | null>(null);
-const activeComponent = van.state<number | null>(null);
+export const toolbarMode = van.state<ToolbarMode | null>(null);
+export const activeComponent = van.state<number | null>(null);
 
 // Toolbar events
 van.derive(() => {
