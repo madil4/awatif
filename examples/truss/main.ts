@@ -4,6 +4,7 @@ import {
   getMesh,
   getLoads,
   getSupports,
+  getPositions,
   Geometry,
   Mesh,
 } from "@awatif/components";
@@ -201,6 +202,35 @@ van.derive(() => {
   });
 
   mesh.supports = supportsData.supports;
+});
+
+// Positions events
+van.derive(() => {
+  if (!mesh.nodes.val || !mesh.elements.val) return;
+  if (!mesh.loads || !mesh.supports) return;
+
+  const defaultProps = {
+    elasticity: 200e9,
+    area: 0.01,
+    momentInertia: 8.333e-6,
+    shearModulus: 79.3e9,
+    torsionalConstant: 1.4e-5,
+  };
+
+  const elementsPropsMap = new Map<number, typeof defaultProps>();
+  mesh.elements.val.forEach((_, index) => {
+    elementsPropsMap.set(index, defaultProps);
+  });
+
+  const positions = getPositions(
+    mesh.nodes.val,
+    mesh.elements.val,
+    mesh.loads,
+    mesh.supports,
+    elementsPropsMap
+  );
+
+  mesh.positions = positions;
 });
 
 document.body.append(
