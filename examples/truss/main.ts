@@ -92,19 +92,19 @@ export const components: Components = van.state(
           name: "Point Load at Node 5",
           templateIndex: 0,
           geometry: [5],
-          params: { Fx: 500, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 6",
           templateIndex: 0,
           geometry: [6],
-          params: { Fx: 100, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 7",
           templateIndex: 0,
           geometry: [7],
-          params: { Fx: 200, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
       ],
     ],
@@ -149,7 +149,8 @@ export const grid: Grid = {
 
 export const display: Display = {
   geometry: van.state(true),
-  mesh: van.state(false),
+  mesh: van.state(true),
+  deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
 };
@@ -160,9 +161,8 @@ export const activeComponent = van.state<number | null>(null);
 // Toolbar events
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
-  else display.mesh.val = false;
   if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
-  else display.loads.val = false;
+  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
 });
 
 // Mesh events
@@ -210,11 +210,11 @@ van.derive(() => {
   if (!mesh.loads || !mesh.supports) return;
 
   const defaultProps = {
-    elasticity: 200e9,
-    area: 0.01,
-    momentInertia: 8.333e-6,
-    shearModulus: 79.3e9,
-    torsionalConstant: 1.4e-5,
+    elasticity: 50e6,
+    area: 0.001,
+    momentInertia: 8.333e-8,
+    shearModulus: 79.3e6,
+    torsionalConstant: 1.4e-7,
   };
 
   const elementsPropsMap = new Map<number, typeof defaultProps>();
