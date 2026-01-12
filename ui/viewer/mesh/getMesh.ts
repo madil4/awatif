@@ -14,11 +14,12 @@ export function getMesh({
   const group = new THREE.Group();
 
   // Render nodes
+  const MESH_COLOR = new THREE.Color("#ababab"); // bright gray
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
-      color: new THREE.Color("white"),
-      size: 5,
+      color: MESH_COLOR,
+      size: 4,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -49,7 +50,7 @@ export function getMesh({
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({
-      color: new THREE.Color("white"),
+      color: MESH_COLOR,
       depthTest: false,
     })
   );
