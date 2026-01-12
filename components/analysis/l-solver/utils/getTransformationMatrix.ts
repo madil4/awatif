@@ -1,5 +1,5 @@
 import { dot, identity, kron, MathCollection, norm, subtract } from "mathjs";
-import { Nodes } from "../../../data-model";
+import { Nodes } from "../../../mesh/data-model";
 
 // from global to local
 export function getTransformationMatrix(nodes: Nodes): number[][] {
