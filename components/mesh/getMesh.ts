@@ -24,30 +24,55 @@ export function getMesh({
   const pointToNodes = new Map<number, number[]>();
   const lineToElements = new Map<number, number[]>();
 
-  // Track which lines have been meshed to prevent duplicate meshing
-  const meshedLines = new Set<number>();
-
+  // Build a mapping from lineId to its MESH component (if any)
+  const lineToComponent = new Map<number, (typeof meshComponents)[number]>();
   const meshComponents = components.get("MESH") ?? [];
 
   meshComponents.forEach((component) => {
-    const template = templates.get("MESH")?.[
-      component.templateIndex
-    ] as MeshTemplate<any>;
-    if (!template) return;
-
     component.geometry.forEach((lineId) => {
-      // Skip if this line has already been meshed by another component
-      if (meshedLines.has(lineId)) return;
-      meshedLines.add(lineId);
+      // First component wins if multiple components reference the same line
+      if (!lineToComponent.has(lineId)) {
+        lineToComponent.set(lineId, component);
+      }
+    });
+  });
 
-      const line = geometry.lines.get(lineId);
-      if (!line) return;
+  // Helper to get or create a node for a geometry point
+  const getOrCreateNodeForPoint = (
+    pointId: number,
+    point: [number, number, number]
+  ): number => {
+    if (pointToNodes.has(pointId)) {
+      return pointToNodes.get(pointId)![0];
+    }
 
-      const [startId, endId] = line;
-      const startPoint = geometry.points.get(startId);
-      const endPoint = geometry.points.get(endId);
+    const globalIdx = allNodes.length;
+    allNodes.push([...point]);
+    pointToNodes.set(pointId, [globalIdx]);
+    return globalIdx;
+  };
 
-      if (!startPoint || !endPoint) return;
+  // Loop through all geometry lines
+  geometry.lines.forEach((line, lineId) => {
+    const [startId, endId] = line;
+    const startPoint = geometry.points.get(startId);
+    const endPoint = geometry.points.get(endId);
+
+    if (!startPoint || !endPoint) return;
+
+    const component = lineToComponent.get(lineId);
+
+    if (component) {
+      // Line has a MESH component - use template's getMesh
+      const template = templates.get("MESH")?.[
+        component.templateIndex
+      ] as MeshTemplate<any>;
+
+      if (!template) {
+        // Fallback to simple element if template not found
+        meshLineAsSimpleElement(lineId, startId, endId, startPoint, endPoint);
+        return;
+      }
 
       const { nodes: parametricNodes, elements } = template.getMesh({
         params: component.params as Parameters<
@@ -108,8 +133,27 @@ export function getMesh({
         lineId,
         remappedElements.map((_, i) => elementStartIdx + i)
       );
-    });
+    } else {
+      // Line has no MESH component - create a simple 2-node element
+      meshLineAsSimpleElement(lineId, startId, endId, startPoint, endPoint);
+    }
   });
+
+  // Helper function to mesh a line as a simple 2-node element
+  function meshLineAsSimpleElement(
+    lineId: number,
+    startId: number,
+    endId: number,
+    startPoint: [number, number, number],
+    endPoint: [number, number, number]
+  ) {
+    const startNodeIdx = getOrCreateNodeForPoint(startId, startPoint);
+    const endNodeIdx = getOrCreateNodeForPoint(endId, endPoint);
+
+    const elementIdx = allElements.length;
+    allElements.push([startNodeIdx, endNodeIdx]);
+    lineToElements.set(lineId, [elementIdx]);
+  }
 
   return {
     nodes: allNodes,
