@@ -105,14 +105,22 @@ body {
   width: 50% !important;
   flex-direction: row;
   gap: 6px;
-  padding: 0 10px 10px 0;
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  #layout .canvas {
+    height: 75vh;
+    width: 100% !important;
+  }
 }
 
 /* Pointer events: wrappers pass through, content elements capture */
 #layout .top,
 #layout .bottom,
 #layout .bottom-left,
-#layout .panels-row {
+#layout .panels-row,
+#layout .canvas {
   pointer-events: none;
 }
 
@@ -121,8 +129,7 @@ body {
 #layout .components,
 #layout .toolbar,
 #layout .tooltips,
-#layout .parameters,
-#layout .canvas {
+#layout .parameters {
   pointer-events: auto;
   width: fit-content;
 }

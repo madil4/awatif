@@ -48,6 +48,8 @@
 
 .report-content.open {
   display: flex;
+  pointer-events: auto; /* Canvas disable this by default,
+   It is enabled here so it doesn't interfere with the viewer pointer events */
 }
 
 /* Report Header */
