@@ -234,29 +234,29 @@ van.derive(() => {
   );
 
   mesh.positions = positions;
-
-  // Create report component
-  const report = getReport();
-
-  document.body.append(
-    getLayout({
-      header: [report.button],
-      display: getDisplay({ grid, display }),
-      components: getComponents({
-        toolbarMode,
-        geometry,
-        components,
-        activeComponent,
-      }),
-      toolbar: getToolbar({ toolbarMode }),
-      parameters: getParameters({
-        components,
-        activeComponent,
-        toolbarMode,
-      }),
-      tooltips: getTooltips(),
-      viewer: getViewer({ grid, geometry, mesh, components, display }),
-      canvas: report.panel,
-    })
-  );
 });
+
+// Create report component
+const report = getReport();
+
+document.body.append(
+  getLayout({
+    header: [report.button],
+    display: getDisplay({ grid, display }),
+    components: getComponents({
+      toolbarMode,
+      geometry,
+      components,
+      activeComponent,
+    }),
+    toolbar: getToolbar({ toolbarMode }),
+    parameters: getParameters({
+      components,
+      activeComponent,
+      toolbarMode,
+    }),
+    tooltips: getTooltips(),
+    viewer: getViewer({ grid, geometry, mesh, components, display }),
+    canvas: report.panel,
+  })
+);
