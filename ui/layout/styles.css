@@ -110,7 +110,7 @@ body {
 
 @media (max-width: 768px) {
   #layout .canvas {
-    height: 70vh;
+    height: 50vh;
     width: 100% !important;
   }
 }
