@@ -28,9 +28,8 @@ body {
 
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
 }
 
 .spinner {
@@ -83,10 +82,16 @@ body {
 /* Bottom */
 #layout .bottom {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap-reverse;
+  align-items: flex-start;
   position: relative;
   z-index: 1; /* Above the viewer */
   margin-top: auto;
+}
+
+#layout .bottom-left {
+  display: flex;
+  flex-direction: column;
 }
 
 #layout .panels-row {
@@ -94,9 +99,20 @@ body {
   align-items: flex-end;
 }
 
+#layout .canvas {
+  display: flex;
+  margin-left: auto;
+  height: 90vh;
+  width: 50vw;
+  flex-direction: row;
+  gap: 6px;
+  padding: 0 6px 6px 0;
+}
+
 /* Pointer events: wrappers pass through, content elements capture */
 #layout .top,
 #layout .bottom,
+#layout .bottom-left,
 #layout .panels-row {
   pointer-events: none;
 }
@@ -109,4 +125,8 @@ body {
 #layout .parameters {
   pointer-events: auto;
   width: fit-content;
+}
+
+#layout .canvas {
+  pointer-events: auto;
 }

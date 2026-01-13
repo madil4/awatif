@@ -9,16 +9,17 @@ export function getMesh({
 }: {
   mesh: Mesh;
   render: () => void;
-  display?: { mesh: State<boolean> };
+  display?: { mesh: State<boolean>; deformedShape?: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
   // Render nodes
+  const MESH_COLOR = new THREE.Color("#ababab"); // bright gray
   const points = new THREE.Points(
     new THREE.BufferGeometry(),
     new THREE.PointsMaterial({
-      color: new THREE.Color("white"),
-      size: 5,
+      color: MESH_COLOR,
+      size: 4,
       sizeAttenuation: false,
       depthTest: false,
     })
@@ -27,12 +28,18 @@ export function getMesh({
   group.add(points);
 
   van.derive(() => {
-    if (!display?.mesh || !display.mesh.val || !mesh.nodes) return;
+    if (!display?.mesh || !display.mesh.val || !mesh.nodes.val) return;
 
-    const nodes = mesh.nodes.val.flat();
+    // Use deformed positions if deformedShape toggle is on and positions exist
+    const useDeformed =
+      display?.deformedShape?.val &&
+      mesh.positions &&
+      mesh.positions.length > 0;
+    const positions = useDeformed ? mesh.positions! : mesh.nodes.val.flat();
+
     points.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(nodes, 3)
+      new THREE.Float32BufferAttribute(positions, 3)
     );
     points.geometry.computeBoundingSphere();
 
@@ -43,7 +50,7 @@ export function getMesh({
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
     new THREE.LineBasicMaterial({
-      color: new THREE.Color("white"),
+      color: MESH_COLOR,
       depthTest: false,
     })
   );
@@ -55,7 +62,28 @@ export function getMesh({
       return;
 
     const elementIndices = mesh.elements.val;
-    const nodes = mesh.nodes.val;
+
+    // Use deformed positions if deformedShape toggle is on and positions exist
+    const useDeformed =
+      display?.deformedShape?.val &&
+      mesh.positions &&
+      mesh.positions.length > 0;
+    let nodes: number[][];
+
+    if (useDeformed) {
+      // Convert flat positions array to nodes array
+      nodes = [];
+      for (let i = 0; i < mesh.positions!.length; i += 3) {
+        nodes.push([
+          mesh.positions![i],
+          mesh.positions![i + 1],
+          mesh.positions![i + 2],
+        ]);
+      }
+    } else {
+      nodes = mesh.nodes.val;
+    }
+
     const positions: number[] = [];
 
     // For each element, create edges between consecutive nodes

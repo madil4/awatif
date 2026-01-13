@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { getPositions } from "./getPositions";
-import type { Elements, Mesh, Nodes } from "../../data-model";
+import type { Mesh } from "../../data-model";
+import type { Elements, Nodes } from "../../mesh/data-model";
 
 describe("deform", () => {
   test("Bar: from Logan's book example 3.9", () => {
