@@ -158,6 +158,7 @@ export const display: Display = {
 
 export const toolbarMode = van.state<ToolbarMode | null>(null);
 export const activeComponent = van.state<number | null>(null);
+export const report = getReport();
 
 // Toolbar events
 van.derive(() => {
@@ -235,9 +236,6 @@ van.derive(() => {
 
   mesh.positions = positions;
 });
-
-// Create report component
-const report = getReport();
 
 document.body.append(
   getLayout({
