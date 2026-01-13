@@ -100,8 +100,10 @@ body {
 }
 
 #layout .canvas {
-  margin-left: auto;
   display: flex;
+  margin-left: auto;
+  height: 90vh;
+  width: 50vw;
   flex-direction: row;
   gap: 6px;
   padding: 0 6px 6px 0;
@@ -120,8 +122,11 @@ body {
 #layout .components,
 #layout .toolbar,
 #layout .tooltips,
-#layout .parameters,
-#layout .canvas {
+#layout .parameters {
   pointer-events: auto;
   width: fit-content;
+}
+
+#layout .canvas {
+  pointer-events: auto;
 }

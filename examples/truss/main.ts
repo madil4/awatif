@@ -19,6 +19,7 @@ import {
   getComponents,
   getParameters,
   Display,
+  getReport,
 } from "@awatif/ui";
 
 export const geometry: Geometry = {
@@ -233,24 +234,29 @@ van.derive(() => {
   );
 
   mesh.positions = positions;
-});
 
-document.body.append(
-  getLayout({
-    display: getDisplay({ grid, display }),
-    components: getComponents({
-      toolbarMode,
-      geometry,
-      components,
-      activeComponent,
-    }),
-    toolbar: getToolbar({ toolbarMode }),
-    parameters: getParameters({
-      components,
-      activeComponent,
-      toolbarMode,
-    }),
-    tooltips: getTooltips(),
-    viewer: getViewer({ grid, geometry, mesh, components, display }),
-  })
-);
+  // Create report component
+  const report = getReport();
+
+  document.body.append(
+    getLayout({
+      header: [report.button],
+      display: getDisplay({ grid, display }),
+      components: getComponents({
+        toolbarMode,
+        geometry,
+        components,
+        activeComponent,
+      }),
+      toolbar: getToolbar({ toolbarMode }),
+      parameters: getParameters({
+        components,
+        activeComponent,
+        toolbarMode,
+      }),
+      tooltips: getTooltips(),
+      viewer: getViewer({ grid, geometry, mesh, components, display }),
+      canvas: report.panel,
+    })
+  );
+});
