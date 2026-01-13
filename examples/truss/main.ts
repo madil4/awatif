@@ -183,6 +183,7 @@ van.derive(() => {
 // Loads events
 van.derive(() => {
   if (!mesh.geometryMapping) return;
+  mesh.nodes.val; // to trigger re-assigning of geometryMapping
 
   const loadsData = getLoads({
     geometryMapping: mesh.geometryMapping,
@@ -195,6 +196,7 @@ van.derive(() => {
 // Supports events
 van.derive(() => {
   if (!mesh.geometryMapping) return;
+  mesh.nodes.val; // to trigger re-assigning of geometryMapping
 
   const supportsData = getSupports({
     geometryMapping: mesh.geometryMapping,
