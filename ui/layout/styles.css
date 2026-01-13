@@ -1,5 +1,4 @@
 :root {
-  /* Dark theme color palette */
   --bg-primary: #1e1e1e;
   --bg-secondary: #252525;
   --bg-tertiary: #2d2d2d;
@@ -103,10 +102,10 @@ body {
   display: flex;
   margin-left: auto;
   height: 90vh;
-  width: 50vw;
+  width: 50% !important;
   flex-direction: row;
   gap: 6px;
-  padding: 0 6px 6px 0;
+  padding: 0 10px 10px 0;
 }
 
 /* Pointer events: wrappers pass through, content elements capture */
