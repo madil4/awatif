@@ -121,10 +121,8 @@ export function getViewer({
   if (mesh && display?.pointResult) {
     scene.add(
       getPointResults({
-        displacements: mesh.displacements,
-        reactions: mesh.reactions,
+        mesh,
         display: display.pointResult,
-        nodes: mesh.nodes,
         render,
       })
     );
