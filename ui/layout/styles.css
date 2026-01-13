@@ -122,11 +122,8 @@ body {
 #layout .components,
 #layout .toolbar,
 #layout .tooltips,
-#layout .parameters {
-  pointer-events: auto;
-  width: fit-content;
-}
-
+#layout .parameters,
 #layout .canvas {
   pointer-events: auto;
+  width: fit-content;
 }
