@@ -101,7 +101,7 @@ body {
 #layout .canvas {
   display: flex;
   margin-left: auto;
-  height: 90vh;
+  height: 93vh;
   width: 50% !important;
   flex-direction: row;
   gap: 6px;
