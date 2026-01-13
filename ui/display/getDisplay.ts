@@ -8,6 +8,7 @@ import "./styles.css";
 export type Display = {
   geometry: State<boolean>;
   mesh: State<boolean>;
+  deformedShape: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
@@ -67,6 +68,19 @@ export function getDisplay({
               .checked=${display.mesh.val}
               @change=${(e: Event) =>
                 (display.mesh.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>`
+        : ""}
+      ${display?.deformedShape
+        ? html` <div class="display-item">
+            <label>Deformed Shape</label>
+            <input
+              type="checkbox"
+              .checked=${display.deformedShape.val}
+              @change=${(e: Event) =>
+                (display.deformedShape.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
             />
           </div>`
         : ""}

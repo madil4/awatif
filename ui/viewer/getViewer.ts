@@ -28,6 +28,7 @@ export function getViewer({
   display?: {
     geometry: State<boolean>;
     mesh: State<boolean>;
+    deformedShape: State<boolean>;
     loads: State<boolean>;
     supports: State<boolean>;
     pointResult?: State<PointResultsDisplay>;

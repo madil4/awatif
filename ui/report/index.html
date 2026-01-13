@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Awatif UI - Report</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #f5f5f5;
+      }
+
+      .demo-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .demo-header {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-canvas {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        min-height: 400px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        margin: 0 0 10px 0;
+        font-size: 24px;
+        color: #333;
+      }
+
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-container">
+      <div class="demo-header">
+        <h1>Report Component Demo</h1>
+        <p>Click the button to toggle the report panel</p>
+        <div id="button-container" style="margin-top: 16px"></div>
+      </div>
+
+      <div class="demo-canvas" id="panel-container"></div>
+    </div>
+
+    <script type="module">
+      import van from "vanjs-core";
+      import { getReport } from "./getReport.ts";
+
+      // Sample data to display in the report
+      const sampleData = van.state({
+        projectName: "Example Truss Structure",
+        analysis: {
+          solver: "Linear Solver",
+          completed: true,
+          timestamp: new Date().toISOString(),
+        },
+        geometry: {
+          nodes: 7,
+          elements: 11,
+          materials: ["Steel", "Aluminum"],
+        },
+        results: {
+          maxDisplacement: 0.0042,
+          maxStress: 125.5,
+          unit: "MPa",
+        },
+        loads: [
+          { node: 5, force: -1000, direction: "Y" },
+          { node: 6, force: -1500, direction: "Y" },
+          { node: 7, force: -1000, direction: "Y" },
+        ],
+        supports: [
+          { node: 1, type: "Fixed", constraints: ["Ux", "Uy", "Uz"] },
+          { node: 4, type: "Pinned", constraints: ["Uy", "Uz"] },
+        ],
+      });
+
+      // Create report component
+      const report = getReport({ data: sampleData });
+
+      // Append to demo containers
+      document.getElementById("button-container").appendChild(report.button);
+      document.getElementById("panel-container").appendChild(report.panel);
+
+      // Optional: Update data dynamically to demonstrate reactivity
+      setTimeout(() => {
+        console.log("Updating report data...");
+        sampleData.val = {
+          ...sampleData.val,
+          analysis: {
+            ...sampleData.val.analysis,
+            lastUpdated: new Date().toISOString(),
+          },
+        };
+      }, 5000);
+    </script>
+  </body>
+</html>

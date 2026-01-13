@@ -4,6 +4,7 @@ import {
   getMesh,
   getLoads,
   getSupports,
+  getPositions,
   Geometry,
   Mesh,
 } from "@awatif/components";
@@ -18,9 +19,10 @@ import {
   getComponents,
   getParameters,
   Display,
+  getReport,
 } from "@awatif/ui";
 
-const geometry: Geometry = {
+export const geometry: Geometry = {
   points: van.state(
     new Map([
       [1, [-3, 0, 0]],
@@ -50,7 +52,7 @@ const geometry: Geometry = {
   selection: van.state(null),
 };
 
-const mesh: Mesh = {
+export const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
   geometryMapping: {
@@ -59,7 +61,7 @@ const mesh: Mesh = {
   },
 };
 
-const components: Components = van.state(
+export const components: Components = van.state(
   new Map([
     [
       "MESH",
@@ -91,19 +93,19 @@ const components: Components = van.state(
           name: "Point Load at Node 5",
           templateIndex: 0,
           geometry: [5],
-          params: { Fx: 500, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 6",
           templateIndex: 0,
           geometry: [6],
-          params: { Fx: 100, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1500, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Point Load at Node 7",
           templateIndex: 0,
           geometry: [7],
-          params: { Fx: 200, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          params: { Fx: 0, Fy: -1000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
       ],
     ],
@@ -141,29 +143,27 @@ const components: Components = van.state(
   ])
 );
 
-const grid: Grid = {
+export const grid: Grid = {
   size: van.state(10),
   division: van.state(20),
 };
 
-const display: Display = {
+export const display: Display = {
   geometry: van.state(true),
-  mesh: van.state(false),
+  mesh: van.state(true),
+  deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
 };
 
-const toolbarMode = van.state<ToolbarMode | null>(null);
-const activeComponent = van.state<number | null>(null);
+export const toolbarMode = van.state<ToolbarMode | null>(null);
+export const activeComponent = van.state<number | null>(null);
 
 // Toolbar events
 van.derive(() => {
   if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
-  else display.mesh.val = false;
-  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
-  else display.supports.val = false;
   if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
-  else display.loads.val = false;
+  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
 });
 
 // Mesh events
@@ -184,6 +184,7 @@ van.derive(() => {
 // Loads events
 van.derive(() => {
   if (!mesh.geometryMapping) return;
+  mesh.nodes.val; // to trigger re-assigning of geometryMapping
 
   const loadsData = getLoads({
     geometryMapping: mesh.geometryMapping,
@@ -196,6 +197,7 @@ van.derive(() => {
 // Supports events
 van.derive(() => {
   if (!mesh.geometryMapping) return;
+  mesh.nodes.val; // to trigger re-assigning of geometryMapping
 
   const supportsData = getSupports({
     geometryMapping: mesh.geometryMapping,
@@ -205,22 +207,56 @@ van.derive(() => {
   mesh.supports = supportsData.supports;
 });
 
-document.body.append(
-  getLayout({
-    display: getDisplay({ grid, display }),
-    components: getComponents({
-      toolbarMode,
-      geometry,
-      components,
-      activeComponent,
-    }),
-    toolbar: getToolbar({ toolbarMode }),
-    parameters: getParameters({
-      components,
-      activeComponent,
-      toolbarMode,
-    }),
-    tooltips: getTooltips(),
-    viewer: getViewer({ grid, geometry, mesh, components, display }),
-  })
-);
+// Positions events
+van.derive(() => {
+  if (!mesh.nodes.val || !mesh.elements.val) return;
+  if (!mesh.loads || !mesh.supports) return;
+
+  const defaultProps = {
+    elasticity: 50e6,
+    area: 0.001,
+    momentInertia: 8.333e-8,
+    shearModulus: 79.3e6,
+    torsionalConstant: 1.4e-7,
+  };
+
+  const elementsPropsMap = new Map<number, typeof defaultProps>();
+  mesh.elements.val.forEach((_, index) => {
+    elementsPropsMap.set(index, defaultProps);
+  });
+
+  const positions = getPositions(
+    mesh.nodes.val,
+    mesh.elements.val,
+    mesh.loads,
+    mesh.supports,
+    elementsPropsMap
+  );
+
+  mesh.positions = positions;
+
+  // Create report component
+  const report = getReport();
+
+  document.body.append(
+    getLayout({
+      header: [report.button],
+      display: getDisplay({ grid, display }),
+      components: getComponents({
+        toolbarMode,
+        geometry,
+        components,
+        activeComponent,
+      }),
+      toolbar: getToolbar({ toolbarMode }),
+      parameters: getParameters({
+        components,
+        activeComponent,
+        toolbarMode,
+      }),
+      tooltips: getTooltips(),
+      viewer: getViewer({ grid, geometry, mesh, components, display }),
+      canvas: report.panel,
+    })
+  );
+});

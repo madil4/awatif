@@ -17,6 +17,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
       <input
         type="number"
         min="1"
+        max="10"
         .value=${params.val.divisions}
         @input=${(e: Event) =>
           (params.val = {
