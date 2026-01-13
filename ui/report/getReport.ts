@@ -1,4 +1,4 @@
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import { html, render } from "lit-html";
 
 import "./styles.css";
@@ -7,15 +7,13 @@ export function getReport(): {
   button: HTMLElement;
   panel: HTMLElement;
 } {
-  const isOpen = van.state(false);
-
-  // Create button container
   const buttonContainer = document.createElement("div");
   buttonContainer.id = "report-button";
 
-  // Create panel container
   const panelContainer = document.createElement("div");
   panelContainer.id = "report-panel";
+
+  const isOpen = van.state(false);
 
   const buttonTemplate = () => html`
     <button
@@ -23,7 +21,7 @@ export function getReport(): {
         isOpen.val = !isOpen.val;
       }}
     >
-      ${isOpen.val ? "Report" : "Report"}
+      Report
     </button>
   `;
 
@@ -40,13 +38,10 @@ export function getReport(): {
           ×
         </button>
       </div>
-      <div class="report-body">
-        <!-- Empty panel for now -->
-      </div>
+      <div class="report-body"></div>
     </div>
   `;
 
-  // Reactive rendering
   van.derive(() => {
     render(buttonTemplate(), buttonContainer);
   });
