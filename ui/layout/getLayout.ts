@@ -22,17 +22,13 @@ export function getLayout({
   const template = html`
     <div id="layout">
       <div class="viewer">${viewer}</div>
-      <div class="top">
-        <div class="display">${display}</div>
-        <div class="header">${header}</div>
+      <div class="display">${display}</div>
+      <div class="header">${header}</div>
+      <div class="bottom-left">
+        <div class="components">${components}</div>
+        <div class="tooltips">${tooltips}</div>
       </div>
-      <div class="bottom">
-        <div class="bottom-left">
-          <div class="components">${components}</div>
-          <div class="tooltips">${tooltips}</div>
-        </div>
-        <div class="canvas">${canvas}</div>
-      </div>
+      <div class="canvas">${canvas}</div>
     </div>
   `;
 

@@ -49,86 +49,84 @@ body {
 
 #layout {
   min-height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-areas:
+    "display header"
+    "bottom-left canvas";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+#layout > div {
+  z-index: 1;
 }
 
 #layout .viewer {
+  grid-area: 1 / 1 / 3 / 3;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* Behind everything */
+  z-index: 0;
 }
 
-/* Top */
-#layout .top {
-  display: flex;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1; /* Above the viewer */
+#layout .display {
+  grid-area: display;
 }
 
 #layout .header {
-  margin-left: auto;
+  grid-area: header;
+  justify-self: end;
+  /* move to header */
   display: flex;
-  flex-direction: row;
   gap: 6px;
   padding: 6px 6px 0 0;
 }
 
-/* Bottom */
-#layout .bottom {
-  display: flex;
-  flex-wrap: wrap-reverse;
-  justify-content: space-between;
-  align-items: flex-end;
-  position: relative;
-  z-index: 1; /* Above the viewer */
-  flex: 1;
-}
-
 #layout .bottom-left {
+  grid-area: bottom-left;
+  align-self: end;
   display: flex;
   flex-direction: column;
-  margin-top: auto;
-}
-
-#layout .tooltips {
-  pointer-events: auto;
-  width: fit-content;
 }
 
 #layout .canvas {
-  display: flex;
-  flex: 0 0 50%;
+  grid-area: canvas;
   align-self: stretch;
-  flex-direction: row;
+  display: flex;
+  /* move to header */
   gap: 6px;
   padding: 10px;
 }
 
-@media (max-width: 768px) {
-  #layout .bottom {
-    flex-direction: column-reverse;
-  }
-  #layout .canvas {
-    flex: 1;
-  }
-}
-
-/* Pointer events: wrappers pass through, content elements capture */
-#layout .top,
-#layout .bottom,
+#layout .display,
+#layout .header,
+#layout .tooltips,
 #layout .bottom-left,
 #layout .canvas {
   pointer-events: none;
 }
 
-#layout .display,
-#layout .header,
-#layout .tooltips {
+#layout .display > *,
+#layout .header > *,
+#layout .tooltips > *,
+#layout .bottom-left > *,
+#layout .canvas > * {
   pointer-events: auto;
-  width: fit-content;
+}
+
+@media (max-width: 768px) {
+  #layout {
+    grid-template-areas:
+      "display header"
+      "canvas canvas"
+      "bottom-left bottom-left";
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #layout .viewer {
+    grid-area: 1 / 1 / 4 / 3;
+  }
 }
