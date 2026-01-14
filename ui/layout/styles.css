@@ -105,7 +105,7 @@ body {
   align-self: stretch;
   flex-direction: row;
   gap: 6px;
-  padding: 10px 10px 0 10px;
+  padding: 10px;
 }
 
 @media (max-width: 768px) {
