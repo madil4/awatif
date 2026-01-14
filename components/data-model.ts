@@ -5,7 +5,6 @@ export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
   lines: State<Map<number, [number, number]>>;
 
-  visible?: State<boolean>;
   selection: State<{
     points: number[];
     lines: number[];
@@ -18,11 +17,9 @@ export type Mesh = {
   elements: State<number[][]>; // [[node1, node2], ...]
 
   geometryMapping: State<{
-    pointToNodes: Map<number, number[]>; // geometry point ID → mesh node indices
-    lineToElements: Map<number, number[]>; // geometry line ID → mesh element indices
+    pointToNodes: Map<number, number[]>;
+    lineToElements: Map<number, number[]>;
   }>;
-
-  visible?: State<boolean>;
 
   supports?: Map<
     number,
@@ -43,7 +40,6 @@ export type Mesh = {
 
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
 
-  // Post-processing results
   displacements?: State<
     Map<number, [number, number, number, number, number, number]>
   >;
@@ -62,7 +58,7 @@ export enum ComponentsType {
   SUPPORTS,
 }
 
-export type Component = {
+type Component = {
   name: string;
   templateIndex: number;
   geometry: number[];

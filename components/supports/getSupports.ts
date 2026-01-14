@@ -12,7 +12,6 @@ export function getSupports({
   };
   components: Components["val"];
 }): {
-  // Map of node index to support values [Ux, Uy, Uz, Rx, Ry, Rz]
   supports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>;
 } {
   const supports = new Map<
