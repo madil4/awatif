@@ -25,90 +25,156 @@ export function getList({
   let isSyncing = false;
 
   const getKey = () => componentsBarMode.val as ComponentsType;
-  const getList = () => components.val.get(getKey()) ?? [];
-  const usesPoints = () =>
+  const getComponentList = () => components.val.get(getKey()) ?? [];
+
+  const isPointBased = () =>
     componentsBarMode.val === ComponentsType.LOADS ||
     componentsBarMode.val === ComponentsType.SUPPORTS;
-  const usesLines = () =>
+
+  const isLineBased = () =>
     componentsBarMode.val === ComponentsType.MESH ||
     componentsBarMode.val === ComponentsType.DESIGN;
 
-  // Sync activeComponent -> geometry.selection
-  van.derive(() => {
-    const idx = activeComponent.val;
-    if (idx === null || componentsBarMode.val === null) {
-      if (!isSyncing && geometry.selection.val !== null) {
-        isSyncing = true;
-        geometry.selection.val = null;
-        isSyncing = false;
-      }
-      return;
-    }
+  const getSelectedGeometry = () => {
+    const sel = geometry.selection.val;
+    if (isPointBased()) return sel?.points ?? [];
+    if (isLineBased()) return sel?.lines ?? [];
+    return [];
+  };
 
-    const componentGeometry = getList()[idx]?.geometry ?? [];
-    isSyncing = true;
-    if (usesPoints()) {
-      geometry.selection.val = { points: componentGeometry, lines: [] };
-    } else if (usesLines()) {
-      geometry.selection.val = { points: [], lines: componentGeometry };
+  const setSelection = (indices: number[]) => {
+    if (isPointBased()) {
+      geometry.selection.val = { points: indices, lines: [] };
+    } else if (isLineBased()) {
+      geometry.selection.val = { points: [], lines: indices };
     } else {
       geometry.selection.val = null;
     }
-    isSyncing = false;
-  });
+  };
 
-  // Sync geometry.selection -> activeComponent's geometry
-  van.derive(() => {
-    const selection = geometry.selection.val;
-    const idx = activeComponent.val;
-    if (isSyncing || idx === null || componentsBarMode.val === null) return;
+  const updateComponents = (
+    updater: (
+      list: typeof getComponentList extends () => infer R ? R : never
+    ) => typeof list
+  ) => {
+    components.val = new Map(components.val).set(
+      getKey(),
+      updater(getComponentList())
+    );
+  };
 
-    let selectedGeometry: number[] = [];
-    if (usesPoints()) {
-      selectedGeometry = selection?.points ?? [];
-    } else if (usesLines()) {
-      selectedGeometry = selection?.lines ?? [];
-    }
+  const arraysEqual = (a: number[], b: number[]) =>
+    a.length === b.length && a.every((v, i) => v === b[i]);
 
-    const list = getList();
-    const current = list[idx];
-    if (!current) return;
-
-    const currentGeometry = current.geometry ?? [];
-    const unchanged =
-      currentGeometry.length === selectedGeometry.length &&
-      currentGeometry.every((v, i) => v === selectedGeometry[i]);
-
-    if (!unchanged) {
-      // Create a set of the selected geometry indices for quick lookup
-      const selectedSet = new Set(selectedGeometry);
-
-      // Update all components: assign to active, remove from others in same category
-      const updated = list.map((c, i) => {
-        if (i === idx) {
-          // Active component gets the new selection
-          return { ...c, geometry: [...selectedGeometry] };
-        } else {
-          // Other components: remove any geometry that's now assigned to active
-          const filteredGeometry = (c.geometry ?? []).filter(
-            (g) => !selectedSet.has(g)
-          );
-          return { ...c, geometry: filteredGeometry };
-        }
-      });
-
-      components.val = new Map(components.val).set(getKey(), updated);
-    }
-  });
-
-  // Reset on toolbar mode change or when details closes
+  // Reset activeComponent when mode changes
   van.derive(() => {
     componentsBarMode.val;
     activeComponent.val = null;
   });
 
+  // Clear selection when no active component
   van.derive(() => {
-    if (activeComponent.val === null) geometry.selection.val = null;
+    if (activeComponent.val === null && !isSyncing) {
+      geometry.selection.val = null;
+    }
+  });
+
+  // Sync activeComponent -> geometry.selection
+  van.derive(() => {
+    const idx = activeComponent.val;
+    if (idx === null || componentsBarMode.val === null) return;
+
+    const componentGeometry = getComponentList()[idx]?.geometry ?? [];
+    isSyncing = true;
+    setSelection(componentGeometry);
+    isSyncing = false;
+  });
+
+  // Sync geometry.selection -> activeComponent's geometry
+  van.derive(() => {
+    const idx = activeComponent.val;
+    if (isSyncing || idx === null || componentsBarMode.val === null) return;
+
+    const current = getComponentList()[idx];
+    if (!current) return;
+
+    const selectedGeometry = getSelectedGeometry();
+    if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
+
+    const selectedSet = new Set(selectedGeometry);
+    updateComponents((list) =>
+      list.map((c, i) =>
+        i === idx
+          ? { ...c, geometry: [...selectedGeometry] }
+          : {
+              ...c,
+              geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
+            }
+      )
+    );
+  });
+
+  // Sync geometry deletions -> remove deleted indices from components
+  let prevPointKeys = new Set(geometry.points.val.keys());
+  let prevLineKeys = new Set(geometry.lines.val.keys());
+
+  const findDeleted = (prev: Set<number>, current: Set<number>) => {
+    const deleted = new Set<number>();
+    for (const key of prev) {
+      if (!current.has(key)) deleted.add(key);
+    }
+    return deleted;
+  };
+
+  const removeDeletedFromTypes = (
+    componentsMap: Map<ComponentsType, { geometry: number[] }[]>,
+    types: ComponentsType[],
+    deleted: Set<number>
+  ) => {
+    for (const type of types) {
+      const list = componentsMap.get(type);
+      if (list) {
+        componentsMap.set(
+          type,
+          list.map((c) => ({
+            ...c,
+            geometry: c.geometry.filter((idx) => !deleted.has(idx)),
+          }))
+        );
+      }
+    }
+  };
+
+  van.derive(() => {
+    const currentPointKeys = new Set(geometry.points.val.keys());
+    const currentLineKeys = new Set(geometry.lines.val.keys());
+
+    const deletedPoints = findDeleted(prevPointKeys, currentPointKeys);
+    const deletedLines = findDeleted(prevLineKeys, currentLineKeys);
+
+    if (deletedPoints.size > 0 || deletedLines.size > 0) {
+      const updated = new Map(components.val);
+
+      if (deletedPoints.size > 0) {
+        removeDeletedFromTypes(
+          updated,
+          [ComponentsType.LOADS, ComponentsType.SUPPORTS],
+          deletedPoints
+        );
+      }
+      if (deletedLines.size > 0) {
+        removeDeletedFromTypes(
+          updated,
+          [ComponentsType.MESH, ComponentsType.DESIGN],
+          deletedLines
+        );
+      }
+
+      components.val = updated;
+    }
+
+    prevPointKeys = currentPointKeys;
+    prevLineKeys = currentLineKeys;
   });
 
   // Render
@@ -119,7 +185,7 @@ export function getList({
   function template() {
     if (componentsBarMode.val === null) return html``;
 
-    const list = getList();
+    const list = getComponentList();
     const isOpen =
       componentsBarMode.val === ComponentsType.MESH ||
       componentsBarMode.val === ComponentsType.LOADS ||
@@ -218,7 +284,7 @@ export function getList({
   function copyTemplate(baseName: string, templateIndex: number) {
     if (componentsBarMode.val === null) return;
 
-    const list = getList();
+    const list = getComponentList();
     const names = new Set(list.map((c) => c.name));
     let name = baseName;
 
@@ -241,7 +307,7 @@ export function getList({
   function commitRename(index: number, newName: string) {
     if (componentsBarMode.val === null) return;
 
-    const list = getList();
+    const list = getComponentList();
     const trimmed = newName.trim();
 
     if (trimmed && trimmed !== list[index].name) {
@@ -260,7 +326,7 @@ export function getList({
     if (componentsBarMode.val === null) return;
     if (activeComponent.val === index) activeComponent.val = null;
 
-    const updated = getList().filter((_, i) => i !== index);
+    const updated = getComponentList().filter((_, i) => i !== index);
     components.val = new Map(components.val).set(getKey(), updated);
   }
 
