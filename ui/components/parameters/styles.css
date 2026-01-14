@@ -42,7 +42,8 @@
   font-size: 0.8rem;
 }
 
-#parameters input[type="number"] {
+#parameters input[type="number"],
+#parameters input[type="text"] {
   max-width: 80px;
   padding: 3px 6px;
 
@@ -54,7 +55,8 @@
   transition: border-color 0.2s ease;
 }
 
-#parameters input[type="number"]:focus {
+#parameters input[type="number"]:focus,
+#parameters input[type="text"]:focus {
   outline: none;
   border-color: var(--accent);
 }
