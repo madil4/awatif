@@ -1,8 +1,7 @@
 #toolbar {
+  pointer-events: auto;
   display: flex;
   gap: 8px;
-  pointer-events: auto;
-  padding: 6px 6px 0 0;
 }
 
 #toolbar button {

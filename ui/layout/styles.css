@@ -70,6 +70,9 @@ body {
   grid-area: toolbar;
   justify-self: end;
   align-self: start;
+  display: flex;
+  gap: 8px;
+  padding: 6px 6px 0 0;
 }
 
 #layout .display {
