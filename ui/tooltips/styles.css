@@ -4,20 +4,18 @@
   padding: 4px 10px;
   gap: 4px;
   margin-bottom: 10px;
+  pointer-events: auto;
 
-  /* Looks */
   color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
 #tooltips a {
-  /* Looks */
   color: var(--accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 #tooltips a:hover {
-  /* Looks */
   color: var(--accent-hover);
 }
