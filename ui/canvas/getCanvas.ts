@@ -17,6 +17,13 @@ export function getCanvas({
     <div id="canvas" class=" ${canvasButton.val ? "open" : ""}">
       <div class="canvas-header">
         <h2>${canvasButton.val}</h2>
+        <button
+          class="close-button"
+          @click=${() => (canvasButton.val = null)}
+          title="Close"
+        >
+          ×
+        </button>
       </div>
       <div class="canvas-body">${canvas.val}</div>
     </div>

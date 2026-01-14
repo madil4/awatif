@@ -19,6 +19,7 @@
 .canvas-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-tertiary);
@@ -29,6 +30,32 @@
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+.canvas-header .close-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.canvas-header .close-button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.canvas-header .close-button:active {
+  background: var(--bg-active);
 }
 
 .canvas-body {
