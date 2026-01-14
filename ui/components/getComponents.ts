@@ -3,7 +3,10 @@ import { html, render } from "lit-html";
 import { Geometry, Components } from "@awatif/components";
 import { getList } from "./list/getList";
 import { getParameters } from "./parameters/getParameters";
-import { getToolbar, ToolbarMode } from "./toolbar/getToolbar";
+import {
+  getComponentsBar,
+  ToolbarMode,
+} from "./componentsBar/getComponentsBar";
 
 import "./styles.css";
 
@@ -32,14 +35,14 @@ export function getComponents({
     toolbarMode,
   });
 
-  const toolbar = getToolbar({ toolbarMode });
+  const componentsBar = getComponentsBar({ toolbarMode });
 
   const template = html`
     <div class="components">
       <div class="list">${list}</div>
       <div class="parameters">${parameters}</div>
     </div>
-    <div class="toolbar">${toolbar}</div>
+    <div class="components-bar">${componentsBar}</div>
   `;
 
   render(template, container);

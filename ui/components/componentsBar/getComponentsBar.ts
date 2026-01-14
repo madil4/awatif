@@ -13,16 +13,16 @@ export type Toolbar = {
   toolbarMode: State<ToolbarMode | null>;
 };
 
-export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
+export function getComponentsBar({ toolbarMode }: Toolbar): HTMLElement {
   const container = document.createElement("div");
-  const modes = getToolbarModes();
+  const modes = getComponentsBarModes();
 
   const template = () => html`
-    <div id="toolbar">
+    <div id="components-bar">
       ${modes.map(
         (mode) => html`
           <button
-            class="toolbar-button ${toolbarMode.val === mode.value
+            class="components-bar-button ${toolbarMode.val === mode.value
               ? "active"
               : ""}"
             @click=${() =>
@@ -44,7 +44,7 @@ export function getToolbar({ toolbarMode }: Toolbar): HTMLElement {
 }
 
 // Utils
-function getToolbarModes() {
+function getComponentsBarModes() {
   return Object.keys(ToolbarMode)
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({

@@ -1,4 +1,4 @@
-#toolbar {
+#components-bar {
   display: flex;
   gap: 6px;
   padding: 6px;
@@ -12,7 +12,7 @@
   box-shadow: 0 1px 4px var(--shadow);
 }
 
-#toolbar .toolbar-button {
+#components-bar .components-bar-button {
   padding: 6px 12px;
 
   cursor: pointer;
@@ -25,13 +25,13 @@
   transition: all 0.2s ease;
 }
 
-#toolbar .toolbar-button:hover {
+#components-bar .components-bar-button:hover {
   background: var(--bg-hover);
   border-color: var(--accent);
   transform: translateY(-1px);
 }
 
-#toolbar .toolbar-button.active {
+#components-bar .components-bar-button.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
