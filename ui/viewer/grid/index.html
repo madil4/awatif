@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,17 +16,19 @@
       import { getViewer } from "../getViewer.ts";
       import { getGrid } from "./getGrid.ts";
 
-      const grid = {
-        size: vanjs.state(10),
-        division: vanjs.state(10),
+      const display = {
+        grid: {
+          size: vanjs.state(10),
+          division: vanjs.state(10),
+        },
       };
 
       setTimeout(() => {
-        grid.size.val = 5;
-        grid.division.val = 2;
+        display.grid.size.val = 5;
+        display.grid.division.val = 2;
       }, 1000);
 
-      document.body.append(getViewer({ grid }));
+      document.body.append(getViewer({ display }));
     </script>
   </body>
 </html>

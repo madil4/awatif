@@ -11,22 +11,21 @@
       import van from "vanjs-core";
       import { getDisplay } from "./getDisplay.ts";
 
-      const grid = {
-        size: van.state(10),
-        division: van.state(20),
-      };
-
-      const geometry = {
-        visible: van.state(true),
+      const display = {
+        grid: {
+          size: van.state(10),
+          division: van.state(20),
+        },
+        geometry: van.state(true),
       };
 
       setInterval(() => {
-        grid.size.val = 5;
-        grid.division.val = 7;
-        geometry.visible.val = false;
+        display.grid.size.val = 5;
+        display.grid.division.val = 7;
+        display.geometry.val = false;
       }, 3000);
 
-      document.body.append(getDisplay({ grid, geometry }));
+      document.body.append(getDisplay({ display }));
     </script>
   </body>
 </html>

@@ -7,32 +7,21 @@ import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
 import { getSupports } from "./supports/getSupports";
-import {
-  getPointResults,
-  PointResultsDisplay,
-} from "./pointResult/getPointResults";
+import { getPointResults } from "./pointResult/getPointResults";
+import { Display } from "../display/getDisplay";
 
 import "./style.css";
 
 export function getViewer({
-  grid,
   geometry,
   mesh,
   components,
   display,
 }: {
-  grid?: Grid;
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
-  display?: {
-    geometry: State<boolean>;
-    mesh: State<boolean>;
-    deformedShape: State<boolean>;
-    loads: State<boolean>;
-    supports: State<boolean>;
-    pointResult?: State<PointResultsDisplay>;
-  };
+  display?: Display;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -68,9 +57,9 @@ export function getViewer({
   controls.addEventListener("change", render);
 
   // Objects
-  grid = {
-    size: grid?.size ?? van.state(10),
-    division: grid?.division ?? van.state(20),
+  const grid = {
+    size: display?.grid?.size ?? van.state(10),
+    division: display?.grid?.division ?? van.state(20),
   };
 
   scene.add(getGrid({ grid, render }));

@@ -9,5 +9,4 @@ export { getToolbar } from "./toolbar/getToolbar";
 export { ToolbarMode } from "./toolbar/getToolbar";
 export { getReport } from "./report/getReport";
 
-export type { Grid } from "./viewer/grid/getGrid";
 export type { Display } from "./display/getDisplay";

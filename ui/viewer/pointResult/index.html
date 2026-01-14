@@ -62,12 +62,11 @@
       import van from "vanjs-core";
       import { getViewer } from "../getViewer.ts";
 
-      const grid = {
-        size: van.state(10),
-        division: van.state(20),
-      };
-
       const display = {
+        grid: {
+          size: van.state(10),
+          division: van.state(20),
+        },
         geometry: van.state(false),
         mesh: van.state(true),
         loads: van.state(false),
@@ -104,7 +103,6 @@
 
       document.body.append(
         getViewer({
-          grid,
           mesh,
           display,
         })

@@ -6,6 +6,7 @@ import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import "./styles.css";
 
 export type Display = {
+  grid?: Grid;
   geometry: State<boolean>;
   mesh: State<boolean>;
   deformedShape: State<boolean>;
@@ -14,14 +15,10 @@ export type Display = {
   pointResult?: State<PointResultsDisplay>;
 };
 
-export function getDisplay({
-  grid,
-  display,
-}: {
-  grid?: Grid;
-  display?: Display;
-}): HTMLElement {
+export function getDisplay({ display }: { display?: Display }): HTMLElement {
   const container = document.createElement("div");
+
+  const grid = display?.grid;
 
   const template = () => html`
     <details id="display">
