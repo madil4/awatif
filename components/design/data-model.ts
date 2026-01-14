@@ -7,7 +7,13 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
 
   getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
 
-  getDesign: ({ params }: { params: Params }) => unknown;
+  getElementsProps: ({ params }: { params: Params }) => {
+    elasticity: number;
+    area: number;
+    momentInertia?: number;
+    shearModulus?: number;
+    torsionalConstant?: number;
+  };
 
   getReport: ({ params }: { params: Params }) => TemplateResult;
 };

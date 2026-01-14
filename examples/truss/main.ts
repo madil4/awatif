@@ -4,6 +4,7 @@ import {
   getMesh,
   getLoads,
   getSupports,
+  getElementsProps,
   getPositions,
   Geometry,
   Mesh,
@@ -147,8 +148,8 @@ export const components: Components = van.state(
           templateIndex: 0,
           geometry: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           params: {
-            width: 300,
-            depth: 300,
+            width: 1,
+            depth: 1,
             concreteGrade: "C30",
             steelGrade: "S400",
             steelArea: 400,
@@ -195,30 +196,28 @@ van.derive(() => {
   mesh.supports = supportsData.supports;
 });
 
+// Elements properties events
+van.derive(() => {
+  const elementsPropsData = getElementsProps({
+    geometryMapping: mesh.geometryMapping.val,
+    components: components.val, // Todo: get components from design components
+  });
+
+  mesh.elementsProps = elementsPropsData.elementsProps;
+});
+
 // Positions events
 van.derive(() => {
   if (!mesh.nodes.val || !mesh.elements.val) return;
-  if (!mesh.loads || !mesh.supports) return;
-
-  const defaultProps = {
-    elasticity: 50e6,
-    area: 0.001,
-    momentInertia: 8.333e-8,
-    shearModulus: 79.3e6,
-    torsionalConstant: 1.4e-7,
-  };
-
-  const elementsPropsMap = new Map<number, typeof defaultProps>();
-  mesh.elements.val.forEach((_, index) => {
-    elementsPropsMap.set(index, defaultProps);
-  });
+  if (!mesh.loads || !mesh.supports || !mesh.elementsProps) return;
+  console.log(mesh.elementsProps);
 
   const positions = getPositions(
     mesh.nodes.val,
     mesh.elements.val,
     mesh.loads,
     mesh.supports,
-    elementsPropsMap
+    mesh.elementsProps
   );
 
   mesh.positions = positions;
