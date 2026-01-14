@@ -82,15 +82,16 @@ body {
 #layout .bottom {
   display: flex;
   flex-wrap: wrap-reverse;
-  align-items: flex-start;
+  align-items: flex-end;
   position: relative;
   z-index: 1; /* Above the viewer */
-  margin-top: auto;
+  flex: 1;
 }
 
 #layout .bottom-left {
   display: flex;
   flex-direction: column;
+  margin-top: auto;
 }
 
 #layout .tooltips {
@@ -101,16 +102,16 @@ body {
 #layout .canvas {
   display: flex;
   margin-left: auto;
-  height: 93vh;
+  /* height: 93vh; */
   width: 50% !important;
   flex-direction: row;
   gap: 6px;
-  padding: 10px;
+  padding: 10px 10px 0 10px;
 }
 
 @media (max-width: 768px) {
   #layout .canvas {
-    height: 50vh;
+    /* height: 50vh; */
     width: 100% !important;
   }
 }
