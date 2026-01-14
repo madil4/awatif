@@ -63,11 +63,6 @@ body {
 
 #layout .viewer {
   grid-area: 1 / 1 / 3 / 3;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   z-index: 0;
 }
 
