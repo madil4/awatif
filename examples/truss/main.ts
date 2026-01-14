@@ -14,9 +14,7 @@ import {
   getLayout,
   getViewer,
   ToolbarMode,
-  getToolbar,
   getComponents,
-  getParameters,
   Display,
   getReport,
 } from "@awatif/ui";
@@ -227,7 +225,6 @@ export const display: Display = {
   supports: van.state(true),
 };
 export const report = getReport();
-export const activeComponent = van.state<number | null>(null);
 
 document.body.append(
   getLayout({
@@ -239,14 +236,7 @@ document.body.append(
       toolbarMode,
       geometry,
       components,
-      activeComponent,
     }),
-    parameters: getParameters({
-      components,
-      activeComponent,
-      toolbarMode,
-    }),
-    toolbar: getToolbar({ toolbarMode }),
     tooltips: getTooltips(),
   })
 );
