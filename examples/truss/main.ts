@@ -234,9 +234,9 @@ document.body.append(
     header: [report.button],
     canvas: report.panel,
     components: getComponents({
-      componentsBarMode,
       geometry,
       components,
+      componentsBarMode,
     }),
     tooltips: getTooltips(),
   })

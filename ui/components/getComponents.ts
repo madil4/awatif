@@ -8,13 +8,13 @@ import { getComponentsBar } from "./componentsBar/getComponentsBar";
 import "./styles.css";
 
 export function getComponents({
-  componentsBarMode,
   geometry,
   components,
+  componentsBarMode,
 }: {
-  componentsBarMode: State<ComponentsType | null>;
   geometry: Geometry;
   components: Components;
+  componentsBarMode: State<ComponentsType | null>;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<number | null>(null);
