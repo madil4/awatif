@@ -4,13 +4,18 @@ import { State } from "vanjs-core";
 
 import "./styles.css";
 
+export enum ToolbarButtons {
+  REPORT = "Report",
+  LOGIN = "Login",
+}
+
 export function getToolbar({
-  buttons,
   activeButton,
 }: {
-  buttons: string[];
-  activeButton: State<string | null>;
+  activeButton: State<ToolbarButtons | null>;
 }): HTMLElement {
+  const buttons = [ToolbarButtons.REPORT, ToolbarButtons.LOGIN];
+
   const container = document.createElement("div");
   container.id = "toolbar";
 

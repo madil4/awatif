@@ -18,6 +18,7 @@ import {
   Display,
   getCanvas,
   getToolbar,
+  ToolbarButtons,
 } from "@awatif/ui";
 
 export const geometry: Geometry = {
@@ -216,10 +217,22 @@ van.derive(() => {
 });
 
 // Toolbar events
-export const activeButton = van.state<string | null>(null);
+export const activeButton = van.state<ToolbarButtons | null>(null);
 const activeCanvas = van.state(document.createElement("div"));
 
-van.derive(() => {});
+van.derive(() => {
+  if (activeButton.val === ToolbarButtons.REPORT) {
+    const canvasContent = document.createElement("div");
+    canvasContent.innerHTML = "<p>Canvas content goes here</p>";
+    activeCanvas.val = canvasContent;
+  } else if (activeButton.val === ToolbarButtons.LOGIN) {
+    const loginContent = document.createElement("div");
+    loginContent.innerHTML = "<p>Login content goes here</p>";
+    activeCanvas.val = loginContent;
+  } else {
+    activeCanvas.val = document.createElement("div");
+  }
+});
 
 export const display: Display = {
   grid: {
@@ -237,8 +250,8 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: getToolbar({ buttons: ["Canvas", "Login"], activeButton }),
-    canvas: getCanvas({ activeCanvas }),
+    toolbar: getToolbar({ activeButton }),
+    canvas: getCanvas({ activeCanvas, activeButton }),
     components: getComponents({
       geometry,
       components,
