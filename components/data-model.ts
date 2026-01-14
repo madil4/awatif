@@ -1,5 +1,6 @@
 import type { State } from "vanjs-core";
 
+// Geometry
 export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
   lines: State<Map<number, [number, number]>>;
@@ -11,6 +12,7 @@ export type Geometry = {
   } | null>;
 };
 
+// Mesh
 export type Mesh = {
   nodes: State<number[][]>; // [[x, y, z], [x, y, z], ...]
   elements: State<number[][]>; // [[node1, node2], ...]
@@ -52,3 +54,19 @@ export type Mesh = {
   shears?: State<Map<number, [number, number]>>;
   bendings?: State<Map<number, [number, number]>>;
 };
+
+// Components
+export enum ComponentsType {
+  MESH,
+  LOADS,
+  SUPPORTS,
+}
+
+export type Component = {
+  name: string;
+  templateIndex: number;
+  geometry: number[];
+  params: Record<string, unknown>;
+};
+
+export type Components = State<Map<ComponentsType, Component[]>>;

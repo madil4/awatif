@@ -1,5 +1,5 @@
-import { Geometry } from "../data-model";
-import { Elements, Components, Nodes, MeshTemplate } from "./data-model";
+import { Components, Geometry } from "../data-model";
+import { Elements, Nodes, MeshTemplate } from "./data-model";
 import { templates } from "../templates";
 
 export function getMesh({
