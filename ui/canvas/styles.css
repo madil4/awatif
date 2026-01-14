@@ -10,7 +10,6 @@
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
-  pointer-events: auto;
 }
 
 #canvas.open {
