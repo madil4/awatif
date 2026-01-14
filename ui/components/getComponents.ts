@@ -1,21 +1,18 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { Geometry, Components } from "@awatif/components";
+import { Geometry, Components, ComponentsType } from "@awatif/components";
 import { getList } from "./list/getList";
 import { getParameters } from "./parameters/getParameters";
-import {
-  getComponentsBar,
-  ToolbarMode,
-} from "./componentsBar/getComponentsBar";
+import { getComponentsBar } from "./componentsBar/getComponentsBar";
 
 import "./styles.css";
 
 export function getComponents({
-  toolbarMode,
+  componentsBarMode,
   geometry,
   components,
 }: {
-  toolbarMode: State<ToolbarMode | null>;
+  componentsBarMode: State<ComponentsType | null>;
   geometry: Geometry;
   components: Components;
 }): HTMLElement {
@@ -23,7 +20,7 @@ export function getComponents({
   const activeComponent = van.state<number | null>(null);
 
   const list = getList({
-    toolbarMode,
+    componentsBarMode,
     geometry,
     components,
     activeComponent,
@@ -32,10 +29,10 @@ export function getComponents({
   const parameters = getParameters({
     activeComponent,
     components,
-    toolbarMode,
+    componentsBarMode,
   });
 
-  const componentsBar = getComponentsBar({ toolbarMode });
+  const componentsBar = getComponentsBar({ componentsBarMode });
 
   const template = html`
     <div class="components">

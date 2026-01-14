@@ -7,13 +7,13 @@ import {
   getPositions,
   Geometry,
   Mesh,
+  ComponentsType,
 } from "@awatif/components";
 import {
   getDisplay,
   getTooltips,
   getLayout,
   getViewer,
-  ToolbarMode,
   getComponents,
   Display,
   getReport,
@@ -61,7 +61,7 @@ export const mesh: Mesh = {
 export const components: Components = van.state(
   new Map([
     [
-      "MESH",
+      ComponentsType.MESH,
       [
         {
           name: "Top Chords",
@@ -84,7 +84,7 @@ export const components: Components = van.state(
       ],
     ],
     [
-      "LOADS",
+      ComponentsType.LOADS,
       [
         {
           name: "Point Load at Node 5",
@@ -107,7 +107,7 @@ export const components: Components = van.state(
       ],
     ],
     [
-      "SUPPORTS",
+      ComponentsType.SUPPORTS,
       [
         {
           name: "Left Support",
@@ -205,12 +205,13 @@ van.derive(() => {
 });
 
 // Toolbar events
-export const toolbarMode = van.state<ToolbarMode | null>(null);
+export const componentsBarMode = van.state<ComponentsType | null>(null);
 
 van.derive(() => {
-  if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
-  if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
-  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
+  if (componentsBarMode.val === ComponentsType.MESH) display.mesh.val = true;
+  if (componentsBarMode.val === ComponentsType.LOADS) display.loads.val = true;
+  if (componentsBarMode.val === ComponentsType.SUPPORTS)
+    display.supports.val = true;
 });
 
 export const display: Display = {
@@ -233,7 +234,7 @@ document.body.append(
     header: [report.button],
     canvas: report.panel,
     components: getComponents({
-      toolbarMode,
+      componentsBarMode,
       geometry,
       components,
     }),

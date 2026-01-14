@@ -1,17 +1,21 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { Geometry, Components, templates } from "@awatif/components";
-import { ToolbarMode } from "../componentsBar/getComponentsBar";
+import {
+  Geometry,
+  Components,
+  templates,
+  ComponentsType,
+} from "@awatif/components";
 
 import "./styles.css";
 
 export function getList({
-  toolbarMode,
+  componentsBarMode,
   geometry,
   components,
   activeComponent,
 }: {
-  toolbarMode: State<ToolbarMode | null>;
+  componentsBarMode: State<ComponentsType | null>;
   geometry: Geometry;
   components: Components;
   activeComponent: State<number | null>;
@@ -20,16 +24,16 @@ export function getList({
   const editingIndex = van.state<number | null>(null);
   let isSyncing = false;
 
-  const getKey = () => ToolbarMode[toolbarMode.val!];
+  const getKey = () => componentsBarMode.val as ComponentsType;
   const getList = () => components.val.get(getKey()) ?? [];
   const usesPoints = () =>
-    toolbarMode.val === ToolbarMode.LOADS ||
-    toolbarMode.val === ToolbarMode.SUPPORTS;
+    componentsBarMode.val === ComponentsType.LOADS ||
+    componentsBarMode.val === ComponentsType.SUPPORTS;
 
   // Sync activeComponent -> geometry.selection
   van.derive(() => {
     const idx = activeComponent.val;
-    if (idx === null || toolbarMode.val === null) {
+    if (idx === null || componentsBarMode.val === null) {
       if (!isSyncing && geometry.selection.val !== null) {
         isSyncing = true;
         geometry.selection.val = null;
@@ -50,7 +54,7 @@ export function getList({
   van.derive(() => {
     const selection = geometry.selection.val;
     const idx = activeComponent.val;
-    if (isSyncing || idx === null || toolbarMode.val === null) return;
+    if (isSyncing || idx === null || componentsBarMode.val === null) return;
 
     const selectedGeometry = usesPoints()
       ? selection?.points ?? []
@@ -89,7 +93,7 @@ export function getList({
 
   // Reset on toolbar mode change or when details closes
   van.derive(() => {
-    toolbarMode.val;
+    componentsBarMode.val;
     activeComponent.val = null;
   });
 
@@ -103,13 +107,13 @@ export function getList({
   });
 
   function template() {
-    if (toolbarMode.val === null) return html``;
+    if (componentsBarMode.val === null) return html``;
 
     const list = getList();
     const isOpen =
-      toolbarMode.val === ToolbarMode.MESH ||
-      toolbarMode.val === ToolbarMode.LOADS ||
-      toolbarMode.val === ToolbarMode.SUPPORTS;
+      componentsBarMode.val === ComponentsType.MESH ||
+      componentsBarMode.val === ComponentsType.LOADS ||
+      componentsBarMode.val === ComponentsType.SUPPORTS;
 
     return html`
       <details
@@ -201,7 +205,7 @@ export function getList({
 
   // Actions
   function copyTemplate(baseName: string, templateIndex: number) {
-    if (toolbarMode.val === null) return;
+    if (componentsBarMode.val === null) return;
 
     const list = getList();
     const names = new Set(list.map((c) => c.name));
@@ -224,7 +228,7 @@ export function getList({
   }
 
   function commitRename(index: number, newName: string) {
-    if (toolbarMode.val === null) return;
+    if (componentsBarMode.val === null) return;
 
     const list = getList();
     const trimmed = newName.trim();
@@ -242,7 +246,7 @@ export function getList({
   }
 
   function deleteComponent(index: number) {
-    if (toolbarMode.val === null) return;
+    if (componentsBarMode.val === null) return;
     if (activeComponent.val === index) activeComponent.val = null;
 
     const updated = getList().filter((_, i) => i !== index);

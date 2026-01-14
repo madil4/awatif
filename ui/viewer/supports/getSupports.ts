@@ -1,9 +1,10 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import type {
+import {
   Geometry,
   Components,
   templates as Templates,
+  ComponentsType,
 } from "@awatif/components";
 
 export function getSupports({
@@ -36,12 +37,12 @@ export function getSupports({
       group.remove(group.children[0]);
     }
 
-    const supportComponents = components.val.get("SUPPORTS") ?? [];
+    const supportComponents = components.val.get(ComponentsType.SUPPORTS) ?? [];
     const points = geometry.points.val;
 
     supportComponents.forEach((component) => {
       // Get the template for this component
-      const supportTemplates = templates.get("SUPPORTS");
+      const supportTemplates = templates.get(ComponentsType.SUPPORTS);
       if (!supportTemplates) return;
 
       const template = supportTemplates[component.templateIndex];
