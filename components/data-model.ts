@@ -56,6 +56,7 @@ export enum ComponentsType {
   MESH,
   LOADS,
   SUPPORTS,
+  DESIGN,
 }
 
 type Component = {
