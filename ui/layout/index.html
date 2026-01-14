@@ -18,7 +18,7 @@
       #layout .header {
         background: #4a3a3a;
       }
-      #layout .footer {
+      #layout .bottom-left {
         background: #3a3a4a;
       }
       #layout .components {
@@ -29,9 +29,6 @@
       }
       #layout .tooltips {
         background: #5a4a4a;
-      }
-      #layout .parameters {
-        background: #3a4a5a;
       }
       #layout .canvas {
         background: #3a5a4a;
@@ -44,12 +41,10 @@
 
       const viewer = (document.createElement("div").textContent =
         "--------- Viewer Element ------------");
-      const header1 = (document.createElement("div").textContent =
-        "--------- Header Element 1 ------------");
-      const header2 = (document.createElement("div").textContent =
-        "--------- Header Element 2 ------------");
       const display = (document.createElement("div").textContent =
         "--------- Display Element ------------");
+      const header = (document.createElement("div").textContent =
+        "--------- Header Element ------------");
       const components = (document.createElement("div").textContent =
         "--------- Components Element ------------");
       const tooltips = (document.createElement("div").textContent =
@@ -60,8 +55,8 @@
       document.body.append(
         getLayout({
           viewer,
-          header: [header1, header2],
           display,
+          header,
           components,
           tooltips,
           canvas,

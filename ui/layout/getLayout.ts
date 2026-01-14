@@ -4,15 +4,15 @@ import "./styles.css";
 
 export function getLayout({
   viewer,
-  header,
   display,
+  header,
   components,
   tooltips,
   canvas,
 }: {
   viewer?: HTMLElement;
-  header?: HTMLElement[];
   display?: HTMLElement;
+  header?: HTMLElement[];
   components?: HTMLElement;
   tooltips?: HTMLElement;
   canvas?: HTMLElement;
