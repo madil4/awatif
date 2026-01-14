@@ -29,6 +29,9 @@ export function getList({
   const usesPoints = () =>
     componentsBarMode.val === ComponentsType.LOADS ||
     componentsBarMode.val === ComponentsType.SUPPORTS;
+  const usesLines = () =>
+    componentsBarMode.val === ComponentsType.MESH ||
+    componentsBarMode.val === ComponentsType.DESIGN;
 
   // Sync activeComponent -> geometry.selection
   van.derive(() => {
@@ -44,9 +47,13 @@ export function getList({
 
     const componentGeometry = getList()[idx]?.geometry ?? [];
     isSyncing = true;
-    geometry.selection.val = usesPoints()
-      ? { points: componentGeometry, lines: [] }
-      : { points: [], lines: componentGeometry };
+    if (usesPoints()) {
+      geometry.selection.val = { points: componentGeometry, lines: [] };
+    } else if (usesLines()) {
+      geometry.selection.val = { points: [], lines: componentGeometry };
+    } else {
+      geometry.selection.val = null;
+    }
     isSyncing = false;
   });
 
@@ -56,9 +63,12 @@ export function getList({
     const idx = activeComponent.val;
     if (isSyncing || idx === null || componentsBarMode.val === null) return;
 
-    const selectedGeometry = usesPoints()
-      ? selection?.points ?? []
-      : selection?.lines ?? [];
+    let selectedGeometry: number[] = [];
+    if (usesPoints()) {
+      selectedGeometry = selection?.points ?? [];
+    } else if (usesLines()) {
+      selectedGeometry = selection?.lines ?? [];
+    }
 
     const list = getList();
     const current = list[idx];
@@ -113,7 +123,8 @@ export function getList({
     const isOpen =
       componentsBarMode.val === ComponentsType.MESH ||
       componentsBarMode.val === ComponentsType.LOADS ||
-      componentsBarMode.val === ComponentsType.SUPPORTS;
+      componentsBarMode.val === ComponentsType.SUPPORTS ||
+      componentsBarMode.val === ComponentsType.DESIGN;
 
     return html`
       <details
