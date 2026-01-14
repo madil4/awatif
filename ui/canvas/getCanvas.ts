@@ -1,29 +1,30 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
+import { ToolbarButtons } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getCanvas({
-  activeCanvas,
-  activeButton,
+  canvas,
+  toolbarButton,
 }: {
-  activeCanvas: State<HTMLElement>;
-  activeButton: State<string | null>;
+  canvas: State<HTMLDivElement | null>;
+  toolbarButton: State<ToolbarButtons | null>;
 }): HTMLElement {
   const panelContainer = document.createElement("div");
   panelContainer.id = "canvas-panel";
 
-  const panelTemplate = () => html`
-    <div class="canvas-content ${activeButton.val ? "open" : ""}">
+  const template = () => html`
+    <div class="canvas-content ${toolbarButton.val ? "open" : ""}">
       <div class="canvas-header">
-        <h2>${activeButton.val}</h2>
+        <h2>${toolbarButton.val}</h2>
       </div>
-      <div class="canvas-body">${activeCanvas.val}</div>
+      <div class="canvas-body">${canvas.val?.innerHTML}</div>
     </div>
   `;
 
   van.derive(() => {
-    render(panelTemplate(), panelContainer);
+    render(template(), panelContainer);
   });
 
   return panelContainer;

@@ -10,21 +10,21 @@ export enum ToolbarButtons {
 }
 
 export function getToolbar({
-  activeButton,
+  toolbarButton,
 }: {
-  activeButton: State<ToolbarButtons | null>;
+  toolbarButton: State<ToolbarButtons | null>;
 }): HTMLElement {
   const buttons = [ToolbarButtons.REPORT, ToolbarButtons.LOGIN];
 
   const container = document.createElement("div");
   container.id = "toolbar";
 
-  const toolbarTemplate = () => html`
+  const template = () => html`
     ${buttons.map(
       (button) => html`
         <button
           @click=${() => {
-            activeButton.val = activeButton.val === button ? null : button;
+            toolbarButton.val = toolbarButton.val === button ? null : button;
           }}
         >
           ${button}
@@ -34,7 +34,7 @@ export function getToolbar({
   `;
 
   van.derive(() => {
-    render(toolbarTemplate(), container);
+    render(template(), container);
   });
 
   return container;
