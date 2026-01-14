@@ -5,7 +5,7 @@
 }
 
 .list,
-.toolbar,
+.components-bar,
 .parameters {
   pointer-events: auto;
   width: fit-content;

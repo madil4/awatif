@@ -1,7 +1,7 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { Geometry, Components, templates } from "@awatif/components";
-import { ToolbarMode } from "../toolbar/getToolbar";
+import { ToolbarMode } from "../componentsBar/getComponentsBar";
 
 import "./styles.css";
 
