@@ -1,5 +1,6 @@
-import { Components, LoadTemplate } from "./data-model";
+import { LoadTemplate } from "./data-model";
 import { templates } from "../templates";
+import { Components } from "../data-model";
 
 export function getLoads({
   geometryMapping,

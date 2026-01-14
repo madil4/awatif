@@ -16,16 +16,3 @@ export type MeshTemplate<Params extends Record<string, unknown>> = {
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];
 export type Elements = NonNullable<Mesh["elements"]>["val"];
-
-// components
-export type Component = {
-  name: string;
-  templateIndex: number;
-  geometry: number[];
-  params: Record<string, unknown>;
-};
-
-export type Components = State<Map<string, Component[]>>;
-
-// Deprecated: use Components instead
-export type MeshComponents = State<Component[]>;

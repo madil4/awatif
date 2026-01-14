@@ -24,13 +24,3 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
     position: [number, number, number];
   }) => THREE.Object3D;
 };
-
-// components
-export type Component = {
-  name: string;
-  templateIndex: number;
-  geometry: number[];
-  params: Record<string, unknown>;
-};
-
-export type Components = State<Map<string, Component[]>>;

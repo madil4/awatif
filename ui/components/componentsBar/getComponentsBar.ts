@@ -1,33 +1,30 @@
 import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
+import { ComponentsType } from "@awatif/components";
 
 import "./styles.css";
 
-export enum ToolbarMode {
-  MESH,
-  LOADS,
-  SUPPORTS,
-}
-
-export type Toolbar = {
-  toolbarMode: State<ToolbarMode | null>;
+export type ComponentsBarMode = {
+  componentsBarMode: State<ComponentsType | null>;
 };
 
-export function getComponentsBar({ toolbarMode }: Toolbar): HTMLElement {
+export function getComponentsBar({
+  componentsBarMode,
+}: ComponentsBarMode): HTMLElement {
   const container = document.createElement("div");
-  const modes = getComponentsBarModes();
+  const types = getComponentsTypes();
 
   const template = () => html`
     <div id="components-bar">
-      ${modes.map(
+      ${types.map(
         (mode) => html`
           <button
-            class="components-bar-button ${toolbarMode.val === mode.value
+            class="components-bar-button ${componentsBarMode.val === mode.value
               ? "active"
               : ""}"
             @click=${() =>
-              (toolbarMode.val =
-                toolbarMode.val === mode.value ? null : mode.value)}
+              (componentsBarMode.val =
+                componentsBarMode.val === mode.value ? null : mode.value)}
           >
             ${mode.label}
           </button>
@@ -44,12 +41,12 @@ export function getComponentsBar({ toolbarMode }: Toolbar): HTMLElement {
 }
 
 // Utils
-function getComponentsBarModes() {
-  return Object.keys(ToolbarMode)
+function getComponentsTypes() {
+  return Object.keys(ComponentsType)
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({
       key,
-      value: ToolbarMode[key as keyof typeof ToolbarMode],
+      value: ComponentsType[key as keyof typeof ComponentsType],
       label: getDisplayName(key),
     }));
 

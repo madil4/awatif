@@ -1,4 +1,5 @@
-import { Components, SupportTemplate } from "./data-model";
+import { SupportTemplate } from "./data-model";
+import { Components, ComponentsType } from "../data-model";
 import { templates } from "../templates";
 
 export function getSupports({
@@ -19,7 +20,7 @@ export function getSupports({
     [boolean, boolean, boolean, boolean, boolean, boolean]
   >();
 
-  const supportComponents = components.get("SUPPORTS") ?? [];
+  const supportComponents = components.get(ComponentsType.SUPPORTS) ?? [];
 
   supportComponents.forEach((component) => {
     const template = templates.get("SUPPORTS")?.[
