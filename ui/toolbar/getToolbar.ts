@@ -4,17 +4,17 @@ import { State } from "vanjs-core";
 
 import "./styles.css";
 
-export enum ToolbarButtons {
+export enum CanvasButtons {
   REPORT = "Report",
   LOGIN = "Login",
 }
 
-export function getToolbar({
-  toolbarButton,
+export function getCanvasBar({
+  canvasButton,
 }: {
-  toolbarButton: State<ToolbarButtons | null>;
+  canvasButton: State<CanvasButtons | null>;
 }): HTMLElement {
-  const buttons = [ToolbarButtons.REPORT, ToolbarButtons.LOGIN];
+  const buttons = [CanvasButtons.REPORT, CanvasButtons.LOGIN];
 
   const container = document.createElement("div");
   container.id = "toolbar";
@@ -24,7 +24,7 @@ export function getToolbar({
       (button) => html`
         <button
           @click=${() => {
-            toolbarButton.val = toolbarButton.val === button ? null : button;
+            canvasButton.val = canvasButton.val === button ? null : button;
           }}
         >
           ${button}

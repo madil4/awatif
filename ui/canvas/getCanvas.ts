@@ -1,22 +1,22 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { ToolbarButtons } from "../toolbar/getToolbar";
+import { CanvasButtons } from "../toolbar/getToolbar";
 
 import "./styles.css";
 
 export function getCanvas({
   canvas,
-  toolbarButton,
+  canvasButton,
 }: {
   canvas: State<HTMLDivElement | null>;
-  toolbarButton: State<ToolbarButtons | null>;
+  canvasButton: State<CanvasButtons | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
   const template = () => html`
-    <div id="canvas" class=" ${toolbarButton.val ? "open" : ""}">
+    <div id="canvas" class=" ${canvasButton.val ? "open" : ""}">
       <div class="canvas-header">
-        <h2>${toolbarButton.val}</h2>
+        <h2>${canvasButton.val}</h2>
       </div>
       <div class="canvas-body">${canvas.val}</div>
     </div>
