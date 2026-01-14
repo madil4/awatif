@@ -66,10 +66,6 @@ body {
   z-index: 0;
 }
 
-#layout .display {
-  grid-area: display;
-}
-
 #layout .header {
   grid-area: header;
   justify-self: end;
@@ -79,22 +75,25 @@ body {
   padding: 6px 6px 0 0;
 }
 
+#layout .display {
+  grid-area: display;
+}
+
 #layout .bottom-left {
   grid-area: bottom-left;
   align-self: end;
-  display: flex;
-  flex-direction: column;
 }
 
 #layout .canvas {
   grid-area: canvas;
   align-self: stretch;
-  display: flex;
   /* move to header */
+  display: flex;
   gap: 6px;
   padding: 10px;
 }
 
+/* Prevent layout elements from interfering with the viewer events */
 #layout .display,
 #layout .header,
 #layout .tooltips,
