@@ -12,7 +12,7 @@ export function getLayout({
 }: {
   viewer?: HTMLElement;
   display?: HTMLElement;
-  toolbar?: HTMLElement;
+  toolbar?: HTMLElement[];
   components?: HTMLElement;
   tooltips?: HTMLElement;
   canvas?: HTMLElement;

@@ -223,7 +223,6 @@ const emptyDiv = document.createElement("div");
 
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) canvas.val = emptyDiv;
-  else if (canvasButton.val === CanvasButtons.LOGIN) canvas.val = emptyDiv;
   else canvas.val = null;
 });
 
@@ -243,7 +242,7 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: getCanvasBar({ canvasButton }),
+    toolbar: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
       geometry,
