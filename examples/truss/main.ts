@@ -143,30 +143,6 @@ export const components: Components = van.state(
   ])
 );
 
-export const grid: Grid = {
-  size: van.state(10),
-  division: van.state(20),
-};
-
-export const display: Display = {
-  geometry: van.state(true),
-  mesh: van.state(true),
-  deformedShape: van.state(true),
-  loads: van.state(true),
-  supports: van.state(true),
-};
-
-export const toolbarMode = van.state<ToolbarMode | null>(null);
-export const activeComponent = van.state<number | null>(null);
-export const report = getReport();
-
-// Toolbar events
-van.derive(() => {
-  if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
-  if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
-  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
-});
-
 // Mesh events
 van.derive(() => {
   const meshData = getMesh({
@@ -236,6 +212,29 @@ van.derive(() => {
 
   mesh.positions = positions;
 });
+
+// Toolbar events
+export const toolbarMode = van.state<ToolbarMode | null>(null);
+
+van.derive(() => {
+  if (toolbarMode.val === ToolbarMode.MESH) display.mesh.val = true;
+  if (toolbarMode.val === ToolbarMode.LOADS) display.loads.val = true;
+  if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
+});
+
+export const grid: Grid = {
+  size: van.state(10),
+  division: van.state(20),
+};
+export const display: Display = {
+  geometry: van.state(true),
+  mesh: van.state(true),
+  deformedShape: van.state(true),
+  loads: van.state(true),
+  supports: van.state(true),
+};
+export const activeComponent = van.state<number | null>(null);
+export const report = getReport();
 
 document.body.append(
   getLayout({
