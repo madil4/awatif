@@ -9,7 +9,7 @@ export function getReport({
   components: Components["val"];
 }): HTMLDivElement {
   const container = document.createElement("div");
-  container.style.padding = "20px";
+  container.style.padding = "10px";
 
   const designComponents = components.get(ComponentsType.DESIGN) ?? [];
 
@@ -17,6 +17,8 @@ export function getReport({
   const toggleStates = new Map<string, boolean>();
 
   const renderReport = () => {
+    let isFirstLine = true;
+
     const reportTemplate = html`
       <div>
         ${designComponents.map((component) => {
@@ -35,7 +37,9 @@ export function getReport({
           return html`
             ${component.geometry.map((lineId) => {
               const toggleKey = `${component.name}-${lineId}`;
-              const isOpen = toggleStates.get(toggleKey) ?? false;
+              const defaultOpen = isFirstLine;
+              isFirstLine = false;
+              const isOpen = toggleStates.get(toggleKey) ?? defaultOpen;
 
               return html`
                 <div
