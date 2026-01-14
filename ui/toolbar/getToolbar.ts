@@ -18,7 +18,6 @@ export function getToolbar({
     ${buttons.map(
       (button) => html`
         <button
-          class="${activeButton.val === button ? "active" : ""}"
           @click=${() => {
             activeButton.val = activeButton.val === button ? null : button;
           }}
