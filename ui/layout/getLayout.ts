@@ -5,14 +5,14 @@ import "./styles.css";
 export function getLayout({
   viewer,
   display,
-  header,
+  toolbar,
   components,
   tooltips,
   canvas,
 }: {
   viewer?: HTMLElement;
   display?: HTMLElement;
-  header?: HTMLElement[];
+  toolbar?: HTMLElement;
   components?: HTMLElement;
   tooltips?: HTMLElement;
   canvas?: HTMLElement;
@@ -23,7 +23,7 @@ export function getLayout({
     <div id="layout">
       <div class="viewer">${viewer}</div>
       <div class="display">${display}</div>
-      <div class="header">${header}</div>
+      <div class="toolbar">${toolbar}</div>
       <div class="bottom-left">${components} ${tooltips}</div>
       <div class="canvas">${canvas}</div>
     </div>

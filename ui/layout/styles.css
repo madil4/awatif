@@ -51,7 +51,7 @@ body {
   min-height: 100%;
   display: grid;
   grid-template-areas:
-    "display header"
+    "display toolbar"
     "bottom-left canvas";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
@@ -66,8 +66,8 @@ body {
   z-index: 0;
 }
 
-#layout .header {
-  grid-area: header;
+#layout .toolbar {
+  grid-area: toolbar;
   justify-self: end;
   /* move to header */
   display: flex;
@@ -96,7 +96,7 @@ body {
 /* Prevent layout elements from interfering with the viewer events
 Don't forget to enable it back on the appended elements */
 #layout .display,
-#layout .header,
+#layout .toolbar,
 #layout .tooltips,
 #layout .bottom-left,
 #layout .canvas {
@@ -106,7 +106,7 @@ Don't forget to enable it back on the appended elements */
 @media (max-width: 768px) {
   #layout {
     grid-template-areas:
-      "display header"
+      "display toolbar"
       "canvas canvas"
       "bottom-left bottom-left";
     grid-template-columns: 1fr auto;
