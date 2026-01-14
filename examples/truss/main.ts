@@ -17,6 +17,7 @@ import {
   getComponents,
   Display,
   getReport,
+  getToolbar,
 } from "@awatif/ui";
 
 export const geometry: Geometry = {
@@ -214,6 +215,11 @@ van.derive(() => {
     display.supports.val = true;
 });
 
+// Toolbar events
+export const activeButton = van.state<string | null>(null);
+
+van.derive(() => {});
+
 export const display: Display = {
   grid: {
     size: van.state(10),
@@ -231,7 +237,7 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    header: [report.button],
+    header: [getToolbar({ buttons: ["Report", "User"], activeButton })],
     canvas: report.panel,
     components: getComponents({
       geometry,

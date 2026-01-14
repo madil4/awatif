@@ -1,0 +1,37 @@
+/* Toolbar Styles */
+#toolbar {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+#toolbar button {
+  padding: 6px 12px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#toolbar button:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+#toolbar button:active {
+  background: var(--bg-active);
+}
+
+#toolbar button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
+}
