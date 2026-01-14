@@ -1,5 +1,5 @@
 #components {
-  pointer-events: auto;
+  width: fit-content; /* Fix blocking the viewer pointer events */
 }
 
 #components .components-column {

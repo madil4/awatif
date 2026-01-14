@@ -4,7 +4,7 @@
   padding: 4px 10px;
   gap: 4px;
   margin-bottom: 10px;
-  pointer-events: auto;
+  width: fit-content; /* Fix blocking the viewer pointer events */
 
   color: var(--text-secondary);
   font-size: 0.8rem;

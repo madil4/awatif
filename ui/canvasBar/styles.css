@@ -1,5 +1,4 @@
 #toolbar {
-  pointer-events: auto;
   display: flex;
   gap: 8px;
 }
