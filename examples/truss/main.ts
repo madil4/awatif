@@ -139,6 +139,24 @@ export const components: Components = van.state(
         },
       ],
     ],
+    [
+      ComponentsType.DESIGN,
+      [
+        {
+          name: "EN RC Column",
+          templateIndex: 0,
+          geometry: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          params: {
+            width: 300,
+            depth: 300,
+            concreteGrade: "C30",
+            steelGrade: "S400",
+            steelArea: 400,
+            cover: 40,
+          },
+        },
+      ],
+    ],
   ])
 );
 
