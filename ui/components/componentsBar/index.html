@@ -13,13 +13,13 @@
   <body>
     <script type="module">
       import van from "vanjs-core";
-      import { getComponentsBar, ToolbarMode } from "./getComponentsBar.ts";
+      import { getComponentsBar } from "./getComponentsBar.ts";
 
-      const toolbarMode = van.state(ToolbarMode.GEOMETRY);
+      const componentsBarMode = van.state(null);
 
-      van.derive(() => console.log(toolbarMode.val));
+      van.derive(() => console.log(componentsBarMode.val));
 
-      document.body.append(getComponentsBar({ toolbarMode }));
+      document.body.append(getComponentsBar({ componentsBarMode }));
     </script>
   </body>
 </html>
