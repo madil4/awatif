@@ -109,9 +109,11 @@ body {
 }
 
 @media (max-width: 768px) {
+  #layout .bottom {
+    flex-direction: column-reverse;
+  }
   #layout .canvas {
-    /* height: 50vh; */
-    width: 100% !important;
+    flex: 1;
   }
 }
 
