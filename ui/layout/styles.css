@@ -70,10 +70,6 @@ body {
   grid-area: toolbar;
   justify-self: end;
   align-self: start;
-  /* move to header */
-  display: flex;
-  gap: 6px;
-  padding: 6px 6px 0 0;
 }
 
 #layout .display {
@@ -89,9 +85,6 @@ body {
 #layout .canvas {
   grid-area: canvas;
   align-self: stretch;
-  /* move to header */
-  display: flex;
-  gap: 6px;
   padding: 10px;
 }
 
