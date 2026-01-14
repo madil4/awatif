@@ -16,7 +16,7 @@ import {
   getViewer,
   getComponents,
   Display,
-  getReport,
+  getCanvas,
   getToolbar,
 } from "@awatif/ui";
 
@@ -217,6 +217,7 @@ van.derive(() => {
 
 // Toolbar events
 export const activeButton = van.state<string | null>(null);
+const activeCanvas = van.state(document.createElement("div"));
 
 van.derive(() => {});
 
@@ -231,14 +232,13 @@ export const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
 };
-export const report = getReport();
 
 document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: getToolbar({ buttons: ["Report", "Login"], activeButton }),
-    canvas: report.panel,
+    toolbar: getToolbar({ buttons: ["Canvas", "Login"], activeButton }),
+    canvas: getCanvas({ activeCanvas }),
     components: getComponents({
       geometry,
       components,

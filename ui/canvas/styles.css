@@ -1,10 +1,10 @@
-/* Report Button Styles */
-#report-button {
+/* Canvas Button Styles */
+#canvas-button {
   display: inline-block;
   pointer-events: auto;
 }
 
-#report-button button {
+#canvas-button button {
   padding: 6px 12px;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -18,24 +18,24 @@
   -webkit-user-select: none;
 }
 
-#report-button button:hover {
+#canvas-button button:hover {
   background: var(--bg-hover);
   border-color: var(--accent);
 }
 
-#report-button button:active {
+#canvas-button button:active {
   background: var(--bg-active);
 }
 
-/* Report Panel Styles */
-#report-panel {
+/* Canvas Panel Styles */
+#canvas-panel {
   flex: 1;
   pointer-events: auto;
   width: 100%;
   height: 100%;
 }
 
-.report-content {
+.canvas-content {
   width: 100%;
   height: 100%;
   background: var(--bg-secondary);
@@ -49,14 +49,14 @@
   -webkit-user-select: none;
 }
 
-.report-content.open {
+.canvas-content.open {
   display: flex;
   pointer-events: auto; /* Canvas disable this by default,
    It is enabled here so it doesn't interfere with the viewer pointer events */
 }
 
-/* Report Header */
-.report-header {
+/* Canvas Header */
+.canvas-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,7 +65,7 @@
   background: var(--bg-tertiary);
 }
 
-.report-header h2 {
+.canvas-header h2 {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 500;
@@ -98,8 +98,8 @@
   background: var(--bg-active);
 }
 
-/* Report Body */
-.report-body {
+/* Canvas Body */
+.canvas-body {
   flex: 1;
   padding: 12px;
   overflow-y: auto;
@@ -108,19 +108,19 @@
 }
 
 /* Scrollbar Styling */
-.report-body::-webkit-scrollbar {
+.canvas-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.report-body::-webkit-scrollbar-track {
+.canvas-body::-webkit-scrollbar-track {
   background: var(--bg-secondary);
 }
 
-.report-body::-webkit-scrollbar-thumb {
+.canvas-body::-webkit-scrollbar-thumb {
   background: var(--bg-hover);
   border-radius: 4px;
 }
 
-.report-body::-webkit-scrollbar-thumb:hover {
+.canvas-body::-webkit-scrollbar-thumb:hover {
   background: var(--bg-active);
 }

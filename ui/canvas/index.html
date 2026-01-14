@@ -3,16 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Awatif UI - Report</title>
+    <title>Awatif UI - Canvas</title>
     <link rel="stylesheet" href="../layout/styles.css" />
   </head>
   <body>
     <script type="module">
-      import { getReport } from "./getReport.ts";
+      import van from "vanjs-core";
+      import { getCanvas } from "./getCanvas.ts";
 
-      const report = getReport();
+      const activeCanvas = van.state(document.createElement("div"));
+      const canvas = getCanvas({ activeCanvas });
 
-      document.body.append(report.button, report.panel);
+      document.body.append(canvas);
     </script>
   </body>
 </html>
