@@ -54,10 +54,10 @@ export const geometry: Geometry = {
 export const mesh: Mesh = {
   nodes: van.state([]),
   elements: van.state([]),
-  geometryMapping: {
+  geometryMapping: van.state({
     pointToNodes: new Map(),
     lineToElements: new Map(),
-  },
+  }),
 };
 
 export const components: Components = van.state(
@@ -154,16 +154,13 @@ van.derive(() => {
 
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
-  mesh.geometryMapping = meshData.geometryMapping;
+  mesh.geometryMapping.val = meshData.geometryMapping;
 });
 
 // Loads events
 van.derive(() => {
-  if (!mesh.geometryMapping) return;
-  mesh.nodes.val; // to trigger re-assigning of geometryMapping
-
   const loadsData = getLoads({
-    geometryMapping: mesh.geometryMapping,
+    geometryMapping: mesh.geometryMapping.val,
     components: components.val,
   });
 
@@ -172,11 +169,8 @@ van.derive(() => {
 
 // Supports events
 van.derive(() => {
-  if (!mesh.geometryMapping) return;
-  mesh.nodes.val; // to trigger re-assigning of geometryMapping
-
   const supportsData = getSupports({
-    geometryMapping: mesh.geometryMapping,
+    geometryMapping: mesh.geometryMapping.val,
     components: components.val,
   });
 
@@ -232,27 +226,27 @@ export const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
 };
-export const activeComponent = van.state<number | null>(null);
 export const report = getReport();
+export const activeComponent = van.state<number | null>(null);
 
 document.body.append(
   getLayout({
-    header: [report.button],
     display: getDisplay({ display }),
+    viewer: getViewer({ geometry, mesh, components, display }),
+    header: [report.button],
+    canvas: report.panel,
     components: getComponents({
       toolbarMode,
       geometry,
       components,
       activeComponent,
     }),
-    toolbar: getToolbar({ toolbarMode }),
     parameters: getParameters({
       components,
       activeComponent,
       toolbarMode,
     }),
+    toolbar: getToolbar({ toolbarMode }),
     tooltips: getTooltips(),
-    viewer: getViewer({ geometry, mesh, components, display }),
-    canvas: report.panel,
   })
 );
