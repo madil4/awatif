@@ -7,13 +7,7 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
 
   getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
 
-  getDesign: ({ params }: { params: Params }) => {
-    design: {
-      // Placeholder: design-specific data structure
-      // This could include material properties, dimensions, etc.
-      [key: string]: unknown;
-    };
-  };
+  getDesign: ({ params }: { params: Params }) => unknown;
 
-  getReport?: ({ params }: { params: Params }) => HTMLElement;
+  getReport: ({ params }: { params: Params }) => TemplateResult;
 };
