@@ -216,7 +216,7 @@ van.derive(() => {
     display.supports.val = true;
 });
 
-// Toolbar events
+// Canvas events
 export const canvasButton = van.state<CanvasButtons | null>(null);
 export const canvas = van.state<HTMLDivElement | null>(null);
 const emptyDiv = document.createElement("div");
