@@ -5,6 +5,6 @@ export { getComponents } from "./components/getComponents";
 export { getTooltips } from "./tooltips/getTooltips";
 export { getTables } from "./tables/getTables";
 export { getCanvas } from "./canvas/getCanvas";
-export { getCanvasBar, CanvasButtons } from "./toolbar/getToolbar";
+export { getCanvasBar, CanvasButtons } from "./canvasBar/getCanvasBar";
 
 export type { Display } from "./display/getDisplay";

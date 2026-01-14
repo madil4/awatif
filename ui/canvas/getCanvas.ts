@@ -1,6 +1,6 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { CanvasButtons } from "../toolbar/getToolbar";
+import { CanvasButtons } from "../canvasBar/getCanvasBar";
 
 import "./styles.css";
 
