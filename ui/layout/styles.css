@@ -82,6 +82,7 @@ body {
 #layout .bottom {
   display: flex;
   flex-wrap: wrap-reverse;
+  justify-content: space-between;
   align-items: flex-end;
   position: relative;
   z-index: 1; /* Above the viewer */
@@ -101,7 +102,7 @@ body {
 
 #layout .canvas {
   display: flex;
-  flex: 1;
+  flex: 0 0 50%;
   align-self: stretch;
   flex-direction: row;
   gap: 6px;
