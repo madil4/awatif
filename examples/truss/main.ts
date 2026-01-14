@@ -217,21 +217,14 @@ van.derive(() => {
 });
 
 // Toolbar events
-export const activeButton = van.state<ToolbarButtons | null>(null);
-const activeCanvas = van.state(document.createElement("div"));
+export const toolbarButton = van.state<ToolbarButtons | null>(null);
+export const canvas = van.state<HTMLDivElement | null>(null);
+const emptyDiv = document.createElement("div");
 
 van.derive(() => {
-  if (activeButton.val === ToolbarButtons.REPORT) {
-    const canvasContent = document.createElement("div");
-    canvasContent.innerHTML = "<p>Canvas content goes here</p>";
-    activeCanvas.val = canvasContent;
-  } else if (activeButton.val === ToolbarButtons.LOGIN) {
-    const loginContent = document.createElement("div");
-    loginContent.innerHTML = "<p>Login content goes here</p>";
-    activeCanvas.val = loginContent;
-  } else {
-    activeCanvas.val = document.createElement("div");
-  }
+  if (toolbarButton.val === ToolbarButtons.REPORT) canvas.val = emptyDiv;
+  else if (toolbarButton.val === ToolbarButtons.LOGIN) canvas.val = emptyDiv;
+  else canvas.val = null;
 });
 
 export const display: Display = {
@@ -250,8 +243,8 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: getToolbar({ activeButton }),
-    canvas: getCanvas({ activeCanvas, activeButton }),
+    toolbar: getToolbar({ toolbarButton }),
+    canvas: getCanvas({ canvas, toolbarButton }),
     components: getComponents({
       geometry,
       components,
