@@ -12,7 +12,6 @@ export function getLoads({
   };
   components: Components["val"];
 }): {
-  // Map of node index to load values [Fx, Fy, Fz, Mx, My, Mz]
   loads: Map<number, [number, number, number, number, number, number]>;
 } {
   const loads = new Map<

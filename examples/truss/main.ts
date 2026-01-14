@@ -204,7 +204,7 @@ van.derive(() => {
   mesh.positions = positions;
 });
 
-// Toolbar events
+// Components events
 export const componentsBarMode = van.state<ComponentsType | null>(null);
 
 van.derive(() => {
