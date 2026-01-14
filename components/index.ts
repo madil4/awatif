@@ -6,4 +6,5 @@ export { getMesh } from "./mesh/getMesh";
 export { getLoads } from "./loads/getLoads";
 export { getSupports } from "./supports/getSupports";
 export { getElementsProps } from "./design/getElementsProps";
+export { getReport } from "./design/getReport";
 export { getPositions } from "./analysis/l-solver/getPositions";

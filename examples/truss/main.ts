@@ -5,6 +5,7 @@ import {
   getLoads,
   getSupports,
   getElementsProps,
+  getReport,
   getPositions,
   Geometry,
   Mesh,
@@ -232,11 +233,13 @@ van.derive(() => {
 // Canvas events
 export const canvasButton = van.state<CanvasButtons | null>(null);
 export const canvas = van.state<HTMLDivElement | null>(null);
-const emptyDiv = document.createElement("div");
 
 van.derive(() => {
-  if (canvasButton.val === CanvasButtons.REPORT) canvas.val = emptyDiv;
-  else canvas.val = null;
+  if (canvasButton.val === CanvasButtons.REPORT) {
+    canvas.val = getReport({ components: components.val });
+  } else {
+    canvas.val = null;
+  }
 });
 
 export const display: Display = {
