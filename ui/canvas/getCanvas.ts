@@ -11,21 +11,20 @@ export function getCanvas({
   canvas: State<HTMLDivElement | null>;
   toolbarButton: State<ToolbarButtons | null>;
 }): HTMLElement {
-  const panelContainer = document.createElement("div");
-  panelContainer.id = "canvas-panel";
+  const container = document.createElement("div");
 
   const template = () => html`
-    <div class="canvas-content ${toolbarButton.val ? "open" : ""}">
+    <div id="canvas" class=" ${toolbarButton.val ? "open" : ""}">
       <div class="canvas-header">
         <h2>${toolbarButton.val}</h2>
       </div>
-      <div class="canvas-body">${canvas.val?.innerHTML}</div>
+      <div class="canvas-body">${canvas.val}</div>
     </div>
   `;
 
   van.derive(() => {
-    render(template(), panelContainer);
+    render(template(), container);
   });
 
-  return panelContainer;
+  return container.firstElementChild as HTMLElement;
 }
