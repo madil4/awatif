@@ -6,19 +6,15 @@ export function getLayout({
   viewer,
   header,
   display,
-  toolbar,
-  tooltips,
-  parameters,
   components,
+  tooltips,
   canvas,
 }: {
   viewer?: HTMLElement;
   header?: HTMLElement[];
   display?: HTMLElement;
-  toolbar?: HTMLElement;
-  tooltips?: HTMLElement;
-  parameters?: HTMLElement;
   components?: HTMLElement;
+  tooltips?: HTMLElement;
   canvas?: HTMLElement;
 }): HTMLElement {
   const container = document.createElement("div");
@@ -31,14 +27,7 @@ export function getLayout({
         <div class="header">${header}</div>
       </div>
       <div class="bottom">
-        <div class="bottom-left">
-          <div class="panels-row">
-            <div class="components">${components}</div>
-            <div class="parameters">${parameters}</div>
-          </div>
-          <div class="toolbar">${toolbar}</div>
-          <div class="tooltips">${tooltips}</div>
-        </div>
+        <div class="bottom-left">${components} ${tooltips}</div>
         <div class="canvas">${canvas}</div>
       </div>
     </div>
