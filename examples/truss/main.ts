@@ -208,10 +208,6 @@ van.derive(() => {
 
 // Positions events
 van.derive(() => {
-  if (!mesh.nodes.val || !mesh.elements.val) return;
-  if (!mesh.loads || !mesh.supports || !mesh.elementsProps) return;
-  console.log(mesh.elementsProps);
-
   const positions = getPositions(
     mesh.nodes.val,
     mesh.elements.val,
