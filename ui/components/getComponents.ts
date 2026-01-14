@@ -35,14 +35,13 @@ export function getComponents({
   const componentsBar = getComponentsBar({ componentsBarMode });
 
   const template = html`
-    <div class="components">
-      <div class="list">${list}</div>
-      <div class="parameters">${parameters}</div>
+    <div id="components">
+      <div class="components-column">${list} ${parameters}</div>
+      <div class="components-bar">${componentsBar}</div>
     </div>
-    <div class="components-bar">${componentsBar}</div>
   `;
 
   render(template, container);
 
-  return container;
+  return container.firstElementChild as HTMLElement;
 }

@@ -24,10 +24,7 @@ export function getLayout({
       <div class="viewer">${viewer}</div>
       <div class="display">${display}</div>
       <div class="header">${header}</div>
-      <div class="bottom-left">
-        <div class="components">${components}</div>
-        <div class="tooltips">${tooltips}</div>
-      </div>
+      <div class="bottom-left">${components} ${tooltips}</div>
       <div class="canvas">${canvas}</div>
     </div>
   `;
