@@ -1,38 +1,25 @@
 import { html } from "lit-html";
 import { DesignTemplate } from "../data-model";
 
-type RcColumnParams = {
-  // Geometry
-  width: number; // mm
-  depth: number; // mm
-  height: number; // mm
-
-  // Material properties
-  concreteGrade: string; // e.g., "C30", "C40"
-  steelGrade: string; // e.g., "S400", "S500"
-
-  // Reinforcement (placeholder)
+type EnRcColumnParams = {
+  width: number;
+  depth: number;
+  concreteGrade: string;
+  steelGrade: string;
   longitudinalBars: number;
-  barDiameter: number; // mm
-  stirrupDiameter: number; // mm
-  stirrupSpacing: number; // mm
-
-  // Cover
-  cover: number; // mm
+  barDiameter: number;
+  cover: number;
 };
 
-export const rcColumn: DesignTemplate<RcColumnParams> = {
-  name: "RC Column",
+export const enRcColumn: DesignTemplate<EnRcColumnParams> = {
+  name: "EN RC Column",
   defaultParams: {
     width: 300,
     depth: 300,
-    height: 3000,
     concreteGrade: "C30",
     steelGrade: "S400",
     longitudinalBars: 4,
     barDiameter: 16,
-    stirrupDiameter: 8,
-    stirrupSpacing: 200,
     cover: 40,
   },
 
@@ -42,7 +29,7 @@ export const rcColumn: DesignTemplate<RcColumnParams> = {
         <h3
           style="margin: 0; border-bottom: 1px solid #ccc; padding-bottom: 8px;"
         >
-          RC Column Design
+          EN RC Column Design
         </h3>
 
         <!-- Geometry Section -->
@@ -209,7 +196,7 @@ export const rcColumn: DesignTemplate<RcColumnParams> = {
 
   getDesign: ({ params }) => ({
     design: {
-      type: "rc-column",
+      type: "en-rc-column",
       geometry: {
         width: params.width,
         depth: params.depth,
