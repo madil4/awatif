@@ -1,6 +1,6 @@
 import { LoadTemplate } from "./data-model";
 import { templates } from "../templates";
-import { Components } from "../data-model";
+import { Components, ComponentsType } from "../data-model";
 
 export function getLoads({
   geometryMapping,
@@ -20,10 +20,10 @@ export function getLoads({
     [number, number, number, number, number, number]
   >();
 
-  const loadComponents = components.get("LOADS") ?? [];
+  const loadComponents = components.get(ComponentsType.LOADS) ?? [];
 
   loadComponents.forEach((component) => {
-    const template = templates.get("LOADS")?.[
+    const template = templates.get(ComponentsType.LOADS)?.[
       component.templateIndex
     ] as LoadTemplate<any>;
     if (!template) return;

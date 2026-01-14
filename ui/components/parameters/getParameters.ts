@@ -1,18 +1,17 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
-import { Components, templates } from "@awatif/components";
-import { ToolbarMode } from "../componentsBar/getComponentsBar";
+import { Components, ComponentsType, templates } from "@awatif/components";
 
 import "./styles.css";
 
 export function getParameters({
   activeComponent,
   components,
-  toolbarMode,
+  componentsBarMode,
 }: {
   activeComponent: State<number | null>;
   components: Components;
-  toolbarMode: State<ToolbarMode | null>;
+  componentsBarMode: State<ComponentsType | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -21,7 +20,7 @@ export function getParameters({
 
   // Get or create a param state for a specific component
   const getComponentParams = (
-    mode: string,
+    mode: ComponentsType,
     idx: number,
     initialParams: Record<string, unknown>
   ): State<Record<string, unknown>> => {
@@ -36,8 +35,8 @@ export function getParameters({
       van.derive(() => {
         const params = paramState.val;
         const currentIdx = activeComponent.val;
-        if (toolbarMode.val === null) return;
-        const currentMode = ToolbarMode[toolbarMode.val];
+        if (componentsBarMode.val === null) return;
+        const currentMode = componentsBarMode.val;
 
         // Only sync if this is the active component and mode
         if (currentIdx !== idx || currentMode !== mode) return;
@@ -68,8 +67,8 @@ export function getParameters({
 
   // Clean up param states when components are removed
   van.derive(() => {
-    if (toolbarMode.val === null) return;
-    const mode = ToolbarMode[toolbarMode.val];
+    if (componentsBarMode.val === null) return;
+    const mode = componentsBarMode.val;
     const currentComponents = components.val.get(mode) ?? [];
     const currentKeys = new Set(
       currentComponents.map((_, i) => `${mode}-${i}`)
@@ -85,11 +84,11 @@ export function getParameters({
 
   const getTemplateContent = (): TemplateResult | null => {
     const idx = activeComponent.val;
-    if (idx === null || toolbarMode.val === null) {
+    if (idx === null || componentsBarMode.val === null) {
       return null;
     }
 
-    const key = ToolbarMode[toolbarMode.val];
+    const key = componentsBarMode.val;
     const currentComponents = components.val.get(key) ?? [];
     const component = currentComponents[idx];
     if (!component) return null;

@@ -1,4 +1,4 @@
-import { Components, Geometry } from "../data-model";
+import { Components, ComponentsType, Geometry } from "../data-model";
 import { Elements, Nodes, MeshTemplate } from "./data-model";
 import { templates } from "../templates";
 
@@ -26,7 +26,7 @@ export function getMesh({
 
   // Build a mapping from lineId to its MESH component (if any)
   const lineToComponent = new Map<number, (typeof meshComponents)[number]>();
-  const meshComponents = components.get("MESH") ?? [];
+  const meshComponents = components.get(ComponentsType.MESH) ?? [];
 
   meshComponents.forEach((component) => {
     component.geometry.forEach((lineId) => {
@@ -64,7 +64,7 @@ export function getMesh({
 
     if (component) {
       // Line has a MESH component - use template's getMesh
-      const template = templates.get("MESH")?.[
+      const template = templates.get(ComponentsType.MESH)?.[
         component.templateIndex
       ] as MeshTemplate<any>;
 

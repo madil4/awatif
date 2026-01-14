@@ -23,7 +23,7 @@ export function getSupports({
   const supportComponents = components.get(ComponentsType.SUPPORTS) ?? [];
 
   supportComponents.forEach((component) => {
-    const template = templates.get("SUPPORTS")?.[
+    const template = templates.get(ComponentsType.SUPPORTS)?.[
       component.templateIndex
     ] as SupportTemplate<any>;
     if (!template) return;
