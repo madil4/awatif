@@ -88,26 +88,19 @@ body {
   grid-area: canvas;
   align-self: stretch;
   /* move to header */
-  display: flex;
+  /* display: flex; */
   gap: 6px;
   padding: 10px;
 }
 
-/* Prevent layout elements from interfering with the viewer events */
+/* Prevent layout elements from interfering with the viewer events
+Don't forget to enable it back on the appended elements */
 #layout .display,
 #layout .header,
 #layout .tooltips,
 #layout .bottom-left,
 #layout .canvas {
   pointer-events: none;
-}
-
-#layout .display > *,
-#layout .header > *,
-#layout .tooltips > *,
-#layout .bottom-left > *,
-#layout .canvas > * {
-  pointer-events: auto;
 }
 
 @media (max-width: 768px) {

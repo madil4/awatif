@@ -1,12 +1,10 @@
 .components {
   display: flex;
   align-items: flex-end;
-  pointer-events: none;
 }
 
 .list,
 .components-bar,
 .parameters {
   pointer-events: auto;
-  width: fit-content;
 }

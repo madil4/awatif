@@ -1,6 +1,7 @@
 /* Report Button Styles */
 #report-button {
   display: inline-block;
+  pointer-events: auto;
 }
 
 #report-button button {
@@ -29,6 +30,8 @@
 /* Report Panel Styles */
 #report-panel {
   flex: 1;
+  pointer-events: auto;
+  width: 100%;
 }
 
 .report-content {
