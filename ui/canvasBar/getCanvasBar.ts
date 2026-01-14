@@ -6,7 +6,6 @@ import "./styles.css";
 
 export enum CanvasButtons {
   REPORT = "Report",
-  LOGIN = "Login",
 }
 
 export function getCanvasBar({
@@ -14,7 +13,7 @@ export function getCanvasBar({
 }: {
   canvasButton: State<CanvasButtons | null>;
 }): HTMLElement {
-  const buttons = [CanvasButtons.REPORT, CanvasButtons.LOGIN];
+  const buttons = [CanvasButtons.REPORT];
 
   const container = document.createElement("div");
   container.id = "toolbar";
