@@ -13,7 +13,6 @@ import {
   getTooltips,
   getLayout,
   getViewer,
-  Grid,
   ToolbarMode,
   getToolbar,
   getComponents,
@@ -222,11 +221,11 @@ van.derive(() => {
   if (toolbarMode.val === ToolbarMode.SUPPORTS) display.supports.val = true;
 });
 
-export const grid: Grid = {
-  size: van.state(10),
-  division: van.state(20),
-};
 export const display: Display = {
+  grid: {
+    size: van.state(10),
+    division: van.state(20),
+  },
   geometry: van.state(true),
   mesh: van.state(true),
   deformedShape: van.state(true),
@@ -239,7 +238,7 @@ export const report = getReport();
 document.body.append(
   getLayout({
     header: [report.button],
-    display: getDisplay({ grid, display }),
+    display: getDisplay({ display }),
     components: getComponents({
       toolbarMode,
       geometry,
@@ -253,7 +252,7 @@ document.body.append(
       toolbarMode,
     }),
     tooltips: getTooltips(),
-    viewer: getViewer({ grid, geometry, mesh, components, display }),
+    viewer: getViewer({ geometry, mesh, components, display }),
     canvas: report.panel,
   })
 );
