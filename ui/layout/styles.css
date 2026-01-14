@@ -69,6 +69,7 @@ body {
 #layout .toolbar {
   grid-area: toolbar;
   justify-self: end;
+  align-self: start;
   /* move to header */
   display: flex;
   gap: 6px;
@@ -77,6 +78,7 @@ body {
 
 #layout .display {
   grid-area: display;
+  align-self: start;
 }
 
 #layout .bottom-left {
