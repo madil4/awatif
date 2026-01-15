@@ -61,11 +61,11 @@ export enum ComponentsType {
   DESIGN,
 }
 
+export type Components = State<Map<ComponentsType, Component[]>>;
+
 type Component = {
   name: string;
   templateIndex: number;
   geometry: number[];
   params: Record<string, unknown>;
 };
-
-export type Components = State<Map<ComponentsType, Component[]>>;
