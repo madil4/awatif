@@ -339,7 +339,11 @@ export const canvas = van.state<HTMLDivElement | null>(null);
 
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
-    canvas.val = getReport({ components: components.val });
+    canvas.val = getReport({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      internalForces: mesh.internalForces?.val,
+    });
   } else {
     canvas.val = null;
   }
