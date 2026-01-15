@@ -3,6 +3,8 @@ import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
 import { templates } from "../templates";
 import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
 
+const toggleStates = new Map<string, boolean>();
+
 export function getReport({
   components,
   geometryMapping,
@@ -20,7 +22,6 @@ export function getReport({
   const designComponents = components.get(ComponentsType.DESIGN) ?? [];
 
   // Track toggle states for each line
-  const toggleStates = new Map<string, boolean>();
 
   const renderReport = () => {
     let isFirstLine = true;
