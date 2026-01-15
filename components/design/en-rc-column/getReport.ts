@@ -1,15 +1,18 @@
 import { html } from "lit-html";
 import { EnRcColumnParams } from "./enRcColumn";
 import { LineElementForces } from "../data-model";
+import { DesignResult } from "../../data-model";
 
 export function getReport({
   params,
   lineId,
   lineElementForces,
+  designResult,
 }: {
   params: EnRcColumnParams;
   lineId: number;
   lineElementForces?: LineElementForces;
+  designResult?: DesignResult;
 }) {
   // Extract forces at line ends (first element start, last element end)
   let startN = 0,
@@ -104,6 +107,50 @@ export function getReport({
               No internal forces available
             </div>
           `}
+
+      <!-- Design Check Results -->
+      ${designResult
+        ? html`
+            <div
+              style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;"
+            >
+              <div style="font-weight: 500; margin-bottom: 8px;">
+                Design Check
+              </div>
+              <div
+                style="display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center;"
+              >
+                <div style="color: var(--text-secondary);">Utilization:</div>
+                <div>
+                  <span
+                    style="font-weight: 500; color: ${designResult.utilization >
+                    1.0
+                      ? "#ef4444"
+                      : designResult.utilization > 0.7
+                      ? "#f59e0b"
+                      : "#10b981"};"
+                  >
+                    ${(designResult.utilization * 100).toFixed(1)}%
+                  </span>
+                </div>
+
+                <div style="color: var(--text-secondary);">Status:</div>
+                <div>
+                  <span
+                    style="padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 500; background: ${designResult.status ===
+                    "pass"
+                      ? "#10b98120"
+                      : "#ef444420"}; color: ${designResult.status === "pass"
+                      ? "#10b981"
+                      : "#ef4444"};"
+                  >
+                    ${designResult.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `
+        : null}
     </div>
   `;
 }

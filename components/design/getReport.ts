@@ -1,16 +1,24 @@
 import { html, render } from "lit-html";
 import { DesignTemplate, LineElementForces } from "./data-model";
 import { templates } from "../templates";
-import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
+import {
+  Components,
+  ComponentsType,
+  Mesh,
+  ElementForces,
+  DesignResult,
+} from "../data-model";
 
 export function getReport({
   components,
   geometryMapping,
   internalForces,
+  designResults,
 }: {
   components: Components["val"];
   geometryMapping?: Mesh["geometryMapping"]["val"];
   internalForces?: Map<number, ElementForces>;
+  designResults?: Map<number, DesignResult>;
 }): HTMLDivElement {
   const container = document.createElement("div");
   container.style.padding = "10px";
@@ -70,6 +78,7 @@ export function getReport({
               >[0]["params"],
               lineId,
               lineElementForces,
+              designResult: designResults?.get(lineId),
             });
             const toggleKey = `${component.name}-${lineId}`;
             const defaultOpen = isFirstLine;
