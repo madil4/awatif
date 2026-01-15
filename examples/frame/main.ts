@@ -135,6 +135,18 @@ export const components: Components = van.state(
             cover: 35,
           },
         },
+        {
+          name: "Beam 200x400",
+          templateIndex: 1, // basic template
+          geometry: [5, 6],
+          params: {
+            elasticity: 30, // GPa (C30 concrete)
+            area: 80000, // mm² (200x400mm)
+            momentInertia: 1066666667, // mm⁴ (200x400mm beam)
+            shearModulus: 12.5, // GPa (concrete)
+            torsionalConstant: 533333333, // mm⁴ (approx for 200x400mm)
+          },
+        },
       ],
     ],
   ])
