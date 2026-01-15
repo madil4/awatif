@@ -12,11 +12,11 @@ type BasicParams = {
 export const basic: DesignTemplate<BasicParams> = {
   name: "Basic",
   defaultParams: {
-    elasticity: 200, // GPa (typical steel)
-    area: 10000, // mm² (100 cm²)
-    momentInertia: 83333333, // mm⁴ (example: 100x100mm square section)
-    shearModulus: 77, // GPa (typical steel)
-    torsionalConstant: 141666667, // mm⁴ (example: 100x100mm square section)
+    elasticity: 200,
+    area: 10000,
+    momentInertia: 83333333,
+    shearModulus: 77,
+    torsionalConstant: 141666667,
   },
 
   getTemplate: ({ params }) => {
@@ -94,7 +94,6 @@ export const basic: DesignTemplate<BasicParams> = {
   },
 
   getElementsProps: ({ params }) => {
-    // Convert from user-friendly units to SI units (Pa, m², m⁴)
     return {
       elasticity: params.elasticity * 1e9, // GPa to Pa
       area: params.area * 1e-6, // mm² to m²
