@@ -2,11 +2,15 @@ import { html } from "lit-html";
 import { EnRcColumnParams } from "./enRcColumn";
 import { LineElementForces } from "../data-model";
 
-export function getReport(
-  params: EnRcColumnParams,
-  lineId: number,
-  lineElementForces?: LineElementForces
-) {
+export function getReport({
+  params,
+  lineId,
+  lineElementForces,
+}: {
+  params: EnRcColumnParams;
+  lineId: number;
+  lineElementForces?: LineElementForces;
+}) {
   // Extract forces at line ends (first element start, last element end)
   let startN = 0,
     endN = 0,

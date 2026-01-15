@@ -1,6 +1,6 @@
 import { EnRcColumnParams } from "./enRcColumn";
 
-export function getElementsProps(params: EnRcColumnParams) {
+export function getElementsProps({ params }: { params: EnRcColumnParams }) {
   const width = params.width / 1000;
   const depth = params.depth / 1000;
 

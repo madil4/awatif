@@ -2,7 +2,7 @@ import { html } from "lit-html";
 import { State } from "vanjs-core";
 import { EnRcColumnParams } from "./enRcColumn";
 
-export function getTemplate(params: State<EnRcColumnParams>) {
+export function getTemplate({ params }: { params: State<EnRcColumnParams> }) {
   return html`
     <div>
       <label>Width (mm):</label>

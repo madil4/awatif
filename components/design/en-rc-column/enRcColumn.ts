@@ -22,8 +22,7 @@ export const enRcColumn: DesignTemplate<EnRcColumnParams> = {
     steelArea: 400,
     cover: 40,
   },
-  getTemplate: ({ params }) => getTemplate(params),
-  getElementsProps: ({ params }) => getElementsProps(params),
-  getReport: ({ params, lineId, lineElementForces }) =>
-    getReport(params, lineId, lineElementForces),
+  getTemplate,
+  getElementsProps,
+  getReport,
 };
