@@ -9,13 +9,6 @@ export type Geometry = {
     points: number[];
     lines: number[];
   } | null>;
-
-  designResults: State<Map<number, DesignResult>>;
-};
-
-export type DesignResult = {
-  utilization: number; // 0.0 to 1.0+ (>1.0 means failure)
-  status: "pass" | "fail";
 };
 
 // Mesh

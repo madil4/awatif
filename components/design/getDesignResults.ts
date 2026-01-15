@@ -1,31 +1,22 @@
-import {
-  Geometry,
-  Mesh,
-  Components,
-  ComponentsType,
-  DesignResult,
-} from "../data-model";
-import { DesignTemplate, LineElementForces } from "./data-model";
+import { Mesh, Components, ComponentsType } from "../data-model";
+import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
 
 export const getDesignResults = ({
-  geometry,
   mesh,
   components,
   designTemplates,
 }: {
-  geometry: Geometry;
   mesh: Mesh;
   components: Components;
   designTemplates: DesignTemplate<any>[];
-}): void => {
+}): Map<number, DesignResult> => {
   // Get design components
   const designComponents = components.val.get(ComponentsType.DESIGN) || [];
 
   // Get internal forces
   const internalForces = mesh.internalForces?.val;
   if (!internalForces) {
-    geometry.designResults.val = new Map();
-    return;
+    return new Map();
   }
 
   // Get geometry mapping
@@ -83,6 +74,5 @@ export const getDesignResults = ({
     }
   }
 
-  // Update geometry state
-  geometry.designResults.val = designResults;
+  return designResults;
 };

@@ -1,13 +1,7 @@
 import { html, render } from "lit-html";
-import { DesignTemplate, LineElementForces } from "./data-model";
+import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
 import { templates } from "../templates";
-import {
-  Components,
-  ComponentsType,
-  Mesh,
-  ElementForces,
-  DesignResult,
-} from "../data-model";
+import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
 
 export function getReport({
   components,
