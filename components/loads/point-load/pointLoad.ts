@@ -22,7 +22,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     Mz: 0,
   },
 
-  getTemplate: ({ params }) => {
+  getParamsTemplate: ({ params }) => {
     return html`
       <div>
         <label>Force X:</label>

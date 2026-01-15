@@ -6,7 +6,7 @@ export type SupportTemplate<Params extends Record<string, unknown>> = {
   name: string;
   defaultParams: Params;
 
-  getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
+  getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
   getSupport: ({ params }: { params: Params }) => {
     support: [boolean, boolean, boolean, boolean, boolean, boolean]; //[Ux, Uy, Uz, Rx, Ry, Rz]
   };

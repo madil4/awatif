@@ -11,7 +11,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
     divisions: 3,
   },
 
-  getTemplate: ({ params }) => {
+  getParamsTemplate: ({ params }) => {
     return html`<div>
       <label>Divisions:</label>
       <input

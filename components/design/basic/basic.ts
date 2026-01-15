@@ -19,7 +19,7 @@ export const basic: DesignTemplate<BasicParams> = {
     torsionalConstant: 141666667,
   },
 
-  getTemplate: ({ params }) => {
+  getParamsTemplate: ({ params }) => {
     return html`
       <div>
         <label>Elasticity (GPa):</label>
