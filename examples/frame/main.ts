@@ -82,33 +82,21 @@ export const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "1st Floor Load - Left",
+          name: "1st Floor Load",
           templateIndex: 0,
-          geometry: [3],
+          geometry: [3, 4],
           params: { Fx: 0, Fy: -90000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
-          name: "1st Floor Load - Right",
+          name: "2nd Floor Load",
           templateIndex: 0,
-          geometry: [4],
-          params: { Fx: 0, Fy: -90000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
-        },
-        {
-          name: "2nd Floor Load - Left",
-          templateIndex: 0,
-          geometry: [5],
-          params: { Fx: 0, Fy: -60000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
-        },
-        {
-          name: "2nd Floor Load - Right",
-          templateIndex: 0,
-          geometry: [6],
+          geometry: [5, 6],
           params: { Fx: 0, Fy: -60000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Horizontal Load (Sway)",
           templateIndex: 0,
-          geometry: [5],
+          geometry: [5, 3],
           params: { Fx: 5000, Fy: 0, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
       ],
@@ -117,22 +105,9 @@ export const components: Components = van.state(
       ComponentsType.SUPPORTS,
       [
         {
-          name: "Left Column Base (Fixed)",
+          name: "Column Base (Fixed)",
           templateIndex: 0,
-          geometry: [1],
-          params: {
-            Ux: true,
-            Uy: true,
-            Uz: true,
-            Rx: true,
-            Ry: true,
-            Rz: true,
-          },
-        },
-        {
-          name: "Right Column Base (Fixed)",
-          templateIndex: 0,
-          geometry: [2],
+          geometry: [1, 2],
           params: {
             Ux: true,
             Uy: true,
@@ -157,19 +132,6 @@ export const components: Components = van.state(
             concreteGrade: "C30",
             steelGrade: "B500",
             steelArea: 1256, // 4Ø20 bars
-            cover: 35,
-          },
-        },
-        {
-          name: "RC Beam 300x500",
-          templateIndex: 0,
-          geometry: [5, 6],
-          params: {
-            width: 300,
-            depth: 500,
-            concreteGrade: "C30",
-            steelGrade: "B500",
-            steelArea: 1570, // 5Ø20 bars
             cover: 35,
           },
         },
