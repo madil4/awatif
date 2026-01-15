@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
-import { ElementForces } from "../data-model";
+import { ElementForces, DesignResult } from "../data-model";
 
 // Forces for a line (all elements that belong to this geometry line)
 export type LineElementForces = {
@@ -31,4 +31,12 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     lineId: number;
     lineElementForces?: LineElementForces;
   }) => TemplateResult;
+
+  getDesign?: ({
+    params,
+    lineElementForces,
+  }: {
+    params: Params;
+    lineElementForces: LineElementForces;
+  }) => DesignResult;
 };
