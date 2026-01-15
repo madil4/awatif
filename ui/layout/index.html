@@ -43,8 +43,10 @@
         "--------- Viewer Element ------------");
       const display = (document.createElement("div").textContent =
         "--------- Display Element ------------");
-      const header = (document.createElement("div").textContent =
-        "--------- Header Element ------------");
+      const header1 = (document.createElement("div").textContent =
+        "--------- Header Element 1 ------------");
+      const header2 = (document.createElement("div").textContent =
+        "--------- Header Element 2 ------------");
       const components = (document.createElement("div").textContent =
         "--------- Components Element ------------");
       const tooltips = (document.createElement("div").textContent =
@@ -56,7 +58,7 @@
         getLayout({
           viewer,
           display,
-          header,
+          header: [header1, header2],
           components,
           tooltips,
           canvas,

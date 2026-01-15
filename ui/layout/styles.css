@@ -51,7 +51,7 @@ body {
   height: 100%;
   display: grid;
   grid-template-areas:
-    "display toolbar"
+    "display header"
     "bottom-left canvas";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
@@ -72,8 +72,8 @@ body {
   pointer-events: auto;
 }
 
-#layout .toolbar {
-  grid-area: toolbar;
+#layout .header {
+  grid-area: header;
   justify-self: end;
   align-self: start;
   display: flex;
@@ -101,14 +101,15 @@ body {
 @media (max-width: 768px) {
   #layout {
     grid-template-areas:
-      "display toolbar"
-      "canvas canvas"
-      "bottom-left bottom-left";
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto 1fr auto;
+      "display"
+      "header"
+      "canvas"
+      "bottom-left";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
   }
 
   #layout .viewer {
-    grid-area: 1 / 1 / 4 / 3;
+    grid-area: 1 / 1 / 5 / 2;
   }
 }
