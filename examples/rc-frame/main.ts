@@ -7,6 +7,8 @@ import {
   getElementsProps,
   getReport,
   getPositions,
+  getDisplacements,
+  getInternalForces,
   Geometry,
   Mesh,
   ComponentsType,
@@ -76,6 +78,7 @@ export const mesh: Mesh = {
     pointToNodes: new Map(),
     lineToElements: new Map(),
   }),
+  internalForces: van.state(new Map()),
 };
 
 export const components: Components = van.state(
@@ -260,6 +263,64 @@ van.derive(() => {
   );
 
   mesh.positions = positions;
+});
+
+// Internal forces calculation
+van.derive(() => {
+  // Get displacements from linear analysis
+  const displacements = getDisplacements(
+    mesh.nodes.val,
+    mesh.elements.val,
+    mesh.loads,
+    mesh.supports,
+    mesh.elementsProps
+  );
+
+  // Calculate internal forces
+  const forces = getInternalForces(
+    mesh.nodes.val,
+    mesh.elements.val,
+    displacements,
+    mesh.elementsProps
+  );
+
+  // Store in mesh
+  if (mesh.internalForces) {
+    mesh.internalForces.val = forces;
+  }
+
+  // Store displacements in mesh for future use
+  mesh.displacements = displacements;
+
+  // Log internal forces for each element (for debugging/verification)
+  console.log("\n=== Internal Forces (Linear Analysis) ===");
+  forces.forEach((elementForces, elementIndex) => {
+    const element = mesh.elements.val[elementIndex];
+    console.log(
+      `\nElement ${elementIndex} (nodes ${element[0]} → ${element[1]}):`
+    );
+    console.log(
+      `  Axial (N):     start = ${(elementForces.N[0] / 1000).toFixed(
+        2
+      )} kN, end = ${(elementForces.N[1] / 1000).toFixed(2)} kN`
+    );
+    console.log(
+      `  Shear-Y (Vy):  start = ${(elementForces.Vy[0] / 1000).toFixed(
+        2
+      )} kN, end = ${(elementForces.Vy[1] / 1000).toFixed(2)} kN`
+    );
+    console.log(
+      `  Shear-Z (Vz):  start = ${(elementForces.Vz[0] / 1000).toFixed(
+        2
+      )} kN, end = ${(elementForces.Vz[1] / 1000).toFixed(2)} kN`
+    );
+    console.log(
+      `  Moment-Z (Mz): start = ${(elementForces.Mz[0] / 1000).toFixed(
+        2
+      )} kNm, end = ${(elementForces.Mz[1] / 1000).toFixed(2)} kNm`
+    );
+  });
+  console.log("\n");
 });
 
 // Components events
