@@ -103,9 +103,4 @@ export const basic: DesignTemplate<BasicParams> = {
       torsionalConstant: params.torsionalConstant * 1e-12, // mm⁴ to m⁴
     };
   },
-
-  getReport: () => {
-    // No report section for basic component
-    return html``;
-  },
 };

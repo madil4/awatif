@@ -22,7 +22,7 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     torsionalConstant?: number;
   };
 
-  getReport: ({
+  getReport?: ({
     params,
     lineId,
     lineElementForces,

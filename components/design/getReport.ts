@@ -33,6 +33,11 @@ export function getReport({
           if (!template) return null;
 
           return html` ${component.geometry.map((lineId) => {
+            // Skip if template doesn't have a getReport function
+            if (!template.getReport) {
+              return null;
+            }
+
             // Extract element forces for this line
             let lineElementForces: LineElementForces | undefined;
 
