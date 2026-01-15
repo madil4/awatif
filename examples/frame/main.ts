@@ -25,47 +25,25 @@ import {
   CanvasButtons,
 } from "@awatif/ui";
 
-/**
- * Two-dimensional reinforced concrete single-bay, two-storey frame
- *
- * Geometry:
- * - Storey height: 3.0 m
- * - Bay width: 6.0 m
- * - Columns: 300 × 300 mm
- * - Beams: 300 × 500 mm
- * - Column bases: fixed
- * - Beam–column joints: rigid
- *
- * Materials:
- * - Concrete: C30/37
- * - Reinforcement steel: B500
- */
-
-// Frame geometry - 2D frame in XY plane
 export const geometry: Geometry = {
   points: van.state(
     new Map([
-      // Base level (y = 0)
-      [1, [0, 0, 0]], // Left column base
-      [2, [6, 0, 0]], // Right column base
-      // First floor (y = 3)
-      [3, [0, 3, 0]], // Left column at 1st floor
-      [4, [6, 3, 0]], // Right column at 1st floor
-      // Second floor / roof (y = 6)
-      [5, [0, 6, 0]], // Left column at 2nd floor
-      [6, [6, 6, 0]], // Right column at 2nd floor
+      [1, [0, 0, 0]],
+      [2, [6, 0, 0]],
+      [3, [0, 3, 0]],
+      [4, [6, 3, 0]],
+      [5, [0, 6, 0]],
+      [6, [6, 6, 0]],
     ])
   ),
   lines: van.state(
     new Map([
-      // Columns (vertical members)
-      [1, [1, 3]], // Left column, ground to 1st floor
-      [2, [2, 4]], // Right column, ground to 1st floor
-      [3, [3, 5]], // Left column, 1st to 2nd floor
-      [4, [4, 6]], // Right column, 1st to 2nd floor
-      // Beams (horizontal members)
-      [5, [3, 4]], // Beam at 1st floor
-      [6, [5, 6]], // Beam at 2nd floor (roof)
+      [1, [1, 3]],
+      [2, [2, 4]],
+      [3, [3, 5]],
+      [4, [4, 6]],
+      [5, [3, 4]],
+      [6, [5, 6]],
     ])
   ),
   selection: van.state(null),
@@ -89,13 +67,13 @@ export const components: Components = van.state(
         {
           name: "Columns",
           templateIndex: 0,
-          geometry: [1, 2, 3, 4], // All column lines
+          geometry: [1, 2, 3, 4],
           params: { divisions: 1 },
         },
         {
           name: "Beams",
           templateIndex: 0,
-          geometry: [5, 6], // All beam lines
+          geometry: [5, 6],
           params: { divisions: 1 },
         },
       ],
@@ -103,8 +81,6 @@ export const components: Components = van.state(
     [
       ComponentsType.LOADS,
       [
-        // Vertical loads - representing permanent + variable loads
-        // First floor loads (distributed load converted to nodal: ~30 kN/m * 6m / 2 = 90 kN per node)
         {
           name: "1st Floor Load - Left",
           templateIndex: 0,
@@ -117,7 +93,6 @@ export const components: Components = van.state(
           geometry: [4],
           params: { Fx: 0, Fy: -90000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
-        // Second floor / roof loads
         {
           name: "2nd Floor Load - Left",
           templateIndex: 0,
@@ -130,7 +105,6 @@ export const components: Components = van.state(
           geometry: [6],
           params: { Fx: 0, Fy: -60000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
-        // Horizontal load at roof - simulates wind or initial imperfection for sway
         {
           name: "Horizontal Load (Sway)",
           templateIndex: 0,
@@ -142,7 +116,6 @@ export const components: Components = van.state(
     [
       ComponentsType.SUPPORTS,
       [
-        // Fixed supports at column bases (all DOF restrained)
         {
           name: "Left Column Base (Fixed)",
           templateIndex: 0,
@@ -174,11 +147,10 @@ export const components: Components = van.state(
     [
       ComponentsType.DESIGN,
       [
-        // Columns: 300 × 300 mm, C30/37
         {
           name: "RC Column 300x300",
           templateIndex: 0,
-          geometry: [1, 2, 3, 4], // All columns
+          geometry: [1, 2, 3, 4],
           params: {
             width: 300,
             depth: 300,
@@ -188,11 +160,10 @@ export const components: Components = van.state(
             cover: 35,
           },
         },
-        // Beams: 300 × 500 mm, C30/37
         {
           name: "RC Beam 300x500",
           templateIndex: 0,
-          geometry: [5, 6], // All beams
+          geometry: [5, 6],
           params: {
             width: 300,
             depth: 500,
@@ -265,9 +236,8 @@ van.derive(() => {
   mesh.positions = positions;
 });
 
-// Internal forces calculation
+// Internal forces events
 van.derive(() => {
-  // Get displacements from linear analysis
   const displacements = getDisplacements(
     mesh.nodes.val,
     mesh.elements.val,
@@ -276,7 +246,6 @@ van.derive(() => {
     mesh.elementsProps
   );
 
-  // Calculate internal forces
   const forces = getInternalForces(
     mesh.nodes.val,
     mesh.elements.val,
@@ -284,43 +253,8 @@ van.derive(() => {
     mesh.elementsProps
   );
 
-  // Store in mesh
-  if (mesh.internalForces) {
-    mesh.internalForces.val = forces;
-  }
-
-  // Store displacements in mesh for future use
+  if (mesh.internalForces) mesh.internalForces.val = forces;
   mesh.displacements = displacements;
-
-  // Log internal forces for each element (for debugging/verification)
-  console.log("\n=== Internal Forces (Linear Analysis) ===");
-  forces.forEach((elementForces, elementIndex) => {
-    const element = mesh.elements.val[elementIndex];
-    console.log(
-      `\nElement ${elementIndex} (nodes ${element[0]} → ${element[1]}):`
-    );
-    console.log(
-      `  Axial (N):     start = ${(elementForces.N[0] / 1000).toFixed(
-        2
-      )} kN, end = ${(elementForces.N[1] / 1000).toFixed(2)} kN`
-    );
-    console.log(
-      `  Shear-Y (Vy):  start = ${(elementForces.Vy[0] / 1000).toFixed(
-        2
-      )} kN, end = ${(elementForces.Vy[1] / 1000).toFixed(2)} kN`
-    );
-    console.log(
-      `  Shear-Z (Vz):  start = ${(elementForces.Vz[0] / 1000).toFixed(
-        2
-      )} kN, end = ${(elementForces.Vz[1] / 1000).toFixed(2)} kN`
-    );
-    console.log(
-      `  Moment-Z (Mz): start = ${(elementForces.Mz[0] / 1000).toFixed(
-        2
-      )} kNm, end = ${(elementForces.Mz[1] / 1000).toFixed(2)} kNm`
-    );
-  });
-  console.log("\n");
 });
 
 // Components events
@@ -365,7 +299,7 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: [getCanvasBar({ canvasButton })],
+    header: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
       geometry,
