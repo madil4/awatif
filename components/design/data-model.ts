@@ -12,7 +12,7 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
   name: string;
   defaultParams: Params;
 
-  getTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
+  getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
 
   getElementsProps: ({ params }: { params: Params }) => {
     elasticity: number;

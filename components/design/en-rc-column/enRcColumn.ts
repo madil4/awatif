@@ -1,5 +1,5 @@
 import { DesignTemplate } from "../data-model";
-import { getTemplate } from "./getTemplate";
+import { getParamsTemplate } from "./getParamsTemplate";
 import { getElementsProps } from "./getElementsProps";
 import { getReport } from "./getReport";
 
@@ -22,7 +22,7 @@ export const enRcColumn: DesignTemplate<EnRcColumnParams> = {
     steelArea: 400,
     cover: 40,
   },
-  getTemplate,
+  getParamsTemplate,
   getElementsProps,
   getReport,
 };

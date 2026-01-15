@@ -112,7 +112,7 @@ export function getParameters({
       localParams.val = { ...currentParams };
     }
 
-    return meshTemplate.getTemplate({
+    return meshTemplate.getParamsTemplate({
       params: localParams as any,
     });
   };

@@ -22,7 +22,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
     Rz: false,
   },
 
-  getTemplate: ({ params }) => {
+  getParamsTemplate: ({ params }) => {
     return html`
       <div>
         <label>
