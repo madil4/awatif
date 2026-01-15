@@ -1,6 +1,16 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
-import { ElementForces, DesignResult } from "../data-model";
+import { ElementForces } from "../data-model";
+
+// Design module types
+export type Design = {
+  designResults: State<Map<number, DesignResult>>;
+};
+
+export type DesignResult = {
+  utilization: number; // 0.0 to 1.0+ (>1.0 means failure)
+  status: "pass" | "fail";
+};
 
 // Forces for a line (all elements that belong to this geometry line)
 export type LineElementForces = {

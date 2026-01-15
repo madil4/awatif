@@ -1,6 +1,5 @@
 import { EnRcColumnParams } from "./enRcColumn";
-import { LineElementForces } from "../data-model";
-import { DesignResult } from "../../data-model";
+import { LineElementForces, DesignResult } from "../data-model";
 
 export function getDesign({
   params,

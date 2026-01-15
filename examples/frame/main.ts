@@ -9,9 +9,12 @@ import {
   getPositions,
   getDisplacements,
   getInternalForces,
+  getDesignResults,
   Geometry,
   Mesh,
+  Design,
   ComponentsType,
+  templates,
 } from "@awatif/components";
 import {
   getDisplay,
@@ -47,6 +50,10 @@ export const geometry: Geometry = {
     ])
   ),
   selection: van.state(null),
+};
+
+export const design: Design = {
+  designResults: van.state(new Map()),
 };
 
 export const mesh: Mesh = {
@@ -231,6 +238,18 @@ van.derive(() => {
   mesh.displacements = displacements;
 });
 
+// Design results events
+van.derive(() => {
+  // Trigger when internal forces change
+  mesh.internalForces?.val;
+
+  design.designResults.val = getDesignResults({
+    mesh,
+    components,
+    designTemplates: templates.get(ComponentsType.DESIGN) || [],
+  });
+});
+
 // Components events
 export const componentsBarMode = van.state<ComponentsType | null>(null);
 
@@ -251,6 +270,7 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       internalForces: mesh.internalForces?.val,
+      designResults: design.designResults.val,
     });
   } else {
     canvas.val = null;
