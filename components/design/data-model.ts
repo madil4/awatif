@@ -26,10 +26,12 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     params,
     lineId,
     lineElementForces,
+    designResult,
   }: {
     params: Params;
     lineId: number;
     lineElementForces?: LineElementForces;
+    designResult?: DesignResult;
   }) => TemplateResult;
 
   getDesign?: ({
