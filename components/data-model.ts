@@ -39,16 +39,18 @@ export type Mesh = {
   >;
 
   positions?: number[]; // [x1, y1, z1, x2, y2, z2, ...]
+  displacements?: number[]; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...] Global displacement vector (6 DOF per node)
 
-  displacements?: State<
-    Map<number, [number, number, number, number, number, number]>
-  >;
-  reactions?: State<
-    Map<number, [number, number, number, number, number, number]>
-  >;
-  normals?: State<Map<number, [number, number]>>;
-  shears?: State<Map<number, [number, number]>>;
-  bendings?: State<Map<number, [number, number]>>;
+  internalForces?: State<Map<number, ElementForces>>;
+};
+
+export type ElementForces = {
+  N: [number, number]; // Axial force at start and end
+  Vy: [number, number]; // Shear force (y-direction) at start and end
+  Vz: [number, number]; // Shear force (z-direction) at start and end
+  Mx: [number, number]; // Torsional moment at start and end
+  My: [number, number]; // Bending moment (about y-axis) at start and end
+  Mz: [number, number]; // Bending moment (about z-axis) at start and end
 };
 
 // Components
