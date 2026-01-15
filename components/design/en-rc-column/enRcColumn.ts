@@ -2,6 +2,7 @@ import { DesignTemplate } from "../data-model";
 import { getParamsTemplate } from "./getParamsTemplate";
 import { getElementsProps } from "./getElementsProps";
 import { getReport } from "./getReport";
+import { getDesign } from "./getDesign";
 
 export type EnRcColumnParams = {
   width: number;
@@ -25,4 +26,5 @@ export const enRcColumn: DesignTemplate<EnRcColumnParams> = {
   getParamsTemplate,
   getElementsProps,
   getReport,
+  getDesign,
 };
