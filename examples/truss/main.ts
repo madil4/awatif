@@ -258,7 +258,7 @@ document.body.append(
   getLayout({
     display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display }),
-    toolbar: [getCanvasBar({ canvasButton })],
+    header: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
       geometry,
