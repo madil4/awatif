@@ -1,12 +1,16 @@
 import { html, render } from "lit-html";
-import { DesignTemplate } from "./data-model";
+import { DesignTemplate, LineElementForces } from "./data-model";
 import { templates } from "../templates";
-import { Components, ComponentsType } from "../data-model";
+import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
 
 export function getReport({
   components,
+  geometryMapping,
+  internalForces,
 }: {
   components: Components["val"];
+  geometryMapping?: Mesh["geometryMapping"]["val"];
+  internalForces?: Map<number, ElementForces>;
 }): HTMLDivElement {
   const container = document.createElement("div");
   container.style.padding = "10px";
@@ -28,62 +32,85 @@ export function getReport({
 
           if (!template) return null;
 
-          const report = template.getReport({
-            params: component.params as Parameters<
-              typeof template.getReport
-            >[0]["params"],
-          });
+          return html` ${component.geometry.map((lineId) => {
+            // Extract element forces for this line
+            let lineElementForces: LineElementForces | undefined;
 
-          return html`
-            ${component.geometry.map((lineId) => {
-              const toggleKey = `${component.name}-${lineId}`;
-              const defaultOpen = isFirstLine;
-              isFirstLine = false;
-              const isOpen = toggleStates.get(toggleKey) ?? defaultOpen;
+            if (geometryMapping && internalForces) {
+              const elementIndices =
+                geometryMapping.lineToElements.get(lineId) ?? [];
 
-              return html`
-                <div
-                  style="margin-bottom: 8px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: var(--bg-secondary);"
-                >
-                  <button
-                    style="width: 100%; text-align: left; cursor: pointer; padding: 10px 12px; border: none; background: ${isOpen
+              if (elementIndices.length > 0) {
+                const elementForces: ElementForces[] = [];
+
+                for (const elemIdx of elementIndices) {
+                  const forces = internalForces.get(elemIdx);
+                  if (forces) {
+                    elementForces.push(forces);
+                  }
+                }
+
+                if (elementForces.length > 0) {
+                  lineElementForces = {
+                    elementIndices,
+                    elementForces,
+                  };
+                }
+              }
+            }
+
+            const report = template.getReport({
+              params: component.params as Parameters<
+                typeof template.getReport
+              >[0]["params"],
+              lineId,
+              lineElementForces,
+            });
+            const toggleKey = `${component.name}-${lineId}`;
+            const defaultOpen = isFirstLine;
+            isFirstLine = false;
+            const isOpen = toggleStates.get(toggleKey) ?? defaultOpen;
+
+            return html`
+              <div
+                style="margin-bottom: 8px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: var(--bg-secondary);"
+              >
+                <button
+                  style="width: 100%; text-align: left; cursor: pointer; padding: 10px 12px; border: none; background: ${isOpen
+                    ? "var(--bg-tertiary)"
+                    : "var(--bg-secondary)"}; color: var(--text-primary); font-size: 0.85rem; display: flex; align-items: center; gap: 10px; transition: background 0.15s ease;"
+                  @click=${() => {
+                    toggleStates.set(toggleKey, !isOpen);
+                    renderReport();
+                  }}
+                  @mouseover=${(e: MouseEvent) => {
+                    (e.target as HTMLElement).style.background =
+                      "var(--bg-hover)";
+                  }}
+                  @mouseout=${(e: MouseEvent) => {
+                    (e.target as HTMLElement).style.background = isOpen
                       ? "var(--bg-tertiary)"
-                      : "var(--bg-secondary)"}; color: var(--text-primary); font-size: 0.85rem; display: flex; align-items: center; gap: 10px; transition: background 0.15s ease;"
-                    @click=${() => {
-                      toggleStates.set(toggleKey, !isOpen);
-                      renderReport();
-                    }}
-                    @mouseover=${(e: MouseEvent) => {
-                      (e.target as HTMLElement).style.background =
-                        "var(--bg-hover)";
-                    }}
-                    @mouseout=${(e: MouseEvent) => {
-                      (e.target as HTMLElement).style.background = isOpen
-                        ? "var(--bg-tertiary)"
-                        : "var(--bg-secondary)";
-                    }}
+                      : "var(--bg-secondary)";
+                  }}
+                >
+                  <span style="color: var(--text-secondary); font-size: 0.7rem;"
+                    >${isOpen ? "▼" : "▶"}</span
                   >
-                    <span
-                      style="color: var(--text-secondary); font-size: 0.7rem;"
-                      >${isOpen ? "▼" : "▶"}</span
+                  <span style="font-weight: 500;">Line ${lineId}</span>
+                  <span style="color: var(--text-secondary); font-size: 0.8rem;"
+                    >· ${component.name}</span
+                  >
+                </button>
+                ${isOpen
+                  ? html`<div
+                      style="padding: 12px; background: var(--bg-primary); border-top: 1px solid var(--border);"
                     >
-                    <span style="font-weight: 500;">Line ${lineId}</span>
-                    <span
-                      style="color: var(--text-secondary); font-size: 0.8rem;"
-                      >· ${component.name}</span
-                    >
-                  </button>
-                  ${isOpen
-                    ? html`<div
-                        style="padding: 12px; background: var(--bg-primary); border-top: 1px solid var(--border);"
-                      >
-                        ${report}
-                      </div>`
-                    : null}
-                </div>
-              `;
-            })}
-          `;
+                      ${report}
+                    </div>`
+                  : null}
+              </div>
+            `;
+          })}`;
         })}
       </div>
     `;
