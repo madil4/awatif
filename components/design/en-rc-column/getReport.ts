@@ -129,7 +129,7 @@ export function getReport({
                       ? "#f59e0b"
                       : "#10b981"};"
                   >
-                    ${(designResult.utilization * 100).toFixed(1)}%
+                    ${designResult.utilization.toFixed(1)}%
                   </span>
                 </div>
 
