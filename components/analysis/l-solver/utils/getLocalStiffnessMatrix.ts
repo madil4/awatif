@@ -23,8 +23,8 @@ function getLocalStiffnessMatrixFrame(
 
   const elementProps = elementsProps?.get(index);
 
-  const Iz = elementProps?.momentInertia ?? 0;
-  const Iy = elementProps?.momentInertia ?? 0;
+  const Iz = elementProps?.momentOfInertia ?? 0;
+  const Iy = elementProps?.momentOfInertia ?? 0;
   const E = elementProps?.elasticity ?? 0;
   const A = elementProps?.area ?? 0;
   const G = elementProps?.shearModulus ?? 0;
