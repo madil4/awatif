@@ -26,7 +26,7 @@ export type Mesh = {
     {
       elasticity: number;
       area: number;
-      momentInertia?: number;
+      momentOfInertia?: number;
       shearModulus?: number;
       torsionalConstant?: number;
     }
