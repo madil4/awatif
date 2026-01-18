@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Line Results Test Bench</title>
+    <title>Line Results - Simply Supported Beam Examples</title>
     <style>
       body {
         margin: 0;
@@ -12,152 +12,254 @@
         position: fixed;
         top: 10px;
         right: 10px;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.9);
         color: white;
         padding: 15px;
         border-radius: 8px;
         z-index: 1000;
         font-family: Arial, sans-serif;
         font-size: 14px;
+        max-width: 300px;
       }
       #controls h3 {
-        margin: 0 0 10px 0;
+        margin: 0 0 12px 0;
         font-size: 16px;
       }
-      #controls button {
+      #controls label {
         display: block;
-        width: 100%;
-        margin: 5px 0;
-        padding: 8px;
-        cursor: pointer;
+        margin-top: 10px;
+        opacity: 0.7;
+        font-size: 11px;
       }
       #controls select {
         width: 100%;
         padding: 8px;
         margin: 5px 0;
+        border-radius: 4px;
+        border: none;
       }
-      #status {
-        margin-top: 10px;
-        padding: 8px;
+      #info {
+        margin-top: 12px;
+        padding: 10px;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      #info strong {
+        color: #ffd700;
       }
     </style>
   </head>
   <body>
     <div id="controls">
-      <h3>Line Results Test</h3>
-      <label>Display Mode:</label>
-      <select id="displayMode">
-        <option value="None">None</option>
-        <option value="Normals" selected>Normals</option>
-        <option value="Shears">Shears</option>
-        <option value="Bendings">Bendings</option>
+      <h3>📊 Simply Supported Beam</h3>
+
+      <label>Example:</label>
+      <select id="exampleSelect">
+        <option value="ss-point">Point Load (Center)</option>
+        <option value="ss-udl">Uniformly Distributed Load</option>
+        <option value="ss-triangular">Triangular Load</option>
+        <option value="ss-axial">Axial Force (Tension)</option>
       </select>
-      <button id="updateForces">Randomize Forces</button>
-      <div id="status">Status: Ready</div>
+
+      <label>Display:</label>
+      <select id="displayMode">
+        <option value="Shears" selected>Shear Force (V)</option>
+        <option value="Bendings">Bending Moment (M)</option>
+        <option value="Normals">Axial Force (N)</option>
+        <option value="None">None</option>
+      </select>
+
+      <div id="info"></div>
     </div>
 
     <script type="module">
       import van from "vanjs-core";
       import { getViewer } from "../getViewer.ts";
 
-      const display = {
-        grid: {
-          size: van.state(10),
-          division: van.state(20),
-        },
-        geometry: van.state(false),
-        mesh: van.state(true),
-        loads: van.state(false),
-        supports: van.state(false),
-        pointResult: van.state("None"),
-        lineResult: van.state("Normals"),
+      const L = 4; // Span
+      const P = 10; // Point load
+      const w = 5; // Distributed load
+      const N0 = 15; // Axial force
+      const nSeg = 8; // Segments for smooth curves
+
+      // Helper to create evenly spaced nodes
+      const createNodes = (length, n) => {
+        const nodes = [];
+        for (let i = 0; i <= n; i++) nodes.push([(length * i) / n, 0, 0]);
+        return nodes;
       };
 
-      // Sample frame structure: 3 nodes, 2 elements
-      const mesh = {
-        nodes: van.state([
-          [0, 0, 0],
-          [2, 0, 0],
-          [2, 2, 0],
-        ]),
-        elements: van.state([
-          [0, 1],
-          [1, 2],
-        ]),
-        internalForces: van.state(
-          new Map([
+      // Helper to create sequential elements
+      const createElements = (n) => {
+        const elements = [];
+        for (let i = 0; i < n; i++) elements.push([i, i + 1]);
+        return elements;
+      };
+
+      const examples = {
+        "ss-point": {
+          name: "Point Load at Center",
+          info: `<strong>Point Load:</strong> P = ${P} kN at center<br>
+                 Shear: ±${P / 2} kN (constant)<br>
+                 Moment: max ${((P * L) / 4).toFixed(1)} kN·m (linear)`,
+          nodes: [
+            [0, 0, 0],
+            [L / 2, 0, 0],
+            [L, 0, 0],
+          ],
+          elements: [
+            [0, 1],
+            [1, 2],
+          ],
+          forces: new Map([
             [
               0,
               {
-                N: [10, 10],
-                Vy: [5, -5],
+                N: [0, 0],
+                Vy: [P / 2, P / 2],
                 Vz: [0, 0],
                 Mx: [0, 0],
                 My: [0, 0],
-                Mz: [2, -2],
+                Mz: [0, (P * L) / 4],
               },
             ],
             [
               1,
               {
-                N: [-8, -8],
-                Vy: [3, -3],
+                N: [0, 0],
+                Vy: [-P / 2, -P / 2],
                 Vz: [0, 0],
                 Mx: [0, 0],
                 My: [0, 0],
-                Mz: [1.5, -1.5],
+                Mz: [(P * L) / 4, 0],
               },
             ],
           ]),
-        ),
+        },
+
+        "ss-udl": {
+          name: "Uniformly Distributed Load",
+          info: `<strong>UDL:</strong> w = ${w} kN/m<br>
+                 Shear: ±${((w * L) / 2).toFixed(1)} kN (linear)<br>
+                 Moment: max ${((w * L * L) / 8).toFixed(2)} kN·m (parabolic)`,
+          nodes: createNodes(L, nSeg),
+          elements: createElements(nSeg),
+          forces: (() => {
+            const forces = new Map();
+            for (let i = 0; i < nSeg; i++) {
+              const x1 = (L * i) / nSeg;
+              const x2 = (L * (i + 1)) / nSeg;
+              const V1 = (w * L) / 2 - w * x1;
+              const V2 = (w * L) / 2 - w * x2;
+              const M1 = (w * L * x1) / 2 - (w * x1 * x1) / 2;
+              const M2 = (w * L * x2) / 2 - (w * x2 * x2) / 2;
+              forces.set(i, {
+                N: [0, 0],
+                Vy: [V1, V2],
+                Vz: [0, 0],
+                Mx: [0, 0],
+                My: [0, 0],
+                Mz: [M1, M2],
+              });
+            }
+            return forces;
+          })(),
+        },
+
+        "ss-triangular": {
+          name: "Triangular Load",
+          info: `<strong>Triangular Load:</strong> w_max = ${w} kN/m<br>
+                 Shear: parabolic<br>
+                 Moment: cubic`,
+          nodes: createNodes(L, nSeg),
+          elements: createElements(nSeg),
+          forces: (() => {
+            const forces = new Map();
+            const R1 = (w * L) / 6;
+            for (let i = 0; i < nSeg; i++) {
+              const x1 = (L * i) / nSeg;
+              const x2 = (L * (i + 1)) / nSeg;
+              const V1 = R1 - (w * x1 * x1) / (2 * L);
+              const V2 = R1 - (w * x2 * x2) / (2 * L);
+              const M1 = R1 * x1 - (w * x1 * x1 * x1) / (6 * L);
+              const M2 = R1 * x2 - (w * x2 * x2 * x2) / (6 * L);
+              forces.set(i, {
+                N: [0, 0],
+                Vy: [V1, V2],
+                Vz: [0, 0],
+                Mx: [0, 0],
+                My: [0, 0],
+                Mz: [M1, M2],
+              });
+            }
+            return forces;
+          })(),
+        },
+
+        "ss-axial": {
+          name: "Axial Force (Tie Rod)",
+          info: `<strong>Tie Rod in Tension:</strong> N = ${N0} kN<br>
+                 Shear: 0<br>
+                 Moment: 0<br>
+                 Axial: ${N0} kN (constant)`,
+          nodes: [
+            [0, 0, 0],
+            [L, 0, 0],
+          ],
+          elements: [[0, 1]],
+          forces: new Map([
+            [
+              0,
+              {
+                N: [N0, N0],
+                Vy: [0, 0],
+                Vz: [0, 0],
+                Mx: [0, 0],
+                My: [0, 0],
+                Mz: [0, 0],
+              },
+            ],
+          ]),
+        },
       };
 
-      document.body.append(
-        getViewer({
-          mesh,
-          display,
-        }),
-      );
+      const display = {
+        grid: { size: van.state(10), division: van.state(20) },
+        geometry: van.state(false),
+        mesh: van.state(true),
+        loads: van.state(false),
+        supports: van.state(false),
+        pointResult: van.state("None"),
+        lineResult: van.state("Shears"),
+      };
 
-      // Wire up controls
-      const displayModeSelect = document.getElementById("displayMode");
-      const statusDiv = document.getElementById("status");
+      const mesh = {
+        nodes: van.state(examples["ss-point"].nodes),
+        elements: van.state(examples["ss-point"].elements),
+        internalForces: van.state(examples["ss-point"].forces),
+      };
 
-      displayModeSelect.addEventListener("change", (e) => {
+      document.body.append(getViewer({ mesh, display }));
+
+      const updateInfo = (key) => {
+        document.getElementById("info").innerHTML = examples[key].info;
+      };
+      updateInfo("ss-point");
+
+      document
+        .getElementById("exampleSelect")
+        .addEventListener("change", (e) => {
+          const ex = examples[e.target.value];
+          mesh.nodes.val = ex.nodes;
+          mesh.elements.val = ex.elements;
+          mesh.internalForces.val = ex.forces;
+          updateInfo(e.target.value);
+        });
+
+      document.getElementById("displayMode").addEventListener("change", (e) => {
         display.lineResult.val = e.target.value;
-        statusDiv.textContent = `Status: Display mode changed to ${e.target.value}`;
-      });
-
-      document.getElementById("updateForces").addEventListener("click", () => {
-        const randomForce = () => (Math.random() - 0.5) * 20;
-        const newForces = new Map([
-          [
-            0,
-            {
-              N: [randomForce(), randomForce()],
-              Vy: [randomForce(), randomForce()],
-              Vz: [0, 0],
-              Mx: [0, 0],
-              My: [0, 0],
-              Mz: [randomForce() * 0.5, randomForce() * 0.5],
-            },
-          ],
-          [
-            1,
-            {
-              N: [randomForce(), randomForce()],
-              Vy: [randomForce(), randomForce()],
-              Vz: [0, 0],
-              Mx: [0, 0],
-              My: [0, 0],
-              Mz: [randomForce() * 0.5, randomForce() * 0.5],
-            },
-          ],
-        ]);
-        mesh.internalForces.val = newForces;
-        statusDiv.textContent = "Status: Forces updated!";
       });
     </script>
   </body>

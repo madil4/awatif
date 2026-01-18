@@ -37,16 +37,15 @@ export function getLineResults({
 
     const mode = display.val;
 
-    // Color scheme: green for compression, red for tension (normals)
-    // blue for shear, purple for bending
+    // Color scheme
     const getColor = (mode: LineResultsDisplay) => {
       switch (mode) {
         case "Normals":
-          return { num: 0x00ff00, str: "#00ff00" };
+          return { num: 0x00aa00, str: "#00aa00" }; // Green
         case "Shears":
-          return { num: 0x0088ff, str: "#0088ff" };
+          return { num: 0x0066cc, str: "#0066cc" }; // Blue
         case "Bendings":
-          return { num: 0xff00ff, str: "#ff00ff" };
+          return { num: 0xcc0066, str: "#cc0066" }; // Red/magenta
         default:
           return { num: 0xffffff, str: "#ffffff" };
       }
@@ -54,6 +53,7 @@ export function getLineResults({
 
     const color = getColor(mode);
     const lineMaterial = new THREE.LineBasicMaterial({ color: color.num });
+    const scale = 0.05;
 
     internalForces.forEach((forces: ElementForces, elementIdx: number) => {
       const element = elements[elementIdx];
@@ -66,18 +66,16 @@ export function getLineResults({
 
       const start = new THREE.Vector3(n1[0], n1[1], n1[2] ?? 0);
       const end = new THREE.Vector3(n2[0], n2[1], n2[2] ?? 0);
-      const midpoint = new THREE.Vector3()
-        .addVectors(start, end)
-        .multiplyScalar(0.5);
       const elementDir = new THREE.Vector3().subVectors(end, start).normalize();
 
-      // Get perpendicular direction for diagram offsets (in XY plane)
+      // Perpendicular direction for diagram offsets
       const perpDir = new THREE.Vector3(
         -elementDir.y,
         elementDir.x,
         0,
       ).normalize();
 
+      // Select data based on mode
       let values: [number, number] = [0, 0];
       let label = "";
 
@@ -87,60 +85,53 @@ export function getLineResults({
           label = "N";
           break;
         case "Shears":
-          // Use Vy for 2D visualization
           values = forces.Vy;
           label = "V";
           break;
         case "Bendings":
-          // Use Mz for 2D visualization
           values = forces.Mz;
           label = "M";
           break;
       }
 
       const [valStart, valEnd] = values;
-      const scale = 0.1; // Scale factor for visualization
 
-      // Draw diagram as a filled shape from element to offset points
-      const offsetStart = perpDir.clone().multiplyScalar(valStart * scale);
-      const offsetEnd = perpDir.clone().multiplyScalar(valEnd * scale);
+      // Skip if both values are essentially zero
+      if (Math.abs(valStart) < 0.001 && Math.abs(valEnd) < 0.001) return;
 
-      const diagramStart = start.clone().add(offsetStart);
-      const diagramEnd = end.clone().add(offsetEnd);
+      // Calculate diagram points
+      const diagramStart = start
+        .clone()
+        .add(perpDir.clone().multiplyScalar(valStart * scale));
+      const diagramEnd = end
+        .clone()
+        .add(perpDir.clone().multiplyScalar(valEnd * scale));
 
-      // Draw diagram outline
-      const diagramPoints = [start, diagramStart, diagramEnd, end];
-      const diagramGeometry = new THREE.BufferGeometry().setFromPoints(
-        diagramPoints,
+      // Draw closed diagram: baseline + diagram line + vertical closers
+      const outlinePoints = [start, diagramStart, diagramEnd, end];
+      const outlineGeometry = new THREE.BufferGeometry().setFromPoints(
+        outlinePoints,
       );
-      group.add(new THREE.Line(diagramGeometry, lineMaterial));
+      group.add(new THREE.Line(outlineGeometry, lineMaterial));
 
-      // Add closing line from diagramStart to diagramEnd
-      const topLineGeometry = new THREE.BufferGeometry().setFromPoints([
-        diagramStart,
-        diagramEnd,
-      ]);
-      group.add(new THREE.Line(topLineGeometry, lineMaterial));
-
-      // Add text labels at start and end
+      // Add text labels
       if (Math.abs(valStart) > 0.001) {
         group.add(
           getText(
             `${label}: ${valStart.toFixed(2)}`,
             [diagramStart.x, diagramStart.y, diagramStart.z],
             color.str,
-            0.12,
+            0.1,
           ),
         );
       }
-
-      if (Math.abs(valEnd) > 0.001) {
+      if (Math.abs(valEnd) > 0.001 && Math.abs(valEnd - valStart) > 0.01) {
         group.add(
           getText(
             `${label}: ${valEnd.toFixed(2)}`,
             [diagramEnd.x, diagramEnd.y, diagramEnd.z],
             color.str,
-            0.12,
+            0.1,
           ),
         );
       }
