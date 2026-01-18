@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Line Results Test Bench</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #controls {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        z-index: 1000;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+      }
+      #controls h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+      }
+      #controls button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px;
+        cursor: pointer;
+      }
+      #controls select {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+      }
+      #status {
+        margin-top: 10px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <h3>Line Results Test</h3>
+      <label>Display Mode:</label>
+      <select id="displayMode">
+        <option value="None">None</option>
+        <option value="Normals" selected>Normals</option>
+        <option value="Shears">Shears</option>
+        <option value="Bendings">Bendings</option>
+      </select>
+      <button id="updateForces">Randomize Forces</button>
+      <div id="status">Status: Ready</div>
+    </div>
+
+    <script type="module">
+      import van from "vanjs-core";
+      import { getViewer } from "../getViewer.ts";
+
+      const display = {
+        grid: {
+          size: van.state(10),
+          division: van.state(20),
+        },
+        geometry: van.state(false),
+        mesh: van.state(true),
+        loads: van.state(false),
+        supports: van.state(false),
+        pointResult: van.state("None"),
+        lineResult: van.state("Normals"),
+      };
+
+      // Sample frame structure: 3 nodes, 2 elements
+      const mesh = {
+        nodes: van.state([
+          [0, 0, 0],
+          [2, 0, 0],
+          [2, 2, 0],
+        ]),
+        elements: van.state([
+          [0, 1],
+          [1, 2],
+        ]),
+        internalForces: van.state(
+          new Map([
+            [
+              0,
+              {
+                N: [10, 10],
+                Vy: [5, -5],
+                Vz: [0, 0],
+                Mx: [0, 0],
+                My: [0, 0],
+                Mz: [2, -2],
+              },
+            ],
+            [
+              1,
+              {
+                N: [-8, -8],
+                Vy: [3, -3],
+                Vz: [0, 0],
+                Mx: [0, 0],
+                My: [0, 0],
+                Mz: [1.5, -1.5],
+              },
+            ],
+          ]),
+        ),
+      };
+
+      document.body.append(
+        getViewer({
+          mesh,
+          display,
+        }),
+      );
+
+      // Wire up controls
+      const displayModeSelect = document.getElementById("displayMode");
+      const statusDiv = document.getElementById("status");
+
+      displayModeSelect.addEventListener("change", (e) => {
+        display.lineResult.val = e.target.value;
+        statusDiv.textContent = `Status: Display mode changed to ${e.target.value}`;
+      });
+
+      document.getElementById("updateForces").addEventListener("click", () => {
+        const randomForce = () => (Math.random() - 0.5) * 20;
+        const newForces = new Map([
+          [
+            0,
+            {
+              N: [randomForce(), randomForce()],
+              Vy: [randomForce(), randomForce()],
+              Vz: [0, 0],
+              Mx: [0, 0],
+              My: [0, 0],
+              Mz: [randomForce() * 0.5, randomForce() * 0.5],
+            },
+          ],
+          [
+            1,
+            {
+              N: [randomForce(), randomForce()],
+              Vy: [randomForce(), randomForce()],
+              Vz: [0, 0],
+              Mx: [0, 0],
+              My: [0, 0],
+              Mz: [randomForce() * 0.5, randomForce() * 0.5],
+            },
+          ],
+        ]);
+        mesh.internalForces.val = newForces;
+        statusDiv.textContent = "Status: Forces updated!";
+      });
+    </script>
+  </body>
+</html>

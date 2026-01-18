@@ -2,6 +2,7 @@ import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
+import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
 
 import "./styles.css";
 
@@ -13,6 +14,7 @@ export type Display = {
   loads: State<boolean>;
   supports: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
+  lineResult?: State<LineResultsDisplay>;
 };
 
 export function getDisplay({ display }: { display?: Display }): HTMLElement {
@@ -41,7 +43,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               value=${grid.division.val}
               @input=${(e: Event) =>
                 (grid.division.val = Number(
-                  (e.target as HTMLInputElement).value
+                  (e.target as HTMLInputElement).value,
                 ))}
             />
           </div>`
@@ -129,6 +131,43 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   ?selected=${display.pointResult.val === "Reactions"}
                 >
                   Reactions
+                </option>
+              </select>
+            </div>
+          `
+        : ""}
+      ${display?.lineResult
+        ? html`
+            <div class="display-item">
+              <label>Line Results</label>
+              <select
+                @change=${(e: Event) =>
+                  (display.lineResult!.val = (e.target as HTMLSelectElement)
+                    .value as LineResultsDisplay)}
+              >
+                <option
+                  value="None"
+                  ?selected=${display.lineResult.val === "None"}
+                >
+                  None
+                </option>
+                <option
+                  value="Normals"
+                  ?selected=${display.lineResult.val === "Normals"}
+                >
+                  Normals
+                </option>
+                <option
+                  value="Shears"
+                  ?selected=${display.lineResult.val === "Shears"}
+                >
+                  Shears
+                </option>
+                <option
+                  value="Bendings"
+                  ?selected=${display.lineResult.val === "Bendings"}
+                >
+                  Bendings
                 </option>
               </select>
             </div>
