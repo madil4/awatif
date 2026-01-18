@@ -1,4 +1,4 @@
-export type { Geometry, Mesh, Components } from "./data-model";
+export type { Geometry, Mesh, Components, ElementForces } from "./data-model";
 export type { Design } from "./design/data-model";
 export { ComponentsType } from "./data-model";
 export { templates } from "./templates";
