@@ -1,6 +1,10 @@
 import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
-import { Components, ComponentsType, templates } from "@awatif/components";
+import {
+  Components,
+  ComponentsType,
+  templates as Templates,
+} from "@awatif/components";
 
 import "./styles.css";
 
@@ -8,10 +12,12 @@ export function getParameters({
   activeComponent,
   components,
   componentsBarMode,
+  templates,
 }: {
   activeComponent: State<number | null>;
   components: Components;
   componentsBarMode: State<ComponentsType | null>;
+  templates?: typeof Templates;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -22,7 +28,7 @@ export function getParameters({
   const getComponentParams = (
     mode: ComponentsType,
     idx: number,
-    initialParams: Record<string, unknown>
+    initialParams: Record<string, unknown>,
   ): State<Record<string, unknown>> => {
     const key = `${mode}-${idx}`;
     if (!componentParamsMap.has(key)) {
@@ -48,16 +54,16 @@ export function getParameters({
         // Only update if params actually changed
         const currentParams = component.params;
         const hasChanges = Object.keys(params).some(
-          (key) => params[key] !== currentParams[key]
+          (key) => params[key] !== currentParams[key],
         );
 
         if (hasChanges) {
           const updatedComponents = currentComponents.map((comp, i) =>
-            i === idx ? { ...comp, params: { ...params } } : comp
+            i === idx ? { ...comp, params: { ...params } } : comp,
           );
           components.val = new Map(components.val).set(
             currentMode,
-            updatedComponents
+            updatedComponents,
           );
         }
       });
@@ -71,7 +77,7 @@ export function getParameters({
     const mode = componentsBarMode.val;
     const currentComponents = components.val.get(mode) ?? [];
     const currentKeys = new Set(
-      currentComponents.map((_, i) => `${mode}-${i}`)
+      currentComponents.map((_, i) => `${mode}-${i}`),
     );
 
     // Remove param states for components that no longer exist in current mode
@@ -93,6 +99,7 @@ export function getParameters({
     const component = currentComponents[idx];
     if (!component) return null;
 
+    if (!templates) return null;
     const meshTemplate = templates.get(key)?.[component.templateIndex];
     if (!meshTemplate) return null;
 
@@ -104,7 +111,7 @@ export function getParameters({
     const localParamsVal = localParams.val;
     const needsUpdate =
       Object.keys(currentParams).some(
-        (key) => currentParams[key] !== localParamsVal[key]
+        (key) => currentParams[key] !== localParamsVal[key],
       ) ||
       Object.keys(localParamsVal).length !== Object.keys(currentParams).length;
 

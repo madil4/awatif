@@ -1,16 +1,17 @@
 import { SupportTemplate } from "./data-model";
 import { Components, ComponentsType } from "../data-model";
-import { templates } from "../templates";
 
 export function getSupports({
   geometryMapping,
   components,
+  templates,
 }: {
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
+  templates: Map<ComponentsType, any[]>;
 }): {
   supports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>;
 } {

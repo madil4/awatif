@@ -1,7 +1,12 @@
 import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Geometry, Mesh, Components, templates } from "@awatif/components";
+import {
+  Geometry,
+  Mesh,
+  Components,
+  templates as Templates,
+} from "@awatif/components";
 import { getGrid, Grid } from "./grid/getGrid";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
@@ -19,11 +24,13 @@ export function getViewer({
   mesh,
   components,
   display,
+  templates,
 }: {
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
   display?: Display;
+  templates?: typeof Templates;
 }): HTMLDivElement {
   THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
@@ -87,7 +94,7 @@ export function getViewer({
       }),
     );
 
-  if (components && geometry) {
+  if (components && geometry && templates) {
     scene.add(
       getLoads({
         geometry,
