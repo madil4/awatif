@@ -31,12 +31,12 @@ import {
 export const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [-3, 0, 0]],
-      [2, [3, 0, 0]],
-      [3, [-3, 3, 0]],
-      [4, [3, 3, 0]],
-      [5, [-3, 6, 0]],
-      [6, [3, 6, 0]],
+      [1, [-3, -3, 0]],
+      [2, [3, -3, 0]],
+      [3, [-3, 0, 0]],
+      [4, [3, 0, 0]],
+      [5, [-3, 3, 0]],
+      [6, [3, 3, 0]],
     ]),
   ),
   lines: van.state(
@@ -266,6 +266,7 @@ export const canvas = van.state<HTMLDivElement | null>(null);
 
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
+    display.design.val = true;
     canvas.val = getReport({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
@@ -273,13 +274,15 @@ van.derive(() => {
       designResults: design.designResults.val,
     });
   } else {
+    if (componentsBarMode.val !== ComponentsType.DESIGN)
+      display.design.val = false;
     canvas.val = null;
   }
 });
 
 export const display: Display = {
   grid: {
-    size: van.state(15),
+    size: van.state(10),
     division: van.state(30),
   },
   geometry: van.state(true),
@@ -287,6 +290,7 @@ export const display: Display = {
   deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
+  design: van.state(false),
 };
 
 document.body.append(
