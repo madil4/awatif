@@ -4,10 +4,9 @@ import { pointLoad } from "./loads/point-load/pointLoad";
 import { pointSupport } from "./supports/point-support/pointSupport";
 import { basic } from "./design/basic/basic";
 
-// Todo: use a map with ids to make it possible to remove templates without reindexing
-export const templates = new Map<ComponentsType, any[]>([
-  [ComponentsType.MESH, [lineMesh]],
-  [ComponentsType.LOADS, [pointLoad]],
-  [ComponentsType.SUPPORTS, [pointSupport]],
-  [ComponentsType.DESIGN, [basic]],
+export const templates = new Map<ComponentsType, Map<string, any>>([
+  [ComponentsType.MESH, new Map([["line-mesh", lineMesh]])],
+  [ComponentsType.LOADS, new Map([["point-load", pointLoad]])],
+  [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
+  [ComponentsType.DESIGN, new Map([["basic", basic]])],
 ]);

@@ -11,7 +11,7 @@ export function getMesh({
     lines: Geometry["lines"]["val"];
   };
   components: Components["val"];
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): {
   nodes: Nodes;
   elements: Elements;
@@ -65,9 +65,9 @@ export function getMesh({
 
     if (component) {
       // Line has a MESH component - use template's getMesh
-      const template = templates.get(ComponentsType.MESH)?.[
-        component.templateIndex
-      ] as MeshTemplate<any>;
+      const template = templates
+        .get(ComponentsType.MESH)
+        ?.get(component.templateId) as MeshTemplate<any>;
 
       if (!template) {
         // Fallback to simple element if template not found

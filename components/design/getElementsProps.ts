@@ -11,7 +11,7 @@ export function getElementsProps({
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): {
   elementsProps: Map<
     number,
@@ -38,9 +38,9 @@ export function getElementsProps({
   const designComponents = components.get(ComponentsType.DESIGN) ?? [];
 
   designComponents.forEach((component) => {
-    const template = templates.get(ComponentsType.DESIGN)?.[
-      component.templateIndex
-    ] as DesignTemplate<any>;
+    const template = templates
+      .get(ComponentsType.DESIGN)
+      ?.get(component.templateId) as DesignTemplate<any>;
     if (!template) return;
 
     const props = template.getElementsProps({

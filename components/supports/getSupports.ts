@@ -11,7 +11,7 @@ export function getSupports({
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): {
   supports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>;
 } {
@@ -23,9 +23,9 @@ export function getSupports({
   const supportComponents = components.get(ComponentsType.SUPPORTS) ?? [];
 
   supportComponents.forEach((component) => {
-    const template = templates.get(ComponentsType.SUPPORTS)?.[
-      component.templateIndex
-    ] as SupportTemplate<any>;
+    const template = templates
+      .get(ComponentsType.SUPPORTS)
+      ?.get(component.templateId) as SupportTemplate<any>;
     if (!template) return;
 
     const { support } = template.getSupport({

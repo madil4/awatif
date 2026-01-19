@@ -45,7 +45,7 @@ export function getSupports({
       const supportTemplates = templates.get(ComponentsType.SUPPORTS);
       if (!supportTemplates) return;
 
-      const template = supportTemplates[component.templateIndex];
+      const template = supportTemplates.get(component.templateId);
       if (!template || !("getObject3D" in template)) return;
 
       // For each geometry point in the component, create a visualization

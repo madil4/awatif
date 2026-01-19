@@ -65,7 +65,7 @@ export type Components = State<Map<ComponentsType, Component[]>>;
 
 type Component = {
   name: string;
-  templateIndex: number;
+  templateId: string;
   geometry: number[];
   params: Record<string, unknown>;
 };

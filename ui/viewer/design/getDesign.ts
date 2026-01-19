@@ -47,7 +47,7 @@ export function getDesign({
       const designTemplates = templates.get(ComponentsType.DESIGN);
       if (!designTemplates) return;
 
-      const template = designTemplates[component.templateIndex];
+      const template = designTemplates.get(component.templateId);
       if (!template) return;
 
       // For each geometry line in the component, create a text visualization

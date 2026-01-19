@@ -45,7 +45,7 @@ export function getLoads({
       const loadTemplates = templates.get(ComponentsType.LOADS);
       if (!loadTemplates) return;
 
-      const template = loadTemplates[component.templateIndex];
+      const template = loadTemplates.get(component.templateId);
       if (!template || !("getObject3D" in template)) return;
 
       // For each geometry point in the component, create a visualization
