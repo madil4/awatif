@@ -11,7 +11,7 @@ export function getLoads({
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): {
   loads: Map<number, [number, number, number, number, number, number]>;
 } {
@@ -23,9 +23,9 @@ export function getLoads({
   const loadComponents = components.get(ComponentsType.LOADS) ?? [];
 
   loadComponents.forEach((component) => {
-    const template = templates.get(ComponentsType.LOADS)?.[
-      component.templateIndex
-    ] as LoadTemplate<any>;
+    const template = templates
+      .get(ComponentsType.LOADS)
+      ?.get(component.templateId) as LoadTemplate<any>;
     if (!template) return;
 
     const { load } = template.getLoad({

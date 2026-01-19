@@ -69,13 +69,13 @@ export const components: Components = van.state(
       [
         {
           name: "Columns",
-          templateIndex: 0,
+          templateId: "line-mesh",
           geometry: [1, 2, 3, 4],
           params: { divisions: 8 },
         },
         {
           name: "Beams",
-          templateIndex: 0,
+          templateId: "line-mesh",
           geometry: [5, 6],
           params: { divisions: 4 },
         },
@@ -86,19 +86,19 @@ export const components: Components = van.state(
       [
         {
           name: "1st Floor Load",
-          templateIndex: 0,
+          templateId: "point-load",
           geometry: [3, 4],
           params: { Fx: 0, Fy: -90000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "2nd Floor Load",
-          templateIndex: 0,
+          templateId: "point-load",
           geometry: [5, 6],
           params: { Fx: 0, Fy: -60000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
         {
           name: "Horizontal Load (Sway)",
-          templateIndex: 0,
+          templateId: "point-load",
           geometry: [5, 3],
           params: { Fx: 5000, Fy: 0, Fz: 0, Mx: 0, My: 0, Mz: 0 },
         },
@@ -109,7 +109,7 @@ export const components: Components = van.state(
       [
         {
           name: "Column Base (Fixed)",
-          templateIndex: 0,
+          templateId: "point-support",
           geometry: [1, 2],
           params: {
             Ux: true,
@@ -127,7 +127,7 @@ export const components: Components = van.state(
       [
         {
           name: "Beam 200x400",
-          templateIndex: 0, // basic template
+          templateId: "basic", // basic template
           geometry: [1, 2, 3, 4, 5, 6],
           params: {
             elasticity: 30, // GPa (C30 concrete)

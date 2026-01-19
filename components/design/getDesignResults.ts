@@ -8,7 +8,7 @@ export const getDesignResults = ({
 }: {
   mesh: Mesh;
   components: Components;
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): Map<number, DesignResult> => {
   // Get design components
   const designComponents = components.val.get(ComponentsType.DESIGN) || [];
@@ -27,9 +27,9 @@ export const getDesignResults = ({
 
   // Process each design component
   for (const component of designComponents) {
-    const template = templates.get(ComponentsType.DESIGN)?.[
-      component.templateIndex
-    ] as DesignTemplate<any>;
+    const template = templates
+      .get(ComponentsType.DESIGN)
+      ?.get(component.templateId) as DesignTemplate<any>;
 
     // Skip if template doesn't have getDesign function
     if (!template?.getDesign) {

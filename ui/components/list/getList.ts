@@ -261,17 +261,19 @@ export function getList({
 
   function templatesSection() {
     if (!templates) return html``;
-    const list = templates.get(getKey()) ?? [];
+    const map = templates.get(getKey());
+    if (!map) return html``;
+
     return html`
       <details class="components-templates" open>
         <summary class="components-divider">templates</summary>
-        ${list.map(
-          (t, i) => html`
+        ${Array.from(map.entries()).map(
+          ([id, t]) => html`
             <div class="components-item template">
               <label>${t.name}</label>
               <button
                 class="components-copy-btn"
-                @click=${() => copyTemplate(t.name, i)}
+                @click=${() => copyTemplate(t.name, id)}
                 title="Copy template"
               >
                 +
@@ -284,7 +286,7 @@ export function getList({
   }
 
   // Actions
-  function copyTemplate(baseName: string, templateIndex: number) {
+  function copyTemplate(baseName: string, templateId: string) {
     if (componentsBarMode.val === null) return;
 
     const list = getComponentList();
@@ -298,11 +300,11 @@ export function getList({
     }
 
     const defaultParams = {
-      ...templates?.get(getKey())?.[templateIndex]?.defaultParams,
+      ...templates?.get(getKey())?.get(templateId)?.defaultParams,
     };
     const updated = [
       ...list,
-      { name, templateIndex, geometry: [], params: defaultParams },
+      { name, templateId, geometry: [], params: defaultParams },
     ];
     components.val = new Map(components.val).set(getKey(), updated);
   }

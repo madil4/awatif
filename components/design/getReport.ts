@@ -15,7 +15,7 @@ export function getReport({
   geometryMapping?: Mesh["geometryMapping"]["val"];
   internalForces?: Map<number, ElementForces>;
   designResults?: Map<number, DesignResult>;
-  templates: Map<ComponentsType, any[]>;
+  templates: Map<ComponentsType, Map<string, any>>;
 }): HTMLDivElement {
   const container = document.createElement("div");
   container.style.padding = "10px";
@@ -30,9 +30,9 @@ export function getReport({
     const reportTemplate = html`
       <div>
         ${designComponents.map((component) => {
-          const template = templates.get(ComponentsType.DESIGN)?.[
-            component.templateIndex
-          ] as DesignTemplate<any>;
+          const template = templates
+            .get(ComponentsType.DESIGN)
+            ?.get(component.templateId) as DesignTemplate<any>;
 
           if (!template) return null;
 

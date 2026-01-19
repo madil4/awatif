@@ -100,7 +100,7 @@ export function getParameters({
     if (!component) return null;
 
     if (!templates) return null;
-    const meshTemplate = templates.get(key)?.[component.templateIndex];
+    const meshTemplate = templates.get(key)?.get(component.templateId);
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component
