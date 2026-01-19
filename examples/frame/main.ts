@@ -37,7 +37,7 @@ export const geometry: Geometry = {
       [4, [3, 3, 0]],
       [5, [-3, 6, 0]],
       [6, [3, 6, 0]],
-    ])
+    ]),
   ),
   lines: van.state(
     new Map([
@@ -47,7 +47,7 @@ export const geometry: Geometry = {
       [4, [4, 6]],
       [5, [3, 4]],
       [6, [5, 6]],
-    ])
+    ]),
   ),
   selection: van.state(null),
 };
@@ -156,7 +156,7 @@ export const components: Components = van.state(
         },
       ],
     ],
-  ])
+  ]),
 );
 
 // Mesh events
@@ -211,7 +211,7 @@ van.derive(() => {
     mesh.elements.val,
     mesh.loads,
     mesh.supports,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   mesh.positions = positions;
@@ -224,14 +224,14 @@ van.derive(() => {
     mesh.elements.val,
     mesh.loads,
     mesh.supports,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   const forces = getInternalForces(
     mesh.nodes.val,
     mesh.elements.val,
     displacements,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   if (mesh.internalForces) mesh.internalForces.val = forces;
@@ -301,5 +301,5 @@ document.body.append(
       componentsBarMode,
     }),
     tooltips: getTooltips(),
-  })
+  }),
 );
