@@ -31,13 +31,13 @@ import {
 export const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [-3, 0, 0]],
-      [2, [3, 0, 0]],
-      [3, [-3, 3, 0]],
-      [4, [3, 3, 0]],
-      [5, [-3, 6, 0]],
-      [6, [3, 6, 0]],
-    ])
+      [1, [-3, -3, 0]],
+      [2, [3, -3, 0]],
+      [3, [-3, 0, 0]],
+      [4, [3, 0, 0]],
+      [5, [-3, 3, 0]],
+      [6, [3, 3, 0]],
+    ]),
   ),
   lines: van.state(
     new Map([
@@ -47,7 +47,7 @@ export const geometry: Geometry = {
       [4, [4, 6]],
       [5, [3, 4]],
       [6, [5, 6]],
-    ])
+    ]),
   ),
   selection: van.state(null),
 };
@@ -156,7 +156,7 @@ export const components: Components = van.state(
         },
       ],
     ],
-  ])
+  ]),
 );
 
 // Mesh events
@@ -211,7 +211,7 @@ van.derive(() => {
     mesh.elements.val,
     mesh.loads,
     mesh.supports,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   mesh.positions = positions;
@@ -224,14 +224,14 @@ van.derive(() => {
     mesh.elements.val,
     mesh.loads,
     mesh.supports,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   const forces = getInternalForces(
     mesh.nodes.val,
     mesh.elements.val,
     displacements,
-    mesh.elementsProps
+    mesh.elementsProps,
   );
 
   if (mesh.internalForces) mesh.internalForces.val = forces;
@@ -266,6 +266,7 @@ export const canvas = van.state<HTMLDivElement | null>(null);
 
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
+    display.design.val = true;
     canvas.val = getReport({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
@@ -273,13 +274,15 @@ van.derive(() => {
       designResults: design.designResults.val,
     });
   } else {
+    if (componentsBarMode.val !== ComponentsType.DESIGN)
+      display.design.val = false;
     canvas.val = null;
   }
 });
 
 export const display: Display = {
   grid: {
-    size: van.state(15),
+    size: van.state(10),
     division: van.state(30),
   },
   geometry: van.state(true),
@@ -287,6 +290,7 @@ export const display: Display = {
   deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
+  design: van.state(false),
 };
 
 document.body.append(
@@ -301,5 +305,5 @@ document.body.append(
       componentsBarMode,
     }),
     tooltips: getTooltips(),
-  })
+  }),
 );
