@@ -28,9 +28,6 @@ import {
   CanvasButtons,
 } from "@awatif/ui";
 
-// Re-export templates for use in other files
-export { templates };
-
 export const geometry: Geometry = {
   points: van.state(
     new Map([
@@ -53,10 +50,6 @@ export const geometry: Geometry = {
     ]),
   ),
   selection: van.state(null),
-};
-
-export const design: Design = {
-  designResults: van.state(new Map()),
 };
 
 export const mesh: Mesh = {
@@ -133,22 +126,9 @@ export const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "RC Column 300x300",
-          templateIndex: 0,
-          geometry: [1, 2, 3, 4],
-          params: {
-            width: 300,
-            depth: 300,
-            concreteGrade: "C30",
-            steelGrade: "B500",
-            steelArea: 1256, // 4Ø20 bars
-            cover: 35,
-          },
-        },
-        {
           name: "Beam 200x400",
-          templateIndex: 1, // basic template
-          geometry: [5, 6],
+          templateIndex: 0, // basic template
+          geometry: [1, 2, 3, 4, 5, 6],
           params: {
             elasticity: 30, // GPa (C30 concrete)
             area: 80000, // mm² (200x400mm)
@@ -161,6 +141,23 @@ export const components: Components = van.state(
     ],
   ]),
 );
+
+export const design: Design = {
+  designResults: van.state(new Map()),
+};
+
+export const display: Display = {
+  grid: {
+    size: van.state(10),
+    division: van.state(30),
+  },
+  geometry: van.state(true),
+  mesh: van.state(true),
+  deformedShape: van.state(true),
+  loads: van.state(true),
+  supports: van.state(true),
+  design: van.state(false),
+};
 
 // Mesh events
 van.derive(() => {
@@ -211,7 +208,7 @@ van.derive(() => {
   mesh.elementsProps = elementsPropsData.elementsProps;
 });
 
-// Positions events (linear analysis)
+// Positions events
 van.derive(() => {
   const positions = getPositions(
     mesh.nodes.val,
@@ -247,8 +244,7 @@ van.derive(() => {
 
 // Design results events
 van.derive(() => {
-  // Trigger when internal forces change
-  mesh.internalForces?.val;
+  mesh.internalForces?.val; // Trigger when internal forces change
 
   design.designResults.val = getDesignResults({
     mesh,
@@ -287,19 +283,6 @@ van.derive(() => {
     canvas.val = null;
   }
 });
-
-export const display: Display = {
-  grid: {
-    size: van.state(10),
-    division: van.state(30),
-  },
-  geometry: van.state(true),
-  mesh: van.state(true),
-  deformedShape: van.state(true),
-  loads: van.state(true),
-  supports: van.state(true),
-  design: van.state(false),
-};
 
 document.body.append(
   getLayout({
