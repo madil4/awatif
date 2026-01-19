@@ -14,7 +14,6 @@ import {
   Mesh,
   Design,
   ComponentsType,
-  templates,
 } from "@awatif/components";
 import {
   getDisplay,
@@ -27,6 +26,19 @@ import {
   getCanvasBar,
   CanvasButtons,
 } from "@awatif/ui";
+
+// Todo: find a better place to import templates
+import { lineMesh } from "@awatif/components/mesh/line-mesh/lineMesh";
+import { pointLoad } from "@awatif/components/loads/point-load/pointLoad";
+import { pointSupport } from "@awatif/components/supports/point-support/pointSupport";
+import { basic } from "@awatif/components/design/basic/basic";
+
+export const templates = new Map<ComponentsType, Map<string, any>>([
+  [ComponentsType.MESH, new Map([["line-mesh", lineMesh]])],
+  [ComponentsType.LOADS, new Map([["point-load", pointLoad]])],
+  [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
+  [ComponentsType.DESIGN, new Map([["basic", basic]])],
+]);
 
 export const geometry: Geometry = {
   points: van.state(
