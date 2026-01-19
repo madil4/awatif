@@ -1,16 +1,17 @@
 import { LoadTemplate } from "./data-model";
-import { templates } from "../templates";
 import { Components, ComponentsType } from "../data-model";
 
 export function getLoads({
   geometryMapping,
   components,
+  templates,
 }: {
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
+  templates: Map<ComponentsType, any[]>;
 }): {
   loads: Map<number, [number, number, number, number, number, number]>;
 } {

@@ -3,7 +3,7 @@ import { html, render } from "lit-html";
 import {
   Geometry,
   Components,
-  templates,
+  templates as Templates,
   ComponentsType,
 } from "@awatif/components";
 
@@ -14,11 +14,13 @@ export function getList({
   geometry,
   components,
   activeComponent,
+  templates,
 }: {
   componentsBarMode: State<ComponentsType | null>;
   geometry: Geometry;
   components: Components;
   activeComponent: State<number | null>;
+  templates?: typeof Templates;
 }): HTMLElement {
   const container = document.createElement("div");
   const editingIndex = van.state<number | null>(null);
@@ -54,12 +56,12 @@ export function getList({
 
   const updateComponents = (
     updater: (
-      list: typeof getComponentList extends () => infer R ? R : never
-    ) => typeof list
+      list: typeof getComponentList extends () => infer R ? R : never,
+    ) => typeof list,
   ) => {
     components.val = new Map(components.val).set(
       getKey(),
-      updater(getComponentList())
+      updater(getComponentList()),
     );
   };
 
@@ -109,8 +111,8 @@ export function getList({
           : {
               ...c,
               geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
-            }
-      )
+            },
+      ),
     );
   });
 
@@ -129,7 +131,7 @@ export function getList({
   const removeDeletedFromTypes = (
     componentsMap: Map<ComponentsType, { geometry: number[] }[]>,
     types: ComponentsType[],
-    deleted: Set<number>
+    deleted: Set<number>,
   ) => {
     for (const type of types) {
       const list = componentsMap.get(type);
@@ -139,7 +141,7 @@ export function getList({
           list.map((c) => ({
             ...c,
             geometry: c.geometry.filter((idx) => !deleted.has(idx)),
-          }))
+          })),
         );
       }
     }
@@ -159,14 +161,14 @@ export function getList({
         removeDeletedFromTypes(
           updated,
           [ComponentsType.LOADS, ComponentsType.SUPPORTS],
-          deletedPoints
+          deletedPoints,
         );
       }
       if (deletedLines.size > 0) {
         removeDeletedFromTypes(
           updated,
           [ComponentsType.MESH, ComponentsType.DESIGN],
-          deletedLines
+          deletedLines,
         );
       }
 
@@ -258,6 +260,7 @@ export function getList({
   }
 
   function templatesSection() {
+    if (!templates) return html``;
     const list = templates.get(getKey()) ?? [];
     return html`
       <details class="components-templates" open>
@@ -274,7 +277,7 @@ export function getList({
                 +
               </button>
             </div>
-          `
+          `,
         )}
       </details>
     `;
@@ -295,7 +298,7 @@ export function getList({
     }
 
     const defaultParams = {
-      ...templates.get(getKey())?.[templateIndex]?.defaultParams,
+      ...templates?.get(getKey())?.[templateIndex]?.defaultParams,
     };
     const updated = [
       ...list,
@@ -312,7 +315,7 @@ export function getList({
 
     if (trimmed && trimmed !== list[index].name) {
       const updated = list.map((c, i) =>
-        i === index ? { ...c, name: trimmed } : c
+        i === index ? { ...c, name: trimmed } : c,
       );
       components.val = new Map(components.val).set(getKey(), updated);
     }

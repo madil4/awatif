@@ -1,16 +1,17 @@
 import { Components, ComponentsType, Geometry } from "../data-model";
 import { Elements, Nodes, MeshTemplate } from "./data-model";
-import { templates } from "../templates";
 
 export function getMesh({
   geometry,
   components,
+  templates,
 }: {
   geometry: {
     points: Geometry["points"]["val"];
     lines: Geometry["lines"]["val"];
   };
   components: Components["val"];
+  templates: Map<ComponentsType, any[]>;
 }): {
   nodes: Nodes;
   elements: Elements;
@@ -40,7 +41,7 @@ export function getMesh({
   // Helper to get or create a node for a geometry point
   const getOrCreateNodeForPoint = (
     pointId: number,
-    point: [number, number, number]
+    point: [number, number, number],
   ): number => {
     if (pointToNodes.has(pointId)) {
       return pointToNodes.get(pointId)![0];
@@ -122,7 +123,7 @@ export function getMesh({
 
       // Remap element indices using the local-to-global mapping
       const remappedElements = elements.map((element) =>
-        element.map((localIdx) => localToGlobal.get(localIdx)!)
+        element.map((localIdx) => localToGlobal.get(localIdx)!),
       );
 
       const elementStartIdx = allElements.length;
@@ -131,7 +132,7 @@ export function getMesh({
       // Map geometry line to its mesh elements
       lineToElements.set(
         lineId,
-        remappedElements.map((_, i) => elementStartIdx + i)
+        remappedElements.map((_, i) => elementStartIdx + i),
       );
     } else {
       // Line has no MESH component - create a simple 2-node element
@@ -145,7 +146,7 @@ export function getMesh({
     startId: number,
     endId: number,
     startPoint: [number, number, number],
-    endPoint: [number, number, number]
+    endPoint: [number, number, number],
   ) {
     const startNodeIdx = getOrCreateNodeForPoint(startId, startPoint);
     const endNodeIdx = getOrCreateNodeForPoint(endId, endPoint);

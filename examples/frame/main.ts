@@ -28,6 +28,9 @@ import {
   CanvasButtons,
 } from "@awatif/ui";
 
+// Re-export templates for use in other files
+export { templates };
+
 export const geometry: Geometry = {
   points: van.state(
     new Map([
@@ -167,6 +170,7 @@ van.derive(() => {
       lines: geometry.lines.val,
     },
     components: components.val,
+    templates,
   });
 
   mesh.nodes.val = meshData.nodes;
@@ -179,6 +183,7 @@ van.derive(() => {
   const loadsData = getLoads({
     geometryMapping: mesh.geometryMapping.val,
     components: components.val,
+    templates,
   });
 
   mesh.loads = loadsData.loads;
@@ -189,6 +194,7 @@ van.derive(() => {
   const supportsData = getSupports({
     geometryMapping: mesh.geometryMapping.val,
     components: components.val,
+    templates,
   });
 
   mesh.supports = supportsData.supports;
@@ -199,6 +205,7 @@ van.derive(() => {
   const elementsPropsData = getElementsProps({
     geometryMapping: mesh.geometryMapping.val,
     components: components.val,
+    templates,
   });
 
   mesh.elementsProps = elementsPropsData.elementsProps;
@@ -246,7 +253,7 @@ van.derive(() => {
   design.designResults.val = getDesignResults({
     mesh,
     components,
-    designTemplates: templates.get(ComponentsType.DESIGN) || [],
+    templates,
   });
 });
 
@@ -272,6 +279,7 @@ van.derive(() => {
       geometryMapping: mesh.geometryMapping.val,
       internalForces: mesh.internalForces?.val,
       designResults: design.designResults.val,
+      templates,
     });
   } else {
     if (componentsBarMode.val !== ComponentsType.DESIGN)
@@ -296,13 +304,14 @@ export const display: Display = {
 document.body.append(
   getLayout({
     display: getDisplay({ display }),
-    viewer: getViewer({ geometry, mesh, components, display }),
+    viewer: getViewer({ geometry, mesh, components, display, templates }),
     header: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
       geometry,
       components,
       componentsBarMode,
+      templates,
     }),
     tooltips: getTooltips(),
   }),

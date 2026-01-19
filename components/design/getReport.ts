@@ -1,6 +1,5 @@
 import { html, render } from "lit-html";
 import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
-import { templates } from "../templates";
 import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
 
 const toggleStates = new Map<string, boolean>();
@@ -10,11 +9,13 @@ export function getReport({
   geometryMapping,
   internalForces,
   designResults,
+  templates,
 }: {
   components: Components["val"];
   geometryMapping?: Mesh["geometryMapping"]["val"];
   internalForces?: Map<number, ElementForces>;
   designResults?: Map<number, DesignResult>;
+  templates: Map<ComponentsType, any[]>;
 }): HTMLDivElement {
   const container = document.createElement("div");
   container.style.padding = "10px";

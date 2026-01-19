@@ -4,11 +4,11 @@ import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
 export const getDesignResults = ({
   mesh,
   components,
-  designTemplates,
+  templates,
 }: {
   mesh: Mesh;
   components: Components;
-  designTemplates: DesignTemplate<any>[];
+  templates: Map<ComponentsType, any[]>;
 }): Map<number, DesignResult> => {
   // Get design components
   const designComponents = components.val.get(ComponentsType.DESIGN) || [];
@@ -27,10 +27,12 @@ export const getDesignResults = ({
 
   // Process each design component
   for (const component of designComponents) {
-    const template = designTemplates[component.templateIndex];
+    const template = templates.get(ComponentsType.DESIGN)?.[
+      component.templateIndex
+    ] as DesignTemplate<any>;
 
     // Skip if template doesn't have getDesign function
-    if (!template.getDesign) {
+    if (!template?.getDesign) {
       continue;
     }
 

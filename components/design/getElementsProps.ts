@@ -1,16 +1,17 @@
 import { DesignTemplate } from "./data-model";
-import { templates } from "../templates";
 import { Components, ComponentsType } from "../data-model";
 
 export function getElementsProps({
   geometryMapping,
   components,
+  templates,
 }: {
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
   components: Components["val"];
+  templates: Map<ComponentsType, any[]>;
 }): {
   elementsProps: Map<
     number,
