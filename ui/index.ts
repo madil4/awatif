@@ -3,7 +3,6 @@ export { getViewer } from "./viewer/getViewer";
 export { getDisplay } from "./display/getDisplay";
 export { getComponents } from "./components/getComponents";
 export { getTooltips } from "./tooltips/getTooltips";
-export { getTables } from "./tables/getTables";
 export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar, CanvasButtons } from "./canvasBar/getCanvasBar";
 

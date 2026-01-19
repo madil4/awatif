@@ -7,6 +7,7 @@ import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
 import { getSupports } from "./supports/getSupports";
+import { getDesign } from "./design/getDesign";
 import { getPointResults } from "./pointResult/getPointResults";
 import { Display } from "../display/getDisplay";
 
@@ -30,9 +31,9 @@ export function getViewer({
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
-  camera.position.set(0, 0, 10);
+  camera.position.set(0, 0, 6);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -73,7 +74,7 @@ export function getViewer({
         rendererElm: renderer.domElement,
         render,
         display,
-      })
+      }),
     );
 
   if (mesh)
@@ -82,7 +83,7 @@ export function getViewer({
         mesh,
         render,
         display,
-      })
+      }),
     );
 
   if (components && geometry) {
@@ -93,7 +94,7 @@ export function getViewer({
         templates,
         render,
         display,
-      })
+      }),
     );
 
     scene.add(
@@ -103,7 +104,17 @@ export function getViewer({
         templates,
         render,
         display,
-      })
+      }),
+    );
+
+    scene.add(
+      getDesign({
+        geometry,
+        components,
+        templates,
+        render,
+        display,
+      }),
     );
   }
 
@@ -113,7 +124,7 @@ export function getViewer({
         mesh,
         display: display.pointResult,
         render,
-      })
+      }),
     );
   }
 

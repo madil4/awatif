@@ -12,6 +12,7 @@ export type Display = {
   deformedShape: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
+  design: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
 };
 
@@ -41,7 +42,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               value=${grid.division.val}
               @input=${(e: Event) =>
                 (grid.division.val = Number(
-                  (e.target as HTMLInputElement).value
+                  (e.target as HTMLInputElement).value,
                 ))}
             />
           </div>`
@@ -100,6 +101,17 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               .checked=${display.supports.val}
               @change=${(e: Event) =>
                 (display.supports.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>`
+        : ""}
+      ${display?.design
+        ? html` <div class="display-item">
+            <label>Design</label>
+            <input
+              type="checkbox"
+              .checked=${display.design.val}
+              @change=${(e: Event) =>
+                (display.design.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}
