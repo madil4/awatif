@@ -36,24 +36,35 @@ export function getLineResults({
     if (display.val === "None") return render();
 
     const mode = display.val;
+    const color = "#0066cc";
+    const lineMaterial = new THREE.LineBasicMaterial({ color });
 
-    // Color scheme
-    const getColor = (mode: LineResultsDisplay) => {
+    // Find maximum force value for normalization
+    let maxForceValue = 0;
+    internalForces.forEach((forces: ElementForces) => {
+      let values: [number, number] = [0, 0];
       switch (mode) {
         case "Normals":
-          return { num: 0x00aa00, str: "#00aa00" }; // Green
+          values = forces.N;
+          break;
         case "Shears":
-          return { num: 0x0066cc, str: "#0066cc" }; // Blue
+          values = forces.Vy;
+          break;
         case "Bendings":
-          return { num: 0xcc0066, str: "#cc0066" }; // Red/magenta
-        default:
-          return { num: 0xffffff, str: "#ffffff" };
+          values = forces.Mz;
+          break;
       }
-    };
+      const [valStart, valEnd] = values;
+      maxForceValue = Math.max(
+        maxForceValue,
+        Math.abs(valStart),
+        Math.abs(valEnd),
+      );
+    });
 
-    const color = getColor(mode);
-    const lineMaterial = new THREE.LineBasicMaterial({ color: color.num });
-    const scale = 0.05;
+    // Normalize scale: target max diagram width of 0.5 units
+    const targetMaxWidth = 0.5;
+    const scale = maxForceValue > 0 ? targetMaxWidth / maxForceValue : 0.05;
 
     internalForces.forEach((forces: ElementForces, elementIdx: number) => {
       const element = elements[elementIdx];
@@ -115,13 +126,14 @@ export function getLineResults({
       group.add(new THREE.Line(outlineGeometry, lineMaterial));
 
       // Add text labels
+      const textSize = 0.2;
       if (Math.abs(valStart) > 0.001) {
         group.add(
           getText(
             `${label}: ${valStart.toFixed(2)}`,
             [diagramStart.x, diagramStart.y, diagramStart.z],
-            color.str,
-            0.1,
+            color,
+            textSize,
           ),
         );
       }
@@ -130,8 +142,8 @@ export function getLineResults({
           getText(
             `${label}: ${valEnd.toFixed(2)}`,
             [diagramEnd.x, diagramEnd.y, diagramEnd.z],
-            color.str,
-            0.1,
+            color,
+            textSize,
           ),
         );
       }
