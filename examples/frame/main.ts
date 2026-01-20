@@ -159,6 +159,7 @@ export const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
   design: van.state(false),
+  lineResult: van.state("None"),
 };
 
 // Mesh events
