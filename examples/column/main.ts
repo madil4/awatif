@@ -39,6 +39,7 @@ const geometry: Geometry = {
   ),
   lines: van.state(new Map([[1, [1, 2]]])),
   selection: van.state(null),
+  designs: van.state(new Map()),
 };
 
 const components: Components = van.state(
@@ -127,11 +128,6 @@ const display: Display = {
   design: van.state(false),
 };
 
-// Todo: Find a btetter place for this and call it designs
-const design: Design = {
-  designResults: van.state(new Map()),
-};
-
 // Mesh events
 van.derive(() => {
   const meshData = getMesh({
@@ -216,15 +212,17 @@ van.derive(() => {
   mesh.displacements = displacements;
 });
 
-// Design results events
+// Designs events
 van.derive(() => {
   mesh.internalForces?.val; // Trigger when internal forces change
 
-  design.designResults.val = getDesignResults({
-    mesh,
-    components,
-    templates,
-  });
+  if (geometry.designs) {
+    geometry.designs.val = getDesignResults({
+      mesh,
+      components,
+      templates,
+    });
+  }
 });
 
 // Components events
@@ -248,7 +246,7 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       internalForces: mesh.internalForces?.val,
-      designResults: design.designResults.val,
+      designResults: geometry.designs?.val,
       templates,
     });
   } else {
