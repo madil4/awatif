@@ -9,6 +9,8 @@ export type Geometry = {
     points: number[];
     lines: number[];
   } | null>;
+
+  designs?: State<Map<number, any>>; // Design results per geometry line
 };
 
 // Mesh
