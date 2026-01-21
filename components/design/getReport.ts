@@ -69,7 +69,8 @@ export function getReport({
             }
 
             const report = template.getReport({
-              params: component.params as Parameters<
+              params: (component.params ??
+                template.defaultParams) as Parameters<
                 typeof template.getReport
               >[0]["params"],
               lineId,

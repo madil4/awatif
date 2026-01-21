@@ -52,7 +52,7 @@ export function getParameters({
         if (!component) return;
 
         // Only update if params actually changed
-        const currentParams = component.params;
+        const currentParams = component.params ?? {};
         const hasChanges = Object.keys(params).some(
           (key) => params[key] !== currentParams[key],
         );
@@ -104,10 +104,14 @@ export function getParameters({
     if (!meshTemplate) return null;
 
     // Get or create the param state for this component
-    const localParams = getComponentParams(key, idx, component.params);
+    const localParams = getComponentParams(
+      key,
+      idx,
+      component.params ?? meshTemplate.defaultParams ?? {},
+    );
 
     // Update the local params if the component's params changed externally
-    const currentParams = component.params;
+    const currentParams = component.params ?? meshTemplate.defaultParams ?? {};
     const localParamsVal = localParams.val;
     const needsUpdate =
       Object.keys(currentParams).some(

@@ -78,7 +78,7 @@ export const getDesignResults = ({
 
       // Compute design result
       const designResult = template.getDesign({
-        params: component.params,
+        params: component.params ?? template.defaultParams,
         lineElementForces,
         length,
       });

@@ -55,7 +55,7 @@ export function getSupports({
 
         // Call the template's getObject3D function
         const supportObject = template.getObject3D?.({
-          params: component.params as any,
+          params: (component.params ?? template.defaultParams) as any,
           position: position as [number, number, number],
         });
 

@@ -55,7 +55,7 @@ export function getLoads({
 
         // Call the template's getObject3D function
         const loadObject = template.getObject3D?.({
-          params: component.params as any,
+          params: (component.params ?? template.defaultParams) as any,
           position: position as [number, number, number],
         });
 

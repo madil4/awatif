@@ -29,7 +29,7 @@ export function getLoads({
     if (!template) return;
 
     const { load } = template.getLoad({
-      params: component.params as Parameters<
+      params: (component.params ?? template.defaultParams) as Parameters<
         typeof template.getLoad
       >[0]["params"],
     });
