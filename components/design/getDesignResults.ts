@@ -59,10 +59,28 @@ export const getDesignResults = ({
         elementForces,
       };
 
+      // Calculate length
+      let length = 0;
+      const nodes = mesh.nodes.val;
+      const elements = mesh.elements.val;
+
+      for (const elemIdx of elementIndices) {
+        const [node1Idx, node2Idx] = elements[elemIdx];
+        const node1 = nodes[node1Idx];
+        const node2 = nodes[node2Idx];
+
+        const dx = node2[0] - node1[0];
+        const dy = node2[1] - node1[1];
+        const dz = node2[2] - node1[2];
+
+        length += Math.sqrt(dx * dx + dy * dy + dz * dz);
+      }
+
       // Compute design result
       const designResult = template.getDesign({
         params: component.params,
         lineElementForces,
+        length,
       });
 
       // Store result (if multiple components affect same line, keep worst utilization)
