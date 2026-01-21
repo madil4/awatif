@@ -114,6 +114,7 @@ const mesh: Mesh = {
   supports: van.state(new Map()),
   elementsProps: van.state(new Map()),
   positions: van.state([]),
+  displacements: van.state([]),
   internalForces: van.state(new Map()),
 };
 
@@ -204,13 +205,13 @@ van.derive(() => {
     mesh.elementsProps.val,
   );
 
-  if (mesh.internalForces) mesh.internalForces.val = forces;
-  mesh.displacements = displacements;
+  mesh.internalForces.val = forces;
+  mesh.displacements.val = displacements;
 });
 
 // Designs events
 van.derive(() => {
-  mesh.internalForces?.val; // Trigger when internal forces change
+  mesh.internalForces.val; // Trigger when internal forces change
 
   if (geometry.designs) {
     geometry.designs.val = getDesignResults({
@@ -241,7 +242,7 @@ van.derive(() => {
     canvas.val = getReport({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
-      internalForces: mesh.internalForces?.val,
+      internalForces: mesh.internalForces.val,
       designResults: geometry.designs?.val,
       templates,
     });

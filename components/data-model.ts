@@ -40,8 +40,8 @@ export type Mesh = {
   >;
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]
-  displacements?: number[]; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
-  internalForces?: State<Map<number, ElementForces>>;
+  displacements: State<number[]>; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
+  internalForces: State<Map<number, ElementForces>>;
 };
 
 export type ElementForces = {
