@@ -38,6 +38,7 @@ export function getLineResults({
     const mode = display.val;
     const color = "#0066cc";
     const lineMaterial = new THREE.LineBasicMaterial({ color });
+    lineMaterial.depthTest = false; // Todo: fix it properly
 
     // Find maximum force value for normalization
     let maxForceValue = 0;
@@ -63,7 +64,7 @@ export function getLineResults({
     });
 
     // Normalize scale: target max diagram width of 0.5 units
-    const targetMaxWidth = 0.5;
+    const targetMaxWidth = 1;
     const scale = maxForceValue > 0 ? targetMaxWidth / maxForceValue : 0.05;
 
     internalForces.forEach((forces: ElementForces, elementIdx: number) => {
@@ -126,7 +127,7 @@ export function getLineResults({
       group.add(new THREE.Line(outlineGeometry, lineMaterial));
 
       // Add text labels
-      const textSize = 0.2;
+      const textSize = 0.5;
       if (Math.abs(valStart) > 0.001) {
         group.add(
           getText(

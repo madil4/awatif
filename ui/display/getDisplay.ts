@@ -15,7 +15,7 @@ export type Display = {
   supports: State<boolean>;
   design: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
-  lineResult?: State<LineResultsDisplay>;
+  lineResult: State<LineResultsDisplay>;
 };
 
 export function getDisplay({ display }: { display?: Display }): HTMLElement {
