@@ -22,20 +22,21 @@ export type Mesh = {
     lineToElements: Map<number, number[]>;
   }>;
 
-  supports?: Map<
-    number,
-    [boolean, boolean, boolean, boolean, boolean, boolean]
+  supports?: State<
+    Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>
   >;
-  loads?: Map<number, [number, number, number, number, number, number]>;
-  elementsProps?: Map<
-    number,
-    {
-      elasticity: number;
-      area: number;
-      momentInertia?: number;
-      shearModulus?: number;
-      torsionalConstant?: number;
-    }
+  loads?: State<Map<number, [number, number, number, number, number, number]>>;
+  elementsProps?: State<
+    Map<
+      number,
+      {
+        elasticity: number;
+        area: number;
+        momentInertia?: number;
+        shearModulus?: number;
+        torsionalConstant?: number;
+      }
+    >
   >;
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]

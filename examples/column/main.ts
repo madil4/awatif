@@ -110,6 +110,9 @@ const mesh: Mesh = {
     pointToNodes: new Map(),
     lineToElements: new Map(),
   }),
+  loads: van.state(new Map()),
+  supports: van.state(new Map()),
+  elementsProps: van.state(new Map()),
   positions: van.state([]),
   internalForces: van.state(new Map()),
 };
@@ -145,29 +148,35 @@ van.derive(() => {
 
 // Loads events
 van.derive(() => {
-  mesh.loads = getLoads({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-  });
+  if (mesh.loads) {
+    mesh.loads.val = getLoads({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
+  }
 });
 
 // Supports events
 van.derive(() => {
-  mesh.supports = getSupports({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-  });
+  if (mesh.supports) {
+    mesh.supports.val = getSupports({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
+  }
 });
 
 // Elements properties events
 van.derive(() => {
-  mesh.elementsProps = getElementsProps({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-  });
+  if (mesh.elementsProps) {
+    mesh.elementsProps.val = getElementsProps({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
+  }
 });
 
 // Positions events
@@ -175,9 +184,9 @@ van.derive(() => {
   const positions = getPositions(
     mesh.nodes.val,
     mesh.elements.val,
-    mesh.loads,
-    mesh.supports,
-    mesh.elementsProps,
+    mesh.loads?.val,
+    mesh.supports?.val,
+    mesh.elementsProps?.val,
   );
 
   mesh.positions.val = positions;
@@ -189,16 +198,16 @@ van.derive(() => {
   const displacements = getDisplacements(
     mesh.nodes.val,
     mesh.elements.val,
-    mesh.loads,
-    mesh.supports,
-    mesh.elementsProps,
+    mesh.loads?.val,
+    mesh.supports?.val,
+    mesh.elementsProps?.val,
   );
 
   const forces = getInternalForces(
     mesh.nodes.val,
     mesh.elements.val,
     displacements,
-    mesh.elementsProps,
+    mesh.elementsProps?.val,
   );
 
   if (mesh.internalForces) mesh.internalForces.val = forces;

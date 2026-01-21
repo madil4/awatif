@@ -27,7 +27,7 @@ export function getInternalForces(
   nodes: Nodes,
   elements: Elements,
   displacements: number[],
-  elementsProps: Mesh["elementsProps"]
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
 ): Map<number, ElementForces> {
   const internalForces = new Map<number, ElementForces>();
 
@@ -63,14 +63,14 @@ export function getInternalForces(
     // Transform displacements to local coordinates: u_local = T * u_global
     const elementDisplacementsLocal = multiply(
       T,
-      elementDisplacementsGlobal
+      elementDisplacementsGlobal,
     ) as number[];
 
     // Get local stiffness matrix
     const kLocal = getLocalStiffnessMatrix(
       elmNodes,
       elementsProps,
-      elementIndex
+      elementIndex,
     );
 
     // Calculate local forces: f_local = K_local * u_local
@@ -105,9 +105,9 @@ export function getInternalForces(
 export function getDisplacements(
   nodes: Nodes,
   elements: Elements,
-  loads: Mesh["loads"],
-  supports: Mesh["supports"],
-  elementsProps: Mesh["elementsProps"]
+  loads: NonNullable<Mesh["loads"]>["val"] | undefined,
+  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
 ): number[] {
   if (!nodes || !elements) return [];
   if (nodes.length === 0 || elements.length === 0) return [];
@@ -120,7 +120,7 @@ export function getDisplacements(
     nodes,
     elements,
     elementsProps,
-    dof
+    dof,
   );
 
   const forcesFree = subset(appliedForces, mathIndex(freeInd));
@@ -134,14 +134,17 @@ export function getDisplacements(
   const displacements: number[] = subset(
     Array(dof).fill(0),
     mathIndex(freeInd),
-    flatten(displacementFree)
+    flatten(displacementFree),
   );
 
   return displacements;
 }
 
 // Utility functions
-function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
+function getFreeIndices(
+  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
+  dof: number,
+): number[] {
   const toRemove: number[] = [];
   supports?.forEach((support, index) => {
     if (support[0]) toRemove.push(index * 6);
@@ -158,7 +161,10 @@ function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
     .filter((v) => !toRemove.includes(v));
 }
 
-function getAppliedForces(forcesInputs: Mesh["loads"], dof: number): number[] {
+function getAppliedForces(
+  forcesInputs: NonNullable<Mesh["loads"]>["val"] | undefined,
+  dof: number,
+): number[] {
   const forces: number[] = Array(dof).fill(0);
 
   forcesInputs?.forEach((force, index) => {

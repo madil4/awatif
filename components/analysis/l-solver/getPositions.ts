@@ -6,9 +6,9 @@ import { Elements, Nodes } from "../../mesh/data-model.js";
 export function getPositions(
   nodes: Nodes,
   elements: Elements,
-  loads: Mesh["loads"],
-  supports: Mesh["supports"],
-  elementsProps: Mesh["elementsProps"],
+  loads: NonNullable<Mesh["loads"]>["val"] | undefined,
+  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
 ): number[] {
   if (!nodes || !elements) return [];
   if (nodes.length === 0 || elements.length === 0) return [];
@@ -53,7 +53,10 @@ export function getPositions(
 }
 
 // Utils
-function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
+function getFreeIndices(
+  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
+  dof: number,
+): number[] {
   const toRemove: number[] = [];
   supports?.forEach((support, index) => {
     if (support[0]) toRemove.push(index * 6);
@@ -70,7 +73,10 @@ function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
     .filter((v) => !toRemove.includes(v));
 }
 
-function getAppliedForces(forcesInputs: Mesh["loads"], dof: number): number[] {
+function getAppliedForces(
+  forcesInputs: NonNullable<Mesh["loads"]>["val"] | undefined,
+  dof: number,
+): number[] {
   const forces: number[] = Array(dof).fill(0);
 
   forcesInputs?.forEach((force, index) => {

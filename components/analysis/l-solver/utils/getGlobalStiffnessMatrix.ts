@@ -7,8 +7,8 @@ import { Elements, Nodes } from "../../../mesh/data-model";
 export function getGlobalStiffnessMatrix(
   nodes: Nodes,
   elements: Elements,
-  elementsProps: Mesh["elementsProps"],
-  dof: number
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
+  dof: number,
 ): number[][] {
   let stiffnessMatrix = Array(dof)
     .fill(0)
@@ -31,7 +31,7 @@ export function getGlobalStiffnessMatrix(
 function assemble(
   stiffnessMatrix: number[][],
   kGlobal: number[][],
-  element: number[]
+  element: number[],
 ): number[][] {
   const isN2 = element.length === 3;
   const offset0 = 6 * element[0];
