@@ -145,35 +145,29 @@ van.derive(() => {
 
 // Loads events
 van.derive(() => {
-  const loadsData = getLoads({
-    geometryMapping: mesh.geometryMapping.val,
+  mesh.loads = getLoads({
     components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
     templates,
   });
-
-  mesh.loads = loadsData.loads;
 });
 
 // Supports events
 van.derive(() => {
-  const supportsData = getSupports({
-    geometryMapping: mesh.geometryMapping.val,
+  mesh.supports = getSupports({
     components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
     templates,
   });
-
-  mesh.supports = supportsData.supports;
 });
 
 // Elements properties events
 van.derive(() => {
-  const elementsPropsData = getElementsProps({
-    geometryMapping: mesh.geometryMapping.val,
+  mesh.elementsProps = getElementsProps({
     components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
     templates,
   });
-
-  mesh.elementsProps = elementsPropsData.elementsProps;
 });
 
 // Positions events

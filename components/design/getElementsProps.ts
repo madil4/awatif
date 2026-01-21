@@ -2,28 +2,26 @@ import { DesignTemplate } from "./data-model";
 import { Components, ComponentsType } from "../data-model";
 
 export function getElementsProps({
-  geometryMapping,
   components,
+  geometryMapping,
   templates,
 }: {
+  components: Components["val"];
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
-  components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
-}): {
-  elementsProps: Map<
-    number,
-    {
-      elasticity: number;
-      area: number;
-      momentInertia?: number;
-      shearModulus?: number;
-      torsionalConstant?: number;
-    }
-  >;
-} {
+}): Map<
+  number,
+  {
+    elasticity: number;
+    area: number;
+    momentInertia?: number;
+    shearModulus?: number;
+    torsionalConstant?: number;
+  }
+> {
   const elementsProps = new Map<
     number,
     {
@@ -66,5 +64,5 @@ export function getElementsProps({
     });
   });
 
-  return { elementsProps };
+  return elementsProps;
 }
