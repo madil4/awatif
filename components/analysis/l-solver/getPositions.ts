@@ -6,9 +6,9 @@ import { Elements, Nodes } from "../../mesh/data-model.js";
 export function getPositions(
   nodes: Nodes,
   elements: Elements,
-  loads: NonNullable<Mesh["loads"]>["val"] | undefined,
-  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
-  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
+  loads: Mesh["loads"]["val"],
+  supports: Mesh["supports"]["val"],
+  elementsProps: Mesh["elementsProps"]["val"],
 ): number[] {
   if (!nodes || !elements) return [];
   if (nodes.length === 0 || elements.length === 0) return [];
@@ -54,7 +54,7 @@ export function getPositions(
 
 // Utils
 function getFreeIndices(
-  supports: NonNullable<Mesh["supports"]>["val"] | undefined,
+  supports: Mesh["supports"]["val"] | undefined,
   dof: number,
 ): number[] {
   const toRemove: number[] = [];
@@ -74,7 +74,7 @@ function getFreeIndices(
 }
 
 function getAppliedForces(
-  forcesInputs: NonNullable<Mesh["loads"]>["val"] | undefined,
+  forcesInputs: Mesh["loads"]["val"] | undefined,
   dof: number,
 ): number[] {
   const forces: number[] = Array(dof).fill(0);

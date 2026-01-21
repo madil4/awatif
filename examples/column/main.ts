@@ -148,35 +148,29 @@ van.derive(() => {
 
 // Loads events
 van.derive(() => {
-  if (mesh.loads) {
-    mesh.loads.val = getLoads({
-      components: components.val,
-      geometryMapping: mesh.geometryMapping.val,
-      templates,
-    });
-  }
+  mesh.loads.val = getLoads({
+    components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
+    templates,
+  });
 });
 
 // Supports events
 van.derive(() => {
-  if (mesh.supports) {
-    mesh.supports.val = getSupports({
-      components: components.val,
-      geometryMapping: mesh.geometryMapping.val,
-      templates,
-    });
-  }
+  mesh.supports.val = getSupports({
+    components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
+    templates,
+  });
 });
 
 // Elements properties events
 van.derive(() => {
-  if (mesh.elementsProps) {
-    mesh.elementsProps.val = getElementsProps({
-      components: components.val,
-      geometryMapping: mesh.geometryMapping.val,
-      templates,
-    });
-  }
+  mesh.elementsProps.val = getElementsProps({
+    components: components.val,
+    geometryMapping: mesh.geometryMapping.val,
+    templates,
+  });
 });
 
 // Positions events
@@ -184,9 +178,9 @@ van.derive(() => {
   const positions = getPositions(
     mesh.nodes.val,
     mesh.elements.val,
-    mesh.loads?.val,
-    mesh.supports?.val,
-    mesh.elementsProps?.val,
+    mesh.loads.val,
+    mesh.supports.val,
+    mesh.elementsProps.val,
   );
 
   mesh.positions.val = positions;
@@ -198,16 +192,16 @@ van.derive(() => {
   const displacements = getDisplacements(
     mesh.nodes.val,
     mesh.elements.val,
-    mesh.loads?.val,
-    mesh.supports?.val,
-    mesh.elementsProps?.val,
+    mesh.loads.val,
+    mesh.supports.val,
+    mesh.elementsProps.val,
   );
 
   const forces = getInternalForces(
     mesh.nodes.val,
     mesh.elements.val,
     displacements,
-    mesh.elementsProps?.val,
+    mesh.elementsProps.val,
   );
 
   if (mesh.internalForces) mesh.internalForces.val = forces;

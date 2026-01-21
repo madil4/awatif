@@ -7,7 +7,7 @@ import { Elements, Nodes } from "../../../mesh/data-model";
 export function getGlobalStiffnessMatrix(
   nodes: Nodes,
   elements: Elements,
-  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
+  elementsProps: Mesh["elementsProps"]["val"] | undefined,
   dof: number,
 ): number[][] {
   let stiffnessMatrix = Array(dof)
