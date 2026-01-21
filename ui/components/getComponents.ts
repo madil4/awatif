@@ -18,15 +18,16 @@ export function getComponents({
   components,
   componentsBarMode,
   templates,
+  activeAnalysis = van.state("linear"),
 }: {
   geometry: Geometry;
   components: Components;
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
+  activeAnalysis?: State<string>;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<number | null>(null);
-  const activeAnalysis = van.state<string>("linear");
 
   const list = getList({
     componentsBarMode,
