@@ -11,7 +11,7 @@ import {
   getPositions,
   getDisplacements,
   getInternalForces,
-  getDesignResults,
+  getDesigns,
   Geometry,
   Mesh,
   ComponentsType,
@@ -188,7 +188,6 @@ van.derive(() => {
 });
 
 // Internal forces events
-// Todo: Check units
 van.derive(() => {
   const displacements = getDisplacements(
     mesh.nodes.val,
@@ -213,13 +212,11 @@ van.derive(() => {
 van.derive(() => {
   mesh.internalForces.val; // Trigger when internal forces change
 
-  if (geometry.designs) {
-    geometry.designs.val = getDesignResults({
-      mesh,
-      components,
-      templates,
-    });
-  }
+  geometry.designs.val = getDesigns({
+    mesh,
+    components,
+    templates,
+  });
 });
 
 // Components events
@@ -243,7 +240,7 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       internalForces: mesh.internalForces.val,
-      designResults: geometry.designs?.val,
+      designResults: geometry.designs.val,
       templates,
     });
   } else {
