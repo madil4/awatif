@@ -4,7 +4,7 @@ import { ComponentsType } from "@awatif/components";
 
 export type AnalysisListProps = {
   componentsBarMode: State<ComponentsType | null>;
-  activeAnalysis: State<string>;
+  activeAnalysis?: State<string | undefined>;
 };
 
 export function getAnalysisList({
@@ -26,12 +26,12 @@ export function getAnalysisList({
   };
 
   function analysisItem(name: string, id: string) {
-    const isActive = activeAnalysis.val === id;
+    const isActive = activeAnalysis?.val === id;
 
     return html`
       <div
         class="components-item ${isActive ? "active" : ""}"
-        @click=${() => (activeAnalysis.val = id)}
+        @click=${() => activeAnalysis && (activeAnalysis.val = id)}
       >
         <label>${name}</label>
       </div>
