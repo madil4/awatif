@@ -8,8 +8,8 @@ export function getPositions(
   elements: Elements,
   loads: Mesh["loads"],
   supports: Mesh["supports"],
-  elementsProps: Mesh["elementsProps"]
-): NonNullable<Mesh["positions"]> {
+  elementsProps: Mesh["elementsProps"],
+): number[] {
   if (!nodes || !elements) return [];
   if (nodes.length === 0 || elements.length === 0) return [];
 
@@ -22,7 +22,7 @@ export function getPositions(
     nodes,
     elements,
     elementsProps,
-    dof
+    dof,
   );
 
   const forcesFree = subset(appliedForces, index(freeInd));
@@ -36,7 +36,7 @@ export function getPositions(
   const deformations: number[] = subset(
     Array(dof).fill(0),
     index(freeInd),
-    flatten(deformationFree)
+    flatten(deformationFree),
   );
 
   const displacements = nodes

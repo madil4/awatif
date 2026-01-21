@@ -22,7 +22,7 @@ export function getMesh({
       size: 4,
       sizeAttenuation: false,
       depthTest: false,
-    })
+    }),
   );
   points.renderOrder = 2; // Render mesh nodes above mesh lines
   group.add(points);
@@ -32,14 +32,12 @@ export function getMesh({
 
     // Use deformed positions if deformedShape toggle is on and positions exist
     const useDeformed =
-      display?.deformedShape?.val &&
-      mesh.positions &&
-      mesh.positions.length > 0;
-    const positions = useDeformed ? mesh.positions! : mesh.nodes.val.flat();
+      display?.deformedShape?.val && mesh.positions.val.length > 0;
+    const positions = useDeformed ? mesh.positions.val : mesh.nodes.val.flat();
 
     points.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     points.geometry.computeBoundingSphere();
 
@@ -52,7 +50,7 @@ export function getMesh({
     new THREE.LineBasicMaterial({
       color: MESH_COLOR,
       depthTest: false,
-    })
+    }),
   );
   lines.renderOrder = 1; // Render mesh lines above grid
   group.add(lines);
@@ -65,20 +63,15 @@ export function getMesh({
 
     // Use deformed positions if deformedShape toggle is on and positions exist
     const useDeformed =
-      display?.deformedShape?.val &&
-      mesh.positions &&
-      mesh.positions.length > 0;
+      display?.deformedShape?.val && mesh.positions.val.length > 0;
     let nodes: number[][];
 
     if (useDeformed) {
       // Convert flat positions array to nodes array
       nodes = [];
-      for (let i = 0; i < mesh.positions!.length; i += 3) {
-        nodes.push([
-          mesh.positions![i],
-          mesh.positions![i + 1],
-          mesh.positions![i + 2],
-        ]);
+      const pos = mesh.positions.val;
+      for (let i = 0; i < pos.length; i += 3) {
+        nodes.push([pos[i], pos[i + 1], pos[i + 2]]);
       }
     } else {
       nodes = mesh.nodes.val;
@@ -102,7 +95,7 @@ export function getMesh({
 
     lines.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     lines.geometry.computeBoundingSphere();
 

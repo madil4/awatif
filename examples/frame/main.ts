@@ -61,6 +61,7 @@ export const mesh: Mesh = {
     pointToNodes: new Map(),
     lineToElements: new Map(),
   }),
+  positions: van.state([]),
   internalForces: van.state(new Map()),
 };
 
@@ -221,7 +222,7 @@ van.derive(() => {
     mesh.elementsProps,
   );
 
-  mesh.positions = positions;
+  mesh.positions.val = positions;
 });
 
 // Internal forces events
