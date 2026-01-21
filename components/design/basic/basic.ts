@@ -22,6 +22,7 @@ export const basic: DesignTemplate<BasicParams> = {
         <input
           type="number"
           step="1"
+          min="1"
           .value=${params.val.elasticity}
           @input=${(e: Event) =>
             (params.val = {
@@ -36,6 +37,7 @@ export const basic: DesignTemplate<BasicParams> = {
         <input
           type="number"
           step="1"
+          min="1"
           .value=${params.val.area}
           @input=${(e: Event) =>
             (params.val = {
@@ -50,6 +52,7 @@ export const basic: DesignTemplate<BasicParams> = {
         <input
           type="number"
           step="1000"
+          min="1"
           .value=${params.val.momentInertia}
           @input=${(e: Event) =>
             (params.val = {
