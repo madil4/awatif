@@ -237,6 +237,7 @@ const canvasButton = van.state<CanvasButtons | null>(null);
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
     display.design.val = true;
+
     canvas.val = getReport({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
@@ -247,14 +248,15 @@ van.derive(() => {
   } else {
     if (componentsBarMode.val !== ComponentsType.DESIGN)
       display.design.val = false;
+
     canvas.val = null;
   }
 });
 
 document.body.append(
   getLayout({
-    display: getDisplay({ display }),
     viewer: getViewer({ geometry, mesh, components, display, templates }),
+    display: getDisplay({ display }),
     header: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
