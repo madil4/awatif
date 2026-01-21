@@ -9,6 +9,7 @@ import {
 import { getList } from "./list/getList";
 import { getParameters } from "./parameters/getParameters";
 import { getComponentsBar } from "./componentsBar/getComponentsBar";
+import { getAnalysisList } from "./analysisList/getAnalysisList";
 
 import "./styles.css";
 
@@ -25,6 +26,7 @@ export function getComponents({
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<number | null>(null);
+  const activeAnalysis = van.state<string>("linear");
 
   const list = getList({
     componentsBarMode,
@@ -42,10 +44,11 @@ export function getComponents({
   });
 
   const componentsBar = getComponentsBar({ componentsBarMode });
+  const analysisList = getAnalysisList({ componentsBarMode, activeAnalysis });
 
   const template = html`
     <div id="components">
-      <div class="components-column">${list} ${parameters}</div>
+      <div class="components-column">${list} ${analysisList} ${parameters}</div>
       <div class="components-bar">${componentsBar}</div>
     </div>
   `;

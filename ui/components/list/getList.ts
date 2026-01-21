@@ -186,6 +186,7 @@ export function getList({
 
   function template() {
     if (componentsBarMode.val === null) return html``;
+    if (componentsBarMode.val === ComponentsType.ANALYSIS) return html``;
 
     const list = getComponentList();
     const isOpen =
