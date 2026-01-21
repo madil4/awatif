@@ -10,9 +10,9 @@ type BasicParams = {
 export const basic: DesignTemplate<BasicParams> = {
   name: "Basic",
   defaultParams: {
-    elasticity: 200, // GPa
-    area: 100, // cm²
-    momentInertia: 8333333.3, // cm⁴
+    elasticity: 33, // GPa (C30/37 concrete)
+    area: 900, // cm² (300×300 mm section)
+    momentInertia: 67500, // cm⁴ (300×300 mm section)
   },
 
   getParamsTemplate: ({ params }) => {
