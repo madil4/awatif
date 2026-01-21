@@ -1,7 +1,6 @@
 import {
   multiply,
   subset,
-  index,
   index as mathIndex,
   sparse,
   lup,

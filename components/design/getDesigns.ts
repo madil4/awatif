@@ -1,7 +1,7 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
 import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
 
-export const getDesignResults = ({
+export const getDesigns = ({
   mesh,
   components,
   templates,
