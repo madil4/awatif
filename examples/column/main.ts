@@ -47,10 +47,10 @@ const components: Components = van.state(
       ComponentsType.MESH,
       [
         {
-          name: "Column",
+          name: "Line Mesh",
           templateId: "line-mesh",
           geometry: [1],
-          params: { divisions: 1 },
+          params: { divisions: 4 },
         },
       ],
     ],
@@ -94,7 +94,7 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Basic Column",
+          name: "Basic Design",
           templateId: "basic",
           geometry: [1],
         },
