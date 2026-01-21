@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite --open frame/index.html --port 4600"
+    "dev": "vite --open column/index.html --port 4600"
   },
   "dependencies": {
     "vanjs-core": "^1.6.0",

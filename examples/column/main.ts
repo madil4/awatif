@@ -1,3 +1,5 @@
+// Positions are in meters and forces are in Kilo-Newton,
+// everything else propogate from these two assumptions
 import van from "vanjs-core";
 import {
   Components,
@@ -28,59 +30,27 @@ import {
   CanvasButtons,
 } from "@awatif/ui";
 
-export { templates };
-
-export const geometry: Geometry = {
+const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [-3, -3, 0]],
-      [2, [3, -3, 0]],
-      [3, [-3, 0, 0]],
-      [4, [3, 0, 0]],
-      [5, [-3, 3, 0]],
-      [6, [3, 3, 0]],
+      [1, [0, -3, 0]],
+      [2, [0, 3.2, 0]],
     ]),
   ),
-  lines: van.state(
-    new Map([
-      [1, [1, 3]],
-      [2, [2, 4]],
-      [3, [3, 5]],
-      [4, [4, 6]],
-      [5, [3, 4]],
-      [6, [5, 6]],
-    ]),
-  ),
+  lines: van.state(new Map([[1, [1, 2]]])),
   selection: van.state(null),
 };
 
-export const mesh: Mesh = {
-  nodes: van.state([]),
-  elements: van.state([]),
-  geometryMapping: van.state({
-    pointToNodes: new Map(),
-    lineToElements: new Map(),
-  }),
-  positions: van.state([]),
-  internalForces: van.state(new Map()),
-};
-
-export const components: Components = van.state(
+const components: Components = van.state(
   new Map([
     [
       ComponentsType.MESH,
       [
         {
-          name: "Columns",
+          name: "Column",
           templateId: "line-mesh",
-          geometry: [1, 2, 3, 4],
-          params: { divisions: 8 },
-        },
-        {
-          name: "Beams",
-          templateId: "line-mesh",
-          geometry: [5, 6],
-          params: { divisions: 4 },
+          geometry: [1],
+          params: { divisions: 1 },
         },
       ],
     ],
@@ -88,22 +58,17 @@ export const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "1st Floor Load",
+          name: "Axial Load",
           templateId: "point-load",
-          geometry: [3, 4],
-          params: { Fx: 0, Fy: -90000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
-        },
-        {
-          name: "2nd Floor Load",
-          templateId: "point-load",
-          geometry: [5, 6],
-          params: { Fx: 0, Fy: -60000, Fz: 0, Mx: 0, My: 0, Mz: 0 },
-        },
-        {
-          name: "Horizontal Load (Sway)",
-          templateId: "point-load",
-          geometry: [5, 3],
-          params: { Fx: 5000, Fy: 0, Fz: 0, Mx: 0, My: 0, Mz: 0 },
+          geometry: [2],
+          params: {
+            Fx: 0,
+            Fy: -633,
+            Fz: 0,
+            Mx: 0,
+            My: 0,
+            Mz: 0,
+          },
         },
       ],
     ],
@@ -111,9 +76,9 @@ export const components: Components = van.state(
       ComponentsType.SUPPORTS,
       [
         {
-          name: "Column Base (Fixed)",
+          name: "Fixed Support",
           templateId: "point-support",
-          geometry: [1, 2],
+          geometry: [1],
           params: {
             Ux: true,
             Uy: true,
@@ -129,27 +94,28 @@ export const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Beam 200x400",
-          templateId: "basic", // basic template
-          geometry: [1, 2, 3, 4, 5, 6],
-          params: {
-            elasticity: 30, // GPa (C30 concrete)
-            area: 80000, // mm² (200x400mm)
-            momentInertia: 1066666667, // mm⁴ (200x400mm beam)
-            shearModulus: 12.5, // GPa (concrete)
-            torsionalConstant: 533333333, // mm⁴ (approx for 200x400mm)
-          },
+          name: "Basic Column",
+          templateId: "basic",
+          geometry: [1],
+          params: {}, // Todo: when params is missing use default params
         },
       ],
     ],
   ]),
 );
 
-export const design: Design = {
-  designResults: van.state(new Map()),
+const mesh: Mesh = {
+  nodes: van.state([]),
+  elements: van.state([]),
+  geometryMapping: van.state({
+    pointToNodes: new Map(),
+    lineToElements: new Map(),
+  }),
+  positions: van.state([]),
+  internalForces: van.state(new Map()),
 };
 
-export const display: Display = {
+const display: Display = {
   grid: {
     size: van.state(10),
     division: van.state(30),
@@ -160,7 +126,11 @@ export const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
   design: van.state(false),
-  lineResult: van.state("None"),
+};
+
+// Todo: Find a btetter place for this and call it designs
+const design: Design = {
+  designResults: van.state(new Map()),
 };
 
 // Mesh events
@@ -258,8 +228,7 @@ van.derive(() => {
 });
 
 // Components events
-export const componentsBarMode = van.state<ComponentsType | null>(null);
-
+const componentsBarMode = van.state<ComponentsType | null>(null);
 van.derive(() => {
   if (componentsBarMode.val === ComponentsType.MESH) display.mesh.val = true;
   if (componentsBarMode.val === ComponentsType.LOADS) display.loads.val = true;
@@ -268,9 +237,8 @@ van.derive(() => {
 });
 
 // Canvas events
-export const canvasButton = van.state<CanvasButtons | null>(null);
-export const canvas = van.state<HTMLDivElement | null>(null);
-
+const canvas = van.state<HTMLDivElement | null>(null);
+const canvasButton = van.state<CanvasButtons | null>(null);
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
     display.design.val = true;
