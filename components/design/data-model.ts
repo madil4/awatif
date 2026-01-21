@@ -47,8 +47,10 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
   getDesign?: ({
     params,
     lineElementForces,
+    length,
   }: {
     params: Params;
     lineElementForces: LineElementForces;
+    length: number;
   }) => DesignResult;
 };
