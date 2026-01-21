@@ -6,11 +6,11 @@ export function getMesh({
   components,
   templates,
 }: {
+  components: Components["val"];
   geometry: {
     points: Geometry["points"]["val"];
     lines: Geometry["lines"]["val"];
   };
-  components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
 }): {
   nodes: Nodes;

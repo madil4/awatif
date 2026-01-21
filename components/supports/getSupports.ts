@@ -2,19 +2,17 @@ import { SupportTemplate } from "./data-model";
 import { Components, ComponentsType } from "../data-model";
 
 export function getSupports({
-  geometryMapping,
   components,
+  geometryMapping,
   templates,
 }: {
+  components: Components["val"];
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
-  components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
-}): {
-  supports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>;
-} {
+}): Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]> {
   const supports = new Map<
     number,
     [boolean, boolean, boolean, boolean, boolean, boolean]
@@ -66,5 +64,5 @@ export function getSupports({
     });
   });
 
-  return { supports };
+  return supports;
 }
