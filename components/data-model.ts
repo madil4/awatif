@@ -68,5 +68,5 @@ type Component = {
   name: string;
   templateId: string;
   geometry: number[];
-  params: Record<string, unknown>;
+  params?: Record<string, unknown>;
 };

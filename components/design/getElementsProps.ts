@@ -44,7 +44,7 @@ export function getElementsProps({
     if (!template) return;
 
     const props = template.getElementsProps({
-      params: component.params as Parameters<
+      params: (component.params ?? template.defaultParams) as Parameters<
         typeof template.getElementsProps
       >[0]["params"],
     });

@@ -76,7 +76,7 @@ export function getMesh({
       }
 
       const { nodes: parametricNodes, elements } = template.getMesh({
-        params: component.params as Parameters<
+        params: (component.params ?? template.defaultParams) as Parameters<
           typeof template.getMesh
         >[0]["params"],
       });

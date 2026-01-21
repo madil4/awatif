@@ -97,7 +97,6 @@ const components: Components = van.state(
           name: "Basic Column",
           templateId: "basic",
           geometry: [1],
-          params: {}, // Todo: when params is missing use default params
         },
       ],
     ],
