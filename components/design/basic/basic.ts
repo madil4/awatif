@@ -12,11 +12,11 @@ type BasicParams = {
 export const basic: DesignTemplate<BasicParams> = {
   name: "Basic",
   defaultParams: {
-    elasticity: 200,
-    area: 10000,
-    momentInertia: 83333333,
-    shearModulus: 77,
-    torsionalConstant: 141666667,
+    elasticity: 200, // GPa
+    area: 10000, // mm²
+    momentInertia: 83333333, // mm⁴
+    shearModulus: 77, // GPa
+    torsionalConstant: 141666667, // mm⁴
   },
 
   getParamsTemplate: ({ params }) => {
