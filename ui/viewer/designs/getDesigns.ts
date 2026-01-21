@@ -8,7 +8,7 @@ import {
 } from "@awatif/components";
 import { getText } from "../text/getText";
 
-export function getDesign({
+export function getDesigns({
   geometry,
   components,
   templates,
