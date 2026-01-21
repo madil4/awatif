@@ -15,7 +15,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   name: "Point Load",
   defaultParams: {
     Fx: 0,
-    Fy: -100,
+    Fy: -100, // KN
     Fz: 0,
     Mx: 0,
     My: 0,
@@ -25,7 +25,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   getParamsTemplate: ({ params }) => {
     return html`
       <div>
-        <label>Force X:</label>
+        <label>Force X (KN):</label>
         <input
           type="number"
           .value=${params.val.Fx}
@@ -38,7 +38,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
       </div>
 
       <div>
-        <label>Force Y:</label>
+        <label>Force Y (KN):</label>
         <input
           type="number"
           .value=${params.val.Fy}
@@ -82,7 +82,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         ARROW_LENGTH,
         COLOR_X,
         ARROW_HEAD_LENGTH,
-        ARROW_HEAD_WIDTH
+        ARROW_HEAD_WIDTH,
       );
       setMaterialOnTop(arrowX);
       group.add(arrowX);
@@ -97,7 +97,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         ARROW_LENGTH,
         COLOR_Y,
         ARROW_HEAD_LENGTH,
-        ARROW_HEAD_WIDTH
+        ARROW_HEAD_WIDTH,
       );
       setMaterialOnTop(arrowY);
       group.add(arrowY);

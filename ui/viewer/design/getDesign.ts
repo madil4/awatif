@@ -68,10 +68,10 @@ export function getDesign({
         ];
 
         // Create text label with line number and component name
-        const labelText = `Line ${lineId}`;
+        const labelText = `${lineId}: ${component.name}`;
 
         // Use accent color from the layout theme (#4a9eff)
-        const textSprite = getText(labelText, midpoint, "#fff", 0.35);
+        const textSprite = getText(labelText, midpoint, "#fff", 0.5);
 
         // Add to the group
         group.add(textSprite);
