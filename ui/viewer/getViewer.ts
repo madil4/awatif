@@ -12,7 +12,7 @@ import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
 import { getSupports } from "./supports/getSupports";
-import { getDesign } from "./design/getDesign";
+import { getDesigns } from "./designs/getDesigns";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { Display } from "../display/getDisplay";
@@ -116,7 +116,7 @@ export function getViewer({
     );
 
     scene.add(
-      getDesign({
+      getDesigns({
         geometry,
         components,
         templates,
