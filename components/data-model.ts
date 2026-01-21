@@ -17,7 +17,6 @@ export type Geometry = {
 export type Mesh = {
   nodes: State<number[][]>; // [[x, y, z], [x, y, z], ...]
   elements: State<number[][]>; // [[node1, node2], ...]
-
   geometryMapping: State<{
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
@@ -28,7 +27,6 @@ export type Mesh = {
     [boolean, boolean, boolean, boolean, boolean, boolean]
   >;
   loads?: Map<number, [number, number, number, number, number, number]>;
-
   elementsProps?: Map<
     number,
     {
@@ -41,8 +39,7 @@ export type Mesh = {
   >;
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]
-  displacements?: number[]; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...] Global displacement vector (6 DOF per node)
-
+  displacements?: number[]; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
   internalForces?: State<Map<number, ElementForces>>;
 };
 
