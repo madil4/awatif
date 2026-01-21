@@ -14,7 +14,6 @@ import {
   getDesignResults,
   Geometry,
   Mesh,
-  Design,
   ComponentsType,
   templates,
 } from "@awatif/components";
