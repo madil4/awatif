@@ -4,8 +4,8 @@ import { Nodes } from "../../../mesh/data-model";
 
 export function getLocalStiffnessMatrix(
   nodes: Nodes,
-  elementsProps: Mesh["elementsProps"],
-  index: number
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
+  index: number,
 ): number[][] {
   if (!nodes || !elementsProps) return [];
 
@@ -17,8 +17,8 @@ export function getLocalStiffnessMatrix(
 
 function getLocalStiffnessMatrixFrame(
   nodes: Nodes,
-  elementsProps: Mesh["elementsProps"],
-  index: number
+  elementsProps: NonNullable<Mesh["elementsProps"]>["val"] | undefined,
+  index: number,
 ): number[][] {
   if (!nodes || !elementsProps) return [];
 
