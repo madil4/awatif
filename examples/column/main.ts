@@ -195,6 +195,7 @@ van.derive(() => {
 });
 
 // Internal forces events
+// Todo: Check units
 van.derive(() => {
   const displacements = getDisplacements(
     mesh.nodes.val,
