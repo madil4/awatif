@@ -22,11 +22,11 @@ export type Mesh = {
     lineToElements: Map<number, number[]>;
   }>;
 
-  supports?: State<
+  supports: State<
     Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>
   >;
-  loads?: State<Map<number, [number, number, number, number, number, number]>>;
-  elementsProps?: State<
+  loads: State<Map<number, [number, number, number, number, number, number]>>;
+  elementsProps: State<
     Map<
       number,
       {
