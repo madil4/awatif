@@ -15,7 +15,9 @@
   -moz-user-select: none;
   -ms-user-select: none;
 
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   transform-origin: bottom left;
 }
 
