@@ -41,7 +41,7 @@ export function getViewer({
     0.1,
     1000,
   );
-  camera.position.set(0, 0, 6);
+  camera.position.set(0, 0, 7);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
