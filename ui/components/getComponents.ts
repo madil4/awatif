@@ -18,7 +18,7 @@ export function getComponents({
   components,
   componentsBarMode,
   templates,
-  activeAnalysis = van.state("linear"),
+  activeAnalysis,
 }: {
   geometry: Geometry;
   components: Components;
@@ -44,7 +44,7 @@ export function getComponents({
     templates,
   });
 
-  const componentsBar = getComponentsBar({ componentsBarMode });
+  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis });
   const analysisList = getAnalysisList({ componentsBarMode, activeAnalysis });
 
   const template = html`

@@ -6,13 +6,15 @@ import "./styles.css";
 
 export type ComponentsBarMode = {
   componentsBarMode: State<ComponentsType | null>;
+  activeAnalysis?: State<string | undefined>;
 };
 
 export function getComponentsBar({
   componentsBarMode,
+  activeAnalysis,
 }: ComponentsBarMode): HTMLElement {
   const container = document.createElement("div");
-  const types = getComponentsTypes();
+  const types = getComponentsTypes(activeAnalysis);
 
   const template = () => html`
     <div id="components-bar">
@@ -28,7 +30,7 @@ export function getComponentsBar({
           >
             ${mode.label}
           </button>
-        `
+        `,
       )}
     </div>
   `;
@@ -41,9 +43,19 @@ export function getComponentsBar({
 }
 
 // Utils
-function getComponentsTypes() {
+function getComponentsTypes(activeAnalysis?: State<string | undefined>) {
   return Object.keys(ComponentsType)
     .filter((key) => isNaN(Number(key)))
+    .filter((key) => {
+      // Skip ANALYSIS tab when activeAnalysis is undefined
+      if (
+        key === "ANALYSIS" &&
+        (!activeAnalysis || activeAnalysis.val === undefined)
+      ) {
+        return false;
+      }
+      return true;
+    })
     .map((key) => ({
       key,
       value: ComponentsType[key as keyof typeof ComponentsType],
