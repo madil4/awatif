@@ -68,4 +68,33 @@ export const basic: DesignTemplate<BasicParams> = {
       momentInertia: params.momentInertia * 1e-8, // cm⁴ to m⁴
     };
   },
+
+  getReport: ({ params }: { params: BasicParams }) => {
+    return html`
+      <div
+        style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary);"
+      >
+        <!-- Section Properties -->
+        <div style="margin-bottom: 12px;">
+          <div style="font-weight: 500; margin-bottom: 4px;">
+            Section Properties
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);">Elasticity:</span>
+            ${params.elasticity} GPa
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);">Area:</span>
+            ${params.area} cm²
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);"
+              >Moment of Inertia:</span
+            >
+            ${params.momentInertia.toFixed(1)} cm⁴
+          </div>
+        </div>
+      </div>
+    `;
+  },
 };
