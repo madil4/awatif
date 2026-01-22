@@ -75,7 +75,7 @@ export function getReport({
               >[0]["params"],
               lineId,
               lineElementForces,
-              designResult: designResults?.get(lineId),
+              design: designResults?.get(lineId),
             });
             const toggleKey = `${component.name}-${lineId}`;
             const defaultOpen = isFirstLine;
