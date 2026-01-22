@@ -1,5 +1,5 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
-import { DesignTemplate, LineElementForces, DesignResult } from "./data-model";
+import { DesignTemplate, LineElementForces, Design } from "./data-model";
 
 export const getDesigns = ({
   mesh,
@@ -9,7 +9,7 @@ export const getDesigns = ({
   mesh: Mesh;
   components: Components;
   templates: Map<ComponentsType, Map<string, any>>;
-}): Map<number, DesignResult> => {
+}): Map<number, Design> => {
   // Get design components
   const designComponents = components.val.get(ComponentsType.DESIGN) || [];
 
@@ -23,7 +23,7 @@ export const getDesigns = ({
   const { lineToElements } = mesh.geometryMapping.val;
 
   // Create new design results map
-  const designResults = new Map<number, DesignResult>();
+  const designResults = new Map<number, Design>();
 
   // Process each design component
   for (const component of designComponents) {

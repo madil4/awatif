@@ -2,23 +2,6 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import { ElementForces } from "../data-model";
 
-// Design module types
-export type Design = {
-  designResults: State<Map<number, DesignResult>>;
-};
-
-export type DesignResult<Details = unknown> = {
-  utilization: number; // 0.0 to 1.0+ (>1.0 means failure)
-  status: "pass" | "fail";
-  designDetails?: Details;
-};
-
-// Forces for a line (all elements that belong to this geometry line)
-export type LineElementForces = {
-  elementIndices: number[]; // Element indices that belong to this line
-  elementForces: ElementForces[]; // Forces for each element (same order as elementIndices)
-};
-
 export type DesignTemplate<Params extends Record<string, unknown>> = {
   name: string;
   defaultParams: Params;
@@ -42,7 +25,7 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     params: Params;
     lineId: number;
     lineElementForces?: LineElementForces;
-    designResult?: DesignResult;
+    designResult?: Design;
   }) => TemplateResult;
 
   getDesign?: ({
@@ -53,5 +36,17 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     params: Params;
     lineElementForces: LineElementForces;
     length: number;
-  }) => DesignResult;
+  }) => Design;
+};
+
+export type Design<Details = unknown> = {
+  utilization: number;
+  status: "pass" | "fail";
+  details?: Details;
+};
+
+// Forces for a line (all elements that belong to this geometry line)
+export type LineElementForces = {
+  elementIndices: number[]; // Element indices that belong to this line
+  elementForces: ElementForces[]; // Forces for each element (same order as elementIndices)
 };
