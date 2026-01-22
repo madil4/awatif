@@ -2,7 +2,10 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import { ElementForces } from "../data-model";
 
-export type DesignTemplate<Params extends Record<string, unknown>> = {
+export type DesignTemplate<
+  Params extends Record<string, unknown>,
+  Design extends Record<string, unknown>,
+> = {
   name: string;
   defaultParams: Params;
 
@@ -18,13 +21,9 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
 
   getReport?: ({
     params,
-    lineId,
-    lineElementForces,
     design,
   }: {
     params: Params;
-    lineId: number;
-    lineElementForces?: LineElementForces;
     design?: Design;
   }) => TemplateResult;
 
@@ -37,11 +36,6 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
     lineElementForces: LineElementForces;
     length: number;
   }) => Design;
-};
-
-export type Design<Details = unknown> = {
-  utilization: number;
-  details?: Details;
 };
 
 // Forces for a line (all elements that belong to this geometry line)
