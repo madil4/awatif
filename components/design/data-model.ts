@@ -7,9 +7,10 @@ export type Design = {
   designResults: State<Map<number, DesignResult>>;
 };
 
-export type DesignResult = {
+export type DesignResult<Details = unknown> = {
   utilization: number; // 0.0 to 1.0+ (>1.0 means failure)
   status: "pass" | "fail";
+  designDetails?: Details;
 };
 
 // Forces for a line (all elements that belong to this geometry line)
