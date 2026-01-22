@@ -1,5 +1,6 @@
 import { html } from "lit-html";
 import { DesignTemplate, LineElementForces } from "../data-model";
+import { getLineEndForces } from "../utils";
 
 type BasicParams = {
   elasticity: number; // GPa
@@ -80,29 +81,8 @@ export const basic: DesignTemplate<BasicParams> = {
     lineElementForces?: LineElementForces;
   }) => {
     // Extract forces at line ends (first element start, last element end)
-    let startN = 0,
-      endN = 0,
-      startMz = 0,
-      endMz = 0,
-      startVy = 0,
-      endVy = 0;
-    let hasForces = false;
-
-    if (lineElementForces && lineElementForces.elementForces.length > 0) {
-      const firstForces = lineElementForces.elementForces[0];
-      const lastForces =
-        lineElementForces.elementForces[
-          lineElementForces.elementForces.length - 1
-        ];
-
-      startN = firstForces.N[0];
-      endN = lastForces.N[1];
-      startMz = firstForces.Mz[0];
-      endMz = lastForces.Mz[1];
-      startVy = firstForces.Vy[0];
-      endVy = lastForces.Vy[1];
-      hasForces = true;
-    }
+    const { startN, endN, startMz, endMz, startVy, endVy, hasForces } =
+      getLineEndForces(lineElementForces);
 
     return html`
       <div
