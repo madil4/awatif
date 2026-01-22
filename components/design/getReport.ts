@@ -1,5 +1,5 @@
 import { html, render } from "lit-html";
-import { DesignTemplate, LineElementForces, Design } from "./data-model";
+import { DesignTemplate, LineElementForces } from "./data-model";
 import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
 
 const toggleStates = new Map<string, boolean>();
@@ -8,13 +8,13 @@ export function getReport({
   components,
   geometryMapping,
   internalForces,
-  designResults,
+  designs,
   templates,
 }: {
   components: Components["val"];
   geometryMapping?: Mesh["geometryMapping"]["val"];
   internalForces?: Map<number, ElementForces>;
-  designResults?: Map<number, Design>;
+  designs?: Map<number, any>;
   templates: Map<ComponentsType, Map<string, any>>;
 }): HTMLDivElement {
   const container = document.createElement("div");
@@ -32,7 +32,7 @@ export function getReport({
         ${designComponents.map((component) => {
           const template = templates
             .get(ComponentsType.DESIGN)
-            ?.get(component.templateId) as DesignTemplate<any>;
+            ?.get(component.templateId) as DesignTemplate<any, any>;
 
           if (!template) return null;
 
@@ -73,9 +73,7 @@ export function getReport({
                 template.defaultParams) as Parameters<
                 typeof template.getReport
               >[0]["params"],
-              lineId,
-              lineElementForces,
-              design: designResults?.get(lineId),
+              design: designs?.get(lineId),
             });
             const toggleKey = `${component.name}-${lineId}`;
             const defaultOpen = isFirstLine;

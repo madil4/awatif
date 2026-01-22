@@ -242,7 +242,7 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       internalForces: mesh.internalForces.val,
-      designResults: geometry.designs.val,
+      designs: geometry.designs.val,
       templates,
     });
   } else {
