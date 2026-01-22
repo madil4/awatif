@@ -41,7 +41,6 @@ export type DesignTemplate<Params extends Record<string, unknown>> = {
 
 export type Design<Details = unknown> = {
   utilization: number;
-  status: "pass" | "fail";
   details?: Details;
 };
 
