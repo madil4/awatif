@@ -1,16 +1,30 @@
 import { index, subset, add, sparse, lup, lusolve, flatten } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
-import type { Elements, Mesh, Nodes } from "../../data-model";
+import type { Elements, Mesh, Nodes, InternalForces } from "../../data-model";
+import { getTransformationMatrix } from "./utils/getTransformationMatrix";
+import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
+import { multiply } from "mathjs";
 
-export function getPositions(
+export function getPositionsAndForces(
   nodes: Nodes,
   elements: Elements,
   loads: Mesh["loads"],
   supports: Mesh["supports"],
   elementsProps: Mesh["elementsProps"]
-): NonNullable<Mesh["positions"]> {
-  if (!nodes || !elements) return [];
-  if (nodes.length === 0 || elements.length === 0) return [];
+): {
+  positions: NonNullable<Mesh["positions"]>,
+  internalForces: InternalForces,
+} {
+  const internalForces = {
+    normals: new Map(),
+    shearsY: new Map(),
+    shearsZ: new Map(),
+    torsions: new Map(),
+    bendingsY: new Map(),
+    bendingsZ: new Map(),
+  }
+  if (!nodes || !elements) return { positions: [], internalForces: internalForces };
+  if (nodes.length === 0 || elements.length === 0) return { positions: [], internalForces: internalForces };
 
   const dof = nodes.length * 6;
   const originalPositions = nodes.flat();
@@ -48,7 +62,28 @@ export function getPositions(
 
   const positions = add(originalPositions, displacements) as number[];
 
-  return positions;
+  elements.forEach((e, i) => {
+    const elmNodes = e.map((e) => nodes[e]);
+    const dxGlobal = e.reduce(
+      (a, b) => a.concat(deformations.slice(b * 6, b * 6 + 6)),
+      [] as number[]
+    );
+    const T = getTransformationMatrix(elmNodes);
+    const dxLocal = multiply(T, dxGlobal);
+
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i);
+    let fLocal = multiply(kLocal, dxLocal);
+
+    // Frame element
+    internalForces.normals?.set(i, [fLocal[0], fLocal[6]]);
+    internalForces.shearsY?.set(i, [fLocal[1], fLocal[7]]);
+    internalForces.shearsZ?.set(i, [fLocal[2], fLocal[8]]);
+    internalForces.torsions?.set(i, [fLocal[3], fLocal[9]]);
+    internalForces.bendingsY?.set(i, [fLocal[4], fLocal[10]]);
+    internalForces.bendingsZ?.set(i, [fLocal[5], fLocal[11]]);
+  });
+
+  return { positions, internalForces };
 }
 
 function getFreeIndices(supports: Mesh["supports"], dof: number): number[] {
