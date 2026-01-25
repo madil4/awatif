@@ -1,4 +1,3 @@
-import { getPositions } from "./getPositions";
 import { Mesh, Nodes } from "../../data-model";
 import { subtract } from "mathjs";
 
