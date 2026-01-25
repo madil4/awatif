@@ -37,3 +37,12 @@ export type Mesh = {
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];
 export type Elements = NonNullable<Mesh["elements"]>["val"];
+
+export type InternalForces = {
+  normals?: Map<number, [number, number]>;
+  shearsY?: Map<number, [number, number]>;
+  shearsZ?: Map<number, [number, number]>;
+  torsions?: Map<number, [number, number]>;
+  bendingsY?: Map<number, [number, number]>;
+  bendingsZ?: Map<number, [number, number]>;
+};
