@@ -1,8 +1,8 @@
 import { describe, test, expect } from "vitest";
-import { getPositions } from "./getPositions";
+import { getPositionsAndForces } from "./getPositionsAndForces";
 import type { Elements, Mesh, Nodes } from "../../data-model";
 
-describe("deform", () => {
+describe("positions and forces", () => {
   test("Bar: from Logan's book example 3.9", () => {
     const nodes: Nodes = [
       [12, -3, -4],
@@ -28,7 +28,7 @@ describe("deform", () => {
       })
     );
 
-    const positions = getPositions(
+    const { positions, internalForces } = getPositionsAndForces(
       nodes,
       elements,
       loads,
@@ -40,6 +40,16 @@ describe("deform", () => {
     expect(positions[0]).toBeCloseTo(12.001383724933236);
     expect(positions[1]).toBeCloseTo(-3.00005156643246716524);
     expect(positions[2]).toBeCloseTo(-4 + 0.00006015037593984961);
+
+    const normals = internalForces.normals ?? new Map();
+
+    expect(normals.get(0)[0]).toBeCloseTo(-20.526315789473685);
+    expect(normals.get(0)[1]).toBeCloseTo(20.526315789473685);
+    expect(normals.get(1)[0]).toBeCloseTo(-4.210526315789473);
+    expect(normals.get(1)[1]).toBeCloseTo(4.210526315789473);
+    expect(normals.get(2)[0]).toBeCloseTo(5.289408221642574);
+    expect(normals.get(2)[1]).toBeCloseTo(-5.289408221642574);
+
   });
 
   test("Frame: from Logan's book example 5.8", () => {
@@ -76,7 +86,7 @@ describe("deform", () => {
       })
     );
 
-    const positions = getPositions(
+    const { positions, internalForces } = getPositionsAndForces(
       nodes,
       elements,
       loads,
@@ -87,5 +97,38 @@ describe("deform", () => {
     expect(positions[0]).toBeCloseTo(2.5 + 0.0000017466534414748466);
     expect(positions[1]).toBeCloseTo(0 - 0.0003356441727126348);
     expect(positions[2]).toBeCloseTo(0 - 0.00005650787769304768);
+
+    expect(internalForces).toEqual({
+      normals: new Map([
+        [0, [-873.3267207374233, 873.3267207374233]],
+        [1, [28253.93884652384, -28253.93884652384]],
+        [2, [167822.0863563174, -167822.0863563174]],
+      ]),
+      shearsY: new Map([
+        [0, [1299.1563606221894, -1299.1563606221894]],
+        [1, [30878.75728306041, -30878.75728306041]],
+        [2, [-752.3099977798178, 752.3099977798178]],
+      ]),
+      shearsZ: new Map([
+        [0, [215.43623884405804, -215.43623884405804]],
+        [1, [-121.0167229576055, 121.0167229576055]],
+        [2, [-28469.375085367898, 28469.375085367898]],
+      ]),
+      torsions: new Map([
+        [0, [1801.0349678696236, -1801.0349678696236]],
+        [1, [47.69008978276494, -47.69008978276494]],
+        [2, [-8.234260106376682, 8.234260106376682]],
+      ]),
+      bendingsY: new Map([
+        [0, [-324.19036593091715, -214.40023117922803]],
+        [1, [96.37583632116228, 206.1659710728514]],
+        [2, [23579.819070912377, 47593.61864250736]],
+      ]),
+      bendingsZ: new Map([
+        [0, [1941.8793826628362, 1306.0115188926368]],
+        [1, [26591.54681802802, 50605.346389623]],
+        [2, [-622.4535653396724, -1258.3214291098718]],
+      ]),
+    });
   });
 });
