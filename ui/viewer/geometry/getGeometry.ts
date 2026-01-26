@@ -53,6 +53,23 @@ export function getGeometry({
   `;
   document.body.appendChild(selectionBox);
 
+  // Coordinate tooltip DOM element
+  const coordTooltip = document.createElement("div");
+  coordTooltip.style.cssText = `
+    position: fixed;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    pointer-events: none;
+    display: none;
+    z-index: 1001;
+    white-space: nowrap;
+  `;
+  document.body.appendChild(coordTooltip);
+
   // Initialize nextPointId based on existing points
   const getNextPointId = () => {
     const points = geometry.points.rawVal;
@@ -707,12 +724,35 @@ export function getGeometry({
   van.derive(() => {
     if (!hitPoint.val || geometry.selection.val !== null) {
       marker.visible = false;
+      coordTooltip.style.display = "none";
       render();
       return;
     }
 
-    marker.visible = mode.val === Mode.APPEND || mode.val === Mode.EDIT;
+    const isMarkerVisible = mode.val === Mode.APPEND || mode.val === Mode.EDIT;
+    marker.visible = isMarkerVisible;
     marker.position.set(...(hitPoint.val as [number, number, number]));
+
+    // Update coordinate tooltip
+    if (isMarkerVisible) {
+      const [x, y] = hitPoint.val;
+      coordTooltip.textContent = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+
+      // Position tooltip near the marker in screen space
+      const vec = new THREE.Vector3(
+        ...(hitPoint.val as [number, number, number]),
+      );
+      vec.project(camera);
+      const rect = rendererElm.getBoundingClientRect();
+      const screenX = ((vec.x + 1) / 2) * rect.width + rect.left;
+      const screenY = ((-vec.y + 1) / 2) * rect.height + rect.top;
+
+      coordTooltip.style.left = `${screenX + 15}px`;
+      coordTooltip.style.top = `${screenY - 10}px`;
+      coordTooltip.style.display = "block";
+    } else {
+      coordTooltip.style.display = "none";
+    }
 
     render();
   });
