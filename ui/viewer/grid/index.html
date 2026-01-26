@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,13 +19,13 @@
       const display = {
         grid: {
           size: vanjs.state(10),
-          division: vanjs.state(10),
+          precision: vanjs.state(1),
         },
       };
 
       setTimeout(() => {
         display.grid.size.val = 5;
-        display.grid.division.val = 2;
+        display.grid.precision.val = 0.5;
       }, 1000);
 
       document.body.append(getViewer({ display }));

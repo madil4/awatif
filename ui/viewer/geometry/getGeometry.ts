@@ -74,7 +74,7 @@ export function getGeometry({
   // Render lines
   const lines = new THREE.LineSegments(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: GEOMETRY_COLOR, depthTest: false })
+    new THREE.LineBasicMaterial({ color: GEOMETRY_COLOR, depthTest: false }),
   );
   lines.renderOrder = 3; // Ensure geometry lines render on top of mesh
   group.add(lines);
@@ -96,7 +96,7 @@ export function getGeometry({
 
     lines.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     lines.geometry.computeBoundingSphere();
 
@@ -117,7 +117,7 @@ export function getGeometry({
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
-    })
+    }),
   );
   points.renderOrder = 4; // Render geometry points on top of everything
   group.add(points);
@@ -130,7 +130,7 @@ export function getGeometry({
     });
     points.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(flatPositions, 3)
+      new THREE.Float32BufferAttribute(flatPositions, 3),
     );
     points.geometry.computeBoundingSphere();
 
@@ -151,7 +151,7 @@ export function getGeometry({
       color: SELECTION_COLOR,
       depthTest: false,
       linewidth: 2,
-    })
+    }),
   );
   selectedLines.renderOrder = 5; // Render on top of everything
   group.add(selectedLines);
@@ -181,7 +181,7 @@ export function getGeometry({
 
     selectedLines.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     selectedLines.geometry.computeBoundingSphere();
     selectedLines.visible = true;
@@ -197,7 +197,7 @@ export function getGeometry({
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
-    })
+    }),
   );
   selectedPoints.renderOrder = 6; // Render on top of everything
   group.add(selectedPoints);
@@ -222,7 +222,7 @@ export function getGeometry({
 
     selectedPoints.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute(positions, 3)
+      new THREE.Float32BufferAttribute(positions, 3),
     );
     selectedPoints.geometry.computeBoundingSphere();
     selectedPoints.visible = true;
@@ -238,7 +238,7 @@ export function getGeometry({
 
   const hitPoint = van.state<number[] | null>(null);
   const gridObj = new THREE.Mesh(
-    new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal)
+    new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal),
   );
   van.derive(() => {
     const gridSize = grid.size.val;
@@ -248,8 +248,12 @@ export function getGeometry({
   const getSnapFunction = () => {
     const gridSize = grid.size.rawVal;
     const offset = -gridSize / 2;
-    const step = gridSize / grid.division.rawVal;
-    return (v: number) => Math.round((v - offset) / step) * step + offset;
+    // Calculate actual step from precision (relative to major cell size)
+    const BASE_DIVISIONS = 10;
+    const majorCellSize = gridSize / BASE_DIVISIONS;
+    const actualStep = majorCellSize * grid.precision.rawVal;
+    return (v: number) =>
+      Math.round((v - offset) / actualStep) * actualStep + offset;
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
@@ -404,7 +408,7 @@ export function getGeometry({
     left: number,
     top: number,
     right: number,
-    bottom: number
+    bottom: number,
   ): boolean {
     // Check if either endpoint is inside the box
     const p1InBox =
@@ -437,7 +441,7 @@ export function getGeometry({
     cx: number,
     cy: number,
     dx: number,
-    dy: number
+    dy: number,
   ): boolean {
     const d = (bx - ax) * (dy - cy) - (by - ay) * (dx - cx);
     if (d === 0) return false;
@@ -689,14 +693,14 @@ export function getGeometry({
   const marker = new THREE.Points(
     new THREE.BufferGeometry().setAttribute(
       "position",
-      new THREE.Float32BufferAttribute([0, 0, 0], 3)
+      new THREE.Float32BufferAttribute([0, 0, 0], 3),
     ),
     new THREE.PointsMaterial({
       color: GEOMETRY_COLOR,
       size: POINT_SIZE,
       sizeAttenuation: false,
       depthTest: false,
-    })
+    }),
   );
   group.add(marker);
 
@@ -721,7 +725,7 @@ export function getGeometry({
       dashSize: POINT_SIZE * 0.01 * 2,
       gapSize: POINT_SIZE * 0.01,
       depthTest: false,
-    })
+    }),
   );
   previewLine.renderOrder = 1; // Ensure preview line renders on top of grid
   group.add(previewLine);
@@ -744,7 +748,7 @@ export function getGeometry({
 
     previewLine.geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute([...fromPoint, ...toPoint], 3)
+      new THREE.Float32BufferAttribute([...fromPoint, ...toPoint], 3),
     );
     previewLine.computeLineDistances();
     previewLine.visible = true;

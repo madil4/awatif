@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -14,14 +14,14 @@
       const display = {
         grid: {
           size: van.state(10),
-          division: van.state(20),
+          precision: van.state(1),
         },
         geometry: van.state(true),
       };
 
       setInterval(() => {
         display.grid.size.val = 5;
-        display.grid.division.val = 7;
+        display.grid.precision.val = 0.2;
         display.geometry.val = false;
       }, 3000);
 

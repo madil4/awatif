@@ -68,7 +68,7 @@ export function getViewer({
   // Objects
   const grid = {
     size: display?.grid?.size ?? van.state(10),
-    division: display?.grid?.division ?? van.state(20),
+    precision: display?.grid?.precision ?? van.state(1),
   };
 
   scene.add(getGrid({ grid, render }));

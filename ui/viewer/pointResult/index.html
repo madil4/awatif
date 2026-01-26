@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -65,7 +65,7 @@
       const display = {
         grid: {
           size: van.state(10),
-          division: van.state(20),
+          precision: van.state(1),
         },
         geometry: van.state(false),
         mesh: van.state(true),
@@ -91,13 +91,13 @@
           new Map([
             [0, [0.3, 0.3, 0, 0, 0, 0.05]],
             [1, [0.3, -0.3, 0, 0, 0, -0.03]],
-          ])
+          ]),
         ),
         reactions: van.state(
           new Map([
             [2, [0.5, 1.0, 0, 0, 0, 0]],
             [3, [-0.5, 1.2, 0, 0, 0, 0]],
-          ])
+          ]),
         ),
       };
 
@@ -105,7 +105,7 @@
         getViewer({
           mesh,
           display,
-        })
+        }),
       );
 
       // Wire up controls
