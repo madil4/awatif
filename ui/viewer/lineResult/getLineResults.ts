@@ -15,6 +15,7 @@ export function getLineResults({
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
+  group.renderOrder = 100; // Todo: align with the rest of objects renderOrder
 
   const clearGroup = () => {
     while (group.children.length) {
