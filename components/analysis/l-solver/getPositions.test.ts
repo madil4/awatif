@@ -1,32 +1,31 @@
 import { describe, test, expect } from "vitest";
 import { getPositions } from "./getPositions";
 import type { Mesh } from "../../data-model";
-import type { Elements, Nodes } from "../../mesh/data-model";
 
 describe("deform", () => {
   test("Bar: from Logan's book example 3.9", () => {
-    const nodes: Nodes = [
+    const nodes: Mesh["nodes"]["val"] = [
       [12, -3, -4],
       [0, 0, 0],
       [12, -3, -7],
       [14, 6, 0],
     ];
-    const elements: Elements = [
+    const elements: Mesh["elements"]["val"] = [
       [1, 0],
       [2, 0],
       [3, 0],
     ];
-    const supports: Mesh["supports"] = new Map([
+    const supports: Mesh["supports"]["val"] = new Map([
       [1, [true, true, true, false, false, false]],
       [2, [true, true, true, false, false, false]],
       [3, [true, true, true, false, false, false]],
     ]);
-    const loads: Mesh["loads"] = new Map([[0, [20, 0, 0, 0, 0, 0]]]);
+    const loads: Mesh["loads"]["val"] = new Map([[0, [20, 0, 0, 0, 0, 0]]]);
 
-    const elementsProps: Mesh["elementsProps"] = new Map(
+    const elementsProps: Mesh["elementsProps"]["val"] = new Map(
       elements.map((_, i) => {
         return [i, { elasticity: 210e6, area: 10e-4 }];
-      })
+      }),
     );
 
     const positions = getPositions(
@@ -34,7 +33,7 @@ describe("deform", () => {
       elements,
       loads,
       supports,
-      elementsProps
+      elementsProps,
     );
 
     expect(positions.length).toBe(nodes.length * 3);
@@ -44,25 +43,27 @@ describe("deform", () => {
   });
 
   test("Frame: from Logan's book example 5.8", () => {
-    const nodes: Nodes = [
+    const nodes: Mesh["nodes"]["val"] = [
       [2.5, 0, 0],
       [0, 0, 0],
       [2.5, 0, -2.5],
       [2.5, -2.5, 0],
     ];
-    const elements: Elements = [
+    const elements: Mesh["elements"]["val"] = [
       [1, 0],
       [2, 0],
       [3, 0],
     ];
-    const supports: Mesh["supports"] = new Map([
+    const supports: Mesh["supports"]["val"] = new Map([
       [1, [true, true, true, true, true, true]],
       [2, [true, true, true, true, true, true]],
       [3, [true, true, true, true, true, true]],
     ]);
-    const loads: Mesh["loads"] = new Map([[0, [0, -200e3, 0, -100e3, 0, 0]]]);
+    const loads: Mesh["loads"]["val"] = new Map([
+      [0, [0, -200e3, 0, -100e3, 0, 0]],
+    ]);
 
-    const elementsProps: Mesh["elementsProps"] = new Map(
+    const elementsProps: Mesh["elementsProps"]["val"] = new Map(
       elements.map((_, i) => {
         return [
           i,
@@ -74,7 +75,7 @@ describe("deform", () => {
             area: 6.25e-3,
           },
         ];
-      })
+      }),
     );
 
     const positions = getPositions(
@@ -82,7 +83,7 @@ describe("deform", () => {
       elements,
       loads,
       supports,
-      elementsProps
+      elementsProps,
     );
 
     expect(positions[0]).toBeCloseTo(2.5 + 0.0000017466534414748466);

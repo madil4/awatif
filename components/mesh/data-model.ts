@@ -8,10 +8,7 @@ export type MeshTemplate<Params extends Record<string, unknown>> = {
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
   getMesh: ({ params }: { params: Params }) => {
-    nodes: Nodes;
-    elements: Elements;
+    nodes: Mesh["nodes"]["val"];
+    elements: Mesh["elements"]["val"];
   };
 };
-
-export type Nodes = NonNullable<Mesh["nodes"]>["val"];
-export type Elements = NonNullable<Mesh["elements"]>["val"];
