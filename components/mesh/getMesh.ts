@@ -1,5 +1,5 @@
-import { Components, ComponentsType, Geometry } from "../data-model";
-import { Elements, Nodes, MeshTemplate } from "./data-model";
+import { Components, ComponentsType, Geometry, Mesh } from "../data-model";
+import { MeshTemplate } from "./data-model";
 
 export function getMesh({
   geometry,
@@ -13,15 +13,15 @@ export function getMesh({
   };
   templates: Map<ComponentsType, Map<string, any>>;
 }): {
-  nodes: Nodes;
-  elements: Elements;
+  nodes: Mesh["nodes"]["val"];
+  elements: Mesh["elements"]["val"];
   geometryMapping: {
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
   };
 } {
-  const allNodes: Nodes = [];
-  const allElements: Elements = [];
+  const allNodes: Mesh["nodes"]["val"] = [];
+  const allElements: Mesh["elements"]["val"] = [];
   const pointToNodes = new Map<number, number[]>();
   const lineToElements = new Map<number, number[]>();
 

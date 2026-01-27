@@ -1,9 +1,8 @@
 import { norm, subtract } from "mathjs";
 import { Mesh } from "../../../data-model";
-import { Nodes } from "../../../mesh/data-model";
 
 export function getLocalStiffnessMatrix(
-  nodes: Nodes,
+  nodes: Mesh["nodes"]["val"],
   elementsProps: Mesh["elementsProps"]["val"] | undefined,
   index: number,
 ): number[][] {
@@ -16,7 +15,7 @@ export function getLocalStiffnessMatrix(
 }
 
 function getLocalStiffnessMatrixFrame(
-  nodes: Nodes,
+  nodes: Mesh["nodes"]["val"],
   elementsProps: Mesh["elementsProps"]["val"] | undefined,
   index: number,
 ): number[][] {

@@ -11,7 +11,6 @@ import { getTransformationMatrix } from "./utils/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 import type { Mesh, ElementForces } from "../../data-model.js";
-import { Elements, Nodes } from "../../mesh/data-model.js";
 
 /**
  * Calculate internal forces (N, V, M) for all elements from displacements
@@ -23,8 +22,8 @@ import { Elements, Nodes } from "../../mesh/data-model.js";
  * @returns Map of element index to internal forces at element ends
  */
 export function getInternalForces(
-  nodes: Nodes,
-  elements: Elements,
+  nodes: Mesh["nodes"]["val"],
+  elements: Mesh["elements"]["val"],
   displacements: number[],
   elementsProps: Mesh["elementsProps"]["val"],
 ): Map<number, ElementForces> {
@@ -102,8 +101,8 @@ export function getInternalForces(
  * @returns Full displacement vector [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
  */
 export function getDisplacements(
-  nodes: Nodes,
-  elements: Elements,
+  nodes: Mesh["nodes"]["val"],
+  elements: Mesh["elements"]["val"],
   loads: Mesh["loads"]["val"],
   supports: Mesh["supports"]["val"],
   elementsProps: Mesh["elementsProps"]["val"],
