@@ -7,3 +7,4 @@ export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar, CanvasButtons } from "./canvasBar/getCanvasBar";
 
 export type { Display } from "./display/getDisplay";
+export type { ActiveAnalysis } from "./components/analysisList/getAnalysisList";
