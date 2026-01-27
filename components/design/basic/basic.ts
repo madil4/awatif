@@ -8,7 +8,7 @@ type BasicParams = {
   momentInertia: number; // cm⁴
 };
 
-export const basic: DesignTemplate<BasicParams> = {
+export const basic: DesignTemplate<BasicParams, any> = {
   name: "Basic",
   defaultParams: {
     elasticity: 33, // GPa (C30/37 concrete)
@@ -73,17 +73,7 @@ export const basic: DesignTemplate<BasicParams> = {
     };
   },
 
-  getReport: ({
-    params,
-    lineElementForces,
-  }: {
-    params: BasicParams;
-    lineElementForces?: LineElementForces;
-  }) => {
-    // Extract forces at line ends (first element start, last element end)
-    const { startN, endN, startMz, endMz, startVy, endVy, hasForces } =
-      getLineEndForces(lineElementForces);
-
+  getReport: ({ params }: { params: BasicParams }) => {
     return html`
       <div
         style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary);"
@@ -108,52 +98,6 @@ export const basic: DesignTemplate<BasicParams> = {
             ${params.momentInertia.toFixed(1)} cm⁴
           </div>
         </div>
-
-        <!-- Internal Forces -->
-        ${hasForces
-          ? html`
-              <div
-                style="border-top: 1px solid var(--border); padding-top: 12px; margin-bottom: 12px;"
-              >
-                <div style="font-weight: 500; margin-bottom: 8px;">
-                  Internal Forces
-                </div>
-                <div
-                  style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px 12px;"
-                >
-                  <div style="color: var(--text-secondary);"></div>
-                  <div
-                    style="color: var(--text-secondary); font-size: 0.75rem;"
-                  >
-                    Start
-                  </div>
-                  <div
-                    style="color: var(--text-secondary); font-size: 0.75rem;"
-                  >
-                    End
-                  </div>
-
-                  <div style="color: var(--text-secondary);">N</div>
-                  <div>${formatForce(startN, "kN")}</div>
-                  <div>${formatForce(endN, "kN")}</div>
-
-                  <div style="color: var(--text-secondary);">Vy</div>
-                  <div>${formatForce(startVy, "kN")}</div>
-                  <div>${formatForce(endVy, "kN")}</div>
-
-                  <div style="color: var(--text-secondary);">Mz</div>
-                  <div>${formatForce(startMz, "kNm")}</div>
-                  <div>${formatForce(endMz, "kNm")}</div>
-                </div>
-              </div>
-            `
-          : html`
-              <div
-                style="color: var(--text-secondary); font-style: italic; border-top: 1px solid var(--border); padding-top: 12px; margin-bottom: 12px;"
-              >
-                No internal forces available
-              </div>
-            `}
       </div>
     `;
 
