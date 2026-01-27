@@ -1,26 +1,31 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
-import { DesignTemplate, LineElementForces, Design } from "./data-model";
+import { Design, DesignTemplate, LineElementForces } from "./data-model";
 
 export const getDesigns = ({
   mesh,
   components,
   templates,
 }: {
-  mesh: Mesh;
-  components: Components;
+  mesh: {
+    nodes: Mesh["nodes"]["val"];
+    elements: Mesh["elements"]["val"];
+    geometryMapping: Mesh["geometryMapping"]["val"];
+    internalForces: Mesh["internalForces"]["val"];
+  };
+  components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
 }): Map<number, Design> => {
   // Get design components
-  const designComponents = components.val.get(ComponentsType.DESIGN) || [];
+  const designComponents = components.get(ComponentsType.DESIGN) || [];
 
   // Get internal forces
-  const internalForces = mesh.internalForces?.val;
+  const internalForces = mesh.internalForces;
   if (!internalForces) {
     return new Map();
   }
 
   // Get geometry mapping
-  const { lineToElements } = mesh.geometryMapping.val;
+  const { lineToElements } = mesh.geometryMapping;
 
   // Create new design results map
   const designResults = new Map<number, Design>();
@@ -61,8 +66,8 @@ export const getDesigns = ({
 
       // Calculate length
       let length = 0;
-      const nodes = mesh.nodes.val;
-      const elements = mesh.elements.val;
+      const nodes = mesh.nodes;
+      const elements = mesh.elements;
 
       for (const elemIdx of elementIndices) {
         const [node1Idx, node2Idx] = elements[elemIdx];
