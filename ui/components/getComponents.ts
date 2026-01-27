@@ -9,7 +9,10 @@ import {
 import { getList } from "./list/getList";
 import { getParameters } from "./parameters/getParameters";
 import { getComponentsBar } from "./componentsBar/getComponentsBar";
-import { getAnalysisList } from "./analysisList/getAnalysisList";
+import {
+  getAnalysisList,
+  ActiveAnalysis,
+} from "./analysisList/getAnalysisList";
 
 import "./styles.css";
 
@@ -24,7 +27,7 @@ export function getComponents({
   components: Components;
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
-  activeAnalysis?: State<string>;
+  activeAnalysis?: ActiveAnalysis;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<number | null>(null);

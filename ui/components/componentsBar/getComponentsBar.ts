@@ -1,18 +1,17 @@
 import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
 import { ComponentsType } from "@awatif/components";
+import { ActiveAnalysis } from "../analysisList/getAnalysisList";
 
 import "./styles.css";
-
-export type ComponentsBarMode = {
-  componentsBarMode: State<ComponentsType | null>;
-  activeAnalysis?: State<string | undefined>;
-};
 
 export function getComponentsBar({
   componentsBarMode,
   activeAnalysis,
-}: ComponentsBarMode): HTMLElement {
+}: {
+  componentsBarMode: State<ComponentsType | null>;
+  activeAnalysis?: ActiveAnalysis;
+}): HTMLElement {
   const container = document.createElement("div");
   const types = getComponentsTypes(activeAnalysis);
 
@@ -43,7 +42,7 @@ export function getComponentsBar({
 }
 
 // Utils
-function getComponentsTypes(activeAnalysis?: State<string | undefined>) {
+function getComponentsTypes(activeAnalysis?: ActiveAnalysis) {
   return Object.keys(ComponentsType)
     .filter((key) => isNaN(Number(key)))
     .filter((key) => {
