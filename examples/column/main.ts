@@ -211,11 +211,14 @@ van.derive(() => {
 
 // Designs events
 van.derive(() => {
-  mesh.internalForces.val; // Trigger when internal forces change
-
   geometry.designs.val = getDesigns({
-    mesh,
-    components,
+    mesh: {
+      nodes: mesh.nodes.val,
+      elements: mesh.elements.val,
+      geometryMapping: mesh.geometryMapping.val,
+      internalForces: mesh.internalForces.val,
+    },
+    components: components.val,
     templates,
   });
 });
