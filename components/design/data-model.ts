@@ -1,6 +1,7 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import { ElementForces } from "../data-model";
+import type { ActiveAnalysis } from "@awatif/ui";
 
 export type Design = {
   utilization: number;
@@ -35,10 +36,12 @@ export type DesignTemplate<
     params,
     lineElementForces,
     length,
+    activeAnalysis,
   }: {
     params: Params;
     lineElementForces: LineElementForces;
     length: number;
+    activeAnalysis?: ActiveAnalysis["val"];
   }) => TDesign;
 };
 
