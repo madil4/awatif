@@ -22,7 +22,13 @@ export type DesignTemplate<
     activeAnalysis?: ActiveAnalysis;
   }) => TemplateResult;
 
-  getElementsProps: ({ params }: { params: Params }) => {
+  getElementsProps: ({
+    params,
+    activeAnalysis,
+  }: {
+    params: Params;
+    activeAnalysis?: ActiveAnalysis["val"];
+  }) => {
     elasticity: number;
     area: number;
     momentInertia?: number;

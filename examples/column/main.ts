@@ -133,6 +133,8 @@ const display: Display = {
   lineResult: van.state("None"),
 };
 
+const activeAnalysis: ActiveAnalysis = van.state("linear");
+
 // Mesh events
 van.derive(() => {
   const meshData = getMesh({
@@ -173,12 +175,11 @@ van.derive(() => {
     components: components.val,
     geometryMapping: mesh.geometryMapping.val,
     templates,
+    activeAnalysis: activeAnalysis.val,
   });
 });
 
 // Positions events
-const activeAnalysis: ActiveAnalysis = van.state("linear");
-
 van.derive(() => {
   const positions = getPositions(
     mesh.nodes.val,
