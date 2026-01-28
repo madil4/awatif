@@ -1,5 +1,5 @@
 import { DesignTemplate } from "./data-model";
-import { Components, ComponentsType } from "../data-model";
+import { Mesh, Components, ComponentsType } from "../data-model";
 import type { ActiveAnalysis } from "@awatif/ui";
 
 export function getElementsProps({
@@ -7,6 +7,7 @@ export function getElementsProps({
   geometryMapping,
   templates,
   activeAnalysis,
+  internalForces,
 }: {
   components: Components["val"];
   geometryMapping: {
@@ -15,6 +16,7 @@ export function getElementsProps({
   };
   templates: Map<ComponentsType, Map<string, any>>;
   activeAnalysis?: ActiveAnalysis["val"];
+  internalForces?: Mesh["internalForces"]["val"];
 }): Map<
   number,
   {
@@ -44,14 +46,24 @@ export function getElementsProps({
       ?.get(component.templateId) as DesignTemplate<any>;
     if (!template) return;
 
-    const props = template.getElementsProps({
-      params: (component.params ?? template.defaultParams) as any,
-      activeAnalysis,
-    });
-
     component.geometry.forEach((lineId) => {
       const elementIndices = geometryMapping.lineToElements.get(lineId);
       if (!elementIndices) return;
+
+      const elementForces = elementIndices
+        .map((elemIdx) => internalForces?.get(elemIdx))
+        .filter((forces): forces is typeof forces & {} => forces !== undefined);
+
+      const lineElementForces =
+        elementForces.length > 0
+          ? { elementIndices, elementForces }
+          : undefined;
+
+      const props = template.getElementsProps({
+        params: (component.params ?? template.defaultParams) as any,
+        activeAnalysis,
+        lineElementForces,
+      });
 
       // Apply properties to all elements that map to this geometry line
       elementIndices.forEach((elementIdx) => {
