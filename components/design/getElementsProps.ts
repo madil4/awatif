@@ -1,10 +1,12 @@
 import { DesignTemplate } from "./data-model";
 import { Components, ComponentsType } from "../data-model";
+import type { ActiveAnalysis } from "@awatif/ui";
 
 export function getElementsProps({
   components,
   geometryMapping,
   templates,
+  activeAnalysis,
 }: {
   components: Components["val"];
   geometryMapping: {
@@ -12,6 +14,7 @@ export function getElementsProps({
     lineToElements: Map<number, number[]>;
   };
   templates: Map<ComponentsType, Map<string, any>>;
+  activeAnalysis?: ActiveAnalysis["val"];
 }): Map<
   number,
   {
@@ -42,9 +45,8 @@ export function getElementsProps({
     if (!template) return;
 
     const props = template.getElementsProps({
-      params: (component.params ?? template.defaultParams) as Parameters<
-        typeof template.getElementsProps
-      >[0]["params"],
+      params: (component.params ?? template.defaultParams) as any,
+      activeAnalysis,
     });
 
     component.geometry.forEach((lineId) => {
