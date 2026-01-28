@@ -1,10 +1,12 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
 import { Design, DesignTemplate, LineElementForces } from "./data-model";
+import type { ActiveAnalysis } from "@awatif/ui";
 
 export const getDesigns = ({
   mesh,
   components,
   templates,
+  activeAnalysis,
 }: {
   mesh: {
     nodes: Mesh["nodes"]["val"];
@@ -14,6 +16,7 @@ export const getDesigns = ({
   };
   components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
+  activeAnalysis?: ActiveAnalysis["val"];
 }): Map<number, Design> => {
   // Get design components
   const designComponents = components.get(ComponentsType.DESIGN) || [];
@@ -86,6 +89,7 @@ export const getDesigns = ({
         params: component.params ?? template.defaultParams,
         lineElementForces,
         length,
+        activeAnalysis,
       });
 
       // Store result (if multiple components affect same line, keep worst utilization)

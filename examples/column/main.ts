@@ -27,6 +27,7 @@ import {
   getCanvas,
   getCanvasBar,
   CanvasButtons,
+  ActiveAnalysis,
 } from "@awatif/ui";
 
 const geometry: Geometry = {
@@ -176,6 +177,8 @@ van.derive(() => {
 });
 
 // Positions events
+const activeAnalysis: ActiveAnalysis = van.state("linear");
+
 van.derive(() => {
   const positions = getPositions(
     mesh.nodes.val,
@@ -220,6 +223,7 @@ van.derive(() => {
     },
     components: components.val,
     templates,
+    activeAnalysis: activeAnalysis.val,
   });
 });
 
@@ -267,6 +271,7 @@ document.body.append(
       components,
       componentsBarMode,
       templates,
+      activeAnalysis,
     }),
     tooltips: getTooltips(),
   }),
