@@ -45,6 +45,7 @@ export function getComponents({
     components,
     componentsBarMode,
     templates,
+    activeAnalysis,
   });
 
   const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis });

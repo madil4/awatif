@@ -14,7 +14,13 @@ export type DesignTemplate<
   name: string;
   defaultParams: Params;
 
-  getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
+  getParamsTemplate: ({
+    params,
+    activeAnalysis,
+  }: {
+    params: State<Params>;
+    activeAnalysis?: ActiveAnalysis;
+  }) => TemplateResult;
 
   getElementsProps: ({ params }: { params: Params }) => {
     elasticity: number;

@@ -5,6 +5,7 @@ import {
   ComponentsType,
   templates as Templates,
 } from "@awatif/components";
+import { ActiveAnalysis } from "../../components/analysisList/getAnalysisList";
 
 import "./styles.css";
 
@@ -13,11 +14,13 @@ export function getParameters({
   components,
   componentsBarMode,
   templates,
+  activeAnalysis,
 }: {
   activeComponent: State<number | null>;
   components: Components;
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
+  activeAnalysis?: ActiveAnalysis;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -125,6 +128,7 @@ export function getParameters({
 
     return meshTemplate.getParamsTemplate({
       params: localParams as any,
+      activeAnalysis,
     });
   };
 
