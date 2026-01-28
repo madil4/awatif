@@ -25,9 +25,11 @@ export type DesignTemplate<
   getElementsProps: ({
     params,
     activeAnalysis,
+    length,
   }: {
     params: Params;
     activeAnalysis?: ActiveAnalysis["val"];
+    length: number;
   }) => {
     elasticity: number;
     area: number;
