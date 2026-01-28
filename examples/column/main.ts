@@ -176,6 +176,7 @@ van.derive(() => {
     geometryMapping: mesh.geometryMapping.val,
     templates,
     activeAnalysis: activeAnalysis.val,
+    internalForces: mesh.internalForces.val,
   });
 });
 
