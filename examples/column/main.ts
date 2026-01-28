@@ -135,8 +135,9 @@ const display: Display = {
 
 const activeAnalysis: ActiveAnalysis = van.state("linear");
 
-// Mesh events
+// Analysis events
 van.derive(() => {
+  // Mesh events
   const meshData = getMesh({
     geometry: {
       points: geometry.points.val,
@@ -149,28 +150,22 @@ van.derive(() => {
   mesh.nodes.val = meshData.nodes;
   mesh.elements.val = meshData.elements;
   mesh.geometryMapping.val = meshData.geometryMapping;
-});
 
-// Loads events
-van.derive(() => {
+  // Loads events
   mesh.loads.val = getLoads({
     components: components.val,
     geometryMapping: mesh.geometryMapping.val,
     templates,
   });
-});
 
-// Supports events
-van.derive(() => {
+  // Supports events
   mesh.supports.val = getSupports({
     components: components.val,
     geometryMapping: mesh.geometryMapping.val,
     templates,
   });
-});
 
-// Elements properties events
-van.derive(() => {
+  // Elements properties events
   mesh.elementsProps.val = getElementsProps({
     components: components.val,
     geometryMapping: mesh.geometryMapping.val,
@@ -178,10 +173,8 @@ van.derive(() => {
     activeAnalysis: activeAnalysis.val,
     internalForces: mesh.internalForces.val,
   });
-});
 
-// Positions events
-van.derive(() => {
+  // Positions events
   const positions = getPositions(
     mesh.nodes.val,
     mesh.elements.val,
@@ -191,10 +184,8 @@ van.derive(() => {
   );
 
   mesh.positions.val = positions;
-});
 
-// Internal forces events
-van.derive(() => {
+  // Internal forces events
   const displacements = getDisplacements(
     mesh.nodes.val,
     mesh.elements.val,
