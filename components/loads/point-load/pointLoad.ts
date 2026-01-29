@@ -28,6 +28,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <label>Force X (KN):</label>
         <input
           type="number"
+          step="0.1"
           .value=${params.val.Fx}
           @input=${(e: Event) =>
             (params.val = {
@@ -41,6 +42,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <label>Force Y (KN):</label>
         <input
           type="number"
+          step="0.1"
           .value=${params.val.Fy}
           @input=${(e: Event) =>
             (params.val = {
