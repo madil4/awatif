@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open --port 4600",
+    "test": "vitest",
     "build": "vite build",
     "preview": "vite preview --open --port 4600"
   },
