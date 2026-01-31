@@ -70,3 +70,6 @@ type Component = {
   geometry: number[];
   params?: Record<string, unknown>;
 };
+
+export type Nodes = NonNullable<Mesh["nodes"]>["val"];
+export type Elements = NonNullable<Mesh["elements"]>["val"];

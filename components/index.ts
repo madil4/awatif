@@ -14,8 +14,4 @@ export { getElementsProps } from "./design/getElementsProps";
 export { getReport } from "./design/getReport";
 export { getDesigns } from "./design/getDesigns";
 export { getLineEndForces, getMaxAxialForce } from "./design/utils";
-export { getPositions } from "./analysis/l-solver/getPositions";
-export {
-  getInternalForces,
-  getDisplacements,
-} from "./analysis/l-solver/getInternalForces";
+export { getPositionsAndForces } from "./analysis/l-solver/getPositionsAndForces";

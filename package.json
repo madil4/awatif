@@ -21,5 +21,8 @@
     "vanjs-core": "^1.6.0",
     "@awatif/ui": "*",
     "@awatif/components": "*"
-  }
+  },
+  "workspaces": [
+    "*"
+  ]
 }
