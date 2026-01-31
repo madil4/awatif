@@ -69,14 +69,13 @@ export function getPositionsAndForces(
     const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i);
     let fLocal = multiply(kLocal, dxLocal);
 
-    // Frame element - store forces using new data-model
     internalForces.set(i, {
-      N: [fLocal[0], fLocal[6]], // Axial forces (tension positive)
-      Vy: [fLocal[1], fLocal[7]], // Shear in local y
-      Vz: [fLocal[2], fLocal[8]], // Shear in local z
-      Mx: [fLocal[3], fLocal[9]], // Torsion about local x
-      My: [fLocal[4], fLocal[10]], // Bending about local y
-      Mz: [fLocal[5], fLocal[11]], // Bending about local z
+      N: [fLocal[0], -fLocal[6]],
+      Vy: [fLocal[1], -fLocal[7]],
+      Vz: [fLocal[2], -fLocal[8]],
+      Mx: [fLocal[3], -fLocal[9]],
+      My: [fLocal[4], -fLocal[10]],
+      Mz: [fLocal[5], -fLocal[11]],
     });
   });
 
