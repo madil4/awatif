@@ -1,6 +1,6 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
-import type { Mesh } from "../data-model.js";
+import type { Nodes, Elements } from "../data-model.js";
 
 export type MeshTemplate<Params extends Record<string, unknown>> = {
   name: string;

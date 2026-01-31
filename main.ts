@@ -8,9 +8,7 @@ import {
   getSupports,
   getElementsProps,
   getReport,
-  getPositions,
-  getDisplacements,
-  getInternalForces,
+  getPositionsAndForces,
   getDesigns,
   Geometry,
   Mesh,
@@ -27,7 +25,6 @@ import {
   getCanvas,
   getCanvasBar,
   CanvasButtons,
-  ActiveAnalysis,
 } from "@awatif/ui";
 
 const geometry: Geometry = {
@@ -172,7 +169,7 @@ van.derive(() => {
   });
 
   // Positions events
-  const positions = getPositions(
+  const { positions, internalForces } = getPositionsAndForces(
     mesh.nodes.val,
     mesh.elements.val,
     mesh.loads.val,
@@ -181,25 +178,7 @@ van.derive(() => {
   );
 
   mesh.positions.val = positions;
-
-  // Internal forces events
-  const displacements = getDisplacements(
-    mesh.nodes.val,
-    mesh.elements.val,
-    mesh.loads.val,
-    mesh.supports.val,
-    mesh.elementsProps.val,
-  );
-
-  const forces = getInternalForces(
-    mesh.nodes.val,
-    mesh.elements.val,
-    displacements,
-    mesh.elementsProps.val,
-  );
-
-  mesh.internalForces.val = forces;
-  mesh.displacements.val = displacements;
+  mesh.internalForces.val = internalForces;
 });
 
 // Designs events

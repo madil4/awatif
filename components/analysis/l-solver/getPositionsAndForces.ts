@@ -1,16 +1,25 @@
 import { index, subset, add, sparse, lup, lusolve, flatten } from "mathjs";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
-import type { Mesh } from "../../data-model.js";
+import { getTransformationMatrix } from "./utils/getTransformationMatrix";
+import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
+import { multiply } from "mathjs";
+import type { Mesh } from "../../data-model";
 
-export function getPositions(
+export function getPositionsAndForces(
   nodes: Mesh["nodes"]["val"],
   elements: Mesh["elements"]["val"],
   loads: Mesh["loads"]["val"],
   supports: Mesh["supports"]["val"],
   elementsProps: Mesh["elementsProps"]["val"],
-): number[] {
-  if (!nodes || !elements) return [];
-  if (nodes.length === 0 || elements.length === 0) return [];
+): {
+  positions: NonNullable<Mesh["positions"]["val"]>;
+  internalForces: Mesh["internalForces"]["val"];
+} {
+  const internalForces: Mesh["internalForces"]["val"] = new Map();
+  if (!nodes || !elements)
+    return { positions: [], internalForces: internalForces };
+  if (nodes.length === 0 || elements.length === 0)
+    return { positions: [], internalForces: internalForces };
 
   const dof = nodes.length * 6;
   const originalPositions = nodes.flat();
@@ -48,7 +57,30 @@ export function getPositions(
 
   const positions = add(originalPositions, displacements) as number[];
 
-  return positions;
+  elements.forEach((e, i) => {
+    const elmNodes = e.map((e) => nodes[e]);
+    const dxGlobal = e.reduce(
+      (a, b) => a.concat(deformations.slice(b * 6, b * 6 + 6)),
+      [] as number[],
+    );
+    const T = getTransformationMatrix(elmNodes);
+    const dxLocal = multiply(T, dxGlobal);
+
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i);
+    let fLocal = multiply(kLocal, dxLocal);
+
+    // Frame element - store forces using new data-model
+    internalForces.set(i, {
+      N: [fLocal[0], fLocal[6]], // Axial forces (tension positive)
+      Vy: [fLocal[1], fLocal[7]], // Shear in local y
+      Vz: [fLocal[2], fLocal[8]], // Shear in local z
+      Mx: [fLocal[3], fLocal[9]], // Torsion about local x
+      My: [fLocal[4], fLocal[10]], // Bending about local y
+      Mz: [fLocal[5], fLocal[11]], // Bending about local z
+    });
+  });
+
+  return { positions, internalForces };
 }
 
 // Utils
