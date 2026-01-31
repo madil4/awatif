@@ -4,7 +4,21 @@
   "version": "3.0.0",
   "author": "Mohamed Adil",
   "license": "MIT",
-  "workspaces": [
-    "*"
-  ]
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open --port 4600",
+    "build": "vite build",
+    "preview": "vite preview --open --port 4600"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "vanjs-core": "^1.6.0",
+    "@awatif/ui": "*",
+    "@awatif/components": "*"
+  }
 }

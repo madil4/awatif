@@ -133,8 +133,6 @@ const display: Display = {
   lineResult: van.state("None"),
 };
 
-const activeAnalysis: ActiveAnalysis = van.state("linear");
-
 // Analysis events
 van.derive(() => {
   // Mesh events
@@ -170,7 +168,6 @@ van.derive(() => {
     components: components.val,
     geometryMapping: mesh.geometryMapping.val,
     templates,
-    activeAnalysis: activeAnalysis.val,
     internalForces: mesh.internalForces.val,
   });
 
@@ -216,7 +213,6 @@ van.derive(() => {
     },
     components: components.val,
     templates,
-    activeAnalysis: activeAnalysis.val,
   });
 });
 
@@ -264,7 +260,6 @@ document.body.append(
       components,
       componentsBarMode,
       templates,
-      activeAnalysis,
     }),
     tooltips: getTooltips(),
   }),
