@@ -30,8 +30,8 @@ import {
 const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [0, -3, 0]],
-      [2, [0, 3.2, 0]],
+      [1, [5, 2, 0]],
+      [2, [5, 8.2, 0]],
     ]),
   ),
   lines: van.state(new Map([[1, [1, 2]]])),
