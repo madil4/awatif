@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Grid } from "../grid/getGrid";
+import { Grid, BASE_DIVISIONS } from "../grid/getGrid";
 import { Geometry } from "@awatif/components";
 
 export function getGeometry({
@@ -257,20 +257,19 @@ export function getGeometry({
   const gridObj = new THREE.Mesh(
     new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal),
   );
+
   van.derive(() => {
     const gridSize = grid.size.val;
     gridObj.geometry.dispose();
     gridObj.geometry = new THREE.PlaneGeometry(gridSize, gridSize);
+    gridObj.position.set(gridSize / 2, gridSize / 2, 0);
+    gridObj.updateMatrixWorld();
   });
+
   const getSnapFunction = () => {
-    const gridSize = grid.size.rawVal;
-    const offset = -gridSize / 2;
-    // Calculate actual step from precision (relative to major cell size)
-    const BASE_DIVISIONS = 10;
-    const majorCellSize = gridSize / BASE_DIVISIONS;
+    const majorCellSize = grid.size.rawVal / BASE_DIVISIONS;
     const actualStep = majorCellSize * grid.precision.rawVal;
-    return (v: number) =>
-      Math.round((v - offset) / actualStep) * actualStep + offset;
+    return (v: number) => Math.round(v / actualStep) * actualStep;
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
