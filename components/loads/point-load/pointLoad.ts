@@ -1,6 +1,6 @@
+import * as THREE from "three";
 import { html } from "lit-html";
 import { LoadTemplate } from "../data-model";
-import * as THREE from "three";
 
 type PointLoadParams = {
   Fx: number;
@@ -15,7 +15,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   name: "Point Load",
   defaultParams: {
     Fx: 0,
-    Fy: -100, // KN
+    Fy: 0,
     Fz: 0,
     Mx: 0,
     My: 0,
@@ -73,8 +73,6 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
 
     const OFFSET = 0.25; // Offset distance from the point
 
-    // Helper function to set material properties for visibility on top
-
     if (Fx !== 0) {
       const direction = new THREE.Vector3(Fx > 0 ? 1 : -1, 0, 0);
       const offset = new THREE.Vector3((Fx > 0 ? 1 : -1) * OFFSET, 0, 0);
@@ -106,15 +104,14 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     }
 
     return group;
+
+    function setMaterialOnTop(object: THREE.Object3D) {
+      object.traverse((child) => {
+        if ((child as THREE.Mesh).material) {
+          const material = (child as THREE.Mesh).material as THREE.Material;
+          material.depthTest = false; // Disable depth testing so arrows always appear on top
+        }
+      });
+    }
   },
 };
-
-// Utils
-function setMaterialOnTop(object: THREE.Object3D) {
-  object.traverse((child) => {
-    if ((child as THREE.Mesh).material) {
-      const material = (child as THREE.Mesh).material as THREE.Material;
-      material.depthTest = false; // Disable depth testing so arrows always appear on top
-    }
-  });
-}
