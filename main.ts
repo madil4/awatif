@@ -56,7 +56,7 @@ const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "Axial Load",
+          name: "Lateral Load",
           templateId: "point-load",
           geometry: [2],
           params: {
@@ -123,11 +123,11 @@ const display: Display = {
   },
   geometry: van.state(true),
   mesh: van.state(true),
-  deformedShape: van.state(true),
+  deformedShape: van.state(false),
   loads: van.state(true),
   supports: van.state(true),
   design: van.state(false),
-  lineResult: van.state("None"),
+  lineResult: van.state("Bendings"),
 };
 
 // Analysis events
