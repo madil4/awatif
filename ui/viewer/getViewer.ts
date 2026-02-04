@@ -7,7 +7,7 @@ import {
   Components,
   templates as Templates,
 } from "@awatif/components";
-import { getGrid, Grid } from "./grid/getGrid";
+import { getGrid } from "./grid/getGrid";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
