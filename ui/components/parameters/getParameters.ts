@@ -24,127 +24,81 @@ export function getParameters({
 }): HTMLElement {
   const container = document.createElement("div");
 
-  // Map to store separate param states for each component by mode and index
-  const componentParamsMap = new Map<string, State<Record<string, unknown>>>();
+  const templateContent = van.state<TemplateResult | null>(null);
+  const params = van.state<Record<string, unknown> | null>(null);
 
-  // Get or create a param state for a specific component
-  const getComponentParams = (
-    mode: ComponentsType,
-    idx: number,
-    initialParams: Record<string, unknown>,
-  ): State<Record<string, unknown>> => {
-    const key = `${mode}-${idx}`;
-    if (!componentParamsMap.has(key)) {
-      const paramState = van.state<Record<string, unknown>>({
-        ...initialParams,
-      });
-      componentParamsMap.set(key, paramState);
-
-      // Set up a derive for this specific component to sync params back
-      van.derive(() => {
-        const params = paramState.val;
-        const currentIdx = activeComponent.val;
-        if (componentsBarMode.val === null) return;
-        const currentMode = componentsBarMode.val;
-
-        // Only sync if this is the active component and mode
-        if (currentIdx !== idx || currentMode !== mode) return;
-
-        const currentComponents = components.val.get(currentMode) ?? [];
-        const component = currentComponents[idx];
-        if (!component) return;
-
-        // Only update if params actually changed
-        const currentParams = component.params ?? {};
-        const hasChanges = Object.keys(params).some(
-          (key) => params[key] !== currentParams[key],
-        );
-
-        if (hasChanges) {
-          const updatedComponents = currentComponents.map((comp, i) =>
-            i === idx ? { ...comp, params: { ...params } } : comp,
-          );
-          components.val = new Map(components.val).set(
-            currentMode,
-            updatedComponents,
-          );
-        }
-      });
-    }
-    return componentParamsMap.get(key)!;
-  };
-
-  // Clean up param states when components are removed
+  // Render parameters
   van.derive(() => {
-    if (componentsBarMode.val === null) return;
-    const mode = componentsBarMode.val;
-    const currentComponents = components.val.get(mode) ?? [];
-    const currentKeys = new Set(
-      currentComponents.map((_, i) => `${mode}-${i}`),
-    );
+    templateContent.val = null;
+    params.val = null;
 
-    // Remove param states for components that no longer exist in current mode
-    for (const [key] of componentParamsMap) {
-      if (key.startsWith(`${mode}-`) && !currentKeys.has(key)) {
-        componentParamsMap.delete(key);
-      }
-    }
-  });
+    if (
+      activeComponent.val === null ||
+      !templates ||
+      componentsBarMode.val === null
+    )
+      return;
 
-  const getTemplateContent = (): TemplateResult | null => {
-    const idx = activeComponent.val;
-    if (idx === null || componentsBarMode.val === null) {
-      return null;
-    }
+    const component = components.val.get(componentsBarMode.val)?.[
+      activeComponent.val
+    ];
+    if (!component) return;
 
-    const key = componentsBarMode.val;
-    const currentComponents = components.val.get(key) ?? [];
-    const component = currentComponents[idx];
-    if (!component) return null;
+    const template = templates
+      .get(componentsBarMode.val)
+      ?.get(component?.templateId);
+    if (!template?.getParamsTemplate) return;
 
-    if (!templates) return null;
-    const meshTemplate = templates.get(key)?.get(component.templateId);
-    if (!meshTemplate) return null;
+    params.val = component.params || template.defaultParams || {};
 
-    // Get or create the param state for this component
-    const localParams = getComponentParams(
-      key,
-      idx,
-      component.params ?? meshTemplate.defaultParams ?? {},
-    );
-
-    // Update the local params if the component's params changed externally
-    const currentParams = component.params ?? meshTemplate.defaultParams ?? {};
-    const localParamsVal = localParams.val;
-    const needsUpdate =
-      Object.keys(currentParams).some(
-        (key) => currentParams[key] !== localParamsVal[key],
-      ) ||
-      Object.keys(localParamsVal).length !== Object.keys(currentParams).length;
-
-    if (needsUpdate) {
-      localParams.val = { ...currentParams };
-    }
-
-    return meshTemplate.getParamsTemplate({
-      params: localParams as any,
+    templateContent.val = template.getParamsTemplate({
+      params,
       activeAnalysis,
     });
-  };
-
-  const template = () => {
-    const templateContent = getTemplateContent();
-
-    return html`
-      <div id="parameters" class="${templateContent ? "visible" : "hidden"}">
-        ${templateContent}
-      </div>
-    `;
-  };
-
-  van.derive(() => {
-    render(template(), container);
   });
+
+  // Update components when parameters change
+  van.derive(() => {
+    if (
+      !params.val ||
+      activeComponent.val === null ||
+      componentsBarMode.val === null
+    ) {
+      return;
+    }
+
+    const currentComponents = components.val.get(componentsBarMode.val);
+    if (!currentComponents) return;
+
+    const component = currentComponents[activeComponent.val];
+    if (!component) return;
+
+    // Check if params actually changed to avoid infinite loops
+    const currentParams = component.params ?? {};
+    const hasChanges = Object.keys(params.val).some(
+      (key) => params.val![key] !== currentParams[key],
+    );
+
+    if (!hasChanges) return;
+
+    // Update the component with new params
+    const updatedComponents = currentComponents.map((comp, i) =>
+      i === activeComponent.val ? { ...comp, params: { ...params.val } } : comp,
+    );
+
+    components.val = new Map(components.val).set(
+      componentsBarMode.val,
+      updatedComponents,
+    );
+  });
+
+  const template = () => html`
+    <div id="parameters" class="${templateContent.val ? "visible" : "hidden"}">
+      ${templateContent.val}
+    </div>
+  `;
+
+  van.derive(() => render(template(), container));
 
   return container;
 }
