@@ -38,12 +38,14 @@ export function getGrid({
     // Minor grid (lighter color, finer divisions)
     minorGrid = new THREE.GridHelper(size, minorDivisions, 0x303030, 0x303030);
     minorGrid.rotateX(Math.PI / 2);
+    minorGrid.position.set(size / 2, size / 2, 0);
     minorGrid.renderOrder = 0;
     group.add(minorGrid);
 
     // Major grid (darker/more visible, base divisions)
     majorGrid = new THREE.GridHelper(size, BASE_DIVISIONS, 0x505050, 0x505050);
     majorGrid.rotateX(Math.PI / 2);
+    majorGrid.position.set(size / 2, size / 2, 0);
     majorGrid.renderOrder = 1; // Render on top of minor grid
     group.add(majorGrid);
 
