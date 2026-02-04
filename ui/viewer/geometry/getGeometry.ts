@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Grid, BASE_DIVISIONS } from "../grid/getGrid";
+import { Grid } from "../grid/getGrid";
 import { Geometry } from "@awatif/components";
 
 export function getGeometry({
@@ -267,9 +267,8 @@ export function getGeometry({
   });
 
   const getSnapFunction = () => {
-    const majorCellSize = grid.size.rawVal / BASE_DIVISIONS;
-    const actualStep = majorCellSize * grid.precision.rawVal;
-    return (v: number) => Math.round(v / actualStep) * actualStep;
+    const step = grid.spacing.rawVal;
+    return (v: number) => Math.round(v / step) * step;
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {

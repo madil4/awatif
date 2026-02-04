@@ -118,7 +118,7 @@ const mesh: Mesh = {
 const display: Display = {
   grid: {
     size: van.state(10),
-    precision: van.state(0.2),
+    spacing: van.state(0.2),
   },
   geometry: van.state(true),
   mesh: van.state(true),
