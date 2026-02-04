@@ -66,7 +66,7 @@ export function getViewer({
   // Objects
   const grid = {
     size: display?.grid?.size ?? van.state(10),
-    precision: display?.grid?.precision ?? van.state(1),
+    spacing: display?.grid?.spacing ?? van.state(1),
   };
 
   camera.position.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 7);

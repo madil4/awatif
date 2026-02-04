@@ -14,14 +14,14 @@
       const display = {
         grid: {
           size: van.state(10),
-          precision: van.state(1),
+          spacing: van.state(1),
         },
         geometry: van.state(true),
       };
 
       setInterval(() => {
         display.grid.size.val = 5;
-        display.grid.precision.val = 0.2;
+        display.grid.spacing.val = 0.2;
         display.geometry.val = false;
       }, 3000);
 

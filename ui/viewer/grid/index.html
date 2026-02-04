@@ -19,13 +19,13 @@
       const display = {
         grid: {
           size: vanjs.state(10),
-          precision: vanjs.state(1),
+          spacing: vanjs.state(1),
         },
       };
 
       setTimeout(() => {
         display.grid.size.val = 5;
-        display.grid.precision.val = 0.5;
+        display.grid.spacing.val = 0.5;
       }, 1000);
 
       document.body.append(getViewer({ display }));

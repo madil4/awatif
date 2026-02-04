@@ -28,29 +28,29 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
       <summary>Display</summary>
       ${grid
         ? html` <div class="display-item">
-            <label>Grid Size & Precision</label>
+            <label>Grid Size & Spacing</label>
             <input
               type="number"
               min="1"
-              max="1000"
+              max="100"
               value=${grid.size.val}
               @input=${(e: Event) =>
                 (grid.size.val = Number((e.target as HTMLInputElement).value))}
             />
             <select
               @change=${(e: Event) =>
-                (grid.precision.val = Number(
+                (grid.spacing.val = Number(
                   (e.target as HTMLSelectElement).value,
                 ))}
             >
-              <option value="1" ?selected=${grid.precision.val === 1}>1</option>
-              <option value="0.5" ?selected=${grid.precision.val === 0.5}>
+              <option value="1" ?selected=${grid.spacing.val === 1}>1</option>
+              <option value="0.5" ?selected=${grid.spacing.val === 0.5}>
                 0.5
               </option>
-              <option value="0.2" ?selected=${grid.precision.val === 0.2}>
+              <option value="0.2" ?selected=${grid.spacing.val === 0.2}>
                 0.2
               </option>
-              <option value="0.1" ?selected=${grid.precision.val === 0.1}>
+              <option value="0.1" ?selected=${grid.spacing.val === 0.1}>
                 0.1
               </option>
             </select>
