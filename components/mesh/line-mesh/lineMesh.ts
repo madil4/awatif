@@ -8,7 +8,7 @@ type LineMeshParams = {
 export const lineMesh: MeshTemplate<LineMeshParams> = {
   name: "Line Mesh",
   defaultParams: {
-    divisions: 3,
+    divisions: 4,
   },
 
   getParamsTemplate: ({ params }) => {
@@ -17,7 +17,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
       <input
         type="number"
         min="1"
-        max="10"
+        max="5"
         .value=${params.val.divisions}
         @input=${(e: Event) =>
           (params.val = {
