@@ -32,7 +32,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
             <input
               type="number"
               min="1"
-              max="100"
+              max="50"
               value=${grid.size.val}
               @input=${(e: Event) =>
                 (grid.size.val = Number((e.target as HTMLInputElement).value))}
