@@ -8,10 +8,12 @@ export type LineResultsDisplay = "None" | "Normals" | "Bendings" | "Shears";
 export function getLineResults({
   mesh,
   display,
+  displayScale,
   render,
 }: {
   mesh: Mesh;
   display: State<LineResultsDisplay>;
+  displayScale: State<number>;
   render: () => void;
 }): THREE.Group {
   const group = new THREE.Group();
@@ -36,6 +38,7 @@ export function getLineResults({
     if (!nodes?.length || !elements?.length || !internalForces) return render();
     if (display.val === "None") return render();
 
+    const s = displayScale.val;
     const mode = display.val;
     const color = "#0066cc";
     const lineMaterial = new THREE.LineBasicMaterial({ color });
@@ -64,8 +67,8 @@ export function getLineResults({
       );
     });
 
-    // Normalize scale: target max diagram width of 0.5 units
-    const targetMaxWidth = 1;
+    // Normalize scale: target max diagram width
+    const targetMaxWidth = 1 * s;
     const scale = maxForceValue > 0 ? targetMaxWidth / maxForceValue : 0.05;
 
     internalForces.forEach((forces: ElementForces, elementIdx: number) => {
@@ -128,7 +131,7 @@ export function getLineResults({
       group.add(new THREE.Line(outlineGeometry, lineMaterial));
 
       // Add text labels
-      const textSize = 0.5;
+      const textSize = 0.5 * s;
       if (Math.abs(valStart) > 0.001) {
         group.add(
           getText(

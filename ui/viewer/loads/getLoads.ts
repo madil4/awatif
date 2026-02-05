@@ -11,12 +11,14 @@ export function getLoads({
   geometry,
   components,
   templates,
+  displayScale,
   render,
   display,
 }: {
   geometry: Geometry;
   components: Components;
   templates: typeof Templates;
+  displayScale: State<number>;
   render: () => void;
   display?: { loads: State<boolean> };
 }): THREE.Group {
@@ -37,6 +39,7 @@ export function getLoads({
       group.remove(group.children[0]);
     }
 
+    const s = displayScale.val;
     const loadComponents = components.val.get(ComponentsType.LOADS) ?? [];
     const points = geometry.points.val;
 
@@ -57,6 +60,7 @@ export function getLoads({
         const loadObject = template.getObject3D?.({
           params: (component.params ?? template.defaultParams) as any,
           position: position as [number, number, number],
+          displayScale: s,
         });
 
         // Add to the group

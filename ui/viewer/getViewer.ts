@@ -69,7 +69,16 @@ export function getViewer({
     spacing: display?.grid?.spacing ?? van.state(1),
   };
 
-  camera.position.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 7);
+  const displayScale = van.state(grid.size.rawVal / 10);
+  van.derive(() => {
+    displayScale.val = grid.size.val / 10;
+  });
+
+  camera.position.set(
+    grid.size.rawVal / 2,
+    grid.size.rawVal / 2,
+    7 * (grid.size.rawVal / 10),
+  );
   controls.target.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 0);
   controls.update();
 
@@ -80,6 +89,7 @@ export function getViewer({
       getGeometry({
         geometry,
         grid,
+        displayScale,
         camera,
         rendererElm: renderer.domElement,
         render,
@@ -102,6 +112,7 @@ export function getViewer({
         geometry,
         components,
         templates,
+        displayScale,
         render,
         display,
       }),
@@ -112,6 +123,7 @@ export function getViewer({
         geometry,
         components,
         templates,
+        displayScale,
         render,
         display,
       }),
@@ -122,6 +134,7 @@ export function getViewer({
         geometry,
         components,
         templates,
+        displayScale,
         render,
         display,
       }),
@@ -133,6 +146,7 @@ export function getViewer({
       getPointResults({
         mesh,
         display: display.pointResult,
+        displayScale,
         render,
       }),
     );
@@ -143,6 +157,7 @@ export function getViewer({
       getLineResults({
         mesh,
         display: display.lineResult,
+        displayScale,
         render,
       }),
     );

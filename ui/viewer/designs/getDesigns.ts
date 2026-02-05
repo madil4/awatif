@@ -12,12 +12,14 @@ export function getDesigns({
   geometry,
   components,
   templates,
+  displayScale,
   render,
   display,
 }: {
   geometry: Geometry;
   components: Components;
   templates: typeof Templates;
+  displayScale: State<number>;
   render: () => void;
   display?: { design: State<boolean> };
 }): THREE.Group {
@@ -38,6 +40,7 @@ export function getDesigns({
       group.remove(group.children[0]);
     }
 
+    const s = displayScale.val;
     const designComponents = components.val.get(ComponentsType.DESIGN) ?? [];
     const lines = geometry.lines.val;
     const points = geometry.points.val;
@@ -71,7 +74,7 @@ export function getDesigns({
         const labelText = `#${lineId}`;
 
         // Use accent color from the layout theme (#4a9eff)
-        const textSprite = getText(labelText, midpoint, "#fff", 0.5);
+        const textSprite = getText(labelText, midpoint, "#fff", 0.5 * s);
 
         // Add to the group
         group.add(textSprite);
