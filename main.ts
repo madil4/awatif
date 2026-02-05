@@ -18,6 +18,7 @@ import {
 import {
   getDisplay,
   getTooltips,
+  getAnalysisStatus,
   getLayout,
   getViewer,
   getComponents,
@@ -25,6 +26,7 @@ import {
   getCanvas,
   getCanvasBar,
   CanvasButtons,
+  AnalysisStatus,
 } from "@awatif/ui";
 
 const geometry: Geometry = {
@@ -129,55 +131,66 @@ const display: Display = {
   lineResult: van.state("Bendings"),
 };
 
+const analysisStatus = van.state<AnalysisStatus>({ ok: true });
+
 // Analysis events
 van.derive(() => {
-  // Mesh events
-  const meshData = getMesh({
-    geometry: {
-      points: geometry.points.val,
-      lines: geometry.lines.val,
-    },
-    components: components.val,
-    templates,
-  });
+  try {
+    // Mesh events
+    const meshData = getMesh({
+      geometry: {
+        points: geometry.points.val,
+        lines: geometry.lines.val,
+      },
+      components: components.val,
+      templates,
+    });
 
-  mesh.nodes.val = meshData.nodes;
-  mesh.elements.val = meshData.elements;
-  mesh.geometryMapping.val = meshData.geometryMapping;
+    mesh.nodes.val = meshData.nodes;
+    mesh.elements.val = meshData.elements;
+    mesh.geometryMapping.val = meshData.geometryMapping;
 
-  // Loads events
-  mesh.loads.val = getLoads({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-  });
+    // Loads events
+    mesh.loads.val = getLoads({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
 
-  // Supports events
-  mesh.supports.val = getSupports({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-  });
+    // Supports events
+    mesh.supports.val = getSupports({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
 
-  // Elements properties events
-  mesh.elementsProps.val = getElementsProps({
-    components: components.val,
-    geometryMapping: mesh.geometryMapping.val,
-    templates,
-    internalForces: mesh.internalForces.val,
-  });
+    // Elements properties events
+    mesh.elementsProps.val = getElementsProps({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+      internalForces: mesh.internalForces.val,
+    });
 
-  // Positions events
-  const { positions, internalForces } = getPositionsAndForces(
-    mesh.nodes.val,
-    mesh.elements.val,
-    mesh.loads.val,
-    mesh.supports.val,
-    mesh.elementsProps.val,
-  );
+    // Positions events
+    const { positions, internalForces } = getPositionsAndForces(
+      mesh.nodes.val,
+      mesh.elements.val,
+      mesh.loads.val,
+      mesh.supports.val,
+      mesh.elementsProps.val,
+    );
 
-  mesh.positions.val = positions;
-  mesh.internalForces.val = internalForces;
+    mesh.positions.val = positions;
+    mesh.internalForces.val = internalForces;
+
+    analysisStatus.val = { ok: true };
+  } catch (e) {
+    analysisStatus.val = {
+      ok: false,
+      error: e instanceof Error ? e.message : "unknown error",
+    };
+  }
 });
 
 // Designs events
@@ -239,6 +252,6 @@ document.body.append(
       componentsBarMode,
       templates,
     }),
-    footer: [getTooltips()],
+    footer: [getAnalysisStatus(analysisStatus), getTooltips()],
   }),
 );
