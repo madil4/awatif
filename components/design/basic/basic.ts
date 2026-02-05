@@ -1,19 +1,19 @@
 import { html } from "lit-html";
-import { DesignTemplate, LineElementForces } from "../data-model";
-import { getLineEndForces } from "../utils";
+import { live } from "lit-html/directives/live.js";
+import { DesignTemplate } from "../data-model";
 
 type BasicParams = {
-  elasticity: number; // GPa
-  area: number; // cm²
-  momentInertia: number; // cm⁴
+  elasticity: string; // GPa
+  area: string; // cm²
+  momentInertia: string; // cm⁴
 };
 
 export const basic: DesignTemplate<BasicParams, any> = {
   name: "Basic",
   defaultParams: {
-    elasticity: 33, // GPa (C30/37 concrete)
-    area: 900, // cm² (300×300 mm section)
-    momentInertia: 67500, // cm⁴ (300×300 mm section)
+    elasticity: "33", // GPa (C30/37 concrete)
+    area: "900", // cm² (300×300 mm section)
+    momentInertia: "67500", // cm⁴ (300×300 mm section)
   },
 
   getParamsTemplate: ({ params }) => {
@@ -22,13 +22,12 @@ export const basic: DesignTemplate<BasicParams, any> = {
         <label>Elasticity (GPa):</label>
         <input
           type="number"
-          step="1"
           min="1"
-          .value=${params.val.elasticity}
+          .value=${live(params.val.elasticity)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              elasticity: Number((e.target as HTMLInputElement).value),
+              elasticity: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -37,13 +36,12 @@ export const basic: DesignTemplate<BasicParams, any> = {
         <label>Area (cm²):</label>
         <input
           type="number"
-          step="1"
           min="1"
-          .value=${params.val.area}
+          .value=${live(params.val.area)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              area: Number((e.target as HTMLInputElement).value),
+              area: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -52,13 +50,12 @@ export const basic: DesignTemplate<BasicParams, any> = {
         <label>Moment of Inertia (cm⁴):</label>
         <input
           type="number"
-          step="1000"
           min="1"
-          .value=${params.val.momentInertia}
+          .value=${live(params.val.momentInertia)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              momentInertia: Number((e.target as HTMLInputElement).value),
+              momentInertia: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -67,9 +64,9 @@ export const basic: DesignTemplate<BasicParams, any> = {
 
   getElementsProps: ({ params }) => {
     return {
-      elasticity: params.elasticity * 1e6, // GPa to KN/m^2
-      area: params.area * 1e-4, // cm² to m²
-      momentInertia: params.momentInertia * 1e-8, // cm⁴ to m⁴
+      elasticity: Number(params.elasticity) * 1e6, // GPa to KN/m^2
+      area: Number(params.area) * 1e-4, // cm² to m²
+      momentInertia: Number(params.momentInertia) * 1e-8, // cm⁴ to m⁴
     };
   },
 
@@ -95,15 +92,10 @@ export const basic: DesignTemplate<BasicParams, any> = {
             <span style="color: var(--text-secondary);"
               >Moment of Inertia:</span
             >
-            ${params.momentInertia.toFixed(1)} cm⁴
+            ${Number(params.momentInertia).toFixed(1)} cm⁴
           </div>
         </div>
       </div>
     `;
-
-    // Utils
-    function formatForce(value: number, unit: string) {
-      return `${value >= 0 ? "+" : ""}${value.toFixed(1)} ${unit}`;
-    }
   },
 };
