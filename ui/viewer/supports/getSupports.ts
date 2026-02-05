@@ -11,12 +11,14 @@ export function getSupports({
   geometry,
   components,
   templates,
+  displayScale,
   render,
   display,
 }: {
   geometry: Geometry;
   components: Components;
   templates: typeof Templates;
+  displayScale: State<number>;
   render: () => void;
   display?: { supports: State<boolean> };
 }): THREE.Group {
@@ -37,6 +39,7 @@ export function getSupports({
       group.remove(group.children[0]);
     }
 
+    const s = displayScale.val;
     const supportComponents = components.val.get(ComponentsType.SUPPORTS) ?? [];
     const points = geometry.points.val;
 
@@ -57,6 +60,7 @@ export function getSupports({
         const supportObject = template.getObject3D?.({
           params: (component.params ?? template.defaultParams) as any,
           position: position as [number, number, number],
+          displayScale: s,
         });
 
         // Add to the group

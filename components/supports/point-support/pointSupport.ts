@@ -81,26 +81,26 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
     };
   },
 
-  getObject3D: ({ params, position }) => {
+  getObject3D: ({ params, position, displayScale }) => {
     const { Ux, Uy, Rz } = params; // Focus on 2D: X, Y translations and Z rotation
     const group = new THREE.Group();
 
-    const SIZE = 0.4; // Base size for support symbol
+    const SIZE = 0.4 * displayScale; // Base size for support symbol
     const COLOR = 0xff0000; // Red for support symbols
 
     group.position.set(position[0], position[1], position[2]);
     group.renderOrder = 5;
 
     if (Ux && Uy && Rz) {
-      drawFixedSupport(group, SIZE, COLOR);
+      drawFixedSupport(group, SIZE, COLOR, displayScale);
     } else if (Ux && Uy && !Rz) {
-      drawPinnedSupport(group, SIZE, COLOR);
+      drawPinnedSupport(group, SIZE, COLOR, displayScale);
     } else if (!Ux && Uy && !Rz) {
-      drawRollerSupport(group, SIZE, COLOR, "horizontal");
+      drawRollerSupport(group, SIZE, COLOR, "horizontal", displayScale);
     } else if (Ux && !Uy && !Rz) {
-      drawRollerSupport(group, SIZE, COLOR, "vertical");
+      drawRollerSupport(group, SIZE, COLOR, "vertical", displayScale);
     } else {
-      drawCustomSupport(group, SIZE, COLOR, Ux, Uy, Rz);
+      drawCustomSupport(group, SIZE, COLOR, Ux, Uy, Rz, displayScale);
     }
 
     setMaterialOnTop(group);
@@ -118,7 +118,7 @@ function setMaterialOnTop(object: THREE.Object3D) {
   });
 }
 
-function drawFixedSupport(group: THREE.Group, size: number, color: number) {
+function drawFixedSupport(group: THREE.Group, size: number, color: number, displayScale: number) {
   // Draw triangle
   const trianglePoints = [
     new THREE.Vector3(0, 0, 0), // Apex at node
@@ -142,7 +142,7 @@ function drawFixedSupport(group: THREE.Group, size: number, color: number) {
     const x = -size / 2 + i * hatchSpacing;
     const hatchPoints = [
       new THREE.Vector3(x, -size, 0),
-      new THREE.Vector3(x - 0.1, -size - 0.15, 0),
+      new THREE.Vector3(x - 0.1 * displayScale, -size - 0.15 * displayScale, 0),
     ];
     const hatchGeometry = new THREE.BufferGeometry().setFromPoints(hatchPoints);
     const hatchMaterial = new THREE.LineBasicMaterial({ color, linewidth: 1 });
@@ -152,8 +152,8 @@ function drawFixedSupport(group: THREE.Group, size: number, color: number) {
 
   // Draw ground line
   const groundPoints = [
-    new THREE.Vector3(-size / 2 - 0.1, -size, 0),
-    new THREE.Vector3(size / 2 + 0.1, -size, 0),
+    new THREE.Vector3(-size / 2 - 0.1 * displayScale, -size, 0),
+    new THREE.Vector3(size / 2 + 0.1 * displayScale, -size, 0),
   ];
   const groundGeometry = new THREE.BufferGeometry().setFromPoints(groundPoints);
   const groundMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
@@ -161,7 +161,7 @@ function drawFixedSupport(group: THREE.Group, size: number, color: number) {
   group.add(ground);
 }
 
-function drawPinnedSupport(group: THREE.Group, size: number, color: number) {
+function drawPinnedSupport(group: THREE.Group, size: number, color: number, displayScale: number) {
   // Draw triangle
   const trianglePoints = [
     new THREE.Vector3(0, 0, 0), // Apex at node
@@ -189,8 +189,8 @@ function drawPinnedSupport(group: THREE.Group, size: number, color: number) {
 
   // Draw ground line
   const groundPoints = [
-    new THREE.Vector3(-size / 2 - 0.1, -size, 0),
-    new THREE.Vector3(size / 2 + 0.1, -size, 0),
+    new THREE.Vector3(-size / 2 - 0.1 * displayScale, -size, 0),
+    new THREE.Vector3(size / 2 + 0.1 * displayScale, -size, 0),
   ];
   const groundGeometry = new THREE.BufferGeometry().setFromPoints(groundPoints);
   const groundMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
@@ -202,7 +202,8 @@ function drawRollerSupport(
   group: THREE.Group,
   size: number,
   color: number,
-  direction: "horizontal" | "vertical"
+  direction: "horizontal" | "vertical",
+  displayScale: number
 ) {
   const rotation = direction === "vertical" ? Math.PI / 2 : 0;
   const subGroup = new THREE.Group();
@@ -257,8 +258,8 @@ function drawRollerSupport(
   // Draw ground line
   const groundY = -size * 0.7 - rollerRadius * 2.2;
   const groundPoints = [
-    new THREE.Vector3(-size / 2 - 0.1, groundY, 0),
-    new THREE.Vector3(size / 2 + 0.1, groundY, 0),
+    new THREE.Vector3(-size / 2 - 0.1 * displayScale, groundY, 0),
+    new THREE.Vector3(size / 2 + 0.1 * displayScale, groundY, 0),
   ];
   const groundGeometry = new THREE.BufferGeometry().setFromPoints(groundPoints);
   const groundMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
@@ -274,7 +275,8 @@ function drawCustomSupport(
   color: number,
   Ux: boolean,
   Uy: boolean,
-  Rz: boolean
+  Rz: boolean,
+  displayScale: number
 ) {
   // Draw a simple cross with indicators for each restraint
   const halfSize = size / 2;
@@ -294,7 +296,7 @@ function drawCustomSupport(
     group.add(line);
 
     // Add end markers
-    const markerSize = 0.1;
+    const markerSize = 0.1 * displayScale;
     const leftMarker = [
       new THREE.Vector3(-halfSize, -markerSize, 0),
       new THREE.Vector3(-halfSize, markerSize, 0),
@@ -325,7 +327,7 @@ function drawCustomSupport(
     group.add(line);
 
     // Add end markers
-    const markerSize = 0.1;
+    const markerSize = 0.1 * displayScale;
     const bottomMarker = [
       new THREE.Vector3(-markerSize, -halfSize, 0),
       new THREE.Vector3(markerSize, -halfSize, 0),

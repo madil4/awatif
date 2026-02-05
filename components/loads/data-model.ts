@@ -14,8 +14,10 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
   getObject3D?: ({
     params,
     position,
+    displayScale,
   }: {
     params: Params;
     position: [number, number, number];
+    displayScale: number;
   }) => THREE.Object3D;
 };

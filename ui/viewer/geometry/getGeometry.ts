@@ -6,6 +6,7 @@ import { Geometry } from "@awatif/components";
 export function getGeometry({
   geometry,
   grid,
+  displayScale,
   camera,
   rendererElm,
   render,
@@ -13,6 +14,7 @@ export function getGeometry({
 }: {
   geometry: Geometry;
   grid: Grid;
+  displayScale: State<number>;
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
   render: () => void;
@@ -250,8 +252,14 @@ export function getGeometry({
   /* ---- Mouse Events ---- */
   const pointer = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
-  raycaster.params.Line = { threshold: 0.15 };
-  raycaster.params.Points = { threshold: 0.2 };
+  raycaster.params.Line = { threshold: 0.15 * displayScale.rawVal };
+  raycaster.params.Points = { threshold: 0.2 * displayScale.rawVal };
+
+  van.derive(() => {
+    const s = displayScale.val;
+    raycaster.params.Line = { threshold: 0.15 * s };
+    raycaster.params.Points = { threshold: 0.2 * s };
+  });
 
   const hitPoint = van.state<number[] | null>(null);
   const gridObj = new THREE.Mesh(
@@ -763,13 +771,21 @@ export function getGeometry({
     new THREE.BufferGeometry(),
     new THREE.LineDashedMaterial({
       color: GEOMETRY_COLOR,
-      dashSize: POINT_SIZE * 0.01 * 2,
-      gapSize: POINT_SIZE * 0.01,
+      dashSize: POINT_SIZE * 0.01 * 2 * displayScale.rawVal,
+      gapSize: POINT_SIZE * 0.01 * displayScale.rawVal,
       depthTest: false,
     }),
   );
   previewLine.renderOrder = 1; // Ensure preview line renders on top of grid
   group.add(previewLine);
+
+  van.derive(() => {
+    const s = displayScale.val;
+    const mat = previewLine.material as THREE.LineDashedMaterial;
+    mat.dashSize = POINT_SIZE * 0.01 * 2 * s;
+    mat.gapSize = POINT_SIZE * 0.01 * s;
+    mat.needsUpdate = true;
+  });
 
   van.derive(() => {
     if (mode.val !== Mode.APPEND || appendPoint === null || !hitPoint.val) {
