@@ -3,13 +3,10 @@ import { html, render } from "lit-html";
 
 import "./styles.css";
 
-export type AnalysisStatus = {
-  ok: boolean;
-  error?: string;
-};
+export type AnalysisStatus = State<boolean>;
 
 export function getAnalysisStatus(
-  status: State<AnalysisStatus>,
+  status: AnalysisStatus,
 ): HTMLElement {
   const container = document.createElement("div");
 
@@ -27,8 +24,7 @@ export function getAnalysisStatus(
   const tooltip = el.querySelector(".tooltip") as HTMLElement;
 
   van.derive(() => {
-    const s = status.val;
-    if (s.ok) {
+    if (status.val) {
       dot.className = "dot success";
       tooltip.textContent = "Analysis done";
     } else {
