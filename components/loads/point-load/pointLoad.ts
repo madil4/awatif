@@ -1,25 +1,26 @@
 import * as THREE from "three";
 import { html } from "lit-html";
+import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
 
 type PointLoadParams = {
-  Fx: number;
-  Fy: number;
-  Fz: number;
-  Mx: number;
-  My: number;
-  Mz: number;
+  Fx: string;
+  Fy: string;
+  Fz: string;
+  Mx: string;
+  My: string;
+  Mz: string;
 };
 
 export const pointLoad: LoadTemplate<PointLoadParams> = {
   name: "Point Load",
   defaultParams: {
-    Fx: 0,
-    Fy: 0,
-    Fz: 0,
-    Mx: 0,
-    My: 0,
-    Mz: 0,
+    Fx: "0",
+    Fy: "0",
+    Fz: "0",
+    Mx: "0",
+    My: "0",
+    Mz: "0",
   },
 
   getParamsTemplate: ({ params }) => {
@@ -28,12 +29,12 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <label>Force X (KN):</label>
         <input
           type="number"
-          step="0.1"
-          .value=${params.val.Fx}
+          placeholder="0"
+          .value=${live(params.val.Fx)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              Fx: Number((e.target as HTMLInputElement).value),
+              Fx: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -42,12 +43,12 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <label>Force Y (KN):</label>
         <input
           type="number"
-          step="0.1"
-          .value=${params.val.Fy}
+          placeholder="0"
+          .value=${live(params.val.Fy)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              Fy: Number((e.target as HTMLInputElement).value),
+              Fy: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -55,11 +56,19 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   },
 
   getLoad: ({ params }) => ({
-    load: [params.Fx, params.Fy, params.Fz, params.Mx, params.My, params.Mz],
+    load: [
+      Number(params.Fx),
+      Number(params.Fy),
+      Number(params.Fz),
+      Number(params.Mx),
+      Number(params.My),
+      Number(params.Mz),
+    ],
   }),
 
   getObject3D: ({ params, position }) => {
-    const { Fx, Fy } = params;
+    const Fx = Number(params.Fx);
+    const Fy = Number(params.Fy);
     const group = new THREE.Group();
 
     const ARROW_LENGTH = 1 * 0.4;
