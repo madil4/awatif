@@ -1,9 +1,7 @@
 #tooltips {
   display: flex;
   align-items: center;
-  padding: 4px 10px;
   gap: 4px;
-  margin-bottom: 10px;
   width: fit-content; /* Fix blocking the viewer pointer events */
 
   color: var(--text-secondary);

@@ -27,8 +27,9 @@ body {
 
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
 }
 
 .spinner {
@@ -89,6 +90,12 @@ body {
 #layout .bottom-left {
   grid-area: bottom-left;
   align-self: end;
+}
+
+#layout .footer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 #layout .canvas {
