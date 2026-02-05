@@ -3,6 +3,7 @@ import van, { State } from "vanjs-core";
 import { Mesh } from "@awatif/components";
 import { getText } from "../text/getText";
 
+// Todo: Reaction are still not implemented in the solver
 export type PointResultsDisplay = "None" | "Displacements" | "Reactions";
 
 export function getPointResults({
@@ -22,7 +23,7 @@ export function getPointResults({
     while (group.children.length) {
       const c = group.children[0];
       if (c instanceof THREE.Sprite)
-        c.material.map?.dispose(), c.material.dispose();
+        (c.material.map?.dispose(), c.material.dispose());
       if (c instanceof THREE.ArrowHelper) c.dispose();
       if (c instanceof THREE.Line) c.geometry.dispose();
       if (c instanceof THREE.Mesh) c.geometry.dispose();
@@ -38,12 +39,14 @@ export function getPointResults({
     const s = displayScale.val;
 
     const isDisp = display.val === "Displacements" && mesh.displacements?.val;
+    // @ts-ignore
     const isReact = display.val === "Reactions" && mesh.reactions?.val;
     const data = isDisp
       ? mesh.displacements!.val
       : isReact
-      ? mesh.reactions!.val
-      : null;
+        ? // @ts-ignore
+          mesh.reactions!.val
+        : null;
     if (!data) return render();
 
     const color = isDisp ? 0x00ff00 : 0xff0000;
@@ -53,10 +56,12 @@ export function getPointResults({
     const scale = (isDisp ? 1 : 0.5) * s;
     const [p1, p2] = isDisp ? ["U", "R"] : ["R", "M"];
 
+    // @ts-ignore
     data.forEach((r, i) => {
       const n = nodes[i];
       if (!n) return;
-      const [vx, vy, , , , rz] = r;
+      // @ts-ignore
+      const [vx, vy, vz, rx, ry, rz] = r;
       const origin = new THREE.Vector3(n[0], n[1], n[2]);
       // X arrow
       if (Math.abs(vx) > 0.001) {
@@ -68,16 +73,16 @@ export function getPointResults({
             Math.abs(vx * scale),
             color,
             0.08 * s,
-            0.04 * s
-          )
+            0.04 * s,
+          ),
         );
         group.add(
           getText(
             `${p1}x: ${vx.toFixed(2)}`,
             [n[0] + vx * scale + (vx > 0 ? 0.15 * s : -0.15 * s), n[1], n[2]],
             colorStr,
-            0.15 * s
-          )
+            0.15 * s,
+          ),
         );
       }
 
@@ -91,16 +96,16 @@ export function getPointResults({
             Math.abs(vy * scale),
             color,
             0.08 * s,
-            0.04 * s
-          )
+            0.04 * s,
+          ),
         );
         group.add(
           getText(
             `${p1}y: ${vy.toFixed(2)}`,
             [n[0], n[1] + vy * scale + (vy > 0 ? 0.15 * s : -0.15 * s), n[2]],
             colorStr,
-            0.15 * s
-          )
+            0.15 * s,
+          ),
         );
       }
 
@@ -117,7 +122,7 @@ export function getPointResults({
           radius,
           start,
           start + arc,
-          ccw
+          ccw,
         );
         const pts = curve
           .getPoints(24)
@@ -125,8 +130,8 @@ export function getPointResults({
         group.add(
           new THREE.Line(
             new THREE.BufferGeometry().setFromPoints(pts),
-            new THREE.LineBasicMaterial({ color })
-          )
+            new THREE.LineBasicMaterial({ color }),
+          ),
         );
 
         // Cone arrowhead at arc end
@@ -145,8 +150,8 @@ export function getPointResults({
             `${p2}z: ${rz.toFixed(3)}`,
             [n[0] - radius - 0.15 * s, n[1], n[2]],
             colorStr,
-            0.15 * s
-          )
+            0.15 * s,
+          ),
         );
       }
     });
