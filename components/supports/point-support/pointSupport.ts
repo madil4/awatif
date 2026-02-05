@@ -118,50 +118,45 @@ function setMaterialOnTop(object: THREE.Object3D) {
   });
 }
 
-function drawFixedSupport(group: THREE.Group, size: number, color: number, displayScale: number) {
-  // Draw triangle
-  const trianglePoints = [
-    new THREE.Vector3(0, 0, 0), // Apex at node
-    new THREE.Vector3(-size / 2, -size, 0), // Bottom left
-    new THREE.Vector3(size / 2, -size, 0), // Bottom right
-    new THREE.Vector3(0, 0, 0), // Close the triangle
-  ];
+function drawFixedSupport(
+  group: THREE.Group,
+  size: number,
+  color: number,
+  displayScale: number,
+) {
+  const groundWidth = size * 1.5 * displayScale;
+  const hatchLength = 0.2 * displayScale;
+  const lineMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
 
-  const triangleGeometry = new THREE.BufferGeometry().setFromPoints(
-    trianglePoints
-  );
-  const triangleMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
-  const triangle = new THREE.Line(triangleGeometry, triangleMaterial);
-  group.add(triangle);
-
-  // Draw hatching lines on base
-  const numHatches = 5;
-  const hatchSpacing = size / numHatches;
-
-  for (let i = 0; i <= numHatches; i++) {
-    const x = -size / 2 + i * hatchSpacing;
-    const hatchPoints = [
-      new THREE.Vector3(x, -size, 0),
-      new THREE.Vector3(x - 0.1 * displayScale, -size - 0.15 * displayScale, 0),
-    ];
-    const hatchGeometry = new THREE.BufferGeometry().setFromPoints(hatchPoints);
-    const hatchMaterial = new THREE.LineBasicMaterial({ color, linewidth: 1 });
-    const hatch = new THREE.Line(hatchGeometry, hatchMaterial);
-    group.add(hatch);
-  }
-
-  // Draw ground line
   const groundPoints = [
-    new THREE.Vector3(-size / 2 - 0.1 * displayScale, -size, 0),
-    new THREE.Vector3(size / 2 + 0.1 * displayScale, -size, 0),
+    new THREE.Vector3(-groundWidth / 2, 0, 0),
+    new THREE.Vector3(groundWidth / 2, 0, 0),
   ];
   const groundGeometry = new THREE.BufferGeometry().setFromPoints(groundPoints);
-  const groundMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
-  const ground = new THREE.Line(groundGeometry, groundMaterial);
+  const ground = new THREE.Line(groundGeometry, lineMaterial);
   group.add(ground);
+
+  const numHatches = 5;
+  const hatchSpacing = groundWidth / (numHatches + 1);
+
+  for (let i = 1; i <= numHatches; i++) {
+    const x = -groundWidth / 2 + i * hatchSpacing;
+    const hatchPoints = [
+      new THREE.Vector3(x, 0, 0),
+      new THREE.Vector3(x - hatchLength * 0.7, -hatchLength, 0),
+    ];
+    const hatchGeometry = new THREE.BufferGeometry().setFromPoints(hatchPoints);
+    const hatch = new THREE.Line(hatchGeometry, lineMaterial);
+    group.add(hatch);
+  }
 }
 
-function drawPinnedSupport(group: THREE.Group, size: number, color: number, displayScale: number) {
+function drawPinnedSupport(
+  group: THREE.Group,
+  size: number,
+  color: number,
+  displayScale: number,
+) {
   // Draw triangle
   const trianglePoints = [
     new THREE.Vector3(0, 0, 0), // Apex at node
@@ -171,7 +166,7 @@ function drawPinnedSupport(group: THREE.Group, size: number, color: number, disp
   ];
 
   const triangleGeometry = new THREE.BufferGeometry().setFromPoints(
-    trianglePoints
+    trianglePoints,
   );
   const triangleMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
   const triangle = new THREE.Line(triangleGeometry, triangleMaterial);
@@ -203,7 +198,7 @@ function drawRollerSupport(
   size: number,
   color: number,
   direction: "horizontal" | "vertical",
-  displayScale: number
+  displayScale: number,
 ) {
   const rotation = direction === "vertical" ? Math.PI / 2 : 0;
   const subGroup = new THREE.Group();
@@ -218,7 +213,7 @@ function drawRollerSupport(
   ];
 
   const triangleGeometry = new THREE.BufferGeometry().setFromPoints(
-    trianglePoints
+    trianglePoints,
   );
   const triangleMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
   const triangle = new THREE.Line(triangleGeometry, triangleMaterial);
@@ -244,7 +239,7 @@ function drawRollerSupport(
     const outlineGeometry = new THREE.RingGeometry(
       rollerRadius,
       rollerRadius * 1.2,
-      12
+      12,
     );
     const outlineMaterial = new THREE.MeshBasicMaterial({
       color,
@@ -276,7 +271,7 @@ function drawCustomSupport(
   Ux: boolean,
   Uy: boolean,
   Rz: boolean,
-  displayScale: number
+  displayScale: number,
 ) {
   // Draw a simple cross with indicators for each restraint
   const halfSize = size / 2;
