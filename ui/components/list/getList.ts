@@ -81,6 +81,17 @@ export function getList({
     }
   });
 
+  // Exit active component when selection is cleared externally (e.g., right-click in viewer)
+  van.derive(() => {
+    if (
+      geometry.selection.val === null &&
+      activeComponent.rawVal !== null &&
+      !isSyncing
+    ) {
+      activeComponent.val = null;
+    }
+  });
+
   // Sync activeComponent -> geometry.selection
   van.derive(() => {
     const idx = activeComponent.val;
@@ -96,6 +107,7 @@ export function getList({
   van.derive(() => {
     const idx = activeComponent.val;
     if (isSyncing || idx === null || componentsBarMode.val === null) return;
+    if (geometry.selection.val === null) return;
 
     const current = getComponentList()[idx];
     if (!current) return;

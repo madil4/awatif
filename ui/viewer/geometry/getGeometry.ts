@@ -528,8 +528,11 @@ export function getGeometry({
   rendererElm.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
 
-    // In Select mode, don't allow editing
-    if (geometry.selection.rawVal !== null) return;
+    // In Select mode, right-click exits select mode
+    if (geometry.selection.rawVal !== null) {
+      geometry.selection.val = null;
+      return;
+    }
 
     const pointHits = raycaster.intersectObject(points, false);
 
