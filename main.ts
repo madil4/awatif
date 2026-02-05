@@ -239,6 +239,6 @@ document.body.append(
       componentsBarMode,
       templates,
     }),
-    tooltips: getTooltips(),
+    footer: [getTooltips()],
   }),
 );

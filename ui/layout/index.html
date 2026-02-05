@@ -27,7 +27,7 @@
       #layout .components-bar {
         background: #4a4a3a;
       }
-      #layout .tooltips {
+      #layout .footer {
         background: #5a4a4a;
       }
       #layout .canvas {
@@ -49,8 +49,10 @@
         "--------- Header Element 2 ------------");
       const components = (document.createElement("div").textContent =
         "--------- Components Element ------------");
-      const tooltips = (document.createElement("div").textContent =
-        "--------- Tooltips Element ------------");
+      const footer1 = (document.createElement("div").textContent =
+        "--------- Footer Element 1 ------------");
+      const footer2 = (document.createElement("div").textContent =
+        "--------- Footer Element 2 ------------");
       const canvas = (document.createElement("div").textContent =
         "--------- Canvas Element ------------");
 
@@ -60,7 +62,7 @@
           display,
           header: [header1, header2],
           components,
-          tooltips,
+          footer: [footer1, footer2],
           canvas,
         })
       );
