@@ -39,6 +39,7 @@ export type SettingsObj = {
   shellResults?: string;
   flipAxes?: boolean;
   solids?: boolean;
+  showFrameResults?: boolean;
   customSelects?: {
     folder?: string;
     label: string;
@@ -110,18 +111,20 @@ export function getSettings(
       label: "Node results",
     });
 
-    outputs.addBinding(settings.frameResults, "val", {
-      options: {
-        none: "none",
-        normals: "normals",
-        shearsY: "shearsY",
-        shearsZ: "shearsZ",
-        torsions: "torsions",
-        bendingsY: "bendingsY",
-        bendingsZ: "bendingsZ",
-      },
-      label: "Frame results",
-    });
+    if (settingsObj?.showFrameResults !== false) {
+      outputs.addBinding(settings.frameResults, "val", {
+        options: {
+          none: "none",
+          normals: "normals",
+          shearsY: "shearsY",
+          shearsZ: "shearsZ",
+          torsions: "torsions",
+          bendingsY: "bendingsY",
+          bendingsZ: "bendingsZ",
+        },
+        label: "Frame results",
+      });
+    }
 
     outputs.addBinding(settings.shellResults, "val", {
       options: {

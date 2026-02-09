@@ -1,27 +1,28 @@
 import van from "vanjs-core";
-import { analyze, CLTLayup, Mesh, Node, Element } from "awatif-fem";
+import { analyze, CLTLayup, Element, Mesh, Node } from "awatif-fem";
 import { deform } from "awatif-fem/src/deform";
 import { getMesh } from "awatif-mesh";
-import { getToolbar, getViewer } from "awatif-ui";
+import { getViewer } from "awatif-ui";
 
 import "./styles.css";
 
-const { div, h1, p, span } = van.tags;
+const { div } = van.tags;
 
 const LENGTH = 10;
 const WIDTH = 2.45;
-const TOTAL_THICKNESS = 0.24;
 const KDEF_SQ = 0.8;
 
 const qUls = 4.335; // kN/m2
 const qSls = 1.589; // kN/m2
 
-const benchmark = {
-  vMax: 21.67,
-  mMax: 54.25,
-  sigmaMax: 8.75,
-  tauMax: 0.1224,
-  wFin: 47.0,
+type DisplayCase = "ULS" | "SLS";
+
+type CaseResult = {
+  loads: Map<number, [number, number, number, number, number, number]>;
+  elementInputs: { cltLayups: Map<number, CLTLayup> };
+  deformations?: Map<number, [number, number, number, number, number, number]>;
+  reactions?: Map<number, [number, number, number, number, number, number]>;
+  analyze: ReturnType<typeof analyze>;
 };
 
 const mesh: Mesh = {
@@ -33,38 +34,9 @@ const mesh: Mesh = {
   analyzeOutputs: van.state({}),
 };
 
-type DisplayCase = "ULS" | "SLS";
-
-type CaseResult = {
-  loads: Map<number, [number, number, number, number, number, number]>;
-  elementInputs: { cltLayups: Map<number, CLTLayup> };
-  deformations?: Map<number, [number, number, number, number, number, number]>;
-  reactions?: Map<number, [number, number, number, number, number, number]>;
-  analyze: ReturnType<typeof analyze>;
-  centerDeflectionMm: number;
-  vMax: number;
-  mMax: number;
-  momentCurve: number[];
-  shearCurve: number[];
-};
-
 const displayCaseState = van.state<DisplayCase>("SLS");
 const displayCases: { ULS?: CaseResult; SLS?: CaseResult } = {};
 let displaySupports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]> | undefined;
-
-const kpiState = van.state({
-  vMax: 0,
-  mMax: 0,
-  sigmaMax: 0,
-  tauMax: 0,
-  wFin: 0,
-});
-
-const stripState = van.state({
-  shear: [] as number[],
-  moment: [] as number[],
-  deflection: [] as number[],
-});
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -89,7 +61,7 @@ function initialize() {
 
   const supports = getSupportMap(nodes);
 
-  const uls = runCase({
+  displayCases.ULS = runCase({
     nodes,
     elements,
     supports,
@@ -97,7 +69,7 @@ function initialize() {
     stiffnessReduction: 1,
   });
 
-  const sls = runCase({
+  displayCases.SLS = runCase({
     nodes,
     elements,
     supports,
@@ -105,32 +77,11 @@ function initialize() {
     stiffnessReduction: 1 + KDEF_SQ,
   });
 
-  const effectiveInertia = 0.000744; // m4/m from FEM-Design chapter 6.2 hand calc
-  const staticMoment = 0.0042; // m3/m from chapter 6.2
-
-  const sigmaMax = ((uls.mMax * (TOTAL_THICKNESS / 2)) / effectiveInertia) / 1000;
-  const tauMax = ((uls.vMax * staticMoment) / (effectiveInertia * 1)) / 1000;
-
-  kpiState.val = {
-    vMax: uls.vMax,
-    mMax: uls.mMax,
-    sigmaMax,
-    tauMax,
-    wFin: sls.centerDeflectionMm,
-  };
-
-  stripState.val = {
-    shear: uls.shearCurve,
-    moment: uls.momentCurve,
-    deflection: buildDeflectionStrip(nodes, sls.deformations),
-  };
-
   displaySupports = supports;
-  displayCases.ULS = uls;
-  displayCases.SLS = sls;
 
-  mesh.nodes.val = nodes;
-  mesh.elements.val = elements;
+  mesh.nodes!.val = nodes;
+  mesh.elements!.val = elements;
+
   applyDisplayCase();
 }
 
@@ -138,16 +89,16 @@ function applyDisplayCase() {
   const selected = displayCases[displayCaseState.val];
   if (!selected || !displaySupports) return;
 
-  mesh.nodeInputs.val = {
+  mesh.nodeInputs!.val = {
     supports: displaySupports,
     loads: selected.loads,
   };
-  mesh.elementInputs.val = selected.elementInputs;
-  mesh.deformOutputs.val = {
+  mesh.elementInputs!.val = selected.elementInputs;
+  mesh.deformOutputs!.val = {
     deformations: selected.deformations,
     reactions: selected.reactions,
   };
-  mesh.analyzeOutputs.val = selected.analyze;
+  mesh.analyzeOutputs!.val = selected.analyze;
 }
 
 function runCase({
@@ -162,8 +113,9 @@ function runCase({
   supports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>;
   q: number;
   stiffnessReduction: number;
-}) {
+}): CaseResult {
   const nodalAreas = getNodalAreas(nodes, elements);
+
   const loads = new Map(
     nodes.map((_, i) => [i, [0, 0, -q * nodalAreas[i], 0, 0, 0] as [number, number, number, number, number, number]]),
   );
@@ -175,39 +127,16 @@ function runCase({
   const deformOutputs = deform(nodes, elements, { supports, loads }, elementInputs);
   const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
 
-  const centerIndex = getClosestNodeIndex(nodes, [LENGTH / 2, WIDTH / 2, 0]);
-  const centerDeflectionMm = Math.abs(deformOutputs.deformations.get(centerIndex)?.[2] ?? 0) * 1000;
-
-  const momentCurve = sampleCenterlineBendingCurve(
-    nodes,
-    elements,
-    analyzeOutputs.bendingXX,
-    16,
-  );
-  const shearCurve = getShearCurveFromMoment(momentCurve, LENGTH);
-  const mMax = maxAbs(momentCurve);
-  let reactionAtLeft = 0;
-  deformOutputs.reactions?.forEach((r, i) => {
-    if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
-  });
-  const vMax = Math.abs(reactionAtLeft / WIDTH);
-
   return {
     loads,
     elementInputs,
     deformations: deformOutputs.deformations,
     reactions: deformOutputs.reactions,
     analyze: analyzeOutputs,
-    centerDeflectionMm,
-    vMax,
-    mMax,
-    momentCurve,
-    shearCurve,
   };
 }
 
 function buildSevenLayerCLTLayup(): CLTLayup {
-  // Source: FEM-Design laminated shell chapter 6.2 reduced panel setup.
   const mmToM = 1e-3;
   const nmm2TokNm2 = 1e3;
 
@@ -263,9 +192,11 @@ function getNodalAreas(nodes: Node[], elements: Element[]): number[] {
 
   for (const e of elements) {
     if (e.length !== 3) continue;
+
     const [n1, n2, n3] = e.map((i) => nodes[i]);
     const area = Math.abs((n2[0] - n1[0]) * (n3[1] - n1[1]) - (n3[0] - n1[0]) * (n2[1] - n1[1])) * 0.5;
     const lumped = area / 3;
+
     areas[e[0]] += lumped;
     areas[e[1]] += lumped;
     areas[e[2]] += lumped;
@@ -274,205 +205,38 @@ function getNodalAreas(nodes: Node[], elements: Element[]): number[] {
   return areas;
 }
 
-function getClosestNodeIndex(nodes: Node[], target: Node): number {
-  let min = Number.POSITIVE_INFINITY;
-  let idx = 0;
-  nodes.forEach((n, i) => {
-    const d = Math.hypot(n[0] - target[0], n[1] - target[1], n[2] - target[2]);
-    if (d < min) {
-      min = d;
-      idx = i;
-    }
-  });
-  return idx;
-}
-
-function sampleCenterlineBendingCurve(
-  nodes: Node[],
-  elements: Element[],
-  bendingXX?: Map<number, [number, number, number]>,
-  samples = 16,
-): number[] {
-  const dx = LENGTH / (samples - 1);
-  const halfBin = dx * 0.5;
-
-  const centroids = elements.map((e) => {
-    const n1 = nodes[e[0]];
-    const n2 = nodes[e[1]];
-    const n3 = nodes[e[2]];
-    return [(n1[0] + n2[0] + n3[0]) / 3, (n1[1] + n2[1] + n3[1]) / 3];
-  });
-
-  return Array.from({ length: samples }, (_, i) => {
-    const x = (i / (samples - 1)) * LENGTH;
-    const vals: number[] = [];
-
-    elements.forEach((_, elementIndex) => {
-      if (Math.abs(centroids[elementIndex][0] - x) > halfBin) return;
-      const m = bendingXX?.get(elementIndex);
-      if (!m) return;
-      vals.push((m[0] + m[1] + m[2]) / 3);
-    });
-
-    if (!vals.length) return 0;
-    return vals.reduce((sum, v) => sum + v, 0) / vals.length;
-  });
-}
-
-function getShearCurveFromMoment(momentCurve: number[], span: number): number[] {
-  const n = momentCurve.length;
-  const dx = span / (n - 1);
-  const shear = Array(n).fill(0);
-
-  if (n < 3) return shear;
-
-  shear[0] = -(momentCurve[1] - momentCurve[0]) / dx;
-  shear[n - 1] = -(momentCurve[n - 1] - momentCurve[n - 2]) / dx;
-
-  for (let i = 1; i < n - 1; i++) {
-    shear[i] = -(momentCurve[i + 1] - momentCurve[i - 1]) / (2 * dx);
-  }
-
-  return shear;
-}
-
-function maxAbs(values: number[]): number {
-  return values.reduce((acc, v) => Math.max(acc, Math.abs(v)), 0);
-}
-
-function buildDeflectionStrip(
-  nodes: Node[],
-  deformations?: Map<number, [number, number, number, number, number, number]>,
-): number[] {
-  const samples = 12;
-  const y = WIDTH / 2;
-  return Array.from({ length: samples }, (_, i) => {
-    const x = (i / (samples - 1)) * LENGTH;
-    const nodeIndex = getClosestNodeIndex(nodes, [x, y, 0]);
-    const dz = deformations?.get(nodeIndex)?.[2] ?? 0;
-    return Math.abs(dz) * 1000;
-  });
-}
-
-function getColor(value: number, min: number, max: number): string {
-  const t = max === min ? 0.5 : (value - min) / (max - min);
-  const hue = 220 - 220 * Math.max(0, Math.min(1, t));
-  return `hsl(${hue}, 90%, 52%)`;
-}
-
-function strip(titleText: string, values: number[], unit: string): HTMLElement {
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const peak = values.reduce((acc, v) => (Math.abs(v) > Math.abs(acc) ? v : acc), 0);
-
-  const body = div({ class: "strip" }, values.map((v) => div({ style: `background:${getColor(v, min, max)}` })));
-  body.appendChild(div({ class: "strip-label" }, `${peak.toFixed(3)} ${unit}`));
-
-  return div(
-    { class: "plot-card" },
-    div({ class: "plot-title" }, titleText),
-    body,
-  );
-}
-
 function render() {
   const root = div({ id: "page" });
 
   root.append(
     div(
-      { id: "hero" },
-      h1("CLT Plate Benchmark (Chapter 6.2)"),
-      p("One-way CLT panel 10m x 2.45m with 7-layer layup and ESL shell stiffness. ULS and SLS checks are displayed against FEM-Design target values."),
-    ),
-  );
-
-  const kpis = div({ id: "kpis" });
-  const entries = [
-    ["Vmax", "kN/m", kpiState.val.vMax, benchmark.vMax],
-    ["Mmax", "kNm/m", kpiState.val.mMax, benchmark.mMax],
-    ["sigma max", "MPa", kpiState.val.sigmaMax, benchmark.sigmaMax],
-    ["tau yz,max", "MPa", kpiState.val.tauMax, benchmark.tauMax],
-    ["wfin", "mm", kpiState.val.wFin, benchmark.wFin],
-  ] as const;
-
-  entries.forEach(([name, unit, value, target]) => {
-    const err = target === 0 ? 0 : Math.abs((value - target) / target) * 100;
-    kpis.append(
-      div(
-        { class: "kpi" },
-        div({ class: "label" }, name),
-        div({ class: "value" }, `${value.toFixed(3)} ${unit}`),
-        div({ class: "target" }, `target ${target} ${unit} | error ${err.toFixed(2)}%`),
-      ),
-    );
-  });
-  root.append(kpis);
-
-  const layout = div({ id: "layout" });
-  const viewerWrap = div({ id: "viewer-wrap" });
-  viewerWrap.append(
-    getViewer({
-      mesh,
-      settingsObj: {
-        deformedShape: true,
-        shellResults: "displacementZ",
-        nodes: false,
-        nodesIndexes: false,
-        elementsIndexes: false,
-        loads: true,
-        supports: true,
-        displayScale: 8,
-        customSelects: [
-          {
-            folder: "Analysis Inputs",
-            label: "Load case",
-            state: displayCaseState,
-            options: {
-              ULS: "ULS",
-              SLS: "SLS",
+      { id: "viewer-wrap" },
+      getViewer({
+        mesh,
+        settingsObj: {
+          deformedShape: true,
+          shellResults: "displacementZ",
+          showFrameResults: false,
+          nodes: false,
+          nodesIndexes: false,
+          elementsIndexes: false,
+          loads: true,
+          supports: true,
+          displayScale: 8,
+          customSelects: [
+            {
+              folder: "Analysis Inputs",
+              label: "Load case",
+              state: displayCaseState,
+              options: {
+                ULS: "ULS",
+                SLS: "SLS",
+              },
             },
-          },
-        ],
-      },
-    }),
-  );
-
-  const plots = div(
-    { id: "plots" },
-    strip("Specific shear strip qx,z [kN/m]", stripState.val.shear, "kN/m"),
-    strip("Specific bending strip mx [kNm/m]", stripState.val.moment, "kNm/m"),
-    strip("SLS deflection strip w [mm]", stripState.val.deflection, "mm"),
-    div(
-      { id: "notes" },
-      p(
-        "Section-force extraction uses shell bending sampled on centerline and derives shear from dM/dx. If needed, I can add exact cut-line integration next.",
-      ),
-      p(span("Viewer case: "), span(() => displayCaseState.val), span(" (values in meters for displacement results).")),
-      p(
-        span("Material mode: "),
-        span("CLT ESL with shear coupling and symmetric-layup check."),
-      ),
-      p(
-        span("SLS stiffness reduction: "),
-        span("E,G scaled by "),
-        span({ style: "font-weight:700" }, `1/(1+${KDEF_SQ})`),
-        span(" to emulate final deflection with creep effect."),
-      ),
-      p(
-        span("Code reference: "),
-        span({ style: "font-family:monospace" }, "examples/src/clt-plate/main.ts"),
-      ),
+          ],
+        },
+      }),
     ),
-  );
-
-  layout.append(viewerWrap, plots);
-  root.append(layout);
-
-  root.append(
-    getToolbar({
-      sourceCode: "https://github.com/madil4/awatif/blob/main/examples/src/clt-plate/main.ts",
-      author: "https://www.linkedin.com/in/mahjoubmusaab/",
-    }),
   );
 
   document.body.append(root);
