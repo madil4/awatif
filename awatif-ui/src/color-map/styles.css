@@ -32,3 +32,14 @@
   font-family: "Courier New";
   font-weight: 500;
 }
+
+#legend .unit {
+  position: absolute;
+  top: -22px;
+  left: -2px;
+  color: white;
+  font-size: 12px;
+  margin: 0;
+  font-family: "Courier New";
+  font-weight: 600;
+}

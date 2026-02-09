@@ -23,6 +23,12 @@ export type Settings = {
   flipAxes: State<boolean>;
 };
 
+export type ShellResultType =
+  | "bendingXX"
+  | "bendingYY"
+  | "bendingXY"
+  | "displacementZ";
+
 export type SettingsObj = {
   gridSize?: number;
   displayScale?: number;
@@ -40,6 +46,8 @@ export type SettingsObj = {
   flipAxes?: boolean;
   solids?: boolean;
   showFrameResults?: boolean;
+  shellResultScales?: Partial<Record<ShellResultType, number>>;
+  shellResultUnits?: Partial<Record<ShellResultType, string>>;
   customNumbers?: {
     folder?: string;
     label: string;

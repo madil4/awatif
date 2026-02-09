@@ -5,6 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
   Settings,
   SettingsObj,
+  ShellResultType,
   getDefaultSettings,
   getSettings,
 } from "./settings/getSettings";
@@ -148,14 +149,18 @@ export function getViewer({
     );
 
     // Color map
-    const colorMapValues = getColorMapValues(mesh, settings);
+    const colorMapValues = getColorMapValues(mesh, settings, settingsObj);
+    const shellResultUnit = van.derive(() => {
+      const resultType = settings.shellResults.val as ShellResultType;
+      return settingsObj?.shellResultUnits?.[resultType] ?? "";
+    });
     const shellResultsObj = shellResults(
       mesh,
       settings,
       derivedNodes,
       colorMapValues
     );
-    const legend = getLegend(colorMapValues);
+    const legend = getLegend(colorMapValues, 8, shellResultUnit);
 
     scene.add(shellResultsObj);
     viewerElm.appendChild(legend);
@@ -255,7 +260,11 @@ function deriveNodes(
   });
 }
 
-function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
+function getColorMapValues(
+  mesh: Mesh,
+  settings: Settings,
+  settingsObj?: SettingsObj
+): State<number[]> {
   // Init
   const colorMapValues = van.state([]);
 
@@ -298,6 +307,9 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
       [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
     };
 
+    const resultType = settings.shellResults.val as ShellResultType;
+    const resultScale = settingsObj?.shellResultScales?.[resultType] ?? 1;
+
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
       const resultMap = resultMapper[settings.shellResults.val];
@@ -306,7 +318,7 @@ function getColorMapValues(mesh: Mesh, settings: Settings): State<number[]> {
         values.push(0);
         return;
       }
-      values.push(resultMap[0].get(i)[resultMap[1]]);
+      values.push(resultMap[0].get(i)[resultMap[1]] * resultScale);
     });
 
     colorMapValues.val = values;

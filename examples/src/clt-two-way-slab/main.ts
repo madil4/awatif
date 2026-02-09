@@ -7,8 +7,8 @@ import "./styles.css";
 
 const { div } = van.tags;
 
-const LENGTH = 10;
-const WIDTH = 2.45;
+const LENGTH = 7;
+const WIDTH = 5;
 
 type DisplayCase = "ULS" | "SLS";
 
@@ -29,14 +29,14 @@ const mesh: Mesh = {
   analyzeOutputs: van.state({}),
 };
 
-const displayCaseState = van.state<DisplayCase>("SLS");
+const displayCaseState = van.state<DisplayCase>("ULS");
 const displayCases: { ULS?: CaseResult; SLS?: CaseResult } = {};
 let displaySupports:
   | Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>
   | undefined;
 const maxMeshSizeState = van.state(0.36);
-const qUlsState = van.state(4.335); // kN/m2
-const qSlsState = van.state(1.589); // kN/m2
+const qUlsState = van.state(4.335);
+const qSlsState = van.state(1.589);
 const kDefSqState = van.state(0.8);
 
 const cltLayup = buildSevenLayerCLTLayup();
@@ -48,10 +48,12 @@ van.derive(() => {
   kDefSqState.val;
   recomputeModel();
 });
+
 van.derive(() => {
   displayCaseState.val;
   applyDisplayCase();
 });
+
 render();
 
 function recomputeModel() {
@@ -172,8 +174,8 @@ function buildSevenLayerCLTLayup(): CLTLayup {
       thickness: thkMm * mmToM,
       thetaDeg: angles[i],
       Ex: 11000 * nmm2TokNm2,
-      Ey: 0.1 * nmm2TokNm2,
-      nuXY: 0,
+      Ey: 370 * nmm2TokNm2,
+      nuXY: 0.2,
       Gxy: 690 * nmm2TokNm2,
       Gxz: 690 * nmm2TokNm2,
       Gyz: 69 * nmm2TokNm2,
@@ -208,7 +210,10 @@ function getSupportMap(nodes: Node[]) {
       .map((node, i) => ({ node, i }))
       .filter(
         ({ node }) =>
-          Math.abs(node[0]) < 1e-6 || Math.abs(node[0] - LENGTH) < 1e-6,
+          Math.abs(node[0]) < 1e-6 ||
+          Math.abs(node[0] - LENGTH) < 1e-6 ||
+          Math.abs(node[1]) < 1e-6 ||
+          Math.abs(node[1] - WIDTH) < 1e-6,
       )
       .map(({ i }) => [
         i,
@@ -286,7 +291,7 @@ function render() {
               label: "Max mesh size [m]",
               state: maxMeshSizeState,
               min: 0.01,
-              max: 1.5,
+              max: 1.2,
               step: 0.01,
             },
             {

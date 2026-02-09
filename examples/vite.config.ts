@@ -25,6 +25,7 @@ export default defineConfig({
         report: "src/report/index.html",
         plate: "src/plate/index.html",
         "clt-plate": "src/clt-plate/index.html",
+        "clt-two-way-slab": "src/clt-two-way-slab/index.html",
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
         "color-map": "src/color-map/index.html",

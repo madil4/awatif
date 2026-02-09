@@ -4,10 +4,14 @@ import "./styles.css";
 
 export function getLegend(
   values: State<number[]>,
-  numMarkerIntervals: number = 8
+  numMarkerIntervals: number = 8,
+  unit?: string | State<string>
 ): HTMLDivElement {
   const legendElm = document.createElement("div");
   legendElm.id = "legend";
+  const unitElm = document.createElement("p");
+  unitElm.className = "unit";
+  legendElm.append(unitElm);
 
   const markerRatios = Array.from(
     { length: numMarkerIntervals + 1 },
@@ -39,6 +43,15 @@ export function getLegend(
         markerText.innerText = getMarkerValue(values.val, ratio).toString();
       });
     });
+
+    van.derive(() => {
+      if (!unit) {
+        unitElm.innerText = "";
+        return;
+      }
+      unitElm.innerText =
+        typeof unit === "string" ? unit : unit.val ? `[${unit.val}]` : "";
+    });
   });
 
   return legendElm;
@@ -46,6 +59,7 @@ export function getLegend(
 
 // Utils
 function getMarkerValue(values: number[], ratio: number) {
+  if (!values.length) return 0;
   const valueRange = Math.max(...values) - Math.min(...values);
   return (Math.min(...values) + ratio * valueRange).toPrecision(3);
 }
