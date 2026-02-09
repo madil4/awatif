@@ -96,8 +96,8 @@ function initialize() {
   };
 
   stripState.val = {
-    shear: buildShearStrip(uls.vMax),
-    moment: buildMomentStrip(uls.mMax),
+    shear: uls.shearCurve,
+    moment: uls.momentCurve,
     deflection: buildDeflectionStrip(nodes, sls.deformations),
   };
 
@@ -143,18 +143,15 @@ function runCase({
   const centerIndex = getClosestNodeIndex(nodes, [LENGTH / 2, WIDTH / 2, 0]);
   const centerDeflectionMm = Math.abs(deformOutputs.deformations.get(centerIndex)?.[2] ?? 0) * 1000;
 
-  let mMax = 0;
-  analyzeOutputs.bendingXX?.forEach((vals) => {
-    for (const val of vals) {
-      mMax = Math.max(mMax, Math.abs(val));
-    }
-  });
-
-  let reactionAtLeft = 0;
-  deformOutputs.reactions?.forEach((r, i) => {
-    if (Math.abs(nodes[i][0]) < 1e-6) reactionAtLeft += r[2] ?? 0;
-  });
-  const vMax = Math.abs(reactionAtLeft / WIDTH);
+  const momentCurve = sampleCenterlineBendingCurve(
+    nodes,
+    elements,
+    analyzeOutputs.bendingXX,
+    16,
+  );
+  const shearCurve = getShearCurveFromMoment(momentCurve, LENGTH);
+  const mMax = maxAbs(momentCurve);
+  const vMax = maxAbs(shearCurve);
 
   return {
     loads,
@@ -165,6 +162,8 @@ function runCase({
     centerDeflectionMm,
     vMax,
     mMax,
+    momentCurve,
+    shearCurve,
   };
 }
 
@@ -249,20 +248,57 @@ function getClosestNodeIndex(nodes: Node[], target: Node): number {
   return idx;
 }
 
-function buildShearStrip(vMax: number): number[] {
-  const samples = 12;
+function sampleCenterlineBendingCurve(
+  nodes: Node[],
+  elements: Element[],
+  bendingXX?: Map<number, [number, number, number]>,
+  samples = 16,
+): number[] {
+  const dx = LENGTH / (samples - 1);
+  const halfBin = dx * 0.5;
+
+  const centroids = elements.map((e) => {
+    const n1 = nodes[e[0]];
+    const n2 = nodes[e[1]];
+    const n3 = nodes[e[2]];
+    return [(n1[0] + n2[0] + n3[0]) / 3, (n1[1] + n2[1] + n3[1]) / 3];
+  });
+
   return Array.from({ length: samples }, (_, i) => {
     const x = (i / (samples - 1)) * LENGTH;
-    return vMax * (1 - (2 * x) / LENGTH);
+    const vals: number[] = [];
+
+    elements.forEach((_, elementIndex) => {
+      if (Math.abs(centroids[elementIndex][0] - x) > halfBin) return;
+      const m = bendingXX?.get(elementIndex);
+      if (!m) return;
+      vals.push((m[0] + m[1] + m[2]) / 3);
+    });
+
+    if (!vals.length) return 0;
+    return vals.reduce((sum, v) => sum + v, 0) / vals.length;
   });
 }
 
-function buildMomentStrip(mMax: number): number[] {
-  const samples = 12;
-  return Array.from({ length: samples }, (_, i) => {
-    const x = (i / (samples - 1)) * LENGTH;
-    return (4 * mMax * x * (LENGTH - x)) / (LENGTH * LENGTH);
-  });
+function getShearCurveFromMoment(momentCurve: number[], span: number): number[] {
+  const n = momentCurve.length;
+  const dx = span / (n - 1);
+  const shear = Array(n).fill(0);
+
+  if (n < 3) return shear;
+
+  shear[0] = -(momentCurve[1] - momentCurve[0]) / dx;
+  shear[n - 1] = -(momentCurve[n - 1] - momentCurve[n - 2]) / dx;
+
+  for (let i = 1; i < n - 1; i++) {
+    shear[i] = -(momentCurve[i + 1] - momentCurve[i - 1]) / (2 * dx);
+  }
+
+  return shear;
+}
+
+function maxAbs(values: number[]): number {
+  return values.reduce((acc, v) => Math.max(acc, Math.abs(v)), 0);
 }
 
 function buildDeflectionStrip(
@@ -359,7 +395,7 @@ function render() {
     div(
       { id: "notes" },
       p(
-        "Section-force extraction uses nodal reactions for shear and shell bending field maxima for Mx. If you want exact section integration through a cut, I can add a dedicated cut-line integrator next.",
+        "Section-force extraction uses shell bending sampled on centerline and derives shear from dM/dx. If needed, I can add exact cut-line integration next.",
       ),
       p(
         span("Material mode: "),
