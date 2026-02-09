@@ -64,7 +64,7 @@ export function getViewer({
   const gridObj = grid(settings.gridSize.rawVal);
 
   // update
-  viewerElm.appendChild(getSettings(settings, mesh, solids));
+  viewerElm.appendChild(getSettings(settings, mesh, solids, settingsObj));
 
   viewerElm.setAttribute("id", "viewer");
   viewerElm.appendChild(renderer.domElement);

@@ -39,12 +39,19 @@ export type SettingsObj = {
   shellResults?: string;
   flipAxes?: boolean;
   solids?: boolean;
+  customSelects?: {
+    folder?: string;
+    label: string;
+    state: State<any>;
+    options: Record<string, string>;
+  }[];
 };
 
 export function getSettings(
   settings: Settings,
   mesh?: Mesh,
-  solids?: State<object>
+  solids?: State<object>,
+  settingsObj?: SettingsObj
 ): HTMLElement {
   // init
   const container = document.createElement("div");
@@ -79,8 +86,12 @@ export function getSettings(
     });
   }
 
+  let inputsFolder: any;
+  let outputsFolder: any;
+
   if (mesh?.nodeInputs || mesh?.elementInputs) {
     const inputs = pane.addFolder({ title: "Analysis Inputs" });
+    inputsFolder = inputs;
 
     inputs.addBinding(settings.supports, "val", { label: "Supports" });
     inputs.addBinding(settings.loads, "val", { label: "Loads" });
@@ -88,6 +99,7 @@ export function getSettings(
 
   if (mesh?.deformOutputs || mesh?.analyzeOutputs) {
     const outputs = pane.addFolder({ title: "Analysis Outputs" });
+    outputsFolder = outputs;
 
     outputs.addBinding(settings.nodeResults, "val", {
       options: {
@@ -124,6 +136,27 @@ export function getSettings(
 
     outputs.addBinding(settings.deformedShape, "val", {
       label: "Deformed shape",
+    });
+  }
+
+  if (settingsObj?.customSelects?.length) {
+    const folders = new Map<string, any>();
+
+    settingsObj.customSelects.forEach((control) => {
+      const folderTitle = control.folder ?? "Display";
+      let folder = folders.get(folderTitle);
+
+      if (!folder) {
+        if (folderTitle === "Analysis Inputs" && inputsFolder) folder = inputsFolder;
+        else if (folderTitle === "Analysis Outputs" && outputsFolder) folder = outputsFolder;
+        else folder = pane.addFolder({ title: folderTitle });
+        folders.set(folderTitle, folder);
+      }
+
+      folder.addBinding(control.state, "val", {
+        label: control.label,
+        options: control.options,
+      });
     });
   }
 
