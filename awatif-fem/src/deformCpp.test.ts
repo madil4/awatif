@@ -36,33 +36,50 @@ describe("deformCpp", () => {
 
     const deformOutputs = deformCpp(nodes, elements, nodeInputs, elementInputs);
 
-    expect(deformOutputs).toEqual({
-      deformations: new Map([
+    const expectedDeformations = new Map([
+      [
+        0,
         [
+          0.001383724933236592, -0.00005156643246716527,
+          0.00006015037593984965, 0, 0, 0,
+        ],
+      ],
+      [1, [0, 0, 0, 0, 0, 0]],
+      [2, [0, 0, 0, 0, 0, 0]],
+      [3, [0, 0, 0, 0, 0, 0]],
+    ]);
+    const expectedReactions = new Map([
+      [
+        1,
+        [-18.947368421052634, 4.736842105263158, 6.31578947368421, 0, 0, 0],
+      ],
+      [2, [0, 0, -4.210526315789475, 0, 0, 0]],
+      [
+        3,
+        [
+          -1.0526315789473686, -4.7368421052631575, -2.105263157894737, 0, 0,
           0,
-          [
-            0.001383724933236592, -0.00005156643246716527,
-            0.00006015037593984965, 0, 0, 0,
-          ],
         ],
-        [1, [0, 0, 0, 0, 0, 0]],
-        [2, [0, 0, 0, 0, 0, 0]],
-        [3, [0, 0, 0, 0, 0, 0]],
-      ]),
-      reactions: new Map([
-        [
-          1,
-          [-18.947368421052634, 4.736842105263158, 6.31578947368421, 0, 0, 0],
-        ],
-        [2, [0, 0, -4.210526315789475, 0, 0, 0]],
-        [
-          3,
-          [
-            -1.0526315789473686, -4.7368421052631575, -2.105263157894737, 0, 0,
-            0,
-          ],
-        ],
-      ]),
+      ],
+    ]);
+
+    expect(deformOutputs.deformations.size).toBe(expectedDeformations.size);
+    expect(deformOutputs.reactions.size).toBe(expectedReactions.size);
+
+    deformOutputs.deformations.forEach((actualDef, nodeIndex) => {
+      const expectedDef = expectedDeformations.get(nodeIndex);
+      expect(expectedDef).toBeDefined();
+      actualDef.forEach((val, i) => {
+        expect(val).toBeCloseTo(expectedDef[i], 12);
+      });
+    });
+
+    deformOutputs.reactions.forEach((actualReact, nodeIndex) => {
+      const expectedReact = expectedReactions.get(nodeIndex);
+      expect(expectedReact).toBeDefined();
+      actualReact.forEach((val, i) => {
+        expect(val).toBeCloseTo(expectedReact[i], 12);
+      });
     });
   });
 

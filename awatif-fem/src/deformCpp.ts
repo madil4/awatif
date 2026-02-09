@@ -7,9 +7,6 @@ import {
   DeformOutputs,
 } from "./data-model.js";
 import createModule from "./cpp/built/deform.js";
-import { deform } from "./deform";
-
-const WASM_CLT_DEFORM_ARITY = 48;
 
 // @ts-ignore, load wasm
 const mod = await createModule();
@@ -21,13 +18,6 @@ export function deformCpp(
   elementInputs: ElementInputs
 ): DeformOutputs {
   if (nodes.length === 0) return;
-
-  const hasCltLayups = (elementInputs.cltLayups?.size ?? 0) > 0;
-  const supportsCltWasm = mod._deform.length >= WASM_CLT_DEFORM_ARITY;
-  if (hasCltLayups && !supportsCltWasm) {
-    // Compatibility fallback while older wasm builds are still in use.
-    return deform(nodes, elements, nodeInputs, elementInputs);
-  }
 
   const gc: number[] = []; // Garage Collector
 
@@ -109,106 +99,57 @@ export function deformCpp(
 
   // 2- Call C++ Function
   const deformFn = mod._deform as unknown as (...args: number[]) => void;
-  if (supportsCltWasm) {
-    deformFn(
-      nodesPtr,
-      nodes.length,
-      elementsPtr,
-      elementIndices.length,
-      elementSizesPtz,
-      elements.length,
-      supportKeysPtr,
-      supportValuesPtr,
-      supportKeys.length,
-      loadKeysPtr,
-      loadValuesPtr,
-      loadKeys.length,
-      elasticities.keysPtr,
-      elasticities.valuesPtr,
-      elasticities.size,
-      areas.keysPtr,
-      areas.valuesPtr,
-      areas.size,
-      moiZ.keysPtr,
-      moiZ.valuesPtr,
-      moiZ.size,
-      moiY.keysPtr,
-      moiY.valuesPtr,
-      moiY.size,
-      shearMod.keysPtr,
-      shearMod.valuesPtr,
-      shearMod.size,
-      torsion.keysPtr,
-      torsion.valuesPtr,
-      torsion.size,
-      thickness.keysPtr,
-      thickness.valuesPtr,
-      thickness.size,
-      poisson.keysPtr,
-      poisson.valuesPtr,
-      poisson.size,
-      elasticitiesOrthogonal.keysPtr,
-      elasticitiesOrthogonal.valuesPtr,
-      elasticitiesOrthogonal.size,
-      cltLayups.keysPtr,
-      cltLayups.layerCountsPtr,
-      cltLayups.optionsPtr,
-      cltLayups.layersFlatPtr,
-      cltLayups.size,
-      // Output pointers
-      deformationsDataPtrOutPtr,
-      deformationsSizeOutPtr,
-      reactionsDataPtrOutPtr,
-      reactionsSizeOutPtr
-    );
-  } else {
-    deformFn(
-      nodesPtr,
-      nodes.length,
-      elementsPtr,
-      elementIndices.length,
-      elementSizesPtz,
-      elements.length,
-      supportKeysPtr,
-      supportValuesPtr,
-      supportKeys.length,
-      loadKeysPtr,
-      loadValuesPtr,
-      loadKeys.length,
-      elasticities.keysPtr,
-      elasticities.valuesPtr,
-      elasticities.size,
-      areas.keysPtr,
-      areas.valuesPtr,
-      areas.size,
-      moiZ.keysPtr,
-      moiZ.valuesPtr,
-      moiZ.size,
-      moiY.keysPtr,
-      moiY.valuesPtr,
-      moiY.size,
-      shearMod.keysPtr,
-      shearMod.valuesPtr,
-      shearMod.size,
-      torsion.keysPtr,
-      torsion.valuesPtr,
-      torsion.size,
-      thickness.keysPtr,
-      thickness.valuesPtr,
-      thickness.size,
-      poisson.keysPtr,
-      poisson.valuesPtr,
-      poisson.size,
-      elasticitiesOrthogonal.keysPtr,
-      elasticitiesOrthogonal.valuesPtr,
-      elasticitiesOrthogonal.size,
-      // Output pointers
-      deformationsDataPtrOutPtr,
-      deformationsSizeOutPtr,
-      reactionsDataPtrOutPtr,
-      reactionsSizeOutPtr
-    );
-  }
+  deformFn(
+    nodesPtr,
+    nodes.length,
+    elementsPtr,
+    elementIndices.length,
+    elementSizesPtz,
+    elements.length,
+    supportKeysPtr,
+    supportValuesPtr,
+    supportKeys.length,
+    loadKeysPtr,
+    loadValuesPtr,
+    loadKeys.length,
+    elasticities.keysPtr,
+    elasticities.valuesPtr,
+    elasticities.size,
+    areas.keysPtr,
+    areas.valuesPtr,
+    areas.size,
+    moiZ.keysPtr,
+    moiZ.valuesPtr,
+    moiZ.size,
+    moiY.keysPtr,
+    moiY.valuesPtr,
+    moiY.size,
+    shearMod.keysPtr,
+    shearMod.valuesPtr,
+    shearMod.size,
+    torsion.keysPtr,
+    torsion.valuesPtr,
+    torsion.size,
+    thickness.keysPtr,
+    thickness.valuesPtr,
+    thickness.size,
+    poisson.keysPtr,
+    poisson.valuesPtr,
+    poisson.size,
+    elasticitiesOrthogonal.keysPtr,
+    elasticitiesOrthogonal.valuesPtr,
+    elasticitiesOrthogonal.size,
+    cltLayups.keysPtr,
+    cltLayups.layerCountsPtr,
+    cltLayups.optionsPtr,
+    cltLayups.layersFlatPtr,
+    cltLayups.size,
+    // Output pointers
+    deformationsDataPtrOutPtr,
+    deformationsSizeOutPtr,
+    reactionsDataPtrOutPtr,
+    reactionsSizeOutPtr
+  );
 
   // 3- Read Output Data
   // Read the pointers and sizes written by C++
