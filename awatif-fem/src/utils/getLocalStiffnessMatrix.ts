@@ -1,4 +1,5 @@
-import { Node, ElementInputs } from ".././data-model";
+import { Node, ElementInputs, CLTLayup } from ".././data-model";
+import { computeLaminateESL } from "../awatif-clt/laminate";
 import {
   add,
   matrix,
@@ -108,42 +109,63 @@ function getLocalStiffnessMatrixFrame(
   ];
 }
 
-function getLocalStiffnessMatrixShell(
+export function getLocalStiffnessMatrixShell(
   nodes: Node[],
   elementInputs: ElementInputs,
   index: number
 ): number[][] {
+  const cltLayup = elementInputs.cltLayups?.get(index);
   const elasticityX = elementInputs.elasticities?.get(index) ?? 0;
   const elasticityY = elementInputs.elasticitiesOrthogonal?.get(index) ?? 0;
   const poissonRatio = elementInputs.poissonsRatios?.get(index) ?? 0;
   const shearModulus = elementInputs.shearModuli?.get(index) ?? 0;
-  const thickness = elementInputs.thicknesses?.get(index) ?? 0;
 
-  // Determine if the material is orthotropic based on the presence of elasticityY
-  const isOrthotropic = elasticityY > 0;
+  let thickness = elementInputs.thicknesses?.get(index) ?? 0;
+  let bendingStiffnessMatrix: Matrix;
+  let shearStiffnessMatrix: Matrix;
+  let inPlaneConstitutiveMatrix: Matrix;
 
-  const bendingStiffnessMatrix = isOrthotropic
-    ? getOrthotropicBendingStiffnessMatrix(
-        elasticityX,
-        elasticityY,
-        shearModulus,
-        poissonRatio,
-        thickness
-      )
-    : getIsotropicBendingStiffnessMatrix(elasticityX, poissonRatio, thickness);
+  if (cltLayup) {
+    const esl = computeLaminateESL(cltLayup);
+    validateLaminateSymmetryForElement(cltLayup, esl.B, esl.A, esl.t);
+    thickness = esl.t;
+    bendingStiffnessMatrix = matrix(esl.D) as Matrix;
+    shearStiffnessMatrix = matrix(esl.S) as Matrix;
+    inPlaneConstitutiveMatrix = multiply(
+      matrix(esl.A),
+      1 / esl.t
+    ) as Matrix;
+  } else {
+    // Determine if the material is orthotropic based on the presence of elasticityY
+    const isOrthotropic = elasticityY > 0;
 
-  const shearStiffnessMatrix = isOrthotropic
-    ? getOrthotropicShearStiffnessMatrix(shearModulus, thickness)
-    : getIsotropicShearStiffnessMatrix(elasticityX, poissonRatio, thickness);
+    bendingStiffnessMatrix = isOrthotropic
+      ? getOrthotropicBendingStiffnessMatrix(
+          elasticityX,
+          elasticityY,
+          shearModulus,
+          poissonRatio,
+          thickness
+        )
+      : getIsotropicBendingStiffnessMatrix(
+          elasticityX,
+          poissonRatio,
+          thickness
+        );
 
-  const inPlaneConstitutiveMatrix = isOrthotropic
-    ? getOrthotropicInPlaneConstitutiveMatrix(
-        elasticityX,
-        elasticityY,
-        shearModulus,
-        poissonRatio
-      )
-    : getIsotropicInPlaneConstitutiveMatrix(elasticityX, poissonRatio);
+    shearStiffnessMatrix = isOrthotropic
+      ? getOrthotropicShearStiffnessMatrix(shearModulus, thickness)
+      : getIsotropicShearStiffnessMatrix(elasticityX, poissonRatio, thickness);
+
+    inPlaneConstitutiveMatrix = isOrthotropic
+      ? getOrthotropicInPlaneConstitutiveMatrix(
+          elasticityX,
+          elasticityY,
+          shearModulus,
+          poissonRatio
+        )
+      : getIsotropicInPlaneConstitutiveMatrix(elasticityX, poissonRatio);
+  }
 
   // Extract node coordinates for clarity
   const nodeCoordinates = nodes.map(([x, y]) => [x, y]);
@@ -189,25 +211,7 @@ function getLocalStiffnessMatrixShell(
   // Assemble the 9x9 membrane stiffness matrix into the 18x18 shell stiffness matrix
   // Assuming the node degrees of freedom are ordered as [ux1, uy1, wz1, rx1, ry1, rz1, ux2, ..., rz3]
   // The membrane terms (ux, uy, rz) correspond to indices 0, 1, 5; 6, 7, 11; 12, 13, 17 for each node.
-  const membraneMapping = [
-    [0, 1, 5], // Node 1: ux, uy, rz
-    [6, 7, 11], // Node 2: ux, uy, rz
-    [12, 13, 17], // Node 3: ux, uy, rz
-  ];
-
-  for (let i = 0; i < 3; i++) {
-    // For each node (0, 1, 2)
-    for (let j = 0; j < 3; j++) {
-      // For each DOF within the 9x9 membrane matrix
-      for (let k = 0; k < 3; k++) {
-        // For each DOF within the 9x9 membrane matrix
-        const globalRow = membraneMapping[i][j];
-        const globalCol = membraneMapping[k][j]; // Corrected index for global column mapping
-        localStiffnessMatrix[globalRow][globalCol] =
-          membraneStiffnessMatrix9x9[i * 3 + j][k * 3 + j]; // This mapping needs careful review
-      }
-    }
-  }
+  assembleMembrane9x9To18x18(localStiffnessMatrix, membraneStiffnessMatrix9x9);
 
   // Overlay Kp (bending and shear) onto the appropriate DOFs of the 18x18 matrix
   // Kp directly corresponds to the 18x18 matrix for bending and shear DOFs
@@ -656,6 +660,57 @@ function getLocalStiffnessMatrixShell(
 
     return Km;
   }
+}
+
+function validateLaminateSymmetryForElement(
+  layup: CLTLayup,
+  B: number[][],
+  A: number[][],
+  thickness: number
+): void {
+  const strict = layup.options.strictSymmetryForElement ?? true;
+  if (!strict) return;
+
+  const tol = layup.options.symmetryTolerance ?? 1e-6;
+  const bNorm = frobeniusNorm(B);
+  const ref = Math.max(1e-12, frobeniusNorm(A) * thickness);
+
+  if (bNorm / ref > tol) {
+    throw new Error(
+      "Unsymmetric laminate requires A–B–D coupling; not supported yet."
+    );
+  }
+}
+
+export function assembleMembrane9x9To18x18(
+  K18: number[][],
+  Km9: number[][]
+): void {
+  const map = [
+    [0, 1, 5],
+    [6, 7, 11],
+    [12, 13, 17],
+  ];
+
+  for (let aNode = 0; aNode < 3; aNode++) {
+    for (let aDof = 0; aDof < 3; aDof++) {
+      const row = map[aNode][aDof];
+      for (let bNode = 0; bNode < 3; bNode++) {
+        for (let bDof = 0; bDof < 3; bDof++) {
+          const col = map[bNode][bDof];
+          K18[row][col] += Km9[aNode * 3 + aDof][bNode * 3 + bDof];
+        }
+      }
+    }
+  }
+}
+
+function frobeniusNorm(A: number[][]): number {
+  let s = 0;
+  for (let i = 0; i < A.length; i++) {
+    for (let j = 0; j < A[0].length; j++) s += A[i][j] ** 2;
+  }
+  return Math.sqrt(s);
 }
 
 export function getIsotropicInPlaneConstitutiveMatrix(

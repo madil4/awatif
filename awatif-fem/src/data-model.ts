@@ -32,6 +32,34 @@ export type ElementInputs = {
   torsionalConstants?: Map<number, number>;
   thicknesses?: Map<number, number>;
   poissonsRatios?: Map<number, number>;
+  cltLayups?: Map<number, CLTLayup>;
+};
+
+export type CLTLayer = {
+  thickness: number;
+  thetaDeg: number;
+  Ex: number;
+  Ey: number;
+  nuXY: number;
+  Gxy: number;
+  Gxz: number;
+  Gyz: number;
+};
+
+export type CLTOptions = {
+  shearCoupling: boolean;
+  noGlueAtNarrowSide: boolean;
+  strictSymmetryForElement?: boolean;
+  symmetryTolerance?: number;
+  r33?: number;
+  r66?: number;
+  r77?: number;
+  r88?: number;
+};
+
+export type CLTLayup = {
+  layers: CLTLayer[];
+  options: CLTOptions;
 };
 
 export type DeformOutputs = {
