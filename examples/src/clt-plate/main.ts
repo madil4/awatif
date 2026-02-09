@@ -1,5 +1,6 @@
 import van from "vanjs-core";
-import { analyze, deform, CLTLayup, Mesh, Node, Element } from "awatif-fem";
+import { analyze, CLTLayup, Mesh, Node, Element } from "awatif-fem";
+import { deform } from "awatif-fem/src/deform";
 import { getMesh } from "awatif-mesh";
 import { getToolbar, getViewer } from "awatif-ui";
 
