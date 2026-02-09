@@ -151,7 +151,11 @@ function runCase({
   );
   const shearCurve = getShearCurveFromMoment(momentCurve, LENGTH);
   const mMax = maxAbs(momentCurve);
-  const vMax = maxAbs(shearCurve);
+  let reactionAtLeft = 0;
+  deformOutputs.reactions?.forEach((r, i) => {
+    if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
+  });
+  const vMax = Math.abs(reactionAtLeft / WIDTH);
 
   return {
     loads,
