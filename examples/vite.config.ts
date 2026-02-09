@@ -24,6 +24,7 @@ export default defineConfig({
         drawing: "src/drawing/index.html",
         report: "src/report/index.html",
         plate: "src/plate/index.html",
+        "clt-plate": "src/clt-plate/index.html",
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
         "color-map": "src/color-map/index.html",
