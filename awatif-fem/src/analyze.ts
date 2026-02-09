@@ -12,6 +12,7 @@ import {
   getIsotropicInPlaneConstitutiveMatrix,
   getOrthotropicInPlaneConstitutiveMatrix,
 } from "./utils/getLocalStiffnessMatrix";
+import { computeLaminateESL } from "./awatif-clt/laminate";
 
 export function analyze(
   nodes: Node[],
@@ -69,7 +70,8 @@ export function analyze(
       analyzeOutputs.bendingsY.set(i, [fLocal[4], fLocal[10]]);
       analyzeOutputs.bendingsZ.set(i, [fLocal[5], fLocal[11]]);
     } else {
-      const materialStiffness3x3Matrix = getMaterialStiffnessMatrix3x3(
+      const { membraneStiffness3x3Matrix, bendingStiffness3x3Matrix } =
+        getShellMaterialStiffnessMatrices(
         elementInputs,
         i
       );
@@ -77,26 +79,38 @@ export function analyze(
       const displacmentMattrix6x2 = getDisplacementMatrix6x2(dxGlobal);
       const elementArea = getElementArea(elmNodes);
 
-      const fLocal = multiply(
+      const strainAndCurvature = multiply(
         1 / (2 * elementArea),
-        multiply(
-          multiply(materialStiffness3x3Matrix, linearFieldMatrix3x6),
-          displacmentMattrix6x2
-        )
+        multiply(linearFieldMatrix3x6, displacmentMattrix6x2)
       );
 
-      const fGlobal = fLocal.toArray() as number[][];
+      const strainAndCurvatureValues = strainAndCurvature.toArray() as number[][];
+      const membraneStrain = matrix(
+        strainAndCurvatureValues.map((row) => [row[0]])
+      );
+      const curvature = matrix(
+        strainAndCurvatureValues.map((row) => [row[1]])
+      );
 
-      // Plate element
-      const thickness = elementInputs.thicknesses?.get(i) ?? 1;
+      const membraneForces = multiply(
+        membraneStiffness3x3Matrix,
+        membraneStrain
+      ) as Matrix;
+      const bendingMoments = multiply(
+        bendingStiffness3x3Matrix,
+        curvature
+      ) as Matrix;
 
-      const Nx = fGlobal[0][0] * thickness;
-      const Ny = fGlobal[1][0] * thickness;
-      const Nxy = fGlobal[2][0] * thickness;
+      const Nvals = membraneForces.toArray() as number[][];
+      const Mvals = bendingMoments.toArray() as number[][];
 
-      const Mx = fGlobal[0][1] * (thickness ** 3 / 12);
-      const My = fGlobal[1][1] * (thickness ** 3 / 12);
-      const Mxy = fGlobal[2][1] * (thickness ** 3 / 12);
+      const Nx = Nvals[0][0];
+      const Ny = Nvals[1][0];
+      const Nxy = Nvals[2][0];
+
+      const Mx = Mvals[0][0];
+      const My = Mvals[1][0];
+      const Mxy = Mvals[2][0];
 
       analyzeOutputsElements.membraneXX.set(i, Nx);
       analyzeOutputsElements.membraneYY.set(i, Ny);
@@ -193,6 +207,28 @@ function getMaterialStiffnessMatrix3x3(
         poissonRatio
       )
     : getIsotropicInPlaneConstitutiveMatrix(elasticityX, poissonRatio);
+}
+
+function getShellMaterialStiffnessMatrices(
+  elementInputs: ElementInputs,
+  index: number
+): { membraneStiffness3x3Matrix: Matrix; bendingStiffness3x3Matrix: Matrix } {
+  const cltLayup = elementInputs.cltLayups?.get(index);
+  if (cltLayup) {
+    const esl = computeLaminateESL(cltLayup);
+    return {
+      membraneStiffness3x3Matrix: matrix(esl.A) as Matrix,
+      bendingStiffness3x3Matrix: matrix(esl.D) as Matrix,
+    };
+  }
+
+  const thickness = elementInputs.thicknesses?.get(index) ?? 1;
+  const q = getMaterialStiffnessMatrix3x3(elementInputs, index);
+
+  return {
+    membraneStiffness3x3Matrix: multiply(q, thickness) as Matrix,
+    bendingStiffness3x3Matrix: multiply(q, thickness ** 3 / 12) as Matrix,
+  };
 }
 
 function getLinearFieldMatrix3x6(nodeCoordinates: Node[]): Matrix {
