@@ -30,7 +30,8 @@ export function applyImperfections(
 
     const sign = params.direction === "negative" ? -1 : 1;
 
-    // Global inclination: offset x by θᵢ × y for all nodes of selected lines
+    // Global inclination: offset x by θᵢ × (y - y_base) for all nodes of selected lines
+    // This creates a rotation about the base, keeping bottom nodes fixed
     if (params.globalInclination) {
       const thetaI = computeThetaI(params);
       const nodeIndices = collectNodesFromLines(
@@ -38,8 +39,16 @@ export function applyImperfections(
         lineToElements,
         allElements,
       );
+
+      // Find the base (minimum y-coordinate) of the structure
+      let y_base = Infinity;
       for (const ni of nodeIndices) {
-        allNodes[ni][0] += sign * thetaI * allNodes[ni][1];
+        y_base = Math.min(y_base, allNodes[ni][1]);
+      }
+
+      // Apply inclination relative to the base
+      for (const ni of nodeIndices) {
+        allNodes[ni][0] += sign * thetaI * (allNodes[ni][1] - y_base);
       }
     }
 
