@@ -14,6 +14,12 @@ template <typename K, typename V>
 std::map<K, std::vector<V>> parseMapVecFromFlat(K *keys_ptr, V *values_ptr, int size, int value_size);
 template <typename K>
 std::map<K, std::vector<bool>> parseMapBoolVecFromFlat(K *keys_ptr, bool *values_ptr, int size, int value_size);
+std::map<int, CLTLayup> parseCltLayupsFromFlat(
+    int *keys_ptr,
+    int *layer_counts_ptr,
+    double *options_ptr,
+    double *layers_flat_ptr,
+    int size);
 Eigen::VectorXd getForces(const NodeInputs &nodeInputs, int dof);
 std::vector<int> getFreeIndices(const NodeInputs &nodeInputs, int dof);
 std::vector<int> getZerosIndices(const Eigen::SparseMatrix<double> &matrix);
@@ -44,6 +50,7 @@ extern "C"
         int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,                                        // Map<elemIdx, t>
         int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,                                              // Map<elemIdx, nu>
         int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal, // Map<elemIdx, E_ortho>
+        int *clt_keys_ptr, int *clt_layer_counts_ptr, double *clt_options_ptr, double *clt_layers_flat_ptr, int num_clt_layups, // Map<elemIdx, CLTLayup>
 
         // --- Output Pointers (to be allocated by C++ and filled) ---
         // These are pointers *to* pointers. C++ allocates memory using malloc
@@ -85,6 +92,12 @@ extern "C"
         elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
         elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
         elementInputs.elasticitiesOrthogonal = parseMapFromFlat(elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal);
+        elementInputs.cltLayups = parseCltLayupsFromFlat(
+            clt_keys_ptr,
+            clt_layer_counts_ptr,
+            clt_options_ptr,
+            clt_layers_flat_ptr,
+            num_clt_layups);
 
         // --- 2. Core FEA Calculation using Eigen ---
         int dof = num_nodes * 6; // Total degrees of freedom
@@ -282,6 +295,56 @@ std::map<K, std::vector<bool>> parseMapBoolVecFromFlat(K *keys_ptr, bool *values
         map_data[keys_ptr[i]] = vec_value;
     }
     return map_data;
+}
+
+std::map<int, CLTLayup> parseCltLayupsFromFlat(
+    int *keys_ptr,
+    int *layer_counts_ptr,
+    double *options_ptr,
+    double *layers_flat_ptr,
+    int size)
+{
+    std::map<int, CLTLayup> layups;
+    int layerCursor = 0;
+
+    for (int i = 0; i < size; ++i)
+    {
+        const int elementIndex = keys_ptr[i];
+        const int layerCount = std::max(0, layer_counts_ptr[i]);
+
+        CLTLayup layup;
+
+        const int optOffset = i * 8;
+        layup.options.shearCoupling = options_ptr[optOffset + 0] >= 0.5;
+        layup.options.noGlueAtNarrowSide = options_ptr[optOffset + 1] >= 0.5;
+        layup.options.strictSymmetryForElement = options_ptr[optOffset + 2] >= 0.5;
+        layup.options.symmetryTolerance = options_ptr[optOffset + 3];
+        layup.options.r33 = options_ptr[optOffset + 4];
+        layup.options.r66 = options_ptr[optOffset + 5];
+        layup.options.r77 = options_ptr[optOffset + 6];
+        layup.options.r88 = options_ptr[optOffset + 7];
+
+        layup.layers.reserve(layerCount);
+        for (int k = 0; k < layerCount; ++k)
+        {
+            CLTLayer layer;
+            const int layerOffset = (layerCursor + k) * 8;
+            layer.thickness = layers_flat_ptr[layerOffset + 0];
+            layer.thetaDeg = layers_flat_ptr[layerOffset + 1];
+            layer.Ex = layers_flat_ptr[layerOffset + 2];
+            layer.Ey = layers_flat_ptr[layerOffset + 3];
+            layer.nuXY = layers_flat_ptr[layerOffset + 4];
+            layer.Gxy = layers_flat_ptr[layerOffset + 5];
+            layer.Gxz = layers_flat_ptr[layerOffset + 6];
+            layer.Gyz = layers_flat_ptr[layerOffset + 7];
+            layup.layers.push_back(layer);
+        }
+
+        layerCursor += layerCount;
+        layups[elementIndex] = layup;
+    }
+
+    return layups;
 }
 
 Eigen::VectorXd getForces(

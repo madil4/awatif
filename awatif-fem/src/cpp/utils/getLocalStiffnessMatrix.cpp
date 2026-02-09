@@ -1,10 +1,14 @@
 #include "../data-model.h"
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include <Eigen/Dense>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
+#include <limits>
+
+constexpr double PI = 3.14159265358979323846;
 
 template <typename K, typename V>
 V getMapValueOrDefault(const std::map<K, V> &map, const K &key, const V &defaultValue);
@@ -155,6 +159,398 @@ Eigen::Matrix2d buildOrthotropicDs(double Gxy, double t)
     Ds << k_s * Gxy * t, 0,
         0, k_s * Gxy * t;
     return Ds;
+}
+
+struct LaminateLayerState
+{
+    CLTLayer layer;
+    double zTop;
+    double zBot;
+    Eigen::Matrix3d qLocal;
+    Eigen::Matrix2d qShearLocal;
+};
+
+struct ShearCorrectionLayer
+{
+    double zBot;
+    double zTop;
+    double qn;
+    double qs;
+};
+
+struct MainShearLayer
+{
+    double zBot;
+    double zTop;
+    double q11;
+    double q22;
+    double q55;
+    double q44;
+};
+
+struct LaminateESL
+{
+    double t = 0.0;
+    Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
+    Eigen::Matrix3d B = Eigen::Matrix3d::Zero();
+    Eigen::Matrix3d D = Eigen::Matrix3d::Zero();
+    Eigen::Matrix2d S = Eigen::Matrix2d::Zero();
+    double rho13 = 0.0;
+    double rho23 = 0.0;
+    double alphaDeg = 0.0;
+    bool hasRho = false;
+};
+
+Eigen::Matrix3d layerInPlaneQ(const CLTLayer &layer, bool noGlueAtNarrowSide)
+{
+    const double Ex = layer.Ex;
+    const double Ey = noGlueAtNarrowSide ? 0.0 : layer.Ey;
+    const double nuXY = layer.nuXY;
+    const double nuYX = std::abs(Ex) < 1e-12 ? 0.0 : (nuXY * Ey) / Ex;
+    const double denominator = 1.0 - nuXY * nuYX;
+
+    if (std::abs(denominator) < 1e-12)
+    {
+        return Eigen::Matrix3d::Zero();
+    }
+
+    const double Q11 = Ex / denominator;
+    const double Q22 = Ey / denominator;
+    const double Q12 = (nuXY * Ey) / denominator;
+    const double Q66 = layer.Gxy;
+
+    Eigen::Matrix3d q = Eigen::Matrix3d::Zero();
+    q(0, 0) = Q11;
+    q(0, 1) = Q12;
+    q(1, 0) = Q12;
+    q(1, 1) = Q22;
+    q(2, 2) = Q66;
+    return q;
+}
+
+Eigen::Matrix2d layerShearQ(const CLTLayer &layer)
+{
+    Eigen::Matrix2d q = Eigen::Matrix2d::Zero();
+    q(0, 0) = layer.Gxz;
+    q(1, 1) = layer.Gyz;
+    return q;
+}
+
+Eigen::Matrix3d rotateInPlaneReducedStiffness(const Eigen::Matrix3d &q, double theta)
+{
+    const double m = std::cos(theta);
+    const double n = std::sin(theta);
+
+    const double Q11 = q(0, 0);
+    const double Q22 = q(1, 1);
+    const double Q12 = q(0, 1);
+    const double Q66 = q(2, 2);
+
+    const double m2 = m * m;
+    const double n2 = n * n;
+    const double m3 = m2 * m;
+    const double n3 = n2 * n;
+    const double m4 = m2 * m2;
+    const double n4 = n2 * n2;
+
+    const double Q11b = Q11 * m4 + 2.0 * (Q12 + 2.0 * Q66) * m2 * n2 + Q22 * n4;
+    const double Q22b = Q11 * n4 + 2.0 * (Q12 + 2.0 * Q66) * m2 * n2 + Q22 * m4;
+    const double Q12b = (Q11 + Q22 - 4.0 * Q66) * m2 * n2 + Q12 * (m4 + n4);
+    const double Q16b = (Q11 - Q12 - 2.0 * Q66) * m3 * n - (Q22 - Q12 - 2.0 * Q66) * m * n3;
+    const double Q26b = (Q11 - Q12 - 2.0 * Q66) * m * n3 - (Q22 - Q12 - 2.0 * Q66) * m3 * n;
+    const double Q66b = (Q11 + Q22 - 2.0 * Q12 - 2.0 * Q66) * m2 * n2 + Q66 * (m4 + n4);
+
+    Eigen::Matrix3d qBar = Eigen::Matrix3d::Zero();
+    qBar(0, 0) = Q11b;
+    qBar(0, 1) = Q12b;
+    qBar(0, 2) = Q16b;
+    qBar(1, 0) = Q12b;
+    qBar(1, 1) = Q22b;
+    qBar(1, 2) = Q26b;
+    qBar(2, 0) = Q16b;
+    qBar(2, 1) = Q26b;
+    qBar(2, 2) = Q66b;
+    return qBar;
+}
+
+Eigen::Matrix2d rotate2x2(const Eigen::Matrix2d &q, double theta)
+{
+    const double c = std::cos(theta);
+    const double s = std::sin(theta);
+    Eigen::Matrix2d T;
+    T << c, s,
+        -s, c;
+    return T * q * T.transpose();
+}
+
+Eigen::Matrix2d rotateMainShearBack(const Eigen::Matrix2d &sMain, double alpha)
+{
+    const double c = std::cos(alpha);
+    const double s = std::sin(alpha);
+    Eigen::Matrix2d T;
+    T << c, -s,
+        s, c;
+    return T * sMain * T.transpose();
+}
+
+std::vector<LaminateLayerState> buildLayerStates(
+    const std::vector<CLTLayer> &layers,
+    double totalThickness,
+    bool noGlueAtNarrowSide)
+{
+    const double DEG2RAD = PI / 180.0;
+    double zTop = totalThickness / 2.0;
+    std::vector<LaminateLayerState> states;
+    states.reserve(layers.size());
+
+    for (const auto &layer : layers)
+    {
+        const double zBot = zTop - layer.thickness;
+        LaminateLayerState state;
+        state.layer = layer;
+        state.zTop = zTop;
+        state.zBot = zBot;
+        state.qLocal = rotateInPlaneReducedStiffness(
+            layerInPlaneQ(layer, noGlueAtNarrowSide),
+            layer.thetaDeg * DEG2RAD);
+        state.qShearLocal = rotate2x2(
+            layerShearQ(layer),
+            layer.thetaDeg * DEG2RAD);
+        states.push_back(state);
+        zTop = zBot;
+    }
+
+    return states;
+}
+
+double findMainStiffnessDirection(const Eigen::Matrix3d &A)
+{
+    const double A11 = A(0, 0);
+    const double A22 = A(1, 1);
+    const double A12 = A(0, 1);
+    const double A66 = A(2, 2);
+    const double A16 = A(0, 2);
+    const double A26 = A(1, 2);
+
+    auto valueAt = [&](double alpha) {
+        const double c = std::cos(alpha);
+        const double s = std::sin(alpha);
+        const double c2 = c * c;
+        const double s2 = s * s;
+        const double c3 = c2 * c;
+        const double s3 = s2 * s;
+        const double c4 = c2 * c2;
+        const double s4 = s2 * s2;
+        return c4 * A11 +
+               s4 * A22 +
+               c2 * s2 * (2.0 * A12 + 4.0 * A66) +
+               4.0 * c3 * s * A16 +
+               4.0 * c * s3 * A26;
+    };
+
+    double bestAlpha = 0.0;
+    double bestValue = -std::numeric_limits<double>::infinity();
+    const double coarseStep = PI / 7200.0;
+    for (double alpha = 0.0; alpha < PI; alpha += coarseStep)
+    {
+        const double val = valueAt(alpha);
+        if (val > bestValue)
+        {
+            bestValue = val;
+            bestAlpha = alpha;
+        }
+    }
+
+    return bestAlpha;
+}
+
+double computeShearCorrection(std::vector<ShearCorrectionLayer> layers)
+{
+    std::sort(layers.begin(), layers.end(), [](const ShearCorrectionLayer &a, const ShearCorrectionLayer &b) {
+        return a.zBot < b.zBot;
+    });
+
+    const double eps = 1e-12;
+    double numZn = 0.0;
+    double denZn = 0.0;
+    for (const auto &layer : layers)
+    {
+        numZn += layer.qn * 0.5 * (layer.zTop * layer.zTop - layer.zBot * layer.zBot);
+        denZn += layer.qn * (layer.zTop - layer.zBot);
+    }
+
+    const double zn = std::abs(denZn) < eps ? 0.0 : numZn / denZn;
+
+    double R = 0.0;
+    for (const auto &layer : layers)
+    {
+        R += layer.qn *
+             (std::pow(layer.zTop - zn, 3.0) - std::pow(layer.zBot - zn, 3.0)) / 3.0;
+    }
+
+    double d = 0.0;
+    double denomIntegral = 0.0;
+    double gAtBot = 0.0;
+
+    for (const auto &layer : layers)
+    {
+        const double zBot = layer.zBot;
+        const double zTop = layer.zTop;
+        const double qn = layer.qn;
+        const double qs = layer.qs;
+
+        d += qs * (zTop - zBot);
+
+        const double c0 = gAtBot + 0.5 * qn * std::pow(zBot - zn, 2.0);
+        const double a = -0.5 * qn;
+        const double b = qn * zn;
+        const double c = c0 - 0.5 * qn * zn * zn;
+
+        auto F = [&](double z) {
+            return std::pow(a, 2.0) * std::pow(z, 5.0) / 5.0 +
+                   (2.0 * a * b) * std::pow(z, 4.0) / 4.0 +
+                   (2.0 * a * c + std::pow(b, 2.0)) * std::pow(z, 3.0) / 3.0 +
+                   (2.0 * b * c) * std::pow(z, 2.0) / 2.0 +
+                   std::pow(c, 2.0) * z;
+        };
+
+        denomIntegral += (F(zTop) - F(zBot)) / std::max(qs, eps);
+        const double gAtTop = gAtBot - 0.5 * qn * (std::pow(zTop - zn, 2.0) - std::pow(zBot - zn, 2.0));
+        gAtBot = gAtTop;
+    }
+
+    const double denom = std::max(d * denomIntegral, eps);
+    return (R * R) / denom;
+}
+
+LaminateESL computeLaminateESL(const CLTLayup &layup)
+{
+    if (layup.layers.empty())
+    {
+        throw std::runtime_error("CLT layup must contain at least one layer.");
+    }
+
+    const auto &options = layup.options;
+    LaminateESL out;
+    for (const auto &layer : layup.layers)
+    {
+        out.t += layer.thickness;
+    }
+
+    auto states = buildLayerStates(layup.layers, out.t, options.noGlueAtNarrowSide);
+
+    for (const auto &state : states)
+    {
+        const double dz = state.zTop - state.zBot;
+        out.A += state.qLocal * dz;
+
+        if (options.shearCoupling)
+        {
+            out.B += state.qLocal * (0.5 * (state.zTop * state.zTop - state.zBot * state.zBot));
+            out.D += state.qLocal * ((std::pow(state.zTop, 3.0) - std::pow(state.zBot, 3.0)) / 3.0);
+        }
+        else
+        {
+            out.D += state.qLocal * (std::pow(state.layer.thickness, 3.0) / 12.0);
+        }
+    }
+
+    if (!options.shearCoupling)
+    {
+        out.B.setZero();
+    }
+
+    if (options.shearCoupling)
+    {
+        const double DEG2RAD = PI / 180.0;
+        const double alpha = findMainStiffnessDirection(out.A);
+        out.alphaDeg = alpha / DEG2RAD;
+        out.hasRho = true;
+
+        std::vector<MainShearLayer> inMain;
+        inMain.reserve(states.size());
+        for (const auto &state : states)
+        {
+            const double phi = alpha - state.layer.thetaDeg * DEG2RAD;
+            const Eigen::Matrix3d qMain = rotateInPlaneReducedStiffness(
+                layerInPlaneQ(state.layer, options.noGlueAtNarrowSide),
+                phi);
+            const Eigen::Matrix2d qShearMain = rotate2x2(layerShearQ(state.layer), phi);
+
+            inMain.push_back({
+                state.zBot,
+                state.zTop,
+                qMain(0, 0),
+                qMain(1, 1),
+                qShearMain(0, 0),
+                qShearMain(1, 1),
+            });
+        }
+
+        std::vector<ShearCorrectionLayer> rho13Layers;
+        std::vector<ShearCorrectionLayer> rho23Layers;
+        rho13Layers.reserve(inMain.size());
+        rho23Layers.reserve(inMain.size());
+        for (const auto &layer : inMain)
+        {
+            rho13Layers.push_back({layer.zBot, layer.zTop, layer.q11, layer.q55});
+            rho23Layers.push_back({layer.zBot, layer.zTop, layer.q22, layer.q44});
+        }
+
+        out.rho13 = computeShearCorrection(rho13Layers);
+        out.rho23 = computeShearCorrection(rho23Layers);
+
+        double s55 = 0.0;
+        double s44 = 0.0;
+        for (const auto &layer : inMain)
+        {
+            const double dz = layer.zTop - layer.zBot;
+            s55 += layer.q55 * dz;
+            s44 += layer.q44 * dz;
+        }
+        s55 *= out.rho13;
+        s44 *= out.rho23;
+
+        Eigen::Matrix2d sMain = Eigen::Matrix2d::Zero();
+        sMain(0, 0) = s55;
+        sMain(1, 1) = s44;
+        out.S = rotateMainShearBack(sMain, alpha);
+    }
+    else
+    {
+        for (const auto &state : states)
+        {
+            out.S += state.qShearLocal * (state.zTop - state.zBot);
+        }
+        out.S *= (5.0 / 6.0);
+    }
+
+    out.A(2, 2) *= options.r66;
+    out.D(2, 2) *= options.r33;
+    out.S(0, 0) *= options.r77;
+    out.S(1, 1) *= options.r88;
+
+    return out;
+}
+
+void validateLaminateSymmetryForElement(
+    const CLTLayup &layup,
+    const Eigen::Matrix3d &B,
+    const Eigen::Matrix3d &A,
+    double thickness)
+{
+    if (!layup.options.strictSymmetryForElement)
+    {
+        return;
+    }
+
+    const double tol = layup.options.symmetryTolerance;
+    const double bNorm = B.norm();
+    const double ref = std::max(1e-12, A.norm() * thickness);
+    if ((bNorm / ref) > tol)
+    {
+        throw std::runtime_error("Unsymmetric laminate requires A-B-D coupling; not supported yet.");
+    }
 }
 
 struct CsOutput
@@ -570,40 +966,47 @@ Eigen::MatrixXd getLocalStiffnessMatrixShell(
         throw std::runtime_error("Shell element must have 3 nodes.");
     }
 
+    const auto cltIt = elementInputs.cltLayups.find(index);
+    const bool hasCltLayup = cltIt != elementInputs.cltLayups.end();
+
     double E = getMapValueOrDefault(elementInputs.elasticities, index, 0.0);
     double Eo = getMapValueOrDefault(elementInputs.elasticitiesOrthogonal, index, 0.0);
     double nu = getMapValueOrDefault(elementInputs.poissonsRatios, index, 0.0);
     double Gxy = getMapValueOrDefault(elementInputs.shearModuli, index, 0.0);
     double t = getMapValueOrDefault(elementInputs.thicknesses, index, 0.0);
 
-    Eigen::Matrix3d bendingStiffnessMatrix;
-    if (Eo != 0.0)
-    {
-        bendingStiffnessMatrix = buildOrthotropicDb(E, Eo, Gxy, nu, t);
-    }
-    else
-    {
-        bendingStiffnessMatrix = buildIsoDb(E, nu, t);
-    }
+    Eigen::Matrix3d bendingStiffnessMatrix = Eigen::Matrix3d::Zero();
+    Eigen::Matrix2d shearStiffnessMatrix = Eigen::Matrix2d::Zero();
+    Eigen::Matrix3d inPlaneConstitutiveMatrix = Eigen::Matrix3d::Zero();
 
-    Eigen::Matrix2d shearStiffnessMatrix;
-    if (Eo != 0.0)
+    if (hasCltLayup)
     {
-        shearStiffnessMatrix = buildOrthotropicDs(Gxy, t);
-    }
-    else
-    {
-        shearStiffnessMatrix = buildIsoDs(E, nu, t);
-    }
+        const LaminateESL esl = computeLaminateESL(cltIt->second);
+        validateLaminateSymmetryForElement(cltIt->second, esl.B, esl.A, esl.t);
 
-    Eigen::Matrix3d inPlaneConstitutiveMatrix;
-    if (Eo != 0.0)
-    {
-        inPlaneConstitutiveMatrix = getOrthotropicInPlaneConstitutiveMatrix(E, Eo, Gxy, nu);
+        t = esl.t;
+        bendingStiffnessMatrix = esl.D;
+        shearStiffnessMatrix = esl.S;
+        if (std::abs(esl.t) < 1e-12)
+        {
+            throw std::runtime_error("CLT layup thickness is zero.");
+        }
+        inPlaneConstitutiveMatrix = esl.A / esl.t;
     }
     else
     {
-        inPlaneConstitutiveMatrix = getIsotropicInPlaneConstitutiveMatrix(E, nu);
+        if (Eo != 0.0)
+        {
+            bendingStiffnessMatrix = buildOrthotropicDb(E, Eo, Gxy, nu, t);
+            shearStiffnessMatrix = buildOrthotropicDs(Gxy, t);
+            inPlaneConstitutiveMatrix = getOrthotropicInPlaneConstitutiveMatrix(E, Eo, Gxy, nu);
+        }
+        else
+        {
+            bendingStiffnessMatrix = buildIsoDb(E, nu, t);
+            shearStiffnessMatrix = buildIsoDs(E, nu, t);
+            inPlaneConstitutiveMatrix = getIsotropicInPlaneConstitutiveMatrix(E, nu);
+        }
     }
 
     double x1 = nodes[0][0], y1 = nodes[0][1];

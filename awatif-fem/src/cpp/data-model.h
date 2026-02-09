@@ -11,6 +11,36 @@
 using Node = std::vector<double>;          // [x, y, z]
 using Element = std::vector<unsigned int>; // Node indices
 
+struct CLTLayer
+{
+    double thickness = 0.0;
+    double thetaDeg = 0.0;
+    double Ex = 0.0;
+    double Ey = 0.0;
+    double nuXY = 0.0;
+    double Gxy = 0.0;
+    double Gxz = 0.0;
+    double Gyz = 0.0;
+};
+
+struct CLTOptions
+{
+    bool shearCoupling = true;
+    bool noGlueAtNarrowSide = false;
+    bool strictSymmetryForElement = true;
+    double symmetryTolerance = 1e-6;
+    double r33 = 1.0;
+    double r66 = 1.0;
+    double r77 = 1.0;
+    double r88 = 1.0;
+};
+
+struct CLTLayup
+{
+    std::vector<CLTLayer> layers;
+    CLTOptions options;
+};
+
 struct ElementInputs
 {
     std::map<int, double> elasticities;
@@ -22,6 +52,7 @@ struct ElementInputs
     std::map<int, double> torsionalConstants;
     std::map<int, double> thicknesses;
     std::map<int, double> poissonsRatios;
+    std::map<int, CLTLayup> cltLayups;
 };
 
 struct NodeInputs

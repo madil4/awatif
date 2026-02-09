@@ -1,5 +1,6 @@
 import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { deformCpp } from "./deformCpp";
+import { deform } from "./deform";
 
 describe("deformCpp", () => {
   test("Bar: from Logan's book example 3.9", () => {
@@ -330,5 +331,122 @@ describe("deformCpp", () => {
       const norm = Math.sqrt(cross[0] ** 2 + cross[1] ** 2 + cross[2] ** 2);
       return norm / 2;
     }
+  });
+
+  test("CLT shell: deformCpp matches TypeScript deform path", () => {
+    const L = 6;
+    const W = 2;
+    const nx = 8;
+    const ny = 4;
+    const q = 4.335;
+
+    const nodes: Node[] = [];
+    for (let j = 0; j < ny; j++) {
+      for (let i = 0; i < nx; i++) {
+        nodes.push([(i * L) / (nx - 1), (j * W) / (ny - 1), 0]);
+      }
+    }
+
+    const elements: Element[] = [];
+    for (let j = 0; j < ny - 1; j++) {
+      for (let i = 0; i < nx - 1; i++) {
+        const bl = j * nx + i;
+        const br = bl + 1;
+        const tl = (j + 1) * nx + i;
+        const tr = tl + 1;
+        elements.push([bl, br, tl]);
+        elements.push([br, tr, tl]);
+      }
+    }
+
+    const supports = new Map<
+      number,
+      [boolean, boolean, boolean, boolean, boolean, boolean]
+    >();
+    nodes.forEach((n, i) => {
+      if (Math.abs(n[0]) < 1e-8 || Math.abs(n[0] - L) < 1e-8) {
+        supports.set(i, [true, true, true, false, false, false]);
+      }
+    });
+
+    const nodalAreas = Array(nodes.length).fill(0);
+    elements.forEach((e) => {
+      const [n1, n2, n3] = e.map((idx) => nodes[idx]);
+      const area =
+        Math.abs(
+          (n2[0] - n1[0]) * (n3[1] - n1[1]) -
+            (n3[0] - n1[0]) * (n2[1] - n1[1])
+        ) * 0.5;
+      const lump = area / 3;
+      nodalAreas[e[0]] += lump;
+      nodalAreas[e[1]] += lump;
+      nodalAreas[e[2]] += lump;
+    });
+
+    const loads = new Map<
+      number,
+      [number, number, number, number, number, number]
+    >();
+    nodes.forEach((_, i) => {
+      loads.set(i, [0, 0, -q * nodalAreas[i], 0, 0, 0]);
+    });
+
+    const nodeInputs: NodeInputs = { supports, loads };
+    const layup = {
+      layers: [
+        {
+          thickness: 0.03,
+          thetaDeg: 0,
+          Ex: 11000e3,
+          Ey: 0.1e3,
+          nuXY: 0,
+          Gxy: 690e3,
+          Gxz: 690e3,
+          Gyz: 69e3,
+        },
+        {
+          thickness: 0.04,
+          thetaDeg: 90,
+          Ex: 11000e3,
+          Ey: 0.1e3,
+          nuXY: 0,
+          Gxy: 690e3,
+          Gxz: 690e3,
+          Gyz: 69e3,
+        },
+        {
+          thickness: 0.03,
+          thetaDeg: 0,
+          Ex: 11000e3,
+          Ey: 0.1e3,
+          nuXY: 0,
+          Gxy: 690e3,
+          Gxz: 690e3,
+          Gyz: 69e3,
+        },
+      ],
+      options: {
+        shearCoupling: true,
+        noGlueAtNarrowSide: false,
+        strictSymmetryForElement: true,
+      },
+    };
+
+    const elementInputs: ElementInputs = {
+      cltLayups: new Map(elements.map((_, i) => [i, layup])),
+    };
+
+    const outTs = deform(nodes, elements, nodeInputs, elementInputs);
+    const outCpp = deformCpp(nodes, elements, nodeInputs, elementInputs);
+
+    expect(outCpp.deformations?.size).toBe(outTs.deformations?.size);
+
+    outTs.deformations?.forEach((dTs, idx) => {
+      const dCpp = outCpp.deformations?.get(idx);
+      expect(dCpp).toBeDefined();
+      dTs.forEach((v, dof) => {
+        expect(dCpp?.[dof]).toBeCloseTo(v, 4);
+      });
+    });
   });
 });

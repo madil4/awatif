@@ -2,10 +2,14 @@ import {
   Node,
   Element,
   ElementInputs,
+  CLTLayup,
   NodeInputs,
   DeformOutputs,
 } from "./data-model.js";
 import createModule from "./cpp/built/deform.js";
+import { deform } from "./deform";
+
+const WASM_CLT_DEFORM_ARITY = 48;
 
 // @ts-ignore, load wasm
 const mod = await createModule();
@@ -17,6 +21,13 @@ export function deformCpp(
   elementInputs: ElementInputs
 ): DeformOutputs {
   if (nodes.length === 0) return;
+
+  const hasCltLayups = (elementInputs.cltLayups?.size ?? 0) > 0;
+  const supportsCltWasm = mod._deform.length >= WASM_CLT_DEFORM_ARITY;
+  if (hasCltLayups && !supportsCltWasm) {
+    // Compatibility fallback while older wasm builds are still in use.
+    return deform(nodes, elements, nodeInputs, elementInputs);
+  }
 
   const gc: number[] = []; // Garage Collector
 
@@ -84,6 +95,7 @@ export function deformCpp(
   const torsion = processElementInput(elementInputs.torsionalConstants);
   const thickness = processElementInput(elementInputs.thicknesses);
   const poisson = processElementInput(elementInputs.poissonsRatios);
+  const cltLayups = processCltLayups(elementInputs.cltLayups);
 
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
@@ -96,52 +108,107 @@ export function deformCpp(
   gc.push(reactionsSizeOutPtr);
 
   // 2- Call C++ Function
-  mod._deform(
-    nodesPtr,
-    nodes.length,
-    elementsPtr,
-    elementIndices.length,
-    elementSizesPtz,
-    elements.length,
-    supportKeysPtr,
-    supportValuesPtr,
-    supportKeys.length,
-    loadKeysPtr,
-    loadValuesPtr,
-    loadKeys.length,
-    elasticities.keysPtr,
-    elasticities.valuesPtr,
-    elasticities.size,
-    areas.keysPtr,
-    areas.valuesPtr,
-    areas.size,
-    moiZ.keysPtr,
-    moiZ.valuesPtr,
-    moiZ.size,
-    moiY.keysPtr,
-    moiY.valuesPtr,
-    moiY.size,
-    shearMod.keysPtr,
-    shearMod.valuesPtr,
-    shearMod.size,
-    torsion.keysPtr,
-    torsion.valuesPtr,
-    torsion.size,
-    thickness.keysPtr,
-    thickness.valuesPtr,
-    thickness.size,
-    poisson.keysPtr,
-    poisson.valuesPtr,
-    poisson.size,
-    elasticitiesOrthogonal.keysPtr,
-    elasticitiesOrthogonal.valuesPtr,
-    elasticitiesOrthogonal.size,
-    // Output pointers
-    deformationsDataPtrOutPtr,
-    deformationsSizeOutPtr,
-    reactionsDataPtrOutPtr,
-    reactionsSizeOutPtr
-  );
+  const deformFn = mod._deform as unknown as (...args: number[]) => void;
+  if (supportsCltWasm) {
+    deformFn(
+      nodesPtr,
+      nodes.length,
+      elementsPtr,
+      elementIndices.length,
+      elementSizesPtz,
+      elements.length,
+      supportKeysPtr,
+      supportValuesPtr,
+      supportKeys.length,
+      loadKeysPtr,
+      loadValuesPtr,
+      loadKeys.length,
+      elasticities.keysPtr,
+      elasticities.valuesPtr,
+      elasticities.size,
+      areas.keysPtr,
+      areas.valuesPtr,
+      areas.size,
+      moiZ.keysPtr,
+      moiZ.valuesPtr,
+      moiZ.size,
+      moiY.keysPtr,
+      moiY.valuesPtr,
+      moiY.size,
+      shearMod.keysPtr,
+      shearMod.valuesPtr,
+      shearMod.size,
+      torsion.keysPtr,
+      torsion.valuesPtr,
+      torsion.size,
+      thickness.keysPtr,
+      thickness.valuesPtr,
+      thickness.size,
+      poisson.keysPtr,
+      poisson.valuesPtr,
+      poisson.size,
+      elasticitiesOrthogonal.keysPtr,
+      elasticitiesOrthogonal.valuesPtr,
+      elasticitiesOrthogonal.size,
+      cltLayups.keysPtr,
+      cltLayups.layerCountsPtr,
+      cltLayups.optionsPtr,
+      cltLayups.layersFlatPtr,
+      cltLayups.size,
+      // Output pointers
+      deformationsDataPtrOutPtr,
+      deformationsSizeOutPtr,
+      reactionsDataPtrOutPtr,
+      reactionsSizeOutPtr
+    );
+  } else {
+    deformFn(
+      nodesPtr,
+      nodes.length,
+      elementsPtr,
+      elementIndices.length,
+      elementSizesPtz,
+      elements.length,
+      supportKeysPtr,
+      supportValuesPtr,
+      supportKeys.length,
+      loadKeysPtr,
+      loadValuesPtr,
+      loadKeys.length,
+      elasticities.keysPtr,
+      elasticities.valuesPtr,
+      elasticities.size,
+      areas.keysPtr,
+      areas.valuesPtr,
+      areas.size,
+      moiZ.keysPtr,
+      moiZ.valuesPtr,
+      moiZ.size,
+      moiY.keysPtr,
+      moiY.valuesPtr,
+      moiY.size,
+      shearMod.keysPtr,
+      shearMod.valuesPtr,
+      shearMod.size,
+      torsion.keysPtr,
+      torsion.valuesPtr,
+      torsion.size,
+      thickness.keysPtr,
+      thickness.valuesPtr,
+      thickness.size,
+      poisson.keysPtr,
+      poisson.valuesPtr,
+      poisson.size,
+      elasticitiesOrthogonal.keysPtr,
+      elasticitiesOrthogonal.valuesPtr,
+      elasticitiesOrthogonal.size,
+      // Output pointers
+      deformationsDataPtrOutPtr,
+      deformationsSizeOutPtr,
+      reactionsDataPtrOutPtr,
+      reactionsSizeOutPtr
+    );
+  }
 
   // 3- Read Output Data
   // Read the pointers and sizes written by C++
@@ -204,6 +271,60 @@ export function deformCpp(
     deformations,
     reactions,
   };
+
+  function processCltLayups(cltMap: Map<number, CLTLayup> | undefined) {
+    const entries = cltMap ? Array.from(cltMap.entries()) : [];
+    const keys: number[] = [];
+    const layerCounts: number[] = [];
+    const optionsFlat: number[] = [];
+    const layersFlat: number[] = [];
+
+    for (const [elementIndex, layup] of entries) {
+      keys.push(elementIndex);
+      layerCounts.push(layup.layers.length);
+
+      optionsFlat.push(
+        layup.options.shearCoupling ? 1 : 0,
+        layup.options.noGlueAtNarrowSide ? 1 : 0,
+        (layup.options.strictSymmetryForElement ?? true) ? 1 : 0,
+        layup.options.symmetryTolerance ?? 1e-6,
+        layup.options.r33 ?? 1,
+        layup.options.r66 ?? 1,
+        layup.options.r77 ?? 1,
+        layup.options.r88 ?? 1
+      );
+
+      for (const layer of layup.layers) {
+        layersFlat.push(
+          layer.thickness,
+          layer.thetaDeg,
+          layer.Ex,
+          layer.Ey,
+          layer.nuXY,
+          layer.Gxy,
+          layer.Gxz,
+          layer.Gyz
+        );
+      }
+    }
+
+    const keysPtr = allocate(keys, Uint32Array, mod.HEAPU32);
+    gc.push(keysPtr);
+    const layerCountsPtr = allocate(layerCounts, Uint32Array, mod.HEAPU32);
+    gc.push(layerCountsPtr);
+    const optionsPtr = allocate(optionsFlat, Float64Array, mod.HEAPF64);
+    gc.push(optionsPtr);
+    const layersFlatPtr = allocate(layersFlat, Float64Array, mod.HEAPF64);
+    gc.push(layersFlatPtr);
+
+    return {
+      keysPtr,
+      layerCountsPtr,
+      optionsPtr,
+      layersFlatPtr,
+      size: entries.length,
+    };
+  }
 }
 
 // Utils
