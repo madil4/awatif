@@ -93,6 +93,32 @@ body {
   overflow: hidden;
   border: 1px solid #d3dbe7;
   background: #0f1114;
+  position: relative;
+}
+
+#case-switch {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.case-btn {
+  border: 1px solid #6c7a93;
+  background: rgba(18, 26, 41, 0.75);
+  color: #d7e4ff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.case-btn.active {
+  background: #0c5fcc;
+  border-color: #0c5fcc;
+  color: #ffffff;
 }
 
 #plots {

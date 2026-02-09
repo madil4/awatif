@@ -7,6 +7,7 @@ import { getToolbar, getViewer } from "awatif-ui";
 import "./styles.css";
 
 const { div, h1, p, span } = van.tags;
+const { button } = van.tags;
 
 const LENGTH = 10;
 const WIDTH = 2.45;
@@ -32,6 +33,25 @@ const mesh: Mesh = {
   deformOutputs: van.state({}),
   analyzeOutputs: van.state({}),
 };
+
+type DisplayCase = "ULS" | "SLS";
+
+type CaseResult = {
+  loads: Map<number, [number, number, number, number, number, number]>;
+  elementInputs: { cltLayups: Map<number, CLTLayup> };
+  deformations?: Map<number, [number, number, number, number, number, number]>;
+  reactions?: Map<number, [number, number, number, number, number, number]>;
+  analyze: ReturnType<typeof analyze>;
+  centerDeflectionMm: number;
+  vMax: number;
+  mMax: number;
+  momentCurve: number[];
+  shearCurve: number[];
+};
+
+const displayCaseState = van.state<DisplayCase>("SLS");
+const displayCases: { ULS?: CaseResult; SLS?: CaseResult } = {};
+let displaySupports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]> | undefined;
 
 const kpiState = van.state({
   vMax: 0,
@@ -102,18 +122,30 @@ function initialize() {
     deflection: buildDeflectionStrip(nodes, sls.deformations),
   };
 
+  displaySupports = supports;
+  displayCases.ULS = uls;
+  displayCases.SLS = sls;
+
   mesh.nodes.val = nodes;
   mesh.elements.val = elements;
+  applyDisplayCase("SLS");
+}
+
+function applyDisplayCase(name: DisplayCase) {
+  const selected = displayCases[name];
+  if (!selected || !displaySupports) return;
+
+  displayCaseState.val = name;
   mesh.nodeInputs.val = {
-    supports,
-    loads: uls.loads,
+    supports: displaySupports,
+    loads: selected.loads,
   };
-  mesh.elementInputs.val = uls.elementInputs;
+  mesh.elementInputs.val = selected.elementInputs;
   mesh.deformOutputs.val = {
-    deformations: uls.deformations,
-    reactions: uls.reactions,
+    deformations: selected.deformations,
+    reactions: selected.reactions,
   };
-  mesh.analyzeOutputs.val = uls.analyze;
+  mesh.analyzeOutputs.val = selected.analyze;
 }
 
 function runCase({
@@ -376,7 +408,25 @@ function render() {
 
   const layout = div({ id: "layout" });
   const viewerWrap = div({ id: "viewer-wrap" });
+  const caseSwitch = div(
+    { id: "case-switch" },
+    button(
+      {
+        class: () => `case-btn ${displayCaseState.val === "ULS" ? "active" : ""}`,
+        onclick: () => applyDisplayCase("ULS"),
+      },
+      "Show ULS",
+    ),
+    button(
+      {
+        class: () => `case-btn ${displayCaseState.val === "SLS" ? "active" : ""}`,
+        onclick: () => applyDisplayCase("SLS"),
+      },
+      "Show SLS (default)",
+    ),
+  );
   viewerWrap.append(
+    caseSwitch,
     getViewer({
       mesh,
       settingsObj: {
@@ -402,6 +452,7 @@ function render() {
       p(
         "Section-force extraction uses shell bending sampled on centerline and derives shear from dM/dx. If needed, I can add exact cut-line integration next.",
       ),
+      p(span("Viewer case: "), span(() => displayCaseState.val), span(" (values in meters for displacement results).")),
       p(
         span("Material mode: "),
         span("CLT ESL with shear coupling and symmetric-layup check."),
