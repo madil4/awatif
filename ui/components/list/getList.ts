@@ -116,15 +116,20 @@ export function getList({
     if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
 
     const selectedSet = new Set(selectedGeometry);
+    const activeTemplateId = current.templateId;
+    const isImperfections = activeTemplateId === "imperfections";
     updateComponents((list) =>
-      list.map((c, i) =>
-        i === idx
-          ? { ...c, geometry: [...selectedGeometry] }
-          : {
-              ...c,
-              geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
-            },
-      ),
+      list.map((c, i) => {
+        if (i === idx) return { ...c, geometry: [...selectedGeometry] };
+        // Only strip geometry from components of the same kind:
+        // imperfections don't conflict with regular mesh components
+        const otherIsImperfections = c.templateId === "imperfections";
+        if (isImperfections !== otherIsImperfections) return c;
+        return {
+          ...c,
+          geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
+        };
+      }),
     );
   });
 
