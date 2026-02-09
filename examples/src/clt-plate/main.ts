@@ -10,10 +10,6 @@ const { div } = van.tags;
 
 const LENGTH = 10;
 const WIDTH = 2.45;
-const KDEF_SQ = 0.8;
-
-const qUls = 4.335; // kN/m2
-const qSls = 1.589; // kN/m2
 
 type DisplayCase = "ULS" | "SLS";
 
@@ -37,17 +33,27 @@ const mesh: Mesh = {
 const displayCaseState = van.state<DisplayCase>("SLS");
 const displayCases: { ULS?: CaseResult; SLS?: CaseResult } = {};
 let displaySupports: Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]> | undefined;
+const maxMeshSizeState = van.state(0.36);
+const qUlsState = van.state(4.335); // kN/m2
+const qSlsState = van.state(1.589); // kN/m2
+const kDefSqState = van.state(0.8);
 
 const cltLayup = buildSevenLayerCLTLayup();
 
-initialize();
+van.derive(() => {
+  maxMeshSizeState.val;
+  qUlsState.val;
+  qSlsState.val;
+  kDefSqState.val;
+  recomputeModel();
+});
 van.derive(() => {
   displayCaseState.val;
   applyDisplayCase();
 });
 render();
 
-function initialize() {
+function recomputeModel() {
   const { nodes, elements } = getMesh({
     points: [
       [0, 0, 0],
@@ -56,7 +62,7 @@ function initialize() {
       [0, WIDTH, 0],
     ],
     polygon: [0, 1, 2, 3],
-    maxMeshSize: 0.36,
+    maxMeshSize: maxMeshSizeState.val,
   });
 
   const supports = getSupportMap(nodes);
@@ -65,7 +71,7 @@ function initialize() {
     nodes,
     elements,
     supports,
-    q: qUls,
+    q: qUlsState.val,
     stiffnessReduction: 1,
   });
 
@@ -73,8 +79,8 @@ function initialize() {
     nodes,
     elements,
     supports,
-    q: qSls,
-    stiffnessReduction: 1 + KDEF_SQ,
+    q: qSlsState.val,
+    stiffnessReduction: 1 + kDefSqState.val,
   });
 
   displaySupports = supports;
@@ -232,6 +238,37 @@ function render() {
                 ULS: "ULS",
                 SLS: "SLS",
               },
+            },
+          ],
+          customNumbers: [
+            {
+              folder: "Analysis Model",
+              label: "Max mesh size [m]",
+              state: maxMeshSizeState,
+              min: 0.1,
+              max: 1.5,
+              step: 0.01,
+            },
+            {
+              folder: "Analysis Inputs",
+              label: "q ULS [kN/m2]",
+              state: qUlsState,
+              min: 0,
+              step: 0.001,
+            },
+            {
+              folder: "Analysis Inputs",
+              label: "q SLS [kN/m2]",
+              state: qSlsState,
+              min: 0,
+              step: 0.001,
+            },
+            {
+              folder: "Analysis Inputs",
+              label: "kdef",
+              state: kDefSqState,
+              min: 0,
+              step: 0.01,
             },
           ],
         },

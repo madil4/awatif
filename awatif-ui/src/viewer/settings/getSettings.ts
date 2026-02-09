@@ -40,6 +40,14 @@ export type SettingsObj = {
   flipAxes?: boolean;
   solids?: boolean;
   showFrameResults?: boolean;
+  customNumbers?: {
+    folder?: string;
+    label: string;
+    state: State<number>;
+    min?: number;
+    max?: number;
+    step?: number;
+  }[];
   customSelects?: {
     folder?: string;
     label: string;
@@ -142,23 +150,37 @@ export function getSettings(
     });
   }
 
+  const folders = new Map<string, any>();
+  const getOrCreateFolder = (folderTitle: string) => {
+    let folder = folders.get(folderTitle);
+    if (folder) return folder;
+
+    if (folderTitle === "Analysis Inputs" && inputsFolder) folder = inputsFolder;
+    else if (folderTitle === "Analysis Outputs" && outputsFolder) folder = outputsFolder;
+    else folder = pane.addFolder({ title: folderTitle });
+
+    folders.set(folderTitle, folder);
+    return folder;
+  };
+
   if (settingsObj?.customSelects?.length) {
-    const folders = new Map<string, any>();
-
     settingsObj.customSelects.forEach((control) => {
-      const folderTitle = control.folder ?? "Display";
-      let folder = folders.get(folderTitle);
-
-      if (!folder) {
-        if (folderTitle === "Analysis Inputs" && inputsFolder) folder = inputsFolder;
-        else if (folderTitle === "Analysis Outputs" && outputsFolder) folder = outputsFolder;
-        else folder = pane.addFolder({ title: folderTitle });
-        folders.set(folderTitle, folder);
-      }
-
+      const folder = getOrCreateFolder(control.folder ?? "Display");
       folder.addBinding(control.state, "val", {
         label: control.label,
         options: control.options,
+      });
+    });
+  }
+
+  if (settingsObj?.customNumbers?.length) {
+    settingsObj.customNumbers.forEach((control) => {
+      const folder = getOrCreateFolder(control.folder ?? "Display");
+      folder.addBinding(control.state, "val", {
+        label: control.label,
+        min: control.min,
+        max: control.max,
+        step: control.step,
       });
     });
   }
