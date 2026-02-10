@@ -1,7 +1,7 @@
 import { index, subset, add, sparse, lup, lusolve, flatten } from "mathjs";
-import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
-import { getTransformationMatrix } from "./utils/getTransformationMatrix";
-import { getLocalStiffnessMatrix } from "./utils/getLocalStiffnessMatrix";
+import { getGlobalStiffnessMatrix } from "./helpers/getGlobalStiffnessMatrix";
+import { getTransformationMatrix } from "./helpers/getTransformationMatrix";
+import { getLocalStiffnessMatrix } from "./helpers/getLocalStiffnessMatrix";
 import { multiply } from "mathjs";
 import type { Mesh } from "../../data-model";
 
