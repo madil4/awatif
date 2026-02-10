@@ -51,11 +51,13 @@ export type DesignTemplate<
     lineElementForces,
     length,
     activeAnalysis,
+    imperfections,
   }: {
     params: Params;
     lineElementForces: LineElementForces;
     length: number;
     activeAnalysis?: ActiveAnalysis["val"];
+    imperfections?: Record<string, unknown>;
   }) => TDesign;
 };
 

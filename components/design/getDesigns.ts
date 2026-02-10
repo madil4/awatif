@@ -30,6 +30,21 @@ export const getDesigns = ({
   // Get geometry mapping
   const { lineToElements } = mesh.geometryMapping;
 
+  // Build line → imperfection params lookup from mesh components
+  const meshComponents = components.get(ComponentsType.MESH) ?? [];
+  const lineToImperfections = new Map<number, Record<string, unknown>>();
+  for (const mc of meshComponents) {
+    if (mc.templateId !== "imperfections") continue;
+    const impTemplate = templates.get(ComponentsType.MESH)?.get("imperfections");
+    const impParams = (mc.params ?? impTemplate?.defaultParams) as
+      | Record<string, unknown>
+      | undefined;
+    if (!impParams) continue;
+    for (const lineId of mc.geometry) {
+      lineToImperfections.set(lineId, impParams);
+    }
+  }
+
   // Create new design results map
   const designResults = new Map<number, Design>();
 
@@ -90,6 +105,7 @@ export const getDesigns = ({
         lineElementForces,
         length,
         activeAnalysis,
+        imperfections: lineToImperfections.get(lineId),
       });
 
       // Store result (if multiple components affect same line, keep worst utilization)
