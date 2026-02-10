@@ -13,15 +13,15 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
 
   getParamsTemplate: ({ params }) => {
     return html`<div>
-      <label>Divisions (max 8):</label>
+      <label>Divisions (max 15):</label>
       <input
         type="number"
         min="1"
-        max="8"
+        max="30"
         .value=${params.val.divisions}
         @input=${(e: Event) => {
           const value = Number((e.target as HTMLInputElement).value);
-          const clampedValue = Math.max(1, Math.min(8, value));
+          const clampedValue = Math.max(1, Math.min(30, value));
           params.val = {
             ...params.val,
             divisions: clampedValue,
