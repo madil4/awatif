@@ -15,7 +15,10 @@ export function deformCpp(
   nodes: Node[],
   elements: Element[],
   nodeInputs: NodeInputs,
-  elementInputs: ElementInputs
+  elementInputs: ElementInputs,
+  options?: {
+    includeReactions?: boolean;
+  }
 ): DeformOutputs {
   if (nodes.length === 0) return;
 
@@ -86,6 +89,7 @@ export function deformCpp(
   const thickness = processElementInput(elementInputs.thicknesses);
   const poisson = processElementInput(elementInputs.poissonsRatios);
   const cltLayups = processCltLayups(elementInputs.cltLayups);
+  const includeReactions = options?.includeReactions ?? true;
 
   // Allocate memory for the pointers that C++ will write the results pointers to
   const deformationsDataPtrOutPtr = mod._malloc(4); // Pointer to a pointer (size 4 for 32-bit WASM)
@@ -144,6 +148,7 @@ export function deformCpp(
     cltLayups.optionsPtr,
     cltLayups.layersFlatPtr,
     cltLayups.size,
+    includeReactions ? 1 : 0,
     // Output pointers
     deformationsDataPtrOutPtr,
     deformationsSizeOutPtr,

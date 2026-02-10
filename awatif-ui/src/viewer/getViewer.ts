@@ -282,19 +282,19 @@ function getColorMapValues(
     const nodeBendingYY = new Map<number, number[]>();
     const nodeBendingXY = new Map<number, number[]>();
 
-    mesh.analyzeOutputs?.val.bendingXX.forEach((vals, elementIndex) => {
+    mesh.analyzeOutputs?.val.bendingXX?.forEach((vals, elementIndex) => {
       nodeBendingXX.set(mesh.elements.val[elementIndex][0], [vals[0]]);
       nodeBendingXX.set(mesh.elements.val[elementIndex][1], [vals[1]]);
       nodeBendingXX.set(mesh.elements.val[elementIndex][2], [vals[2]]);
     });
 
-    mesh.analyzeOutputs?.val.bendingYY.forEach((vals, elementIndex) => {
+    mesh.analyzeOutputs?.val.bendingYY?.forEach((vals, elementIndex) => {
       nodeBendingYY.set(mesh.elements.val[elementIndex][0], [vals[0]]);
       nodeBendingYY.set(mesh.elements.val[elementIndex][1], [vals[1]]);
       nodeBendingYY.set(mesh.elements.val[elementIndex][2], [vals[2]]);
     });
 
-    mesh.analyzeOutputs?.val.bendingXY.forEach((vals, elementIndex) => {
+    mesh.analyzeOutputs?.val.bendingXY?.forEach((vals, elementIndex) => {
       nodeBendingXY.set(mesh.elements.val[elementIndex][0], [vals[0]]);
       nodeBendingXY.set(mesh.elements.val[elementIndex][1], [vals[1]]);
       nodeBendingXY.set(mesh.elements.val[elementIndex][2], [vals[2]]);
@@ -312,13 +312,26 @@ function getColorMapValues(
 
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
-      const resultMap = resultMapper[settings.shellResults.val];
-      if (!resultMap) return;
-      if (!resultMap[0].has(i)) {
+      if (resultType === ResultType.displacementZ) {
+        const displacementZ = mesh.deformOutputs?.val.deformations?.get(i)?.[2] ?? 0;
+        values.push(displacementZ * resultScale);
+        return;
+      }
+
+      const resultMap = resultMapper[resultType];
+      if (!resultMap) {
         values.push(0);
         return;
       }
-      values.push(resultMap[0].get(i)[resultMap[1]] * resultScale);
+
+      const mappedValues = resultMap[0] as Map<number, number[]> | undefined;
+      const mappedResult = mappedValues?.get(i);
+      if (!mappedResult) {
+        values.push(0);
+        return;
+      }
+
+      values.push(mappedResult[resultMap[1]] * resultScale);
     });
 
     colorMapValues.val = values;

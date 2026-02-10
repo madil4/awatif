@@ -23,8 +23,12 @@ export type LaminateESL = {
 };
 
 const DEG2RAD = Math.PI / 180;
+const laminateEslCache = new WeakMap<CLTLayup, LaminateESL>();
 
 export function computeLaminateESL(layup: CLTLayup): LaminateESL {
+  const cached = laminateEslCache.get(layup);
+  if (cached) return cached;
+
   if (!layup.layers.length) throw new Error("CLT layup must contain at least one layer.");
 
   const options = {
@@ -111,7 +115,10 @@ export function computeLaminateESL(layup: CLTLayup): LaminateESL {
   S[0][0] *= options.r77;
   S[1][1] *= options.r88;
 
-  return { t, A, B, D, S, rho13, rho23, alphaDeg };
+  const esl = { t, A, B, D, S, rho13, rho23, alphaDeg };
+  // Layups are expected to be immutable analysis inputs for a run.
+  laminateEslCache.set(layup, esl);
+  return esl;
 }
 
 function buildLayerStates(
@@ -220,6 +227,20 @@ function findMainStiffnessDirection(A: Mat3): number {
   const A66 = A[2][2];
   const A16 = A[0][2];
   const A26 = A[1][2];
+
+  // Common CLT case: laminate axes are aligned with shell axes (A16 ~= A26 ~= 0).
+  // Skip global scan when principal direction is directly available.
+  const scale = Math.max(
+    1,
+    Math.abs(A11),
+    Math.abs(A22),
+    Math.abs(A12),
+    Math.abs(A66),
+  );
+  const couplingTol = 1e-12 * scale;
+  if (Math.abs(A16) <= couplingTol && Math.abs(A26) <= couplingTol) {
+    return A11 >= A22 ? 0 : Math.PI / 2;
+  }
 
   const valueAt = (alpha: number) => {
     const c = Math.cos(alpha);

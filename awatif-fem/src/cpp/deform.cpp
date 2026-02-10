@@ -51,6 +51,7 @@ extern "C"
         int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,                                              // Map<elemIdx, nu>
         int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal, // Map<elemIdx, E_ortho>
         int *clt_keys_ptr, int *clt_layer_counts_ptr, double *clt_options_ptr, double *clt_layers_flat_ptr, int num_clt_layups, // Map<elemIdx, CLTLayup>
+        int include_reactions, // 1=true, 0=false
 
         // --- Output Pointers (to be allocated by C++ and filled) ---
         // These are pointers *to* pointers. C++ allocates memory using malloc
@@ -152,8 +153,12 @@ extern "C"
             U_global(reducedIndices[i]) = U_reduced(i);
         }
 
-        // Calculate the full reaction force vector: R_global = K_global * U_global
-        Eigen::VectorXd R_global = K_global * U_global;
+        Eigen::VectorXd R_global;
+        if (include_reactions)
+        {
+            // Calculate the full reaction force vector only when requested.
+            R_global = K_global * U_global;
+        }
 
         // --- 3. Prepare Output Data Structures ---
         // Collate results into the DeformOutputs structure.
@@ -184,7 +189,7 @@ extern "C"
             }
 
             // If the node has support, extract reactions
-            if (hasSupport)
+            if (include_reactions && hasSupport)
             {
                 std::vector<double> node_react(6);
                 for (int j = 0; j < 6; ++j)
@@ -204,7 +209,14 @@ extern "C"
         *deformations_data_ptr_out = (double *)malloc(*deformations_size_out * sizeof(double));
 
         *reactions_size_out = outputs.reactions.size() * 7;
-        *reactions_data_ptr_out = (double *)malloc(*reactions_size_out * sizeof(double));
+        if (*reactions_size_out > 0)
+        {
+            *reactions_data_ptr_out = (double *)malloc(*reactions_size_out * sizeof(double));
+        }
+        else
+        {
+            *reactions_data_ptr_out = nullptr;
+        }
 
         // Check if allocation was successful
         if (!(*deformations_data_ptr_out) || (outputs.reactions.size() > 0 && !(*reactions_data_ptr_out)))

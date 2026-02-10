@@ -11,6 +11,15 @@ import {
   Matrix,
 } from "mathjs";
 
+type PreparedCltConstitutive = {
+  t: number;
+  bendingStiffnessMatrix: Matrix;
+  shearStiffnessMatrix: Matrix;
+  inPlaneConstitutiveMatrix: Matrix;
+};
+
+const preparedCltConstitutiveCache = new WeakMap<CLTLayup, PreparedCltConstitutive>();
+
 export function getLocalStiffnessMatrix(
   nodes: Node[],
   elementInputs: ElementInputs,
@@ -126,15 +135,11 @@ export function getLocalStiffnessMatrixShell(
   let inPlaneConstitutiveMatrix: Matrix;
 
   if (cltLayup) {
-    const esl = computeLaminateESL(cltLayup);
-    validateLaminateSymmetryForElement(cltLayup, esl.B, esl.A, esl.t);
-    thickness = esl.t;
-    bendingStiffnessMatrix = matrix(esl.D) as Matrix;
-    shearStiffnessMatrix = matrix(esl.S) as Matrix;
-    inPlaneConstitutiveMatrix = multiply(
-      matrix(esl.A),
-      1 / esl.t
-    ) as Matrix;
+    const preparedCltConstitutive = getPreparedCltConstitutive(cltLayup);
+    thickness = preparedCltConstitutive.t;
+    bendingStiffnessMatrix = preparedCltConstitutive.bendingStiffnessMatrix;
+    shearStiffnessMatrix = preparedCltConstitutive.shearStiffnessMatrix;
+    inPlaneConstitutiveMatrix = preparedCltConstitutive.inPlaneConstitutiveMatrix;
   } else {
     // Determine if the material is orthotropic based on the presence of elasticityY
     const isOrthotropic = elasticityY > 0;
@@ -660,6 +665,26 @@ export function getLocalStiffnessMatrixShell(
 
     return Km;
   }
+}
+
+function getPreparedCltConstitutive(
+  layup: CLTLayup
+): PreparedCltConstitutive {
+  const cached = preparedCltConstitutiveCache.get(layup);
+  if (cached) return cached;
+
+  const esl = computeLaminateESL(layup);
+  validateLaminateSymmetryForElement(layup, esl.B, esl.A, esl.t);
+
+  const prepared: PreparedCltConstitutive = {
+    t: esl.t,
+    bendingStiffnessMatrix: matrix(esl.D) as Matrix,
+    shearStiffnessMatrix: matrix(esl.S) as Matrix,
+    inPlaneConstitutiveMatrix: multiply(matrix(esl.A), 1 / esl.t) as Matrix,
+  };
+
+  preparedCltConstitutiveCache.set(layup, prepared);
+  return prepared;
 }
 
 function validateLaminateSymmetryForElement(
