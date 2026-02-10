@@ -13,7 +13,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
 
   getParamsTemplate: ({ params }) => {
     return html`<div>
-      <label>Divisions (max 15):</label>
+      <label>Divisions (max 30):</label>
       <input
         type="number"
         min="1"
