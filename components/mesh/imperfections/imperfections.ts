@@ -48,7 +48,7 @@ export const imperfections: {
     theta0: "0.005",
     height: "4",
     memberCount: "1",
-    localBow: true,
+    localBow: false,
     bowRatioDenominator: "400",
     direction: "positive",
   },
