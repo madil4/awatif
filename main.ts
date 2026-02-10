@@ -93,7 +93,7 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Basic Design",
+          name: "Basic",
           templateId: "basic",
           geometry: [1],
         },
@@ -124,7 +124,7 @@ const display: Display = {
   },
   geometry: van.state(true),
   mesh: van.state(true),
-  deformedShape: van.state(false),
+  deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
   design: van.state(false),
