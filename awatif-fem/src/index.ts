@@ -1,5 +1,6 @@
 export * from "./data-model";
 export * from "./awatif-clt/laminate";
+export * from "./awatif-clt/coupling";
 
 export { analyze } from "./analyze";
 export { createCachedDeformSolver } from "./deformCached";

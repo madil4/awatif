@@ -27,6 +27,8 @@ export default defineConfig({
         "clt-plate": "src/clt-plate/index.html",
         "clt-two-way-slab": "src/clt-two-way-slab/index.html",
         "clt-realtime-benchmark": "src/clt-realtime-benchmark/index.html",
+        "clt-multi-story-designer": "src/clt-multi-story-designer/index.html",
+        "clt-wall-coupling": "src/clt-wall-coupling/index.html",
         building: "src/building/index.html",
         "slab-designer": "src/slab-designer/index.html",
         "color-map": "src/color-map/index.html",

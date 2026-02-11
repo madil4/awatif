@@ -1,4 +1,5 @@
 import { State } from "vanjs-core";
+import { CLTLayup } from "awatif-fem";
 
 export type Building = {
   points: State<[number, number, number][]>; // all the points used to define stories, floors, ..etc
@@ -61,6 +62,7 @@ export type SlabAnalysisInput = {
   isOpening: boolean;
   thickness?: number;
   material?: SlabMaterial;
+  cltLayup?: CLTLayup;
 };
 
 export type SlabMaterial = {

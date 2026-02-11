@@ -20,6 +20,7 @@ Eigen::MatrixXd getLocalStiffnessMatrixShell(
     const std::vector<Node> &nodes,
     const ElementInputs &elementInputs,
     int index);
+std::vector<Node> projectShellNodesToLocalXY(const std::vector<Node> &nodes);
 
 Eigen::MatrixXd getLocalStiffnessMatrix(
     const std::vector<Node> &elementNodes,
@@ -956,6 +957,60 @@ Eigen::MatrixXd getMembraneStiffnessMatrix(
     return Km;
 }
 
+std::vector<Node> projectShellNodesToLocalXY(const std::vector<Node> &nodes)
+{
+    if (nodes.size() != 3)
+        return {};
+
+    Eigen::Vector3d p0(nodes[0][0], nodes[0][1], nodes[0][2]);
+    Eigen::Vector3d p1(nodes[1][0], nodes[1][1], nodes[1][2]);
+    Eigen::Vector3d p2(nodes[2][0], nodes[2][1], nodes[2][2]);
+
+    Eigen::Vector3d dX_dxi = p1 - p0;
+    Eigen::Vector3d dX_det = p2 - p0;
+
+    Eigen::Vector3d normalVector = dX_dxi.cross(dX_det);
+    double normalLength = normalVector.norm();
+    if (normalLength < 1e-12)
+        return {};
+    normalVector.normalize();
+
+    Eigen::Vector3d globalX = Eigen::Vector3d::UnitX();
+    Eigen::Vector3d globalZ = Eigen::Vector3d::UnitZ();
+
+    double dotX = normalVector.dot(globalX);
+    Eigen::Vector3d localX;
+    if (std::abs(dotX) > 1.0 - 1e-10)
+    {
+        localX = globalZ - normalVector.dot(globalZ) * normalVector;
+    }
+    else
+    {
+        localX = globalX - dotX * normalVector;
+    }
+
+    double localXLength = localX.norm();
+    if (localXLength < 1e-12)
+        return {};
+    localX.normalize();
+
+    Eigen::Vector3d localY = normalVector.cross(localX);
+    double localYLength = localY.norm();
+    if (localYLength < 1e-12)
+        return {};
+    localY.normalize();
+
+    std::vector<Node> localNodes(3);
+    for (int i = 0; i < 3; ++i)
+    {
+        Eigen::Vector3d p(nodes[i][0], nodes[i][1], nodes[i][2]);
+        Eigen::Vector3d rel = p - p0;
+        localNodes[i] = {rel.dot(localX), rel.dot(localY), 0.0};
+    }
+
+    return localNodes;
+}
+
 Eigen::MatrixXd getLocalStiffnessMatrixShell(
     const std::vector<Node> &nodes,
     const ElementInputs &elementInputs,
@@ -1009,9 +1064,16 @@ Eigen::MatrixXd getLocalStiffnessMatrixShell(
         }
     }
 
-    double x1 = nodes[0][0], y1 = nodes[0][1];
-    double x2 = nodes[1][0], y2 = nodes[1][1];
-    double x3 = nodes[2][0], y3 = nodes[2][1];
+    const std::vector<Node> localNodes = projectShellNodesToLocalXY(nodes);
+    if (localNodes.empty())
+    {
+        std::cerr << "Warning: Degenerate triangle (local projection failed) in getLocalStiffnessMatrixShell. Returning zero matrix." << std::endl;
+        return Eigen::MatrixXd::Zero(18, 18);
+    }
+
+    double x1 = localNodes[0][0], y1 = localNodes[0][1];
+    double x2 = localNodes[1][0], y2 = localNodes[1][1];
+    double x3 = localNodes[2][0], y3 = localNodes[2][1];
 
     double x21 = x2 - x1;
     double x31 = x3 - x1;
@@ -1025,9 +1087,9 @@ Eigen::MatrixXd getLocalStiffnessMatrixShell(
         return Eigen::MatrixXd::Zero(18, 18);
     }
 
-    Eigen::MatrixXd shearStrainDisplacementMatrix = getShearStrainDisplacementMatrix(nodes);
-    Eigen::MatrixXd bendingStrainDisplacementMatrix = getBendingStrainDisplacementMatrix(nodes);
-    Eigen::MatrixXd membraneStiffnessMatrix9x9 = getMembraneStiffnessMatrix(nodes, inPlaneConstitutiveMatrix, t);
+    Eigen::MatrixXd shearStrainDisplacementMatrix = getShearStrainDisplacementMatrix(localNodes);
+    Eigen::MatrixXd bendingStrainDisplacementMatrix = getBendingStrainDisplacementMatrix(localNodes);
+    Eigen::MatrixXd membraneStiffnessMatrix9x9 = getMembraneStiffnessMatrix(localNodes, inPlaneConstitutiveMatrix, t);
 
     Eigen::MatrixXd shearTerm = shearStrainDisplacementMatrix.transpose() * shearStiffnessMatrix * shearStrainDisplacementMatrix;
     Eigen::MatrixXd bendingTerm = bendingStrainDisplacementMatrix.transpose() * bendingStiffnessMatrix * bendingStrainDisplacementMatrix;

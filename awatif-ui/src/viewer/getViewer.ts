@@ -272,6 +272,8 @@ function getColorMapValues(
     bendingXX = "bendingXX",
     bendingYY = "bendingYY",
     bendingXY = "bendingXY",
+    displacementX = "displacementX",
+    displacementY = "displacementY",
     displacementZ = "displacementZ",
   }
 
@@ -304,6 +306,8 @@ function getColorMapValues(
       [ResultType.bendingXX]: [nodeBendingXX, 0],
       [ResultType.bendingYY]: [nodeBendingYY, 0],
       [ResultType.bendingXY]: [nodeBendingXY, 0],
+      [ResultType.displacementX]: [mesh.deformOutputs?.val.deformations, 0],
+      [ResultType.displacementY]: [mesh.deformOutputs?.val.deformations, 1],
       [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
     };
 
@@ -312,9 +316,19 @@ function getColorMapValues(
 
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
-      if (resultType === ResultType.displacementZ) {
-        const displacementZ = mesh.deformOutputs?.val.deformations?.get(i)?.[2] ?? 0;
-        values.push(displacementZ * resultScale);
+      if (
+        resultType === ResultType.displacementX ||
+        resultType === ResultType.displacementY ||
+        resultType === ResultType.displacementZ
+      ) {
+        const dof =
+          resultType === ResultType.displacementX
+            ? 0
+            : resultType === ResultType.displacementY
+            ? 1
+            : 2;
+        const displacement = mesh.deformOutputs?.val.deformations?.get(i)?.[dof] ?? 0;
+        values.push(displacement * resultScale);
         return;
       }
 

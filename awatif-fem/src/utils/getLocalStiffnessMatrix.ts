@@ -172,8 +172,9 @@ export function getLocalStiffnessMatrixShell(
       : getIsotropicInPlaneConstitutiveMatrix(elasticityX, poissonRatio);
   }
 
-  // Extract node coordinates for clarity
-  const nodeCoordinates = nodes.map(([x, y]) => [x, y]);
+  // Build element coordinates in its own local x'-y' plane so the shell
+  // formulation works for arbitrary 3D orientations (walls, inclined shells, ...).
+  const nodeCoordinates = getShellLocalNodeCoordinates(nodes);
 
   // Calculate element area
   const x21 = nodeCoordinates[1][0] - nodeCoordinates[0][0];
@@ -181,6 +182,12 @@ export function getLocalStiffnessMatrixShell(
   const y12 = nodeCoordinates[0][1] - nodeCoordinates[1][1];
   const y31 = nodeCoordinates[2][1] - nodeCoordinates[0][1];
   const elementArea = 0.5 * (x21 * y31 - x31 * -y12);
+  if (Math.abs(elementArea) < 1e-12) {
+    console.warn(
+      "Degenerate triangle (zero area) detected in getLocalStiffnessMatrixShell. Returning zero matrix."
+    );
+    return (zeros(18, 18) as Matrix).toArray() as number[][];
+  }
 
   const shearStrainDisplacementMatrix =
     getShearStrainDisplacementMatrix(nodeCoordinates);
@@ -665,6 +672,84 @@ export function getLocalStiffnessMatrixShell(
 
     return Km;
   }
+}
+
+function getShellLocalNodeCoordinates(nodes: Node[]): number[][] {
+  const [n0, n1, n2] = nodes;
+  const dX_dxi: [number, number, number] = [
+    n1[0] - n0[0],
+    n1[1] - n0[1],
+    n1[2] - n0[2],
+  ];
+  const dX_det: [number, number, number] = [
+    n2[0] - n0[0],
+    n2[1] - n0[1],
+    n2[2] - n0[2],
+  ];
+
+  const normalVector = cross3(dX_dxi, dX_det);
+  const normalLength = vectorNorm3(normalVector);
+  if (normalLength < 1e-12) return [[0, 0], [0, 0], [0, 0]];
+
+  const localZ = scale3(normalVector, 1 / normalLength);
+  const globalX: [number, number, number] = [1, 0, 0];
+  const globalZ: [number, number, number] = [0, 0, 1];
+
+  const dotX = dot3(localZ, globalX);
+  let localX =
+    Math.abs(dotX) > 1 - 1e-10
+      ? subtract3(globalZ, scale3(localZ, dot3(localZ, globalZ)))
+      : subtract3(globalX, scale3(localZ, dotX));
+  const localXLength = vectorNorm3(localX);
+  if (localXLength < 1e-12) return [[0, 0], [0, 0], [0, 0]];
+  localX = scale3(localX, 1 / localXLength);
+
+  let localY = cross3(localZ, localX);
+  const localYLength = vectorNorm3(localY);
+  if (localYLength < 1e-12) return [[0, 0], [0, 0], [0, 0]];
+  localY = scale3(localY, 1 / localYLength);
+
+  return nodes.map((node) => {
+    const rel: [number, number, number] = [
+      node[0] - n0[0],
+      node[1] - n0[1],
+      node[2] - n0[2],
+    ];
+    return [dot3(rel, localX), dot3(rel, localY)];
+  });
+}
+
+function dot3(a: [number, number, number], b: [number, number, number]): number {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function cross3(
+  a: [number, number, number],
+  b: [number, number, number]
+): [number, number, number] {
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0],
+  ];
+}
+
+function vectorNorm3(a: [number, number, number]): number {
+  return Math.sqrt(dot3(a, a));
+}
+
+function scale3(
+  a: [number, number, number],
+  s: number
+): [number, number, number] {
+  return [a[0] * s, a[1] * s, a[2] * s];
+}
+
+function subtract3(
+  a: [number, number, number],
+  b: [number, number, number]
+): [number, number, number] {
+  return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 }
 
 function getPreparedCltConstitutive(

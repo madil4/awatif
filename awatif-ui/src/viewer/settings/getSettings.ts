@@ -27,6 +27,8 @@ export type ShellResultType =
   | "bendingXX"
   | "bendingYY"
   | "bendingXY"
+  | "displacementX"
+  | "displacementY"
   | "displacementZ";
 
 export type SettingsObj = {
@@ -148,6 +150,8 @@ export function getSettings(
         bendingXX: "bendingXX",
         bendingYY: "bendingYY",
         bendingXY: "bendingXY",
+        displacementX: "displacementX",
+        displacementY: "displacementY",
         displacementZ: "displacementZ",
       },
       label: "Shell results",

@@ -1,10 +1,14 @@
-import { subtract, divide, add, multiply, cross, norm } from "mathjs";
-import { Node, Element, NodeInputs, ElementInputs } from "awatif-fem";
+import { subtract, add, cross, norm } from "mathjs";
+import {
+  Node,
+  Element,
+  NodeInputs,
+  ElementInputs,
+  createShellPatchCoupler,
+} from "awatif-fem";
 import { getMesh as getAwatifMesh } from "awatif-mesh";
 import { Building } from "./data-model";
 
-// Todo: Add reference mesh
-// Todo: Optimize how nodes and elements are accumulated
 export function getMesh(
   points: Building["points"]["val"],
   stories: Building["stories"]["val"],
@@ -20,6 +24,8 @@ export function getMesh(
   nodeInputs: NodeInputs;
   elementInputs: ElementInputs;
 } {
+  const shellNodeMergeTolerance = 1e-4;
+
   let nodes: Node[] = [];
   let elements: Element[] = [];
   const nodeInputs: NodeInputs = {
@@ -28,6 +34,7 @@ export function getMesh(
   };
   const elementInputs: ElementInputs = {
     elasticities: new Map(),
+    cltLayups: new Map(),
     thicknesses: new Map(),
     poissonsRatios: new Map(),
     shearModuli: new Map(),
@@ -40,22 +47,23 @@ export function getMesh(
     number,
     Map<number, number>
   > = new Map(
-    stories.map((_, story) => [Number(story), new Map() as Map<number, number>])
+    stories.map((_, story) => [story, new Map() as Map<number, number>])
   );
   const topColumnNodesIndicesByStory: Map<
     number,
     Map<number, number>
   > = new Map(
-    stories.map((_, story) => [Number(story), new Map() as Map<number, number>])
+    stories.map((_, story) => [story, new Map() as Map<number, number>])
   );
+  const shellNodeCoupler = createShellPatchCoupler(shellNodeMergeTolerance);
 
   // slabs
-  for (let story in stories) {
+  for (let story = 0; story < stories.length; story++) {
     // slab geometry
     const pointIndex = stories[story];
     const elevation = points[pointIndex][2];
 
-    const slabsIndices: number[] = slabsByStory.get(Number(story));
+    const slabsIndices: number[] = slabsByStory.get(story) ?? [];
     slabsIndices.forEach((slabIndex) => {
       const slab: number[] = slabs[slabIndex];
       const boundaryPoints = slab.map((s) => points[s] as Node);
@@ -72,10 +80,10 @@ export function getMesh(
         );
       };
 
-      const columnPointsCurrent = getColumnPoints(Number(story));
+      const columnPointsCurrent = getColumnPoints(story);
       const columnPointsNext =
-        Number(story) < stories.length - 1
-          ? getColumnPoints(Number(story) + 1)
+        story < stories.length - 1
+          ? getColumnPoints(story + 1)
           : (new Map() as Map<number, Node>);
 
       // Merge current and next story column points
@@ -84,31 +92,25 @@ export function getMesh(
         ...columnPointsNext,
       ]);
 
-      const meshSize =
-        slabData.get(slabIndex)["analysisInput"]?.meshSize ?? 0.5;
+      const meshSize = slabData.get(slabIndex)?.analysisInput?.meshSize ?? 0.5;
       const slabPoints = getUniqueSlabPoints(
         boundaryPoints,
         Array.from(columnPoints.values())
-      ); // more stable
+      );
       const { nodes: meshNodes, elements: meshElements } = getAwatifMesh({
         points: slabPoints,
         polygon,
         maxMeshSize: meshSize,
       });
-
-      const numExistingNodes = nodes.length;
-      const numExistingElements = elements.length;
-
-      const slabElements = meshElements.map((e) =>
-        e.map((i) => i + numExistingNodes)
-      );
-      const slabsNodesIndices = meshNodes.map((_, i) => i + numExistingNodes);
-      const slabElementsIndices = meshElements.map(
-        (_, i) => i + numExistingElements
-      );
-
-      nodes = [...nodes, ...convertMeshNodesTo3d(meshNodes, elevation)];
-      elements = [...elements, ...slabElements];
+      const {
+        nodeMap: slabsNodesIndices,
+        elementMap: slabElementsIndices,
+        elementsGlobal: slabElements,
+      } = shellNodeCoupler.appendPatch({
+        nodes: convertMeshNodesTo3d(meshNodes, elevation),
+        elements: meshElements,
+      });
+      ({ nodes, elements } = shellNodeCoupler.getMesh());
 
       // get intersection of column points and slab points as indices
       for (const columnIndex of columnPointsCurrent.keys()) {
@@ -121,7 +123,7 @@ export function getMesh(
         );
         if (columnNodeIndex !== null) {
           topColumnNodesIndicesByStory
-            .get(Number(story))
+            .get(story)
             .set(columnIndex, columnNodeIndex);
         }
       }
@@ -136,7 +138,7 @@ export function getMesh(
         );
         if (columnNodeIndex !== null) {
           bottomColumnNodesIndicesByStory
-            .get(Number(story) + 1)
+            .get(story + 1)
             .set(columnIndex, columnNodeIndex);
         }
       }
@@ -146,21 +148,20 @@ export function getMesh(
       const slabElasticity = slabInput?.material?.elasticity ?? 1;
       const slabThickness = slabInput?.thickness ?? 1;
       const slabPoissonsRatio = slabInput?.material?.poissonsRatio ?? 1;
+      const slabCltLayup = slabInput?.cltLayup;
 
       slabElementsIndices.forEach((elementIndex) => {
-        elementInputs.elasticities.set(elementIndex, slabElasticity);
-        elementInputs.thicknesses.set(elementIndex, slabThickness);
-        elementInputs.poissonsRatios.set(elementIndex, slabPoissonsRatio);
+        if (slabCltLayup) {
+          elementInputs.cltLayups?.set(elementIndex, slabCltLayup);
+        } else {
+          elementInputs.elasticities.set(elementIndex, slabElasticity);
+          elementInputs.thicknesses.set(elementIndex, slabThickness);
+          elementInputs.poissonsRatios.set(elementIndex, slabPoissonsRatio);
+        }
       });
 
-      // Todo: Reference
-      const slabMeshReference = {
-        nodesIndices: slabsNodesIndices,
-        elementsIndices: slabElementsIndices,
-      };
-
       // slab loads
-      const areaLoad = slabData.get(slabIndex)["analysisInput"]?.areaLoad ?? 0;
+      const areaLoad = slabData.get(slabIndex)?.analysisInput?.areaLoad ?? 0;
       nodeInputs.loads = getNodalLoadsFromSlabAreaLoad(
         nodes,
         slabElements,
@@ -173,7 +174,7 @@ export function getMesh(
 
   // columns
   for (let story = 0; story < stories.length; story++) {
-    const columnsIndices: number[] = columnsByStory.get(story);
+    const columnsIndices: number[] = columnsByStory.get(story) ?? [];
     columnsIndices.forEach((columnIndex) => {
       // add bottom nodes for first story columns
       if (story === 0) {
@@ -191,6 +192,14 @@ export function getMesh(
       const columnBottomNodeIndex = bottomColumnNodesIndicesByStory
         .get(story)
         .get(columnIndex);
+      if (
+        columnTopNodeIndex === undefined ||
+        columnBottomNodeIndex === undefined
+      ) {
+        throw new Error(
+          `Column ${columnIndex} at story ${story} is not fully connected to slab nodes.`
+        );
+      }
       const { nodes: intermediateColumnNodes, elements: columnElements } =
         meshMember(nodes, columnTopNodeIndex, columnBottomNodeIndex);
 
@@ -211,31 +220,17 @@ export function getMesh(
 
       const lastIndex = elements.length;
       columnElements.forEach((_, elementIndex) => {
-        elementInputs.elasticities.set(lastIndex + elementIndex, 1e6);
-        elementInputs.shearModuli.set(lastIndex + elementIndex, 1e6);
-        elementInputs.areas.set(lastIndex + elementIndex, 1e6);
-        elementInputs.torsionalConstants.set(lastIndex + elementIndex, 1e6);
-        elementInputs.momentsOfInertiaY.set(lastIndex + elementIndex, 1e6);
-        elementInputs.momentsOfInertiaZ.set(lastIndex + elementIndex, 1e6);
+        const currentElementIndex = lastIndex + elementIndex;
+        elementInputs.elasticities.set(currentElementIndex, 1e6);
+        elementInputs.shearModuli.set(currentElementIndex, 1e6);
+        elementInputs.areas.set(currentElementIndex, 1e6);
+        elementInputs.torsionalConstants.set(currentElementIndex, 1e6);
+        elementInputs.momentsOfInertiaY.set(currentElementIndex, 1e6);
+        elementInputs.momentsOfInertiaZ.set(currentElementIndex, 1e6);
       });
 
-      nodes = [...nodes, ...intermediateColumnNodes];
-      elements = [...elements, ...columnElements];
-
-      // Todo: Reference
-      const numExistingNodes = nodes.length;
-      const numExistingElements = elements.length;
-      const columnNodesIndices = intermediateColumnNodes.map(
-        (_, i) => i + numExistingNodes
-      );
-      const columnElementsIndices = columnElements.map(
-        (_, i) => i + numExistingElements
-      );
-
-      const columnMeshReference = {
-        nodesIndices: columnNodesIndices,
-        elementsIndices: columnElementsIndices,
-      };
+      nodes.push(...intermediateColumnNodes);
+      elements.push(...columnElements);
     });
   }
 
@@ -250,43 +245,14 @@ function convertMeshNodesTo3d(nodes: Node[], elevation: number): Node[] {
 function meshMember(
   existingNodes: Node[],
   node1Index: number,
-  node2Index?: number,
-  meshDensity: number = 1
+  node2Index?: number
 ): { nodes: Node[]; elements: Element[] } {
   const node1 = existingNodes[node1Index];
   const node2 = existingNodes[node2Index];
 
   if (!node1 || !node2) return { nodes: [], elements: [] };
 
-  let nodes: Node[] = [];
-  let elements: Element[] = [];
-
-  const vecMember = subtract(node2, node1);
-  const vecSegment = divide(vecMember, meshDensity);
-
-  // Add intermediate nodes
-  for (let i = 0; i < meshDensity - 1; i++) {
-    nodes.push(add(node1, multiply(vecSegment, i + 1)) as Node);
-  }
-
-  // Add elements
-  if (meshDensity == 1) {
-    elements.push([node1Index, node2Index]);
-  } else {
-    let newNodeIndex = existingNodes.length;
-    for (let i = 0; i < meshDensity; i++) {
-      if (i == 0) {
-        elements.push([node1Index, newNodeIndex]);
-      } else if (i == meshDensity - 1) {
-        elements.push([newNodeIndex, node2Index]);
-      } else {
-        elements.push([newNodeIndex, newNodeIndex + 1]);
-        newNodeIndex++;
-      }
-    }
-  }
-
-  return { nodes, elements };
+  return { nodes: [], elements: [[node1Index, node2Index]] };
 }
 
 function getNodalLoadsFromSlabAreaLoad(
@@ -296,12 +262,14 @@ function getNodalLoadsFromSlabAreaLoad(
   areaLoad: number,
   slabsNodeIndices: number[]
 ): NodeInputs["loads"] {
+  const slabNodeSet = new Set(slabsNodeIndices);
+
   storySlabElements.forEach((e) => {
     const [n1, n2, n3] = e.map((i) => nodes[i]);
     const elementArea = getTriangleArea(n1, n2, n3);
     const nodalLoad = (areaLoad * elementArea) / 3;
     e.forEach((n) => {
-      if (slabsNodeIndices.includes(n)) {
+      if (slabNodeSet.has(n)) {
         const loadVector = [0, 0, nodalLoad, 0, 0, 0] as [
           number,
           number,
@@ -317,13 +285,13 @@ function getNodalLoadsFromSlabAreaLoad(
   });
 
   return loads;
+}
 
-  function getTriangleArea(n1: Node, n2: Node, n3: Node): number {
-    const a = subtract(n2, n1);
-    const b = subtract(n3, n1);
+function getTriangleArea(n1: Node, n2: Node, n3: Node): number {
+  const a = subtract(n2, n1);
+  const b = subtract(n3, n1);
 
-    return (norm(cross(a, b)) as number) / 2;
-  }
+  return (norm(cross(a, b)) as number) / 2;
 }
 
 // Utils
@@ -339,8 +307,8 @@ function getUniqueSlabPoints(
   for (const pt of columnPts) {
     let isDuplicate = false;
 
-    // check against all boundary points
-    for (const b of boundaryPts) {
+    // Check against points already added to slab points (boundary + accepted columns).
+    for (const b of slabPts) {
       const dx = pt[0] - b[0];
       const dy = pt[1] - b[1];
       const dz = pt[2] - b[2];
@@ -363,21 +331,26 @@ function getColumnNodeIndex(
   slabNodeIndices: number[],
   columnPoint: Node,
   elevation: number,
-  tolerance: number = 1e-1
+  tolerance: number = 1e-2
 ): number | null {
   const columnNode: Node = [columnPoint[0], columnPoint[1], elevation];
+  let closestNodeIndex: number | null = null;
+  let minDistanceSquared = Number.POSITIVE_INFINITY;
 
   for (const i of slabNodeIndices) {
     const node = nodes[i];
     const dx = node[0] - columnNode[0];
     const dy = node[1] - columnNode[1];
     const dz = node[2] - columnNode[2];
-    if (dx * dx + dy * dy + dz * dz <= tolerance * tolerance) {
-      return i;
+    const distanceSquared = dx * dx + dy * dy + dz * dz;
+
+    if (distanceSquared < minDistanceSquared) {
+      minDistanceSquared = distanceSquared;
+      closestNodeIndex = i;
     }
   }
 
-  return null;
+  return minDistanceSquared <= tolerance * tolerance ? closestNodeIndex : null;
 }
 
 /**
