@@ -18,21 +18,6 @@ export type ImperfectionsParams = {
   direction: string; // "positive" | "negative" (X-axis)
 };
 
-export function computeAlphaH(height: number): number {
-  return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
-}
-
-export function computeAlphaM(memberCount: number): number {
-  return Math.sqrt(0.5 * (1 + 1 / memberCount));
-}
-
-export function computeThetaI(params: ImperfectionsParams): number {
-  const theta0 = Number(params.theta0);
-  const h = Number(params.height);
-  const m = Number(params.memberCount);
-  return theta0 * computeAlphaH(h) * computeAlphaM(m);
-}
-
 export const imperfections: {
   name: string;
   defaultParams: ImperfectionsParams;
@@ -46,8 +31,8 @@ export const imperfections: {
   defaultParams: {
     globalInclination: true,
     theta0: "0.005",
-    height: "4",
-    memberCount: "1",
+    height: "5",
+    memberCount: "2",
     localBow: false,
     bowRatioDenominator: "400",
     direction: "positive",
@@ -182,3 +167,19 @@ export const imperfections: {
     `;
   },
 };
+
+// Helpers
+export function computeAlphaH(height: number): number {
+  return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
+}
+
+export function computeAlphaM(memberCount: number): number {
+  return Math.sqrt(0.5 * (1 + 1 / memberCount));
+}
+
+export function computeThetaI(params: ImperfectionsParams): number {
+  const theta0 = Number(params.theta0);
+  const h = Number(params.height);
+  const m = Number(params.memberCount);
+  return theta0 * computeAlphaH(h) * computeAlphaM(m);
+}
