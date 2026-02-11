@@ -169,7 +169,6 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,
-      internalForces: mesh.internalForces.val,
     });
 
     // Positions events
