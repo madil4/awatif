@@ -11,7 +11,7 @@ import {
 import { Node, Element } from "awatif-fem";
 import triangle from "triangle-wasm";
 
-// Loading the wasm file (UI blocking)
+// Load `triangle` wasm once at module load.
 // @ts-ignore
 import triangleWasmUrl from "./assets/triangle.wasm?url";
 // @ts-ignore
@@ -33,14 +33,16 @@ export function getMesh({
   if (points.length < 3 || polygon.length < 3)
     return { nodes: [], elements: [], boundaryIndices: [] };
 
-  const firstThreePoints = points.slice(0, 3);
-  if (getSignedArea(polygon, points) > 0) firstThreePoints.reverse(); // Ensure counter-clockwise order
+  const firstThreePoints = getFirstThreeNonCollinearPoints(points, polygon);
+  const origin = points[polygon[0]];
 
-  const transformationMatrix = getTransformationMatrix(firstThreePoints);
-
-  const points2D = points
-    .map((p) => multiply(transpose(transformationMatrix), p))
-    .map((p) => [p[0], p[1]]);
+  let transformationMatrix = getTransformationMatrix(firstThreePoints);
+  let points2D = projectPointsTo2D(points, origin, transformationMatrix);
+  if (getSignedArea(polygon, points2D) > 0) {
+    firstThreePoints.reverse(); // Ensure clockwise order for triangle input
+    transformationMatrix = getTransformationMatrix(firstThreePoints);
+    points2D = projectPointsTo2D(points, origin, transformationMatrix);
+  }
 
   // Triangulate using triangle.js
   const triInputs = triangle.makeIO({
@@ -58,9 +60,10 @@ export function getMesh({
     triOutputs.pointmarkerlist
   );
 
-  const nodes = meshNodes.map(
-    (n) => multiply(transformationMatrix, [n[0], n[1], 0]) as Node
-  );
+  const nodes = meshNodes.map((n) => {
+    const p = multiply(transformationMatrix, [n[0], n[1], 0]) as MathCollection;
+    return [origin[0] + p[0], origin[1] + p[1], origin[2] + p[2]] as Node;
+  });
   const elements = toElements(triOutputs.trianglelist);
 
   // Free the memory
@@ -75,6 +78,41 @@ export function getMesh({
 }
 
 // Utils
+function getFirstThreeNonCollinearPoints(
+  points: Node[],
+  polygon: number[]
+): Node[] {
+  const ids = polygon.length ? polygon : points.map((_, i) => i);
+  for (let i = 0; i < ids.length - 2; i++) {
+    for (let j = i + 1; j < ids.length - 1; j++) {
+      for (let k = j + 1; k < ids.length; k++) {
+        const p1 = points[ids[i]];
+        const p2 = points[ids[j]];
+        const p3 = points[ids[k]];
+        const v1 = subtract(p2, p1);
+        const v2 = subtract(p3, p1);
+        const n = cross(v1, v2);
+        if ((norm(n) as number) > 1e-12) return [p1, p2, p3];
+      }
+    }
+  }
+  return points.slice(0, 3);
+}
+
+function projectPointsTo2D(
+  points: Node[],
+  origin: Node,
+  transformationMatrix: number[][]
+): number[][] {
+  return points.map((p) => {
+    const q = multiply(
+      transpose(transformationMatrix),
+      subtract(p, origin)
+    ) as MathCollection;
+    return [q[0], q[1]];
+  });
+}
+
 function toSegments(polygon: number[]): number[] {
   const segments: number[] = [];
 
@@ -86,7 +124,7 @@ function toSegments(polygon: number[]): number[] {
 }
 
 function toElements(trianglelist: number[]): number[][] {
-  const elements = [];
+  const elements: number[][] = [];
 
   for (let i = 0; i < trianglelist.length; i += 3) {
     elements.push([trianglelist[i], trianglelist[i + 1], trianglelist[i + 2]]);
@@ -102,8 +140,8 @@ function toNodesAndBoundaryIndices( // combine Node and boundaryIndices to loop 
   nodes: number[][];
   boundaryIndices: number[];
 } {
-  const nodes = [];
-  const boundaryIndices = [];
+  const nodes: number[][] = [];
+  const boundaryIndices: number[] = [];
 
   for (let i = 0; i < pointlist.length; i += 2) {
     nodes.push([pointlist[i], pointlist[i + 1]]);
@@ -119,7 +157,8 @@ function getTransformationMatrix([n1, n2, n3]: Node[]): number[][] {
   const v2 = subtract(n3, n1);
 
   const x = divide(v1, norm(v1)) as MathCollection;
-  let z = divide(cross(v1, v2), norm(cross(v1, v2))) as MathCollection;
+  const normal = cross(v1, v2);
+  let z = divide(normal, norm(normal)) as MathCollection;
 
   // Fix z-direction to align with reference (e.g., global Z+)
   const referenceZ: Node = [0, 0, 1];

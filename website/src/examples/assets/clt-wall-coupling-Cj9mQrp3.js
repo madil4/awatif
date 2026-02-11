@@ -1,5 +1,5 @@
 import { v as m, g as G } from "./styles-Dc2qaz2G.js";
-import { c as O } from "./coupling-bgRfBz9p.js";
+import { a as O } from "./coupling-CX7jvXLk.js";
 import { d as k, __tla as __tla_0 } from "./deformCpp-CgkBkVyO.js";
 Promise.all([
   (() => {

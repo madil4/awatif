@@ -1,7 +1,7 @@
 import { v as a, g as N } from "./styles-Dc2qaz2G.js";
 import { a as k } from "./analyze-Cqn-kN2k.js";
 import { d as G, __tla as __tla_0 } from "./deformCpp-CgkBkVyO.js";
-import { g as T, __tla as __tla_1 } from "./getMesh-DmUdekin.js";
+import { g as T, __tla as __tla_1 } from "./getMesh-D74EaHsB.js";
 import "./getLocalStiffnessMatrix-CZ_j2Fhc.js";
 import "./complex-i8qiIvCl.js";
 import "./__vite-browser-external-D7Ct-6yo.js";
@@ -19,23 +19,23 @@ Promise.all([
     }
   })()
 ]).then(async () => {
-  const { div: g } = a.tags, d = 10, z = 2.45, m = {
+  const { div: g } = a.tags, d = 7, f = 5, m = {
     nodes: a.state([]),
     elements: a.state([]),
     nodeInputs: a.state({}),
     elementInputs: a.state({}),
     deformOutputs: a.state({}),
     analyzeOutputs: a.state({})
-  }, S = a.state("SLS"), f = {};
-  let y;
-  const v = a.state(0.36), h = a.state(4.335), x = a.state(1.589), L = a.state(0.8), A = E();
+  }, v = a.state("ULS"), y = {};
+  let S;
+  const h = a.state(0.36), x = a.state(4.335), L = a.state(1.589), M = a.state(0.8), A = E();
   a.derive(() => {
-    v.val, h.val, x.val, L.val, w();
+    h.val, x.val, L.val, M.val, w();
   });
   a.derive(() => {
-    S.val, I();
+    v.val, b();
   });
-  R();
+  U();
   function w() {
     const { nodes: e, elements: t } = T({
       points: [
@@ -51,12 +51,12 @@ Promise.all([
         ],
         [
           d,
-          z,
+          f,
           0
         ],
         [
           0,
-          z,
+          f,
           0
         ]
       ],
@@ -66,34 +66,34 @@ Promise.all([
         2,
         3
       ],
-      maxMeshSize: v.val
+      maxMeshSize: h.val
     }), s = C(e);
-    f.ULS = M({
-      nodes: e,
-      elements: t,
-      supports: s,
-      q: h.val,
-      stiffnessReduction: 1
-    }), f.SLS = M({
+    y.ULS = z({
       nodes: e,
       elements: t,
       supports: s,
       q: x.val,
-      stiffnessReduction: 1 + L.val
-    }), y = s, m.nodes.val = e, m.elements.val = t, I();
+      stiffnessReduction: 1
+    }), y.SLS = z({
+      nodes: e,
+      elements: t,
+      supports: s,
+      q: L.val,
+      stiffnessReduction: 1 + M.val
+    }), S = s, m.nodes.val = e, m.elements.val = t, b();
   }
-  function I() {
-    const e = f[S.val];
-    !e || !y || (m.nodeInputs.val = {
-      supports: y,
+  function b() {
+    const e = y[v.val];
+    !e || !S || (m.nodeInputs.val = {
+      supports: S,
       loads: e.loads
     }, m.elementInputs.val = e.elementInputs, m.deformOutputs.val = {
       deformations: e.deformations,
       reactions: e.reactions
     }, m.analyzeOutputs.val = e.analyze);
   }
-  function M({ nodes: e, elements: t, supports: s, q: n, stiffnessReduction: o }) {
-    const r = O(e, t), p = new Map(e.map((b, i) => [
+  function z({ nodes: e, elements: t, supports: s, q: n, stiffnessReduction: o }) {
+    const r = O(e, t), p = new Map(e.map((I, i) => [
       i,
       [
         0,
@@ -104,7 +104,7 @@ Promise.all([
         0
       ]
     ])), u = {
-      cltLayups: new Map(t.map((b, i) => [
+      cltLayups: new Map(t.map((I, i) => [
         i,
         q(A, o)
       ]))
@@ -143,8 +143,8 @@ Promise.all([
         thickness: o * 1e-3,
         thetaDeg: n[r],
         Ex: 11e3 * 1e3,
-        Ey: 0.1 * 1e3,
-        nuXY: 0,
+        Ey: 370 * 1e3,
+        nuXY: 0.2,
         Gxy: 690 * 1e3,
         Gxz: 690 * 1e3,
         Gyz: 69 * 1e3
@@ -173,7 +173,7 @@ Promise.all([
     return new Map(e.map((t, s) => ({
       node: t,
       i: s
-    })).filter(({ node: t }) => Math.abs(t[0]) < 1e-6 || Math.abs(t[0] - d) < 1e-6).map(({ i: t }) => [
+    })).filter(({ node: t }) => Math.abs(t[0]) < 1e-6 || Math.abs(t[0] - d) < 1e-6 || Math.abs(t[1]) < 1e-6 || Math.abs(t[1] - f) < 1e-6).map(({ i: t }) => [
       t,
       [
         true,
@@ -194,7 +194,7 @@ Promise.all([
     }
     return s;
   }
-  function R() {
+  function U() {
     const e = g({
       id: "page"
     });
@@ -222,7 +222,7 @@ Promise.all([
           {
             folder: "Analysis Inputs",
             label: "Load case",
-            state: S,
+            state: v,
             options: {
               ULS: "ULS",
               SLS: "SLS"
@@ -233,22 +233,14 @@ Promise.all([
           {
             folder: "Analysis Model",
             label: "Max mesh size [m]",
-            state: v,
+            state: h,
             min: 0.01,
-            max: 1.5,
+            max: 1.2,
             step: 0.01
           },
           {
             folder: "Analysis Inputs",
             label: "q ULS [kN/m2]",
-            state: h,
-            min: -50,
-            max: 50,
-            step: 0.01
-          },
-          {
-            folder: "Analysis Inputs",
-            label: "q SLS [kN/m2]",
             state: x,
             min: -50,
             max: 50,
@@ -256,8 +248,16 @@ Promise.all([
           },
           {
             folder: "Analysis Inputs",
-            label: "kdef",
+            label: "q SLS [kN/m2]",
             state: L,
+            min: -50,
+            max: 50,
+            step: 0.01
+          },
+          {
+            folder: "Analysis Inputs",
+            label: "kdef",
+            state: M,
             min: 0,
             step: 0.01
           }

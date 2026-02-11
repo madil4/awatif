@@ -64,6 +64,6 @@ function f(n, e) {
   return [Math.floor(n[0] / e), Math.floor(n[1] / e), Math.floor(n[2] / e)];
 }
 export {
-  M as a,
-  w as c
+  w as a,
+  M as c
 };
