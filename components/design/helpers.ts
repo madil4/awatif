@@ -24,3 +24,12 @@ export function getMaxAxialForce(lineElementForces?: LineElementForces) {
   }
   return maxN;
 }
+
+export function getMaxMoment(lineElementForces?: LineElementForces) {
+  const elementForces = lineElementForces?.elementForces || [];
+  let maxMz = 0;
+  for (const forces of elementForces) {
+    maxMz = Math.max(maxMz, Math.abs(forces.Mz[0]), Math.abs(forces.Mz[1]));
+  }
+  return maxMz;
+}
