@@ -1,11 +1,10 @@
-export type { Geometry, Mesh, Components } from "./data-model";
+export type { Geometry, Mesh, Components, ComponentsType } from "./data-model";
+
 export type {
   Design,
   LineElementForces,
   DesignTemplate,
 } from "./design/data-model";
-export { ComponentsType } from "./data-model";
-export { templates } from "./templates";
 
 export { getMesh } from "./mesh/getMesh";
 export { getLoads } from "./loads/getLoads";
@@ -13,9 +12,11 @@ export { getSupports } from "./supports/getSupports";
 export { getElementsProps } from "./design/getElementsProps";
 export { getReport } from "./design/getReport";
 export { getDesigns } from "./design/getDesigns";
+export { getPositionsAndForces } from "./analysis/l-solver/getPositionsAndForces";
 export {
   getLineEndForces,
   getMaxAxialForce,
   getMaxMoment,
 } from "./design/helpers";
-export { getPositionsAndForces } from "./analysis/l-solver/getPositionsAndForces";
+
+export { templates } from "./templates";

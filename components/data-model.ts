@@ -56,6 +56,9 @@ export type Mesh = {
   >;
 };
 
+export type Nodes = NonNullable<Mesh["nodes"]>["val"];
+export type Elements = NonNullable<Mesh["elements"]>["val"];
+
 // Components
 export enum ComponentsType {
   MESH,
@@ -65,14 +68,14 @@ export enum ComponentsType {
   DESIGN,
 }
 
-export type Components = State<Map<ComponentsType, Component[]>>;
-
-type Component = {
-  name: string;
-  templateId: string;
-  geometry: number[];
-  params?: Record<string, unknown>;
-};
-
-export type Nodes = NonNullable<Mesh["nodes"]>["val"];
-export type Elements = NonNullable<Mesh["elements"]>["val"];
+export type Components = State<
+  Map<
+    ComponentsType,
+    {
+      name: string;
+      templateId: string;
+      geometry: number[];
+      params?: Record<string, unknown>;
+    }[]
+  >
+>;
