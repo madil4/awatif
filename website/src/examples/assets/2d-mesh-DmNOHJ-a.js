@@ -1,5 +1,5 @@
 import { v as e, g as n } from "./styles-Dc2qaz2G.js";
-import { g as r } from "./getParameters-DCHP2-il.js";
+import { g as r } from "./getParameters-CW47FUlS.js";
 import { g as i } from "./getToolbar-bwrSjPIY.js";
 import { g as l, __tla as __tla_0 } from "./getMesh-D74EaHsB.js";
 import "./__vite-browser-external-D7Ct-6yo.js";

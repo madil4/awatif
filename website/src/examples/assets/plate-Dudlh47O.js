@@ -1,7 +1,7 @@
 import { v as t, g as p } from "./styles-Dc2qaz2G.js";
 import { a as i } from "./analyze-Cqn-kN2k.js";
 import { d as u, __tla as __tla_0 } from "./deformCpp-CgkBkVyO.js";
-import { g as r } from "./getParameters-DCHP2-il.js";
+import { g as r } from "./getParameters-CW47FUlS.js";
 import { g as d } from "./getToolbar-bwrSjPIY.js";
 import { g as v, __tla as __tla_1 } from "./getMesh-D74EaHsB.js";
 import "./getLocalStiffnessMatrix-CZ_j2Fhc.js";

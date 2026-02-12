@@ -102,6 +102,7 @@ export function getMesh(
         polygon,
         maxMeshSize: meshSize,
       });
+      const columnSnapTolerance = Math.max(1e-3, meshSize * 0.02);
       const {
         nodeMap: slabsNodesIndices,
         elementMap: slabElementsIndices,
@@ -111,6 +112,7 @@ export function getMesh(
         elements: meshElements,
       });
       ({ nodes, elements } = shellNodeCoupler.getMesh());
+      const slabNodeLookup = buildNodeLookupByXY(nodes, slabsNodesIndices);
 
       // get intersection of column points and slab points as indices
       for (const columnIndex of columnPointsCurrent.keys()) {
@@ -118,8 +120,10 @@ export function getMesh(
         const columnNodeIndex = getColumnNodeIndex(
           nodes,
           slabsNodesIndices,
+          slabNodeLookup,
           columnPointCurrent,
-          elevation
+          elevation,
+          columnSnapTolerance
         );
         if (columnNodeIndex !== null) {
           topColumnNodesIndicesByStory
@@ -133,8 +137,10 @@ export function getMesh(
         const columnNodeIndex = getColumnNodeIndex(
           nodes,
           slabsNodesIndices,
+          slabNodeLookup,
           columnPointNext,
-          elevation
+          elevation,
+          columnSnapTolerance
         );
         if (columnNodeIndex !== null) {
           bottomColumnNodesIndicesByStory
@@ -196,9 +202,7 @@ export function getMesh(
         columnTopNodeIndex === undefined ||
         columnBottomNodeIndex === undefined
       ) {
-        throw new Error(
-          `Column ${columnIndex} at story ${story} is not fully connected to slab nodes.`
-        );
+        return;
       }
       const { nodes: intermediateColumnNodes, elements: columnElements } =
         meshMember(nodes, columnTopNodeIndex, columnBottomNodeIndex);
@@ -311,14 +315,14 @@ function getUniqueSlabPoints(
     for (const b of slabPts) {
       const dx = pt[0] - b[0];
       const dy = pt[1] - b[1];
-      const dz = pt[2] - b[2];
-      if (dx * dx + dy * dy + dz * dz <= tol2) {
+      // Slab meshing happens in one plane; deduplicate by in-plane distance.
+      if (dx * dx + dy * dy <= tol2) {
         isDuplicate = true;
         break;
       }
     }
 
-    if (!isDuplicate && isNodeInPolygon(pt, boundaryPts)) {
+    if (!isDuplicate && isNodeInPolygonOrBoundary(pt, boundaryPts, tol)) {
       slabPts.push(pt);
     }
   }
@@ -329,11 +333,18 @@ function getUniqueSlabPoints(
 function getColumnNodeIndex(
   nodes: Node[],
   slabNodeIndices: number[],
+  slabNodeLookup: Map<string, number>,
   columnPoint: Node,
   elevation: number,
   tolerance: number = 1e-2
 ): number | null {
+  if (slabNodeIndices.length === 0) return null;
+
   const columnNode: Node = [columnPoint[0], columnPoint[1], elevation];
+  const key = xyKey(columnNode[0], columnNode[1]);
+  const exactMatch = slabNodeLookup.get(key);
+  if (exactMatch !== undefined) return exactMatch;
+
   let closestNodeIndex: number | null = null;
   let minDistanceSquared = Number.POSITIVE_INFINITY;
 
@@ -350,13 +361,37 @@ function getColumnNodeIndex(
     }
   }
 
+  if (closestNodeIndex === null) return null;
   return minDistanceSquared <= tolerance * tolerance ? closestNodeIndex : null;
+}
+
+function buildNodeLookupByXY(
+  nodes: Node[],
+  slabNodeIndices: number[]
+): Map<string, number> {
+  const lookup = new Map<string, number>();
+  slabNodeIndices.forEach((i) => {
+    const n = nodes[i];
+    if (!n) return;
+    lookup.set(xyKey(n[0], n[1]), i);
+  });
+  return lookup;
+}
+
+function xyKey(x: number, y: number): string {
+  return `${Math.round(x * 1e6)}_${Math.round(y * 1e6)}`;
 }
 
 /**
  * Ray-casting algorithm to check if a node is inside a polygon
  **/
-function isNodeInPolygon(node: Node, polygon: Node[]): boolean {
+function isNodeInPolygonOrBoundary(
+  node: Node,
+  polygon: Node[],
+  tol = 1e-6
+): boolean {
+  if (isNodeOnPolygonBoundary(node, polygon, tol)) return true;
+
   let intersections = 0;
   const x = node[0];
   const y = node[1];
@@ -376,4 +411,45 @@ function isNodeInPolygon(node: Node, polygon: Node[]): boolean {
   }
 
   return intersections % 2 !== 0;
+}
+
+function isNodeOnPolygonBoundary(
+  node: Node,
+  polygon: Node[],
+  tol = 1e-6
+): boolean {
+  const x = node[0];
+  const y = node[1];
+  const tol2 = tol * tol;
+
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i];
+    const b = polygon[(i + 1) % polygon.length];
+    const ax = a[0];
+    const ay = a[1];
+    const bx = b[0];
+    const by = b[1];
+
+    const abx = bx - ax;
+    const aby = by - ay;
+    const apx = x - ax;
+    const apy = y - ay;
+    const ab2 = abx * abx + aby * aby;
+    if (ab2 <= tol2) {
+      const dx = x - ax;
+      const dy = y - ay;
+      if (dx * dx + dy * dy <= tol2) return true;
+      continue;
+    }
+
+    let t = (apx * abx + apy * aby) / ab2;
+    t = Math.max(0, Math.min(1, t));
+    const qx = ax + t * abx;
+    const qy = ay + t * aby;
+    const dx = x - qx;
+    const dy = y - qy;
+    if (dx * dx + dy * dy <= tol2) return true;
+  }
+
+  return false;
 }

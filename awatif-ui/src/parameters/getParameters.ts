@@ -27,6 +27,10 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
   folders.set("root", pane);
 
   Object.entries(parameters).forEach(([key, parameter]) => {
+    const min = parameter.min ?? 0;
+    const max = parameter.max ?? 50;
+    const step = parameter.step ?? 0.5;
+
     parameter.folder &&
       !folders.get(parameter.folder) &&
       folders.set(
@@ -35,9 +39,9 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
       );
 
     folders.get(parameter.folder ?? "root")?.addBinding(tweakParameters, key, {
-      min: parameter.min || 0,
-      max: parameter.max || 50,
-      step: parameter.step || 0.5,
+      min,
+      max,
+      step,
       label: parameter.label || key,
     });
   });
@@ -45,7 +49,21 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
   // Events: on parameters change update the state
   pane.on("change", (e) => {
     // @ts-ignore
-    parameters[e.target.key].value.val = e.value;
+    const key = e.target.key as string | undefined;
+    if (!key || !parameters[key]) return;
+
+    const parameter = parameters[key];
+    const min = parameter.min;
+    const max = parameter.max;
+
+    const numericValue = Number(e.value);
+    if (!Number.isFinite(numericValue)) return;
+
+    let nextValue = numericValue;
+    if (typeof min === "number") nextValue = Math.max(min, nextValue);
+    if (typeof max === "number") nextValue = Math.min(max, nextValue);
+
+    parameter.value.val = nextValue;
   });
 
   return parametersElm;

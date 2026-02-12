@@ -1,7 +1,7 @@
 import { x as s, v as e, g as w } from "./styles-Dc2qaz2G.js";
 import { a as $ } from "./analyze-Cqn-kN2k.js";
 import { d as x, __tla as __tla_0 } from "./deformCpp-CgkBkVyO.js";
-import { g as y } from "./getParameters-DCHP2-il.js";
+import { g as y } from "./getParameters-CW47FUlS.js";
 import { g as z } from "./getToolbar-bwrSjPIY.js";
 import { g as T } from "./getDialog-CtFr1A6T.js";
 import { g as S } from "./getReport-DnJ9dzV2.js";

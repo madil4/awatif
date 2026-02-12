@@ -1,5 +1,5 @@
 import { w as k, v as o, g as x } from "./styles-Dc2qaz2G.js";
-import { g as C } from "./getParameters-DCHP2-il.js";
+import { g as C } from "./getParameters-CW47FUlS.js";
 import { g as P } from "./getToolbar-bwrSjPIY.js";
 function T({ onToolbarClick: t }) {
   const n = document.createElement("div");
