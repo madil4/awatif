@@ -1,7 +1,6 @@
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
-import { State } from "vanjs-core";
-import { TemplateResult } from "lit-html";
+import type { MeshTemplate } from "../data-model";
 
 export type ImperfectionsParams = {
   // Global Inclination — EC2 §5.2(5)
@@ -14,19 +13,10 @@ export type ImperfectionsParams = {
   localBow: boolean;
   bowRatioDenominator: string; // d where e₀ = L/d (default 400)
 
-  // Direction
   direction: string; // "positive" | "negative" (X-axis)
 };
 
-export const imperfections: {
-  name: string;
-  defaultParams: ImperfectionsParams;
-  getParamsTemplate: ({
-    params,
-  }: {
-    params: State<ImperfectionsParams>;
-  }) => TemplateResult;
-} = {
+export const imperfections: MeshTemplate<ImperfectionsParams> = {
   name: "Imperfections",
   defaultParams: {
     globalInclination: true,
@@ -166,14 +156,21 @@ export const imperfections: {
       </div>
     `;
   },
+
+  getMesh: ({ params }) => {
+    return {
+      nodes: [],
+      elements: [],
+    };
+  },
 };
 
 // Helpers
-export function computeAlphaH(height: number): number {
+function computeAlphaH(height: number): number {
   return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
 }
 
-export function computeAlphaM(memberCount: number): number {
+function computeAlphaM(memberCount: number): number {
   return Math.sqrt(0.5 * (1 + 1 / memberCount));
 }
 
