@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Mesh, ElementForces } from "@awatif/components";
+import { Mesh } from "@awatif/components";
 import { getText } from "../text/getText";
 
 export type LineResultsDisplay = "None" | "Normals" | "Bendings" | "Shears";
@@ -46,7 +46,7 @@ export function getLineResults({
 
     // Find maximum force value for normalization
     let maxForceValue = 0;
-    internalForces.forEach((forces: ElementForces) => {
+    internalForces.forEach((forces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V : never) => {
       let values: [number, number] = [0, 0];
       switch (mode) {
         case "Normals":
@@ -71,7 +71,7 @@ export function getLineResults({
     const targetMaxWidth = 1 * s;
     const scale = maxForceValue > 0 ? targetMaxWidth / maxForceValue : 0.05;
 
-    internalForces.forEach((forces: ElementForces, elementIdx: number) => {
+    internalForces.forEach((forces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V : never, elementIdx: number) => {
       const element = elements[elementIdx];
       if (!element || element.length < 2) return;
 
