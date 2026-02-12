@@ -7,10 +7,6 @@
   "type": "module",
   "module": "index.ts",
   "types": "index.ts",
-  "scripts": {
-    "dev": "vite --open mesh/line-mesh/index.html --port 4600",
-    "test": "vitest"
-  },
   "dependencies": {
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.2.1",

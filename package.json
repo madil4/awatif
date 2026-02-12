@@ -7,9 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open --port 4600",
-    "test": "vitest",
     "build": "vite build",
-    "preview": "vite preview --open --port 4600"
+    "preview": "vite preview --open --port 4600",
+    "test": "vitest"
   },
   "engines": {
     "node": ">=22"
@@ -18,11 +18,8 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "vanjs-core": "^1.6.0",
     "@awatif/ui": "*",
-    "@awatif/components": "*"
-  },
-  "workspaces": [
-    "*"
-  ]
+    "@awatif/components": "*",
+    "vanjs-core": "^1.6.0"
+  }
 }
