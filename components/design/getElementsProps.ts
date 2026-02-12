@@ -43,7 +43,7 @@ export function getElementsProps({
   designComponents.forEach((component) => {
     const template = templates
       .get(ComponentsType.DESIGN)
-      ?.get(component.templateId) as DesignTemplate<any>;
+      ?.get(component.templateId) as DesignTemplate<any, any>;
     if (!template) return;
 
     component.geometry.forEach((lineId) => {

@@ -3,13 +3,9 @@ import { TemplateResult } from "lit-html";
 import type { ActiveAnalysis } from "@awatif/ui";
 import type { Mesh } from "../data-model";
 
-export type Design = {
-  utilization: number;
-} & Record<string, any>;
-
 export type DesignTemplate<
   Params extends Record<string, unknown>,
-  TDesign extends Design = Design,
+  Design extends Record<string, any>,
 > = {
   name: string;
   defaultParams: Params;
@@ -43,7 +39,7 @@ export type DesignTemplate<
     design,
   }: {
     params: Params;
-    design?: TDesign;
+    design?: Design;
   }) => TemplateResult;
 
   getDesign?: ({
@@ -58,11 +54,16 @@ export type DesignTemplate<
     length: number;
     activeAnalysis?: ActiveAnalysis["val"];
     imperfections?: Record<string, unknown>;
-  }) => TDesign;
+  }) => Design;
 };
 
 // Forces for a line (all elements that belong to this geometry line)
 export type LineElementForces = {
   elementIndices: number[]; // Element indices that belong to this line
-  elementForces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V[] : never;
+  elementForces: NonNullable<Mesh["internalForces"]["val"]> extends Map<
+    number,
+    infer V
+  >
+    ? V[]
+    : never;
 };
