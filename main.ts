@@ -33,7 +33,7 @@ const geometry: Geometry = {
   points: van.state(
     new Map([
       [1, [5, 2, 0]],
-      [2, [5, 8.2, 0]],
+      [2, [5, 8, 0]],
     ]),
   ),
   lines: van.state(new Map([[1, [1, 2]]])),
@@ -120,7 +120,7 @@ const mesh: Mesh = {
 const display: Display = {
   grid: {
     size: van.state(10),
-    spacing: van.state(0.2),
+    spacing: van.state(0.5),
   },
   geometry: van.state(true),
   mesh: van.state(true),
