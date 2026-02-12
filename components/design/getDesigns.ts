@@ -35,7 +35,9 @@ export const getDesigns = ({
   const lineToImperfections = new Map<number, Record<string, unknown>>();
   for (const mc of meshComponents) {
     if (mc.templateId !== "imperfections") continue;
-    const impTemplate = templates.get(ComponentsType.MESH)?.get("imperfections");
+    const impTemplate = templates
+      .get(ComponentsType.MESH)
+      ?.get("imperfections");
     const impParams = (mc.params ?? impTemplate?.defaultParams) as
       | Record<string, unknown>
       | undefined;

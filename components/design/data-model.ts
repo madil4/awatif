@@ -1,7 +1,7 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
-import { ElementForces } from "../data-model";
 import type { ActiveAnalysis } from "@awatif/ui";
+import type { Mesh } from "../data-model";
 
 export type Design = {
   utilization: number;
@@ -64,5 +64,5 @@ export type DesignTemplate<
 // Forces for a line (all elements that belong to this geometry line)
 export type LineElementForces = {
   elementIndices: number[]; // Element indices that belong to this line
-  elementForces: ElementForces[]; // Forces for each element (same order as elementIndices)
+  elementForces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V[] : never;
 };

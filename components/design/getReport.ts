@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { DesignTemplate, LineElementForces } from "./data-model";
-import { Components, ComponentsType, Mesh, ElementForces } from "../data-model";
+import { Components, ComponentsType, Mesh } from "../data-model";
 
 const toggleStates = new Map<string, boolean>();
 
@@ -13,7 +13,7 @@ export function getReport({
 }: {
   components: Components["val"];
   geometryMapping?: Mesh["geometryMapping"]["val"];
-  internalForces?: Map<number, ElementForces>;
+  internalForces?: Mesh["internalForces"]["val"];
   designs?: Map<number, any>;
   templates: Map<ComponentsType, Map<string, any>>;
 }): HTMLDivElement {
@@ -50,7 +50,7 @@ export function getReport({
                 geometryMapping.lineToElements.get(lineId) ?? [];
 
               if (elementIndices.length > 0) {
-                const elementForces: ElementForces[] = [];
+                const elementForces = [];
 
                 for (const elemIdx of elementIndices) {
                   const forces = internalForces.get(elemIdx);

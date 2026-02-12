@@ -1,5 +1,5 @@
 import { DesignTemplate, LineElementForces } from "./data-model";
-import { Components, ComponentsType, ElementForces } from "../data-model";
+import { Components, ComponentsType, Mesh } from "../data-model";
 import type { ActiveAnalysis } from "@awatif/ui";
 
 export function getElementsProps({
@@ -16,7 +16,7 @@ export function getElementsProps({
   };
   templates: Map<ComponentsType, Map<string, any>>;
   activeAnalysis?: ActiveAnalysis["val"];
-  internalForces?: Map<number, ElementForces>;
+  internalForces?: Mesh["internalForces"]["val"];
 }): Map<
   number,
   {
@@ -55,9 +55,7 @@ export function getElementsProps({
       if (internalForces) {
         const elementForces = elementIndices
           .map((elemIdx) => internalForces.get(elemIdx))
-          .filter(
-            (forces): forces is ElementForces => forces !== undefined,
-          );
+          .filter((forces) => forces !== undefined);
         if (elementForces.length > 0) {
           lineElementForces = { elementIndices, elementForces };
         }
