@@ -5,6 +5,7 @@ import { pointSupport } from "./supports/point-support/pointSupport";
 import { basic } from "./design/basic/basic";
 import { ComponentsType } from "./data-model";
 
+// Todo: Analysis is actually a component and can be added to a geometry
 export const templates = new Map<ComponentsType, Map<string, any>>([
   [
     ComponentsType.MESH,
