@@ -10,8 +10,6 @@ export function getLineEndForces(lineElementForces?: LineElementForces) {
     endN: lastForces?.N[1] ?? 0,
     startMz: firstForces?.Mz[0] ?? 0,
     endMz: lastForces?.Mz[1] ?? 0,
-    startVy: firstForces?.Vy[0] ?? 0,
-    endVy: lastForces?.Vy[1] ?? 0,
     hasForces: elementForces.length > 0,
   };
 }
