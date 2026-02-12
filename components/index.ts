@@ -1,10 +1,6 @@
 export type { Geometry, Mesh, Components, ComponentsType } from "./data-model";
 
-export type {
-  Design,
-  LineElementForces,
-  DesignTemplate,
-} from "./design/data-model";
+export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
 export { getMesh } from "./mesh/getMesh";
 export { getLoads } from "./loads/getLoads";

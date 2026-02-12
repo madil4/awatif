@@ -1,5 +1,5 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
-import { Design, DesignTemplate, LineElementForces } from "./data-model";
+import type { DesignTemplate, LineElementForces } from "./data-model";
 import type { ActiveAnalysis } from "@awatif/ui";
 
 export const getDesigns = ({
@@ -17,7 +17,7 @@ export const getDesigns = ({
   components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
   activeAnalysis?: ActiveAnalysis["val"];
-}): Map<number, Design> => {
+}): Map<number, Record<string, any>> => {
   // Get design components
   const designComponents = components.get(ComponentsType.DESIGN) || [];
 
@@ -48,13 +48,13 @@ export const getDesigns = ({
   }
 
   // Create new design results map
-  const designResults = new Map<number, Design>();
+  const designResults = new Map<number, Record<string, any>>();
 
   // Process each design component
   for (const component of designComponents) {
     const template = templates
       .get(ComponentsType.DESIGN)
-      ?.get(component.templateId) as DesignTemplate<any>;
+      ?.get(component.templateId) as DesignTemplate<any, any>;
 
     // Skip if template doesn't have getDesign function
     if (!template?.getDesign) {

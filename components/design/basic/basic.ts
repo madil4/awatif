@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
-import { DesignTemplate } from "../data-model";
+import type { DesignTemplate } from "../data-model";
 
 type BasicParams = {
   elasticity: string; // GPa
