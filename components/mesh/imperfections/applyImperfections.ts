@@ -1,4 +1,4 @@
-import { Components, ComponentsType, Geometry } from "../../data-model";
+import { ComponentsType, Geometry } from "../../data-model";
 import { ImperfectionsParams, computeThetaI } from "./imperfections";
 
 export function applyImperfections(

@@ -8,7 +8,7 @@ import { ComponentsType } from "./data-model";
 export const templates = new Map<ComponentsType, Map<string, any>>([
   [
     ComponentsType.MESH,
-    new Map([
+    new Map<string, any>([
       ["line-mesh", lineMesh],
       ["imperfections", imperfections],
     ]),
