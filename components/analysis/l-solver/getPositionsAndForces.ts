@@ -1,9 +1,9 @@
+import { multiply } from "mathjs";
 import { index, subset, add, sparse, lup, lusolve, flatten } from "mathjs";
+import type { Mesh } from "../../data-model";
 import { getGlobalStiffnessMatrix } from "./helpers/getGlobalStiffnessMatrix";
 import { getTransformationMatrix } from "./helpers/getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./helpers/getLocalStiffnessMatrix";
-import { multiply } from "mathjs";
-import type { Mesh } from "../../data-model";
 
 export function getPositionsAndForces(
   nodes: Mesh["nodes"]["val"],

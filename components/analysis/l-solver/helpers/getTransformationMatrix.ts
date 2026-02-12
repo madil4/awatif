@@ -5,12 +5,6 @@ import type { Mesh } from "../../../data-model";
 export function getTransformationMatrix(
   nodes: Mesh["nodes"]["val"],
 ): number[][] {
-  if (nodes.length === 2) return getTransformationMatrixFrame(nodes);
-
-  return [];
-}
-
-function getTransformationMatrixFrame(nodes: Mesh["nodes"]["val"]): number[][] {
   const vector = subtract(nodes[1], nodes[0]) as number[];
   const length = norm(vector) as number;
   const l = dot(vector, [1, 0, 0]) / length;

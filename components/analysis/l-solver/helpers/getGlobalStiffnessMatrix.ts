@@ -1,7 +1,7 @@
 import { multiply, transpose } from "mathjs";
+import type { Mesh } from "../../../data-model";
 import { getTransformationMatrix } from "./getTransformationMatrix";
 import { getLocalStiffnessMatrix } from "./getLocalStiffnessMatrix";
-import { Mesh } from "../../../data-model";
 
 export function getGlobalStiffnessMatrix(
   nodes: Mesh["nodes"]["val"],
