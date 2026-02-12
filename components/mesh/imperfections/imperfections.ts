@@ -166,11 +166,11 @@ export const imperfections: MeshTemplate<ImperfectionsParams> = {
 };
 
 // Helpers
-function computeAlphaH(height: number): number {
+export function computeAlphaH(height: number): number {
   return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
 }
 
-function computeAlphaM(memberCount: number): number {
+export function computeAlphaM(memberCount: number): number {
   return Math.sqrt(0.5 * (1 + 1 / memberCount));
 }
 
