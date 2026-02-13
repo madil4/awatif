@@ -38,5 +38,9 @@ export default defineConfig({
       },
     },
   },
+  worker: {
+    format: "es",
+    plugins: () => [topLevelAwait()],
+  },
   plugins: [topLevelAwait()], // used by awatif-fem & awatif-mesh to load wasm at top level
 });

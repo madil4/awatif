@@ -1,7 +1,9 @@
 #include "data-model.h"
 #include <vector>
 #include <map>
+#include <memory>
 #include <algorithm>
+#include <chrono>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <iostream>
@@ -25,6 +27,43 @@ std::vector<int> getFreeIndices(const NodeInputs &nodeInputs, int dof);
 std::vector<int> getZerosIndices(const Eigen::SparseMatrix<double> &matrix);
 Eigen::SparseMatrix<double> getReducedMatrix(const Eigen::SparseMatrix<double> &matrix, const std::vector<int> &reducedIndices);
 Eigen::VectorXd getReducedVector(const Eigen::VectorXd &vector, const std::vector<int> &reducedIndices);
+ElementInputs parseElementInputsFromFlat(
+    int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities,
+    int *area_keys_ptr, double *area_values_ptr, int num_areas,
+    int *moi_z_keys_ptr, double *moi_z_values_ptr, int num_moi_z,
+    int *moi_y_keys_ptr, double *moi_y_values_ptr, int num_moi_y,
+    int *shear_mod_keys_ptr, double *shear_mod_values_ptr, int num_shear_mod,
+    int *torsion_keys_ptr, double *torsion_values_ptr, int num_torsion,
+    int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,
+    int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,
+    int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal,
+    int *clt_keys_ptr, int *clt_layer_counts_ptr, double *clt_options_ptr, double *clt_layers_flat_ptr, int num_clt_layups);
+std::vector<int> getSupportedNodeIndices(const NodeInputs &nodeInputs);
+void setEmptyOutputs(
+    double **deformations_data_ptr_out,
+    int *deformations_size_out,
+    double **reactions_data_ptr_out,
+    int *reactions_size_out);
+bool writeOutputs(
+    const std::map<int, std::vector<double>> &deformations,
+    const std::map<int, std::vector<double>> &reactions,
+    double **deformations_data_ptr_out,
+    int *deformations_size_out,
+    double **reactions_data_ptr_out,
+    int *reactions_size_out);
+
+struct CachedSolverState
+{
+    int numNodes = 0;
+    int dof = 0;
+    std::vector<int> reducedIndices;
+    std::vector<int> supportNodeIndices;
+    Eigen::SparseMatrix<double> KGlobal;
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+};
+
+static int gNextCachedSolverId = 1;
+static std::map<int, std::unique_ptr<CachedSolverState>> gCachedSolvers;
 
 extern "C"
 {
@@ -83,22 +122,17 @@ extern "C"
         nodeInputs.loads = parseMapVecFromFlat(load_keys_ptr, load_values_ptr, num_loads, 6);
 
         // Parse ElementInputs (material/section properties)
-        ElementInputs elementInputs;
-        elementInputs.elasticities = parseMapFromFlat(elasticity_keys_ptr, elasticity_values_ptr, num_elasticities);
-        elementInputs.areas = parseMapFromFlat(area_keys_ptr, area_values_ptr, num_areas);
-        elementInputs.momentsOfInertiaZ = parseMapFromFlat(moi_z_keys_ptr, moi_z_values_ptr, num_moi_z);
-        elementInputs.momentsOfInertiaY = parseMapFromFlat(moi_y_keys_ptr, moi_y_values_ptr, num_moi_y);
-        elementInputs.shearModuli = parseMapFromFlat(shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod);
-        elementInputs.torsionalConstants = parseMapFromFlat(torsion_keys_ptr, torsion_values_ptr, num_torsion);
-        elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
-        elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
-        elementInputs.elasticitiesOrthogonal = parseMapFromFlat(elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal);
-        elementInputs.cltLayups = parseCltLayupsFromFlat(
-            clt_keys_ptr,
-            clt_layer_counts_ptr,
-            clt_options_ptr,
-            clt_layers_flat_ptr,
-            num_clt_layups);
+        ElementInputs elementInputs = parseElementInputsFromFlat(
+            elasticity_keys_ptr, elasticity_values_ptr, num_elasticities,
+            area_keys_ptr, area_values_ptr, num_areas,
+            moi_z_keys_ptr, moi_z_values_ptr, num_moi_z,
+            moi_y_keys_ptr, moi_y_values_ptr, num_moi_y,
+            shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod,
+            torsion_keys_ptr, torsion_values_ptr, num_torsion,
+            thickness_keys_ptr, thickness_values_ptr, num_thickness,
+            poisson_keys_ptr, poisson_values_ptr, num_poisson,
+            elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal,
+            clt_keys_ptr, clt_layer_counts_ptr, clt_options_ptr, clt_layers_flat_ptr, num_clt_layups);
 
         // --- 2. Core FEA Calculation using Eigen ---
         int dof = num_nodes * 6; // Total degrees of freedom
@@ -255,6 +289,219 @@ extern "C"
             }
         }
     }
+
+    int create_cached_solver(
+        // Geometry
+        double *nodes_flat_ptr, int num_nodes,
+        unsigned int *element_indices_ptr, int num_element_indices,
+        unsigned int *element_sizes_ptr, int num_elements,
+
+        // Node supports (loads are provided per solve call)
+        int *support_keys_ptr, bool *support_values_ptr, int num_supports,
+
+        // Element Inputs
+        int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities,
+        int *area_keys_ptr, double *area_values_ptr, int num_areas,
+        int *moi_z_keys_ptr, double *moi_z_values_ptr, int num_moi_z,
+        int *moi_y_keys_ptr, double *moi_y_values_ptr, int num_moi_y,
+        int *shear_mod_keys_ptr, double *shear_mod_values_ptr, int num_shear_mod,
+        int *torsion_keys_ptr, double *torsion_values_ptr, int num_torsion,
+        int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,
+        int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,
+        int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal,
+        int *clt_keys_ptr, int *clt_layer_counts_ptr, double *clt_options_ptr, double *clt_layers_flat_ptr, int num_clt_layups,
+
+        // Outputs
+        int *solver_id_out,
+        int *dof_out,
+        int *free_dof_out,
+        double *setup_ms_out)
+    {
+        if (!solver_id_out || !dof_out || !free_dof_out || !setup_ms_out)
+        {
+            return 0;
+        }
+
+        *solver_id_out = 0;
+        *dof_out = 0;
+        *free_dof_out = 0;
+        *setup_ms_out = 0.0;
+
+        try
+        {
+            const auto setupStart = std::chrono::high_resolution_clock::now();
+
+            std::vector<Node> nodes(num_nodes, Node(3));
+            for (int i = 0; i < num_nodes; ++i)
+            {
+                nodes[i][0] = nodes_flat_ptr[i * 3 + 0];
+                nodes[i][1] = nodes_flat_ptr[i * 3 + 1];
+                nodes[i][2] = nodes_flat_ptr[i * 3 + 2];
+            }
+
+            std::vector<unsigned int> element_indices(element_indices_ptr, element_indices_ptr + num_element_indices);
+            std::vector<unsigned int> element_sizes(element_sizes_ptr, element_sizes_ptr + num_elements);
+
+            NodeInputs nodeInputs;
+            nodeInputs.supports = parseMapBoolVecFromFlat(support_keys_ptr, support_values_ptr, num_supports, 6);
+
+            ElementInputs elementInputs = parseElementInputsFromFlat(
+                elasticity_keys_ptr, elasticity_values_ptr, num_elasticities,
+                area_keys_ptr, area_values_ptr, num_areas,
+                moi_z_keys_ptr, moi_z_values_ptr, num_moi_z,
+                moi_y_keys_ptr, moi_y_values_ptr, num_moi_y,
+                shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod,
+                torsion_keys_ptr, torsion_values_ptr, num_torsion,
+                thickness_keys_ptr, thickness_values_ptr, num_thickness,
+                poisson_keys_ptr, poisson_values_ptr, num_poisson,
+                elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal,
+                clt_keys_ptr, clt_layer_counts_ptr, clt_options_ptr, clt_layers_flat_ptr, num_clt_layups);
+
+            const int dof = num_nodes * 6;
+            std::vector<int> freeIndices = getFreeIndices(nodeInputs, dof);
+
+            auto solverState = std::make_unique<CachedSolverState>();
+            solverState->numNodes = num_nodes;
+            solverState->dof = dof;
+            solverState->supportNodeIndices = getSupportedNodeIndices(nodeInputs);
+            solverState->KGlobal = getGlobalStiffnessMatrix(nodes, element_indices, element_sizes, elementInputs, dof);
+
+            std::vector<int> zeroIndices = getZerosIndices(solverState->KGlobal);
+            std::sort(zeroIndices.begin(), zeroIndices.end());
+            solverState->reducedIndices.reserve(freeIndices.size());
+            for (int idx : freeIndices)
+            {
+                if (!std::binary_search(zeroIndices.begin(), zeroIndices.end(), idx))
+                {
+                    solverState->reducedIndices.push_back(idx);
+                }
+            }
+
+            Eigen::SparseMatrix<double> KReduced = getReducedMatrix(solverState->KGlobal, solverState->reducedIndices);
+            solverState->solver.compute(KReduced);
+            if (solverState->solver.info() != Eigen::Success)
+            {
+                std::cerr << "Error: Cached solver factorization failed." << std::endl;
+                return 0;
+            }
+
+            const int solverId = gNextCachedSolverId++;
+            gCachedSolvers[solverId] = std::move(solverState);
+
+            const auto setupEnd = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double, std::milli> setupMs = setupEnd - setupStart;
+
+            *solver_id_out = solverId;
+            *dof_out = dof;
+            *free_dof_out = static_cast<int>(gCachedSolvers[solverId]->reducedIndices.size());
+            *setup_ms_out = setupMs.count();
+            return 1;
+        }
+        catch (const std::exception &ex)
+        {
+            std::cerr << "Error: create_cached_solver exception: " << ex.what() << std::endl;
+            return 0;
+        }
+    }
+
+    void solve_cached_solver(
+        int solver_id,
+        int *load_keys_ptr, double *load_values_ptr, int num_loads,
+        int include_reactions,
+        double **deformations_data_ptr_out,
+        int *deformations_size_out,
+        double **reactions_data_ptr_out,
+        int *reactions_size_out)
+    {
+        auto solverIt = gCachedSolvers.find(solver_id);
+        if (solverIt == gCachedSolvers.end())
+        {
+            setEmptyOutputs(
+                deformations_data_ptr_out,
+                deformations_size_out,
+                reactions_data_ptr_out,
+                reactions_size_out);
+            return;
+        }
+
+        auto &solverState = solverIt->second;
+
+        NodeInputs loadInputs;
+        loadInputs.loads = parseMapVecFromFlat(load_keys_ptr, load_values_ptr, num_loads, 6);
+
+        const Eigen::VectorXd FGlobal = getForces(loadInputs, solverState->dof);
+        const Eigen::VectorXd FReduced = getReducedVector(FGlobal, solverState->reducedIndices);
+        const Eigen::VectorXd UReduced = solverState->solver.solve(FReduced);
+
+        if (solverState->solver.info() != Eigen::Success)
+        {
+            std::cerr << "Error: Cached solver solve failed." << std::endl;
+            setEmptyOutputs(
+                deformations_data_ptr_out,
+                deformations_size_out,
+                reactions_data_ptr_out,
+                reactions_size_out);
+            return;
+        }
+
+        Eigen::VectorXd UGlobal = Eigen::VectorXd::Zero(solverState->dof);
+        for (size_t i = 0; i < solverState->reducedIndices.size(); ++i)
+        {
+            UGlobal(solverState->reducedIndices[i]) = UReduced(i);
+        }
+
+        std::map<int, std::vector<double>> deformations;
+        deformations.clear();
+        for (int nodeIdx = 0; nodeIdx < solverState->numNodes; ++nodeIdx)
+        {
+            std::vector<double> nodeDeformation(6);
+            for (int dofIdx = 0; dofIdx < 6; ++dofIdx)
+            {
+                nodeDeformation[dofIdx] = UGlobal(nodeIdx * 6 + dofIdx);
+            }
+            deformations[nodeIdx] = nodeDeformation;
+        }
+
+        std::map<int, std::vector<double>> reactions;
+        if (include_reactions)
+        {
+            const Eigen::VectorXd RGlobal = solverState->KGlobal * UGlobal;
+            for (int nodeIdx : solverState->supportNodeIndices)
+            {
+                std::vector<double> nodeReaction(6);
+                for (int dofIdx = 0; dofIdx < 6; ++dofIdx)
+                {
+                    nodeReaction[dofIdx] = RGlobal(nodeIdx * 6 + dofIdx);
+                }
+                reactions[nodeIdx] = nodeReaction;
+            }
+        }
+
+        if (!writeOutputs(
+                deformations,
+                reactions,
+                deformations_data_ptr_out,
+                deformations_size_out,
+                reactions_data_ptr_out,
+                reactions_size_out))
+        {
+            setEmptyOutputs(
+                deformations_data_ptr_out,
+                deformations_size_out,
+                reactions_data_ptr_out,
+                reactions_size_out);
+            return;
+        }
+    }
+
+    void free_cached_solver(int solver_id)
+    {
+        auto it = gCachedSolvers.find(solver_id);
+        if (it != gCachedSolvers.end())
+        {
+            gCachedSolvers.erase(it);
+        }
+    }
 }
 
 // Utils
@@ -357,6 +604,123 @@ std::map<int, CLTLayup> parseCltLayupsFromFlat(
     }
 
     return layups;
+}
+
+ElementInputs parseElementInputsFromFlat(
+    int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities,
+    int *area_keys_ptr, double *area_values_ptr, int num_areas,
+    int *moi_z_keys_ptr, double *moi_z_values_ptr, int num_moi_z,
+    int *moi_y_keys_ptr, double *moi_y_values_ptr, int num_moi_y,
+    int *shear_mod_keys_ptr, double *shear_mod_values_ptr, int num_shear_mod,
+    int *torsion_keys_ptr, double *torsion_values_ptr, int num_torsion,
+    int *thickness_keys_ptr, double *thickness_values_ptr, int num_thickness,
+    int *poisson_keys_ptr, double *poisson_values_ptr, int num_poisson,
+    int *elasticitiesOrthogonal_keys_ptr, double *elasticitiesOrthogonal_values_ptr, int num_elasticitiesOrthogonal,
+    int *clt_keys_ptr, int *clt_layer_counts_ptr, double *clt_options_ptr, double *clt_layers_flat_ptr, int num_clt_layups)
+{
+    ElementInputs elementInputs;
+    elementInputs.elasticities = parseMapFromFlat(elasticity_keys_ptr, elasticity_values_ptr, num_elasticities);
+    elementInputs.areas = parseMapFromFlat(area_keys_ptr, area_values_ptr, num_areas);
+    elementInputs.momentsOfInertiaZ = parseMapFromFlat(moi_z_keys_ptr, moi_z_values_ptr, num_moi_z);
+    elementInputs.momentsOfInertiaY = parseMapFromFlat(moi_y_keys_ptr, moi_y_values_ptr, num_moi_y);
+    elementInputs.shearModuli = parseMapFromFlat(shear_mod_keys_ptr, shear_mod_values_ptr, num_shear_mod);
+    elementInputs.torsionalConstants = parseMapFromFlat(torsion_keys_ptr, torsion_values_ptr, num_torsion);
+    elementInputs.thicknesses = parseMapFromFlat(thickness_keys_ptr, thickness_values_ptr, num_thickness);
+    elementInputs.poissonsRatios = parseMapFromFlat(poisson_keys_ptr, poisson_values_ptr, num_poisson);
+    elementInputs.elasticitiesOrthogonal = parseMapFromFlat(elasticitiesOrthogonal_keys_ptr, elasticitiesOrthogonal_values_ptr, num_elasticitiesOrthogonal);
+    elementInputs.cltLayups = parseCltLayupsFromFlat(
+        clt_keys_ptr,
+        clt_layer_counts_ptr,
+        clt_options_ptr,
+        clt_layers_flat_ptr,
+        num_clt_layups);
+    return elementInputs;
+}
+
+std::vector<int> getSupportedNodeIndices(const NodeInputs &nodeInputs)
+{
+    std::vector<int> supported;
+    supported.reserve(nodeInputs.supports.size());
+    for (const auto &entry : nodeInputs.supports)
+    {
+        bool hasSupport = false;
+        for (bool fixed : entry.second)
+        {
+            if (fixed)
+            {
+                hasSupport = true;
+                break;
+            }
+        }
+        if (hasSupport)
+        {
+            supported.push_back(entry.first);
+        }
+    }
+    return supported;
+}
+
+void setEmptyOutputs(
+    double **deformations_data_ptr_out,
+    int *deformations_size_out,
+    double **reactions_data_ptr_out,
+    int *reactions_size_out)
+{
+    *deformations_data_ptr_out = nullptr;
+    *deformations_size_out = 0;
+    *reactions_data_ptr_out = nullptr;
+    *reactions_size_out = 0;
+}
+
+bool writeOutputs(
+    const std::map<int, std::vector<double>> &deformations,
+    const std::map<int, std::vector<double>> &reactions,
+    double **deformations_data_ptr_out,
+    int *deformations_size_out,
+    double **reactions_data_ptr_out,
+    int *reactions_size_out)
+{
+    *deformations_size_out = static_cast<int>(deformations.size()) * 7;
+    *deformations_data_ptr_out = (double *)malloc(*deformations_size_out * sizeof(double));
+
+    *reactions_size_out = static_cast<int>(reactions.size()) * 7;
+    if (*reactions_size_out > 0)
+    {
+        *reactions_data_ptr_out = (double *)malloc(*reactions_size_out * sizeof(double));
+    }
+    else
+    {
+        *reactions_data_ptr_out = nullptr;
+    }
+
+    if (!(*deformations_data_ptr_out) || (reactions.size() > 0 && !(*reactions_data_ptr_out)))
+    {
+        free(*deformations_data_ptr_out);
+        free(*reactions_data_ptr_out);
+        return false;
+    }
+
+    int defIdx = 0;
+    for (const auto &pair : deformations)
+    {
+        (*deformations_data_ptr_out)[defIdx++] = static_cast<double>(pair.first);
+        for (double value : pair.second)
+        {
+            (*deformations_data_ptr_out)[defIdx++] = value;
+        }
+    }
+
+    int reactIdx = 0;
+    for (const auto &pair : reactions)
+    {
+        (*reactions_data_ptr_out)[reactIdx++] = static_cast<double>(pair.first);
+        for (double value : pair.second)
+        {
+            (*reactions_data_ptr_out)[reactIdx++] = value;
+        }
+    }
+
+    return true;
 }
 
 Eigen::VectorXd getForces(

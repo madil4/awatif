@@ -283,6 +283,9 @@ function getColorMapValues(
     const nodeBendingXX = new Map<number, number[]>();
     const nodeBendingYY = new Map<number, number[]>();
     const nodeBendingXY = new Map<number, number[]>();
+    const deformations = mesh.deformOutputs?.val.deformations as
+      | Map<number, number[]>
+      | undefined;
 
     mesh.analyzeOutputs?.val.bendingXX?.forEach((vals, elementIndex) => {
       nodeBendingXX.set(mesh.elements.val[elementIndex][0], [vals[0]]);
@@ -302,50 +305,41 @@ function getColorMapValues(
       nodeBendingXY.set(mesh.elements.val[elementIndex][2], [vals[2]]);
     });
 
-    const resultMapper = {
+    type ResultMapEntry = [Map<number, number[]> | undefined, number];
+    const resultMapper: Record<ResultType, ResultMapEntry> = {
       [ResultType.bendingXX]: [nodeBendingXX, 0],
       [ResultType.bendingYY]: [nodeBendingYY, 0],
       [ResultType.bendingXY]: [nodeBendingXY, 0],
-      [ResultType.displacementX]: [mesh.deformOutputs?.val.deformations, 0],
-      [ResultType.displacementY]: [mesh.deformOutputs?.val.deformations, 1],
-      [ResultType.displacementZ]: [mesh.deformOutputs?.val.deformations, 2],
+      [ResultType.displacementX]: [deformations, 0],
+      [ResultType.displacementY]: [deformations, 1],
+      [ResultType.displacementZ]: [deformations, 2],
     };
 
-    const resultType = settings.shellResults.val as ShellResultType;
-    const resultScale = settingsObj?.shellResultScales?.[resultType] ?? 1;
+    const resultType = settings.shellResults.val;
+    const shellResultType = resultType as ShellResultType;
+    const resultScale = settingsObj?.shellResultScales?.[shellResultType] ?? 1;
 
     const values = [];
     mesh.nodes.val.forEach((_, i) => {
-      if (
-        resultType === ResultType.displacementX ||
-        resultType === ResultType.displacementY ||
-        resultType === ResultType.displacementZ
-      ) {
-        const dof =
-          resultType === ResultType.displacementX
-            ? 0
-            : resultType === ResultType.displacementY
-            ? 1
-            : 2;
-        const displacement = mesh.deformOutputs?.val.deformations?.get(i)?.[dof] ?? 0;
-        values.push(displacement * resultScale);
+      if (resultType === "none") {
+        values.push(0);
         return;
       }
 
-      const resultMap = resultMapper[resultType];
+      const resultMap = resultMapper[resultType as ResultType];
       if (!resultMap) {
         values.push(0);
         return;
       }
 
-      const mappedValues = resultMap[0] as Map<number, number[]> | undefined;
+      const [mappedValues, mappedIndex] = resultMap;
       const mappedResult = mappedValues?.get(i);
       if (!mappedResult) {
         values.push(0);
         return;
       }
 
-      values.push(mappedResult[resultMap[1]] * resultScale);
+      values.push(mappedResult[mappedIndex] * resultScale);
     });
 
     colorMapValues.val = values;

@@ -1,7 +1,6 @@
 import {
   BufferGeometry,
   Shape,
-  Path,
   ExtrudeGeometry,
   Vector2,
   BufferAttribute,
@@ -68,7 +67,6 @@ export function getSolidsGeometry(
       );
 
       const slabShape = new Shape();
-      const hole = new Path();
       for (let i = 0; i < offsetedContour.length; i++) {
         if (i == 0)
           slabShape.moveTo(offsetedContour[0][0], offsetedContour[0][1]);

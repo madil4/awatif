@@ -59,7 +59,7 @@ export function getToolbar({
   }
 
   // onIconClick toggle dropdown menu
-  function onIconClick(e: Event) {
+  function onIconClick() {
     const dropdown = document.getElementById("dropdown-menu");
     dropdown.style.display =
       dropdown.style.display === "block" ? "none" : "block";

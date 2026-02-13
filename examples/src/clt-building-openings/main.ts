@@ -12,7 +12,8 @@ import { getViewer } from "awatif-ui";
 
 import "./styles.css";
 
-type Dof = [number, number, number, number, number, number];
+type SupportDof = [boolean, boolean, boolean, boolean, boolean, boolean];
+type LoadDof = [number, number, number, number, number, number];
 type Opening = { center: Node; width: number; height: number };
 type Surface = {
   type: "wall" | "floor" | "roof";
@@ -215,7 +216,7 @@ function recompute() {
     }
   });
 
-  const supports = new Map<number, Dof>();
+  const supports = new Map<number, SupportDof>();
 
   fixedNodeIds.forEach((id) => {
     const idx = modelNodeIndex.get(id);
@@ -232,7 +233,7 @@ function recompute() {
     });
   });
 
-  const loads = new Map<number, Dof>();
+  const loads = new Map<number, LoadDof>();
   addAreaLoad(nodes, elements, loadedShellElements, qState.val * KNM2_TO_NM2, [0, 0, -1], loads);
 
   const elementInputs = createElementInputs(cltLayups);
@@ -425,7 +426,7 @@ function addAreaLoad(
   indices: number[],
   pressure: number,
   dir: Node,
-  loads: Map<number, Dof>,
+  loads: Map<number, LoadDof>,
 ) {
   if (Math.abs(pressure) < EPS) return;
   indices.forEach((idx) => {
@@ -435,7 +436,7 @@ function addAreaLoad(
     const nodal = (pressure * area) / 3;
     e.forEach((n) => {
       const v = loads.get(n) ?? [0, 0, 0, 0, 0, 0];
-      const next: Dof = [
+      const next: LoadDof = [
         v[0] + nodal * dir[0],
         v[1] + nodal * dir[1],
         v[2] + nodal * dir[2],

@@ -102,7 +102,6 @@ export function getMesh(
         polygon,
         maxMeshSize: meshSize,
       });
-      const columnSnapTolerance = Math.max(1e-3, meshSize * 0.02);
       const {
         nodeMap: slabsNodesIndices,
         elementMap: slabElementsIndices,
@@ -122,8 +121,7 @@ export function getMesh(
           slabsNodesIndices,
           slabNodeLookup,
           columnPointCurrent,
-          elevation,
-          columnSnapTolerance
+          elevation
         );
         if (columnNodeIndex !== null) {
           topColumnNodesIndicesByStory
@@ -139,8 +137,7 @@ export function getMesh(
           slabsNodesIndices,
           slabNodeLookup,
           columnPointNext,
-          elevation,
-          columnSnapTolerance
+          elevation
         );
         if (columnNodeIndex !== null) {
           bottomColumnNodesIndicesByStory
@@ -181,7 +178,7 @@ export function getMesh(
   // columns
   for (let story = 0; story < stories.length; story++) {
     const columnsIndices: number[] = columnsByStory.get(story) ?? [];
-    columnsIndices.forEach((columnIndex) => {
+    for (const columnIndex of columnsIndices) {
       // add bottom nodes for first story columns
       if (story === 0) {
         const columnPoint = points[columns[columnIndex]] as Node;
@@ -202,7 +199,7 @@ export function getMesh(
         columnTopNodeIndex === undefined ||
         columnBottomNodeIndex === undefined
       ) {
-        return;
+        continue;
       }
       const { nodes: intermediateColumnNodes, elements: columnElements } =
         meshMember(nodes, columnTopNodeIndex, columnBottomNodeIndex);
@@ -235,7 +232,7 @@ export function getMesh(
 
       nodes.push(...intermediateColumnNodes);
       elements.push(...columnElements);
-    });
+    }
   }
 
   return { nodes, elements, nodeInputs, elementInputs };
@@ -335,8 +332,7 @@ function getColumnNodeIndex(
   slabNodeIndices: number[],
   slabNodeLookup: Map<string, number>,
   columnPoint: Node,
-  elevation: number,
-  tolerance: number = 1e-2
+  elevation: number
 ): number | null {
   if (slabNodeIndices.length === 0) return null;
 
@@ -362,7 +358,7 @@ function getColumnNodeIndex(
   }
 
   if (closestNodeIndex === null) return null;
-  return minDistanceSquared <= tolerance * tolerance ? closestNodeIndex : null;
+  return closestNodeIndex;
 }
 
 function buildNodeLookupByXY(

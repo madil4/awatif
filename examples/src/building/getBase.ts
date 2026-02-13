@@ -1,6 +1,5 @@
 import {
   BufferGeometry,
-  Color,
   Float32BufferAttribute,
   LineBasicMaterial,
   LineSegments,

@@ -121,8 +121,8 @@ export function analyze(
     }
   });
 
-  const { nodeToCentroidNodesMap, nodeToCentroidElementIndiciesMap } =
-    getCentroidsMaps(nodes, elements);
+  const nodeToCentroidElementIndiciesMap =
+    getNodeToCentroidElementIndicesMap(elements);
 
   elements.forEach((element, elementIndex) => {
     if (element.length !== 3) return;
@@ -134,7 +134,6 @@ export function analyze(
     let bendingXYs: [number, number, number] = [0, 0, 0];
 
     element.forEach((nodeIndex, pos) => {
-      const centroidNodes = nodeToCentroidNodesMap.get(nodeIndex) || [];
       const elementIndicies =
         nodeToCentroidElementIndiciesMap.get(nodeIndex) || [];
 
@@ -195,7 +194,6 @@ function getMaterialStiffnessMatrix3x3(
   const elasticityY = elementInputs.elasticitiesOrthogonal?.get(index) ?? 0;
   const poissonRatio = elementInputs.poissonsRatios?.get(index) ?? 0;
   const shearModulus = elementInputs.shearModuli?.get(index) ?? 0;
-  const thickness = elementInputs.thicknesses?.get(index) ?? 0;
 
   // Determine if the material is orthotropic based on the presence of elasticityY
   const isOrthotropic = elasticityY > 0;
@@ -279,68 +277,17 @@ function getElementArea(nodeCoordinates: Node[]) {
   return 0.5 * (x21 * y31 - x31 * -y12);
 }
 
-function getCentroidsMaps(
-  nodes: Node[],
+function getNodeToCentroidElementIndicesMap(
   elements: Element[]
-): {
-  nodeToCentroidNodesMap: Map<number, Node[]>;
-  nodeToCentroidElementIndiciesMap: Map<number, number[]>;
-} {
-  const nodeToCentroidNodesMap: Map<number, Node[]> = new Map();
+): Map<number, number[]> {
   const nodeToCentroidElementIndiciesMap: Map<number, number[]> = new Map();
   elements.forEach((element, elementIndex) => {
-    const elmNodes = element.map((index) => nodes[index]);
-    const centroidNode = getCentroidFromNodes(elmNodes) as Node;
     element.forEach((nodeIndex) => {
-      if (!nodeToCentroidNodesMap.has(nodeIndex)) {
-        nodeToCentroidNodesMap.set(nodeIndex, []);
-      }
-      nodeToCentroidNodesMap.get(nodeIndex)?.push(centroidNode);
-
       if (!nodeToCentroidElementIndiciesMap.has(nodeIndex)) {
         nodeToCentroidElementIndiciesMap.set(nodeIndex, []);
       }
       nodeToCentroidElementIndiciesMap.get(nodeIndex)?.push(elementIndex);
     });
   });
-  return {
-    nodeToCentroidNodesMap: nodeToCentroidNodesMap,
-    nodeToCentroidElementIndiciesMap: nodeToCentroidElementIndiciesMap,
-  };
-}
-
-function getCentroidFromNodes(
-  nodeCoordinates: Node[]
-): [number, number, number] {
-  const x =
-    nodeCoordinates.reduce((sum, n) => sum + n[0], 0) / nodeCoordinates.length;
-  const y =
-    nodeCoordinates.reduce((sum, n) => sum + n[1], 0) / nodeCoordinates.length;
-  const z =
-    nodeCoordinates.reduce((sum, n) => sum + n[2], 0) / nodeCoordinates.length;
-  return [x, y, z];
-}
-
-function getLinearlyInterpolatedValueInTriangle(
-  targetNode: Node,
-  n1: Node,
-  n2: Node,
-  n3: Node,
-  f1: number,
-  f2: number,
-  f3: number
-): number {
-  // Compute barycentric coordinates for targetNode in triangle (n1, n2, n3)
-  const [x, y] = targetNode;
-  const [x1, y1] = n1;
-  const [x2, y2] = n2;
-  const [x3, y3] = n3;
-
-  const denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
-  const lambda1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denominator;
-  const lambda2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denominator;
-  const lambda3 = 1 - lambda1 - lambda2;
-
-  // Interpolate value using barycentric coordinates
-  return lambda1 * f1 + lambda2 * f2 + lambda3 * f3;
+  return nodeToCentroidElementIndiciesMap;
 }

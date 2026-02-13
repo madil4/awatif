@@ -10,6 +10,9 @@ export type Mesh = {
   analyzeOutputs?: State<AnalyzeOutputs>;
 };
 
+// Backward-compatible alias used across UI/report modules.
+export type Structure = Mesh;
+
 // The geometry of any structure can be represented by these two entities:
 export type Node = [number, number, number]; // position coordinates [x,y,z]
 export type Element = number[]; // indices of the nodes list

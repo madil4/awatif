@@ -48,8 +48,7 @@ export function getParameters(parameters: Parameters): HTMLDivElement {
 
   // Events: on parameters change update the state
   pane.on("change", (e) => {
-    // @ts-ignore
-    const key = e.target.key as string | undefined;
+    const key = (e as { target?: { key?: string } }).target?.key;
     if (!key || !parameters[key]) return;
 
     const parameter = parameters[key];

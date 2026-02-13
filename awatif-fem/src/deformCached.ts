@@ -1,11 +1,4 @@
-import {
-  flatten,
-  index,
-  lup,
-  lusolve,
-  sparse,
-  subset,
-} from "mathjs";
+import { flatten, index, lup, lusolve, sparse, subset } from "mathjs";
 import {
   DeformOutputs,
   Element,
@@ -13,6 +6,7 @@ import {
   Node,
   NodeInputs,
 } from "./data-model";
+import { createCachedDeformSolverCpp } from "./deformCpp";
 import { getGlobalStiffnessMatrix } from "./utils/getGlobalStiffnessMatrix";
 
 export type CachedDeformSolver = {
@@ -25,6 +19,7 @@ export type CachedDeformSolver = {
       includeReactions?: boolean;
     },
   ) => DeformOutputs;
+  dispose?: () => void;
 };
 
 export function createCachedDeformSolver(
@@ -37,6 +32,30 @@ export function createCachedDeformSolver(
     throw new Error("createCachedDeformSolver requires non-empty nodes/elements");
   }
 
+  // Prefer sparse C++ cached factorization in browser runtimes (window + workers).
+  const isBrowserRuntime =
+    typeof window !== "undefined" ||
+    (typeof self !== "undefined" &&
+      typeof (self as unknown as { importScripts?: unknown }).importScripts ===
+        "function");
+
+  if (isBrowserRuntime) {
+    try {
+      return createCachedDeformSolverCpp(nodes, elements, supports, elementInputs);
+    } catch (error) {
+      console.warn("Falling back to JS cached solver", error);
+    }
+  }
+
+  return createCachedDeformSolverJs(nodes, elements, supports, elementInputs);
+}
+
+function createCachedDeformSolverJs(
+  nodes: Node[],
+  elements: Element[],
+  supports: NodeInputs["supports"],
+  elementInputs: ElementInputs,
+): CachedDeformSolver {
   const dof = nodes.length * 6;
   const freeIndices = getFreeIndices(supports, dof);
   const supportNodeIndices = Array.from(supports?.keys?.() ?? []);
@@ -96,6 +115,7 @@ export function createCachedDeformSolver(
         reactions,
       };
     },
+    dispose: () => undefined,
   };
 }
 
@@ -124,10 +144,7 @@ function dotRow(row: number[], vector: number[]): number {
   return sum;
 }
 
-function getFreeIndices(
-  supports: NodeInputs["supports"],
-  dof: number,
-): number[] {
+function getFreeIndices(supports: NodeInputs["supports"], dof: number): number[] {
   const fixed = Array(dof).fill(false);
   supports?.forEach((support, index) => {
     if (support[0]) fixed[index * 6] = true;
@@ -144,10 +161,7 @@ function getFreeIndices(
     .filter((v) => !fixed[v]);
 }
 
-function getAppliedForces(
-  loads: NodeInputs["loads"],
-  dof: number,
-): number[] {
+function getAppliedForces(loads: NodeInputs["loads"], dof: number): number[] {
   const forces = Array(dof).fill(0);
   loads?.forEach((force, index) => {
     forces[index * 6] = force[0];

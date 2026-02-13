@@ -223,7 +223,6 @@ van.derive(() => {
 
   const storySlabsPoints: number[][] = [];
   const storyColumnsPoints: number[][][] = [];
-  const lastIndex = points.length;
 
   // slabs
   if (drawingSlabPoints.val.length > 0) {

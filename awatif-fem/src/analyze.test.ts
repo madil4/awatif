@@ -1,7 +1,6 @@
 import { Node, Element, NodeInputs, ElementInputs } from "./data-model";
 import { analyze } from "./analyze";
 import { deform } from "./deform";
-import { mean, matrix } from "mathjs";
 
 describe("analyze", () => {
   test("Bar: from Logan's book example 3.9", () => {

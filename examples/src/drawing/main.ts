@@ -97,13 +97,13 @@ van.derive(() => {
 
   // create slabs
   const slabsNodes: Node[] = [];
-  points2nd.val.forEach((point, pointIndex) => {
+  points2nd.val.forEach((point) => {
     slabsNodes.push(point);
   });
 
   const slabsElements: Element[] = [];
   const baseIndex = columnsNodes.length;
-  polylines2nd.val.forEach((polyline, polylineIndex) => {
+  polylines2nd.val.forEach((polyline) => {
     const newPolyline = polyline.map((v) => baseIndex + v);
     slabsElements.push(newPolyline);
   });

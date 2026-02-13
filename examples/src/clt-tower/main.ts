@@ -1,55 +1,34 @@
 import van from "vanjs-core";
-import { CLTLayup, Mesh, analyze, deform } from "awatif-fem";
-import { Parameters, getParameters, getToolbar, getViewer } from "awatif-ui";
+import { Mesh } from "awatif-fem";
+import { getParameters, getToolbar, getViewer } from "awatif-ui";
+
 import { Building } from "../building/data-model";
 import { getBase, getBaseGeometry } from "../building/getBase";
-import { getMesh } from "../building/getMesh";
 import { getSolids, getSolidsGeometry } from "../building/getSolids";
+import {
+  applyTowerInputValues,
+  applyTowerMeshResult,
+  applyTowerSolveState,
+  buildSevenLayerCLTLayup,
+  buildTowerMesh,
+  clearMesh,
+  createTowerParameters,
+  getTowerInputValues,
+  getTowerViewerSettings,
+  normalizeTowerInputs,
+  rebuildTowerBuilding,
+  solveTowerMesh,
+  TowerInputValues,
+  TowerMeshResult,
+} from "./shared";
 
 import "./styles.css";
 
-const FLOOR_HEIGHT = 3.2;
-const KNM2_TO_NM2 = 1e3;
+const PREVIEW_MIN_MESH_SIZE = 1.4;
+const MAX_SOLVER_DOF = 18000;
+const USE_WORKER_SOLVE = false;
 
-const footprint: [number, number][] = [
-  [0, 0],
-  [24, 0],
-  [24, 10],
-  [14, 10],
-  [14, 18],
-  [0, 18],
-];
-
-const parameters: Parameters = {
-  stories: {
-    value: van.state(12),
-    min: 3,
-    max: 20,
-    step: 1,
-    label: "stories",
-  },
-  grid: {
-    value: van.state(2.4),
-    min: 1.8,
-    max: 4,
-    step: 0.2,
-    label: "grid (m)",
-  },
-  meshSize: {
-    value: van.state(2),
-    min: 0.6,
-    max: 3.5,
-    step: 0.1,
-    label: "mesh size (m)",
-  },
-  load: {
-    value: van.state(3.5),
-    min: -10,
-    max: 10,
-    step: 0.1,
-    label: "load (kN/m²)",
-  },
-};
+const parameters = createTowerParameters();
 
 const building: Building = {
   points: van.state([]),
@@ -77,22 +56,140 @@ const mesh: Mesh = {
 };
 
 const cltLayup = buildSevenLayerCLTLayup();
+let activeMesh: TowerMeshResult | null = null;
+let activeSolverKey: string | null = null;
+let lastWorkerCacheKey: string | null = null;
+let latestSolveRequestId = 0;
+let previousInputValues: TowerInputValues | null = null;
+let isSliderInteraction = false;
+let workerBusy = false;
+let pendingSolveMessage: SolveWorkerRequest | null = null;
+let lastOverLimitKey: string | null = null;
+
+const solverWorker = USE_WORKER_SOLVE
+  ? new Worker(new URL("./solverWorker.ts", import.meta.url), {
+      type: "module",
+    })
+  : null;
+
+type SolverTopologyPayload = {
+  nodes: TowerMeshResult["nodes"];
+  elements: TowerMeshResult["elements"];
+  supports: TowerMeshResult["nodeInputs"]["supports"];
+  elementInputs: TowerMeshResult["elementInputs"];
+};
+
+type SolveWorkerRequest =
+  | { type: "reset" }
+  | {
+      type: "solve";
+      requestId: number;
+      cacheKey: string;
+      loads: TowerMeshResult["nodeInputs"]["loads"];
+      topology?: SolverTopologyPayload;
+    };
+
+type SolveWorkerResponse =
+  | {
+      type: "solved";
+      requestId: number;
+      deformOutputs: Mesh["deformOutputs"]["val"];
+      solveMs: number;
+    }
+  | {
+      type: "failed";
+      requestId: number;
+      error: string;
+    };
+
+if (solverWorker) {
+  solverWorker.onmessage = (event: MessageEvent<SolveWorkerResponse>) => {
+    workerBusy = false;
+    const message = event.data;
+    const isLatest = message.requestId === latestSolveRequestId;
+
+    if (isLatest && message.type === "failed") {
+      console.error("CLT tower worker solve failed", message.error);
+      runSolveOnMainThread();
+    }
+
+    if (isLatest && message.type === "solved") {
+      mesh.deformOutputs.val = message.deformOutputs;
+      mesh.analyzeOutputs.val = {};
+    }
+
+    flushPendingSolve();
+  };
+
+  window.addEventListener("beforeunload", () => {
+    solverWorker.terminate();
+  });
+}
 
 van.derive(() => {
-  const stories = clampInt(parameters.stories.value.val, 3, 20);
-  const grid = clampNumber(parameters.grid.value.val, 1.8, 4);
-  const meshSize = clampNumber(parameters.meshSize.value.val, 0.6, 3.5);
-  const load = clampNumber(parameters.load.value.val, -10, 10);
+  const values = normalizeTowerInputs(getTowerInputValues(parameters));
+  applyTowerInputValues(parameters, values);
 
-  if (parameters.stories.value.val !== stories) parameters.stories.value.val = stories;
-  if (parameters.grid.value.val !== grid) parameters.grid.value.val = grid;
-  if (parameters.meshSize.value.val !== meshSize) parameters.meshSize.value.val = meshSize;
-  if (parameters.load.value.val !== load) parameters.load.value.val = load;
+  const isTopologyChange =
+    !previousInputValues ||
+    previousInputValues.stories !== values.stories ||
+    previousInputValues.grid !== values.grid ||
+    previousInputValues.meshSize !== values.meshSize;
 
-  rebuildBuilding();
+  const effectiveValues =
+    isSliderInteraction && isTopologyChange
+      ? ({
+          ...values,
+          meshSize: Math.max(values.meshSize, PREVIEW_MIN_MESH_SIZE),
+        } satisfies TowerInputValues)
+      : values;
+
+  previousInputValues = values;
+  recompute(effectiveValues);
 });
 
-van.derive(() => {
+const parametersElm = getParameters(parameters);
+
+document.body.append(
+  parametersElm,
+  getViewer({
+    objects3D,
+    solids,
+    mesh,
+    settingsObj: getTowerViewerSettings(),
+  }),
+  getToolbar({
+    sourceCode:
+      "https://github.com/madil4/awatif/blob/main/examples/src/clt-tower/main.ts",
+    author: "https://www.linkedin.com/in/musaabmahjoub/",
+  }),
+);
+
+bindSliderInteraction(parametersElm);
+
+function bindSliderInteraction(parametersRoot: HTMLElement) {
+  let pointerCaptured = false;
+
+  parametersRoot.addEventListener("pointerdown", () => {
+    pointerCaptured = true;
+    isSliderInteraction = true;
+  });
+
+  window.addEventListener("pointerup", () => {
+    if (!pointerCaptured) return;
+    pointerCaptured = false;
+    if (!isSliderInteraction) return;
+
+    isSliderInteraction = false;
+    const values = normalizeTowerInputs(getTowerInputValues(parameters));
+    applyTowerInputValues(parameters, values);
+    recompute(values);
+  });
+}
+
+function recompute(values: TowerInputValues) {
+  rebuildTowerBuilding(building, values, cltLayup);
+
   base.geometry = getBaseGeometry(
     building.points.val,
     building.slabs.val,
@@ -105,224 +202,106 @@ van.derive(() => {
   );
   objects3D.val = [...objects3D.rawVal];
 
-  let nodes: Mesh["nodes"]["val"] = [];
-  let elements: Mesh["elements"]["val"] = [];
-  let nodeInputs: Mesh["nodeInputs"]["val"] = {};
-  let elementInputs: Mesh["elementInputs"]["val"] = {};
-
-  try {
-    const result = getMesh(
-      building.points.val,
-      building.stories.val,
-      building.columns.val,
-      building.slabs.val,
-      building.columnsByStory.val,
-      building.slabsByStory.val,
-      building.columnData.val,
-      building.slabData.val,
-    );
-    nodes = result.nodes;
-    elements = result.elements;
-    nodeInputs = result.nodeInputs;
-    elementInputs = result.elementInputs;
-  } catch (error) {
-    console.error("CLT tower mesh build failed", error);
+  const meshResult = buildTowerMesh(building, "CLT tower mesh build failed");
+  if (!meshResult) {
+    activeMesh = null;
+    activeSolverKey = null;
+    lastWorkerCacheKey = null;
+    lastOverLimitKey = null;
+    pendingSolveMessage = null;
+    latestSolveRequestId++;
+    clearMesh(mesh);
+    if (solverWorker) {
+      const resetMessage: SolveWorkerRequest = { type: "reset" };
+      solverWorker.postMessage(resetMessage);
+    }
+    return;
   }
 
-  if (!nodes.length || !elements.length) {
-    mesh.nodes.val = [];
-    mesh.elements.val = [];
-    mesh.nodeInputs.val = {};
-    mesh.elementInputs.val = {};
+  activeMesh = meshResult;
+  activeSolverKey = `${values.stories}|${values.grid.toFixed(3)}|${values.meshSize.toFixed(3)}`;
+  applyTowerMeshResult(mesh, meshResult);
+  runSolve();
+}
+
+function runSolve() {
+  if (!activeMesh || !activeSolverKey) return;
+  const dof = activeMesh.nodes.length * 6;
+  if (dof > MAX_SOLVER_DOF) {
+    if (lastOverLimitKey !== activeSolverKey) {
+      console.warn(
+        `CLT tower solve skipped: DOF ${dof} exceeds safe limit ${MAX_SOLVER_DOF}. Increase mesh size or reduce stories.`,
+      );
+      lastOverLimitKey = activeSolverKey;
+    }
+    latestSolveRequestId++;
+    pendingSolveMessage = null;
     mesh.deformOutputs.val = {};
     mesh.analyzeOutputs.val = {};
     return;
   }
+  lastOverLimitKey = null;
 
-  mesh.deformOutputs.val = deform(nodes, elements, nodeInputs, elementInputs);
-  mesh.analyzeOutputs.val = analyze(
-    nodes,
-    elements,
-    elementInputs,
-    mesh.deformOutputs.val,
-  );
-  mesh.nodes.val = nodes;
-  mesh.elements.val = elements;
-  mesh.nodeInputs.val = nodeInputs;
-  mesh.elementInputs.val = elementInputs;
-});
-
-document.body.append(
-  getParameters(parameters),
-  getViewer({
-    objects3D,
-    solids,
-    mesh,
-    settingsObj: {
-      solids: true,
-      elements: true,
-      nodes: false,
-      loads: false,
-      deformedShape: true,
-      shellResults: "displacementZ",
-      shellResultScales: { displacementZ: 1000 },
-      shellResultUnits: { displacementZ: "mm" },
-      showFrameResults: false,
-    },
-  }),
-  getToolbar({
-    sourceCode:
-      "https://github.com/madil4/awatif/blob/main/examples/src/clt-tower/main.ts",
-    author: "https://www.linkedin.com/in/musaabmahjoub/",
-  }),
-);
-
-function rebuildBuilding() {
-  const storiesCount = clampInt(parameters.stories.value.val, 3, 20);
-  const gridSpacing = clampNumber(parameters.grid.value.val, 1.8, 4);
-  const meshSize = clampNumber(parameters.meshSize.value.val, 0.6, 3.5);
-  const loadKNm2 = clampNumber(parameters.load.value.val, -10, 10);
-
-  const points: [number, number, number][] = [];
-  const stories: number[] = [];
-  const columns: number[] = [];
-  const slabs: number[][] = [];
-  const columnsByStory: Map<number, number[]> = new Map();
-  const slabsByStory: Map<number, number[]> = new Map();
-  const columnData: Building["columnData"]["val"] = new Map();
-  const slabData: Building["slabData"]["val"] = new Map();
-
-  const columnPlan = buildColumnPlan(gridSpacing);
-
-  for (let story = 0; story < storiesCount; story++) {
-    const z = FLOOR_HEIGHT * (story + 1);
-
-    const slabStart = points.length;
-    footprint.forEach(([x, y]) => points.push([x, y, z]));
-    const slab = footprint.map((_, i) => slabStart + i);
-    slabs.push(slab);
-    const slabIndex = slabs.length - 1;
-
-    stories.push(slabStart);
-    slabsByStory.set(story, [slabIndex]);
-    slabData.set(slabIndex, {
-      analysisInput: {
-        meshSize,
-        areaLoad: -loadKNm2 * KNM2_TO_NM2,
-        isOpening: false,
-        cltLayup,
-      },
-    });
-
-    const storyColumnIndices: number[] = [];
-    columnPlan.forEach(([x, y]) => {
-      points.push([x, y, z]);
-      columns.push(points.length - 1);
-      const columnIndex = columns.length - 1;
-      storyColumnIndices.push(columnIndex);
-
-      if (story === 0) {
-        columnData.set(columnIndex, {
-          analysisInput: {
-            support: [true, true, true, true, true, true],
-          },
-        });
-      }
-    });
-    columnsByStory.set(story, storyColumnIndices);
+  if (!solverWorker) {
+    runSolveOnMainThread();
+    return;
   }
 
-  building.points.val = points;
-  building.stories.val = stories;
-  building.columns.val = columns;
-  building.slabs.val = slabs;
-  building.columnsByStory.val = columnsByStory;
-  building.slabsByStory.val = slabsByStory;
-  building.columnData.val = columnData;
-  building.slabData.val = slabData;
-}
+  const requestId = ++latestSolveRequestId;
+  const topologyChanged = activeSolverKey !== lastWorkerCacheKey;
 
-function buildColumnPlan(spacing: number): [number, number][] {
-  const [minX, maxX, minY, maxY] = bounds(footprint);
-  const cols: [number, number][] = [];
-  const tol = 1e-6;
-
-  for (let x = minX; x <= maxX + tol; x += spacing) {
-    for (let y = minY; y <= maxY + tol; y += spacing) {
-      const p: [number, number] = [round3(x), round3(y)];
-      if (pointInPolygon2d(p, footprint)) cols.push(p);
-    }
-  }
-
-  const unique = new Map<string, [number, number]>();
-  cols.forEach((p) => unique.set(`${p[0]}_${p[1]}`, p));
-  return Array.from(unique.values());
-}
-
-function bounds(poly: [number, number][]) {
-  let minX = Number.POSITIVE_INFINITY;
-  let maxX = Number.NEGATIVE_INFINITY;
-  let minY = Number.POSITIVE_INFINITY;
-  let maxY = Number.NEGATIVE_INFINITY;
-  poly.forEach(([x, y]) => {
-    minX = Math.min(minX, x);
-    maxX = Math.max(maxX, x);
-    minY = Math.min(minY, y);
-    maxY = Math.max(maxY, y);
-  });
-  return [minX, maxX, minY, maxY] as const;
-}
-
-function pointInPolygon2d(
-  point: [number, number],
-  polygon: [number, number][],
-): boolean {
-  const [x, y] = point;
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i];
-    const [xj, yj] = polygon[j];
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
-
-function round3(v: number): number {
-  return Math.round(v * 1000) / 1000;
-}
-
-function clampNumber(v: number, min: number, max: number): number {
-  if (!Number.isFinite(v)) return min;
-  return Math.max(min, Math.min(max, v));
-}
-
-function clampInt(v: number, min: number, max: number): number {
-  return Math.round(clampNumber(v, min, max));
-}
-
-function buildSevenLayerCLTLayup(): CLTLayup {
-  const mmToM = 1e-3;
-  const nmm2ToNm2 = 1e6;
-  const pattern = [30, 40, 30, 40, 30, 40, 30];
-  const angles = [0, 90, 0, 90, 0, 90, 0];
-
-  return {
-    layers: pattern.map((thkMm, i) => ({
-      thickness: thkMm * mmToM,
-      thetaDeg: angles[i],
-      Ex: 11000 * nmm2ToNm2,
-      Ey: 370 * nmm2ToNm2,
-      nuXY: 0.2,
-      Gxy: 690 * nmm2ToNm2,
-      Gxz: 690 * nmm2ToNm2,
-      Gyz: 69 * nmm2ToNm2,
-    })),
-    options: {
-      shearCoupling: true,
-      noGlueAtNarrowSide: false,
-      strictSymmetryForElement: true,
-    },
+  const solveMessage: SolveWorkerRequest = {
+    type: "solve",
+    requestId,
+    cacheKey: activeSolverKey,
+    loads: activeMesh.nodeInputs.loads,
+    topology: topologyChanged
+      ? {
+          nodes: activeMesh.nodes,
+          elements: activeMesh.elements,
+          supports: activeMesh.nodeInputs.supports,
+          elementInputs: activeMesh.elementInputs,
+        }
+      : undefined,
   };
+
+  if (workerBusy) {
+    pendingSolveMessage = solveMessage;
+    return;
+  }
+
+  workerBusy = true;
+  solverWorker.postMessage(solveMessage);
+  if (solveMessage.topology) {
+    lastWorkerCacheKey = solveMessage.cacheKey;
+  }
+}
+
+function flushPendingSolve() {
+  if (!solverWorker || workerBusy || !pendingSolveMessage) return;
+  const message = pendingSolveMessage;
+  pendingSolveMessage = null;
+
+  if (message.type !== "solve") return;
+
+  workerBusy = true;
+  solverWorker.postMessage(message);
+  if (message.topology) {
+    lastWorkerCacheKey = message.cacheKey;
+  }
+}
+
+function runSolveOnMainThread() {
+  if (!activeMesh) return;
+  const solved = solveTowerMesh(activeMesh, {
+    includeAnalyze: false,
+    cacheKey: activeSolverKey ?? undefined,
+    useCached: false,
+  });
+  if (!solved) {
+    mesh.deformOutputs.val = {};
+    mesh.analyzeOutputs.val = {};
+    return;
+  }
+  applyTowerSolveState(mesh, solved);
 }

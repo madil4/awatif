@@ -5,7 +5,6 @@ import { Building } from "./data-model";
 import { getMesh } from "./getMesh";
 import { getBase, getBaseGeometry } from "./getBase";
 import { getSolids, getSolidsGeometry } from "./getSolids";
-import { column } from "mathjs";
 
 const parameters: Parameters = {
   stories: { value: van.state(2), min: 1, max: 5, step: 1 },
@@ -90,7 +89,7 @@ van.derive(() => {
 
     const slabLoad: number = 1;
     slabData.set(j, {
-      analysisInput: { areaLoad: slabLoad, isOpening: false },
+      analysisInput: { meshSize: 1, areaLoad: slabLoad, isOpening: false },
     });
 
     // columns

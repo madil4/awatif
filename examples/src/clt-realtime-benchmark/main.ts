@@ -91,6 +91,7 @@ function initModelGeometry() {
 }
 
 function warmCachedSolver(nodes: Node[], elements: Element[]) {
+  cachedSolver?.dispose?.();
   cachedSolver = createCachedDeformSolver(nodes, elements, supports, elementInputs);
 
   // Reset history to benchmark interactive mode independently from first solve.
