@@ -144,6 +144,7 @@ van.derive(() => {
       },
       components: components.val,
       templates,
+      activeAnalysis: "linear",
     });
 
     mesh.nodes.val = meshData.nodes;

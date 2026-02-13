@@ -6,6 +6,7 @@ export function getMesh({
   geometry,
   components,
   templates,
+  activeAnalysis,
 }: {
   components: Components["val"];
   geometry: {
@@ -13,6 +14,7 @@ export function getMesh({
     lines: Geometry["lines"]["val"];
   };
   templates: Map<ComponentsType, Map<string, any>>;
+  activeAnalysis: string;
 }): {
   nodes: Mesh["nodes"]["val"];
   elements: Mesh["elements"]["val"];
@@ -165,16 +167,19 @@ export function getMesh({
     lineToElements.set(lineId, [elementIdx]);
   }
 
-  // Apply imperfections as post-processing on the meshed nodes
-  applyImperfections(
-    imperfectionComponents,
-    templates,
-    geometry,
-    allNodes,
-    allElements,
-    lineToElements,
-    pointToNodes,
-  );
+  // Apply imperfections only for nonlinear analysis
+  // (for linear analysis, imperfections are added analytically in the design calculation)
+  if (activeAnalysis !== "linear") {
+    applyImperfections(
+      imperfectionComponents,
+      templates,
+      geometry,
+      allNodes,
+      allElements,
+      lineToElements,
+      pointToNodes,
+    );
+  }
 
   return {
     nodes: allNodes,
