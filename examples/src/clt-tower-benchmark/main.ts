@@ -25,8 +25,10 @@ import {
 
 import "./styles.css";
 
-const { div, h3, p } = van.tags;
+const PREVIEW_MIN_MESH_SIZE = 1.4;
+const MAX_SOLVER_DOF = 18000;
 
+const { div, h3, p } = van.tags;
 const parameters = createTowerParameters();
 
 const building: Building = {
@@ -62,27 +64,37 @@ const firstSolveMsState = van.state(0);
 const freshStartWallMsState = van.state(0);
 const medianSolveMsState = van.state(0);
 const historyCountState = van.state(0);
-
 const solveHistoryMs: number[] = [];
 const appStartMs = performance.now();
 let hasFirstSolve = false;
-let queuedValues: TowerInputValues | null = null;
-let recomputeQueued = false;
-let solveTimer: number | undefined;
-let solveSeq = 0;
-let activeMesh: TowerMeshResult | null = null;
-let activeSolverKey: string | null = null;
-let previousValues: TowerInputValues | null = null;
-let lastOverLimitKey: string | null = null;
-const SOLVE_DEBOUNCE_MS = 120;
-const MAX_INTERACTIVE_DOF = 4500;
 
 const cltLayup = buildSevenLayerCLTLayup();
+let activeMesh: TowerMeshResult | null = null;
+let activeSolverKey: string | null = null;
+let previousInputValues: TowerInputValues | null = null;
+let isSliderInteraction = false;
+let lastOverLimitKey: string | null = null;
 
 van.derive(() => {
   const values = normalizeTowerInputs(getTowerInputValues(parameters));
   applyTowerInputValues(parameters, values);
-  scheduleRecompute(values);
+
+  const isTopologyChange =
+    !previousInputValues ||
+    previousInputValues.stories !== values.stories ||
+    previousInputValues.grid !== values.grid ||
+    previousInputValues.meshSize !== values.meshSize;
+
+  const effectiveValues =
+    isSliderInteraction && isTopologyChange
+      ? ({
+          ...values,
+          meshSize: Math.max(values.meshSize, PREVIEW_MIN_MESH_SIZE),
+        } satisfies TowerInputValues)
+      : values;
+
+  previousInputValues = values;
+  recompute(effectiveValues);
 });
 
 function render() {
@@ -102,6 +114,7 @@ function render() {
     ),
   );
 
+  const parametersElm = getParameters(parameters);
   root.append(
     div(
       { id: "viewer-wrap" },
@@ -112,7 +125,7 @@ function render() {
         settingsObj: getTowerViewerSettings(),
       }),
     ),
-    getParameters(parameters),
+    parametersElm,
     getToolbar({
       sourceCode:
         "https://github.com/madil4/awatif/blob/main/examples/src/clt-tower-benchmark/main.ts",
@@ -122,21 +135,28 @@ function render() {
   );
 
   document.body.append(root);
+  bindSliderInteraction(parametersElm);
 }
 
 render();
 
-function scheduleRecompute(values: TowerInputValues) {
-  queuedValues = values;
-  if (recomputeQueued) return;
-  recomputeQueued = true;
+function bindSliderInteraction(parametersRoot: HTMLElement) {
+  let pointerCaptured = false;
 
-  requestAnimationFrame(() => {
-    recomputeQueued = false;
-    if (!queuedValues) return;
-    const latest = queuedValues;
-    queuedValues = null;
-    recompute(latest);
+  parametersRoot.addEventListener("pointerdown", () => {
+    pointerCaptured = true;
+    isSliderInteraction = true;
+  });
+
+  window.addEventListener("pointerup", () => {
+    if (!pointerCaptured) return;
+    pointerCaptured = false;
+    if (!isSliderInteraction) return;
+
+    isSliderInteraction = false;
+    const values = normalizeTowerInputs(getTowerInputValues(parameters));
+    applyTowerInputValues(parameters, values);
+    recompute(values);
   });
 }
 
@@ -159,7 +179,7 @@ function recompute(values: TowerInputValues) {
   if (!meshResult) {
     activeMesh = null;
     activeSolverKey = null;
-    previousValues = values;
+    lastOverLimitKey = null;
     clearMesh(mesh);
     nodeCountState.val = 0;
     elementCountState.val = 0;
@@ -174,54 +194,34 @@ function recompute(values: TowerInputValues) {
   nodeCountState.val = meshResult.nodes.length;
   elementCountState.val = meshResult.elements.length;
   dofState.val = meshResult.nodes.length * 6;
-  if (dofState.val > MAX_INTERACTIVE_DOF) {
+  runSolve();
+}
+
+function runSolve() {
+  if (!activeMesh || !activeSolverKey) return;
+  const dof = activeMesh.nodes.length * 6;
+  if (dof > MAX_SOLVER_DOF) {
     if (lastOverLimitKey !== activeSolverKey) {
       console.warn(
-        `CLT tower benchmark solve skipped: DOF ${dofState.val} exceeds safe interactive limit ${MAX_INTERACTIVE_DOF}. Increase mesh size or reduce stories/grid.`,
+        `CLT tower benchmark solve skipped: DOF ${dof} exceeds safe limit ${MAX_SOLVER_DOF}. Increase mesh size or reduce stories.`,
       );
       lastOverLimitKey = activeSolverKey;
     }
+    mesh.deformOutputs.val = {};
+    mesh.analyzeOutputs.val = {};
     return;
   }
   lastOverLimitKey = null;
-
-  const isTopologyChange =
-    !previousValues ||
-    previousValues.stories !== values.stories ||
-    previousValues.grid !== values.grid ||
-    previousValues.meshSize !== values.meshSize;
-  previousValues = values;
-
-  const seq = ++solveSeq;
-  if (!hasFirstSolve || isTopologyChange) {
-    if (solveTimer !== undefined) {
-      window.clearTimeout(solveTimer);
-      solveTimer = undefined;
-    }
-    runSolve(seq);
-    return;
-  }
-
-  scheduleSolve(seq, SOLVE_DEBOUNCE_MS);
+  runSolveOnMainThread();
 }
 
-function scheduleSolve(seq: number, delayMs: number) {
-  if (solveTimer !== undefined) window.clearTimeout(solveTimer);
-  solveTimer = window.setTimeout(() => {
-    solveTimer = undefined;
-    runSolve(seq);
-  }, delayMs);
-}
-
-function runSolve(seq: number) {
+function runSolveOnMainThread() {
   if (!activeMesh) return;
-
   const solved = solveTowerMesh(activeMesh, {
     includeAnalyze: false,
     cacheKey: activeSolverKey ?? undefined,
     useCached: false,
   });
-  if (seq !== solveSeq) return;
   if (!solved) {
     mesh.deformOutputs.val = {};
     mesh.analyzeOutputs.val = {};
@@ -233,7 +233,6 @@ function runSolve(seq: number) {
     firstSolveMsState.val = solved.solveMs;
     freshStartWallMsState.val = performance.now() - appStartMs;
   }
-
   solveHistoryMs.push(solved.solveMs);
   if (solveHistoryMs.length > 50) solveHistoryMs.shift();
   historyCountState.val = solveHistoryMs.length;
