@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
-import type { MeshTemplate } from "../data-model";
+import type { ImperfectionsTemplate } from "./data-model";
 
 export type ImperfectionsParams = {
   // Global Inclination — EC2 §5.2(5)
@@ -16,7 +16,7 @@ export type ImperfectionsParams = {
   direction: string; // "positive" | "negative" (X-axis)
 };
 
-export const imperfections: MeshTemplate<ImperfectionsParams> = {
+export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   name: "Imperfections",
   defaultParams: {
     globalInclination: true,
@@ -155,13 +155,6 @@ export const imperfections: MeshTemplate<ImperfectionsParams> = {
         </select>
       </div>
     `;
-  },
-
-  getMesh: ({ params, lineLength }) => {
-    return {
-      nodes: [],
-      elements: [],
-    };
   },
 };
 

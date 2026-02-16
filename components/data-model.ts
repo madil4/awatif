@@ -66,6 +66,7 @@ export enum ComponentsType {
   SUPPORTS,
   ANALYSIS,
   DESIGN,
+  IMPERFECTIONS,
 }
 
 export type Components = State<

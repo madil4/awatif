@@ -1,6 +1,6 @@
 import { Components, ComponentsType, Geometry, Mesh } from "../data-model";
 import { MeshTemplate } from "./data-model";
-import { applyImperfections } from "./imperfections/applyImperfections";
+import { applyImperfections } from "../imperfections/applyImperfections";
 
 /**
  * Converts geometry lines into mesh nodes and elements.
@@ -37,14 +37,9 @@ export function getMesh({
   const pointToNodes = new Map<number, number[]>();
   const lineToElements = new Map<number, number[]>();
 
-  // Separate regular mesh components from imperfection components
-  const allMeshComponents = components.get(ComponentsType.MESH) ?? [];
-  const regularComponents = allMeshComponents.filter(
-    (c) => c.templateId !== "imperfections",
-  );
-  const imperfectionComponents = allMeshComponents.filter(
-    (c) => c.templateId === "imperfections",
-  );
+  const regularComponents = components.get(ComponentsType.MESH) ?? [];
+  const imperfectionComponents =
+    components.get(ComponentsType.IMPERFECTIONS) ?? [];
 
   // Build a mapping from lineId to its regular MESH component (if any)
   const lineToComponent = new Map<number, (typeof regularComponents)[number]>();
