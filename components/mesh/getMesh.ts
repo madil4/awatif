@@ -7,15 +7,12 @@ import { applyImperfections } from "../imperfections/applyImperfections";
  *
  * For each line:
  * - If a mesh component is assigned → uses that component's template and params
- * - If no component + linear analysis → creates a single 2-node element
- * - If no component + nonlinear analysis → auto-applies the "line-mesh" template
- *   with default spacing to subdivide the line
+ * - If no component → auto-applies the "line-mesh" template with default spacing
  */
 export function getMesh({
   geometry,
   components,
   templates,
-  activeAnalysis,
 }: {
   components: Components["val"];
   geometry: {
@@ -23,7 +20,6 @@ export function getMesh({
     lines: Geometry["lines"]["val"];
   };
   templates: Map<ComponentsType, Map<string, any>>;
-  activeAnalysis: string;
 }): {
   nodes: Mesh["nodes"]["val"];
   elements: Mesh["elements"]["val"];
@@ -97,21 +93,8 @@ export function getMesh({
         pointToNodes,
         lineToElements,
       );
-    } else if (activeAnalysis === "linear") {
-      // Linear analysis: simple 2-node element (no subdivision needed)
-      meshLineAsSimpleElement(
-        lineId,
-        startId,
-        endId,
-        startPoint,
-        endPoint,
-        allNodes,
-        allElements,
-        pointToNodes,
-        lineToElements,
-      );
     } else {
-      // Nonlinear analysis: use default line-mesh template for subdivision
+      // No component: auto-apply line-mesh template
       const defaultTemplate = templates
         .get(ComponentsType.MESH)
         ?.get("line-mesh") as MeshTemplate<any> | undefined;
@@ -147,19 +130,15 @@ export function getMesh({
     }
   });
 
-  // Apply imperfections only for nonlinear analysis
-  // (for linear analysis, imperfections are added analytically in the design calculation)
-  if (activeAnalysis !== "linear") {
-    applyImperfections(
-      imperfectionComponents,
-      templates,
-      geometry,
-      allNodes,
-      allElements,
-      lineToElements,
-      pointToNodes,
-    );
-  }
+  applyImperfections(
+    imperfectionComponents,
+    templates,
+    geometry,
+    allNodes,
+    allElements,
+    lineToElements,
+    pointToNodes,
+  );
 
   return {
     nodes: allNodes,
