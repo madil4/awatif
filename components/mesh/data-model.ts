@@ -7,7 +7,7 @@ export type MeshTemplate<Params extends Record<string, unknown>> = {
   defaultParams: Params;
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
-  getMesh: ({ params }: { params: Params }) => {
+  getMesh: ({ params, lineLength }: { params: Params; lineLength: number }) => {
     nodes: Mesh["nodes"]["val"];
     elements: Mesh["elements"]["val"];
   };

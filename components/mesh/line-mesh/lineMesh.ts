@@ -2,37 +2,39 @@ import { html } from "lit-html";
 import { MeshTemplate } from "../data-model";
 
 type LineMeshParams = {
-  divisions: number;
+  spacing: number;
 };
 
 export const lineMesh: MeshTemplate<LineMeshParams> = {
   name: "Line Mesh",
   defaultParams: {
-    divisions: 8,
+    spacing: 0.6,
   },
 
   getParamsTemplate: ({ params }) => {
     return html`<div>
-      <label>Divisions (max 30):</label>
+      <label>Spacing (m):</label>
       <input
         type="number"
-        min="1"
-        max="30"
-        .value=${params.val.divisions}
+        min="0.1"
+        max="5"
+        step="0.1"
+        .value=${params.val.spacing}
         @input=${(e: Event) => {
           const value = Number((e.target as HTMLInputElement).value);
-          const clampedValue = Math.max(1, Math.min(30, value));
+          const clampedValue = Math.max(0.1, Math.min(5, value));
           params.val = {
             ...params.val,
-            divisions: clampedValue,
+            spacing: clampedValue,
           };
         }}
       />
     </div>`;
   },
 
-  getMesh: ({ params }) => {
-    const { divisions } = params;
+  getMesh: ({ params, lineLength }) => {
+    const { spacing } = params;
+    const divisions = Math.max(1, Math.round(lineLength / spacing));
     const nodes: number[][] = [];
     const elements: number[][] = [];
 

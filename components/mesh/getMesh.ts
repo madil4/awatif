@@ -86,10 +86,17 @@ export function getMesh({
         return;
       }
 
+      const lineLength = Math.sqrt(
+        (endPoint[0] - startPoint[0]) ** 2 +
+          (endPoint[1] - startPoint[1]) ** 2 +
+          (endPoint[2] - startPoint[2]) ** 2,
+      );
+
       const { nodes: parametricNodes, elements } = template.getMesh({
         params: (component.params ?? template.defaultParams) as Parameters<
           typeof template.getMesh
         >[0]["params"],
+        lineLength,
       });
 
       // Build local-to-global index mapping to reuse shared nodes
