@@ -44,16 +44,6 @@ const geometry: Geometry = {
 const components: Components = van.state(
   new Map([
     [
-      ComponentsType.MESH,
-      [
-        {
-          name: "Line Mesh",
-          templateId: "line-mesh",
-          geometry: [1],
-        },
-      ],
-    ],
-    [
       ComponentsType.LOADS,
       [
         {
@@ -211,7 +201,6 @@ van.derive(() => {
 // Components events
 const componentsBarMode = van.state<ComponentsType | null>(null);
 van.derive(() => {
-  if (componentsBarMode.val === ComponentsType.MESH) display.mesh.val = true;
   if (componentsBarMode.val === ComponentsType.LOADS) display.loads.val = true;
   if (componentsBarMode.val === ComponentsType.SUPPORTS)
     display.supports.val = true;

@@ -37,20 +37,6 @@ export function getComponentsBar({
 
       <button
         class="components-bar-button ${componentsBarMode.val ===
-        ComponentsType.MESH
-          ? "active"
-          : ""}"
-        @click=${() =>
-          (componentsBarMode.val =
-            componentsBarMode.val === ComponentsType.MESH
-              ? null
-              : ComponentsType.MESH)}
-      >
-        Mesh
-      </button>
-
-      <button
-        class="components-bar-button ${componentsBarMode.val ===
         ComponentsType.LOADS
           ? "active"
           : ""}"
