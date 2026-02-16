@@ -35,7 +35,8 @@ export function getList({
 
   const isLineBased = () =>
     componentsBarMode.val === ComponentsType.MESH ||
-    componentsBarMode.val === ComponentsType.DESIGN;
+    componentsBarMode.val === ComponentsType.DESIGN ||
+    componentsBarMode.val === ComponentsType.IMPERFECTIONS;
 
   const getSelectedGeometry = () => {
     const sel = geometry.selection.val;
@@ -116,15 +117,9 @@ export function getList({
     if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
 
     const selectedSet = new Set(selectedGeometry);
-    const activeTemplateId = current.templateId;
-    const isImperfections = activeTemplateId === "imperfections";
     updateComponents((list) =>
       list.map((c, i) => {
         if (i === idx) return { ...c, geometry: [...selectedGeometry] };
-        // Only strip geometry from components of the same kind:
-        // imperfections don't conflict with regular mesh components
-        const otherIsImperfections = c.templateId === "imperfections";
-        if (isImperfections !== otherIsImperfections) return c;
         return {
           ...c,
           geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
@@ -184,7 +179,7 @@ export function getList({
       if (deletedLines.size > 0) {
         removeDeletedFromTypes(
           updated,
-          [ComponentsType.MESH, ComponentsType.DESIGN],
+          [ComponentsType.MESH, ComponentsType.DESIGN, ComponentsType.IMPERFECTIONS],
           deletedLines,
         );
       }
@@ -210,7 +205,8 @@ export function getList({
       componentsBarMode.val === ComponentsType.MESH ||
       componentsBarMode.val === ComponentsType.LOADS ||
       componentsBarMode.val === ComponentsType.SUPPORTS ||
-      componentsBarMode.val === ComponentsType.DESIGN;
+      componentsBarMode.val === ComponentsType.DESIGN ||
+      componentsBarMode.val === ComponentsType.IMPERFECTIONS;
 
     return html`
       <details

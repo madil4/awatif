@@ -1,4 +1,4 @@
-import { ComponentsType, Geometry } from "../../data-model";
+import { ComponentsType, Geometry } from "../data-model";
 import { ImperfectionsParams, computeThetaI } from "./imperfections";
 
 export function applyImperfections(
@@ -19,7 +19,9 @@ export function applyImperfections(
 ): void {
   if (imperfectionComponents.length === 0) return;
 
-  const template = templates.get(ComponentsType.MESH)?.get("imperfections");
+  const template = templates
+    .get(ComponentsType.IMPERFECTIONS)
+    ?.get("imperfections");
   if (!template) return;
 
   for (const component of imperfectionComponents) {

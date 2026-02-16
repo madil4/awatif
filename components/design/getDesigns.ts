@@ -30,14 +30,14 @@ export const getDesigns = ({
   // Get geometry mapping
   const { lineToElements } = mesh.geometryMapping;
 
-  // Build line → imperfection params lookup from mesh components
-  const meshComponents = components.get(ComponentsType.MESH) ?? [];
+  // Build line → imperfection params lookup from imperfection components
+  const imperfectionComponents =
+    components.get(ComponentsType.IMPERFECTIONS) ?? [];
   const lineToImperfections = new Map<number, Record<string, unknown>>();
-  for (const mc of meshComponents) {
-    if (mc.templateId !== "imperfections") continue;
+  for (const mc of imperfectionComponents) {
     const impTemplate = templates
-      .get(ComponentsType.MESH)
-      ?.get("imperfections");
+      .get(ComponentsType.IMPERFECTIONS)
+      ?.get(mc.templateId);
     const impParams = (mc.params ?? impTemplate?.defaultParams) as
       | Record<string, unknown>
       | undefined;

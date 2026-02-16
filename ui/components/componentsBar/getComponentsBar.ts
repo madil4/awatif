@@ -65,6 +65,20 @@ export function getComponentsBar({
 
       <button
         class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.IMPERFECTIONS
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.IMPERFECTIONS
+              ? null
+              : ComponentsType.IMPERFECTIONS)}
+      >
+        Imperfections
+      </button>
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
         ComponentsType.DESIGN
           ? "active"
           : ""}"
