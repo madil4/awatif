@@ -17,6 +17,24 @@ export function getComponentsBar({
 
   const template = () => html`
     <div id="components-bar">
+      ${showAnalysis
+        ? html`
+            <button
+              class="components-bar-button ${componentsBarMode.val ===
+              ComponentsType.ANALYSIS
+                ? "active"
+                : ""}"
+              @click=${() =>
+                (componentsBarMode.val =
+                  componentsBarMode.val === ComponentsType.ANALYSIS
+                    ? null
+                    : ComponentsType.ANALYSIS)}
+            >
+              Analysis
+            </button>
+          `
+        : ""}
+
       <button
         class="components-bar-button ${componentsBarMode.val ===
         ComponentsType.MESH
@@ -58,24 +76,6 @@ export function getComponentsBar({
       >
         Supports
       </button>
-
-      ${showAnalysis
-        ? html`
-            <button
-              class="components-bar-button ${componentsBarMode.val ===
-              ComponentsType.ANALYSIS
-                ? "active"
-                : ""}"
-              @click=${() =>
-                (componentsBarMode.val =
-                  componentsBarMode.val === ComponentsType.ANALYSIS
-                    ? null
-                    : ComponentsType.ANALYSIS)}
-            >
-              Analysis
-            </button>
-          `
-        : ""}
 
       <button
         class="components-bar-button ${componentsBarMode.val ===
