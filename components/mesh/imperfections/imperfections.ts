@@ -157,7 +157,7 @@ export const imperfections: MeshTemplate<ImperfectionsParams> = {
     `;
   },
 
-  getMesh: ({ params }) => {
+  getMesh: ({ params, lineLength }) => {
     return {
       nodes: [],
       elements: [],
