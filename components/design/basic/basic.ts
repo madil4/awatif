@@ -2,60 +2,84 @@ import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import type { DesignTemplate } from "../data-model";
 
-type BasicParams = {
-  elasticity: string; // GPa
-  area: string; // cm²
-  momentInertia: string; // cm⁴
+type RcBeamParams = {
+  width: string; // mm
+  depth: string; // mm
+  concreteGrade: string; // e.g., "C30"
+  stiffnessModifier: string; // 0.01–1.0 (1.0 = uncracked)
 };
 
-export const basic: DesignTemplate<BasicParams, any> = {
-  name: "Basic",
+function parseEcm(concreteGrade: string) {
+  const fckMatch = concreteGrade.match(/C(\d+)/);
+  const fck = fckMatch ? parseInt(fckMatch[1]) : 30;
+  const fcm = fck + 8;
+  return 22000 * Math.pow(fcm / 10, 0.3); // MPa
+}
+
+export const rcBeam: DesignTemplate<RcBeamParams, any> = {
+  name: "RC Beam",
   defaultParams: {
-    elasticity: "33", // GPa (C30/37 concrete)
-    area: "900", // cm² (300×300 mm section)
-    momentInertia: "67500", // cm⁴ (300×300 mm section)
+    width: "250",
+    depth: "500",
+    concreteGrade: "C30",
+    stiffnessModifier: "1.0",
   },
 
   getParamsTemplate: ({ params }) => {
     return html`
       <div>
-        <label>Elasticity (GPa):</label>
+        <label>Width (mm):</label>
         <input
           type="number"
           min="1"
-          .value=${live(params.val.elasticity)}
+          .value=${live(params.val.width)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              elasticity: (e.target as HTMLInputElement).value,
+              width: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
 
       <div>
-        <label>Area (cm²):</label>
+        <label>Depth (mm):</label>
         <input
           type="number"
           min="1"
-          .value=${live(params.val.area)}
+          .value=${live(params.val.depth)}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              area: (e.target as HTMLInputElement).value,
+              depth: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
 
       <div>
-        <label>Moment of Inertia (cm⁴):</label>
+        <label>Concrete Grade:</label>
         <input
-          type="number"
-          min="1"
-          .value=${live(params.val.momentInertia)}
+          type="text"
+          .value=${params.val.concreteGrade}
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              momentInertia: (e.target as HTMLInputElement).value,
+              concreteGrade: (e.target as HTMLInputElement).value,
+            })}
+        />
+      </div>
+
+      <div>
+        <label>Stiffness Modifier:</label>
+        <input
+          type="number"
+          min="0.01"
+          max="1"
+          step="0.05"
+          .value=${live(params.val.stiffnessModifier)}
+          @input=${(e: Event) =>
+            (params.val = {
+              ...params.val,
+              stiffnessModifier: (e.target as HTMLInputElement).value,
             })}
         />
       </div>
@@ -63,36 +87,77 @@ export const basic: DesignTemplate<BasicParams, any> = {
   },
 
   getElementsProps: ({ params }) => {
+    const width = Number(params.width) / 1000; // mm to m
+    const depth = Number(params.depth) / 1000; // mm to m
+    const modifier = Number(params.stiffnessModifier);
+
+    const Ecm = parseEcm(params.concreteGrade); // MPa
+    const Ecm_kNm2 = Ecm * 1e3; // MPa to kN/m²
+
     return {
-      elasticity: Number(params.elasticity) * 1e6, // GPa to KN/m^2
-      area: Number(params.area) * 1e-4, // cm² to m²
-      momentInertia: Number(params.momentInertia) * 1e-8, // cm⁴ to m⁴
+      elasticity: Ecm_kNm2 * modifier,
+      area: width * depth,
+      momentInertia: (width * Math.pow(depth, 3)) / 12,
     };
   },
 
-  getReport: ({ params }: { params: BasicParams }) => {
+  getReport: ({ params }: { params: RcBeamParams }) => {
+    const width = Number(params.width);
+    const depth = Number(params.depth);
+    const modifier = Number(params.stiffnessModifier);
+    const Ecm = parseEcm(params.concreteGrade);
+
     return html`
       <div
         style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary);"
       >
-        <!-- Section Properties -->
         <div style="margin-bottom: 12px;">
           <div style="font-weight: 500; margin-bottom: 4px;">
             Section Properties
           </div>
           <div>
-            <span style="color: var(--text-secondary);">Elasticity:</span>
-            ${params.elasticity} GPa
+            <span style="color: var(--text-secondary);">Width:</span>
+            ${params.width} mm
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);">Depth:</span>
+            ${params.depth} mm
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);">Concrete Grade:</span>
+            ${params.concreteGrade}
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);"
+              >Stiffness Modifier:</span
+            >
+            ${params.stiffnessModifier}
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight: 500; margin-bottom: 4px;">
+            Computed Properties
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);">E<sub>cm</sub>:</span>
+            ${Ecm.toFixed(0)} MPa
+          </div>
+          <div>
+            <span style="color: var(--text-secondary);"
+              >Effective E<sub>cm</sub>:</span
+            >
+            ${(Ecm * modifier).toFixed(0)} MPa
           </div>
           <div>
             <span style="color: var(--text-secondary);">Area:</span>
-            ${params.area} cm²
+            ${(width * depth).toFixed(0)} mm²
           </div>
           <div>
             <span style="color: var(--text-secondary);"
               >Moment of Inertia:</span
             >
-            ${Number(params.momentInertia).toFixed(1)} cm⁴
+            ${((width * Math.pow(depth, 3)) / 12).toFixed(0)} mm⁴
           </div>
         </div>
       </div>
