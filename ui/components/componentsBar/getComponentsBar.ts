@@ -13,24 +13,83 @@ export function getComponentsBar({
   activeAnalysis?: ActiveAnalysis;
 }): HTMLElement {
   const container = document.createElement("div");
-  const types = getComponentsTypes(activeAnalysis);
+  const showAnalysis = activeAnalysis && activeAnalysis.val !== undefined;
 
   const template = () => html`
     <div id="components-bar">
-      ${types.map(
-        (mode) => html`
-          <button
-            class="components-bar-button ${componentsBarMode.val === mode.value
-              ? "active"
-              : ""}"
-            @click=${() =>
-              (componentsBarMode.val =
-                componentsBarMode.val === mode.value ? null : mode.value)}
-          >
-            ${mode.label}
-          </button>
-        `,
-      )}
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.MESH
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.MESH
+              ? null
+              : ComponentsType.MESH)}
+      >
+        Mesh
+      </button>
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.LOADS
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.LOADS
+              ? null
+              : ComponentsType.LOADS)}
+      >
+        Loads
+      </button>
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.SUPPORTS
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.SUPPORTS
+              ? null
+              : ComponentsType.SUPPORTS)}
+      >
+        Supports
+      </button>
+
+      ${showAnalysis
+        ? html`
+            <button
+              class="components-bar-button ${componentsBarMode.val ===
+              ComponentsType.ANALYSIS
+                ? "active"
+                : ""}"
+              @click=${() =>
+                (componentsBarMode.val =
+                  componentsBarMode.val === ComponentsType.ANALYSIS
+                    ? null
+                    : ComponentsType.ANALYSIS)}
+            >
+              Analysis
+            </button>
+          `
+        : ""}
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.DESIGN
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.DESIGN
+              ? null
+              : ComponentsType.DESIGN)}
+      >
+        Design
+      </button>
     </div>
   `;
 
@@ -39,29 +98,4 @@ export function getComponentsBar({
   });
 
   return container.firstElementChild as HTMLElement;
-}
-
-// Utils
-function getComponentsTypes(activeAnalysis?: ActiveAnalysis) {
-  return Object.keys(ComponentsType)
-    .filter((key) => isNaN(Number(key)))
-    .filter((key) => {
-      // Skip ANALYSIS tab when activeAnalysis is undefined
-      if (
-        key === "ANALYSIS" &&
-        (!activeAnalysis || activeAnalysis.val === undefined)
-      ) {
-        return false;
-      }
-      return true;
-    })
-    .map((key) => ({
-      key,
-      value: ComponentsType[key as keyof typeof ComponentsType],
-      label: getDisplayName(key),
-    }));
-
-  function getDisplayName(key: string): string {
-    return key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
-  }
 }
