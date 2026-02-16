@@ -12,10 +12,8 @@ export type DesignTemplate<
 
   getParamsTemplate: ({
     params,
-    activeAnalysis,
   }: {
     params: State<Params>;
-    activeAnalysis?: ActiveAnalysis;
   }) => TemplateResult;
 
   getElementsProps: ({
