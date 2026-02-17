@@ -1,5 +1,8 @@
 import { Node } from "../../data-model";
-import { getShellLinearKinematics } from "../stress/kinematics";
+import {
+  getShellLinearKinematics,
+  getShellTransverseShearStrain,
+} from "../stress/kinematics";
 
 describe("shell linear kinematics", () => {
   const nodes: Node[] = [
@@ -64,6 +67,21 @@ describe("shell linear kinematics", () => {
     expect(kinematics.elementArea).toBe(0);
     expect(kinematics.membraneStrain).toEqual([0, 0, 0]);
     expect(kinematics.curvature).toEqual([0, 0, 0]);
+  });
+
+  test("transverse shear strain scales linearly with displacement amplitudes", () => {
+    const d1 = buildShellDofs(nodes, (x) => ({
+      uz: 0.01 * x,
+    }));
+    const d2 = buildShellDofs(nodes, (x) => ({
+      uz: 0.02 * x,
+    }));
+
+    const g1 = getShellTransverseShearStrain(nodes, d1);
+    const g2 = getShellTransverseShearStrain(nodes, d2);
+
+    expect(g2[0]).toBeCloseTo(2 * g1[0], 12);
+    expect(g2[1]).toBeCloseTo(2 * g1[1], 12);
   });
 });
 

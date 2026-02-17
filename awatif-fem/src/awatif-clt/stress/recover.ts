@@ -1,20 +1,28 @@
 import { multiply } from "mathjs";
 import {
-  CLTLayup,
   DeformOutputs,
   Element,
   ElementInputs,
   Node,
 } from "../../data-model";
 import { getTransformationMatrix } from "../../utils/getTransformationMatrix";
-import { getShellLinearKinematics } from "./kinematics";
+import {
+  getShellLinearKinematics,
+  getShellTransverseShearStrain,
+} from "./kinematics";
 import {
   InPlaneRecoveryMode,
   LayerInPlaneStressProfile,
   recoverLaminateInPlaneStressProfile,
 } from "./inPlane";
+import {
+  LayerTransverseStressProfile,
+  TransverseRecoveryMode,
+  recoverLaminateTransverseShearProfile,
+} from "./transverse";
 
 export type CltInPlaneStressProfiles = Map<number, LayerInPlaneStressProfile[]>;
+export type CltTransverseStressProfiles = Map<number, LayerTransverseStressProfile[]>;
 
 export function recoverCltInPlaneStressProfiles(
   nodes: Node[],
@@ -54,6 +62,40 @@ export function recoverCltInPlaneStressProfiles(
   return profiles;
 }
 
+export function recoverCltTransverseShearProfiles(
+  nodes: Node[],
+  elements: Element[],
+  elementInputs: ElementInputs,
+  deformOutputs: DeformOutputs,
+  options?: {
+    mode?: TransverseRecoveryMode;
+  },
+): CltTransverseStressProfiles {
+  const profiles: CltTransverseStressProfiles = new Map();
+  const deformations = deformOutputs.deformations;
+  if (!deformations) return profiles;
+
+  elements.forEach((element, elementIndex) => {
+    if (element.length !== 3) return;
+    const layup = elementInputs.cltLayups?.get(elementIndex);
+    if (!layup) return;
+
+    const elementNodes = element.map((nodeIndex) => nodes[nodeIndex]);
+    const elementGlobalDofs = getElementGlobalDofs(element, deformations);
+    const transform = getTransformationMatrix(elementNodes);
+    const elementLocalDofs = multiply(transform, elementGlobalDofs) as number[];
+    const localNodes = getElementLocalNodes(elementNodes, transform);
+    const gamma = getShellTransverseShearStrain(localNodes, elementLocalDofs);
+
+    profiles.set(
+      elementIndex,
+      recoverLaminateTransverseShearProfile(layup, gamma, { mode: options?.mode }),
+    );
+  });
+
+  return profiles;
+}
+
 export function getLayerPointStressComponent(
   profile: LayerInPlaneStressProfile[],
   layerIndex: number,
@@ -67,6 +109,21 @@ export function getLayerPointStressComponent(
 
   const componentIndex = component === "sigmaX" ? 0 : component === "sigmaY" ? 1 : 2;
   return pointValue.stressShell[componentIndex];
+}
+
+export function getLayerPointTransverseStressComponent(
+  profile: LayerTransverseStressProfile[],
+  layerIndex: number,
+  point: "top" | "mid" | "bottom",
+  component: "tauXZ" | "tauYZ",
+): number | undefined {
+  const layer = profile[layerIndex];
+  if (!layer) return undefined;
+  const pointValue = layer.points.find((it) => it.point === point);
+  if (!pointValue) return undefined;
+
+  const componentIndex = component === "tauXZ" ? 0 : 1;
+  return pointValue.tauShell[componentIndex];
 }
 
 function getElementGlobalDofs(

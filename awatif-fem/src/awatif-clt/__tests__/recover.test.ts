@@ -5,7 +5,9 @@ import {
 import {
   getLayerPointStressComponent,
   recoverCltInPlaneStressProfiles,
+  recoverCltTransverseShearProfiles,
 } from "../stress/recover";
+import { recoverLaminateTransverseResultantFromProfile } from "../stress/transverse";
 
 describe("CLT in-plane mesh recovery", () => {
   test("matches direct laminate profile on a single shell element", () => {
@@ -83,6 +85,92 @@ describe("CLT in-plane mesh recovery", () => {
     const sigmaX = getLayerPointStressComponent(direct, 0, "mid", "sigmaX");
     expect(sigmaX).toBeDefined();
     expect(sigmaX as number).toBeGreaterThan(0);
+  });
+
+  test("recovers mesh-level transverse shear profile and keeps top/bottom zero", () => {
+    const nodes: Node[] = [
+      [0, 0, 0],
+      [2, 0, 0],
+      [0, 1, 0],
+    ];
+    const elements = [[0, 1, 2]];
+    const layup = {
+      ...makeLayup(),
+      options: { ...makeLayup().options, shearCoupling: false },
+    };
+
+    const elementInputs: ElementInputs = {
+      cltLayups: new Map([[0, layup]]),
+    };
+    const deformOutputs: DeformOutputs = {
+      deformations: new Map([
+        [0, [0, 0, 0, 0, 0, 0]],
+        [1, [0, 0, 0.02, 0, 0, 0]],
+        [2, [0, 0, 0, 0, 0, 0]],
+      ]),
+      reactions: new Map(),
+    };
+
+    const profiles = recoverCltTransverseShearProfiles(
+      nodes,
+      elements,
+      elementInputs,
+      deformOutputs,
+      { mode: "uncoupled" },
+    );
+    const elementProfile = profiles.get(0);
+    expect(elementProfile).toBeDefined();
+
+    const firstLayer = elementProfile?.[0];
+    const top = firstLayer?.points.find((p) => p.point === "top");
+    const mid = firstLayer?.points.find((p) => p.point === "mid");
+    const bot = firstLayer?.points.find((p) => p.point === "bottom");
+
+    expect(top?.tauShell[0]).toBeCloseTo(0, 12);
+    expect(top?.tauShell[1]).toBeCloseTo(0, 12);
+    expect(bot?.tauShell[0]).toBeCloseTo(0, 12);
+    expect(bot?.tauShell[1]).toBeCloseTo(0, 12);
+    expect(Math.hypot(mid?.tauShell[0] ?? 0, mid?.tauShell[1] ?? 0)).toBeGreaterThan(0);
+  });
+
+  test("transverse recovery scales linearly with displacement amplitude", () => {
+    const nodes: Node[] = [
+      [0, 0, 0],
+      [2, 0, 0],
+      [0, 1, 0],
+    ];
+    const elements = [[0, 1, 2]];
+    const layup = {
+      ...makeLayup(),
+      options: { ...makeLayup().options, shearCoupling: false },
+    };
+    const elementInputs: ElementInputs = {
+      cltLayups: new Map([[0, layup]]),
+    };
+
+    const run = (scale: number) =>
+      recoverCltTransverseShearProfiles(
+        nodes,
+        elements,
+        elementInputs,
+        {
+          deformations: new Map([
+            [0, [0, 0, 0, 0, 0, 0]],
+            [1, [0, 0, 0.01 * scale, 0, 0, 0]],
+            [2, [0, 0, 0, 0, 0, 0]],
+          ]),
+          reactions: new Map(),
+        },
+        { mode: "uncoupled" },
+      ).get(0) ?? [];
+
+    const profile1 = run(1);
+    const profile2 = run(2);
+    const q1 = recoverLaminateTransverseResultantFromProfile(profile1);
+    const q2 = recoverLaminateTransverseResultantFromProfile(profile2);
+
+    expect(q2[0]).toBeCloseTo(2 * q1[0], 9);
+    expect(q2[1]).toBeCloseTo(2 * q1[1], 9);
   });
 });
 
