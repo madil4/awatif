@@ -142,7 +142,7 @@ function buildLayerStates(
   return states;
 }
 
-function layerInPlaneQ(layer: CLTLayer, noGlueAtNarrowSide: boolean): Mat3 {
+export function layerInPlaneQ(layer: CLTLayer, noGlueAtNarrowSide: boolean): Mat3 {
   const Ex = layer.Ex;
   const Ey = noGlueAtNarrowSide ? 0 : layer.Ey;
   const nuXY = layer.nuXY;
@@ -168,7 +168,7 @@ function layerShearQ(layer: CLTLayer): Mat2 {
   ];
 }
 
-function rotateInPlaneReducedStiffness(q: Mat3, theta: number): Mat3 {
+export function rotateInPlaneReducedStiffness(q: Mat3, theta: number): Mat3 {
   const m = Math.cos(theta);
   const n = Math.sin(theta);
 

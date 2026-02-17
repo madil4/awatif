@@ -13,6 +13,7 @@ import {
   getOrthotropicInPlaneConstitutiveMatrix,
 } from "./utils/getLocalStiffnessMatrix";
 import { computeLaminateESL } from "./awatif-clt/laminate";
+import { getShellLinearKinematics } from "./awatif-clt/stress/kinematics";
 
 export function analyze(
   nodes: Node[],
@@ -75,30 +76,18 @@ export function analyze(
         elementInputs,
         i
       );
-      const linearFieldMatrix3x6 = getLinearFieldMatrix3x6(elmNodes);
-      const displacmentMattrix6x2 = getDisplacementMatrix6x2(dxGlobal);
-      const elementArea = getElementArea(elmNodes);
-
-      const strainAndCurvature = multiply(
-        1 / (2 * elementArea),
-        multiply(linearFieldMatrix3x6, displacmentMattrix6x2)
-      );
-
-      const strainAndCurvatureValues = strainAndCurvature.toArray() as number[][];
-      const membraneStrain = matrix(
-        strainAndCurvatureValues.map((row) => [row[0]])
-      );
-      const curvature = matrix(
-        strainAndCurvatureValues.map((row) => [row[1]])
+      const { membraneStrain, curvature } = getShellLinearKinematics(
+        elmNodes,
+        dxGlobal
       );
 
       const membraneForces = multiply(
         membraneStiffness3x3Matrix,
-        membraneStrain
+        matrix([[membraneStrain[0]], [membraneStrain[1]], [membraneStrain[2]]])
       ) as Matrix;
       const bendingMoments = multiply(
         bendingStiffness3x3Matrix,
-        curvature
+        matrix([[curvature[0]], [curvature[1]], [curvature[2]]])
       ) as Matrix;
 
       const Nvals = membraneForces.toArray() as number[][];
@@ -227,54 +216,6 @@ function getShellMaterialStiffnessMatrices(
     membraneStiffness3x3Matrix: multiply(q, thickness) as Matrix,
     bendingStiffness3x3Matrix: multiply(q, thickness ** 3 / 12) as Matrix,
   };
-}
-
-function getLinearFieldMatrix3x6(nodeCoordinates: Node[]): Matrix {
-  const [x1, y1] = nodeCoordinates[0];
-  const [x2, y2] = nodeCoordinates[1];
-  const [x3, y3] = nodeCoordinates[2];
-
-  const y23 = y2 - y3;
-  const y31 = y3 - y1;
-  const y12 = y1 - y2;
-
-  const x32 = x3 - x2;
-  const x13 = x1 - x3;
-  const x21 = x2 - x1;
-
-  return matrix([
-    [y23, y31, y12, 0, 0, 0],
-    [0, 0, 0, x32, x13, x21],
-    [x32, x13, x21, y23, y31, y12],
-  ]);
-}
-
-function getDisplacementMatrix6x2(dxLocal: number[]): Matrix {
-  const [u1, u2, u3] = [dxLocal[0], dxLocal[6], dxLocal[12]];
-  const [v1, v2, v3] = [dxLocal[1], dxLocal[7], dxLocal[13]];
-  const [theta_y1, theta_y2, theta_y3] = [dxLocal[4], dxLocal[10], dxLocal[16]];
-  const [theta_x1, theta_x2, theta_x3] = [dxLocal[3], dxLocal[9], dxLocal[15]];
-  return matrix([
-    [u1, -theta_y1],
-    [u2, -theta_y2],
-    [u3, -theta_y3],
-    [v1, theta_x1],
-    [v2, theta_x2],
-    [v3, theta_x3],
-  ]);
-}
-
-function getElementArea(nodeCoordinates: Node[]) {
-  const [x1, y1] = nodeCoordinates[0];
-  const [x2, y2] = nodeCoordinates[1];
-  const [x3, y3] = nodeCoordinates[2];
-
-  const x21 = x2 - x1;
-  const x31 = x3 - x1;
-  const y31 = y3 - y1;
-  const y12 = y1 - y2;
-
-  return 0.5 * (x21 * y31 - x31 * -y12);
 }
 
 function getNodeToCentroidElementIndicesMap(
