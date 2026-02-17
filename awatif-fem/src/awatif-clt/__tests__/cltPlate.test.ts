@@ -1,6 +1,7 @@
 import { analyze } from "../../analyze";
 import { deform } from "../../deform";
 import { CLTLayup, Element, Node, NodeInputs } from "../../data-model";
+import { recoverCltInPlaneStressProfiles } from "../stress/recover";
 
 const LENGTH = 10;
 const WIDTH = 2.45;
@@ -28,7 +29,12 @@ describe("CLT one-way plate benchmark (chapter 6.2)", () => {
     const inertia = 0.000744;
     const staticMoment = 0.0042;
 
-    const sigmaMax = ((uls.mMax * (THICKNESS / 2)) / inertia) / 1000;
+    const sigmaMax = sampleMidSpanExtremeFiberSigmaMpa(
+      nodes,
+      elements,
+      uls.inPlaneProfiles,
+      [LENGTH / 2, WIDTH / 2],
+    );
     const tauMax = ((uls.vMax * staticMoment) / inertia) / 1000;
 
     expect(relErr(uls.vMax, benchmark.vMax)).toBeLessThan(0.2);
@@ -58,6 +64,13 @@ function runCase(
 
   const deformOutputs = deform(nodes, elements, { supports, loads }, elementInputs);
   const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
+  const inPlaneProfiles = recoverCltInPlaneStressProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
 
   const momentCurve = sampleCenterlineBendingCurve(nodes, elements, analyzeOutputs.bendingXX, 16);
   const shearCurve = getShearCurveFromMoment(momentCurve, LENGTH);
@@ -74,6 +87,7 @@ function runCase(
     mMax: maxAbs(momentCurve),
     centerDeflectionMm,
     shearCurve,
+    inPlaneProfiles,
   };
 }
 
@@ -234,4 +248,43 @@ function getClosestNodeIndex(nodes: Node[], target: Node): number {
 
 function relErr(actual: number, expected: number): number {
   return Math.abs(actual - expected) / Math.max(1e-12, Math.abs(expected));
+}
+
+function sampleMidSpanExtremeFiberSigmaMpa(
+  nodes: Node[],
+  elements: Element[],
+  inPlaneProfiles: Map<number, import("../stress/inPlane").LayerInPlaneStressProfile[]>,
+  target: [number, number],
+): number {
+  let bestElement = -1;
+  let minDistance = Number.POSITIVE_INFINITY;
+
+  elements.forEach((e, elementIndex) => {
+    if (e.length !== 3 || !inPlaneProfiles.has(elementIndex)) return;
+    const n1 = nodes[e[0]];
+    const n2 = nodes[e[1]];
+    const n3 = nodes[e[2]];
+    const cx = (n1[0] + n2[0] + n3[0]) / 3;
+    const cy = (n1[1] + n2[1] + n3[1]) / 3;
+    const d = Math.hypot(cx - target[0], cy - target[1]);
+    if (d < minDistance) {
+      minDistance = d;
+      bestElement = elementIndex;
+    }
+  });
+
+  if (bestElement < 0) return 0;
+  const profile = inPlaneProfiles.get(bestElement);
+  if (!profile?.length) return 0;
+
+  const topLayer = profile[0];
+  const bottomLayer = profile[profile.length - 1];
+  const topPoint = topLayer.points.find((p) => p.point === "top");
+  const bottomPoint = bottomLayer.points.find((p) => p.point === "bottom");
+  if (!topPoint || !bottomPoint) return 0;
+
+  // Internal unit is kN/m^2 (kPa). Convert to MPa.
+  const sigmaTopMpa = Math.abs(topPoint.stressLayer[0]) / 1000;
+  const sigmaBottomMpa = Math.abs(bottomPoint.stressLayer[0]) / 1000;
+  return Math.max(sigmaTopMpa, sigmaBottomMpa);
 }
