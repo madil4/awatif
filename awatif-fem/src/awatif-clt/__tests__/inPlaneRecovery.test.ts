@@ -1,5 +1,5 @@
 import { CLTLayup } from "../../data-model";
-import { computeLaminateESL } from "../laminate";
+import { computeLaminateESL, layerInPlaneQ } from "../laminate";
 import {
   recoverLaminateInPlaneResultants,
   recoverLaminateInPlaneStressProfile,
@@ -61,6 +61,30 @@ describe("CLT in-plane stress recovery", () => {
     expect(Math.abs(middleLayerMid)).toBeLessThan(
       Math.max(1, Math.abs(topLayerTop)) * 1e-8,
     );
+  });
+
+  test("returns layer-local strains/stresses consistently", () => {
+    const layup = makeLayup({ shearCoupling: true }, [0.03], [45]);
+    const eps0: [number, number, number] = [1e-3, 0, 0];
+    const kappa: [number, number, number] = [0, 0, 0];
+
+    const profile = recoverLaminateInPlaneStressProfile(layup, eps0, kappa, {
+      mode: "coupled",
+    });
+    const p = profile[0].points[1];
+
+    // At theta=45 deg and epsX=1e-3, layer strain is:
+    // eps1 = eps2 = 0.5e-3, gamma12 = -1e-3
+    expect(p.strainLayer[0]).toBeCloseTo(0.5e-3, 12);
+    expect(p.strainLayer[1]).toBeCloseTo(0.5e-3, 12);
+    expect(p.strainLayer[2]).toBeCloseTo(-1e-3, 12);
+
+    // Consistency check: stressLayer = Q_layer * strainLayer.
+    const expectedLayer = mul3x3Vec3(
+      layerInPlaneQ(layup.layers[0], layup.options.noGlueAtNarrowSide),
+      p.strainLayer,
+    );
+    expectVecClose(p.stressLayer, expectedLayer, 9);
   });
 });
 

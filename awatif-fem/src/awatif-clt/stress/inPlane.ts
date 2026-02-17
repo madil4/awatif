@@ -18,6 +18,8 @@ export type LayerInPlaneStressPoint = {
   zLocal: number;
   strainShell: Vec3;
   stressShell: Vec3;
+  strainLayer: Vec3;
+  stressLayer: Vec3;
 };
 
 export type LayerInPlaneStressProfile = {
@@ -58,6 +60,8 @@ export function recoverLaminateInPlaneStressProfile(
       const zForStrain = mode === "coupled" ? zGlobal : zLocal;
       const strainShell = add3(eps0, scale3(kappa, zForStrain));
       const stressShell = mul3x3Vec3(state.qShell, strainShell);
+      const strainLayer = strainShellToLayer(strainShell, state.thetaDeg * DEG2RAD);
+      const stressLayer = mul3x3Vec3(state.qLayer, strainLayer);
 
       return {
         point,
@@ -65,6 +69,8 @@ export function recoverLaminateInPlaneStressProfile(
         zLocal,
         strainShell,
         stressShell,
+        strainLayer,
+        stressLayer,
       };
     });
 
@@ -123,6 +129,7 @@ function getLayerStates(layup: CLTLayup): Array<{
   thetaDeg: number;
   zTop: number;
   zBot: number;
+  qLayer: Mat3;
   qShell: Mat3;
 }> {
   if (!layup.layers.length) return [];
@@ -144,12 +151,28 @@ function getLayerStates(layup: CLTLayup): Array<{
       thetaDeg: layer.thetaDeg,
       zTop,
       zBot,
+      qLayer,
       qShell,
     };
 
     zTop = zBot;
     return state;
   });
+}
+
+function strainShellToLayer(strainShell: Vec3, thetaRad: number): Vec3 {
+  const [epsX, epsY, gammaXY] = strainShell;
+  const m = Math.cos(thetaRad);
+  const n = Math.sin(thetaRad);
+  const m2 = m * m;
+  const n2 = n * n;
+  const mn = m * n;
+
+  const eps1 = m2 * epsX + n2 * epsY + mn * gammaXY;
+  const eps2 = n2 * epsX + m2 * epsY - mn * gammaXY;
+  const gamma12 = -2 * mn * epsX + 2 * mn * epsY + (m2 - n2) * gammaXY;
+
+  return [eps1, eps2, gamma12];
 }
 
 function mul3x3Vec3(a: Mat3, x: Vec3): Vec3 {
