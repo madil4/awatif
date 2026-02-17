@@ -198,7 +198,7 @@ export function rotateInPlaneReducedStiffness(q: Mat3, theta: number): Mat3 {
   ];
 }
 
-function rotate2x2(q: Mat2, theta: number): Mat2 {
+export function rotate2x2(q: Mat2, theta: number): Mat2 {
   // Eq. 23/24 style rotation matrix.
   const c = Math.cos(theta);
   const s = Math.sin(theta);
