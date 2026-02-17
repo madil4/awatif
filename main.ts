@@ -83,8 +83,8 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Basic",
-          templateId: "basic",
+          name: "RC Beam",
+          templateId: "rc-beam",
           geometry: [1],
         },
       ],
