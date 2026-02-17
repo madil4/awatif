@@ -1,5 +1,14 @@
 import van from "vanjs-core";
-import { analyze, CLTLayup, Element, Mesh, Node, deform } from "awatif-fem";
+import {
+  analyze,
+  CLTLayup,
+  Element,
+  LayerInPlaneStressProfile,
+  Mesh,
+  Node,
+  deform,
+  recoverCltInPlaneStressProfiles,
+} from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
 
@@ -18,6 +27,8 @@ type CaseResult = {
   deformations?: Map<number, [number, number, number, number, number, number]>;
   reactions?: Map<number, [number, number, number, number, number, number]>;
   analyze: ReturnType<typeof analyze>;
+  sigma1MidSpanExtremeMpa: number;
+  tauRollingSupportMpa: number;
 };
 
 const mesh: Mesh = {
@@ -38,6 +49,9 @@ const maxMeshSizeState = van.state(0.36);
 const qUlsState = van.state(4.335); // kN/m2
 const qSlsState = van.state(1.589); // kN/m2
 const kDefSqState = van.state(0.8);
+const maxDeflectionMmState = van.state(0);
+const sigma1MidSpanExtremeMpaState = van.state(0);
+const tauRollingSupportMpaState = van.state(0);
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -106,6 +120,11 @@ function applyDisplayCase() {
     reactions: selected.reactions,
   };
   mesh.analyzeOutputs!.val = selected.analyze;
+  maxDeflectionMmState.val = getMaximumDownwardDeflectionMm(
+    selected.deformations,
+  );
+  sigma1MidSpanExtremeMpaState.val = selected.sigma1MidSpanExtremeMpa;
+  tauRollingSupportMpaState.val = selected.tauRollingSupportMpa;
 }
 
 function runCase({
@@ -150,6 +169,23 @@ function runCase({
     elementInputs,
   );
   const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
+  const inPlaneProfiles = recoverCltInPlaneStressProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
+  const sigma1MidSpanExtremeMpa = sampleMidSpanExtremeFiberSigma1Mpa(
+    nodes,
+    elements,
+    inPlaneProfiles,
+    [LENGTH / 2, WIDTH / 2],
+  );
+  const tauRollingSupportMpa = estimateRollingShearAtSupportMpa(
+    nodes,
+    deformOutputs.reactions,
+  );
 
   return {
     loads,
@@ -157,6 +193,8 @@ function runCase({
     deformations: deformOutputs.deformations,
     reactions: deformOutputs.reactions,
     analyze: analyzeOutputs,
+    sigma1MidSpanExtremeMpa,
+    tauRollingSupportMpa,
   };
 }
 
@@ -245,6 +283,75 @@ function getNodalAreas(nodes: Node[], elements: Element[]): number[] {
   return areas;
 }
 
+function getMaximumDownwardDeflectionMm(
+  deformations?: Map<number, [number, number, number, number, number, number]>,
+): number {
+  if (!deformations?.size) return 0;
+
+  let minWz = 0;
+  deformations.forEach((dof) => {
+    minWz = Math.min(minWz, dof[2] ?? 0);
+  });
+
+  return -minWz * 1000;
+}
+
+function sampleMidSpanExtremeFiberSigma1Mpa(
+  nodes: Node[],
+  elements: Element[],
+  inPlaneProfiles: Map<number, LayerInPlaneStressProfile[]>,
+  target: [number, number],
+): number {
+  let bestElement = -1;
+  let minDistance = Number.POSITIVE_INFINITY;
+
+  elements.forEach((e, elementIndex) => {
+    if (e.length !== 3 || !inPlaneProfiles.has(elementIndex)) return;
+    const n1 = nodes[e[0]];
+    const n2 = nodes[e[1]];
+    const n3 = nodes[e[2]];
+    const cx = (n1[0] + n2[0] + n3[0]) / 3;
+    const cy = (n1[1] + n2[1] + n3[1]) / 3;
+    const d = Math.hypot(cx - target[0], cy - target[1]);
+    if (d < minDistance) {
+      minDistance = d;
+      bestElement = elementIndex;
+    }
+  });
+
+  if (bestElement < 0) return 0;
+  const profile = inPlaneProfiles.get(bestElement);
+  if (!profile?.length) return 0;
+
+  const topLayer = profile[0];
+  const bottomLayer = profile[profile.length - 1];
+  const topPoint = topLayer.points.find((p) => p.point === "top");
+  const bottomPoint = bottomLayer.points.find((p) => p.point === "bottom");
+  if (!topPoint || !bottomPoint) return 0;
+
+  // Internal unit is kN/m^2 (kPa). Convert to MPa.
+  const top = Math.abs(topPoint.stressLayer[0]) / 1000;
+  const bottom = Math.abs(bottomPoint.stressLayer[0]) / 1000;
+  return Math.max(top, bottom);
+}
+
+function estimateRollingShearAtSupportMpa(
+  nodes: Node[],
+  reactions?: Map<number, [number, number, number, number, number, number]>,
+): number {
+  if (!reactions?.size) return 0;
+
+  const inertia = 0.000744;
+  const staticMoment = 0.0042;
+  let reactionAtLeft = 0;
+  reactions.forEach((r, i) => {
+    if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
+  });
+
+  const vMax = Math.abs(reactionAtLeft / WIDTH); // kN/m
+  return ((vMax * staticMoment) / inertia) / 1000; // MPa
+}
+
 function render() {
   const root = div({ id: "page" });
 
@@ -315,6 +422,20 @@ function render() {
           ],
         },
       }),
+    ),
+    div(
+      { id: "clt-stats" },
+      div({ class: "title" }, "CLT plate"),
+      div(() => `Load case: ${displayCaseState.val}`),
+      div(() => `Max deflection [mm]: ${maxDeflectionMmState.val.toFixed(3)}`),
+      div(
+        () =>
+          `sigma_1 mid-span extreme [MPa]: ${sigma1MidSpanExtremeMpaState.val.toFixed(3)}`,
+      ),
+      div(
+        () =>
+          `tau_yz support (section) [MPa]: ${tauRollingSupportMpaState.val.toFixed(4)}`,
+      ),
     ),
   );
 
