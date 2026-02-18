@@ -5,7 +5,7 @@ import {
   recoverLaminateTransverseShearProfile,
 } from "../stress/transverse";
 
-describe("CLT transverse shear recovery (uncoupled)", () => {
+describe("CLT transverse shear recovery", () => {
   test("returns parabolic layer profile with zero top/bottom and max at mid", () => {
     const layup = makeLayup();
     const gamma: [number, number] = [2e-4, -3e-4];
@@ -39,23 +39,41 @@ describe("CLT transverse shear recovery (uncoupled)", () => {
     const fromConstitutive = recoverLaminateTransverseResultantFromConstitutive(
       layup,
       gamma,
+      { mode: "uncoupled" },
     );
 
     expect(fromProfile[0]).toBeCloseTo(fromConstitutive[0], 9);
     expect(fromProfile[1]).toBeCloseTo(fromConstitutive[1], 9);
   });
 
-  test("coupled mode intentionally throws until Eq.45/46 recovery is added", () => {
-    const layup = {
-      ...makeLayup(),
-      options: { ...makeLayup().options, shearCoupling: true },
-    };
+  test("coupled mode recovers resultant equilibrium (Eq.45/46 style)", () => {
+    const layup = makeCoupledLayup();
+    const gamma: [number, number] = [2.2e-4, -1.9e-4];
 
-    expect(() =>
-      recoverLaminateTransverseShearProfile(layup, [1e-4, 1e-4], {
-        mode: "coupled",
-      }),
-    ).toThrow(/not implemented/i);
+    const profile = recoverLaminateTransverseShearProfile(layup, gamma, {
+      mode: "coupled",
+    });
+    const fromProfile = recoverLaminateTransverseResultantFromProfile(profile);
+    const fromConstitutive = recoverLaminateTransverseResultantFromConstitutive(
+      layup,
+      gamma,
+      { mode: "coupled" },
+    );
+
+    expect(fromProfile[0]).toBeCloseTo(fromConstitutive[0], 8);
+    expect(fromProfile[1]).toBeCloseTo(fromConstitutive[1], 8);
+
+    const topGlobal = profile[0]?.points.find((p) => p.point === "top");
+    const bottomGlobal = profile[profile.length - 1]?.points.find(
+      (p) => p.point === "bottom",
+    );
+    expect(Math.hypot(topGlobal?.tauShell[0] ?? 0, topGlobal?.tauShell[1] ?? 0)).toBeCloseTo(0, 9);
+    expect(
+      Math.hypot(bottomGlobal?.tauShell[0] ?? 0, bottomGlobal?.tauShell[1] ?? 0),
+    ).toBeCloseTo(0, 9);
+
+    const interfacePoint = profile[0]?.points.find((p) => p.point === "bottom");
+    expect(Math.hypot(interfacePoint?.tauShell[0] ?? 0, interfacePoint?.tauShell[1] ?? 0)).toBeGreaterThan(0);
   });
 });
 
@@ -97,6 +115,16 @@ function makeLayup(): CLTLayup {
       shearCoupling: false,
       noGlueAtNarrowSide: false,
       strictSymmetryForElement: true,
+    },
+  };
+}
+
+function makeCoupledLayup(): CLTLayup {
+  return {
+    ...makeLayup(),
+    options: {
+      ...makeLayup().options,
+      shearCoupling: true,
     },
   };
 }
