@@ -1,11 +1,13 @@
 import { analyze } from "../../analyze";
 import { deform } from "../../deform";
 import { CLTLayup, Element, Node, NodeInputs } from "../../data-model";
-import { recoverCltInPlaneStressProfiles } from "../stress/recover";
+import {
+  recoverCltInPlaneStressProfiles,
+  recoverCltTransverseShearProfiles,
+} from "../stress/recover";
 
 const LENGTH = 10;
 const WIDTH = 2.45;
-const THICKNESS = 0.24;
 const Q_ULS = 4.335;
 const Q_SLS = 1.589;
 const KDEF_SQ = 0.8;
@@ -26,16 +28,19 @@ describe("CLT one-way plate benchmark (chapter 6.2)", () => {
     const uls = runCase(nodes, elements, supports, Q_ULS, 1);
     const sls = runCase(nodes, elements, supports, Q_SLS, 1 + KDEF_SQ);
 
-    const inertia = 0.000744;
-    const staticMoment = 0.0042;
-
     const sigmaMax = sampleMidSpanExtremeFiberSigmaMpa(
       nodes,
       elements,
       uls.inPlaneProfiles,
       [LENGTH / 2, WIDTH / 2],
     );
-    const tauMax = ((uls.vMax * staticMoment) / inertia) / 1000;
+    const tauMax = sampleSupportRollingShearMpa(
+      nodes,
+      elements,
+      uls.transverseProfiles,
+      [0, WIDTH / 2],
+      3,
+    );
 
     expect(relErr(uls.vMax, benchmark.vMax)).toBeLessThan(0.2);
     expect(relErr(uls.mMax, benchmark.mMax)).toBeLessThan(0.25);
@@ -71,9 +76,15 @@ function runCase(
     deformOutputs,
     { mode: "coupled" },
   );
+  const transverseProfiles = recoverCltTransverseShearProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
 
   const momentCurve = sampleCenterlineBendingCurve(nodes, elements, analyzeOutputs.bendingXX, 16);
-  const shearCurve = getShearCurveFromMoment(momentCurve, LENGTH);
   let reactionAtLeft = 0;
   deformOutputs.reactions?.forEach((r, i) => {
     if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
@@ -86,8 +97,8 @@ function runCase(
     vMax: Math.abs(reactionAtLeft / WIDTH),
     mMax: maxAbs(momentCurve),
     centerDeflectionMm,
-    shearCurve,
     inPlaneProfiles,
+    transverseProfiles,
   };
 }
 
@@ -212,23 +223,6 @@ function sampleCenterlineBendingCurve(
   });
 }
 
-function getShearCurveFromMoment(momentCurve: number[], span: number): number[] {
-  const n = momentCurve.length;
-  const dx = span / (n - 1);
-  const shear = Array(n).fill(0);
-
-  if (n < 3) return shear;
-
-  shear[0] = -(momentCurve[1] - momentCurve[0]) / dx;
-  shear[n - 1] = -(momentCurve[n - 1] - momentCurve[n - 2]) / dx;
-
-  for (let i = 1; i < n - 1; i++) {
-    shear[i] = -(momentCurve[i + 1] - momentCurve[i - 1]) / (2 * dx);
-  }
-
-  return shear;
-}
-
 function maxAbs(values: number[]): number {
   return values.reduce((acc, v) => Math.max(acc, Math.abs(v)), 0);
 }
@@ -287,4 +281,47 @@ function sampleMidSpanExtremeFiberSigmaMpa(
   const sigmaTopMpa = Math.abs(topPoint.stressLayer[0]) / 1000;
   const sigmaBottomMpa = Math.abs(bottomPoint.stressLayer[0]) / 1000;
   return Math.max(sigmaTopMpa, sigmaBottomMpa);
+}
+
+function sampleSupportRollingShearMpa(
+  nodes: Node[],
+  elements: Element[],
+  transverseProfiles: Map<
+    number,
+    import("../stress/transverse").LayerTransverseStressProfile[]
+  >,
+  target: [number, number],
+  layerIndex: number,
+): number {
+  let bestElement = -1;
+  let minDistance = Number.POSITIVE_INFINITY;
+
+  elements.forEach((e, elementIndex) => {
+    if (e.length !== 3 || !transverseProfiles.has(elementIndex)) return;
+    const n1 = nodes[e[0]];
+    const n2 = nodes[e[1]];
+    const n3 = nodes[e[2]];
+    const cx = (n1[0] + n2[0] + n3[0]) / 3;
+    const cy = (n1[1] + n2[1] + n3[1]) / 3;
+
+    // Prefer points close to the support line, then nearest in y.
+    const dx = Math.abs(cx - target[0]);
+    const dy = Math.abs(cy - target[1]);
+    const d = dx * 10 + dy;
+    if (d < minDistance) {
+      minDistance = d;
+      bestElement = elementIndex;
+    }
+  });
+
+  if (bestElement < 0) return 0;
+  const profile = transverseProfiles.get(bestElement);
+  const layer = profile?.[layerIndex];
+  if (!layer) return 0;
+
+  const mid = layer.points.find((p) => p.point === "mid");
+  if (!mid) return 0;
+
+  // Internal unit is kN/m^2 (kPa). Convert to MPa.
+  return Math.abs(mid.tauShell[1]) / 1000;
 }

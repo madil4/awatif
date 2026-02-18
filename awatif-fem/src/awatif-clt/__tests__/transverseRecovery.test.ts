@@ -75,6 +75,38 @@ describe("CLT transverse shear recovery", () => {
     const interfacePoint = profile[0]?.points.find((p) => p.point === "bottom");
     expect(Math.hypot(interfacePoint?.tauShell[0] ?? 0, interfacePoint?.tauShell[1] ?? 0)).toBeGreaterThan(0);
   });
+
+  test("default mode follows layup shearCoupling option", () => {
+    const gamma: [number, number] = [1.6e-4, -1.1e-4];
+
+    const uncoupledLayup = makeLayup();
+    const uncoupledProfile = recoverLaminateTransverseShearProfile(
+      uncoupledLayup,
+      gamma,
+    );
+    const uncoupledResultant = recoverLaminateTransverseResultantFromProfile(
+      uncoupledProfile,
+    );
+    const uncoupledConstitutive =
+      recoverLaminateTransverseResultantFromConstitutive(
+        uncoupledLayup,
+        gamma,
+      );
+    expect(uncoupledResultant[0]).toBeCloseTo(uncoupledConstitutive[0], 9);
+    expect(uncoupledResultant[1]).toBeCloseTo(uncoupledConstitutive[1], 9);
+
+    const coupledLayup = makeCoupledLayup();
+    const coupledProfile = recoverLaminateTransverseShearProfile(coupledLayup, gamma);
+    const coupledResultant = recoverLaminateTransverseResultantFromProfile(
+      coupledProfile,
+    );
+    const coupledConstitutive = recoverLaminateTransverseResultantFromConstitutive(
+      coupledLayup,
+      gamma,
+    );
+    expect(coupledResultant[0]).toBeCloseTo(coupledConstitutive[0], 8);
+    expect(coupledResultant[1]).toBeCloseTo(coupledConstitutive[1], 8);
+  });
 });
 
 function makeLayup(): CLTLayup {
@@ -120,10 +152,11 @@ function makeLayup(): CLTLayup {
 }
 
 function makeCoupledLayup(): CLTLayup {
+  const base = makeLayup();
   return {
-    ...makeLayup(),
+    ...base,
     options: {
-      ...makeLayup().options,
+      ...base.options,
       shearCoupling: true,
     },
   };
