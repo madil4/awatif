@@ -30,6 +30,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <input
           type="number"
           placeholder="0"
+          step="10"
           .value=${live(params.val.Fx)}
           @input=${(e: Event) =>
             (params.val = {
@@ -44,6 +45,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         <input
           type="number"
           placeholder="0"
+          step="10"
           .value=${live(params.val.Fy)}
           @input=${(e: Event) =>
             (params.val = {
