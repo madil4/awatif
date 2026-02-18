@@ -6,6 +6,7 @@ export * from "./awatif-clt/stress/inPlane";
 export * from "./awatif-clt/stress/recover";
 export * from "./awatif-clt/stress/transverse";
 export * from "./awatif-clt/stress/fields";
+export * from "./awatif-clt/stress/probes";
 
 export { analyze } from "./analyze";
 export { createCachedDeformSolver } from "./deformCached";

@@ -5,6 +5,10 @@ import {
   recoverCltInPlaneStressProfiles,
   recoverCltTransverseShearProfiles,
 } from "../stress/recover";
+import {
+  sampleClosestInPlaneStressMpa,
+  sampleClosestTransverseStressMpa,
+} from "../stress/probes";
 
 const LENGTH = 10;
 const WIDTH = 2.45;
@@ -29,17 +33,36 @@ describe("CLT one-way plate benchmark (chapter 6.2)", () => {
     const sls = runCase(nodes, elements, supports, Q_SLS, 1 + KDEF_SQ);
 
     const sigmaMax = sampleMidSpanExtremeFiberSigmaMpa(
-      nodes,
-      elements,
-      uls.inPlaneProfiles,
-      [LENGTH / 2, WIDTH / 2],
+      sampleClosestInPlaneStressMpa(
+        nodes,
+        elements,
+        uls.inPlaneProfiles,
+        [LENGTH / 2, WIDTH / 2],
+        0,
+        "top",
+        "sigmaX",
+      ),
+      sampleClosestInPlaneStressMpa(
+        nodes,
+        elements,
+        uls.inPlaneProfiles,
+        [LENGTH / 2, WIDTH / 2],
+        6,
+        "bottom",
+        "sigmaX",
+      ),
     );
-    const tauMax = sampleSupportRollingShearMpa(
+    const tauMax = Math.abs(
+      sampleClosestTransverseStressMpa(
       nodes,
       elements,
       uls.transverseProfiles,
       [0, WIDTH / 2],
       3,
+      "mid",
+      "tauYZ",
+      { weightX: 10, weightY: 1 },
+    ) ?? 0,
     );
 
     expect(relErr(uls.vMax, benchmark.vMax)).toBeLessThan(0.2);
@@ -245,83 +268,8 @@ function relErr(actual: number, expected: number): number {
 }
 
 function sampleMidSpanExtremeFiberSigmaMpa(
-  nodes: Node[],
-  elements: Element[],
-  inPlaneProfiles: Map<number, import("../stress/inPlane").LayerInPlaneStressProfile[]>,
-  target: [number, number],
+  sigmaTopMpa?: number,
+  sigmaBottomMpa?: number,
 ): number {
-  let bestElement = -1;
-  let minDistance = Number.POSITIVE_INFINITY;
-
-  elements.forEach((e, elementIndex) => {
-    if (e.length !== 3 || !inPlaneProfiles.has(elementIndex)) return;
-    const n1 = nodes[e[0]];
-    const n2 = nodes[e[1]];
-    const n3 = nodes[e[2]];
-    const cx = (n1[0] + n2[0] + n3[0]) / 3;
-    const cy = (n1[1] + n2[1] + n3[1]) / 3;
-    const d = Math.hypot(cx - target[0], cy - target[1]);
-    if (d < minDistance) {
-      minDistance = d;
-      bestElement = elementIndex;
-    }
-  });
-
-  if (bestElement < 0) return 0;
-  const profile = inPlaneProfiles.get(bestElement);
-  if (!profile?.length) return 0;
-
-  const topLayer = profile[0];
-  const bottomLayer = profile[profile.length - 1];
-  const topPoint = topLayer.points.find((p) => p.point === "top");
-  const bottomPoint = bottomLayer.points.find((p) => p.point === "bottom");
-  if (!topPoint || !bottomPoint) return 0;
-
-  // Internal unit is kN/m^2 (kPa). Convert to MPa.
-  const sigmaTopMpa = Math.abs(topPoint.stressLayer[0]) / 1000;
-  const sigmaBottomMpa = Math.abs(bottomPoint.stressLayer[0]) / 1000;
-  return Math.max(sigmaTopMpa, sigmaBottomMpa);
-}
-
-function sampleSupportRollingShearMpa(
-  nodes: Node[],
-  elements: Element[],
-  transverseProfiles: Map<
-    number,
-    import("../stress/transverse").LayerTransverseStressProfile[]
-  >,
-  target: [number, number],
-  layerIndex: number,
-): number {
-  let bestElement = -1;
-  let minDistance = Number.POSITIVE_INFINITY;
-
-  elements.forEach((e, elementIndex) => {
-    if (e.length !== 3 || !transverseProfiles.has(elementIndex)) return;
-    const n1 = nodes[e[0]];
-    const n2 = nodes[e[1]];
-    const n3 = nodes[e[2]];
-    const cx = (n1[0] + n2[0] + n3[0]) / 3;
-    const cy = (n1[1] + n2[1] + n3[1]) / 3;
-
-    // Prefer points close to the support line, then nearest in y.
-    const dx = Math.abs(cx - target[0]);
-    const dy = Math.abs(cy - target[1]);
-    const d = dx * 10 + dy;
-    if (d < minDistance) {
-      minDistance = d;
-      bestElement = elementIndex;
-    }
-  });
-
-  if (bestElement < 0) return 0;
-  const profile = transverseProfiles.get(bestElement);
-  const layer = profile?.[layerIndex];
-  if (!layer) return 0;
-
-  const mid = layer.points.find((p) => p.point === "mid");
-  if (!mid) return 0;
-
-  // Internal unit is kN/m^2 (kPa). Convert to MPa.
-  return Math.abs(mid.tauShell[1]) / 1000;
+  return Math.max(Math.abs(sigmaTopMpa ?? 0), Math.abs(sigmaBottomMpa ?? 0));
 }
