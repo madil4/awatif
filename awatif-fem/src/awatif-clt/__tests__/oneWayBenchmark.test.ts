@@ -1,5 +1,9 @@
 import { AnalyzeOutputs, Element, Node } from "../../data-model";
-import { getOneWaySectionMetrics } from "../benchmark/oneWay";
+import {
+  getOneWaySectionMetrics,
+  getRelativeErrorPercent,
+  getSimplySupportedBeamReference,
+} from "../benchmark/oneWay";
 
 describe("one-way benchmark helpers", () => {
   test("extracts shear, bending, and deflection metrics", () => {
@@ -42,5 +46,16 @@ describe("one-way benchmark helpers", () => {
     expect(metrics.specificSupportShearKnPerM).toBeCloseTo(10);
     expect(metrics.maxSpecificBendingMomentKnmPerM).toBeCloseTo(10);
     expect(metrics.maxDownwardDeflectionMm).toBeCloseTo(4);
+  });
+
+  test("returns simply supported beam reference values", () => {
+    const ref = getSimplySupportedBeamReference(4.335, 10);
+    expect(ref.specificSupportShearKnPerM).toBeCloseTo(21.675, 6);
+    expect(ref.maxSpecificBendingMomentKnmPerM).toBeCloseTo(54.1875, 6);
+  });
+
+  test("computes relative error in percent", () => {
+    expect(getRelativeErrorPercent(54.25, 54.19)).toBeCloseTo(0.11072, 4);
+    expect(getRelativeErrorPercent(1, 0)).toBeCloseTo(0);
   });
 });

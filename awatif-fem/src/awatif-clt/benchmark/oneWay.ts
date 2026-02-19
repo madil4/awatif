@@ -11,6 +11,11 @@ export type OneWaySectionMetrics = {
   maxDownwardDeflectionMm: number;
 };
 
+export type OneWayBeamReference = {
+  specificSupportShearKnPerM: number;
+  maxSpecificBendingMomentKnmPerM: number;
+};
+
 export function getOneWaySectionMetrics(
   nodes: Node[],
   elements: Element[],
@@ -49,6 +54,22 @@ export function getOneWaySectionMetrics(
     ),
     maxDownwardDeflectionMm: getMaximumDownwardDeflectionMm(deformations),
   };
+}
+
+export function getSimplySupportedBeamReference(
+  loadKnPerM2: number,
+  spanLengthM: number,
+): OneWayBeamReference {
+  const absLoad = Math.abs(loadKnPerM2);
+  return {
+    specificSupportShearKnPerM: (absLoad * spanLengthM) / 2,
+    maxSpecificBendingMomentKnmPerM: (absLoad * spanLengthM ** 2) / 8,
+  };
+}
+
+export function getRelativeErrorPercent(actual: number, reference: number): number {
+  if (Math.abs(reference) < 1e-12) return 0;
+  return (Math.abs(actual - reference) / Math.abs(reference)) * 100;
 }
 
 export function getSpecificSupportShearKnPerM(

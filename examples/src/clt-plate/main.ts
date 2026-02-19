@@ -19,6 +19,8 @@ import {
   sampleClosestTransverseThroughThicknessMpa,
   getThroughThicknessExtrema,
   getOneWaySectionMetrics,
+  getRelativeErrorPercent,
+  getSimplySupportedBeamReference,
 } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
@@ -73,6 +75,10 @@ const inPlaneMaxAbsMpaState = van.state(0);
 const transverseMaxAbsMpaState = van.state(0);
 const supportShearKnPerMState = van.state(0);
 const maxSpecificMomentKnmPerMState = van.state(0);
+const referenceShearKnPerMState = van.state(0);
+const referenceMomentKnmPerMState = van.state(0);
+const shearErrorPercentState = van.state(0);
+const momentErrorPercentState = van.state(0);
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -146,9 +152,6 @@ function applyDisplayCase() {
     reactions: selected.reactions,
   };
   mesh.analyzeOutputs!.val = selected.analyze;
-  maxDeflectionMmState.val = getMaximumDownwardDeflectionMm(
-    selected.deformations,
-  );
 
   const layerIndex = getSelectedLayerIndex();
   if (layerIndexState.val !== layerIndex) {
@@ -167,6 +170,21 @@ function applyDisplayCase() {
   supportShearKnPerMState.val = sectionMetrics.specificSupportShearKnPerM;
   maxSpecificMomentKnmPerMState.val =
     sectionMetrics.maxSpecificBendingMomentKnmPerM;
+  maxDeflectionMmState.val = sectionMetrics.maxDownwardDeflectionMm;
+
+  const activeLoadKnPerM2 =
+    displayCaseState.val === "ULS" ? qUlsState.val : qSlsState.val;
+  const reference = getSimplySupportedBeamReference(activeLoadKnPerM2, LENGTH);
+  referenceShearKnPerMState.val = reference.specificSupportShearKnPerM;
+  referenceMomentKnmPerMState.val = reference.maxSpecificBendingMomentKnmPerM;
+  shearErrorPercentState.val = getRelativeErrorPercent(
+    supportShearKnPerMState.val,
+    reference.specificSupportShearKnPerM,
+  );
+  momentErrorPercentState.val = getRelativeErrorPercent(
+    maxSpecificMomentKnmPerMState.val,
+    reference.maxSpecificBendingMomentKnmPerM,
+  );
 
   inPlaneProbeMpaState.val =
     sampleClosestInPlaneStressMpa(
@@ -368,19 +386,6 @@ function getNodalAreas(nodes: Node[], elements: Element[]): number[] {
   return areas;
 }
 
-function getMaximumDownwardDeflectionMm(
-  deformations?: Map<number, [number, number, number, number, number, number]>,
-): number {
-  if (!deformations?.size) return 0;
-
-  let minWz = 0;
-  deformations.forEach((dof) => {
-    minWz = Math.min(minWz, dof[2] ?? 0);
-  });
-
-  return -minWz * 1000;
-}
-
 function getSelectedLayerIndex(): number {
   return clamp(Math.round(layerIndexState.val), 0, cltLayup.layers.length - 1);
 }
@@ -523,7 +528,15 @@ function render() {
       ),
       div(
         () =>
+          `Beam reference shear [kN/m]: ${referenceShearKnPerMState.val.toFixed(3)} (${shearErrorPercentState.val.toFixed(2)}% err)`,
+      ),
+      div(
+        () =>
           `Max specific bending moment [kNm/m]: ${maxSpecificMomentKnmPerMState.val.toFixed(3)}`,
+      ),
+      div(
+        () =>
+          `Beam reference moment [kNm/m]: ${referenceMomentKnmPerMState.val.toFixed(3)} (${momentErrorPercentState.val.toFixed(2)}% err)`,
       ),
       div(
         () =>
