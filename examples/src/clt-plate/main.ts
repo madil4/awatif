@@ -3,11 +3,13 @@ import {
   analyze,
   CLTLayup,
   Element,
-  LayerInPlaneStressProfile,
   Mesh,
   Node,
   deform,
   recoverCltInPlaneStressProfiles,
+  recoverCltTransverseShearProfiles,
+  sampleClosestInPlaneStressMpa,
+  sampleClosestTransverseStressMpa,
 } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
@@ -176,15 +178,46 @@ function runCase({
     deformOutputs,
     { mode: "coupled" },
   );
-  const sigma1MidSpanExtremeMpa = sampleMidSpanExtremeFiberSigma1Mpa(
+  const transverseProfiles = recoverCltTransverseShearProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
+  const sigmaTopMpa = sampleClosestInPlaneStressMpa(
     nodes,
     elements,
     inPlaneProfiles,
     [LENGTH / 2, WIDTH / 2],
+    0,
+    "top",
+    "sigmaX",
   );
-  const tauRollingSupportMpa = estimateRollingShearAtSupportMpa(
+  const sigmaBottomMpa = sampleClosestInPlaneStressMpa(
     nodes,
-    deformOutputs.reactions,
+    elements,
+    inPlaneProfiles,
+    [LENGTH / 2, WIDTH / 2],
+    cltLayup.layers.length - 1,
+    "bottom",
+    "sigmaX",
+  );
+  const sigma1MidSpanExtremeMpa = Math.max(
+    Math.abs(sigmaTopMpa ?? 0),
+    Math.abs(sigmaBottomMpa ?? 0),
+  );
+  const tauRollingSupportMpa = Math.abs(
+    sampleClosestTransverseStressMpa(
+      nodes,
+      elements,
+      transverseProfiles,
+      [0, WIDTH / 2],
+      Math.floor(cltLayup.layers.length / 2),
+      "mid",
+      "tauYZ",
+      { weightX: 10, weightY: 1 },
+    ) ?? 0,
   );
 
   return {
@@ -294,62 +327,6 @@ function getMaximumDownwardDeflectionMm(
   });
 
   return -minWz * 1000;
-}
-
-function sampleMidSpanExtremeFiberSigma1Mpa(
-  nodes: Node[],
-  elements: Element[],
-  inPlaneProfiles: Map<number, LayerInPlaneStressProfile[]>,
-  target: [number, number],
-): number {
-  let bestElement = -1;
-  let minDistance = Number.POSITIVE_INFINITY;
-
-  elements.forEach((e, elementIndex) => {
-    if (e.length !== 3 || !inPlaneProfiles.has(elementIndex)) return;
-    const n1 = nodes[e[0]];
-    const n2 = nodes[e[1]];
-    const n3 = nodes[e[2]];
-    const cx = (n1[0] + n2[0] + n3[0]) / 3;
-    const cy = (n1[1] + n2[1] + n3[1]) / 3;
-    const d = Math.hypot(cx - target[0], cy - target[1]);
-    if (d < minDistance) {
-      minDistance = d;
-      bestElement = elementIndex;
-    }
-  });
-
-  if (bestElement < 0) return 0;
-  const profile = inPlaneProfiles.get(bestElement);
-  if (!profile?.length) return 0;
-
-  const topLayer = profile[0];
-  const bottomLayer = profile[profile.length - 1];
-  const topPoint = topLayer.points.find((p) => p.point === "top");
-  const bottomPoint = bottomLayer.points.find((p) => p.point === "bottom");
-  if (!topPoint || !bottomPoint) return 0;
-
-  // Internal unit is kN/m^2 (kPa). Convert to MPa.
-  const top = Math.abs(topPoint.stressLayer[0]) / 1000;
-  const bottom = Math.abs(bottomPoint.stressLayer[0]) / 1000;
-  return Math.max(top, bottom);
-}
-
-function estimateRollingShearAtSupportMpa(
-  nodes: Node[],
-  reactions?: Map<number, [number, number, number, number, number, number]>,
-): number {
-  if (!reactions?.size) return 0;
-
-  const inertia = 0.000744;
-  const staticMoment = 0.0042;
-  let reactionAtLeft = 0;
-  reactions.forEach((r, i) => {
-    if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
-  });
-
-  const vMax = Math.abs(reactionAtLeft / WIDTH); // kN/m
-  return ((vMax * staticMoment) / inertia) / 1000; // MPa
 }
 
 function render() {
