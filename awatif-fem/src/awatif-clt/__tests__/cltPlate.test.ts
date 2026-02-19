@@ -9,11 +9,7 @@ import {
   sampleClosestInPlaneStressMpa,
   sampleClosestTransverseStressMpa,
 } from "../stress/probes";
-import {
-  maxAbsSectionLineValue,
-  meanNodalScalarsByElement,
-  sampleScalarFieldAlongX,
-} from "../stress/sections";
+import { getOneWaySectionMetrics } from "../benchmark/oneWay";
 
 const LENGTH = 10;
 const WIDTH = 2.45;
@@ -114,26 +110,19 @@ function runCase(
     { mode: "coupled" },
   );
 
-  const bendingXXByElement = meanNodalScalarsByElement(analyzeOutputs.bendingXX);
-  const momentCurve = sampleScalarFieldAlongX(
+  const sectionMetrics = getOneWaySectionMetrics(
     nodes,
     elements,
-    bendingXXByElement,
-    16,
-    { xMin: 0, xMax: LENGTH },
+    analyzeOutputs,
+    deformOutputs.deformations,
+    deformOutputs.reactions,
+    { xMin: 0, xMax: LENGTH, slabWidth: WIDTH },
   );
-  let reactionAtLeft = 0;
-  deformOutputs.reactions?.forEach((r, i) => {
-    if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
-  });
-
-  const center = getClosestNodeIndex(nodes, [LENGTH / 2, WIDTH / 2, 0]);
-  const centerDeflectionMm = Math.abs(deformOutputs.deformations.get(center)?.[2] ?? 0) * 1000;
 
   return {
-    vMax: Math.abs(reactionAtLeft / WIDTH),
-    mMax: maxAbsSectionLineValue(momentCurve),
-    centerDeflectionMm,
+    vMax: sectionMetrics.specificSupportShearKnPerM,
+    mMax: sectionMetrics.maxSpecificBendingMomentKnmPerM,
+    centerDeflectionMm: sectionMetrics.maxDownwardDeflectionMm,
     inPlaneProfiles,
     transverseProfiles,
   };
@@ -226,19 +215,6 @@ function scaleLayup(layup: CLTLayup, factor: number): CLTLayup {
       Gyz: l.Gyz / factor,
     })),
   };
-}
-
-function getClosestNodeIndex(nodes: Node[], target: Node): number {
-  let min = Number.POSITIVE_INFINITY;
-  let idx = 0;
-  nodes.forEach((n, i) => {
-    const d = Math.hypot(n[0] - target[0], n[1] - target[1], n[2] - target[2]);
-    if (d < min) {
-      min = d;
-      idx = i;
-    }
-  });
-  return idx;
 }
 
 function relErr(actual: number, expected: number): number {

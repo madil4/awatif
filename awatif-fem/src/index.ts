@@ -1,6 +1,7 @@
 export * from "./data-model";
 export * from "./awatif-clt/laminate";
 export * from "./awatif-clt/coupling";
+export * from "./awatif-clt/benchmark/oneWay";
 export * from "./awatif-clt/stress/kinematics";
 export * from "./awatif-clt/stress/inPlane";
 export * from "./awatif-clt/stress/recover";

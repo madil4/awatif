@@ -18,9 +18,7 @@ import {
   sampleClosestTransverseStressMpa,
   sampleClosestTransverseThroughThicknessMpa,
   getThroughThicknessExtrema,
-  maxAbsSectionLineValue,
-  meanNodalScalarsByElement,
-  sampleScalarFieldAlongX,
+  getOneWaySectionMetrics,
 } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
@@ -159,15 +157,16 @@ function applyDisplayCase() {
 
   const nodes = mesh.nodes!.val as Node[];
   const elements = mesh.elements!.val as Element[];
-  supportShearKnPerMState.val = getSpecificSupportShearKnPerM(
-    nodes,
-    selected.reactions,
-  );
-  maxSpecificMomentKnmPerMState.val = getMaxSpecificMomentKnmPerM(
+  const sectionMetrics = getOneWaySectionMetrics(
     nodes,
     elements,
     selected.analyze,
+    selected.deformations,
+    selected.reactions,
   );
+  supportShearKnPerMState.val = sectionMetrics.specificSupportShearKnPerM;
+  maxSpecificMomentKnmPerMState.val =
+    sectionMetrics.maxSpecificBendingMomentKnmPerM;
 
   inPlaneProbeMpaState.val =
     sampleClosestInPlaneStressMpa(
@@ -380,38 +379,6 @@ function getMaximumDownwardDeflectionMm(
   });
 
   return -minWz * 1000;
-}
-
-function getSpecificSupportShearKnPerM(
-  nodes: Node[],
-  reactions?: Map<number, [number, number, number, number, number, number]>,
-): number {
-  if (!reactions?.size) return 0;
-
-  let leftSupportReaction = 0;
-  reactions.forEach((reaction, nodeIndex) => {
-    if (Math.abs(nodes[nodeIndex][0]) < 1e-6) {
-      leftSupportReaction += reaction[2] ?? 0;
-    }
-  });
-
-  return Math.abs(leftSupportReaction / WIDTH);
-}
-
-function getMaxSpecificMomentKnmPerM(
-  nodes: Node[],
-  elements: Element[],
-  analyzeOutputs: ReturnType<typeof analyze>,
-): number {
-  const bendingByElement = meanNodalScalarsByElement(analyzeOutputs.bendingXX);
-  const sectionCurve = sampleScalarFieldAlongX(
-    nodes,
-    elements,
-    bendingByElement,
-    16,
-    { xMin: 0, xMax: LENGTH },
-  );
-  return maxAbsSectionLineValue(sectionCurve);
 }
 
 function getSelectedLayerIndex(): number {
