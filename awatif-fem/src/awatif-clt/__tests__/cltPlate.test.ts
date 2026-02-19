@@ -20,6 +20,7 @@ const WIDTH = 2.45;
 const Q_ULS = 4.335;
 const Q_SLS = 1.589;
 const KDEF_SQ = 0.8;
+const TAU_SECTION_X = 1.0;
 
 const benchmark = {
   vMax: 21.67,
@@ -62,19 +63,20 @@ describe("CLT one-way plate benchmark (chapter 6.2)", () => {
       nodes,
       elements,
       uls.transverseProfiles,
-      [0, WIDTH / 2],
+      // Probe one meter from support to avoid boundary singularity at x = 0.
+      [TAU_SECTION_X, WIDTH / 2],
       3,
       "mid",
       "tauYZ",
-      { weightX: 10, weightY: 1 },
+      { weightX: 2, weightY: 1 },
     ) ?? 0,
     );
 
-    expect(relErr(uls.vMax, benchmark.vMax)).toBeLessThan(0.2);
-    expect(relErr(uls.mMax, benchmark.mMax)).toBeLessThan(0.25);
-    expect(relErr(sigmaMax, benchmark.sigmaMax)).toBeLessThan(0.25);
-    expect(relErr(tauMax, benchmark.tauMax)).toBeLessThan(0.3);
-    expect(relErr(sls.centerDeflectionMm, benchmark.wFin)).toBeLessThan(0.35);
+    expect(relErr(uls.vMax, benchmark.vMax)).toBeLessThan(0.01);
+    expect(relErr(uls.mMax, benchmark.mMax)).toBeLessThan(0.02);
+    expect(relErr(sigmaMax, benchmark.sigmaMax)).toBeLessThan(0.02);
+    expect(relErr(tauMax, benchmark.tauMax)).toBeLessThan(0.02);
+    expect(relErr(sls.centerDeflectionMm, benchmark.wFin)).toBeLessThan(0.02);
   });
 });
 
