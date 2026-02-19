@@ -126,3 +126,29 @@ Mode behavior:
 - `uncoupled`:
   - in-plane recovery via Eq. 43 / Eq. 44
   - transverse recovery via Eq. 47 (layerwise parabolic)
+
+## One-Way Benchmark Mapping (Chapter 6.2)
+
+For the one-way CLT benchmark (`10 m x 2.45 m`) we map FE results to reported
+quantities as follows:
+
+- Specific shear force at support `[kN/m]`:
+  - Sum support reactions in `z` on the left support line (`x = 0`).
+  - Divide by slab width (`2.45 m`).
+- Specific bending moment `[kNm/m]`:
+  - Use `Mxx` from shell analysis.
+  - Collapse nodal element values to element means.
+  - Sample strip-wise along `x` and take the maximum absolute value.
+- Extreme-fiber normal stress `[MPa]`:
+  - Probe in-plane recovered stress `sigmaX` at slab mid-span
+    (`x = L/2, y = W/2`), top of layer 1 and bottom of layer 7.
+  - Use the larger absolute value.
+- Transverse shear stress `[MPa]`:
+  - Probe recovered `tauYZ` at the center of the 4th layer.
+  - Use an interior section (`x = 1.0 m`, `y = W/2`) to avoid support-line
+    boundary singularity at `x = 0`.
+- Deflection `[mm]`:
+  - Use maximum downward nodal `wz` over the slab.
+
+This mapping gives an apple-to-apple comparison against the published benchmark
+while keeping the extraction numerically stable.
