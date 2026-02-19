@@ -1,5 +1,24 @@
 import van from "vanjs-core";
-import { analyze, CLTLayup, Element, Mesh, Node, deform } from "awatif-fem";
+import {
+  analyze,
+  CLTLayup,
+  CltInPlaneStressProfiles,
+  CltTransverseStressProfiles,
+  Element,
+  InPlaneProbeComponent,
+  Mesh,
+  Node,
+  ThroughThicknessPoint,
+  TransverseProbeComponent,
+  deform,
+  getThroughThicknessExtrema,
+  recoverCltInPlaneStressProfiles,
+  recoverCltTransverseShearProfiles,
+  sampleClosestInPlaneStressMpa,
+  sampleClosestInPlaneThroughThicknessMpa,
+  sampleClosestTransverseStressMpa,
+  sampleClosestTransverseThroughThicknessMpa,
+} from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
 
@@ -18,6 +37,8 @@ type CaseResult = {
   deformations?: Map<number, [number, number, number, number, number, number]>;
   reactions?: Map<number, [number, number, number, number, number, number]>;
   analyze: ReturnType<typeof analyze>;
+  inPlaneProfiles: CltInPlaneStressProfiles;
+  transverseProfiles: CltTransverseStressProfiles;
 };
 
 const mesh: Mesh = {
@@ -38,6 +59,16 @@ const maxMeshSizeState = van.state(0.36);
 const qUlsState = van.state(4.335);
 const qSlsState = van.state(1.589);
 const kDefSqState = van.state(0.8);
+const layerIndexState = van.state(3);
+const inPlaneComponentState = van.state<InPlaneProbeComponent>("sigma1");
+const inPlanePointState = van.state<ThroughThicknessPoint>("top");
+const transverseComponentState = van.state<TransverseProbeComponent>("tauYZ");
+const transversePointState = van.state<ThroughThicknessPoint>("mid");
+const maxDeflectionMmState = van.state(0);
+const inPlaneProbeMpaState = van.state(0);
+const transverseProbeMpaState = van.state(0);
+const inPlaneMaxAbsMpaState = van.state(0);
+const transverseMaxAbsMpaState = van.state(0);
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -51,6 +82,11 @@ van.derive(() => {
 
 van.derive(() => {
   displayCaseState.val;
+  layerIndexState.val;
+  inPlaneComponentState.val;
+  inPlanePointState.val;
+  transverseComponentState.val;
+  transversePointState.val;
   applyDisplayCase();
 });
 
@@ -108,6 +144,63 @@ function applyDisplayCase() {
     reactions: selected.reactions,
   };
   mesh.analyzeOutputs!.val = selected.analyze;
+  maxDeflectionMmState.val = getMaximumDownwardDeflectionMm(
+    selected.deformations,
+  );
+
+  const layerIndex = getSelectedLayerIndex();
+  if (layerIndexState.val !== layerIndex) {
+    layerIndexState.val = layerIndex;
+  }
+
+  const nodes = mesh.nodes!.val as Node[];
+  const elements = mesh.elements!.val as Element[];
+
+  inPlaneProbeMpaState.val =
+    sampleClosestInPlaneStressMpa(
+      nodes,
+      elements,
+      selected.inPlaneProfiles,
+      [LENGTH / 2, WIDTH / 2],
+      layerIndex,
+      inPlanePointState.val,
+      inPlaneComponentState.val,
+    ) ?? 0;
+
+  const inPlaneSamplesMpa = sampleClosestInPlaneThroughThicknessMpa(
+    nodes,
+    elements,
+    selected.inPlaneProfiles,
+    [LENGTH / 2, WIDTH / 2],
+    inPlaneComponentState.val,
+  );
+  inPlaneMaxAbsMpaState.val = inPlaneSamplesMpa?.length
+    ? getThroughThicknessExtrema(inPlaneSamplesMpa).maxAbs
+    : 0;
+
+  transverseProbeMpaState.val =
+    sampleClosestTransverseStressMpa(
+      nodes,
+      elements,
+      selected.transverseProfiles,
+      [LENGTH / 2, 0],
+      layerIndex,
+      transversePointState.val,
+      transverseComponentState.val,
+      { weightX: 1, weightY: 10 },
+    ) ?? 0;
+
+  const transverseSamplesMpa = sampleClosestTransverseThroughThicknessMpa(
+    nodes,
+    elements,
+    selected.transverseProfiles,
+    [LENGTH / 2, 0],
+    transverseComponentState.val,
+    { weightX: 1, weightY: 10 },
+  );
+  transverseMaxAbsMpaState.val = transverseSamplesMpa?.length
+    ? getThroughThicknessExtrema(transverseSamplesMpa).maxAbs
+    : 0;
 }
 
 function runCase({
@@ -152,6 +245,20 @@ function runCase({
     elementInputs,
   );
   const analyzeOutputs = analyze(nodes, elements, elementInputs, deformOutputs);
+  const inPlaneProfiles = recoverCltInPlaneStressProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
+  const transverseProfiles = recoverCltTransverseShearProfiles(
+    nodes,
+    elements,
+    elementInputs,
+    deformOutputs,
+    { mode: "coupled" },
+  );
 
   return {
     loads,
@@ -159,6 +266,8 @@ function runCase({
     deformations: deformOutputs.deformations,
     reactions: deformOutputs.reactions,
     analyze: analyzeOutputs,
+    inPlaneProfiles,
+    transverseProfiles,
   };
 }
 
@@ -250,6 +359,27 @@ function getNodalAreas(nodes: Node[], elements: Element[]): number[] {
   return areas;
 }
 
+function getMaximumDownwardDeflectionMm(
+  deformations?: Map<number, [number, number, number, number, number, number]>,
+): number {
+  if (!deformations?.size) return 0;
+
+  let minWz = 0;
+  deformations.forEach((dof) => {
+    minWz = Math.min(minWz, dof[2] ?? 0);
+  });
+
+  return -minWz * 1000;
+}
+
+function getSelectedLayerIndex(): number {
+  return clamp(Math.round(layerIndexState.val), 0, cltLayup.layers.length - 1);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
 function render() {
   const root = div({ id: "page" });
 
@@ -282,6 +412,50 @@ function render() {
               options: {
                 ULS: "ULS",
                 SLS: "SLS",
+              },
+            },
+            {
+              folder: "Analysis Outputs",
+              label: "In-plane component",
+              state: inPlaneComponentState,
+              options: {
+                sigmaX: "sigmaX",
+                sigmaY: "sigmaY",
+                tauXY: "tauXY",
+                sigma1: "sigma1",
+                sigma2: "sigma2",
+                tau12: "tau12",
+              },
+            },
+            {
+              folder: "Analysis Outputs",
+              label: "In-plane point",
+              state: inPlanePointState,
+              options: {
+                top: "top",
+                mid: "mid",
+                bottom: "bottom",
+              },
+            },
+            {
+              folder: "Analysis Outputs",
+              label: "Transverse component",
+              state: transverseComponentState,
+              options: {
+                tauXZ: "tauXZ",
+                tauYZ: "tauYZ",
+                tau13: "tau13",
+                tau23: "tau23",
+              },
+            },
+            {
+              folder: "Analysis Outputs",
+              label: "Transverse point",
+              state: transversePointState,
+              options: {
+                top: "top",
+                mid: "mid",
+                bottom: "bottom",
               },
             },
           ],
@@ -317,9 +491,39 @@ function render() {
               min: 0,
               step: 0.01,
             },
+            {
+              folder: "Analysis Outputs",
+              label: "Layer index",
+              state: layerIndexState,
+              min: 0,
+              max: cltLayup.layers.length - 1,
+              step: 1,
+            },
           ],
         },
       }),
+    ),
+    div(
+      { id: "clt-stats" },
+      div({ class: "title" }, "CLT two-way slab"),
+      div(() => `Load case: ${displayCaseState.val}`),
+      div(() => `Max deflection [mm]: ${maxDeflectionMmState.val.toFixed(3)}`),
+      div(
+        () =>
+          `${inPlaneComponentState.val} @ ${inPlanePointState.val}, layer ${getSelectedLayerIndex()} [MPa]: ${inPlaneProbeMpaState.val.toFixed(3)}`,
+      ),
+      div(
+        () =>
+          `${inPlaneComponentState.val} through-thickness |max| [MPa]: ${inPlaneMaxAbsMpaState.val.toFixed(3)}`,
+      ),
+      div(
+        () =>
+          `${transverseComponentState.val} @ ${transversePointState.val}, layer ${getSelectedLayerIndex()} [MPa]: ${transverseProbeMpaState.val.toFixed(4)}`,
+      ),
+      div(
+        () =>
+          `${transverseComponentState.val} through-thickness |max| [MPa]: ${transverseMaxAbsMpaState.val.toFixed(4)}`,
+      ),
     ),
   );
 
