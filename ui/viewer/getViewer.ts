@@ -15,6 +15,7 @@ import { getSupports } from "./supports/getSupports";
 import { getDesigns } from "./designs/getDesigns";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
+import { getView3D } from "./view3D/getView3D";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -137,6 +138,18 @@ export function getViewer({
         displayScale,
         render,
         display,
+      }),
+    );
+  }
+
+  if (geometry && components && templates && display?.view3D) {
+    scene.add(
+      getView3D({
+        geometry,
+        components,
+        templates,
+        display: display.view3D,
+        render,
       }),
     );
   }

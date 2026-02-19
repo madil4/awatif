@@ -14,6 +14,7 @@ export type Display = {
   loads: State<boolean>;
   supports: State<boolean>;
   design: State<boolean>;
+  view3D?: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
 };
@@ -121,6 +122,17 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               .checked=${display.design.val}
               @change=${(e: Event) =>
                 (display.design.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>`
+        : ""}
+      ${display?.view3D
+        ? html` <div class="display-item">
+            <label>3D View</label>
+            <input
+              type="checkbox"
+              .checked=${display.view3D.val}
+              @change=${(e: Event) =>
+                (display.view3D!.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}

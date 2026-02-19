@@ -101,6 +101,17 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
     };
   },
 
+  getSection: (params: RcBeamParams): [number, number][] => {
+    const w = Number(params.width) / 2000; // half-width in m
+    const h = Number(params.depth) / 2000; // half-depth in m
+    return [
+      [-w, -h],
+      [w, -h],
+      [w, h],
+      [-w, h],
+    ];
+  },
+
   getReport: ({ params }: { params: RcBeamParams }) => {
     const width = Number(params.width);
     const depth = Number(params.depth);
