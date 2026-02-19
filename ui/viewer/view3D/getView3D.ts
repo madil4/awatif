@@ -23,13 +23,9 @@ export function getView3D({
   const group = new THREE.Group();
 
   van.derive(() => {
-    group.visible = display.val;
-    render();
-  });
-
-  van.derive(() => {
-    while (group.children.length > 0) group.remove(group.children[0]);
     if (!display.val) return;
+
+    while (group.children.length > 0) group.remove(group.children[0]);
 
     const lines = geometry.lines.val;
     const points = geometry.points.val;
@@ -100,6 +96,11 @@ export function getView3D({
       });
     });
 
+    render();
+  });
+
+  van.derive(() => {
+    group.visible = display.val;
     render();
   });
 

@@ -204,8 +204,6 @@ van.derive(() => {
   if (componentsBarMode.val === ComponentsType.LOADS) display.loads.val = true;
   if (componentsBarMode.val === ComponentsType.SUPPORTS)
     display.supports.val = true;
-  if (componentsBarMode.val === ComponentsType.DESIGN)
-    display.design.val = true;
 });
 
 // Canvas events
@@ -223,8 +221,7 @@ van.derive(() => {
       templates,
     });
   } else {
-    if (componentsBarMode.val !== ComponentsType.DESIGN)
-      display.design.val = false;
+    display.design.val = false;
 
     canvas.val = null;
   }
