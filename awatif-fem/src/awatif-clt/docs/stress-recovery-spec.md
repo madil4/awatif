@@ -82,3 +82,45 @@ Recovered stresses must satisfy equilibrium against FE resultants (per element, 
 - `integral(tau dz) ~ Q`
 
 These checks are mandatory regression tests for stress recovery implementation.
+
+## Implemented API Surface (awatif-clt-v2)
+
+Core recovery functions:
+
+- `recoverLaminateInPlaneStressProfile(...)`
+- `recoverLaminateInPlaneResultants(...)`
+- `recoverLaminateTransverseShearProfile(...)`
+- `recoverLaminateTransverseResultantFromProfile(...)`
+- `recoverLaminateTransverseResultantFromConstitutive(...)`
+
+Mesh-level recovery functions:
+
+- `recoverCltInPlaneStressProfiles(...)`
+- `recoverCltTransverseShearProfiles(...)`
+
+Post-processing utilities:
+
+- `extractInPlaneStressField(...)`
+- `extractTransverseStressField(...)`
+- `findClosestElementByCentroid(...)`
+- `sampleClosestInPlaneStressMpa(...)`
+- `sampleClosestTransverseStressMpa(...)`
+- `sampleInPlaneThroughThickness(...)`
+- `sampleTransverseThroughThickness(...)`
+- `getThroughThicknessExtrema(...)`
+
+Supported stress components:
+
+- In-plane shell local: `sigmaX`, `sigmaY`, `tauXY`
+- In-plane layer local: `sigma1`, `sigma2`, `tau12`
+- Transverse shell local: `tauXZ`, `tauYZ`
+- Transverse layer local: `tau13`, `tau23`
+
+Mode behavior:
+
+- `coupled`:
+  - in-plane recovery via Eq. 42 + Eq. 13a
+  - transverse recovery via Eq. 45/46 style shape functions
+- `uncoupled`:
+  - in-plane recovery via Eq. 43 / Eq. 44
+  - transverse recovery via Eq. 47 (layerwise parabolic)
