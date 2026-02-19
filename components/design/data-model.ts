@@ -53,6 +53,8 @@ export type DesignTemplate<
     activeAnalysis?: ActiveAnalysis["val"];
     imperfections?: Record<string, unknown>;
   }) => Design;
+
+  getSection?: (params: Params) => [number, number][];
 };
 
 // Forces for a line (all elements that belong to this geometry line)
