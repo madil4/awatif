@@ -9,6 +9,11 @@ import {
   sampleClosestInPlaneStressMpa,
   sampleClosestTransverseStressMpa,
 } from "../stress/probes";
+import {
+  maxAbsSectionLineValue,
+  meanNodalScalarsByElement,
+  sampleScalarFieldAlongX,
+} from "../stress/sections";
 
 const LENGTH = 10;
 const WIDTH = 2.45;
@@ -107,7 +112,14 @@ function runCase(
     { mode: "coupled" },
   );
 
-  const momentCurve = sampleCenterlineBendingCurve(nodes, elements, analyzeOutputs.bendingXX, 16);
+  const bendingXXByElement = meanNodalScalarsByElement(analyzeOutputs.bendingXX);
+  const momentCurve = sampleScalarFieldAlongX(
+    nodes,
+    elements,
+    bendingXXByElement,
+    16,
+    { xMin: 0, xMax: LENGTH },
+  );
   let reactionAtLeft = 0;
   deformOutputs.reactions?.forEach((r, i) => {
     if (Math.abs(nodes[i][0]) < 1e-8) reactionAtLeft += r[2] ?? 0;
@@ -118,7 +130,7 @@ function runCase(
 
   return {
     vMax: Math.abs(reactionAtLeft / WIDTH),
-    mMax: maxAbs(momentCurve),
+    mMax: maxAbsSectionLineValue(momentCurve),
     centerDeflectionMm,
     inPlaneProfiles,
     transverseProfiles,
@@ -212,42 +224,6 @@ function scaleLayup(layup: CLTLayup, factor: number): CLTLayup {
       Gyz: l.Gyz / factor,
     })),
   };
-}
-
-function sampleCenterlineBendingCurve(
-  nodes: Node[],
-  elements: Element[],
-  bendingXX?: Map<number, [number, number, number]>,
-  samples = 16,
-): number[] {
-  const dx = LENGTH / (samples - 1);
-  const halfBin = dx * 0.5;
-
-  const centroids = elements.map((e) => {
-    const n1 = nodes[e[0]];
-    const n2 = nodes[e[1]];
-    const n3 = nodes[e[2]];
-    return [(n1[0] + n2[0] + n3[0]) / 3, (n1[1] + n2[1] + n3[1]) / 3];
-  });
-
-  return Array.from({ length: samples }, (_, i) => {
-    const x = (i / (samples - 1)) * LENGTH;
-    const vals: number[] = [];
-
-    elements.forEach((_, elementIndex) => {
-      if (Math.abs(centroids[elementIndex][0] - x) > halfBin) return;
-      const m = bendingXX?.get(elementIndex);
-      if (!m) return;
-      vals.push((m[0] + m[1] + m[2]) / 3);
-    });
-
-    if (!vals.length) return 0;
-    return vals.reduce((sum, v) => sum + v, 0) / vals.length;
-  });
-}
-
-function maxAbs(values: number[]): number {
-  return values.reduce((acc, v) => Math.max(acc, Math.abs(v)), 0);
 }
 
 function getClosestNodeIndex(nodes: Node[], target: Node): number {
