@@ -9,8 +9,14 @@ import {
 
 export type ProbePoint2D = [number, number];
 
-export type InPlaneProbeComponent = "sigmaX" | "sigmaY" | "tauXY";
-export type TransverseProbeComponent = "tauXZ" | "tauYZ";
+export type InPlaneProbeComponent =
+  | "sigmaX"
+  | "sigmaY"
+  | "tauXY"
+  | "sigma1"
+  | "sigma2"
+  | "tau12";
+export type TransverseProbeComponent = "tauXZ" | "tauYZ" | "tau13" | "tau23";
 
 export type ElementSearchOptions = {
   weightX?: number;

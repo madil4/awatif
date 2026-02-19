@@ -100,30 +100,44 @@ export function getLayerPointStressComponent(
   profile: LayerInPlaneStressProfile[],
   layerIndex: number,
   point: "top" | "mid" | "bottom",
-  component: "sigmaX" | "sigmaY" | "tauXY",
+  component: "sigmaX" | "sigmaY" | "tauXY" | "sigma1" | "sigma2" | "tau12",
 ): number | undefined {
   const layer = profile[layerIndex];
   if (!layer) return undefined;
   const pointValue = layer.points.find((it) => it.point === point);
   if (!pointValue) return undefined;
 
-  const componentIndex = component === "sigmaX" ? 0 : component === "sigmaY" ? 1 : 2;
-  return pointValue.stressShell[componentIndex];
+  const useLayerSystem =
+    component === "sigma1" || component === "sigma2" || component === "tau12";
+  const componentIndex =
+    component === "sigmaX" || component === "sigma1"
+      ? 0
+      : component === "sigmaY" || component === "sigma2"
+      ? 1
+      : 2;
+
+  return useLayerSystem
+    ? pointValue.stressLayer[componentIndex]
+    : pointValue.stressShell[componentIndex];
 }
 
 export function getLayerPointTransverseStressComponent(
   profile: LayerTransverseStressProfile[],
   layerIndex: number,
   point: "top" | "mid" | "bottom",
-  component: "tauXZ" | "tauYZ",
+  component: "tauXZ" | "tauYZ" | "tau13" | "tau23",
 ): number | undefined {
   const layer = profile[layerIndex];
   if (!layer) return undefined;
   const pointValue = layer.points.find((it) => it.point === point);
   if (!pointValue) return undefined;
 
-  const componentIndex = component === "tauXZ" ? 0 : 1;
-  return pointValue.tauShell[componentIndex];
+  const useLayerSystem = component === "tau13" || component === "tau23";
+  const componentIndex = component === "tauXZ" || component === "tau13" ? 0 : 1;
+
+  return useLayerSystem
+    ? pointValue.tauLayer[componentIndex]
+    : pointValue.tauShell[componentIndex];
 }
 
 function getElementGlobalDofs(

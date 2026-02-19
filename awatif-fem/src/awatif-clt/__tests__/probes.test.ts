@@ -35,9 +35,9 @@ describe("CLT stress probes", () => {
           zTop: 0.05,
           zBot: -0.05,
           points: [
-            { point: "top", zGlobal: 0.05, zLocal: 0.05, strainShell: [0, 0, 0], stressShell: [2500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2500, 0, 0] },
-            { point: "mid", zGlobal: 0, zLocal: 0, strainShell: [0, 0, 0], stressShell: [2000, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2000, 0, 0] },
-            { point: "bottom", zGlobal: -0.05, zLocal: -0.05, strainShell: [0, 0, 0], stressShell: [1500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [1500, 0, 0] },
+            { point: "top", zGlobal: 0.05, zLocal: 0.05, strainShell: [0, 0, 0], stressShell: [2500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [3200, 50, 10] },
+            { point: "mid", zGlobal: 0, zLocal: 0, strainShell: [0, 0, 0], stressShell: [2000, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2600, 40, 8] },
+            { point: "bottom", zGlobal: -0.05, zLocal: -0.05, strainShell: [0, 0, 0], stressShell: [1500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2100, 30, 6] },
           ],
         },
       ]],
@@ -54,6 +54,17 @@ describe("CLT stress probes", () => {
     );
 
     expect(sigmaTopMpa).toBeCloseTo(2.5, 12);
+
+    const sigma1TopMpa = sampleClosestInPlaneStressMpa(
+      nodes,
+      elements,
+      profiles,
+      [0.1, 0.1],
+      0,
+      "top",
+      "sigma1",
+    );
+    expect(sigma1TopMpa).toBeCloseTo(3.2, 12);
   });
 
   test("samples closest transverse stress in MPa", () => {
@@ -69,7 +80,7 @@ describe("CLT stress probes", () => {
           zBot: -0.05,
           points: [
             { point: "top", zGlobal: 0.05, zLocal: 0.05, tauShell: [0, 0], tauLayer: [0, 0] },
-            { point: "mid", zGlobal: 0, zLocal: 0, tauShell: [80, 120], tauLayer: [80, 120] },
+            { point: "mid", zGlobal: 0, zLocal: 0, tauShell: [80, 120], tauLayer: [95, 140] },
             { point: "bottom", zGlobal: -0.05, zLocal: -0.05, tauShell: [0, 0], tauLayer: [0, 0] },
           ],
         },
@@ -87,6 +98,17 @@ describe("CLT stress probes", () => {
     );
 
     expect(tauMpa).toBeCloseTo(0.12, 12);
+
+    const tau23Mpa = sampleClosestTransverseStressMpa(
+      nodes,
+      elements,
+      profiles,
+      [1.8, 1.5],
+      0,
+      "mid",
+      "tau23",
+    );
+    expect(tau23Mpa).toBeCloseTo(0.14, 12);
   });
 });
 
