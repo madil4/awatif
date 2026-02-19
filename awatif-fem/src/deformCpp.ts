@@ -112,6 +112,9 @@ export function deformCpp(
   );
 
   const result = readOutputMaps(out);
+  if (includeReactions && result.reactions.size) {
+    subtractAppliedLoadsFromReactions(result.reactions, nodeInputs.loads);
+  }
 
   if (result.deformationsDataPtr) gc.push(result.deformationsDataPtr);
   if (result.reactionsDataPtr) gc.push(result.reactionsDataPtr);
@@ -244,6 +247,9 @@ export function createCachedDeformSolverCpp(
     );
 
     const result = readOutputMaps(out);
+    if ((options.includeReactions ?? false) && result.reactions.size) {
+      subtractAppliedLoadsFromReactions(result.reactions, loads);
+    }
 
     if (!result.deformations.size) {
       freePointers(solveGc);
@@ -506,6 +512,27 @@ function readOutputMaps(out: {
     deformations,
     reactions,
   };
+}
+
+function subtractAppliedLoadsFromReactions(
+  reactions: NonNullable<DeformOutputs["reactions"]>,
+  loads?: NodeInputs["loads"],
+): void {
+  if (!loads?.size) return;
+
+  reactions.forEach((reaction, nodeIndex) => {
+    const applied = loads.get(nodeIndex);
+    if (!applied) return;
+
+    reactions.set(nodeIndex, [
+      reaction[0] - applied[0],
+      reaction[1] - applied[1],
+      reaction[2] - applied[2],
+      reaction[3] - applied[3],
+      reaction[4] - applied[4],
+      reaction[5] - applied[5],
+    ]);
+  });
 }
 
 function freePointers(gc: number[]) {

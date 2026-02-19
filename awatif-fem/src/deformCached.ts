@@ -100,13 +100,14 @@ function createCachedDeformSolverJs(
 
       const reactions: DeformOutputs["reactions"] = new Map();
       supportNodeIndices.forEach((nodeIndex) => {
+        const applied = loads?.get(nodeIndex) ?? [0, 0, 0, 0, 0, 0];
         reactions.set(nodeIndex, [
-          dotRow(globalStiffness[nodeIndex * 6], deformationsArray),
-          dotRow(globalStiffness[nodeIndex * 6 + 1], deformationsArray),
-          dotRow(globalStiffness[nodeIndex * 6 + 2], deformationsArray),
-          dotRow(globalStiffness[nodeIndex * 6 + 3], deformationsArray),
-          dotRow(globalStiffness[nodeIndex * 6 + 4], deformationsArray),
-          dotRow(globalStiffness[nodeIndex * 6 + 5], deformationsArray),
+          dotRow(globalStiffness[nodeIndex * 6], deformationsArray) - applied[0],
+          dotRow(globalStiffness[nodeIndex * 6 + 1], deformationsArray) - applied[1],
+          dotRow(globalStiffness[nodeIndex * 6 + 2], deformationsArray) - applied[2],
+          dotRow(globalStiffness[nodeIndex * 6 + 3], deformationsArray) - applied[3],
+          dotRow(globalStiffness[nodeIndex * 6 + 4], deformationsArray) - applied[4],
+          dotRow(globalStiffness[nodeIndex * 6 + 5], deformationsArray) - applied[5],
         ]);
       });
 

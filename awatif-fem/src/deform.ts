@@ -41,7 +41,10 @@ export function deform(
     flatten(deformationFree)
   );
 
-  const reactionsArray = multiply(stiffnesses, deformationsArray);
+  const internalForces = multiply(stiffnesses, deformationsArray) as number[];
+  const reactionsArray = internalForces.map(
+    (force, dofIndex) => force - appliedForces[dofIndex],
+  );
 
   const deformations: DeformOutputs["deformations"] = new Map();
   const reactions: DeformOutputs["reactions"] = new Map();

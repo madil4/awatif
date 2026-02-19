@@ -190,8 +190,8 @@ extern "C"
         Eigen::VectorXd R_global;
         if (include_reactions)
         {
-            // Calculate the full reaction force vector only when requested.
-            R_global = K_global * U_global;
+            // Reactions at constrained DOFs are internal minus applied nodal loads.
+            R_global = K_global * U_global - F_global;
         }
 
         // --- 3. Prepare Output Data Structures ---
@@ -228,8 +228,6 @@ extern "C"
                 std::vector<double> node_react(6);
                 for (int j = 0; j < 6; ++j)
                 {
-                    // Note: R_global = K*U. FEM reactions are often defined as internal forces balancing external loads.
-                    // However, to match the JS implementation which returns K*U at supports, we use R_global directly.
                     node_react[j] = R_global(i * 6 + j);
                 }
                 outputs.reactions[i] = node_react;
@@ -465,7 +463,7 @@ extern "C"
         std::map<int, std::vector<double>> reactions;
         if (include_reactions)
         {
-            const Eigen::VectorXd RGlobal = solverState->KGlobal * UGlobal;
+            const Eigen::VectorXd RGlobal = solverState->KGlobal * UGlobal - FGlobal;
             for (int nodeIdx : solverState->supportNodeIndices)
             {
                 std::vector<double> nodeReaction(6);
