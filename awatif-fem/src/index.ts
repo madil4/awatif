@@ -8,6 +8,7 @@ export * from "./awatif-clt/stress/transverse";
 export * from "./awatif-clt/stress/fields";
 export * from "./awatif-clt/stress/probes";
 export * from "./awatif-clt/stress/throughThickness";
+export * from "./awatif-clt/stress/sections";
 
 export { analyze } from "./analyze";
 export { createCachedDeformSolver } from "./deformCached";

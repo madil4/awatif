@@ -18,6 +18,9 @@ import {
   sampleClosestTransverseStressMpa,
   sampleClosestTransverseThroughThicknessMpa,
   getThroughThicknessExtrema,
+  maxAbsSectionLineValue,
+  meanNodalScalarsByElement,
+  sampleScalarFieldAlongX,
 } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
@@ -28,6 +31,7 @@ const { div } = van.tags;
 
 const LENGTH = 10;
 const WIDTH = 2.45;
+const TAU_PROBE_X = 1.0;
 
 type DisplayCase = "ULS" | "SLS";
 
@@ -69,6 +73,8 @@ const inPlaneProbeMpaState = van.state(0);
 const transverseProbeMpaState = van.state(0);
 const inPlaneMaxAbsMpaState = van.state(0);
 const transverseMaxAbsMpaState = van.state(0);
+const supportShearKnPerMState = van.state(0);
+const maxSpecificMomentKnmPerMState = van.state(0);
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -153,6 +159,15 @@ function applyDisplayCase() {
 
   const nodes = mesh.nodes!.val as Node[];
   const elements = mesh.elements!.val as Element[];
+  supportShearKnPerMState.val = getSpecificSupportShearKnPerM(
+    nodes,
+    selected.reactions,
+  );
+  maxSpecificMomentKnmPerMState.val = getMaxSpecificMomentKnmPerM(
+    nodes,
+    elements,
+    selected.analyze,
+  );
 
   inPlaneProbeMpaState.val =
     sampleClosestInPlaneStressMpa(
@@ -181,20 +196,20 @@ function applyDisplayCase() {
       nodes,
       elements,
       selected.transverseProfiles,
-      [0, WIDTH / 2],
+      [TAU_PROBE_X, WIDTH / 2],
       layerIndex,
       transversePointState.val,
       transverseComponentState.val,
-      { weightX: 10, weightY: 1 },
+      { weightX: 2, weightY: 1 },
     ) ?? 0;
 
   const transverseSamplesMpa = sampleClosestTransverseThroughThicknessMpa(
     nodes,
     elements,
     selected.transverseProfiles,
-    [0, WIDTH / 2],
+    [TAU_PROBE_X, WIDTH / 2],
     transverseComponentState.val,
-    { weightX: 10, weightY: 1 },
+    { weightX: 2, weightY: 1 },
   );
   transverseMaxAbsMpaState.val = transverseSamplesMpa?.length
     ? getThroughThicknessExtrema(transverseSamplesMpa).maxAbs
@@ -367,6 +382,38 @@ function getMaximumDownwardDeflectionMm(
   return -minWz * 1000;
 }
 
+function getSpecificSupportShearKnPerM(
+  nodes: Node[],
+  reactions?: Map<number, [number, number, number, number, number, number]>,
+): number {
+  if (!reactions?.size) return 0;
+
+  let leftSupportReaction = 0;
+  reactions.forEach((reaction, nodeIndex) => {
+    if (Math.abs(nodes[nodeIndex][0]) < 1e-6) {
+      leftSupportReaction += reaction[2] ?? 0;
+    }
+  });
+
+  return Math.abs(leftSupportReaction / WIDTH);
+}
+
+function getMaxSpecificMomentKnmPerM(
+  nodes: Node[],
+  elements: Element[],
+  analyzeOutputs: ReturnType<typeof analyze>,
+): number {
+  const bendingByElement = meanNodalScalarsByElement(analyzeOutputs.bendingXX);
+  const sectionCurve = sampleScalarFieldAlongX(
+    nodes,
+    elements,
+    bendingByElement,
+    16,
+    { xMin: 0, xMax: LENGTH },
+  );
+  return maxAbsSectionLineValue(sectionCurve);
+}
+
 function getSelectedLayerIndex(): number {
   return clamp(Math.round(layerIndexState.val), 0, cltLayup.layers.length - 1);
 }
@@ -503,6 +550,14 @@ function render() {
       div({ class: "title" }, "CLT plate"),
       div(() => `Load case: ${displayCaseState.val}`),
       div(() => `Max deflection [mm]: ${maxDeflectionMmState.val.toFixed(3)}`),
+      div(
+        () =>
+          `Specific shear @ support [kN/m]: ${supportShearKnPerMState.val.toFixed(3)}`,
+      ),
+      div(
+        () =>
+          `Max specific bending moment [kNm/m]: ${maxSpecificMomentKnmPerMState.val.toFixed(3)}`,
+      ),
       div(
         () =>
           `${inPlaneComponentState.val} @ ${inPlanePointState.val}, layer ${getSelectedLayerIndex()} [MPa]: ${inPlaneProbeMpaState.val.toFixed(3)}`,
