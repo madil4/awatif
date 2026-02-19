@@ -105,6 +105,8 @@ Post-processing utilities:
 - `findClosestElementByCentroid(...)`
 - `sampleClosestInPlaneStressMpa(...)`
 - `sampleClosestTransverseStressMpa(...)`
+- `sampleClosestInPlaneThroughThicknessMpa(...)`
+- `sampleClosestTransverseThroughThicknessMpa(...)`
 - `sampleInPlaneThroughThickness(...)`
 - `sampleTransverseThroughThickness(...)`
 - `getThroughThicknessExtrema(...)`

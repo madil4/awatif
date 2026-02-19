@@ -4,7 +4,9 @@ import { LayerTransverseStressProfile } from "../stress/transverse";
 import {
   findClosestElementByCentroid,
   sampleClosestInPlaneStressMpa,
+  sampleClosestInPlaneThroughThicknessMpa,
   sampleClosestTransverseStressMpa,
+  sampleClosestTransverseThroughThicknessMpa,
 } from "../stress/probes";
 
 describe("CLT stress probes", () => {
@@ -25,23 +27,7 @@ describe("CLT stress probes", () => {
 
   test("samples closest in-plane stress in MPa", () => {
     const { nodes, elements } = makeMesh();
-
-    const profiles: Map<number, LayerInPlaneStressProfile[]> = new Map([
-      [0, [
-        {
-          layerIndex: 0,
-          thetaDeg: 0,
-          thickness: 0.1,
-          zTop: 0.05,
-          zBot: -0.05,
-          points: [
-            { point: "top", zGlobal: 0.05, zLocal: 0.05, strainShell: [0, 0, 0], stressShell: [2500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [3200, 50, 10] },
-            { point: "mid", zGlobal: 0, zLocal: 0, strainShell: [0, 0, 0], stressShell: [2000, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2600, 40, 8] },
-            { point: "bottom", zGlobal: -0.05, zLocal: -0.05, strainShell: [0, 0, 0], stressShell: [1500, 0, 0], strainLayer: [0, 0, 0], stressLayer: [2100, 30, 6] },
-          ],
-        },
-      ]],
-    ]);
+    const profiles = makeInPlaneProfiles();
 
     const sigmaTopMpa = sampleClosestInPlaneStressMpa(
       nodes,
@@ -69,23 +55,7 @@ describe("CLT stress probes", () => {
 
   test("samples closest transverse stress in MPa", () => {
     const { nodes, elements } = makeMesh();
-
-    const profiles: Map<number, LayerTransverseStressProfile[]> = new Map([
-      [1, [
-        {
-          layerIndex: 0,
-          thetaDeg: 0,
-          thickness: 0.1,
-          zTop: 0.05,
-          zBot: -0.05,
-          points: [
-            { point: "top", zGlobal: 0.05, zLocal: 0.05, tauShell: [0, 0], tauLayer: [0, 0] },
-            { point: "mid", zGlobal: 0, zLocal: 0, tauShell: [80, 120], tauLayer: [95, 140] },
-            { point: "bottom", zGlobal: -0.05, zLocal: -0.05, tauShell: [0, 0], tauLayer: [0, 0] },
-          ],
-        },
-      ]],
-    ]);
+    const profiles = makeTransverseProfiles();
 
     const tauMpa = sampleClosestTransverseStressMpa(
       nodes,
@@ -110,7 +80,131 @@ describe("CLT stress probes", () => {
     );
     expect(tau23Mpa).toBeCloseTo(0.14, 12);
   });
+
+  test("samples closest in-plane through-thickness profile in MPa", () => {
+    const { nodes, elements } = makeMesh();
+    const profiles = makeInPlaneProfiles();
+
+    const samples = sampleClosestInPlaneThroughThicknessMpa(
+      nodes,
+      elements,
+      profiles,
+      [0.1, 0.1],
+      "sigmaX",
+    );
+
+    expect(samples).toBeDefined();
+    expect(samples).toHaveLength(3);
+    expect(samples?.[0].value).toBeCloseTo(2.5, 12);
+    expect(samples?.[1].value).toBeCloseTo(2.0, 12);
+    expect(samples?.[2].value).toBeCloseTo(1.5, 12);
+  });
+
+  test("samples closest transverse through-thickness profile in MPa", () => {
+    const { nodes, elements } = makeMesh();
+    const profiles = makeTransverseProfiles();
+
+    const samples = sampleClosestTransverseThroughThicknessMpa(
+      nodes,
+      elements,
+      profiles,
+      [1.8, 1.5],
+      "tau23",
+    );
+
+    expect(samples).toBeDefined();
+    expect(samples).toHaveLength(3);
+    expect(samples?.[0].value).toBeCloseTo(0, 12);
+    expect(samples?.[1].value).toBeCloseTo(0.14, 12);
+    expect(samples?.[2].value).toBeCloseTo(0, 12);
+  });
 });
+
+function makeInPlaneProfiles(): Map<number, LayerInPlaneStressProfile[]> {
+  return new Map([
+    [
+      0,
+      [
+        {
+          layerIndex: 0,
+          thetaDeg: 0,
+          thickness: 0.1,
+          zTop: 0.05,
+          zBot: -0.05,
+          points: [
+            {
+              point: "top",
+              zGlobal: 0.05,
+              zLocal: 0.05,
+              strainShell: [0, 0, 0],
+              stressShell: [2500, 0, 0],
+              strainLayer: [0, 0, 0],
+              stressLayer: [3200, 50, 10],
+            },
+            {
+              point: "mid",
+              zGlobal: 0,
+              zLocal: 0,
+              strainShell: [0, 0, 0],
+              stressShell: [2000, 0, 0],
+              strainLayer: [0, 0, 0],
+              stressLayer: [2600, 40, 8],
+            },
+            {
+              point: "bottom",
+              zGlobal: -0.05,
+              zLocal: -0.05,
+              strainShell: [0, 0, 0],
+              stressShell: [1500, 0, 0],
+              strainLayer: [0, 0, 0],
+              stressLayer: [2100, 30, 6],
+            },
+          ],
+        },
+      ],
+    ],
+  ]);
+}
+
+function makeTransverseProfiles(): Map<number, LayerTransverseStressProfile[]> {
+  return new Map([
+    [
+      1,
+      [
+        {
+          layerIndex: 0,
+          thetaDeg: 0,
+          thickness: 0.1,
+          zTop: 0.05,
+          zBot: -0.05,
+          points: [
+            {
+              point: "top",
+              zGlobal: 0.05,
+              zLocal: 0.05,
+              tauShell: [0, 0],
+              tauLayer: [0, 0],
+            },
+            {
+              point: "mid",
+              zGlobal: 0,
+              zLocal: 0,
+              tauShell: [80, 120],
+              tauLayer: [95, 140],
+            },
+            {
+              point: "bottom",
+              zGlobal: -0.05,
+              zLocal: -0.05,
+              tauShell: [0, 0],
+              tauLayer: [0, 0],
+            },
+          ],
+        },
+      ],
+    ],
+  ]);
+}
 
 function makeMesh(): { nodes: Node[]; elements: Element[] } {
   const nodes: Node[] = [

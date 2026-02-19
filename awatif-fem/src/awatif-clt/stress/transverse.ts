@@ -4,6 +4,7 @@ import {
   layerInPlaneQ,
   rotateInPlaneReducedStiffness,
 } from "../laminate";
+import { ThroughThicknessPoint } from "./inPlane";
 
 const DEG2RAD = Math.PI / 180;
 const EPS = 1e-12;
@@ -12,7 +13,6 @@ type Vec2 = [number, number];
 type Mat2 = [[number, number], [number, number]];
 
 export type TransverseRecoveryMode = "coupled" | "uncoupled";
-export type ThroughThicknessPoint = "top" | "mid" | "bottom";
 
 export type LayerTransverseStressPoint = {
   point: ThroughThicknessPoint;

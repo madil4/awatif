@@ -6,6 +6,13 @@ import {
   getLayerPointStressComponent,
   getLayerPointTransverseStressComponent,
 } from "./recover";
+import {
+  InPlaneThroughThicknessComponent,
+  ThroughThicknessSample,
+  TransverseThroughThicknessComponent,
+  sampleInPlaneThroughThickness,
+  sampleTransverseThroughThickness,
+} from "./throughThickness";
 
 export type ProbePoint2D = [number, number];
 
@@ -21,6 +28,10 @@ export type TransverseProbeComponent = "tauXZ" | "tauYZ" | "tau13" | "tau23";
 export type ElementSearchOptions = {
   weightX?: number;
   weightY?: number;
+};
+
+type ProbeContext<TProfile> = {
+  profile: TProfile;
 };
 
 export function findClosestElementByCentroid(
@@ -116,4 +127,81 @@ export function sampleClosestTransverseStressMpa(
 
   // Internal stresses are kN/m^2 (kPa); convert to MPa.
   return value / 1000;
+}
+
+export function sampleClosestInPlaneThroughThicknessMpa(
+  nodes: Node[],
+  elements: Element[],
+  profilesByElement: CltInPlaneStressProfiles,
+  target: ProbePoint2D,
+  component: InPlaneThroughThicknessComponent,
+  search?: ElementSearchOptions,
+): ThroughThicknessSample[] | undefined {
+  const context = getClosestProfileContext(
+    nodes,
+    elements,
+    profilesByElement,
+    target,
+    search,
+  );
+  if (!context) return undefined;
+
+  const samples = sampleInPlaneThroughThickness(context.profile, component, {
+    includeInterfaceDuplicates: true,
+  });
+
+  return convertSamplesToMpa(samples);
+}
+
+export function sampleClosestTransverseThroughThicknessMpa(
+  nodes: Node[],
+  elements: Element[],
+  profilesByElement: CltTransverseStressProfiles,
+  target: ProbePoint2D,
+  component: TransverseThroughThicknessComponent,
+  search?: ElementSearchOptions,
+): ThroughThicknessSample[] | undefined {
+  const context = getClosestProfileContext(
+    nodes,
+    elements,
+    profilesByElement,
+    target,
+    search,
+  );
+  if (!context) return undefined;
+
+  const samples = sampleTransverseThroughThickness(context.profile, component, {
+    includeInterfaceDuplicates: true,
+  });
+
+  return convertSamplesToMpa(samples);
+}
+
+function getClosestProfileContext<TProfile>(
+  nodes: Node[],
+  elements: Element[],
+  profilesByElement: Map<number, TProfile>,
+  target: ProbePoint2D,
+  search?: ElementSearchOptions,
+): ProbeContext<TProfile> | undefined {
+  const elementIndex = findClosestElementByCentroid(nodes, elements, target, {
+    search,
+    includeElement: (idx) => profilesByElement.has(idx),
+  });
+  if (elementIndex === undefined) return undefined;
+
+  const profile = profilesByElement.get(elementIndex);
+  if (!profile) return undefined;
+
+  return { profile };
+}
+
+function convertSamplesToMpa(
+  samples: ThroughThicknessSample[],
+): ThroughThicknessSample[] {
+  return samples.map((sample) => ({
+    ...sample,
+    // Internal stresses are kN/m^2 (kPa); convert to MPa.
+    value: sample.value / 1000,
+  }));
 }
