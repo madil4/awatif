@@ -15,7 +15,7 @@ import { getSupports } from "./supports/getSupports";
 import { getDesigns } from "./designs/getDesigns";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
-import { getView3D } from "./view3D/getView3D";
+import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -142,13 +142,13 @@ export function getViewer({
     );
   }
 
-  if (geometry && components && templates && display?.view3D) {
+  if (geometry && components && templates && display?.extrudeSections) {
     scene.add(
-      getView3D({
+      getExtrudeSections({
         geometry,
         components,
         templates,
-        display: display.view3D,
+        display: display.extrudeSections,
         render,
       }),
     );

@@ -14,7 +14,7 @@ export type Display = {
   loads: State<boolean>;
   supports: State<boolean>;
   design: State<boolean>;
-  view3D?: State<boolean>;
+  extrudeSections?: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
 };
@@ -125,14 +125,16 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
             />
           </div>`
         : ""}
-      ${display?.view3D
+      ${display?.extrudeSections
         ? html` <div class="display-item">
-            <label>3D View</label>
+            <label>Extrude Sections</label>
             <input
               type="checkbox"
-              .checked=${display.view3D.val}
+              .checked=${display.extrudeSections.val}
               @change=${(e: Event) =>
-                (display.view3D!.val = (e.target as HTMLInputElement).checked)}
+                (display.extrudeSections!.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
             />
           </div>`
         : ""}
