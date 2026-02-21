@@ -67,7 +67,13 @@ export enum ComponentsType {
   ANALYSIS,
   DESIGN,
   IMPERFECTIONS,
+  SPECIAL,
 }
+
+export type ActiveComponent = {
+  type: ComponentsType;
+  index: number;
+} | null;
 
 export type Components = State<
   Map<
