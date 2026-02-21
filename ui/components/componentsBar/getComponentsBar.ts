@@ -31,6 +31,13 @@ export function getComponentsBar({
                     : ComponentsType.ANALYSIS)}
             >
               Analysis
+              ${activeAnalysis?.val
+                ? html`<span class="analysis-badge"
+                    >${activeAnalysis.val === "linear"
+                      ? "Linear"
+                      : "Nonlinear"}</span
+                  >`
+                : ""}
             </button>
           `
         : ""}
