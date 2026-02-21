@@ -14,6 +14,7 @@ export {
   getLineEndForces,
   getMaxAxialForce,
   getMaxMoment,
+  getMidHeightMoment,
 } from "./design/helpers";
 
 export { templates } from "./templates";
