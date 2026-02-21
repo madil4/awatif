@@ -7,7 +7,7 @@ import {
   ComponentsType,
 } from "@awatif/components";
 
-export function getView3D({
+export function getExtrudeSections({
   geometry,
   components,
   templates,

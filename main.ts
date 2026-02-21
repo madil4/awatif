@@ -118,7 +118,7 @@ const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
   design: van.state(false),
-  view3D: van.state(false),
+  extrudeSections: van.state(false),
   lineResult: van.state("Bendings"),
 };
 
