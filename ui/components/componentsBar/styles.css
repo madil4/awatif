@@ -37,3 +37,14 @@
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
 }
+
+#components-bar .analysis-badge {
+  font-size: 0.65rem;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 4px;
+}
+
+#components-bar .components-bar-button.active .analysis-badge {
+  opacity: 0.9;
+}
