@@ -5,38 +5,47 @@ import {
   Components,
   templates as Templates,
   ComponentsType,
+  ActiveComponent,
 } from "@awatif/components";
 
 import "./styles.css";
 
+type TaggedItem = {
+  type: ComponentsType;
+  index: number;
+  item: { name: string; templateId: string; geometry: number[]; params?: Record<string, unknown> };
+};
+
 export function getList({
-  componentsBarMode,
+  types,
+  geometryKind,
   geometry,
   components,
   activeComponent,
   templates,
 }: {
-  componentsBarMode: State<ComponentsType | null>;
+  types: State<ComponentsType[]>;
+  geometryKind: State<"point" | "line" | null>;
   geometry: Geometry;
   components: Components;
-  activeComponent: State<number | null>;
+  activeComponent: State<ActiveComponent>;
   templates?: typeof Templates;
 }): HTMLElement {
   const container = document.createElement("div");
   const editingIndex = van.state<number | null>(null);
   let isSyncing = false;
 
-  const getKey = () => componentsBarMode.val as ComponentsType;
-  const getComponentList = () => components.val.get(getKey()) ?? [];
+  const getTaggedList = (): TaggedItem[] => {
+    const result: TaggedItem[] = [];
+    for (const type of types.val) {
+      const list = components.val.get(type) ?? [];
+      list.forEach((item, i) => result.push({ type, index: i, item }));
+    }
+    return result;
+  };
 
-  const isPointBased = () =>
-    componentsBarMode.val === ComponentsType.LOADS ||
-    componentsBarMode.val === ComponentsType.SUPPORTS;
-
-  const isLineBased = () =>
-    componentsBarMode.val === ComponentsType.MESH ||
-    componentsBarMode.val === ComponentsType.DESIGN ||
-    componentsBarMode.val === ComponentsType.IMPERFECTIONS;
+  const isPointBased = () => geometryKind.val === "point";
+  const isLineBased = () => geometryKind.val === "line";
 
   const getSelectedGeometry = () => {
     const sel = geometry.selection.val;
@@ -55,23 +64,12 @@ export function getList({
     }
   };
 
-  const updateComponents = (
-    updater: (
-      list: typeof getComponentList extends () => infer R ? R : never,
-    ) => typeof list,
-  ) => {
-    components.val = new Map(components.val).set(
-      getKey(),
-      updater(getComponentList()),
-    );
-  };
-
   const arraysEqual = (a: number[], b: number[]) =>
     a.length === b.length && a.every((v, i) => v === b[i]);
 
-  // Reset activeComponent when mode changes
+  // Reset activeComponent when types change
   van.derive(() => {
-    componentsBarMode.val;
+    types.val;
     activeComponent.val = null;
   });
 
@@ -95,10 +93,11 @@ export function getList({
 
   // Sync activeComponent -> geometry.selection
   van.derive(() => {
-    const idx = activeComponent.val;
-    if (idx === null || componentsBarMode.val === null) return;
+    const active = activeComponent.val;
+    if (active === null || types.val.length === 0) return;
 
-    const componentGeometry = getComponentList()[idx]?.geometry ?? [];
+    const list = components.val.get(active.type) ?? [];
+    const componentGeometry = list[active.index]?.geometry ?? [];
     isSyncing = true;
     setSelection(componentGeometry);
     isSyncing = false;
@@ -106,26 +105,28 @@ export function getList({
 
   // Sync geometry.selection -> activeComponent's geometry
   van.derive(() => {
-    const idx = activeComponent.val;
-    if (isSyncing || idx === null || componentsBarMode.val === null) return;
+    const active = activeComponent.val;
+    if (isSyncing || active === null || types.val.length === 0) return;
     if (geometry.selection.val === null) return;
 
-    const current = getComponentList()[idx];
+    const list = components.val.get(active.type) ?? [];
+    const current = list[active.index];
     if (!current) return;
 
     const selectedGeometry = getSelectedGeometry();
     if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
 
     const selectedSet = new Set(selectedGeometry);
-    updateComponents((list) =>
-      list.map((c, i) => {
-        if (i === idx) return { ...c, geometry: [...selectedGeometry] };
-        return {
-          ...c,
-          geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
-        };
-      }),
-    );
+
+    // Update the active component's geometry and remove those indices from others of the same type
+    const updatedList = list.map((c, i) => {
+      if (i === active.index) return { ...c, geometry: [...selectedGeometry] };
+      return {
+        ...c,
+        geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
+      };
+    });
+    components.val = new Map(components.val).set(active.type, updatedList);
   });
 
   // Sync geometry deletions -> remove deleted indices from components
@@ -142,10 +143,10 @@ export function getList({
 
   const removeDeletedFromTypes = (
     componentsMap: Map<ComponentsType, { geometry: number[] }[]>,
-    types: ComponentsType[],
+    typesToClean: ComponentsType[],
     deleted: Set<number>,
   ) => {
-    for (const type of types) {
+    for (const type of typesToClean) {
       const list = componentsMap.get(type);
       if (list) {
         componentsMap.set(
@@ -197,49 +198,52 @@ export function getList({
   });
 
   function template() {
-    if (componentsBarMode.val === null) return html``;
-    if (componentsBarMode.val === ComponentsType.ANALYSIS) return html``;
+    if (types.val.length === 0) return html``;
 
-    const list = getComponentList();
-    const isOpen =
-      componentsBarMode.val === ComponentsType.MESH ||
-      componentsBarMode.val === ComponentsType.LOADS ||
-      componentsBarMode.val === ComponentsType.SUPPORTS ||
-      componentsBarMode.val === ComponentsType.DESIGN ||
-      componentsBarMode.val === ComponentsType.IMPERFECTIONS;
+    const taggedList = getTaggedList();
 
     return html`
       <details
         id="list"
-        ?open=${isOpen}
+        open
         @toggle=${(e: Event) => {
           if (!(e.target as HTMLDetailsElement).open)
             activeComponent.val = null;
         }}
       >
         <summary>Components</summary>
-        ${list.map((comp, i) => componentItem(comp, i))} ${templatesSection()}
+        ${taggedList.map((tagged, combinedIdx) =>
+          componentItem(tagged, combinedIdx),
+        )}
+        ${templatesSection()}
       </details>
     `;
   }
 
-  function componentItem(comp: { name: string }, index: number) {
-    const isActive = activeComponent.val === index;
-    const isEditing = editingIndex.val === index;
+  function componentItem(tagged: TaggedItem, combinedIndex: number) {
+    const active = activeComponent.val;
+    const isActive =
+      active !== null &&
+      active.type === tagged.type &&
+      active.index === tagged.index;
+    const isEditing = editingIndex.val === combinedIndex;
 
     return html`
       <div
         class="components-item ${isActive ? "active" : ""}"
-        @click=${() => (activeComponent.val = isActive ? null : index)}
+        @click=${() =>
+          (activeComponent.val = isActive
+            ? null
+            : { type: tagged.type, index: tagged.index })}
       >
         ${isEditing
-          ? renameInput(comp.name, index)
-          : nameLabel(comp.name, index)}
+          ? renameInput(tagged.item.name, tagged)
+          : nameLabel(tagged.item.name, combinedIndex)}
         <button
           class="components-delete-btn"
           @click=${(e: Event) => {
             e.stopPropagation();
-            deleteComponent(index);
+            deleteComponent(tagged);
           }}
           title="Delete component"
         >
@@ -249,17 +253,17 @@ export function getList({
     `;
   }
 
-  function renameInput(name: string, index: number) {
+  function renameInput(name: string, tagged: TaggedItem) {
     return html`
       <input
         class="components-rename-input"
         type="text"
         .value=${name}
         @blur=${(e: Event) =>
-          commitRename(index, (e.target as HTMLInputElement).value)}
+          commitRename(tagged, (e.target as HTMLInputElement).value)}
         @keydown=${(e: KeyboardEvent) => {
           if (e.key === "Enter")
-            commitRename(index, (e.target as HTMLInputElement).value);
+            commitRename(tagged, (e.target as HTMLInputElement).value);
           else if (e.key === "Escape") editingIndex.val = null;
         }}
         @input=${(e: Event) => e.stopPropagation()}
@@ -267,27 +271,42 @@ export function getList({
     `;
   }
 
-  function nameLabel(name: string, index: number) {
+  function nameLabel(name: string, combinedIndex: number) {
     return html`
-      <label @dblclick=${() => (editingIndex.val = index)}>${name}</label>
+      <label @dblclick=${() => (editingIndex.val = combinedIndex)}
+        >${name}</label
+      >
     `;
   }
 
   function templatesSection() {
     if (!templates) return html``;
-    const map = templates.get(getKey());
-    if (!map) return html``;
+
+    const allEntries: Array<{
+      type: ComponentsType;
+      id: string;
+      t: any;
+    }> = [];
+    for (const type of types.val) {
+      const map = templates.get(type);
+      if (map) {
+        for (const [id, t] of map.entries()) {
+          allEntries.push({ type, id, t });
+        }
+      }
+    }
+    if (allEntries.length === 0) return html``;
 
     return html`
       <details class="components-templates" open>
         <summary class="components-divider">templates</summary>
-        ${Array.from(map.entries()).map(
-          ([id, t]) => html`
+        ${allEntries.map(
+          ({ type, id, t }) => html`
             <div class="components-item template">
               <label>${t.name}</label>
               <button
                 class="components-copy-btn"
-                @click=${() => copyTemplate(t.name, id)}
+                @click=${() => copyTemplate(t.name, id, type)}
                 title="Copy template"
               >
                 +
@@ -300,10 +319,12 @@ export function getList({
   }
 
   // Actions
-  function copyTemplate(baseName: string, templateId: string) {
-    if (componentsBarMode.val === null) return;
-
-    const list = getComponentList();
+  function copyTemplate(
+    baseName: string,
+    templateId: string,
+    targetType: ComponentsType,
+  ) {
+    const list = components.val.get(targetType) ?? [];
     const names = new Set(list.map((c) => c.name));
     let name = baseName;
 
@@ -314,39 +335,44 @@ export function getList({
     }
 
     const defaultParams = {
-      ...templates?.get(getKey())?.get(templateId)?.defaultParams,
+      ...templates?.get(targetType)?.get(templateId)?.defaultParams,
     };
     const updated = [
       ...list,
       { name, templateId, geometry: [], params: defaultParams },
     ];
-    components.val = new Map(components.val).set(getKey(), updated);
+    components.val = new Map(components.val).set(targetType, updated);
   }
 
-  function commitRename(index: number, newName: string) {
-    if (componentsBarMode.val === null) return;
-
-    const list = getComponentList();
+  function commitRename(tagged: TaggedItem, newName: string) {
+    const list = components.val.get(tagged.type) ?? [];
     const trimmed = newName.trim();
 
-    if (trimmed && trimmed !== list[index].name) {
+    if (trimmed && trimmed !== list[tagged.index]?.name) {
       const updated = list.map((c, i) =>
-        i === index ? { ...c, name: trimmed } : c,
+        i === tagged.index ? { ...c, name: trimmed } : c,
       );
-      components.val = new Map(components.val).set(getKey(), updated);
+      components.val = new Map(components.val).set(tagged.type, updated);
     }
 
     requestAnimationFrame(() => {
-      if (editingIndex.val === index) editingIndex.val = null;
+      editingIndex.val = null;
     });
   }
 
-  function deleteComponent(index: number) {
-    if (componentsBarMode.val === null) return;
-    if (activeComponent.val === index) activeComponent.val = null;
+  function deleteComponent(tagged: TaggedItem) {
+    const active = activeComponent.val;
+    if (
+      active !== null &&
+      active.type === tagged.type &&
+      active.index === tagged.index
+    ) {
+      activeComponent.val = null;
+    }
 
-    const updated = getComponentList().filter((_, i) => i !== index);
-    components.val = new Map(components.val).set(getKey(), updated);
+    const list = components.val.get(tagged.type) ?? [];
+    const updated = list.filter((_, i) => i !== tagged.index);
+    components.val = new Map(components.val).set(tagged.type, updated);
   }
 
   return container;

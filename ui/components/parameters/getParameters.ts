@@ -2,7 +2,7 @@ import van, { State } from "vanjs-core";
 import { html, render, TemplateResult } from "lit-html";
 import {
   Components,
-  ComponentsType,
+  ActiveComponent,
   templates as Templates,
 } from "@awatif/components";
 import "./styles.css";
@@ -10,12 +10,10 @@ import "./styles.css";
 export function getParameters({
   activeComponent,
   components,
-  componentsBarMode,
   templates,
 }: {
-  activeComponent: State<number | null>;
+  activeComponent: State<ActiveComponent>;
   components: Components;
-  componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
 }): HTMLElement {
   const container = document.createElement("div");
@@ -28,21 +26,13 @@ export function getParameters({
     templateContent.val = null;
     params.val = null;
 
-    if (
-      activeComponent.val === null ||
-      !templates ||
-      componentsBarMode.val === null
-    )
-      return;
+    const active = activeComponent.val;
+    if (active === null || !templates) return;
 
-    const component = components.val.get(componentsBarMode.val)?.[
-      activeComponent.val
-    ];
+    const component = components.val.get(active.type)?.[active.index];
     if (!component) return;
 
-    const template = templates
-      .get(componentsBarMode.val)
-      ?.get(component?.templateId);
+    const template = templates.get(active.type)?.get(component?.templateId);
     if (!template?.getParamsTemplate) return;
 
     params.val = component.params || template.defaultParams || {};
@@ -54,18 +44,15 @@ export function getParameters({
 
   // Update components when parameters change
   van.derive(() => {
-    if (
-      !params.val ||
-      activeComponent.val === null ||
-      componentsBarMode.val === null
-    ) {
+    const active = activeComponent.val;
+    if (!params.val || active === null) {
       return;
     }
 
-    const currentComponents = components.val.get(componentsBarMode.val);
+    const currentComponents = components.val.get(active.type);
     if (!currentComponents) return;
 
-    const component = currentComponents[activeComponent.val];
+    const component = currentComponents[active.index];
     if (!component) return;
 
     // Check if params actually changed to avoid infinite loops
@@ -78,11 +65,11 @@ export function getParameters({
 
     // Update the component with new params
     const updatedComponents = currentComponents.map((comp, i) =>
-      i === activeComponent.val ? { ...comp, params: { ...params.val } } : comp,
+      i === active.index ? { ...comp, params: { ...params.val } } : comp,
     );
 
     components.val = new Map(components.val).set(
-      componentsBarMode.val,
+      active.type,
       updatedComponents,
     );
   });
