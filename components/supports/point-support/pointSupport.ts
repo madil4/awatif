@@ -3,104 +3,80 @@ import { SupportTemplate } from "../data-model";
 import * as THREE from "three";
 
 type PointSupportParams = {
-  Ux: boolean; // Translation restraint in X
-  Uy: boolean; // Translation restraint in Y
-  Uz: boolean; // Translation restraint in Z
-  Rx: boolean; // Rotation restraint about X
-  Ry: boolean; // Rotation restraint about Y
-  Rz: boolean; // Rotation restraint about Z
+  type: "fixed" | "pinned" | "horizontal-roller" | "vertical-roller";
+};
+
+const supportMap: Record<
+  PointSupportParams["type"],
+  [boolean, boolean, boolean, boolean, boolean, boolean]
+> = {
+  fixed: [true, true, true, true, true, true],
+  pinned: [true, true, true, false, false, false],
+  "horizontal-roller": [false, true, true, false, false, false],
+  "vertical-roller": [true, false, true, false, false, false],
 };
 
 export const pointSupport: SupportTemplate<PointSupportParams> = {
   name: "Point Support",
   defaultParams: {
-    Ux: true,
-    Uy: true,
-    Uz: true,
-    Rx: false,
-    Ry: false,
-    Rz: false,
+    type: "pinned",
   },
 
   getParamsTemplate: ({ params }) => {
     return html`
       <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Ux}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Ux: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Translation X
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Uy}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Uy: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Translation Y
-        </label>
-      </div>
-
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            .checked=${params.val.Rz}
-            @change=${(e: Event) =>
-              (params.val = {
-                ...params.val,
-                Rz: (e.target as HTMLInputElement).checked,
-              })}
-          />
-          Restrain Rotation about Z
-        </label>
+        <label>Support Type:</label>
+        <select
+          @change=${(e: Event) =>
+            (params.val = {
+              type: (e.target as HTMLSelectElement)
+                .value as PointSupportParams["type"],
+            })}
+        >
+          <option value="fixed" .selected=${params.val.type === "fixed"}>
+            Fixed
+          </option>
+          <option value="pinned" .selected=${params.val.type === "pinned"}>
+            Pinned
+          </option>
+          <option
+            value="horizontal-roller"
+            .selected=${params.val.type === "horizontal-roller"}
+          >
+            Horizontal Roller
+          </option>
+          <option
+            value="vertical-roller"
+            .selected=${params.val.type === "vertical-roller"}
+          >
+            Vertical Roller
+          </option>
+        </select>
       </div>
     `;
   },
 
   getSupport: ({ params }) => {
-    const { Ux, Uy, Uz, Rx, Ry, Rz } = params;
-
-    // Return support values: [Ux, Uy, Uz, Rx, Ry, Rz]
-    // true = restrained, false = free
-    return {
-      support: [Ux, Uy, Uz, Rx, Ry, Rz],
-    };
+    return { support: supportMap[params.type] };
   },
 
   getObject3D: ({ params, position, displayScale }) => {
-    const { Ux, Uy, Rz } = params; // Focus on 2D: X, Y translations and Z rotation
     const group = new THREE.Group();
 
-    const SIZE = 0.4 * displayScale; // Base size for support symbol
-    const COLOR = 0xff0000; // Red for support symbols
+    const SIZE = 0.4 * displayScale;
+    const COLOR = 0xff0000;
 
     group.position.set(position[0], position[1], position[2]);
     group.renderOrder = 5;
 
-    if (Ux && Uy && Rz) {
+    if (params.type === "fixed") {
       drawFixedSupport(group, SIZE, COLOR, displayScale);
-    } else if (Ux && Uy && !Rz) {
+    } else if (params.type === "pinned") {
       drawPinnedSupport(group, SIZE, COLOR, displayScale);
-    } else if (!Ux && Uy && !Rz) {
+    } else if (params.type === "horizontal-roller") {
       drawRollerSupport(group, SIZE, COLOR, "horizontal", displayScale);
-    } else if (Ux && !Uy && !Rz) {
-      drawRollerSupport(group, SIZE, COLOR, "vertical", displayScale);
     } else {
-      drawCustomSupport(group, SIZE, COLOR, Ux, Uy, Rz, displayScale);
+      drawRollerSupport(group, SIZE, COLOR, "vertical", displayScale);
     }
 
     setMaterialOnTop(group);
@@ -262,88 +238,4 @@ function drawRollerSupport(
   subGroup.add(ground);
 
   group.add(subGroup);
-}
-
-function drawCustomSupport(
-  group: THREE.Group,
-  size: number,
-  color: number,
-  Ux: boolean,
-  Uy: boolean,
-  Rz: boolean,
-  displayScale: number,
-) {
-  // Draw a simple cross with indicators for each restraint
-  const halfSize = size / 2;
-
-  // X restraint indicator (vertical line)
-  if (Ux) {
-    const points = [
-      new THREE.Vector3(-halfSize, 0, 0),
-      new THREE.Vector3(halfSize, 0, 0),
-    ];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({
-      color: color,
-      linewidth: 3,
-    });
-    const line = new THREE.Line(geometry, material);
-    group.add(line);
-
-    // Add end markers
-    const markerSize = 0.1 * displayScale;
-    const leftMarker = [
-      new THREE.Vector3(-halfSize, -markerSize, 0),
-      new THREE.Vector3(-halfSize, markerSize, 0),
-    ];
-    const rightMarker = [
-      new THREE.Vector3(halfSize, -markerSize, 0),
-      new THREE.Vector3(halfSize, markerSize, 0),
-    ];
-
-    const leftGeo = new THREE.BufferGeometry().setFromPoints(leftMarker);
-    const rightGeo = new THREE.BufferGeometry().setFromPoints(rightMarker);
-    group.add(new THREE.Line(leftGeo, material));
-    group.add(new THREE.Line(rightGeo, material));
-  }
-
-  // Y restraint indicator (horizontal line)
-  if (Uy) {
-    const points = [
-      new THREE.Vector3(0, -halfSize, 0),
-      new THREE.Vector3(0, halfSize, 0),
-    ];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({
-      color: color,
-      linewidth: 3,
-    });
-    const line = new THREE.Line(geometry, material);
-    group.add(line);
-
-    // Add end markers
-    const markerSize = 0.1 * displayScale;
-    const bottomMarker = [
-      new THREE.Vector3(-markerSize, -halfSize, 0),
-      new THREE.Vector3(markerSize, -halfSize, 0),
-    ];
-    const topMarker = [
-      new THREE.Vector3(-markerSize, halfSize, 0),
-      new THREE.Vector3(markerSize, halfSize, 0),
-    ];
-
-    const bottomGeo = new THREE.BufferGeometry().setFromPoints(bottomMarker);
-    const topGeo = new THREE.BufferGeometry().setFromPoints(topMarker);
-    group.add(new THREE.Line(bottomGeo, material));
-    group.add(new THREE.Line(topGeo, material));
-  }
-
-  // Rotation restraint indicator (small arc)
-  if (Rz) {
-    const arcRadius = size * 0.3;
-    const arcGeometry = new THREE.CircleGeometry(arcRadius, 16, 0, Math.PI);
-    const arcMaterial = new THREE.LineBasicMaterial({ color: color });
-    const arcLine = new THREE.LineLoop(arcGeometry, arcMaterial);
-    group.add(arcLine);
-  }
 }
