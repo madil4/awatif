@@ -31,6 +31,7 @@ export function getGeometry({
     DRAG,
     APPEND,
     SELECT,
+    DISABLED,
   }
 
   /* ---- State Management ---- */
@@ -126,6 +127,15 @@ export function getGeometry({
     lines.visible = display.geometry.val;
 
     render();
+  });
+
+  van.derive(() => {
+    if (!display?.geometry) return;
+    if (!display.geometry.val) {
+      mode.val = Mode.DISABLED;
+    } else if (mode.rawVal === Mode.DISABLED) {
+      mode.val = Mode.EDIT;
+    }
   });
 
   // Render points
@@ -281,6 +291,7 @@ export function getGeometry({
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.button !== 0) return;
+    if (mode.val === Mode.DISABLED) return;
 
     // Selection mode: only when selection is not null
     if (geometry.selection.rawVal !== null) {
@@ -315,6 +326,7 @@ export function getGeometry({
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     raycaster.setFromCamera(pointer, camera);
+    if (mode.val === Mode.DISABLED) return;
 
     // Update hit point on grid
     const gridHits = raycaster.intersectObject(gridObj, false);
@@ -369,6 +381,7 @@ export function getGeometry({
 
   rendererElm.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return;
+    if (mode.val === Mode.DISABLED) return;
 
     const pointHits = raycaster.intersectObject(points, false);
 
@@ -535,6 +548,7 @@ export function getGeometry({
 
   rendererElm.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
+    if (mode.val === Mode.DISABLED) return;
 
     // In Select mode, right-click exits select mode
     if (geometry.selection.rawVal !== null) {
