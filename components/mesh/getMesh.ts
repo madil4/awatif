@@ -148,17 +148,6 @@ export function getMesh({
 }
 
 // Helpers
-function computeLineLength(
-  startPoint: [number, number, number],
-  endPoint: [number, number, number],
-): number {
-  return Math.sqrt(
-    (endPoint[0] - startPoint[0]) ** 2 +
-      (endPoint[1] - startPoint[1]) ** 2 +
-      (endPoint[2] - startPoint[2]) ** 2,
-  );
-}
-
 function getOrCreateNodeForPoint(
   pointId: number,
   point: [number, number, number],
@@ -217,12 +206,7 @@ function meshLineWithTemplate(
   pointToNodes: Map<number, number[]>,
   lineToElements: Map<number, number[]>,
 ) {
-  const lineLength = computeLineLength(startPoint, endPoint);
-
-  const { nodes: parametricNodes, elements } = template.getMesh({
-    params,
-    lineLength,
-  });
+  const { nodes: parametricNodes, elements } = template.getMesh({ params });
 
   // Build local-to-global index mapping to reuse shared nodes
   const localToGlobal = new Map<number, number>();
