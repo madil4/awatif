@@ -69,12 +69,7 @@ const components: Components = van.state(
           templateId: "point-support",
           geometry: [1],
           params: {
-            Ux: true,
-            Uy: true,
-            Uz: true,
-            Rx: true,
-            Ry: true,
-            Rz: true,
+            type: "fixed",
           },
         },
       ],
