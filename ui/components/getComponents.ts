@@ -75,6 +75,7 @@ export function getComponents({
     activeComponent,
     components,
     templates,
+    activeAnalysis,
   });
 
   const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis });

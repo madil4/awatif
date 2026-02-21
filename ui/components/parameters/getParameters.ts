@@ -5,16 +5,19 @@ import {
   ActiveComponent,
   templates as Templates,
 } from "@awatif/components";
+import { ActiveAnalysis } from "../analysisList/getAnalysisList";
 import "./styles.css";
 
 export function getParameters({
   activeComponent,
   components,
   templates,
+  activeAnalysis,
 }: {
   activeComponent: State<ActiveComponent>;
   components: Components;
   templates?: typeof Templates;
+  activeAnalysis?: ActiveAnalysis;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -39,6 +42,7 @@ export function getParameters({
 
     templateContent.val = template.getParamsTemplate({
       params,
+      activeAnalysis: activeAnalysis?.val,
     });
   });
 
