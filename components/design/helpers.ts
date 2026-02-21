@@ -31,3 +31,11 @@ export function getMaxMoment(lineElementForces?: LineElementForces) {
   }
   return maxMz;
 }
+
+export function getMidHeightMoment(lineElementForces?: LineElementForces): number {
+  const elementForces = lineElementForces?.elementForces || [];
+  if (elementForces.length === 0) return 0;
+  const midIndex = Math.floor(elementForces.length / 2);
+  const midForces = elementForces[midIndex];
+  return Math.max(Math.abs(midForces.Mz[0]), Math.abs(midForces.Mz[1]));
+}
