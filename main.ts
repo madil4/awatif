@@ -80,6 +80,19 @@ const components: Components = van.state(
       ],
     ],
     [
+      ComponentsType.MESH,
+      [
+        {
+          name: "Line Mesh",
+          templateId: "line-mesh",
+          geometry: [1],
+          params: {
+            divisions: 8,
+          },
+        },
+      ],
+    ],
+    [
       ComponentsType.DESIGN,
       [
         {
