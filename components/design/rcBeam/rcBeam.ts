@@ -20,7 +20,7 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
   name: "RC Beam",
   defaultParams: {
     width: "250",
-    depth: "500",
+    depth: "250",
     concreteGrade: "C30",
     stiffnessModifier: "1.0",
   },
