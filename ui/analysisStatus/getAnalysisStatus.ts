@@ -3,7 +3,7 @@ import { html, render } from "lit-html";
 
 import "./styles.css";
 
-export type AnalysisStatus = State<boolean>;
+export type AnalysisStatus = State<{ success: boolean; iterations?: number }>;
 
 export function getAnalysisStatus(
   status: AnalysisStatus,
@@ -24,9 +24,13 @@ export function getAnalysisStatus(
   const tooltip = el.querySelector(".tooltip") as HTMLElement;
 
   van.derive(() => {
-    if (status.val) {
+    const { success, iterations } = status.val;
+    if (success) {
       dot.className = "dot success";
-      tooltip.textContent = "Analysis done";
+      tooltip.textContent =
+        iterations !== undefined
+          ? `Analysis done (${iterations} iterations)`
+          : "Analysis done";
     } else {
       dot.className = "dot error";
       tooltip.textContent = "Unstable structure";
