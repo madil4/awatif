@@ -96,6 +96,7 @@ body {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  width: fit-content; /* Fix blocking the viewer pointer events */
 }
 
 #layout .canvas {
