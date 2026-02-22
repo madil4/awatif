@@ -130,7 +130,7 @@ const display: Display = {
   lineResult: van.state("Bendings"),
 };
 
-const analysisStatus: AnalysisStatus = van.state(true);
+const analysisStatus: AnalysisStatus = van.state({ success: true });
 
 // Analysis events
 van.derive(() => {
@@ -182,13 +182,13 @@ van.derive(() => {
     mesh.positions.val = positions;
     mesh.internalForces.val = internalForces;
 
-    analysisStatus.val = true;
+    analysisStatus.val = { success: true };
   } catch (e) {
     mesh.positions.val = [];
     mesh.displacements.val = [];
     mesh.internalForces.val = new Map();
 
-    analysisStatus.val = false;
+    analysisStatus.val = { success: false };
   }
 });
 
