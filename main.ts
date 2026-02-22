@@ -134,6 +134,16 @@ const analysisStatus: AnalysisStatus = van.state({ success: true });
 
 // Analysis events
 van.derive(() => {
+  const assignedLineIds = new Set<number>();
+  (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) =>
+    c.geometry.forEach((id) => assignedLineIds.add(id))
+  );
+  const unassignedLines = [...geometry.lines.val.keys()].filter(
+    (id) => !assignedLineIds.has(id)
+  );
+  const warningPayload =
+    unassignedLines.length > 0 ? { unassignedLines } : {};
+
   try {
     // Mesh events
     const meshData = getMesh({
@@ -182,13 +192,13 @@ van.derive(() => {
     mesh.positions.val = positions;
     mesh.internalForces.val = internalForces;
 
-    analysisStatus.val = { success: true };
+    analysisStatus.val = { success: true, ...warningPayload };
   } catch (e) {
     mesh.positions.val = [];
     mesh.displacements.val = [];
     mesh.internalForces.val = new Map();
 
-    analysisStatus.val = { success: false };
+    analysisStatus.val = { success: false, ...warningPayload };
   }
 });
 
@@ -247,6 +257,6 @@ document.body.append(
       componentsBarMode,
       templates,
     }),
-    footer: [getAnalysisStatus(analysisStatus), getTooltips()],
+    footer: [getAnalysisStatus(analysisStatus, display), getTooltips()],
   }),
 );

@@ -52,6 +52,21 @@
   animation: pulse 1.5s ease-in-out infinite;
 }
 
+#analysis-status .dot.warning {
+  position: relative;
+  overflow: visible;
+}
+
+#analysis-status .dot.warning::after {
+  content: "⚠";
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  font-size: 0.55rem;
+  color: #ffa726;
+  line-height: 1;
+}
+
 @keyframes pulse {
   0%,
   100% {
