@@ -379,6 +379,10 @@ export function getGeometry({
     selectionBox.style.display = "block";
   }
 
+  rendererElm.addEventListener("pointerleave", () => {
+    hitPoint.val = null;
+  });
+
   rendererElm.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.button !== 0) return;
     if (mode.val === Mode.DISABLED) return;
