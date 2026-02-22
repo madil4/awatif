@@ -14,6 +14,14 @@
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
+#analysis-status .label:not(:empty) {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  line-height: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
 #analysis-status .tooltip {
   position: absolute;
   bottom: 100%;
