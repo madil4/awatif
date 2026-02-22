@@ -80,5 +80,20 @@ export function getElementsProps({
     });
   });
 
+  // Fill default RC-beam props for elements with no design assigned
+  const DEFAULT_PROPS = {
+    elasticity: 32_836_580,   // kN/m² — C30 Ecm, uncracked
+    area: 0.0625,             // m²    — 250×250 mm
+    momentInertia: 3.2552e-4, // m⁴   — 250×250 mm rectangular
+  };
+
+  geometryMapping.lineToElements.forEach((elementIndices) => {
+    elementIndices.forEach((elementIdx) => {
+      if (!elementsProps.has(elementIdx)) {
+        elementsProps.set(elementIdx, DEFAULT_PROPS);
+      }
+    });
+  });
+
   return elementsProps;
 }
