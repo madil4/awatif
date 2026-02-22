@@ -342,6 +342,7 @@ export function getList({
       { name, templateId, geometry: [], params: defaultParams },
     ];
     components.val = new Map(components.val).set(targetType, updated);
+    activeComponent.val = { type: targetType, index: updated.length - 1 };
   }
 
   function commitRename(tagged: TaggedItem, newName: string) {
