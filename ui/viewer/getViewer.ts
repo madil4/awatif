@@ -133,8 +133,6 @@ export function getViewer({
     scene.add(
       getMemberIndex({
         geometry,
-        components,
-        templates,
         displayScale,
         render,
         display,
