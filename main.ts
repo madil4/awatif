@@ -125,7 +125,7 @@ const display: Display = {
   deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
-  design: van.state(false),
+  memberIndex: van.state(false),
   extrudeSections: van.state(false),
   lineResult: van.state("Bendings"),
 };
@@ -219,7 +219,7 @@ const canvas = van.state<HTMLDivElement | null>(null);
 const canvasButton = van.state<CanvasButtons | null>(null);
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
-    display.design.val = true;
+    display.memberIndex.val = true;
 
     canvas.val = getReport({
       components: components.val,
@@ -229,7 +229,7 @@ van.derive(() => {
       templates,
     });
   } else {
-    display.design.val = false;
+    display.memberIndex.val = false;
 
     canvas.val = null;
   }

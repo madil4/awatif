@@ -8,7 +8,7 @@ import {
 } from "@awatif/components";
 import { getText } from "../text/getText";
 
-export function getDesigns({
+export function getMemberIndex({
   geometry,
   components,
   templates,
@@ -21,14 +21,14 @@ export function getDesigns({
   templates: typeof Templates;
   displayScale: State<number>;
   render: () => void;
-  display?: { design: State<boolean> };
+  display?: { memberIndex: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
   // Add reactive visibility
-  if (display?.design) {
+  if (display?.memberIndex) {
     van.derive(() => {
-      group.visible = display.design.val;
+      group.visible = display.memberIndex.val;
       render();
     });
   }
