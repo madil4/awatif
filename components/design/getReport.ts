@@ -105,7 +105,7 @@ export function getReport({
                   <span style="color: var(--text-secondary); font-size: 0.7rem;"
                     >${isOpen ? "▼" : "▶"}</span
                   >
-                  <span style="font-weight: 500;">Line ${lineId}</span>
+                  <span style="font-weight: 500;">Member #${lineId}</span>
                   <span style="color: var(--text-secondary); font-size: 0.8rem;"
                     >· ${component.name}</span
                   >
