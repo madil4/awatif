@@ -13,6 +13,7 @@ import {
   Geometry,
   Mesh,
   ComponentsType,
+  LoadSelection,
   templates,
 } from "@awatif/components";
 import {
@@ -128,6 +129,7 @@ const display: Display = {
   memberIndex: van.state(false),
   extrudeSections: van.state(false),
   lineResult: van.state("Bendings"),
+  loadCase: van.state<LoadSelection>("dead"),
 };
 
 const analysisStatus: AnalysisStatus = van.state({ success: true });
@@ -164,6 +166,7 @@ van.derive(() => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,
+      activeLoadCase: display.loadCase?.val,
     });
 
     // Supports events
@@ -237,6 +240,7 @@ van.derive(() => {
       internalForces: mesh.internalForces.val,
       designs: geometry.designs.val,
       templates,
+      activeLoadCase: display.loadCase?.val,
     });
   } else {
     display.memberIndex.val = false;
@@ -256,6 +260,7 @@ document.body.append(
       components,
       componentsBarMode,
       templates,
+      loadCase: display.loadCase,
     }),
     footer: [getAnalysisStatus(analysisStatus, display), getTooltips()],
   }),
