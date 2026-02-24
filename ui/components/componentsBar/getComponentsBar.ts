@@ -56,7 +56,7 @@ export function getComponentsBar({
               : ComponentsType.LOADS)}
       >
         Loads
-        ${loadCase?.val
+        ${loadCase?.val && loadCase.val !== "uls-live" && loadCase.val !== "uls-wind"
           ? html`<span class="analysis-badge"
               >${LOAD_SELECTION_LABELS[loadCase.val]}</span
             >`

@@ -1,11 +1,10 @@
-import { LoadTemplate } from "./data-model";
 import {
-  Components,
-  ComponentsType,
+  LoadTemplate,
   LoadSelection,
   LoadCombination,
   ULS_COMBINATIONS,
-} from "../data-model";
+} from "./data-model";
+import { Components, ComponentsType } from "../data-model";
 
 export function getLoads({
   components,
