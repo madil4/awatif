@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
-import { ComponentsType } from "@awatif/components";
+import { ComponentsType, LoadCase } from "@awatif/components";
 import { ActiveAnalysis } from "../analysisList/getAnalysisList";
 
 import "./styles.css";
@@ -8,9 +8,11 @@ import "./styles.css";
 export function getComponentsBar({
   componentsBarMode,
   activeAnalysis,
+  loadCase,
 }: {
   componentsBarMode: State<ComponentsType | null>;
   activeAnalysis?: ActiveAnalysis;
+  loadCase?: State<LoadCase>;
 }): HTMLElement {
   const container = document.createElement("div");
   const showAnalysis = activeAnalysis && activeAnalysis.val !== undefined;
@@ -54,6 +56,12 @@ export function getComponentsBar({
               : ComponentsType.LOADS)}
       >
         Loads
+        ${loadCase?.val
+          ? html`<span class="analysis-badge"
+              >${loadCase.val.charAt(0).toUpperCase() +
+              loadCase.val.slice(1)}</span
+            >`
+          : ""}
       </button>
 
       <button

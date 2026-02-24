@@ -82,7 +82,7 @@ export function getComponents({
     activeAnalysis,
   });
 
-  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis });
+  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis, loadCase });
   const analysisList = getAnalysisList({ componentsBarMode, activeAnalysis });
 
   const template = html`
