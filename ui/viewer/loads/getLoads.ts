@@ -5,6 +5,7 @@ import {
   Components,
   templates as Templates,
   ComponentsType,
+  LoadCase,
 } from "@awatif/components";
 
 export function getLoads({
@@ -20,7 +21,7 @@ export function getLoads({
   templates: typeof Templates;
   displayScale: State<number>;
   render: () => void;
-  display?: { loads: State<boolean> };
+  display?: { loads: State<boolean>; loadCase?: State<LoadCase> };
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -40,7 +41,13 @@ export function getLoads({
     }
 
     const s = displayScale.val;
-    const loadComponents = components.val.get(ComponentsType.LOADS) ?? [];
+    const allLoadComponents = components.val.get(ComponentsType.LOADS) ?? [];
+    const activeLoadCase = display?.loadCase?.val;
+    const loadComponents = activeLoadCase
+      ? allLoadComponents.filter(
+          (c) => (c.loadCase ?? "dead") === activeLoadCase,
+        )
+      : allLoadComponents;
     const points = geometry.points.val;
 
     loadComponents.forEach((component) => {

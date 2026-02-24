@@ -59,6 +59,15 @@ export type Mesh = {
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];
 export type Elements = NonNullable<Mesh["elements"]>["val"];
 
+// Load Cases
+export type LoadCase = "dead" | "live" | "wind";
+
+export const ULS_FACTORS: Record<LoadCase, number> = {
+  dead: 1.35,
+  live: 1.5,
+  wind: 1.5,
+};
+
 // Components
 export enum ComponentsType {
   MESH,
@@ -83,6 +92,7 @@ export type Components = State<
       templateId: string;
       geometry: number[];
       params?: Record<string, unknown>;
+      loadCase?: LoadCase;
     }[]
   >
 >;

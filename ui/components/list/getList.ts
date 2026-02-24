@@ -6,6 +6,7 @@ import {
   templates as Templates,
   ComponentsType,
   ActiveComponent,
+  LoadCase,
 } from "@awatif/components";
 
 import "./styles.css";
@@ -13,7 +14,7 @@ import "./styles.css";
 type TaggedItem = {
   type: ComponentsType;
   index: number;
-  item: { name: string; templateId: string; geometry: number[]; params?: Record<string, unknown> };
+  item: { name: string; templateId: string; geometry: number[]; params?: Record<string, unknown>; loadCase?: LoadCase };
 };
 
 export function getList({
@@ -23,6 +24,7 @@ export function getList({
   components,
   activeComponent,
   templates,
+  loadCase,
 }: {
   types: State<ComponentsType[]>;
   geometryKind: State<"point" | "line" | null>;
@@ -30,6 +32,7 @@ export function getList({
   components: Components;
   activeComponent: State<ActiveComponent>;
   templates?: typeof Templates;
+  loadCase?: State<LoadCase>;
 }): HTMLElement {
   const container = document.createElement("div");
   const editingIndex = van.state<number | null>(null);
@@ -39,7 +42,17 @@ export function getList({
     const result: TaggedItem[] = [];
     for (const type of types.val) {
       const list = components.val.get(type) ?? [];
-      list.forEach((item, i) => result.push({ type, index: i, item }));
+      list.forEach((item, i) => {
+        // Filter loads by active load case
+        if (
+          type === ComponentsType.LOADS &&
+          loadCase &&
+          (item.loadCase ?? "dead") !== loadCase.val
+        ) {
+          return;
+        }
+        result.push({ type, index: i, item });
+      });
     }
     return result;
   };
@@ -118,9 +131,16 @@ export function getList({
 
     const selectedSet = new Set(selectedGeometry);
 
-    // Update the active component's geometry and remove those indices from others of the same type
+    // Update the active component's geometry and remove those indices from others of the same type.
+    // For load components, only steal geometry from components in the same load case —
+    // different load cases may share the same node.
+    const activeLoadCase = current.loadCase ?? "dead";
     const updatedList = list.map((c, i) => {
       if (i === active.index) return { ...c, geometry: [...selectedGeometry] };
+      const isSameLoadCase =
+        active.type !== ComponentsType.LOADS ||
+        (c.loadCase ?? "dead") === activeLoadCase;
+      if (!isSameLoadCase) return c;
       return {
         ...c,
         geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
@@ -337,10 +357,17 @@ export function getList({
     const defaultParams = {
       ...templates?.get(targetType)?.get(templateId)?.defaultParams,
     };
-    const updated = [
-      ...list,
-      { name, templateId, geometry: [], params: defaultParams },
-    ];
+    const newComponent: { name: string; templateId: string; geometry: number[]; params: Record<string, unknown>; loadCase?: LoadCase } = {
+      name,
+      templateId,
+      geometry: [],
+      params: defaultParams,
+    };
+    // Auto-assign active load case when creating load components
+    if (targetType === ComponentsType.LOADS && loadCase) {
+      newComponent.loadCase = loadCase.val;
+    }
+    const updated = [...list, newComponent];
     components.val = new Map(components.val).set(targetType, updated);
     activeComponent.val = { type: targetType, index: updated.length - 1 };
   }
