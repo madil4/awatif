@@ -3,7 +3,7 @@ import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
-import { LoadCase } from "@awatif/components";
+import { LoadSelection } from "@awatif/components";
 
 import "./styles.css";
 
@@ -18,7 +18,7 @@ export type Display = {
   extrudeSections?: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
-  loadCase?: State<LoadCase>;
+  loadCase?: State<LoadSelection>;
 };
 
 export function getDisplay({ display }: { display?: Display }): HTMLElement {
@@ -215,7 +215,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               <select
                 @change=${(e: Event) =>
                   (display.loadCase!.val = (e.target as HTMLSelectElement)
-                    .value as LoadCase)}
+                    .value as LoadSelection)}
               >
                 <option
                   value="dead"
@@ -234,6 +234,18 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   ?selected=${display.loadCase.val === "wind"}
                 >
                   Wind
+                </option>
+                <option
+                  value="uls-live"
+                  ?selected=${display.loadCase.val === "uls-live"}
+                >
+                  ULS-1: Live leading
+                </option>
+                <option
+                  value="uls-wind"
+                  ?selected=${display.loadCase.val === "uls-wind"}
+                >
+                  ULS-2: Wind leading
                 </option>
               </select>
             </div>

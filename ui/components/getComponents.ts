@@ -5,7 +5,7 @@ import {
   Components,
   ComponentsType,
   ActiveComponent,
-  LoadCase,
+  LoadSelection,
   templates as Templates,
 } from "@awatif/components";
 import { getList } from "./list/getList";
@@ -55,7 +55,7 @@ export function getComponents({
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
   activeAnalysis?: ActiveAnalysis;
-  loadCase?: State<LoadCase>;
+  loadCase?: State<LoadSelection>;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);

@@ -1,5 +1,11 @@
 import { LoadTemplate } from "./data-model";
-import { Components, ComponentsType, ULS_FACTORS, LoadCase } from "../data-model";
+import {
+  Components,
+  ComponentsType,
+  LoadSelection,
+  LoadCombination,
+  ULS_COMBINATIONS,
+} from "../data-model";
 
 export function getLoads({
   components,
@@ -13,7 +19,7 @@ export function getLoads({
     lineToElements: Map<number, number[]>;
   };
   templates: Map<ComponentsType, Map<string, any>>;
-  activeLoadCase?: LoadCase;
+  activeLoadCase?: LoadSelection;
 }): Map<number, [number, number, number, number, number, number]> {
   const loads = new Map<
     number,
@@ -21,9 +27,16 @@ export function getLoads({
   >();
 
   const allLoadComponents = components.get(ComponentsType.LOADS) ?? [];
-  const loadComponents = activeLoadCase
-    ? allLoadComponents.filter((c) => (c.loadCase ?? "dead") === activeLoadCase)
-    : allLoadComponents;
+  const isCombination =
+    activeLoadCase === "uls-live" || activeLoadCase === "uls-wind";
+
+  // Combinations include all loads; individual cases filter to that case
+  const loadComponents =
+    activeLoadCase && !isCombination
+      ? allLoadComponents.filter(
+          (c) => (c.loadCase ?? "dead") === activeLoadCase,
+        )
+      : allLoadComponents;
 
   loadComponents.forEach((component) => {
     const template = templates
@@ -37,8 +50,11 @@ export function getLoads({
       >[0]["params"],
     });
 
-    // Apply ULS factor based on load case
-    const factor = ULS_FACTORS[component.loadCase ?? "dead"];
+    // Combinations apply per-case factors; individual cases are unfactored
+    const componentCase = component.loadCase ?? "dead";
+    const factor = isCombination
+      ? ULS_COMBINATIONS[activeLoadCase as LoadCombination][componentCase]
+      : 1;
     const load: [number, number, number, number, number, number] = [
       rawLoad[0] * factor,
       rawLoad[1] * factor,
