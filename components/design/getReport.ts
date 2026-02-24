@@ -1,6 +1,7 @@
 import { html, render } from "lit-html";
 import { DesignTemplate, LineElementForces } from "./data-model";
 import { Components, ComponentsType, Mesh } from "../data-model";
+import { LoadSelection, LOAD_SELECTION_LABELS, ULS_COMBINATIONS } from "../loads/data-model";
 
 const toggleStates = new Map<string, boolean>();
 
@@ -10,12 +11,14 @@ export function getReport({
   internalForces,
   designs,
   templates,
+  activeLoadCase,
 }: {
   components: Components["val"];
   geometryMapping?: Mesh["geometryMapping"]["val"];
   internalForces?: Mesh["internalForces"]["val"];
   designs?: Map<number, any>;
   templates: Map<ComponentsType, Map<string, any>>;
+  activeLoadCase?: LoadSelection;
 }): HTMLDivElement {
   const container = document.createElement("div");
   container.style.padding = "10px";
@@ -24,11 +27,32 @@ export function getReport({
 
   // Track toggle states for each line
 
+  const loadCaseLabel = activeLoadCase
+    ? LOAD_SELECTION_LABELS[activeLoadCase]
+    : null;
+  const ulsFactors =
+    activeLoadCase && activeLoadCase in ULS_COMBINATIONS
+      ? ULS_COMBINATIONS[activeLoadCase as keyof typeof ULS_COMBINATIONS]
+      : null;
+
   const renderReport = () => {
     let isFirstLine = true;
 
     const reportTemplate = html`
       <div>
+        ${loadCaseLabel
+          ? html`<div
+              style="margin-bottom: 10px; padding: 6px 12px; border-radius: 4px; background: var(--bg-secondary); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-secondary);"
+            >
+              <span style="font-weight: 500; color: var(--text-primary);">Load case:</span>
+              ${ulsFactors
+                ? html`<span style="margin-left: 6px;"
+                    >${loadCaseLabel} — ${ulsFactors.dead}·G +
+                    ${ulsFactors.live}·Q + ${ulsFactors.wind}·W</span
+                  >`
+                : html`<span style="margin-left: 6px;">${loadCaseLabel}</span>`}
+            </div>`
+          : null}
         ${designComponents.map((component) => {
           const template = templates
             .get(ComponentsType.DESIGN)
