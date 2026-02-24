@@ -5,6 +5,7 @@ import {
   Components,
   ComponentsType,
   ActiveComponent,
+  LoadCase,
   templates as Templates,
 } from "@awatif/components";
 import { getList } from "./list/getList";
@@ -47,12 +48,14 @@ export function getComponents({
   componentsBarMode,
   templates,
   activeAnalysis,
+  loadCase,
 }: {
   geometry: Geometry;
   components: Components;
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
   activeAnalysis?: ActiveAnalysis;
+  loadCase?: State<LoadCase>;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);
@@ -69,6 +72,7 @@ export function getComponents({
     components,
     activeComponent,
     templates,
+    loadCase,
   });
 
   const parameters = getParameters({

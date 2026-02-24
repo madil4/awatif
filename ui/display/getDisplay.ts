@@ -3,6 +3,7 @@ import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
+import { LoadCase } from "@awatif/components";
 
 import "./styles.css";
 
@@ -17,6 +18,7 @@ export type Display = {
   extrudeSections?: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
+  loadCase?: State<LoadCase>;
 };
 
 export function getDisplay({ display }: { display?: Display }): HTMLElement {
@@ -201,6 +203,37 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   ?selected=${display.lineResult.val === "Bendings"}
                 >
                   Bendings
+                </option>
+              </select>
+            </div>
+          `
+        : ""}
+      ${display?.loadCase
+        ? html`
+            <div class="display-item">
+              <label>Load Case</label>
+              <select
+                @change=${(e: Event) =>
+                  (display.loadCase!.val = (e.target as HTMLSelectElement)
+                    .value as LoadCase)}
+              >
+                <option
+                  value="dead"
+                  ?selected=${display.loadCase.val === "dead"}
+                >
+                  Dead
+                </option>
+                <option
+                  value="live"
+                  ?selected=${display.loadCase.val === "live"}
+                >
+                  Live
+                </option>
+                <option
+                  value="wind"
+                  ?selected=${display.loadCase.val === "wind"}
+                >
+                  Wind
                 </option>
               </select>
             </div>
