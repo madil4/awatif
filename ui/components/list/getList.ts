@@ -7,6 +7,7 @@ import {
   ComponentsType,
   ActiveComponent,
   LoadCase,
+  LoadSelection,
 } from "@awatif/components";
 
 import "./styles.css";
@@ -32,7 +33,7 @@ export function getList({
   components: Components;
   activeComponent: State<ActiveComponent>;
   templates?: typeof Templates;
-  loadCase?: State<LoadCase>;
+  loadCase?: State<LoadSelection>;
 }): HTMLElement {
   const container = document.createElement("div");
   const editingIndex = van.state<number | null>(null);
@@ -43,13 +44,13 @@ export function getList({
     for (const type of types.val) {
       const list = components.val.get(type) ?? [];
       list.forEach((item, i) => {
-        // Filter loads by active load case
-        if (
-          type === ComponentsType.LOADS &&
-          loadCase &&
-          (item.loadCase ?? "dead") !== loadCase.val
-        ) {
-          return;
+        // Filter loads by active load case; hide all loads when combination is active
+        if (type === ComponentsType.LOADS && loadCase) {
+          const isCombination =
+            loadCase.val === "uls-live" || loadCase.val === "uls-wind";
+          if (isCombination || (item.loadCase ?? "dead") !== loadCase.val) {
+            return;
+          }
         }
         result.push({ type, index: i, item });
       });
@@ -365,7 +366,10 @@ export function getList({
     };
     // Auto-assign active load case when creating load components
     if (targetType === ComponentsType.LOADS && loadCase) {
-      newComponent.loadCase = loadCase.val;
+      const val = loadCase.val;
+      const isCombination = val === "uls-live" || val === "uls-wind";
+      newComponent.loadCase = isCombination ? "dead" : (val as LoadCase);
+      if (isCombination) loadCase.val = "dead";
     }
     const updated = [...list, newComponent];
     components.val = new Map(components.val).set(targetType, updated);

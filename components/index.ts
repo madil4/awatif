@@ -1,5 +1,17 @@
-export type { Geometry, Mesh, Components, ActiveComponent, LoadCase } from "./data-model";
-export { ComponentsType, ULS_FACTORS } from "./data-model";
+export type {
+  Geometry,
+  Mesh,
+  Components,
+  ActiveComponent,
+  LoadCase,
+  LoadCombination,
+  LoadSelection,
+} from "./data-model";
+export {
+  ComponentsType,
+  ULS_COMBINATIONS,
+  LOAD_SELECTION_LABELS,
+} from "./data-model";
 
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
