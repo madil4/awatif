@@ -3,15 +3,18 @@ export type {
   Mesh,
   Components,
   ActiveComponent,
+} from "./data-model";
+export { ComponentsType } from "./data-model";
+
+export type {
   LoadCase,
   LoadCombination,
   LoadSelection,
-} from "./data-model";
+} from "./loads/data-model";
 export {
-  ComponentsType,
   ULS_COMBINATIONS,
   LOAD_SELECTION_LABELS,
-} from "./data-model";
+} from "./loads/data-model";
 
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 

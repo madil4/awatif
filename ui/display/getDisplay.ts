@@ -3,7 +3,7 @@ import { html, render } from "lit-html";
 import { Grid } from "../viewer/grid/getGrid";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
-import { LoadSelection } from "@awatif/components";
+import { LoadSelection, LOAD_SELECTION_LABELS } from "@awatif/components";
 
 import "./styles.css";
 
@@ -217,36 +217,16 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   (display.loadCase!.val = (e.target as HTMLSelectElement)
                     .value as LoadSelection)}
               >
-                <option
-                  value="dead"
-                  ?selected=${display.loadCase.val === "dead"}
-                >
-                  Dead
-                </option>
-                <option
-                  value="live"
-                  ?selected=${display.loadCase.val === "live"}
-                >
-                  Live
-                </option>
-                <option
-                  value="wind"
-                  ?selected=${display.loadCase.val === "wind"}
-                >
-                  Wind
-                </option>
-                <option
-                  value="uls-live"
-                  ?selected=${display.loadCase.val === "uls-live"}
-                >
-                  ULS-1: Live leading
-                </option>
-                <option
-                  value="uls-wind"
-                  ?selected=${display.loadCase.val === "uls-wind"}
-                >
-                  ULS-2: Wind leading
-                </option>
+                ${Object.entries(LOAD_SELECTION_LABELS).map(
+                  ([value, label]) => html`
+                    <option
+                      value=${value}
+                      ?selected=${display.loadCase!.val === value}
+                    >
+                      ${label}
+                    </option>
+                  `,
+                )}
               </select>
             </div>
           `
