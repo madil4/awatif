@@ -81,9 +81,10 @@ export function getList({
   const arraysEqual = (a: number[], b: number[]) =>
     a.length === b.length && a.every((v, i) => v === b[i]);
 
-  // Reset activeComponent when types change
+  // Reset activeComponent when types or load case change
   van.derive(() => {
     types.val;
+    loadCase?.val;
     activeComponent.val = null;
   });
 
