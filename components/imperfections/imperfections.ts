@@ -6,7 +6,6 @@ export type ImperfectionsParams = {
   // Global Inclination — EC2 §5.2(5)
   globalInclination: boolean;
   theta0: string; // Basic value θ₀ [rad] (default 1/200 = 0.005)
-  height: string; // l [m] for αₕ = 2/√l clamped [2/3, 1]
   memberCount: string; // m for αₘ = √(0.5·(1+1/m))
 
   // Local Initial Bow — EC2 §5.2(7), Table 5.1
@@ -21,7 +20,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   defaultParams: {
     globalInclination: true,
     theta0: "0.005",
-    height: "5",
     memberCount: "2",
     localBow: false,
     bowRatioDenominator: "400",
@@ -30,9 +28,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
 
   getParamsTemplate: ({ params }) => {
     const p = params.val;
-    const alphaH = computeAlphaH(Number(p.height));
-    const alphaM = computeAlphaM(Number(p.memberCount));
-    const thetaI = computeThetaI(p);
 
     return html`
       <div>
@@ -68,21 +63,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
             </div>
 
             <div>
-              <label>Height l (m):</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                .value=${live(p.height)}
-                @input=${(e: Event) =>
-                  (params.val = {
-                    ...params.val,
-                    height: (e.target as HTMLInputElement).value,
-                  })}
-              />
-            </div>
-
-            <div>
               <label>Member count m:</label>
               <input
                 type="number"
@@ -95,13 +75,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                     memberCount: (e.target as HTMLInputElement).value,
                   })}
               />
-            </div>
-
-            <div>
-              <label style="color: var(--text-secondary); font-size: 0.85em;">
-                αₕ = ${alphaH.toFixed(3)}, αₘ = ${alphaM.toFixed(3)}, θᵢ =
-                ${thetaI.toFixed(6)} rad
-              </label>
             </div>
           `
         : html``}
@@ -167,9 +140,11 @@ export function computeAlphaM(memberCount: number): number {
   return Math.sqrt(0.5 * (1 + 1 / memberCount));
 }
 
-export function computeThetaI(params: ImperfectionsParams): number {
+export function computeThetaI(
+  params: ImperfectionsParams,
+  height: number,
+): number {
   const theta0 = Number(params.theta0);
-  const h = Number(params.height);
   const m = Number(params.memberCount);
-  return theta0 * computeAlphaH(h) * computeAlphaM(m);
+  return theta0 * computeAlphaH(height) * computeAlphaM(m);
 }
