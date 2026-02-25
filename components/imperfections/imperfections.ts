@@ -54,11 +54,11 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 step="0.001"
                 min="0"
                 .value=${live(p.theta0)}
-                @input=${(e: Event) =>
-                  (params.val = {
-                    ...params.val,
-                    theta0: (e.target as HTMLInputElement).valueAsNumber,
-                  })}
+                @input=${(e: Event) => {
+                  const value = (e.target as HTMLInputElement).valueAsNumber;
+                  if (isNaN(value)) return;
+                  params.val = { ...params.val, theta0: value };
+                }}
               />
             </div>
 
@@ -69,11 +69,11 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 step="1"
                 min="1"
                 .value=${live(p.memberCount)}
-                @input=${(e: Event) =>
-                  (params.val = {
-                    ...params.val,
-                    memberCount: (e.target as HTMLInputElement).valueAsNumber,
-                  })}
+                @input=${(e: Event) => {
+                  const value = (e.target as HTMLInputElement).valueAsNumber;
+                  if (isNaN(value)) return;
+                  params.val = { ...params.val, memberCount: value };
+                }}
               />
             </div>
           `
@@ -103,12 +103,11 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 step="1"
                 min="1"
                 .value=${live(p.bowRatioDenominator)}
-                @input=${(e: Event) =>
-                  (params.val = {
-                    ...params.val,
-                    bowRatioDenominator: (e.target as HTMLInputElement)
-                      .valueAsNumber,
-                  })}
+                @input=${(e: Event) => {
+                  const value = (e.target as HTMLInputElement).valueAsNumber;
+                  if (isNaN(value)) return;
+                  params.val = { ...params.val, bowRatioDenominator: value };
+                }}
               />
             </div>
           `
