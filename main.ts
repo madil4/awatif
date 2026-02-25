@@ -80,7 +80,7 @@ const components: Components = van.state(
       ComponentsType.MESH,
       [
         {
-          name: "Line Mesh",
+          name: "Mesh",
           templateId: "line-mesh",
           geometry: [1],
           params: {
@@ -141,13 +141,12 @@ const analysisStatus: AnalysisStatus = van.state({ success: true });
 van.derive(() => {
   const assignedLineIds = new Set<number>();
   (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) =>
-    c.geometry.forEach((id) => assignedLineIds.add(id))
+    c.geometry.forEach((id) => assignedLineIds.add(id)),
   );
   const unassignedLines = [...geometry.lines.val.keys()].filter(
-    (id) => !assignedLineIds.has(id)
+    (id) => !assignedLineIds.has(id),
   );
-  const warningPayload =
-    unassignedLines.length > 0 ? { unassignedLines } : {};
+  const warningPayload = unassignedLines.length > 0 ? { unassignedLines } : {};
 
   try {
     // Mesh events

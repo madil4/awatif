@@ -2,12 +2,12 @@ import { html } from "lit-html";
 import { ReleaseTemplate } from "../data-model";
 import * as THREE from "three";
 
-type LineReleaseParams = {
+type ReleasesParams = {
   type: "both-ends" | "start" | "end";
 };
 
 const releaseMap: Record<
-  LineReleaseParams["type"],
+  ReleasesParams["type"],
   [boolean, boolean, boolean, boolean]
 > = {
   "both-ends": [true, true, true, true],
@@ -15,8 +15,8 @@ const releaseMap: Record<
   end: [false, false, true, true],
 };
 
-export const lineRelease: ReleaseTemplate<LineReleaseParams> = {
-  name: "Line Release",
+export const releases: ReleaseTemplate<ReleasesParams> = {
+  name: "Releases",
   defaultParams: {
     type: "both-ends",
   },
@@ -29,7 +29,7 @@ export const lineRelease: ReleaseTemplate<LineReleaseParams> = {
           @change=${(e: Event) =>
             (params.val = {
               type: (e.target as HTMLSelectElement)
-                .value as LineReleaseParams["type"],
+                .value as ReleasesParams["type"],
             })}
         >
           <option
