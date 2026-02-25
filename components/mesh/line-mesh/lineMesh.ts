@@ -22,7 +22,7 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
         .value=${params.val.divisions}
         @input=${(e: Event) => {
           const value = Math.round(
-            Number((e.target as HTMLInputElement).value),
+            (e.target as HTMLInputElement).valueAsNumber,
           );
           const clamped = Math.max(1, Math.min(10, value));
           params.val = {

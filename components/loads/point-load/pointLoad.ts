@@ -4,23 +4,23 @@ import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
 
 type PointLoadParams = {
-  Fx: string;
-  Fy: string;
-  Fz: string;
-  Mx: string;
-  My: string;
-  Mz: string;
+  Fx: number;
+  Fy: number;
+  Fz: number;
+  Mx: number;
+  My: number;
+  Mz: number;
 };
 
 export const pointLoad: LoadTemplate<PointLoadParams> = {
   name: "Point Load",
   defaultParams: {
-    Fx: "0",
-    Fy: "0",
-    Fz: "0",
-    Mx: "0",
-    My: "0",
-    Mz: "0",
+    Fx: 0,
+    Fy: 0,
+    Fz: 0,
+    Mx: 0,
+    My: 0,
+    Mz: 0,
   },
 
   getParamsTemplate: ({ params }) => {
@@ -35,7 +35,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              Fx: (e.target as HTMLInputElement).value,
+              Fx: (e.target as HTMLInputElement).valueAsNumber,
             })}
         />
       </div>
@@ -50,7 +50,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              Fy: (e.target as HTMLInputElement).value,
+              Fy: (e.target as HTMLInputElement).valueAsNumber,
             })}
         />
       </div>
@@ -58,19 +58,12 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   },
 
   getLoad: ({ params }) => ({
-    load: [
-      Number(params.Fx),
-      Number(params.Fy),
-      Number(params.Fz),
-      Number(params.Mx),
-      Number(params.My),
-      Number(params.Mz),
-    ],
+    load: [params.Fx, params.Fy, params.Fz, params.Mx, params.My, params.Mz],
   }),
 
   getObject3D: ({ params, position, displayScale }) => {
-    const Fx = Number(params.Fx);
-    const Fy = Number(params.Fy);
+    const Fx = params.Fx;
+    const Fy = params.Fy;
     const group = new THREE.Group();
 
     const ARROW_LENGTH = 1 * 0.4 * displayScale;
