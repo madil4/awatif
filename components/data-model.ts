@@ -27,6 +27,9 @@ export type Mesh = {
     Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>
   >;
   loads: State<Map<number, [number, number, number, number, number, number]>>;
+  releases: State<
+    Map<number, [boolean, boolean, boolean, boolean]> // [My_start, Mz_start, My_end, Mz_end]
+  >;
   elementsProps: State<
     Map<
       number,

@@ -11,6 +11,7 @@ export function getPositionsAndForces(
   loads: Mesh["loads"]["val"],
   supports: Mesh["supports"]["val"],
   elementsProps: Mesh["elementsProps"]["val"],
+  releases?: Mesh["releases"]["val"],
 ): {
   positions: NonNullable<Mesh["positions"]["val"]>;
   internalForces: Mesh["internalForces"]["val"];
@@ -31,6 +32,7 @@ export function getPositionsAndForces(
     elements,
     elementsProps,
     dof,
+    releases,
   );
 
   const forcesFree = subset(appliedForces, index(freeInd));
@@ -66,8 +68,17 @@ export function getPositionsAndForces(
     const T = getTransformationMatrix(elmNodes);
     const dxLocal = multiply(T, dxGlobal);
 
-    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i);
-    let fLocal = multiply(kLocal, dxLocal);
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i, releases);
+    let fLocal = multiply(kLocal, dxLocal) as number[];
+
+    // Zero out forces at released DOFs to guard against floating-point noise
+    const elementReleases = releases?.get(i);
+    if (elementReleases) {
+      const releasedDofMap = [4, 5, 10, 11]; // My_start, Mz_start, My_end, Mz_end
+      elementReleases.forEach((released, idx) => {
+        if (released) fLocal[releasedDofMap[idx]] = 0;
+      });
+    }
 
     internalForces.set(i, {
       N: [fLocal[0], -fLocal[6]],
