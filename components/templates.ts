@@ -2,6 +2,7 @@ import { lineMesh } from "./mesh/line-mesh/lineMesh";
 import { imperfections } from "./imperfections/imperfections";
 import { pointLoad } from "./loads/point-load/pointLoad";
 import { pointSupport } from "./supports/point-support/pointSupport";
+import { lineRelease } from "./releases/line-release/lineRelease";
 import { beam } from "./design/beam/beam";
 import { ComponentsType } from "./data-model";
 
@@ -10,6 +11,7 @@ export const templates = new Map<ComponentsType, Map<string, any>>([
   [ComponentsType.MESH, new Map<string, any>([["line-mesh", lineMesh]])],
   [ComponentsType.LOADS, new Map([["point-load", pointLoad]])],
   [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
+  [ComponentsType.RELEASES, new Map([["line-release", lineRelease]])],
   [ComponentsType.DESIGN, new Map([["beam", beam]])],
   [
     ComponentsType.IMPERFECTIONS,

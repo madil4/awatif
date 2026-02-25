@@ -6,6 +6,7 @@ import {
   getMesh,
   getLoads,
   getSupports,
+  getReleases,
   getElementsProps,
   getReport,
   getPositionsAndForces,
@@ -172,6 +173,13 @@ van.derive(() => {
 
     // Supports events
     mesh.supports.val = getSupports({
+      components: components.val,
+      geometryMapping: mesh.geometryMapping.val,
+      templates,
+    });
+
+    // Releases events
+    mesh.releases.val = getReleases({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,

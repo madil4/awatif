@@ -34,7 +34,7 @@ function getTypesForMode(
       return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
     case ComponentsType.SPECIAL:
       return {
-        types: [ComponentsType.MESH, ComponentsType.IMPERFECTIONS],
+        types: [ComponentsType.MESH, ComponentsType.IMPERFECTIONS, ComponentsType.RELEASES],
         geometryKind: "line",
       };
     default:
