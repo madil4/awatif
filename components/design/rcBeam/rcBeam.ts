@@ -3,10 +3,10 @@ import { live } from "lit-html/directives/live.js";
 import type { DesignTemplate } from "../data-model";
 
 type RcBeamParams = {
-  width: string; // mm
-  depth: string; // mm
+  width: number; // mm
+  depth: number; // mm
   concreteGrade: string; // e.g., "C30"
-  stiffnessModifier: string; // 0.01–1.0 (1.0 = uncracked)
+  stiffnessModifier: number; // 0.01–1.0 (1.0 = uncracked)
 };
 
 function parseEcm(concreteGrade: string) {
@@ -19,10 +19,10 @@ function parseEcm(concreteGrade: string) {
 export const rcBeam: DesignTemplate<RcBeamParams, any> = {
   name: "RC Beam",
   defaultParams: {
-    width: "250",
-    depth: "500",
+    width: 250,
+    depth: 500,
     concreteGrade: "C30",
-    stiffnessModifier: "1.0",
+    stiffnessModifier: 1.0,
   },
 
   getParamsTemplate: ({ params }) => {
@@ -36,7 +36,7 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              width: (e.target as HTMLInputElement).value,
+              width: (e.target as HTMLInputElement).valueAsNumber,
             })}
         />
       </div>
@@ -50,7 +50,7 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              depth: (e.target as HTMLInputElement).value,
+              depth: (e.target as HTMLInputElement).valueAsNumber,
             })}
         />
       </div>
@@ -79,7 +79,7 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           @input=${(e: Event) =>
             (params.val = {
               ...params.val,
-              stiffnessModifier: (e.target as HTMLInputElement).value,
+              stiffnessModifier: (e.target as HTMLInputElement).valueAsNumber,
             })}
         />
       </div>
@@ -87,9 +87,9 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
   },
 
   getElementsProps: ({ params }) => {
-    const width = Number(params.width) / 1000; // mm to m
-    const depth = Number(params.depth) / 1000; // mm to m
-    const modifier = Number(params.stiffnessModifier);
+    const width = params.width / 1000; // mm to m
+    const depth = params.depth / 1000; // mm to m
+    const modifier = params.stiffnessModifier;
 
     const Ecm = parseEcm(params.concreteGrade); // MPa
     const Ecm_kNm2 = Ecm * 1e3; // MPa to kN/m²
@@ -102,9 +102,9 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
   },
 
   getReport: ({ params }: { params: RcBeamParams }) => {
-    const width = Number(params.width);
-    const depth = Number(params.depth);
-    const modifier = Number(params.stiffnessModifier);
+    const width = params.width;
+    const depth = params.depth;
+    const modifier = params.stiffnessModifier;
     const Ecm = parseEcm(params.concreteGrade);
 
     return html`
@@ -165,8 +165,8 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
   },
 
   getSection: (params: RcBeamParams): [number, number][] => {
-    const w = Number(params.width) / 2000; // half-width in m
-    const h = Number(params.depth) / 2000; // half-depth in m
+    const w = params.width / 2000; // half-width in m
+    const h = params.depth / 2000; // half-depth in m
     return [
       [-w, -h],
       [w, -h],

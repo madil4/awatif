@@ -5,13 +5,13 @@ import type { ImperfectionsTemplate } from "./data-model";
 export type ImperfectionsParams = {
   // Global Inclination — EC2 §5.2(5)
   globalInclination: boolean;
-  theta0: string; // Basic value θ₀ [rad] (default 1/200 = 0.005)
-  height: string; // l [m] for αₕ = 2/√l clamped [2/3, 1]
-  memberCount: string; // m for αₘ = √(0.5·(1+1/m))
+  theta0: number; // Basic value θ₀ [rad] (default 1/200 = 0.005)
+  height: number; // l [m] for αₕ = 2/√l clamped [2/3, 1]
+  memberCount: number; // m for αₘ = √(0.5·(1+1/m))
 
   // Local Initial Bow — EC2 §5.2(7), Table 5.1
   localBow: boolean;
-  bowRatioDenominator: string; // d where e₀ = L/d (default 400)
+  bowRatioDenominator: number; // d where e₀ = L/d (default 400)
 
   direction: string; // "positive" | "negative" (X-axis)
 };
@@ -20,18 +20,18 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   name: "Imperfections",
   defaultParams: {
     globalInclination: true,
-    theta0: "0.005",
-    height: "5",
-    memberCount: "2",
+    theta0: 0.005,
+    height: 5,
+    memberCount: 2,
     localBow: false,
-    bowRatioDenominator: "400",
+    bowRatioDenominator: 400,
     direction: "positive",
   },
 
   getParamsTemplate: ({ params }) => {
     const p = params.val;
-    const alphaH = computeAlphaH(Number(p.height));
-    const alphaM = computeAlphaM(Number(p.memberCount));
+    const alphaH = computeAlphaH(p.height);
+    const alphaM = computeAlphaM(p.memberCount);
     const thetaI = computeThetaI(p);
 
     return html`
@@ -62,7 +62,7 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 @input=${(e: Event) =>
                   (params.val = {
                     ...params.val,
-                    theta0: (e.target as HTMLInputElement).value,
+                    theta0: (e.target as HTMLInputElement).valueAsNumber,
                   })}
               />
             </div>
@@ -77,7 +77,7 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 @input=${(e: Event) =>
                   (params.val = {
                     ...params.val,
-                    height: (e.target as HTMLInputElement).value,
+                    height: (e.target as HTMLInputElement).valueAsNumber,
                   })}
               />
             </div>
@@ -92,7 +92,7 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 @input=${(e: Event) =>
                   (params.val = {
                     ...params.val,
-                    memberCount: (e.target as HTMLInputElement).value,
+                    memberCount: (e.target as HTMLInputElement).valueAsNumber,
                   })}
               />
             </div>
@@ -133,7 +133,8 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 @input=${(e: Event) =>
                   (params.val = {
                     ...params.val,
-                    bowRatioDenominator: (e.target as HTMLInputElement).value,
+                    bowRatioDenominator: (e.target as HTMLInputElement)
+                      .valueAsNumber,
                   })}
               />
             </div>
@@ -168,8 +169,8 @@ export function computeAlphaM(memberCount: number): number {
 }
 
 export function computeThetaI(params: ImperfectionsParams): number {
-  const theta0 = Number(params.theta0);
-  const h = Number(params.height);
-  const m = Number(params.memberCount);
+  const theta0 = params.theta0;
+  const h = params.height;
+  const m = params.memberCount;
   return theta0 * computeAlphaH(h) * computeAlphaM(m);
 }
