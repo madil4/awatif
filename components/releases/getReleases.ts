@@ -33,12 +33,14 @@ export function getReleases({
       const elementIndices = geometryMapping.lineToElements.get(lineId);
       if (!elementIndices) return;
 
-      elementIndices.forEach((elementIdx) => {
+      elementIndices.forEach((elementIdx, i) => {
+        const isFirst = i === 0;
+        const isLast = i === elementIndices.length - 1;
         releases.set(elementIdx, [
-          release[0],
-          release[1],
-          release[2],
-          release[3],
+          isFirst ? release[0] : false,
+          isFirst ? release[1] : false,
+          isLast ? release[2] : false,
+          isLast ? release[3] : false,
         ]);
       });
     });
