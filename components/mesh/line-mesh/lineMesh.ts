@@ -21,14 +21,11 @@ export const lineMesh: MeshTemplate<LineMeshParams> = {
         step="1"
         .value=${params.val.divisions}
         @input=${(e: Event) => {
-          const value = Math.round(
-            (e.target as HTMLInputElement).valueAsNumber,
-          );
-          const clamped = Math.max(1, Math.min(10, value));
-          params.val = {
-            ...params.val,
-            divisions: clamped,
-          };
+          const value = (e.target as HTMLInputElement).valueAsNumber;
+          if (isNaN(value)) return;
+          const rounded = Math.round(value);
+          const clamped = Math.max(1, Math.min(10, rounded));
+          params.val = { ...params.val, divisions: clamped };
         }}
       />
     </div>`;

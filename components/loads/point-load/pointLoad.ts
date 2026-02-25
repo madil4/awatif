@@ -32,11 +32,11 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
           placeholder="0"
           step="10"
           .value=${live(params.val.Fx)}
-          @input=${(e: Event) =>
-            (params.val = {
-              ...params.val,
-              Fx: (e.target as HTMLInputElement).valueAsNumber,
-            })}
+          @input=${(e: Event) => {
+            const Fx = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(Fx)) return;
+            params.val = { ...params.val, Fx };
+          }}
         />
       </div>
 
@@ -47,11 +47,11 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
           placeholder="0"
           step="10"
           .value=${live(params.val.Fy)}
-          @input=${(e: Event) =>
-            (params.val = {
-              ...params.val,
-              Fy: (e.target as HTMLInputElement).valueAsNumber,
-            })}
+          @input=${(e: Event) => {
+            const Fy = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(Fy)) return;
+            params.val = { ...params.val, Fy };
+          }}
         />
       </div>
     `;
