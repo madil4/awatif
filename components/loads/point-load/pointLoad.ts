@@ -3,7 +3,7 @@ import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
 
-type PointLoadParams = {
+export type PointLoadParams = {
   Fx: number;
   Fy: number;
   Fz: number;
