@@ -6,7 +6,7 @@ type LineMeshParams = {
 };
 
 export const lineMesh: MeshTemplate<LineMeshParams> = {
-  name: "Line Mesh",
+  name: "Mesh",
   defaultParams: {
     divisions: 1,
   },
