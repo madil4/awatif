@@ -49,6 +49,67 @@ describe("positions and forces", () => {
     expect(internalForces.get(2)?.N[1]).toBeCloseTo(5.289408221642574);
   });
 
+  test("Beam with Mz release at end: propped cantilever", () => {
+    // Beam along X-axis, L=4m
+    // Node 0: fixed (all DOFs restrained)
+    // Node 1: roller (dx,dy,dz restrained) + Mz released at end
+    // Load: P = -10 kN at node 1 in Y direction
+    // This creates a propped cantilever (fixed at 0, pin at 1)
+    // Known solution: Mz at node 1 = 0 (released), Mz at node 0 = PL/2 (?)
+    // Actually for propped cantilever with point load at pin:
+    // The reaction at the pin end carries all the shear,
+    // and the moment at the fixed end = 0 because load is at the support.
+    // Better: apply load at a separate node.
+
+    // Use 2-element beam: node0(fixed) -- node1(loaded) -- node2(pin, Mz released)
+    const L = 4; // total length
+    const nodes: Mesh["nodes"]["val"] = [
+      [0, 0, 0], // fixed support
+      [L / 2, 0, 0], // midpoint, load applied here
+      [L, 0, 0], // pin support (Mz released)
+    ];
+    const elements: Mesh["elements"]["val"] = [
+      [0, 1], // element 0
+      [1, 2], // element 1
+    ];
+    const supports: Mesh["supports"]["val"] = new Map([
+      [0, [true, true, true, true, true, true]], // fixed
+      [2, [true, true, true, false, false, false]], // pin (translations only)
+    ]);
+    const P = -10; // kN downward
+    const loads: Mesh["loads"]["val"] = new Map([[1, [0, P, 0, 0, 0, 0]]]);
+
+    const E = 200e6; // kN/m²
+    const I = 1e-4; // m⁴
+    const A = 1e-2; // m²
+    const elementsProps: Mesh["elementsProps"]["val"] = new Map([
+      [0, { elasticity: E, area: A, momentInertia: I }],
+      [1, { elasticity: E, area: A, momentInertia: I }],
+    ]);
+
+    // Release Mz at end of element 1 (node 2)
+    const releases: Mesh["releases"]["val"] = new Map([
+      [1, [false, false, false, true]], // Mz_end released
+    ]);
+
+    const { internalForces } = getPositionsAndForces(
+      nodes,
+      elements,
+      loads,
+      supports,
+      elementsProps,
+      releases,
+    );
+
+    // Mz at the released end (end of element 1 = node 2) should be zero
+    expect(internalForces.get(1)?.Mz[1]).toBeCloseTo(0, 10);
+
+    // For a propped cantilever with point load P at midspan:
+    // Fixed end moment Mz = 3PL/16
+    // Here |P| = 10, L = 4, so |Mz_fixed| = 3 * 10 * 4 / 16 = 7.5
+    expect(internalForces.get(0)?.Mz[0]).toBeCloseTo(7.5, 5);
+  });
+
   test("Frame: from Logan's book example 5.8", () => {
     const nodes: Mesh["nodes"]["val"] = [
       [2.5, 0, 0],

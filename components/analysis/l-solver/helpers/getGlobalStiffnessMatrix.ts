@@ -8,6 +8,7 @@ export function getGlobalStiffnessMatrix(
   elements: Mesh["elements"]["val"],
   elementsProps: Mesh["elementsProps"]["val"] | undefined,
   dof: number,
+  releases?: Mesh["releases"]["val"],
 ): number[][] {
   let stiffnessMatrix = Array(dof)
     .fill(0)
@@ -17,7 +18,7 @@ export function getGlobalStiffnessMatrix(
 
   elements.forEach((e, i) => {
     const elmNodes = e.map((e) => nodes[e]);
-    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i);
+    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i, releases);
     const T = getTransformationMatrix(elmNodes);
 
     const kGlobal = multiply(transpose(T), multiply(kLocal, T));

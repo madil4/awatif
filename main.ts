@@ -110,6 +110,7 @@ const mesh: Mesh = {
   }),
   loads: van.state(new Map()),
   supports: van.state(new Map()),
+  releases: van.state(new Map()),
   elementsProps: van.state(new Map()),
   positions: van.state([]),
   displacements: van.state([]),
@@ -190,6 +191,7 @@ van.derive(() => {
       mesh.loads.val,
       mesh.supports.val,
       mesh.elementsProps.val,
+      mesh.releases.val,
     );
 
     mesh.positions.val = positions;
