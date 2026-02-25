@@ -128,6 +128,7 @@ const display: Display = {
   deformedShape: van.state(true),
   loads: van.state(true),
   supports: van.state(true),
+  releases: van.state(true),
   memberIndex: van.state(false),
   extrudeSections: van.state(false),
   lineResult: van.state("Bendings"),

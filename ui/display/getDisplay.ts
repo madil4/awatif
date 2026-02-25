@@ -14,6 +14,7 @@ export type Display = {
   deformedShape: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
+  releases?: State<boolean>;
   memberIndex: State<boolean>;
   extrudeSections?: State<boolean>;
   pointResult?: State<PointResultsDisplay>;
@@ -124,6 +125,17 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               .checked=${display.supports.val}
               @change=${(e: Event) =>
                 (display.supports.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>`
+        : ""}
+      ${display?.releases
+        ? html` <div class="display-item">
+            <label>Releases</label>
+            <input
+              type="checkbox"
+              .checked=${display.releases.val}
+              @change=${(e: Event) =>
+                (display.releases!.val = (e.target as HTMLInputElement).checked)}
             />
           </div>`
         : ""}
