@@ -33,11 +33,11 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           type="number"
           min="1"
           .value=${live(params.val.width)}
-          @input=${(e: Event) =>
-            (params.val = {
-              ...params.val,
-              width: (e.target as HTMLInputElement).valueAsNumber,
-            })}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, width: value };
+          }}
         />
       </div>
 
@@ -47,11 +47,11 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           type="number"
           min="1"
           .value=${live(params.val.depth)}
-          @input=${(e: Event) =>
-            (params.val = {
-              ...params.val,
-              depth: (e.target as HTMLInputElement).valueAsNumber,
-            })}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, depth: value };
+          }}
         />
       </div>
 
@@ -76,11 +76,11 @@ export const rcBeam: DesignTemplate<RcBeamParams, any> = {
           max="1"
           step="0.05"
           .value=${live(params.val.stiffnessModifier)}
-          @input=${(e: Event) =>
-            (params.val = {
-              ...params.val,
-              stiffnessModifier: (e.target as HTMLInputElement).valueAsNumber,
-            })}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, stiffnessModifier: value };
+          }}
         />
       </div>
     `;
