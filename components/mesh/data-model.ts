@@ -4,6 +4,7 @@ import { Mesh } from "../data-model";
 
 export type MeshTemplate<Params extends Record<string, unknown>> = {
   name: string;
+  geometryKind: "point" | "line";
   defaultParams: Params;
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;

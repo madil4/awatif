@@ -62,21 +62,39 @@ export function getLoads({
       const template = loadTemplates.get(component.templateId);
       if (!template || !("getObject3D" in template)) return;
 
-      // For each geometry point in the component, create a visualization
-      component.geometry.forEach((pointId) => {
-        const position = points.get(pointId);
-        if (!position) return;
-
-        // Call the template's getObject3D function
-        const loadObject = template.getObject3D?.({
-          params: (component.params ?? template.defaultParams) as any,
-          position: position as [number, number, number],
-          displayScale: s,
+      if (template.geometryKind === "line") {
+        const lines = geometry.lines.val;
+        component.geometry.forEach((lineId) => {
+          const line = lines.get(lineId);
+          if (!line) return;
+          const start = points.get(line[0]) as [number, number, number] | undefined;
+          const end = points.get(line[1]) as [number, number, number] | undefined;
+          if (!start || !end) return;
+          const position: [number, number, number] = [
+            (start[0] + end[0]) / 2,
+            (start[1] + end[1]) / 2,
+            (start[2] + end[2]) / 2,
+          ];
+          const loadObject = template.getObject3D?.({
+            params: (component.params ?? template.defaultParams) as any,
+            position,
+            displayScale: s,
+            line: { start, end },
+          });
+          if (loadObject) group.add(loadObject);
         });
-
-        // Add to the group
-        if (loadObject) group.add(loadObject);
-      });
+      } else {
+        component.geometry.forEach((pointId) => {
+          const position = points.get(pointId);
+          if (!position) return;
+          const loadObject = template.getObject3D?.({
+            params: (component.params ?? template.defaultParams) as any,
+            position: position as [number, number, number],
+            displayScale: s,
+          });
+          if (loadObject) group.add(loadObject);
+        });
+      }
     });
 
     render();
