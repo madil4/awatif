@@ -8,6 +8,7 @@ export type DesignTemplate<
   Design extends Record<string, any>,
 > = {
   name: string;
+  geometryKind: "point" | "line";
   defaultParams: Params;
 
   getParamsTemplate: ({

@@ -14,6 +14,7 @@ type PointLoadParams = {
 
 export const pointLoad: LoadTemplate<PointLoadParams> = {
   name: "Point Load",
+  geometryKind: "point",
   defaultParams: {
     Fx: "0",
     Fy: "0",

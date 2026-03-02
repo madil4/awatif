@@ -22,6 +22,7 @@ export const LOAD_SELECTION_LABELS: Record<LoadSelection, string> = {
 
 export type LoadTemplate<Params extends Record<string, unknown>> = {
   name: string;
+  geometryKind: "point" | "line";
   defaultParams: Params;
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
@@ -33,9 +34,11 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
     params,
     position,
     displayScale,
+    line,
   }: {
     params: Params;
     position: [number, number, number];
     displayScale: number;
+    line?: { start: [number, number, number]; end: [number, number, number] };
   }) => THREE.Object3D;
 };

@@ -17,6 +17,7 @@ const releaseMap: Record<
 
 export const releases: ReleaseTemplate<ReleasesParams> = {
   name: "Releases",
+  geometryKind: "line",
   defaultParams: {
     type: "both-ends",
   },

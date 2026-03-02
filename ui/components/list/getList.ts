@@ -163,25 +163,6 @@ export function getList({
     return deleted;
   };
 
-  const removeDeletedFromTypes = (
-    componentsMap: Map<ComponentsType, { geometry: number[] }[]>,
-    typesToClean: ComponentsType[],
-    deleted: Set<number>,
-  ) => {
-    for (const type of typesToClean) {
-      const list = componentsMap.get(type);
-      if (list) {
-        componentsMap.set(
-          type,
-          list.map((c) => ({
-            ...c,
-            geometry: c.geometry.filter((idx) => !deleted.has(idx)),
-          })),
-        );
-      }
-    }
-  };
-
   van.derive(() => {
     const currentPointKeys = new Set(geometry.points.val.keys());
     const currentLineKeys = new Set(geometry.lines.val.keys());
@@ -191,20 +172,18 @@ export function getList({
 
     if (deletedPoints.size > 0 || deletedLines.size > 0) {
       const updated = new Map(components.val);
+      const allTemplates = templates ?? Templates;
 
-      if (deletedPoints.size > 0) {
-        removeDeletedFromTypes(
-          updated,
-          [ComponentsType.LOADS, ComponentsType.SUPPORTS],
-          deletedPoints,
-        );
-      }
-      if (deletedLines.size > 0) {
-        removeDeletedFromTypes(
-          updated,
-          [ComponentsType.MESH, ComponentsType.DESIGN, ComponentsType.IMPERFECTIONS],
-          deletedLines,
-        );
+      for (const [type, list] of updated) {
+        const updatedList = list.map((c) => {
+          const kind = allTemplates.get(type)?.get(c.templateId)?.geometryKind;
+          if (kind === "point" && deletedPoints.size > 0)
+            return { ...c, geometry: c.geometry.filter((idx) => !deletedPoints.has(idx)) };
+          if (kind === "line" && deletedLines.size > 0)
+            return { ...c, geometry: c.geometry.filter((idx) => !deletedLines.has(idx)) };
+          return c;
+        });
+        updated.set(type, updatedList);
       }
 
       components.val = updated;

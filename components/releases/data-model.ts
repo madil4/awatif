@@ -4,6 +4,7 @@ import * as THREE from "three";
 
 export type ReleaseTemplate<Params extends Record<string, unknown>> = {
   name: string;
+  geometryKind: "point" | "line";
   defaultParams: Params;
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
