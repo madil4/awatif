@@ -1,7 +1,7 @@
 import "./styles.css";
 
 const TIPS = [
-  "Left-click to draw structure; click a node to connect a beam",
+  "Left-click to draw structure; click a node to connect a beam; right-click to cancel drawing",
   "Right-click a node to delete it",
   "Click and drag a node to reposition it",
   "Click a component in the list, then drag to assign geometry; drag the opposite way to unassign",
