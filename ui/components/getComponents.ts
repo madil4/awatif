@@ -18,22 +18,27 @@ import {
 
 import "./styles.css";
 
-function getTypesForMode(mode: ComponentsType | null): ComponentsType[] {
+function getTypesForMode(
+  mode: ComponentsType | null,
+): { types: ComponentsType[]; geometryKind: "point" | "line" | null } {
   switch (mode) {
     case ComponentsType.LOADS:
-      return [ComponentsType.LOADS];
+      return { types: [ComponentsType.LOADS], geometryKind: "point" };
     case ComponentsType.SUPPORTS:
-      return [ComponentsType.SUPPORTS];
+      return { types: [ComponentsType.SUPPORTS], geometryKind: "point" };
     case ComponentsType.MESH:
-      return [ComponentsType.MESH];
+      return { types: [ComponentsType.MESH], geometryKind: "line" };
     case ComponentsType.DESIGN:
-      return [ComponentsType.DESIGN];
+      return { types: [ComponentsType.DESIGN], geometryKind: "line" };
     case ComponentsType.IMPERFECTIONS:
-      return [ComponentsType.IMPERFECTIONS];
+      return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
     case ComponentsType.SPECIAL:
-      return [ComponentsType.MESH, ComponentsType.IMPERFECTIONS, ComponentsType.RELEASES];
+      return {
+        types: [ComponentsType.MESH, ComponentsType.IMPERFECTIONS, ComponentsType.RELEASES],
+        geometryKind: "line",
+      };
     default:
-      return [];
+      return { types: [], geometryKind: null };
   }
 }
 
@@ -55,26 +60,10 @@ export function getComponents({
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);
 
-  const resolvedTemplates = templates ?? Templates;
-
-  const types = van.derive(() => getTypesForMode(componentsBarMode.val));
-  const geometryKind = van.derive((): "point" | "line" | null => {
-    const active = activeComponent.val;
-    if (active !== null) {
-      const templateId = components.val.get(active.type)?.[active.index]?.templateId;
-      if (templateId) {
-        const tmpl = resolvedTemplates.get(active.type)?.get(templateId);
-        if (tmpl?.geometryKind) return tmpl.geometryKind;
-      }
-    }
-    // Fallback: use the first template's geometryKind for the current mode
-    const mode = componentsBarMode.val;
-    if (mode === null) return null;
-    const modeTemplates = resolvedTemplates.get(mode);
-    if (!modeTemplates) return null;
-    const firstTemplate = modeTemplates.values().next().value;
-    return firstTemplate?.geometryKind ?? null;
-  });
+  const types = van.derive(() => getTypesForMode(componentsBarMode.val).types);
+  const geometryKind = van.derive(
+    () => getTypesForMode(componentsBarMode.val).geometryKind,
+  );
 
   const list = getList({
     types,

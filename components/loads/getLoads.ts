@@ -63,35 +63,35 @@ export function getLoads({
       rawLoad[5] * factor,
     ];
 
-    const accumulateLoad = (nodeIdx: number) => {
-      const existingLoad = loads.get(nodeIdx);
-      if (existingLoad) {
-        loads.set(nodeIdx, [
-          existingLoad[0] + load[0],
-          existingLoad[1] + load[1],
-          existingLoad[2] + load[2],
-          existingLoad[3] + load[3],
-          existingLoad[4] + load[4],
-          existingLoad[5] + load[5],
-        ]);
-      } else {
-        loads.set(nodeIdx, [...load]);
-      }
-    };
+    component.geometry.forEach((pointId) => {
+      const nodeIndices = geometryMapping.pointToNodes.get(pointId);
+      if (!nodeIndices) return;
 
-    if (template.geometryKind === "line") {
-      component.geometry.forEach((lineId) => {
-        const elementIndices = geometryMapping.lineToElements.get(lineId);
-        if (!elementIndices) return;
-        elementIndices.forEach(accumulateLoad);
+      // Apply load to all nodes that map to this geometry point
+      nodeIndices.forEach((nodeIdx) => {
+        const existingLoad = loads.get(nodeIdx);
+        if (existingLoad) {
+          // Accumulate loads if multiple components target the same node
+          loads.set(nodeIdx, [
+            existingLoad[0] + load[0],
+            existingLoad[1] + load[1],
+            existingLoad[2] + load[2],
+            existingLoad[3] + load[3],
+            existingLoad[4] + load[4],
+            existingLoad[5] + load[5],
+          ]);
+        } else {
+          loads.set(nodeIdx, [
+            load[0],
+            load[1],
+            load[2],
+            load[3],
+            load[4],
+            load[5],
+          ]);
+        }
       });
-    } else {
-      component.geometry.forEach((pointId) => {
-        const nodeIndices = geometryMapping.pointToNodes.get(pointId);
-        if (!nodeIndices) return;
-        nodeIndices.forEach(accumulateLoad);
-      });
-    }
+    });
   });
 
   return loads;

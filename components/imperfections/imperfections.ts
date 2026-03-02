@@ -17,7 +17,6 @@ export type ImperfectionsParams = {
 
 export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   name: "Imperfections",
-  geometryKind: "line",
   defaultParams: {
     globalInclination: true,
     theta0: "0.005",

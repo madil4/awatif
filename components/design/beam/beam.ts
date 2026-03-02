@@ -10,7 +10,6 @@ type BeamParams = {
 
 export const beam: DesignTemplate<BeamParams, any> = {
   name: "Beam",
-  geometryKind: "line",
   defaultParams: {
     elasticity: "32836", // MPa ≈ C30 Ecm
     area: "625", // cm² = 250×250 mm
