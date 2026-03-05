@@ -24,6 +24,11 @@ import {
 } from "awatif-fem";
 import { getMesh } from "awatif-mesh";
 import { getViewer } from "awatif-ui";
+import {
+  ThroughThicknessStressDropdown,
+  ThroughThicknessStressRow,
+  createThroughThicknessStressDropdown,
+} from "../shared/cltStressProfileDropdown";
 
 import "./styles.css";
 
@@ -31,7 +36,8 @@ const { div } = van.tags;
 
 const LENGTH = 10;
 const WIDTH = 2.45;
-const TAU_PROBE_X = 1.0;
+const TAU_SECTION_X = 1.0;
+type ShellTransverseComponent = "tauXZ" | "tauYZ";
 
 type DisplayCase = "ULS" | "SLS";
 
@@ -66,7 +72,10 @@ const kDefSqState = van.state(0.8);
 const layerIndexState = van.state(3);
 const inPlaneComponentState = van.state<InPlaneProbeComponent>("sigma1");
 const inPlanePointState = van.state<ThroughThicknessPoint>("top");
-const transverseComponentState = van.state<TransverseProbeComponent>("tauYZ");
+const transverseComponentState = van.state<TransverseProbeComponent>("tauXZ");
+const transverseProfileComponentState = van.state<ShellTransverseComponent>(
+  "tauXZ",
+);
 const transversePointState = van.state<ThroughThicknessPoint>("mid");
 const maxDeflectionMmState = van.state(0);
 const inPlaneProbeMpaState = van.state(0);
@@ -79,6 +88,8 @@ const referenceShearKnPerMState = van.state(0);
 const referenceMomentKnmPerMState = van.state(0);
 const shearErrorPercentState = van.state(0);
 const momentErrorPercentState = van.state(0);
+let sigmaProfileDropdown: ThroughThicknessStressDropdown | undefined;
+let transverseProfileDropdown: ThroughThicknessStressDropdown | undefined;
 
 const cltLayup = buildSevenLayerCLTLayup();
 
@@ -95,6 +106,7 @@ van.derive(() => {
   inPlaneComponentState.val;
   inPlanePointState.val;
   transverseComponentState.val;
+  transverseProfileComponentState.val;
   transversePointState.val;
   applyDisplayCase();
 });
@@ -185,6 +197,7 @@ function applyDisplayCase() {
     maxSpecificMomentKnmPerMState.val,
     reference.maxSpecificBendingMomentKnmPerM,
   );
+  const tauProbeX = getSupportProbeX();
 
   inPlaneProbeMpaState.val =
     sampleClosestInPlaneStressMpa(
@@ -213,7 +226,7 @@ function applyDisplayCase() {
       nodes,
       elements,
       selected.transverseProfiles,
-      [TAU_PROBE_X, WIDTH / 2],
+      [tauProbeX, WIDTH / 2],
       layerIndex,
       transversePointState.val,
       transverseComponentState.val,
@@ -224,13 +237,32 @@ function applyDisplayCase() {
     nodes,
     elements,
     selected.transverseProfiles,
-    [TAU_PROBE_X, WIDTH / 2],
+    [tauProbeX, WIDTH / 2],
     transverseComponentState.val,
     { weightX: 2, weightY: 1 },
   );
   transverseMaxAbsMpaState.val = transverseSamplesMpa?.length
     ? getThroughThicknessExtrema(transverseSamplesMpa).maxAbs
     : 0;
+
+  const sigmaProfileRows = sampleSigmaXProfileRows(
+    nodes,
+    elements,
+    selected.inPlaneProfiles,
+  );
+  sigmaProfileDropdown?.update(sigmaProfileRows);
+
+  const transverseProfileRows = sampleTransverseProfileRows(
+    nodes,
+    elements,
+    selected.transverseProfiles,
+    transverseProfileComponentState.val,
+    tauProbeX,
+  );
+  transverseProfileDropdown?.setTitle(
+    `τ${transverseProfileComponentState.val.slice(3).toLowerCase()} Through-Thickness Profile (next to support)`,
+  );
+  transverseProfileDropdown?.update(transverseProfileRows);
 }
 
 function runCase({
@@ -394,8 +426,105 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+function sampleSigmaXProfileRows(
+  nodes: Node[],
+  elements: Element[],
+  inPlaneProfiles: CltInPlaneStressProfiles,
+): ThroughThicknessStressRow[] {
+  return cltLayup.layers.map((layer, layerIndex) => ({
+    thickness: layer.thickness,
+    topMpa:
+      sampleClosestInPlaneStressMpa(
+        nodes,
+        elements,
+        inPlaneProfiles,
+        [LENGTH / 2, WIDTH / 2],
+        layerIndex,
+        "top",
+        "sigmaX",
+      ) ?? 0,
+    bottomMpa:
+      sampleClosestInPlaneStressMpa(
+        nodes,
+        elements,
+        inPlaneProfiles,
+        [LENGTH / 2, WIDTH / 2],
+        layerIndex,
+        "bottom",
+        "sigmaX",
+      ) ?? 0,
+  }));
+}
+
+function sampleTransverseProfileRows(
+  nodes: Node[],
+  elements: Element[],
+  transverseProfiles: CltTransverseStressProfiles,
+  component: TransverseProbeComponent,
+  tauProbeX: number,
+): ThroughThicknessStressRow[] {
+  return cltLayup.layers.map((layer, layerIndex) => ({
+    thickness: layer.thickness,
+    topMpa:
+      sampleClosestTransverseStressMpa(
+        nodes,
+        elements,
+        transverseProfiles,
+        [tauProbeX, WIDTH / 2],
+        layerIndex,
+        "top",
+        component,
+        { weightX: 2, weightY: 1 },
+      ) ?? 0,
+    midMpa:
+      sampleClosestTransverseStressMpa(
+        nodes,
+        elements,
+        transverseProfiles,
+        [tauProbeX, WIDTH / 2],
+        layerIndex,
+        "mid",
+        component,
+        { weightX: 2, weightY: 1 },
+      ) ?? 0,
+    bottomMpa:
+      sampleClosestTransverseStressMpa(
+        nodes,
+        elements,
+        transverseProfiles,
+        [tauProbeX, WIDTH / 2],
+        layerIndex,
+        "bottom",
+        component,
+        { weightX: 2, weightY: 1 },
+      ) ?? 0,
+  }));
+}
+
+function getSupportProbeX(): number {
+  return clamp(TAU_SECTION_X, 0, LENGTH);
+}
+
 function render() {
   const root = div({ id: "page" });
+  sigmaProfileDropdown = createThroughThicknessStressDropdown({
+    title: "σx Through-Thickness Profile",
+    unitLabel: "N/mm²",
+    signConvention: "flip",
+    width: 720,
+    height: 360,
+    valueDigits: 3,
+    defaultOpen: false,
+  });
+  transverseProfileDropdown = createThroughThicknessStressDropdown({
+    title: "τxz Through-Thickness Profile (next to support)",
+    unitLabel: "N/mm²",
+    signConvention: "raw",
+    width: 720,
+    height: 360,
+    valueDigits: 5,
+    defaultOpen: false,
+  });
 
   root.append(
     div(
@@ -470,6 +599,15 @@ function render() {
                 top: "top",
                 mid: "mid",
                 bottom: "bottom",
+              },
+            },
+            {
+              folder: "Analysis Outputs",
+              label: "τ profile component",
+              state: transverseProfileComponentState,
+              options: {
+                tauXZ: "tauXZ",
+                tauYZ: "tauYZ",
               },
             },
           ],
@@ -555,7 +693,13 @@ function render() {
           `${transverseComponentState.val} through-thickness |max| [MPa]: ${transverseMaxAbsMpaState.val.toFixed(4)}`,
       ),
     ),
+    div(
+      { id: "stress-profiles" },
+      sigmaProfileDropdown.element,
+      transverseProfileDropdown.element,
+    ),
   );
 
   document.body.append(root);
+  applyDisplayCase();
 }

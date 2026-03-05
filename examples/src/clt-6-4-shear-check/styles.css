@@ -21,39 +21,40 @@ body {
   height: 100%;
 }
 
-#clt-stats {
+#check-stats {
   position: absolute;
   right: 12px;
   top: 12px;
   z-index: 4;
   color: #e9edf1;
-  background: rgba(20, 24, 30, 0.85);
+  background: rgba(20, 24, 30, 0.86);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 10px 12px;
-  min-width: 330px;
+  min-width: 420px;
   font-family: "Courier New", monospace;
 }
 
-#clt-stats .title {
+#check-stats .title {
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 700;
   color: #a8ff9f;
 }
 
-#clt-stats div {
+#check-stats div {
   margin: 3px 0;
   font-size: 12px;
 }
 
-#stress-profiles {
-  position: absolute;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  z-index: 4;
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
+#check-stats .spacer {
+  margin: 8px 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+#check-stats .foot {
+  margin-top: 8px;
+  color: #c6cad0;
+  font-size: 11px;
 }
