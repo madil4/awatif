@@ -8,4 +8,5 @@ export default {
       target: "es2022",
     },
   }),
+  testPathIgnorePatterns: ["/node_modules/", "\\.bench\\.test\\.ts$"],
 };
