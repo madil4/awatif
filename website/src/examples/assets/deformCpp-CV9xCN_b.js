@@ -1,26 +1,26 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-let mt, ft;
+let vt, mt;
 let __tla = (async () => {
-  const lt = "modulepreload", dt = function(m, h) {
-    return new URL(m, h).href;
-  }, er = {}, ct = function(h, d, F) {
-    let E = Promise.resolve();
+  const dt = "modulepreload", ct = function(f, h) {
+    return new URL(f, h).href;
+  }, er = {}, ut = function(h, d, S) {
+    let p = Promise.resolve();
     if (d && d.length > 0) {
       const b = document.getElementsByTagName("link"), v = document.querySelector("meta[property=csp-nonce]"), R = (v == null ? void 0 : v.nonce) || (v == null ? void 0 : v.getAttribute("nonce"));
-      E = Promise.allSettled(d.map((f) => {
-        if (f = dt(f, F), f in er) return;
-        er[f] = true;
-        const O = f.endsWith(".css"), z = O ? '[rel="stylesheet"]' : "";
-        if (!!F) for (let L = b.length - 1; L >= 0; L--) {
-          const x = b[L];
-          if (x.href === f && (!O || x.rel === "stylesheet")) return;
+      p = Promise.allSettled(d.map((m) => {
+        if (m = ct(m, S), m in er) return;
+        er[m] = true;
+        const O = m.endsWith(".css"), z = O ? '[rel="stylesheet"]' : "";
+        if (!!S) for (let I = b.length - 1; I >= 0; I--) {
+          const H = b[I];
+          if (H.href === m && (!O || H.rel === "stylesheet")) return;
         }
-        else if (document.querySelector(`link[href="${f}"]${z}`)) return;
+        else if (document.querySelector(`link[href="${m}"]${z}`)) return;
         const D = document.createElement("link");
-        if (D.rel = O ? "stylesheet" : lt, O || (D.as = "script"), D.crossOrigin = "", D.href = f, R && D.setAttribute("nonce", R), document.head.appendChild(D), O) return new Promise((L, x) => {
-          D.addEventListener("load", L), D.addEventListener("error", () => x(new Error(`Unable to preload CSS for ${f}`)));
+        if (D.rel = O ? "stylesheet" : dt, O || (D.as = "script"), D.crossOrigin = "", D.href = m, R && D.setAttribute("nonce", R), document.head.appendChild(D), O) return new Promise((I, H) => {
+          D.addEventListener("load", I), D.addEventListener("error", () => H(new Error(`Unable to preload CSS for ${m}`)));
         });
       }));
     }
@@ -30,20 +30,20 @@ let __tla = (async () => {
       });
       if (v.payload = b, window.dispatchEvent(v), !v.defaultPrevented) throw b;
     }
-    return E.then((b) => {
+    return p.then((b) => {
       for (const v of b || []) v.status === "rejected" && y(v.reason);
       return h().catch(y);
     });
   };
-  async function ut(m = {}) {
+  async function ft(f = {}) {
     var _a, _b, _c, _d, _e2, _f;
     var h;
     (function() {
       var _a2;
       function e(c) {
         c = c.split("-")[0];
-        for (var p = c.split(".").slice(0, 3); p.length < 3; ) p.push("00");
-        return p = p.map((P, T, _) => P.padStart(2, "0")), p.join("");
+        for (var _ = c.split(".").slice(0, 3); _.length < 3; ) _.push("00");
+        return _ = _.map((P, T, E) => P.padStart(2, "0")), _.join("");
       }
       var r = (c) => [
         c / 1e4 | 0,
@@ -61,35 +61,35 @@ let __tla = (async () => {
         if (l < 85) throw new Error(`This emscripten-generated code requires Chrome v85 (detected v${l})`);
       }
     })();
-    var d = m, F = !!globalThis.window, E = !!globalThis.WorkerGlobalScope, y = ((_b = (_a = globalThis.process) == null ? void 0 : _a.versions) == null ? void 0 : _b.node) && ((_c = globalThis.process) == null ? void 0 : _c.type) != "renderer", b = !F && !y && !E;
+    var d = f, S = !!globalThis.window, p = !!globalThis.WorkerGlobalScope, y = ((_b = (_a = globalThis.process) == null ? void 0 : _a.versions) == null ? void 0 : _b.node) && ((_c = globalThis.process) == null ? void 0 : _c.type) != "renderer", b = !S && !y && !p;
     if (y) {
-      const { createRequire: e } = await ct(() => import("./__vite-browser-external-D7Ct-6yo.js").then((r) => r._), [], import.meta.url);
+      const { createRequire: e } = await ut(() => import("./__vite-browser-external-D7Ct-6yo.js").then((r) => r._), [], import.meta.url);
       var v = e(import.meta.url);
     }
-    var R = "./this.program", f = import.meta.url, O = "";
+    var R = "./this.program", m = import.meta.url, O = "";
     function z(e) {
       return d.locateFile ? d.locateFile(e, O) : O + e;
     }
     var M, D;
     if (y) {
       if (!(((_e2 = (_d = globalThis.process) == null ? void 0 : _d.versions) == null ? void 0 : _e2.node) && ((_f = globalThis.process) == null ? void 0 : _f.type) != "renderer")) throw new Error("not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)");
-      var L = v("node:fs");
-      f.startsWith("file:") && (O = v("node:path").dirname(v("node:url").fileURLToPath(f)) + "/"), D = (r) => {
+      var I = v("node:fs");
+      m.startsWith("file:") && (O = v("node:path").dirname(v("node:url").fileURLToPath(m)) + "/"), D = (r) => {
         r = te(r) ? new URL(r) : r;
-        var t = L.readFileSync(r);
+        var t = I.readFileSync(r);
         return u(Buffer.isBuffer(t)), t;
       }, M = async (r, t = true) => {
         r = te(r) ? new URL(r) : r;
-        var o = L.readFileSync(r, t ? void 0 : "utf8");
+        var o = I.readFileSync(r, t ? void 0 : "utf8");
         return u(t ? Buffer.isBuffer(o) : typeof o == "string"), o;
       }, process.argv.length > 1 && (R = process.argv[1].replace(/\\/g, "/")), process.argv.slice(2);
-    } else if (!b) if (F || E) {
+    } else if (!b) if (S || p) {
       try {
-        O = new URL(".", f).href;
+        O = new URL(".", m).href;
       } catch {
       }
       if (!(globalThis.window || globalThis.WorkerGlobalScope)) throw new Error("not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)");
-      E && (D = (e) => {
+      p && (D = (e) => {
         var r = new XMLHttpRequest();
         return r.open("GET", e, false), r.responseType = "arraybuffer", r.send(null), new Uint8Array(r.response);
       }), M = async (e) => {
@@ -110,10 +110,10 @@ let __tla = (async () => {
         throw new Error(r.status + " : " + r.url);
       };
     } else throw new Error("environment detection error");
-    var x = console.log.bind(console), I = console.error.bind(console);
+    var H = console.log.bind(console), L = console.error.bind(console);
     u(!b, "shell environment detected but not enabled at build time.  Add `shell` to `-sENVIRONMENT` to enable.");
     var re;
-    globalThis.WebAssembly || I("no native wasm support detected");
+    globalThis.WebAssembly || L("no native wasm support detected");
     var ie = false;
     function u(e, r) {
       e || N("Assertion failed" + (r ? ": " + r : ""));
@@ -121,14 +121,14 @@ let __tla = (async () => {
     var te = (e) => e.startsWith("file://");
     function ue() {
       var e = Ie();
-      u((e & 3) == 0), e == 0 && (e += 4), S[e >> 2] = 34821223, S[e + 4 >> 2] = 2310721022, S[0] = 1668509029;
+      u((e & 3) == 0), e == 0 && (e += 4), k[e >> 2] = 34821223, k[e + 4 >> 2] = 2310721022, k[0] = 1668509029;
     }
     function Fe() {
       if (!ie) {
         var e = Ie();
         e == 0 && (e += 4);
-        var r = S[e >> 2], t = S[e + 4 >> 2];
-        (r != 34821223 || t != 2310721022) && N(`Stack overflow! Stack cookie has been overwritten at ${pe(e)}, expected hex dwords 0x89BACDFE and 0x2135467, but received ${pe(t)} ${pe(r)}`), S[0] != 1668509029 && N("Runtime error: The application has corrupted its heap memory area (address zero)!");
+        var r = k[e >> 2], t = k[e + 4 >> 2];
+        (r != 34821223 || t != 2310721022) && N(`Stack overflow! Stack cookie has been overwritten at ${pe(e)}, expected hex dwords 0x89BACDFE and 0x2135467, but received ${pe(t)} ${pe(r)}`), k[0] != 1668509029 && N("Runtime error: The application has corrupted its heap memory area (address zero)!");
       }
     }
     (() => {
@@ -143,10 +143,10 @@ let __tla = (async () => {
         }
       });
     }
-    function H(e) {
+    function B(e) {
       return () => u(false, `call to '${e}' via reference taken before Wasm module initialization`);
     }
-    function Oe(e) {
+    function Pe(e) {
       Object.getOwnPropertyDescriptor(d, e) && N(`\`Module.${e}\` was supplied but \`${e}\` not included in INCOMING_MODULE_JS_API`);
     }
     function Z(e) {
@@ -164,30 +164,30 @@ let __tla = (async () => {
         }
       });
     }
-    var q, Ue, V, ve, Pe, S, W, he = false;
+    var V, Ue, Y, ve, Te, k, W, he = false;
     function ze() {
-      var e = be.buffer;
-      V = new Int8Array(e), d.HEAPU8 = ve = new Uint8Array(e), Pe = new Int32Array(e), d.HEAPU32 = S = new Uint32Array(e), d.HEAPF64 = new Float64Array(e), W = new BigInt64Array(e), new BigUint64Array(e);
+      var e = Ae.buffer;
+      Y = new Int8Array(e), d.HEAPU8 = ve = new Uint8Array(e), Te = new Int32Array(e), d.HEAPU32 = k = new Uint32Array(e), d.HEAPF64 = new Float64Array(e), W = new BigInt64Array(e), new BigUint64Array(e);
     }
     u(globalThis.Int32Array && globalThis.Float64Array && Int32Array.prototype.subarray && Int32Array.prototype.set, "JS engine does not provide full typed array support");
-    function lr() {
+    function dr() {
       if (d.preRun) for (typeof d.preRun == "function" && (d.preRun = [
         d.preRun
-      ]); d.preRun.length; ) yr(d.preRun.shift());
+      ]); d.preRun.length; ) gr(d.preRun.shift());
       fe("preRun"), Be(He);
     }
-    function dr() {
+    function cr() {
       u(!he), he = true, Fe(), !d.noFSInit && !n.initialized && n.init(), de.__wasm_call_ctors(), n.ignorePermissions = false;
     }
-    function cr() {
+    function ur() {
       if (Fe(), d.postRun) for (typeof d.postRun == "function" && (d.postRun = [
         d.postRun
-      ]); d.postRun.length; ) Er(d.postRun.shift());
+      ]); d.postRun.length; ) yr(d.postRun.shift());
       fe("postRun"), Be(xe);
     }
     function N(e) {
       var _a2;
-      (_a2 = d.onAbort) == null ? void 0 : _a2.call(d, e), e = "Aborted(" + e + ")", I(e), ie = true;
+      (_a2 = d.onAbort) == null ? void 0 : _a2.call(d, e), e = "Aborted(" + e + ")", L(e), ie = true;
       var r = new WebAssembly.RuntimeError(e);
       throw Ue == null ? void 0 : Ue(r), r;
     }
@@ -199,79 +199,79 @@ let __tla = (async () => {
       };
     }
     var De;
-    function ur() {
+    function fr() {
       return d.locateFile ? z("deform.wasm") : new URL("" + new URL("deform-8pxBPo8Q.wasm", import.meta.url).href, import.meta.url).href;
     }
-    function fr(e) {
+    function mr(e) {
       if (e == De && re) return new Uint8Array(re);
       if (D) return D(e);
       throw "both async and sync fetching of the wasm failed";
     }
-    async function mr(e) {
+    async function vr(e) {
       if (!re) try {
         var r = await M(e);
         return new Uint8Array(r);
       } catch {
       }
-      return fr(e);
+      return mr(e);
     }
-    async function vr(e, r) {
+    async function hr(e, r) {
       try {
-        var t = await mr(e), o = await WebAssembly.instantiate(t, r);
+        var t = await vr(e), o = await WebAssembly.instantiate(t, r);
         return o;
       } catch (i) {
-        I(`failed to asynchronously prepare wasm: ${i}`), te(e) && I(`warning: Loading from a file URI (${e}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`), N(i);
+        L(`failed to asynchronously prepare wasm: ${i}`), te(e) && L(`warning: Loading from a file URI (${e}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`), N(i);
       }
     }
-    async function hr(e, r, t) {
+    async function pr(e, r, t) {
       if (!e && !te(r) && !y) try {
         var o = fetch(r, {
           credentials: "same-origin"
         }), i = await WebAssembly.instantiateStreaming(o, t);
         return i;
       } catch (a) {
-        I(`wasm streaming compile failed: ${a}`), I("falling back to ArrayBuffer instantiation");
+        L(`wasm streaming compile failed: ${a}`), L("falling back to ArrayBuffer instantiation");
       }
-      return vr(r, t);
+      return hr(r, t);
     }
-    function pr() {
+    function _r() {
       var e = {
         env: Je,
         wasi_snapshot_preview1: Je
       };
       return e;
     }
-    async function _r() {
+    async function Er() {
       function e(s, l) {
-        return de = s.exports, at(de), ze(), de;
+        return de = s.exports, st(de), ze(), de;
       }
       var r = d;
       function t(s) {
         return u(d === r, "the Module object should not be replaced during async compilation - perhaps the order of HTML elements is wrong?"), r = null, e(s.instance);
       }
-      var o = pr();
+      var o = _r();
       if (d.instantiateWasm) return new Promise((s, l) => {
         try {
-          d.instantiateWasm(o, (c, p) => {
-            s(e(c, p));
+          d.instantiateWasm(o, (c, _) => {
+            s(e(c, _));
           });
         } catch (c) {
-          I(`Module.instantiateWasm callback failed with error: ${c}`), l(c);
+          L(`Module.instantiateWasm callback failed with error: ${c}`), l(c);
         }
       });
-      De ?? (De = ur());
-      var i = await hr(re, De, o), a = t(i);
+      De ?? (De = fr());
+      var i = await pr(re, De, o), a = t(i);
       return a;
     }
     var Be = (e) => {
       for (; e.length > 0; ) e.shift()(d);
-    }, xe = [], Er = (e) => xe.push(e), He = [], yr = (e) => He.push(e), pe = (e) => (u(typeof e == "number", `ptrToString expects a number, got ${typeof e}`), e >>>= 0, "0x" + e.toString(16).padStart(8, "0")), _e = (e) => {
-      _e.shown || (_e.shown = {}), _e.shown[e] || (_e.shown[e] = 1, y && (e = "warning: " + e), I(e));
-    }, We = globalThis.TextDecoder && new TextDecoder(), gr = (e, r, t, o) => {
+    }, xe = [], yr = (e) => xe.push(e), He = [], gr = (e) => He.push(e), pe = (e) => (u(typeof e == "number", `ptrToString expects a number, got ${typeof e}`), e >>>= 0, "0x" + e.toString(16).padStart(8, "0")), _e = (e) => {
+      _e.shown || (_e.shown = {}), _e.shown[e] || (_e.shown[e] = 1, y && (e = "warning: " + e), L(e));
+    }, We = globalThis.TextDecoder && new TextDecoder(), wr = (e, r, t, o) => {
       for (var i = r + t; e[r] && !(r >= i); ) ++r;
       return r;
     }, ae = (e, r = 0, t, o) => {
-      var i = gr(e, r, t);
+      var i = wr(e, r, t);
       if (i - r > 16 && e.buffer && We) return We.decode(e.subarray(r, i));
       for (var a = ""; r < i; ) {
         var s = e[r++];
@@ -287,58 +287,58 @@ let __tla = (async () => {
         var c = e[r++] & 63;
         if ((s & 240) == 224 ? s = (s & 15) << 12 | l << 6 | c : ((s & 248) != 240 && _e("Invalid UTF-8 leading byte " + pe(s) + " encountered when deserializing a UTF-8 string in wasm memory to a JS string!"), s = (s & 7) << 18 | l << 12 | c << 6 | e[r++] & 63), s < 65536) a += String.fromCharCode(s);
         else {
-          var p = s - 65536;
-          a += String.fromCharCode(55296 | p >> 10, 56320 | p & 1023);
+          var _ = s - 65536;
+          a += String.fromCharCode(55296 | _ >> 10, 56320 | _ & 1023);
         }
       }
       return a;
-    }, Ee = (e, r, t) => (u(typeof e == "number", `UTF8ToString expects a number (got ${typeof e})`), e ? ae(ve, e, r) : ""), wr = (e, r, t, o) => N(`Assertion failed: ${Ee(e)}, at: ` + [
+    }, Ee = (e, r, t) => (u(typeof e == "number", `UTF8ToString expects a number (got ${typeof e})`), e ? ae(ve, e, r) : ""), Sr = (e, r, t, o) => N(`Assertion failed: ${Ee(e)}, at: ` + [
       r ? Ee(r) : "unknown filename",
       t,
       o ? Ee(o) : "unknown function"
     ]);
-    class Sr {
+    class kr {
       constructor(r) {
         this.excPtr = r, this.ptr = r - 24;
       }
       set_type(r) {
-        S[this.ptr + 4 >> 2] = r;
+        k[this.ptr + 4 >> 2] = r;
       }
       get_type() {
-        return S[this.ptr + 4 >> 2];
+        return k[this.ptr + 4 >> 2];
       }
       set_destructor(r) {
-        S[this.ptr + 8 >> 2] = r;
+        k[this.ptr + 8 >> 2] = r;
       }
       get_destructor() {
-        return S[this.ptr + 8 >> 2];
+        return k[this.ptr + 8 >> 2];
       }
       set_caught(r) {
-        r = r ? 1 : 0, V[this.ptr + 12] = r;
+        r = r ? 1 : 0, Y[this.ptr + 12] = r;
       }
       get_caught() {
-        return V[this.ptr + 12] != 0;
+        return Y[this.ptr + 12] != 0;
       }
       set_rethrown(r) {
-        r = r ? 1 : 0, V[this.ptr + 13] = r;
+        r = r ? 1 : 0, Y[this.ptr + 13] = r;
       }
       get_rethrown() {
-        return V[this.ptr + 13] != 0;
+        return Y[this.ptr + 13] != 0;
       }
       init(r, t) {
         this.set_adjusted_ptr(0), this.set_type(r), this.set_destructor(t);
       }
       set_adjusted_ptr(r) {
-        S[this.ptr + 16 >> 2] = r;
+        k[this.ptr + 16 >> 2] = r;
       }
       get_adjusted_ptr() {
-        return S[this.ptr + 16 >> 2];
+        return k[this.ptr + 16 >> 2];
       }
     }
-    var kr = (e, r, t) => {
-      var o = new Sr(e);
+    var Fr = (e, r, t) => {
+      var o = new kr(e);
       o.init(r, t), u(false, "Exception thrown, but exception catching is not enabled. Compile with -sNO_DISABLE_EXCEPTION_CATCHING or -sEXCEPTION_CATCHING_ALLOWED=[..] to catch.");
-    }, Fr = () => N("native code called abort()"), Ge = (e, r, t, o) => {
+    }, Pr = () => N("native code called abort()"), Ge = (e, r, t, o) => {
       if (u(typeof e == "string", `stringToUTF8Array expects a string (got ${typeof e})`), !(o > 0)) return 0;
       for (var i = t, a = t + o - 1, s = 0; s < e.length; ++s) {
         var l = e.codePointAt(s);
@@ -357,48 +357,48 @@ let __tla = (async () => {
         }
       }
       return r[t] = 0, t - i;
-    }, ye = (e, r, t) => (u(typeof t == "number", "stringToUTF8(str, outPtr, maxBytesToWrite) is missing the third parameter that specifies the length of the output buffer!"), Ge(e, ve, r, t)), Te = (e) => {
+    }, ye = (e, r, t) => (u(typeof t == "number", "stringToUTF8(str, outPtr, maxBytesToWrite) is missing the third parameter that specifies the length of the output buffer!"), Ge(e, ve, r, t)), be = (e) => {
       for (var r = 0, t = 0; t < e.length; ++t) {
         var o = e.charCodeAt(t);
         o <= 127 ? r++ : o <= 2047 ? r += 2 : o >= 55296 && o <= 57343 ? (r += 4, ++t) : r += 3;
       }
       return r;
-    }, Pr = (e, r, t, o) => {
-      var i = (/* @__PURE__ */ new Date()).getFullYear(), a = new Date(i, 0, 1), s = new Date(i, 6, 1), l = a.getTimezoneOffset(), c = s.getTimezoneOffset(), p = Math.max(l, c);
-      S[e >> 2] = p * 60, Pe[r >> 2] = +(l != c);
+    }, Tr = (e, r, t, o) => {
+      var i = (/* @__PURE__ */ new Date()).getFullYear(), a = new Date(i, 0, 1), s = new Date(i, 6, 1), l = a.getTimezoneOffset(), c = s.getTimezoneOffset(), _ = Math.max(l, c);
+      k[e >> 2] = _ * 60, Te[r >> 2] = +(l != c);
       var P = (w) => {
-        var C = w >= 0 ? "-" : "+", G = Math.abs(w), j = String(Math.floor(G / 60)).padStart(2, "0"), B = String(G % 60).padStart(2, "0");
-        return `UTC${C}${j}${B}`;
-      }, T = P(l), _ = P(c);
-      u(T), u(_), u(Te(T) <= 16, `timezone name truncated to fit in TZNAME_MAX (${T})`), u(Te(_) <= 16, `timezone name truncated to fit in TZNAME_MAX (${_})`), c < l ? (ye(T, t, 17), ye(_, o, 17)) : (ye(T, o, 17), ye(_, t, 17));
-    }, Tr = () => performance.now(), br = () => Date.now(), Ar = (e) => e >= 0 && e <= 3, Or = 9007199254740992, Dr = -9007199254740992, Nr = (e) => e < Dr || e > Or ? NaN : Number(e);
-    function Rr(e, r, t) {
-      if (!Ar(e)) return 28;
+        var C = w >= 0 ? "-" : "+", G = Math.abs(w), j = String(Math.floor(G / 60)).padStart(2, "0"), x = String(G % 60).padStart(2, "0");
+        return `UTC${C}${j}${x}`;
+      }, T = P(l), E = P(c);
+      u(T), u(E), u(be(T) <= 16, `timezone name truncated to fit in TZNAME_MAX (${T})`), u(be(E) <= 16, `timezone name truncated to fit in TZNAME_MAX (${E})`), c < l ? (ye(T, t, 17), ye(E, o, 17)) : (ye(T, o, 17), ye(E, t, 17));
+    }, br = () => performance.now(), Ar = () => Date.now(), Or = (e) => e >= 0 && e <= 3, Dr = 9007199254740992, Nr = -9007199254740992, Rr = (e) => e < Nr || e > Dr ? NaN : Number(e);
+    function Mr(e, r, t) {
+      if (!Or(e)) return 28;
       var o;
-      e === 0 ? o = br() : o = Tr();
+      e === 0 ? o = Ar() : o = br();
       var i = Math.round(o * 1e3 * 1e3);
       return W[t >> 3] = BigInt(i), 0;
     }
-    var Mr = () => 2147483648, Cr = (e, r) => (u(r, "alignment argument is required"), Math.ceil(e / r) * r), Ir = (e) => {
-      var r = be.buffer.byteLength, t = (e - r + 65535) / 65536 | 0;
+    var Cr = () => 2147483648, Ir = (e, r) => (u(r, "alignment argument is required"), Math.ceil(e / r) * r), Lr = (e) => {
+      var r = Ae.buffer.byteLength, t = (e - r + 65535) / 65536 | 0;
       try {
-        return be.grow(t), ze(), 1;
+        return Ae.grow(t), ze(), 1;
       } catch (o) {
-        I(`growMemory: Attempted to grow heap from ${r} bytes to ${e} bytes, but got error: ${o}`);
+        L(`growMemory: Attempted to grow heap from ${r} bytes to ${e} bytes, but got error: ${o}`);
       }
-    }, Lr = (e) => {
+    }, Ur = (e) => {
       var r = ve.length;
       e >>>= 0, u(e > r);
-      var t = Mr();
-      if (e > t) return I(`Cannot enlarge memory, requested ${e} bytes, but the limit is ${t} bytes!`), false;
+      var t = Cr();
+      if (e > t) return L(`Cannot enlarge memory, requested ${e} bytes, but the limit is ${t} bytes!`), false;
       for (var o = 1; o <= 4; o *= 2) {
         var i = r * (1 + 0.2 / o);
         i = Math.min(i, e + 100663296);
-        var a = Math.min(t, Cr(Math.max(e, i), 65536)), s = Ir(a);
+        var a = Math.min(t, Ir(Math.max(e, i), 65536)), s = Lr(a);
         if (s) return true;
       }
-      return I(`Failed to grow the heap from ${r} bytes to ${a} bytes, not enough memory!`), false;
-    }, Ne = {}, Ur = () => R || "./this.program", ge = () => {
+      return L(`Failed to grow the heap from ${r} bytes to ${a} bytes, not enough memory!`), false;
+    }, Ne = {}, zr = () => R || "./this.program", ge = () => {
       var _a2;
       if (!ge.strings) {
         var e = (((_a2 = globalThis.navigator) == null ? void 0 : _a2.language) ?? "C").replace("-", "_") + ".UTF-8", r = {
@@ -408,7 +408,7 @@ let __tla = (async () => {
           PWD: "/",
           HOME: "/home/web_user",
           LANG: e,
-          _: Ur()
+          _: zr()
         };
         for (var t in Ne) Ne[t] === void 0 ? delete r[t] : r[t] = Ne[t];
         var o = [];
@@ -416,19 +416,19 @@ let __tla = (async () => {
         ge.strings = o;
       }
       return ge.strings;
-    }, zr = (e, r) => {
+    }, Br = (e, r) => {
       var t = 0, o = 0;
       for (var i of ge()) {
         var a = r + t;
-        S[e + o >> 2] = a, t += ye(i, a, 1 / 0) + 1, o += 4;
+        k[e + o >> 2] = a, t += ye(i, a, 1 / 0) + 1, o += 4;
       }
       return 0;
-    }, Br = (e, r) => {
+    }, xr = (e, r) => {
       var t = ge();
-      S[e >> 2] = t.length;
+      k[e >> 2] = t.length;
       var o = 0;
-      for (var i of t) o += Te(i) + 1;
-      return S[r >> 2] = o, 0;
+      for (var i of t) o += be(i) + 1;
+      return k[r >> 2] = o, 0;
     }, A = {
       isAbs: (e) => e.charAt(0) === "/",
       splitPath: (e) => {
@@ -454,14 +454,14 @@ let __tla = (async () => {
       basename: (e) => e && e.match(/([^\/]+|\/)\/*$/)[1],
       join: (...e) => A.normalize(e.join("/")),
       join2: (e, r) => A.normalize(e + "/" + r)
-    }, xr = () => {
+    }, Hr = () => {
       if (y) {
         var e = v("node:crypto");
         return (r) => e.randomFillSync(r);
       }
       return (r) => crypto.getRandomValues(r);
     }, je = (e) => {
-      (je = xr())(e);
+      (je = Hr())(e);
     }, se = {
       resolve: (...e) => {
         for (var r = "", t = false, o = e.length - 1; o >= -1 && !t; o--) {
@@ -474,10 +474,10 @@ let __tla = (async () => {
       },
       relative: (e, r) => {
         e = se.resolve(e).slice(1), r = se.resolve(r).slice(1);
-        function t(p) {
-          for (var P = 0; P < p.length && p[P] === ""; P++) ;
-          for (var T = p.length - 1; T >= 0 && p[T] === ""; T--) ;
-          return P > T ? [] : p.slice(P, T - P + 1);
+        function t(_) {
+          for (var P = 0; P < _.length && _[P] === ""; P++) ;
+          for (var T = _.length - 1; T >= 0 && _[T] === ""; T--) ;
+          return P > T ? [] : _.slice(P, T - P + 1);
         }
         for (var o = t(e.split("/")), i = t(r.split("/")), a = Math.min(o.length, i.length), s = a, l = 0; l < a; l++) if (o[l] !== i[l]) {
           s = l;
@@ -487,16 +487,16 @@ let __tla = (async () => {
         return c = c.concat(i.slice(s)), c.join("/");
       }
     }, Re = [], Me = (e, r, t) => {
-      var o = Te(e) + 1, i = new Array(o), a = Ge(e, i, 0, i.length);
+      var o = be(e) + 1, i = new Array(o), a = Ge(e, i, 0, i.length);
       return i.length = a, i;
-    }, Hr = () => {
+    }, Wr = () => {
       var _a2;
       if (!Re.length) {
         var e = null;
         if (y) {
           var r = 256, t = Buffer.alloc(r), o = 0, i = process.stdin.fd;
           try {
-            o = L.readSync(i, t, 0, r);
+            o = I.readSync(i, t, 0, r);
           } catch (a) {
             if (a.toString().includes("EOF")) o = 0;
             else throw a;
@@ -560,14 +560,14 @@ let __tla = (async () => {
       },
       default_tty_ops: {
         get_char(e) {
-          return Hr();
+          return Wr();
         },
         put_char(e, r) {
-          r === null || r === 10 ? (x(ae(e.output)), e.output = []) : r != 0 && e.output.push(r);
+          r === null || r === 10 ? (H(ae(e.output)), e.output = []) : r != 0 && e.output.push(r);
         },
         fsync(e) {
           var _a2;
-          ((_a2 = e.output) == null ? void 0 : _a2.length) > 0 && (x(ae(e.output)), e.output = []);
+          ((_a2 = e.output) == null ? void 0 : _a2.length) > 0 && (H(ae(e.output)), e.output = []);
         },
         ioctl_tcgets(e) {
           return {
@@ -623,11 +623,11 @@ let __tla = (async () => {
       },
       default_tty1_ops: {
         put_char(e, r) {
-          r === null || r === 10 ? (I(ae(e.output)), e.output = []) : r != 0 && e.output.push(r);
+          r === null || r === 10 ? (L(ae(e.output)), e.output = []) : r != 0 && e.output.push(r);
         },
         fsync(e) {
           var _a2;
-          ((_a2 = e.output) == null ? void 0 : _a2.length) > 0 && (I(ae(e.output)), e.output = []);
+          ((_a2 = e.output) == null ? void 0 : _a2.length) > 0 && (L(ae(e.output)), e.output = []);
         }
       }
     }, $e = (e) => {
@@ -773,7 +773,7 @@ let __tla = (async () => {
           return s;
         },
         write(e, r, t, o, i, a) {
-          if (u(!(r instanceof ArrayBuffer)), r.buffer === V.buffer && (a = false), !o) return 0;
+          if (u(!(r instanceof ArrayBuffer)), r.buffer === Y.buffer && (a = false), !o) return 0;
           var s = e.node;
           if (s.mtime = s.ctime = Date.now(), r.subarray && (!s.contents || s.contents.subarray)) {
             if (a) return u(i === 0, "canOwn must imply no weird position inside the file"), s.contents = r.subarray(t, t + o), s.usedBytes = o, o;
@@ -792,10 +792,10 @@ let __tla = (async () => {
         mmap(e, r, t, o, i) {
           if (!n.isFile(e.node.mode)) throw new n.ErrnoError(43);
           var a, s, l = e.node.contents;
-          if (!(i & 2) && l && l.buffer === V.buffer) s = false, a = l.byteOffset;
+          if (!(i & 2) && l && l.buffer === Y.buffer) s = false, a = l.byteOffset;
           else {
             if (s = true, a = $e(), !a) throw new n.ErrnoError(48);
-            l && ((t > 0 || t + r < l.length) && (l.subarray ? l = l.subarray(t, t + r) : l = Array.prototype.slice.call(l, t, t + r)), V.set(l, a));
+            l && ((t > 0 || t + r < l.length) && (l.subarray ? l = l.subarray(t, t + r) : l = Array.prototype.slice.call(l, t, t + r)), Y.set(l, a));
           }
           return {
             ptr: a,
@@ -806,7 +806,7 @@ let __tla = (async () => {
           return g.stream_ops.write(e, r, 0, o, t, false), 0;
         }
       }
-    }, Wr = (e) => {
+    }, Gr = (e) => {
       var r = {
         r: 0,
         "r+": 2,
@@ -820,7 +820,7 @@ let __tla = (async () => {
     }, Ce = (e, r) => {
       var t = 0;
       return e && (t |= 365), r && (t |= 146), t;
-    }, Gr = (e) => Ee(Ke(e)), Ve = {
+    }, jr = (e) => Ee(Ke(e)), Ve = {
       EPERM: 63,
       ENOENT: 44,
       ESRCH: 71,
@@ -942,21 +942,21 @@ let __tla = (async () => {
       ENOTRECOVERABLE: 56,
       EOWNERDEAD: 62,
       ESTRPIPE: 135
-    }, jr = async (e) => {
+    }, $r = async (e) => {
       var r = await M(e);
       return u(r, `Loading data file "${e}" failed (no arrayBuffer).`), new Uint8Array(r);
-    }, $r = (...e) => n.createDataFile(...e), Vr = (e) => {
+    }, Vr = (...e) => n.createDataFile(...e), Yr = (e) => {
       for (var r = e; ; ) {
         if (!le[e]) return e;
         e = r + Math.random();
       }
-    }, oe = 0, we = null, le = {}, ee = null, Yr = (e) => {
+    }, oe = 0, we = null, le = {}, ee = null, qr = (e) => {
       var _a2;
       if (oe--, (_a2 = d.monitorRunDependencies) == null ? void 0 : _a2.call(d, oe), u(e, "removeRunDependency requires an ID"), u(le[e]), delete le[e], oe == 0 && (ee !== null && (clearInterval(ee), ee = null), we)) {
         var r = we;
         we = null, r();
       }
-    }, qr = (e) => {
+    }, Xr = (e) => {
       var _a2, _b2;
       oe++, (_a2 = d.monitorRunDependencies) == null ? void 0 : _a2.call(d, oe), u(e, "addRunDependency requires an ID"), u(!le[e]), le[e] = 1, ee === null && globalThis.setInterval && (ee = setInterval(() => {
         if (ie) {
@@ -964,24 +964,24 @@ let __tla = (async () => {
           return;
         }
         var r = false;
-        for (var t in le) r || (r = true, I("still waiting on run dependencies:")), I(`dependency: ${t}`);
-        r && I("(end of list)");
+        for (var t in le) r || (r = true, L("still waiting on run dependencies:")), L(`dependency: ${t}`);
+        r && L("(end of list)");
       }, 1e4), (_b2 = ee.unref) == null ? void 0 : _b2.call(ee));
-    }, Ye = [], Xr = async (e, r) => {
+    }, Ye = [], Kr = async (e, r) => {
       typeof Browser < "u" && Browser.init();
       for (var t of Ye) if (t.canHandle(r)) return u(t.handle.constructor.name === "AsyncFunction", "Filesystem plugin handlers must be async functions (See #24914)"), t.handle(e, r);
       return e;
     }, qe = async (e, r, t, o, i, a, s, l) => {
-      var c = r ? se.resolve(A.join2(e, r)) : e, p = Vr(`cp ${c}`);
-      qr(p);
+      var c = r ? se.resolve(A.join2(e, r)) : e, _ = Yr(`cp ${c}`);
+      Xr(_);
       try {
         var P = t;
-        typeof t == "string" && (P = await jr(t)), P = await Xr(P, c), l == null ? void 0 : l(), a || $r(e, r, P, o, i, s);
+        typeof t == "string" && (P = await $r(t)), P = await Kr(P, c), l == null ? void 0 : l(), a || Vr(e, r, P, o, i, s);
       } finally {
-        Yr(p);
+        qr(_);
       }
-    }, Kr = (e, r, t, o, i, a, s, l, c, p) => {
-      qe(e, r, t, o, i, l, c, p).then(a).catch(s);
+    }, Zr = (e, r, t, o, i, a, s, l, c, _) => {
+      qe(e, r, t, o, i, l, c, _).then(a).catch(s);
     }, n = {
       root: null,
       mounts: [],
@@ -997,7 +997,7 @@ let __tla = (async () => {
       readFiles: {},
       ErrnoError: class extends Error {
         constructor(e) {
-          super(he ? Gr(e) : "");
+          super(he ? jr(e) : "");
           __publicField(this, "name", "ErrnoError");
           this.errno = e;
           for (var r in Ve) if (Ve[r] === e) {
@@ -1070,7 +1070,7 @@ let __tla = (async () => {
         if (!e) throw new n.ErrnoError(44);
         r.follow_mount ?? (r.follow_mount = true), A.isAbs(e) || (e = n.cwd() + "/" + e);
         e: for (var t = 0; t < 40; t++) {
-          for (var o = e.split("/").filter((p) => !!p), i = n.root, a = "/", s = 0; s < o.length; s++) {
+          for (var o = e.split("/").filter((_) => !!_), i = n.root, a = "/", s = 0; s < o.length; s++) {
             var l = s === o.length - 1;
             if (l && r.parent) break;
             if (o[s] !== ".") {
@@ -1084,11 +1084,11 @@ let __tla = (async () => {
               a = A.join2(a, o[s]);
               try {
                 i = n.lookupNode(i, o[s]);
-              } catch (p) {
-                if ((p == null ? void 0 : p.errno) === 44 && l && r.noent_okay) return {
+              } catch (_) {
+                if ((_ == null ? void 0 : _.errno) === 44 && l && r.noent_okay) return {
                   path: a
                 };
-                throw p;
+                throw _;
               }
               if (n.isMountpoint(i) && (!l || r.follow_mount) && (i = i.mounted.root), n.isLink(i.mode) && (!l || r.follow)) {
                 if (!i.node_ops.readlink) throw new n.ErrnoError(52);
@@ -1279,7 +1279,7 @@ let __tla = (async () => {
         return r;
       },
       syncfs(e, r) {
-        typeof e == "function" && (r = e, e = false), n.syncFSRequests++, n.syncFSRequests > 1 && I(`warning: ${n.syncFSRequests} FS.syncfs operations in flight at once, probably just doing extra work`);
+        typeof e == "function" && (r = e, e = false), n.syncFSRequests++, n.syncFSRequests > 1 && L(`warning: ${n.syncFSRequests} FS.syncfs operations in flight at once, probably just doing extra work`);
         var t = n.getMounts(n.root.mount), o = 0;
         function i(l) {
           return u(n.syncFSRequests > 0), n.syncFSRequests--, r(l);
@@ -1399,7 +1399,7 @@ let __tla = (async () => {
           parent: true
         }), c = s.node, !l || !c) throw new n.ErrnoError(44);
         if (l.mount !== c.mount) throw new n.ErrnoError(75);
-        var p = n.lookupNode(l, i), P = se.relative(e, o);
+        var _ = n.lookupNode(l, i), P = se.relative(e, o);
         if (P.charAt(0) !== ".") throw new n.ErrnoError(28);
         if (P = se.relative(r, t), P.charAt(0) !== ".") throw new n.ErrnoError(55);
         var T;
@@ -1407,20 +1407,20 @@ let __tla = (async () => {
           T = n.lookupNode(c, a);
         } catch {
         }
-        if (p !== T) {
-          var _ = n.isDir(p.mode), w = n.mayDelete(l, i, _);
+        if (_ !== T) {
+          var E = n.isDir(_.mode), w = n.mayDelete(l, i, E);
           if (w) throw new n.ErrnoError(w);
-          if (w = T ? n.mayDelete(c, a, _) : n.mayCreate(c, a), w) throw new n.ErrnoError(w);
+          if (w = T ? n.mayDelete(c, a, E) : n.mayCreate(c, a), w) throw new n.ErrnoError(w);
           if (!l.node_ops.rename) throw new n.ErrnoError(63);
-          if (n.isMountpoint(p) || T && n.isMountpoint(T)) throw new n.ErrnoError(10);
+          if (n.isMountpoint(_) || T && n.isMountpoint(T)) throw new n.ErrnoError(10);
           if (c !== l && (w = n.nodePermissions(l, "w"), w)) throw new n.ErrnoError(w);
-          n.hashRemoveNode(p);
+          n.hashRemoveNode(_);
           try {
-            l.node_ops.rename(p, c, a), p.parent = c;
+            l.node_ops.rename(_, c, a), _.parent = c;
           } catch (C) {
             throw C;
           } finally {
-            n.hashAddNode(p);
+            n.hashAddNode(_);
           }
         }
       },
@@ -1553,7 +1553,7 @@ let __tla = (async () => {
       },
       open(e, r, t = 438) {
         if (e === "") throw new n.ErrnoError(44);
-        r = typeof r == "string" ? Wr(r) : r, r & 64 ? t = t & 4095 | 32768 : t = 0;
+        r = typeof r == "string" ? Gr(r) : r, r & 64 ? t = t & 4095 | 32768 : t = 0;
         var o, i;
         if (typeof e == "object") o = e;
         else {
@@ -1790,12 +1790,12 @@ let __tla = (async () => {
         var l = Ce(o, i), c = n.create(s, l);
         if (t) {
           if (typeof t == "string") {
-            for (var p = new Array(t.length), P = 0, T = t.length; P < T; ++P) p[P] = t.charCodeAt(P);
-            t = p;
+            for (var _ = new Array(t.length), P = 0, T = t.length; P < T; ++P) _[P] = t.charCodeAt(P);
+            t = _;
           }
           n.chmod(c, l | 146);
-          var _ = n.open(c, 577);
-          n.write(_, t, 0, t.length, 0, a), n.close(_), n.chmod(c, l);
+          var E = n.open(c, 577);
+          n.write(E, t, 0, t.length, 0, a), n.close(E), n.chmod(c, l);
         }
       },
       createDevice(e, r, t, o) {
@@ -1811,27 +1811,27 @@ let __tla = (async () => {
             var _a3;
             ((_a3 = o == null ? void 0 : o.buffer) == null ? void 0 : _a3.length) && o(10);
           },
-          read(l, c, p, P, T) {
-            for (var _ = 0, w = 0; w < P; w++) {
+          read(l, c, _, P, T) {
+            for (var E = 0, w = 0; w < P; w++) {
               var C;
               try {
                 C = t();
               } catch {
                 throw new n.ErrnoError(29);
               }
-              if (C === void 0 && _ === 0) throw new n.ErrnoError(6);
+              if (C === void 0 && E === 0) throw new n.ErrnoError(6);
               if (C == null) break;
-              _++, c[p + w] = C;
+              E++, c[_ + w] = C;
             }
-            return _ && (l.node.atime = Date.now()), _;
+            return E && (l.node.atime = Date.now()), E;
           },
-          write(l, c, p, P, T) {
-            for (var _ = 0; _ < P; _++) try {
-              o(c[p + _]);
+          write(l, c, _, P, T) {
+            for (var E = 0; E < P; E++) try {
+              o(c[_ + E]);
             } catch {
               throw new n.ErrnoError(29);
             }
-            return P && (l.node.mtime = l.node.ctime = Date.now()), _;
+            return P && (l.node.mtime = l.node.ctime = Date.now()), E;
           }
         }), n.mkdev(i, a, s);
       },
@@ -1850,29 +1850,29 @@ let __tla = (async () => {
             __publicField(this, "lengthKnown", false);
             __publicField(this, "chunks", []);
           }
-          get(_) {
-            if (!(_ > this.length - 1 || _ < 0)) {
-              var w = _ % this.chunkSize, C = _ / this.chunkSize | 0;
+          get(E) {
+            if (!(E > this.length - 1 || E < 0)) {
+              var w = E % this.chunkSize, C = E / this.chunkSize | 0;
               return this.getter(C)[w];
             }
           }
-          setDataGetter(_) {
-            this.getter = _;
+          setDataGetter(E) {
+            this.getter = E;
           }
           cacheLength() {
-            var _ = new XMLHttpRequest();
-            _.open("HEAD", t, false), _.send(null), _.status >= 200 && _.status < 300 || _.status === 304 || N("Couldn't load " + t + ". Status: " + _.status);
-            var w = Number(_.getResponseHeader("Content-length")), C, G = (C = _.getResponseHeader("Accept-Ranges")) && C === "bytes", j = (C = _.getResponseHeader("Content-Encoding")) && C === "gzip", B = 1024 * 1024;
-            G || (B = w);
-            var Y = (X, ce) => {
+            var E = new XMLHttpRequest();
+            E.open("HEAD", t, false), E.send(null), E.status >= 200 && E.status < 300 || E.status === 304 || N("Couldn't load " + t + ". Status: " + E.status);
+            var w = Number(E.getResponseHeader("Content-length")), C, G = (C = E.getResponseHeader("Accept-Ranges")) && C === "bytes", j = (C = E.getResponseHeader("Content-Encoding")) && C === "gzip", x = 1024 * 1024;
+            G || (x = w);
+            var q = (X, ce) => {
               X > ce && N("invalid range (" + X + ", " + ce + ") or no bytes requested!"), ce > w - 1 && N("only " + w + " bytes available! programmer error!");
               var U = new XMLHttpRequest();
-              return U.open("GET", t, false), w !== B && U.setRequestHeader("Range", "bytes=" + X + "-" + ce), U.responseType = "arraybuffer", U.overrideMimeType && U.overrideMimeType("text/plain; charset=x-user-defined"), U.send(null), U.status >= 200 && U.status < 300 || U.status === 304 || N("Couldn't load " + t + ". Status: " + U.status), U.response !== void 0 ? new Uint8Array(U.response || []) : Me(U.responseText || "");
+              return U.open("GET", t, false), w !== x && U.setRequestHeader("Range", "bytes=" + X + "-" + ce), U.responseType = "arraybuffer", U.overrideMimeType && U.overrideMimeType("text/plain; charset=x-user-defined"), U.send(null), U.status >= 200 && U.status < 300 || U.status === 304 || N("Couldn't load " + t + ". Status: " + U.status), U.response !== void 0 ? new Uint8Array(U.response || []) : Me(U.responseText || "");
             }, ke = this;
             ke.setDataGetter((X) => {
-              var ce = X * B, U = (X + 1) * B - 1;
-              return U = Math.min(U, w - 1), typeof ke.chunks[X] > "u" && (ke.chunks[X] = Y(ce, U)), typeof ke.chunks[X] > "u" && N("doXHR failed!"), ke.chunks[X];
-            }), (j || !w) && (B = w = 1, w = this.getter(0).length, B = w, x("LazyFiles on gzip forces download of the whole file when length is accessed")), this._length = w, this._chunkSize = B, this.lengthKnown = true;
+              var ce = X * x, U = (X + 1) * x - 1;
+              return U = Math.min(U, w - 1), typeof ke.chunks[X] > "u" && (ke.chunks[X] = q(ce, U)), typeof ke.chunks[X] > "u" && N("doXHR failed!"), ke.chunks[X];
+            }), (j || !w) && (x = w = 1, w = this.getter(0).length, x = w, H("LazyFiles on gzip forces download of the whole file when length is accessed")), this._length = w, this._chunkSize = x, this.lengthKnown = true;
           }
           get length() {
             return this.lengthKnown || this.cacheLength(), this._length;
@@ -1882,7 +1882,7 @@ let __tla = (async () => {
           }
         }
         if (globalThis.XMLHttpRequest) {
-          E || N("Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc");
+          p || N("Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc");
           var s = new a(), l = {
             isDevice: false,
             contents: s
@@ -1899,25 +1899,25 @@ let __tla = (async () => {
             }
           }
         });
-        var p = {};
-        for (const [T, _] of Object.entries(c.stream_ops)) p[T] = (...w) => (n.forceLoadFile(c), _(...w));
-        function P(T, _, w, C, G) {
+        var _ = {};
+        for (const [T, E] of Object.entries(c.stream_ops)) _[T] = (...w) => (n.forceLoadFile(c), E(...w));
+        function P(T, E, w, C, G) {
           var j = T.node.contents;
           if (G >= j.length) return 0;
-          var B = Math.min(j.length - G, C);
-          if (u(B >= 0), j.slice) for (var Y = 0; Y < B; Y++) _[w + Y] = j[G + Y];
-          else for (var Y = 0; Y < B; Y++) _[w + Y] = j.get(G + Y);
-          return B;
+          var x = Math.min(j.length - G, C);
+          if (u(x >= 0), j.slice) for (var q = 0; q < x; q++) E[w + q] = j[G + q];
+          else for (var q = 0; q < x; q++) E[w + q] = j.get(G + q);
+          return x;
         }
-        return p.read = (T, _, w, C, G) => (n.forceLoadFile(c), P(T, _, w, C, G)), p.mmap = (T, _, w, C, G) => {
+        return _.read = (T, E, w, C, G) => (n.forceLoadFile(c), P(T, E, w, C, G)), _.mmap = (T, E, w, C, G) => {
           n.forceLoadFile(c);
           var j = $e();
           if (!j) throw new n.ErrnoError(48);
-          return P(T, V, j, _, w), {
+          return P(T, Y, j, E, w), {
             ptr: j,
             allocated: true
           };
-        }, c.stream_ops = p, c;
+        }, c.stream_ops = _, c;
       },
       absolutePath() {
         N("FS.absolutePath has been removed; use PATH_FS.resolve instead");
@@ -1953,12 +1953,12 @@ let __tla = (async () => {
         return o + "/" + r;
       },
       writeStat(e, r) {
-        S[e >> 2] = r.dev, S[e + 4 >> 2] = r.mode, S[e + 8 >> 2] = r.nlink, S[e + 12 >> 2] = r.uid, S[e + 16 >> 2] = r.gid, S[e + 20 >> 2] = r.rdev, W[e + 24 >> 3] = BigInt(r.size), Pe[e + 32 >> 2] = 4096, Pe[e + 36 >> 2] = r.blocks;
+        k[e >> 2] = r.dev, k[e + 4 >> 2] = r.mode, k[e + 8 >> 2] = r.nlink, k[e + 12 >> 2] = r.uid, k[e + 16 >> 2] = r.gid, k[e + 20 >> 2] = r.rdev, W[e + 24 >> 3] = BigInt(r.size), Te[e + 32 >> 2] = 4096, Te[e + 36 >> 2] = r.blocks;
         var t = r.atime.getTime(), o = r.mtime.getTime(), i = r.ctime.getTime();
-        return W[e + 40 >> 3] = BigInt(Math.floor(t / 1e3)), S[e + 48 >> 2] = t % 1e3 * 1e3 * 1e3, W[e + 56 >> 3] = BigInt(Math.floor(o / 1e3)), S[e + 64 >> 2] = o % 1e3 * 1e3 * 1e3, W[e + 72 >> 3] = BigInt(Math.floor(i / 1e3)), S[e + 80 >> 2] = i % 1e3 * 1e3 * 1e3, W[e + 88 >> 3] = BigInt(r.ino), 0;
+        return W[e + 40 >> 3] = BigInt(Math.floor(t / 1e3)), k[e + 48 >> 2] = t % 1e3 * 1e3 * 1e3, W[e + 56 >> 3] = BigInt(Math.floor(o / 1e3)), k[e + 64 >> 2] = o % 1e3 * 1e3 * 1e3, W[e + 72 >> 3] = BigInt(Math.floor(i / 1e3)), k[e + 80 >> 2] = i % 1e3 * 1e3 * 1e3, W[e + 88 >> 3] = BigInt(r.ino), 0;
       },
       writeStatFs(e, r) {
-        S[e + 4 >> 2] = r.bsize, S[e + 60 >> 2] = r.bsize, W[e + 8 >> 3] = BigInt(r.blocks), W[e + 16 >> 3] = BigInt(r.bfree), W[e + 24 >> 3] = BigInt(r.bavail), W[e + 32 >> 3] = BigInt(r.files), W[e + 40 >> 3] = BigInt(r.ffree), S[e + 48 >> 2] = r.fsid, S[e + 64 >> 2] = r.flags, S[e + 56 >> 2] = r.namelen;
+        k[e + 4 >> 2] = r.bsize, k[e + 60 >> 2] = r.bsize, W[e + 8 >> 3] = BigInt(r.blocks), W[e + 16 >> 3] = BigInt(r.bfree), W[e + 24 >> 3] = BigInt(r.bavail), W[e + 32 >> 3] = BigInt(r.files), W[e + 40 >> 3] = BigInt(r.ffree), k[e + 48 >> 2] = r.fsid, k[e + 64 >> 2] = r.flags, k[e + 56 >> 2] = r.namelen;
       },
       doMsync(e, r, t, o, i) {
         if (!n.isFile(r.node.mode)) throw new n.ErrnoError(43);
@@ -1976,7 +1976,7 @@ let __tla = (async () => {
         return r;
       }
     };
-    function Zr(e) {
+    function Jr(e) {
       try {
         var r = Se.getStreamFromFD(e);
         return n.close(r), 0;
@@ -1985,27 +1985,27 @@ let __tla = (async () => {
         return t.errno;
       }
     }
-    var Jr = (e, r, t, o) => {
+    var Qr = (e, r, t, o) => {
       for (var i = 0, a = 0; a < t; a++) {
-        var s = S[r >> 2], l = S[r + 4 >> 2];
+        var s = k[r >> 2], l = k[r + 4 >> 2];
         r += 8;
-        var c = n.read(e, V, s, l, o);
+        var c = n.read(e, Y, s, l, o);
         if (c < 0) return -1;
         if (i += c, c < l) break;
       }
       return i;
     };
-    function Qr(e, r, t, o) {
+    function et(e, r, t, o) {
       try {
-        var i = Se.getStreamFromFD(e), a = Jr(i, r, t);
-        return S[o >> 2] = a, 0;
+        var i = Se.getStreamFromFD(e), a = Qr(i, r, t);
+        return k[o >> 2] = a, 0;
       } catch (s) {
         if (typeof n > "u" || s.name !== "ErrnoError") throw s;
         return s.errno;
       }
     }
-    function et(e, r, t, o) {
-      r = Nr(r);
+    function rt(e, r, t, o) {
+      r = Rr(r);
       try {
         if (isNaN(r)) return 61;
         var i = Se.getStreamFromFD(e);
@@ -2015,33 +2015,33 @@ let __tla = (async () => {
         return a.errno;
       }
     }
-    var rt = (e, r, t, o) => {
+    var tt = (e, r, t, o) => {
       for (var i = 0, a = 0; a < t; a++) {
-        var s = S[r >> 2], l = S[r + 4 >> 2];
+        var s = k[r >> 2], l = k[r + 4 >> 2];
         r += 8;
-        var c = n.write(e, V, s, l, o);
+        var c = n.write(e, Y, s, l, o);
         if (c < 0) return -1;
         if (i += c, c < l) break;
       }
       return i;
     };
-    function tt(e, r, t, o) {
+    function nt(e, r, t, o) {
       try {
-        var i = Se.getStreamFromFD(e), a = rt(i, r, t);
-        return S[o >> 2] = a, 0;
+        var i = Se.getStreamFromFD(e), a = tt(i, r, t);
+        return k[o >> 2] = a, 0;
       } catch (s) {
         if (typeof n > "u" || s.name !== "ErrnoError") throw s;
         return s.errno;
       }
     }
-    n.createPreloadedFile = Kr, n.preloadFile = qe, n.staticInit();
+    n.createPreloadedFile = Zr, n.preloadFile = qe, n.staticInit();
     {
-      if (d.noExitRuntime && d.noExitRuntime, d.preloadPlugins && (Ye = d.preloadPlugins), d.print && (x = d.print), d.printErr && (I = d.printErr), d.wasmBinary && (re = d.wasmBinary), it(), d.arguments && d.arguments, d.thisProgram && (R = d.thisProgram), u(typeof d.memoryInitializerPrefixURL > "u", "Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.pthreadMainPrefixURL > "u", "Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.cdInitializerPrefixURL > "u", "Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.filePackagePrefixURL > "u", "Module.filePackagePrefixURL option was removed, use Module.locateFile instead"), u(typeof d.read > "u", "Module.read option was removed"), u(typeof d.readAsync > "u", "Module.readAsync option was removed (modify readAsync in JS)"), u(typeof d.readBinary > "u", "Module.readBinary option was removed (modify readBinary in JS)"), u(typeof d.setWindowTitle > "u", "Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)"), u(typeof d.TOTAL_MEMORY > "u", "Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY"), u(typeof d.ENVIRONMENT > "u", "Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)"), u(typeof d.STACK_SIZE > "u", "STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time"), u(typeof d.wasmMemory > "u", "Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally"), u(typeof d.INITIAL_MEMORY > "u", "Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically"), d.preInit) for (typeof d.preInit == "function" && (d.preInit = [
+      if (d.noExitRuntime && d.noExitRuntime, d.preloadPlugins && (Ye = d.preloadPlugins), d.print && (H = d.print), d.printErr && (L = d.printErr), d.wasmBinary && (re = d.wasmBinary), at(), d.arguments && d.arguments, d.thisProgram && (R = d.thisProgram), u(typeof d.memoryInitializerPrefixURL > "u", "Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.pthreadMainPrefixURL > "u", "Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.cdInitializerPrefixURL > "u", "Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead"), u(typeof d.filePackagePrefixURL > "u", "Module.filePackagePrefixURL option was removed, use Module.locateFile instead"), u(typeof d.read > "u", "Module.read option was removed"), u(typeof d.readAsync > "u", "Module.readAsync option was removed (modify readAsync in JS)"), u(typeof d.readBinary > "u", "Module.readBinary option was removed (modify readBinary in JS)"), u(typeof d.setWindowTitle > "u", "Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)"), u(typeof d.TOTAL_MEMORY > "u", "Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY"), u(typeof d.ENVIRONMENT > "u", "Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)"), u(typeof d.STACK_SIZE > "u", "STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time"), u(typeof d.wasmMemory > "u", "Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally"), u(typeof d.INITIAL_MEMORY > "u", "Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically"), d.preInit) for (typeof d.preInit == "function" && (d.preInit = [
         d.preInit
       ]); d.preInit.length > 0; ) d.preInit.shift()();
       fe("preInit");
     }
-    var nt = [
+    var ot = [
       "writeI53ToI64",
       "writeI53ToI64Clamped",
       "writeI53ToI64Signaling",
@@ -2204,8 +2204,8 @@ let __tla = (async () => {
       "stackTrace",
       "getNativeTypeSize"
     ];
-    nt.forEach(me);
-    var ot = [
+    ot.forEach(me);
+    var it = [
       "run",
       "out",
       "err",
@@ -2441,30 +2441,30 @@ let __tla = (async () => {
       "printErr",
       "jstoi_s"
     ];
-    ot.forEach(J);
-    function it() {
-      Oe("fetchSettings");
+    it.forEach(J);
+    function at() {
+      Pe("fetchSettings");
     }
-    d._deform = H("_deform"), d._free = H("_free"), d._malloc = H("_malloc"), d._create_cached_solver = H("_create_cached_solver"), d._solve_cached_solver = H("_solve_cached_solver"), d._free_cached_solver = H("_free_cached_solver");
-    var Xe = H("_fflush"), Ke = H("_strerror"), Ie = H("_emscripten_stack_get_end"), Ze = H("_emscripten_stack_init"), be = H("wasmMemory");
-    function at(e) {
-      u(typeof e.deform < "u", "missing Wasm export: deform"), u(typeof e.free < "u", "missing Wasm export: free"), u(typeof e.malloc < "u", "missing Wasm export: malloc"), u(typeof e.create_cached_solver < "u", "missing Wasm export: create_cached_solver"), u(typeof e.solve_cached_solver < "u", "missing Wasm export: solve_cached_solver"), u(typeof e.free_cached_solver < "u", "missing Wasm export: free_cached_solver"), u(typeof e.fflush < "u", "missing Wasm export: fflush"), u(typeof e.strerror < "u", "missing Wasm export: strerror"), u(typeof e.emscripten_stack_get_end < "u", "missing Wasm export: emscripten_stack_get_end"), u(typeof e.emscripten_stack_get_base < "u", "missing Wasm export: emscripten_stack_get_base"), u(typeof e.emscripten_stack_init < "u", "missing Wasm export: emscripten_stack_init"), u(typeof e.emscripten_stack_get_free < "u", "missing Wasm export: emscripten_stack_get_free"), u(typeof e._emscripten_stack_restore < "u", "missing Wasm export: _emscripten_stack_restore"), u(typeof e._emscripten_stack_alloc < "u", "missing Wasm export: _emscripten_stack_alloc"), u(typeof e.emscripten_stack_get_current < "u", "missing Wasm export: emscripten_stack_get_current"), u(typeof e.memory < "u", "missing Wasm export: memory"), u(typeof e.__indirect_function_table < "u", "missing Wasm export: __indirect_function_table"), d._deform = Q("deform", 49), d._free = Q("free", 1), d._malloc = Q("malloc", 1), d._create_cached_solver = Q("create_cached_solver", 45), d._solve_cached_solver = Q("solve_cached_solver", 9), d._free_cached_solver = Q("free_cached_solver", 1), Xe = Q("fflush", 1), Ke = Q("strerror", 1), Ie = e.emscripten_stack_get_end, e.emscripten_stack_get_base, Ze = e.emscripten_stack_init, e.emscripten_stack_get_free, e._emscripten_stack_restore, e._emscripten_stack_alloc, e.emscripten_stack_get_current, be = e.memory, e.__indirect_function_table;
+    d._deform = B("_deform"), d._free = B("_free"), d._malloc = B("_malloc"), d._create_cached_solver = B("_create_cached_solver"), d._solve_cached_solver = B("_solve_cached_solver"), d._free_cached_solver = B("_free_cached_solver");
+    var Xe = B("_fflush"), Ke = B("_strerror"), Ie = B("_emscripten_stack_get_end"), Ze = B("_emscripten_stack_init"), Ae = B("wasmMemory");
+    function st(e) {
+      u(typeof e.deform < "u", "missing Wasm export: deform"), u(typeof e.free < "u", "missing Wasm export: free"), u(typeof e.malloc < "u", "missing Wasm export: malloc"), u(typeof e.create_cached_solver < "u", "missing Wasm export: create_cached_solver"), u(typeof e.solve_cached_solver < "u", "missing Wasm export: solve_cached_solver"), u(typeof e.free_cached_solver < "u", "missing Wasm export: free_cached_solver"), u(typeof e.fflush < "u", "missing Wasm export: fflush"), u(typeof e.strerror < "u", "missing Wasm export: strerror"), u(typeof e.emscripten_stack_get_end < "u", "missing Wasm export: emscripten_stack_get_end"), u(typeof e.emscripten_stack_get_base < "u", "missing Wasm export: emscripten_stack_get_base"), u(typeof e.emscripten_stack_init < "u", "missing Wasm export: emscripten_stack_init"), u(typeof e.emscripten_stack_get_free < "u", "missing Wasm export: emscripten_stack_get_free"), u(typeof e._emscripten_stack_restore < "u", "missing Wasm export: _emscripten_stack_restore"), u(typeof e._emscripten_stack_alloc < "u", "missing Wasm export: _emscripten_stack_alloc"), u(typeof e.emscripten_stack_get_current < "u", "missing Wasm export: emscripten_stack_get_current"), u(typeof e.memory < "u", "missing Wasm export: memory"), u(typeof e.__indirect_function_table < "u", "missing Wasm export: __indirect_function_table"), d._deform = Q("deform", 49), d._free = Q("free", 1), d._malloc = Q("malloc", 1), d._create_cached_solver = Q("create_cached_solver", 45), d._solve_cached_solver = Q("solve_cached_solver", 9), d._free_cached_solver = Q("free_cached_solver", 1), Xe = Q("fflush", 1), Ke = Q("strerror", 1), Ie = e.emscripten_stack_get_end, e.emscripten_stack_get_base, Ze = e.emscripten_stack_init, e.emscripten_stack_get_free, e._emscripten_stack_restore, e._emscripten_stack_alloc, e.emscripten_stack_get_current, Ae = e.memory, e.__indirect_function_table;
     }
     var Je = {
-      __assert_fail: wr,
-      __cxa_throw: kr,
-      _abort_js: Fr,
-      _tzset_js: Pr,
-      clock_time_get: Rr,
-      emscripten_resize_heap: Lr,
-      environ_get: zr,
-      environ_sizes_get: Br,
-      fd_close: Zr,
-      fd_read: Qr,
-      fd_seek: et,
-      fd_write: tt
+      __assert_fail: Sr,
+      __cxa_throw: Fr,
+      _abort_js: Pr,
+      _tzset_js: Tr,
+      clock_time_get: Mr,
+      emscripten_resize_heap: Ur,
+      environ_get: Br,
+      environ_sizes_get: xr,
+      fd_close: Jr,
+      fd_read: et,
+      fd_seek: rt,
+      fd_write: nt
     }, Qe;
-    function st() {
+    function lt() {
       Ze(), ue();
     }
     function Le() {
@@ -2472,23 +2472,23 @@ let __tla = (async () => {
         we = Le;
         return;
       }
-      if (st(), lr(), oe > 0) {
+      if (lt(), dr(), oe > 0) {
         we = Le;
         return;
       }
       function e() {
         var _a2;
-        u(!Qe), Qe = true, d.calledRun = true, !ie && (dr(), q == null ? void 0 : q(d), (_a2 = d.onRuntimeInitialized) == null ? void 0 : _a2.call(d), fe("onRuntimeInitialized"), u(!d._main, 'compiled without a main, but one is present. if you added it from JS, use Module["onRuntimeInitialized"]'), cr());
+        u(!Qe), Qe = true, d.calledRun = true, !ie && (cr(), V == null ? void 0 : V(d), (_a2 = d.onRuntimeInitialized) == null ? void 0 : _a2.call(d), fe("onRuntimeInitialized"), u(!d._main, 'compiled without a main, but one is present. if you added it from JS, use Module["onRuntimeInitialized"]'), ur());
       }
       d.setStatus ? (d.setStatus("Running..."), setTimeout(() => {
         setTimeout(() => d.setStatus(""), 1), e();
       }, 1)) : e(), Fe();
     }
     var de;
-    de = await _r(), Le(), he ? h = d : h = new Promise((e, r) => {
-      q = e, Ue = r;
+    de = await Er(), Le(), he ? h = d : h = new Promise((e, r) => {
+      V = e, Ue = r;
     });
-    for (const e of Object.keys(d)) e in m || Object.defineProperty(m, e, {
+    for (const e of Object.keys(d)) e in f || Object.defineProperty(f, e, {
       configurable: true,
       get() {
         N(`Access to module property ('${e}') is no longer possible via the module constructor argument; Instead, use the result of the module constructor.`);
@@ -2496,171 +2496,184 @@ let __tla = (async () => {
     });
     return h;
   }
-  const k = await ut();
-  ft = function(m, h, d, F, E) {
-    if (m.length === 0) return;
-    const y = [], b = rr(m, h, y), v = tr(d.supports, y), R = nr(d.loads, y), f = or(F, y), O = ir(F.cltLayups, y), z = ar(y), M = (E == null ? void 0 : E.includeReactions) ?? true, D = k._deform;
-    D(b.nodesPtr, m.length, b.elementsPtr, b.elementIndicesLength, b.elementSizesPtr, h.length, v.keysPtr, v.valuesPtr, v.size, R.keysPtr, R.valuesPtr, R.size, f.elasticities.keysPtr, f.elasticities.valuesPtr, f.elasticities.size, f.areas.keysPtr, f.areas.valuesPtr, f.areas.size, f.moiZ.keysPtr, f.moiZ.valuesPtr, f.moiZ.size, f.moiY.keysPtr, f.moiY.valuesPtr, f.moiY.size, f.shearMod.keysPtr, f.shearMod.valuesPtr, f.shearMod.size, f.torsion.keysPtr, f.torsion.valuesPtr, f.torsion.size, f.thickness.keysPtr, f.thickness.valuesPtr, f.thickness.size, f.poisson.keysPtr, f.poisson.valuesPtr, f.poisson.size, f.elasticitiesOrthogonal.keysPtr, f.elasticitiesOrthogonal.valuesPtr, f.elasticitiesOrthogonal.size, O.keysPtr, O.layerCountsPtr, O.optionsPtr, O.layersFlatPtr, O.size, M ? 1 : 0, z.deformationsDataPtrOutPtr, z.deformationsSizeOutPtr, z.reactionsDataPtrOutPtr, z.reactionsSizeOutPtr);
-    const L = sr(z);
-    return L.deformationsDataPtr && y.push(L.deformationsDataPtr), L.reactionsDataPtr && y.push(L.reactionsDataPtr), Ae(y), {
-      deformations: L.deformations,
-      reactions: L.reactions
+  const F = await ft();
+  mt = function(f, h, d, S, p) {
+    if (f.length === 0) return;
+    const y = [], b = rr(f, h, y), v = tr(d.supports, y), R = nr(d.loads, y), m = or(S, y), O = ir(S.cltLayups, y), z = ar(y), M = (p == null ? void 0 : p.includeReactions) ?? true, D = F._deform;
+    D(b.nodesPtr, f.length, b.elementsPtr, b.elementIndicesLength, b.elementSizesPtr, h.length, v.keysPtr, v.valuesPtr, v.size, R.keysPtr, R.valuesPtr, R.size, m.elasticities.keysPtr, m.elasticities.valuesPtr, m.elasticities.size, m.areas.keysPtr, m.areas.valuesPtr, m.areas.size, m.moiZ.keysPtr, m.moiZ.valuesPtr, m.moiZ.size, m.moiY.keysPtr, m.moiY.valuesPtr, m.moiY.size, m.shearMod.keysPtr, m.shearMod.valuesPtr, m.shearMod.size, m.torsion.keysPtr, m.torsion.valuesPtr, m.torsion.size, m.thickness.keysPtr, m.thickness.valuesPtr, m.thickness.size, m.poisson.keysPtr, m.poisson.valuesPtr, m.poisson.size, m.elasticitiesOrthogonal.keysPtr, m.elasticitiesOrthogonal.valuesPtr, m.elasticitiesOrthogonal.size, O.keysPtr, O.layerCountsPtr, O.optionsPtr, O.layersFlatPtr, O.size, M ? 1 : 0, z.deformationsDataPtrOutPtr, z.deformationsSizeOutPtr, z.reactionsDataPtrOutPtr, z.reactionsSizeOutPtr);
+    const I = sr(z);
+    return M && I.reactions.size && lr(I.reactions, d.loads), I.deformationsDataPtr && y.push(I.deformationsDataPtr), I.reactionsDataPtr && y.push(I.reactionsDataPtr), Oe(y), {
+      deformations: I.deformations,
+      reactions: I.reactions
     };
   };
-  mt = function(m, h, d, F) {
-    if (m.length === 0 || h.length === 0) throw new Error("createCachedDeformSolverCpp requires non-empty nodes/elements");
-    const E = [], y = rr(m, h, E), b = tr(d, E), v = or(F, E), R = ir(F.cltLayups, E), f = k._malloc(4);
-    E.push(f);
-    const O = k._malloc(4);
-    E.push(O);
-    const z = k._malloc(4);
-    E.push(z);
-    const M = k._malloc(8);
-    E.push(M);
-    const D = k._create_cached_solver, L = D(y.nodesPtr, m.length, y.elementsPtr, y.elementIndicesLength, y.elementSizesPtr, h.length, b.keysPtr, b.valuesPtr, b.size, v.elasticities.keysPtr, v.elasticities.valuesPtr, v.elasticities.size, v.areas.keysPtr, v.areas.valuesPtr, v.areas.size, v.moiZ.keysPtr, v.moiZ.valuesPtr, v.moiZ.size, v.moiY.keysPtr, v.moiY.valuesPtr, v.moiY.size, v.shearMod.keysPtr, v.shearMod.valuesPtr, v.shearMod.size, v.torsion.keysPtr, v.torsion.valuesPtr, v.torsion.size, v.thickness.keysPtr, v.thickness.valuesPtr, v.thickness.size, v.poisson.keysPtr, v.poisson.valuesPtr, v.poisson.size, v.elasticitiesOrthogonal.keysPtr, v.elasticitiesOrthogonal.valuesPtr, v.elasticitiesOrthogonal.size, R.keysPtr, R.layerCountsPtr, R.optionsPtr, R.layersFlatPtr, R.size, f, O, z, M), x = k.HEAPU32[f / 4], I = k.HEAPU32[O / 4], re = k.HEAPU32[z / 4], ie = k.HEAPF64[M / 8];
-    if (Ae(E), !L || !x) throw new Error("create_cached_solver failed");
-    const u = k._solve_cached_solver, te = k._free_cached_solver;
+  vt = function(f, h, d, S) {
+    if (f.length === 0 || h.length === 0) throw new Error("createCachedDeformSolverCpp requires non-empty nodes/elements");
+    const p = [], y = rr(f, h, p), b = tr(d, p), v = or(S, p), R = ir(S.cltLayups, p), m = F._malloc(4);
+    p.push(m);
+    const O = F._malloc(4);
+    p.push(O);
+    const z = F._malloc(4);
+    p.push(z);
+    const M = F._malloc(8);
+    p.push(M);
+    const D = F._create_cached_solver, I = D(y.nodesPtr, f.length, y.elementsPtr, y.elementIndicesLength, y.elementSizesPtr, h.length, b.keysPtr, b.valuesPtr, b.size, v.elasticities.keysPtr, v.elasticities.valuesPtr, v.elasticities.size, v.areas.keysPtr, v.areas.valuesPtr, v.areas.size, v.moiZ.keysPtr, v.moiZ.valuesPtr, v.moiZ.size, v.moiY.keysPtr, v.moiY.valuesPtr, v.moiY.size, v.shearMod.keysPtr, v.shearMod.valuesPtr, v.shearMod.size, v.torsion.keysPtr, v.torsion.valuesPtr, v.torsion.size, v.thickness.keysPtr, v.thickness.valuesPtr, v.thickness.size, v.poisson.keysPtr, v.poisson.valuesPtr, v.poisson.size, v.elasticitiesOrthogonal.keysPtr, v.elasticitiesOrthogonal.valuesPtr, v.elasticitiesOrthogonal.size, R.keysPtr, R.layerCountsPtr, R.optionsPtr, R.layersFlatPtr, R.size, m, O, z, M), H = F.HEAPU32[m / 4], L = F.HEAPU32[O / 4], re = F.HEAPU32[z / 4], ie = F.HEAPF64[M / 8];
+    if (Oe(p), !I || !H) throw new Error("create_cached_solver failed");
+    const u = F._solve_cached_solver, te = F._free_cached_solver;
     let ue = false;
     return {
-      dof: I,
+      dof: L,
       freeDof: re,
       setupTimeMs: ie,
-      solve: (H = /* @__PURE__ */ new Map(), Oe = {}) => {
+      solve: (B = /* @__PURE__ */ new Map(), Pe = {}) => {
         if (ue) throw new Error("Cached C++ solver was already disposed");
-        const Z = [], me = nr(H, Z), J = ar(Z);
-        u(x, me.keysPtr, me.valuesPtr, me.size, Oe.includeReactions ? 1 : 0, J.deformationsDataPtrOutPtr, J.deformationsSizeOutPtr, J.reactionsDataPtrOutPtr, J.reactionsSizeOutPtr);
-        const q = sr(J);
-        if (!q.deformations.size) throw Ae(Z), new Error("solve_cached_solver returned empty deformation map");
-        return q.deformationsDataPtr && Z.push(q.deformationsDataPtr), q.reactionsDataPtr && Z.push(q.reactionsDataPtr), Ae(Z), {
-          deformations: q.deformations,
-          reactions: q.reactions
+        const Z = [], me = nr(B, Z), J = ar(Z);
+        u(H, me.keysPtr, me.valuesPtr, me.size, Pe.includeReactions ? 1 : 0, J.deformationsDataPtrOutPtr, J.deformationsSizeOutPtr, J.reactionsDataPtrOutPtr, J.reactionsSizeOutPtr);
+        const V = sr(J);
+        if ((Pe.includeReactions ?? false) && V.reactions.size && lr(V.reactions, B), !V.deformations.size) throw Oe(Z), new Error("solve_cached_solver returned empty deformation map");
+        return V.deformationsDataPtr && Z.push(V.deformationsDataPtr), V.reactionsDataPtr && Z.push(V.reactionsDataPtr), Oe(Z), {
+          deformations: V.deformations,
+          reactions: V.reactions
         };
       },
       dispose: () => {
-        ue || (ue = true, te(x));
+        ue || (ue = true, te(H));
       }
     };
   };
-  function rr(m, h, d) {
-    const F = $(m.flat(), Float64Array, k.HEAPF64);
-    d.push(F);
-    const E = h.flat(), y = $(E, Uint32Array, k.HEAPU32);
+  function rr(f, h, d) {
+    const S = $(f.flat(), Float64Array, F.HEAPF64);
+    d.push(S);
+    const p = h.flat(), y = $(p, Uint32Array, F.HEAPU32);
     d.push(y);
-    const b = h.map((R) => R.length), v = $(b, Uint32Array, k.HEAPU32);
+    const b = h.map((R) => R.length), v = $(b, Uint32Array, F.HEAPU32);
     return d.push(v), {
-      nodesPtr: F,
+      nodesPtr: S,
       elementsPtr: y,
-      elementIndicesLength: E.length,
+      elementIndicesLength: p.length,
       elementSizesPtr: v
     };
   }
-  function tr(m, h) {
-    const d = m ? Array.from(m.keys()) : [], F = m ? Array.from(m.values()).flat().map((b) => b ? 1 : 0) : [], E = $(d, Uint32Array, k.HEAPU32);
-    h.push(E);
-    const y = $(F, Uint8Array, k.HEAPU8);
+  function tr(f, h) {
+    const d = f ? Array.from(f.keys()) : [], S = f ? Array.from(f.values()).flat().map((b) => b ? 1 : 0) : [], p = $(d, Uint32Array, F.HEAPU32);
+    h.push(p);
+    const y = $(S, Uint8Array, F.HEAPU8);
     return h.push(y), {
-      keysPtr: E,
+      keysPtr: p,
       valuesPtr: y,
       size: d.length
     };
   }
-  function nr(m, h) {
-    const d = m ? Array.from(m.keys()) : [], F = m ? Array.from(m.values()).flat() : [], E = $(d, Uint32Array, k.HEAPU32);
-    h.push(E);
-    const y = $(F, Float64Array, k.HEAPF64);
+  function nr(f, h) {
+    const d = f ? Array.from(f.keys()) : [], S = f ? Array.from(f.values()).flat() : [], p = $(d, Uint32Array, F.HEAPU32);
+    h.push(p);
+    const y = $(S, Float64Array, F.HEAPF64);
     return h.push(y), {
-      keysPtr: E,
+      keysPtr: p,
       valuesPtr: y,
       size: d.length
     };
   }
-  function K(m, h) {
-    const d = m ? Array.from(m.keys()) : [], F = m ? Array.from(m.values()) : [], E = $(d, Uint32Array, k.HEAPU32);
-    h.push(E);
-    const y = $(F, Float64Array, k.HEAPF64);
+  function K(f, h) {
+    const d = f ? Array.from(f.keys()) : [], S = f ? Array.from(f.values()) : [], p = $(d, Uint32Array, F.HEAPU32);
+    h.push(p);
+    const y = $(S, Float64Array, F.HEAPF64);
     return h.push(y), {
-      keysPtr: E,
+      keysPtr: p,
       valuesPtr: y,
       size: d.length
     };
   }
-  function or(m, h) {
+  function or(f, h) {
     return {
-      elasticities: K(m.elasticities, h),
-      elasticitiesOrthogonal: K(m.elasticitiesOrthogonal, h),
-      areas: K(m.areas, h),
-      moiZ: K(m.momentsOfInertiaZ, h),
-      moiY: K(m.momentsOfInertiaY, h),
-      shearMod: K(m.shearModuli, h),
-      torsion: K(m.torsionalConstants, h),
-      thickness: K(m.thicknesses, h),
-      poisson: K(m.poissonsRatios, h)
+      elasticities: K(f.elasticities, h),
+      elasticitiesOrthogonal: K(f.elasticitiesOrthogonal, h),
+      areas: K(f.areas, h),
+      moiZ: K(f.momentsOfInertiaZ, h),
+      moiY: K(f.momentsOfInertiaY, h),
+      shearMod: K(f.shearModuli, h),
+      torsion: K(f.torsionalConstants, h),
+      thickness: K(f.thicknesses, h),
+      poisson: K(f.poissonsRatios, h)
     };
   }
-  function ir(m, h) {
-    const d = m ? Array.from(m.entries()) : [], F = [], E = [], y = [], b = [];
+  function ir(f, h) {
+    const d = f ? Array.from(f.entries()) : [], S = [], p = [], y = [], b = [];
     for (const [z, M] of d) {
-      F.push(z), E.push(M.layers.length), y.push(M.options.shearCoupling ? 1 : 0, M.options.noGlueAtNarrowSide ? 1 : 0, M.options.strictSymmetryForElement ?? true ? 1 : 0, M.options.symmetryTolerance ?? 1e-6, M.options.r33 ?? 1, M.options.r66 ?? 1, M.options.r77 ?? 1, M.options.r88 ?? 1);
+      S.push(z), p.push(M.layers.length), y.push(M.options.shearCoupling ? 1 : 0, M.options.noGlueAtNarrowSide ? 1 : 0, M.options.strictSymmetryForElement ?? true ? 1 : 0, M.options.symmetryTolerance ?? 1e-6, M.options.r33 ?? 1, M.options.r66 ?? 1, M.options.r77 ?? 1, M.options.r88 ?? 1);
       for (const D of M.layers) b.push(D.thickness, D.thetaDeg, D.Ex, D.Ey, D.nuXY, D.Gxy, D.Gxz, D.Gyz);
     }
-    const v = $(F, Uint32Array, k.HEAPU32);
+    const v = $(S, Uint32Array, F.HEAPU32);
     h.push(v);
-    const R = $(E, Uint32Array, k.HEAPU32);
+    const R = $(p, Uint32Array, F.HEAPU32);
     h.push(R);
-    const f = $(y, Float64Array, k.HEAPF64);
-    h.push(f);
-    const O = $(b, Float64Array, k.HEAPF64);
+    const m = $(y, Float64Array, F.HEAPF64);
+    h.push(m);
+    const O = $(b, Float64Array, F.HEAPF64);
     return h.push(O), {
       keysPtr: v,
       layerCountsPtr: R,
-      optionsPtr: f,
+      optionsPtr: m,
       layersFlatPtr: O,
       size: d.length
     };
   }
-  function ar(m) {
-    const h = k._malloc(4);
-    m.push(h);
-    const d = k._malloc(4);
-    m.push(d);
-    const F = k._malloc(4);
-    m.push(F);
-    const E = k._malloc(4);
-    return m.push(E), {
+  function ar(f) {
+    const h = F._malloc(4);
+    f.push(h);
+    const d = F._malloc(4);
+    f.push(d);
+    const S = F._malloc(4);
+    f.push(S);
+    const p = F._malloc(4);
+    return f.push(p), {
       deformationsDataPtrOutPtr: h,
       deformationsSizeOutPtr: d,
-      reactionsDataPtrOutPtr: F,
-      reactionsSizeOutPtr: E
+      reactionsDataPtrOutPtr: S,
+      reactionsSizeOutPtr: p
     };
   }
-  function sr(m) {
-    const h = k.HEAPU32[m.deformationsDataPtrOutPtr / 4], d = k.HEAPU32[m.deformationsSizeOutPtr / 4], F = k.HEAPU32[m.reactionsDataPtrOutPtr / 4], E = k.HEAPU32[m.reactionsSizeOutPtr / 4], y = new Float64Array(k.HEAPF64.buffer, h, d), b = new Float64Array(k.HEAPF64.buffer, F, E), v = /* @__PURE__ */ new Map();
-    for (let f = 0; f < d; f += 7) {
-      const O = y[f];
-      v.set(O, Array.from(y.slice(f + 1, f + 7)));
+  function sr(f) {
+    const h = F.HEAPU32[f.deformationsDataPtrOutPtr / 4], d = F.HEAPU32[f.deformationsSizeOutPtr / 4], S = F.HEAPU32[f.reactionsDataPtrOutPtr / 4], p = F.HEAPU32[f.reactionsSizeOutPtr / 4], y = new Float64Array(F.HEAPF64.buffer, h, d), b = new Float64Array(F.HEAPF64.buffer, S, p), v = /* @__PURE__ */ new Map();
+    for (let m = 0; m < d; m += 7) {
+      const O = y[m];
+      v.set(O, Array.from(y.slice(m + 1, m + 7)));
     }
     const R = /* @__PURE__ */ new Map();
-    for (let f = 0; f < E; f += 7) {
-      const O = b[f];
-      R.set(O, Array.from(b.slice(f + 1, f + 7)));
+    for (let m = 0; m < p; m += 7) {
+      const O = b[m];
+      R.set(O, Array.from(b.slice(m + 1, m + 7)));
     }
     return {
       deformationsDataPtr: h,
-      reactionsDataPtr: F,
+      reactionsDataPtr: S,
       deformations: v,
       reactions: R
     };
   }
-  function Ae(m) {
-    m.forEach((h) => k._free(h));
+  function lr(f, h) {
+    (h == null ? void 0 : h.size) && f.forEach((d, S) => {
+      const p = h.get(S);
+      p && f.set(S, [
+        d[0] - p[0],
+        d[1] - p[1],
+        d[2] - p[2],
+        d[3] - p[3],
+        d[4] - p[4],
+        d[5] - p[5]
+      ]);
+    });
   }
-  function $(m, h, d) {
-    const F = new h(m), E = k._malloc(F.length * F.BYTES_PER_ELEMENT);
-    return d.set(F, E / F.BYTES_PER_ELEMENT), E;
+  function Oe(f) {
+    f.forEach((h) => F._free(h));
+  }
+  function $(f, h, d) {
+    const S = new h(f), p = F._malloc(S.length * S.BYTES_PER_ELEMENT);
+    return d.set(S, p / S.BYTES_PER_ELEMENT), p;
   }
 })();
 export {
   __tla,
-  mt as c,
-  ft as d
+  vt as c,
+  mt as d
 };
