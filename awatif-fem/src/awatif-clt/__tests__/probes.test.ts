@@ -67,7 +67,7 @@ describe("CLT stress probes", () => {
       "tauYZ",
     );
 
-    expect(tauMpa).toBeCloseTo(0.12, 12);
+    expect(tauMpa).toBeCloseTo(0.08, 12);
 
     const tau23Mpa = sampleClosestTransverseStressMpa(
       nodes,
@@ -78,7 +78,7 @@ describe("CLT stress probes", () => {
       "mid",
       "tau23",
     );
-    expect(tau23Mpa).toBeCloseTo(0.14, 12);
+    expect(tau23Mpa).toBeCloseTo(0.095, 12);
   });
 
   test("samples closest in-plane through-thickness profile in MPa", () => {
@@ -115,7 +115,7 @@ describe("CLT stress probes", () => {
     expect(samples).toBeDefined();
     expect(samples).toHaveLength(3);
     expect(samples?.[0].value).toBeCloseTo(0, 12);
-    expect(samples?.[1].value).toBeCloseTo(0.14, 12);
+    expect(samples?.[1].value).toBeCloseTo(0.095, 12);
     expect(samples?.[2].value).toBeCloseTo(0, 12);
   });
 });

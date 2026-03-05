@@ -82,7 +82,9 @@ export function sampleTransverseThroughThickness(
         component === "tau13" || component === "tau23"
           ? point.tauLayer
           : point.tauShell;
-      const index = component === "tauXZ" || component === "tau13" ? 0 : 1;
+      // Shell/layer transverse component extraction follows physical labels:
+      // tauXZ/tau13 -> vector index 1, tauYZ/tau23 -> vector index 0.
+      const index = component === "tauXZ" || component === "tau13" ? 1 : 0;
 
       samples.push({
         layerIndex: layer.layerIndex,

@@ -133,7 +133,11 @@ export function getLayerPointTransverseStressComponent(
   if (!pointValue) return undefined;
 
   const useLayerSystem = component === "tau13" || component === "tau23";
-  const componentIndex = component === "tauXZ" || component === "tau13" ? 0 : 1;
+  // Shell transverse strain vector ordering in this element path is [gammaYZ, gammaXZ].
+  // Keep physical component labels correct at extraction:
+  // - tauXZ / tau13 -> index 1
+  // - tauYZ / tau23 -> index 0
+  const componentIndex = component === "tauXZ" || component === "tau13" ? 1 : 0;
 
   return useLayerSystem
     ? pointValue.tauLayer[componentIndex]

@@ -17,7 +17,7 @@ for a `10 m x 2.45 m` slab with 7-layer layup.
 - `Mmax`: `Mxx` sampled strip-wise along `x`, maximum absolute value.
 - `sigmaMax`: at slab mid-span (`x = L/2, y = W/2`), top of layer 1 vs bottom
   of layer 7, take larger absolute value.
-- `tauMax`: `tauYZ` at layer 4 mid-point, sampled at `x = 1.0 m` and `y = W/2`
+- `tauMax`: `tauXZ` at layer 4 mid-point, sampled at `x = 1.0 m` and `y = W/2`
   (interior section to avoid support boundary singularity).
 - `wFin`: maximum downward nodal deflection.
 

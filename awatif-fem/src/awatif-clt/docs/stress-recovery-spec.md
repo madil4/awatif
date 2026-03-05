@@ -144,7 +144,7 @@ quantities as follows:
     (`x = L/2, y = W/2`), top of layer 1 and bottom of layer 7.
   - Use the larger absolute value.
 - Transverse shear stress `[MPa]`:
-  - Probe recovered `tauYZ` at the center of the 4th layer.
+  - Probe recovered `tauXZ` at the center of the 4th layer.
   - Use an interior section (`x = 1.0 m`, `y = W/2`) to avoid support-line
     boundary singularity at `x = 0`.
 - Deflection `[mm]`:

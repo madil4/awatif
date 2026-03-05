@@ -63,7 +63,7 @@ describe("CLT one-way plate benchmark (chapter 6.2)", () => {
       [TAU_SECTION_X, WIDTH / 2],
       3,
       "mid",
-      "tauYZ",
+      "tauXZ",
       { weightX: 2, weightY: 1 },
     ) ?? 0,
     );

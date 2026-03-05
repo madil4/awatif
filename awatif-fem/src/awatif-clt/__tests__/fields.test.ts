@@ -101,8 +101,8 @@ describe("CLT stress field extraction", () => {
     const shell = extractTransverseStressField(profiles, 0, "mid", "tauYZ");
     const layer = extractTransverseStressField(profiles, 0, "mid", "tau23");
 
-    expect(shell.get(3)).toEqual([-6, -6, -6]);
-    expect(layer.get(3)).toEqual([-60, -60, -60]);
+    expect(shell.get(3)).toEqual([5, 5, 5]);
+    expect(layer.get(3)).toEqual([50, 50, 50]);
   });
 
   test("computes extrema for element scalar fields", () => {

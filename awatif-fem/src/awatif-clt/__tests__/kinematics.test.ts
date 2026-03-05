@@ -83,6 +83,23 @@ describe("shell linear kinematics", () => {
     expect(g2[0]).toBeCloseTo(2 * g1[0], 12);
     expect(g2[1]).toBeCloseTo(2 * g1[1], 12);
   });
+
+  test("transverse shear strain component ordering is [gammaYZ, gammaXZ]", () => {
+    const wAlongX = buildShellDofs(nodes, (x) => ({
+      uz: x,
+    }));
+    const wAlongY = buildShellDofs(nodes, (_x, y) => ({
+      uz: y,
+    }));
+
+    const gammaFromX = getShellTransverseShearStrain(nodes, wAlongX);
+    const gammaFromY = getShellTransverseShearStrain(nodes, wAlongY);
+
+    expect(gammaFromX[0]).toBeCloseTo(0, 12);
+    expect(gammaFromX[1]).toBeCloseTo(1, 12);
+    expect(gammaFromY[0]).toBeCloseTo(1, 12);
+    expect(gammaFromY[1]).toBeCloseTo(0, 12);
+  });
 });
 
 function buildShellDofs(

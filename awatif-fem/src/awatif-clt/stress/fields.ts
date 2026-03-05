@@ -58,7 +58,7 @@ export function extractTransverseStressField(
     if (!p) return;
 
     const source = component === "tau13" || component === "tau23" ? p.tauLayer : p.tauShell;
-    const idx = component === "tauXZ" || component === "tau13" ? 0 : 1;
+    const idx = component === "tauXZ" || component === "tau13" ? 1 : 0;
     const v = source[idx];
     field.set(elementIndex, [v, v, v]);
   });
