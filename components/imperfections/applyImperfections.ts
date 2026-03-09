@@ -59,7 +59,7 @@ export function applyImperfections(
 
     // Local bow: offset internal nodes perpendicular to chord by e₀·sin(πt)
     if (params.localBow) {
-      const d = Number(params.bowRatioDenominator);
+      const d = params.bowRatioDenominator;
       for (const lineId of selectedLineIds) {
         applyLocalBow(
           lineId,
