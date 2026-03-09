@@ -9,20 +9,6 @@ export function getLocalStiffnessMatrix(
 ): number[][] {
   if (!nodes || !elementsProps) return [];
 
-  if (nodes.length === 2)
-    return getLocalStiffnessMatrixFrame(nodes, elementsProps, index, releases);
-
-  return [];
-}
-
-function getLocalStiffnessMatrixFrame(
-  nodes: Mesh["nodes"]["val"],
-  elementsProps: Mesh["elementsProps"]["val"] | undefined,
-  index: number,
-  releases?: Mesh["releases"]["val"],
-): number[][] {
-  if (!nodes || !elementsProps) return [];
-
   const elementProps = elementsProps?.get(index);
 
   const Iz = elementProps?.momentInertia ?? 0;
@@ -149,4 +135,3 @@ function condenseStiffnessMatrix(
 
   return result;
 }
-
