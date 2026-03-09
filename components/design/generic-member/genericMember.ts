@@ -2,14 +2,14 @@ import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import type { DesignTemplate } from "../data-model";
 
-type BeamParams = {
+type GenericMemberParams = {
   elasticity: string; // MPa
   area: string; // cm²
   momentInertia: string; // cm⁴
 };
 
-export const beam: DesignTemplate<BeamParams, any> = {
-  name: "Beam",
+export const genericMember: DesignTemplate<GenericMemberParams, any> = {
+  name: "Generic Member",
   defaultParams: {
     elasticity: "32836", // MPa ≈ C30 Ecm
     area: "625", // cm² = 250×250 mm
@@ -73,7 +73,7 @@ export const beam: DesignTemplate<BeamParams, any> = {
     };
   },
 
-  getReport: ({ params }: { params: BeamParams }) => {
+  getReport: ({ params }: { params: GenericMemberParams }) => {
     return html`
       <div
         style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary);"
