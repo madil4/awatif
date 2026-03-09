@@ -8,7 +8,7 @@ type LineMeshParams = {
 export const lineMesh: MeshTemplate<LineMeshParams> = {
   name: "Mesh",
   defaultParams: {
-    divisions: 1,
+    divisions: 8,
   },
 
   getParamsTemplate: ({ params }) => {
