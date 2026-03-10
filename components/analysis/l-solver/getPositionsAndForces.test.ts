@@ -2,30 +2,28 @@ import { describe, test, expect } from "vitest";
 import type { Mesh } from "../../data-model";
 import { getPositionsAndForces } from "./getPositionsAndForces";
 
-describe("positions and forces", () => {
-  test("Bar: from Logan's book example 3.9", () => {
-    const nodes: Mesh["nodes"]["val"] = [
-      [12, -3, -4],
-      [0, 0, 0],
-      [12, -3, -7],
-      [14, 6, 0],
-    ];
-    const elements: Mesh["elements"]["val"] = [
-      [1, 0],
-      [2, 0],
-      [3, 0],
-    ];
-    const supports: Mesh["supports"]["val"] = new Map([
-      [1, [true, true, true, false, false, false]],
-      [2, [true, true, true, false, false, false]],
-      [3, [true, true, true, false, false, false]],
-    ]);
-    const loads: Mesh["loads"]["val"] = new Map([[0, [20, 0, 0, 0, 0, 0]]]);
+describe("getPositionsAndForces", () => {
+  // Generic member default props (converted to analysis units)
+  const genericMemberProps = {
+    elasticity: 32_836_000, // kN/m² (32836 MPa × 1e3)
+    area: 0.0625, // m² (625 cm² / 1e4)
+    momentInertia: 0.00032552, // m⁴ (32552 cm⁴ / 1e8)
+  };
 
+  test("Cantilever column: single vertical member with horizontal tip load", () => {
+    const nodes: Mesh["nodes"]["val"] = [
+      [0, 0, 0], // base, fixed
+      [0, 3, 0], // top, free
+    ];
+    const elements: Mesh["elements"]["val"] = [[0, 1]];
+    const supports: Mesh["supports"]["val"] = new Map([
+      [0, [true, true, true, true, true, true]], // fixed
+    ]);
+    const loads: Mesh["loads"]["val"] = new Map([
+      [1, [100, 0, 0, 0, 0, 0]], // 100 kN in +X at tip
+    ]);
     const elementsProps: Mesh["elementsProps"]["val"] = new Map(
-      elements.map((_, i) => {
-        return [i, { elasticity: 210e6, area: 10e-4 }];
-      }),
+      elements.map((_, i) => [i, { ...genericMemberProps }]),
     );
 
     const { positions, internalForces } = getPositionsAndForces(
@@ -37,113 +35,52 @@ describe("positions and forces", () => {
     );
 
     expect(positions.length).toBe(nodes.length * 3);
-    expect(positions[0]).toBeCloseTo(12.001383724933236);
-    expect(positions[1]).toBeCloseTo(-3.00005156643246716524);
-    expect(positions[2]).toBeCloseTo(-4 + 0.00006015037593984961);
+    // Node 0: fixed, no displacement
+    expect(positions[0]).toBeCloseTo(0);
+    expect(positions[1]).toBeCloseTo(0);
+    expect(positions[2]).toBeCloseTo(0);
+    // Node 1: deflects in X due to 100 kN horizontal load
+    expect(positions[3]).toBeCloseTo(0.08420048355177608);
+    expect(positions[4]).toBeCloseTo(3);
+    expect(positions[5]).toBeCloseTo(0);
 
-    expect(internalForces.get(0)?.N[0]).toBeCloseTo(-20.526315789473685);
-    expect(internalForces.get(0)?.N[1]).toBeCloseTo(-20.526315789473685);
-    expect(internalForces.get(1)?.N[0]).toBeCloseTo(-4.210526315789473);
-    expect(internalForces.get(1)?.N[1]).toBeCloseTo(-4.210526315789473);
-    expect(internalForces.get(2)?.N[0]).toBeCloseTo(5.289408221642574);
-    expect(internalForces.get(2)?.N[1]).toBeCloseTo(5.289408221642574);
+    const f0 = internalForces.get(0)!;
+    expect(f0.N[0]).toBeCloseTo(0);
+    expect(f0.N[1]).toBeCloseTo(0);
+    expect(f0.Vy[0]).toBeCloseTo(100); // shear = applied load
+    expect(f0.Vy[1]).toBeCloseTo(100);
+    expect(f0.Vz[0]).toBeCloseTo(0);
+    expect(f0.Vz[1]).toBeCloseTo(0);
+    expect(f0.Mx[0]).toBeCloseTo(0);
+    expect(f0.Mx[1]).toBeCloseTo(0);
+    expect(f0.My[0]).toBeCloseTo(0);
+    expect(f0.My[1]).toBeCloseTo(0);
+    expect(f0.Mz[0]).toBeCloseTo(300); // moment at base = P × L = 100 × 3
+    expect(f0.Mz[1]).toBeCloseTo(0); // moment at free end = 0
   });
 
-  test("Beam with Mz release at end: propped cantilever", () => {
-    // Beam along X-axis, L=4m
-    // Node 0: fixed (all DOFs restrained)
-    // Node 1: roller (dx,dy,dz restrained) + Mz released at end
-    // Load: P = -10 kN at node 1 in Y direction
-    // This creates a propped cantilever (fixed at 0, pin at 1)
-    // Known solution: Mz at node 1 = 0 (released), Mz at node 0 = PL/2 (?)
-    // Actually for propped cantilever with point load at pin:
-    // The reaction at the pin end carries all the shear,
-    // and the moment at the fixed end = 0 because load is at the support.
-    // Better: apply load at a separate node.
-
-    // Use 2-element beam: node0(fixed) -- node1(loaded) -- node2(pin, Mz released)
-    const L = 4; // total length
+  test("Portal frame: pin and roller supports with horizontal and vertical loads", () => {
     const nodes: Mesh["nodes"]["val"] = [
-      [0, 0, 0], // fixed support
-      [L / 2, 0, 0], // midpoint, load applied here
-      [L, 0, 0], // pin support (Mz released)
+      [0, 0, 0], // base left, pin
+      [0, 4, 0], // top left
+      [6, 4, 0], // top right
+      [6, 0, 0], // base right, roller
     ];
     const elements: Mesh["elements"]["val"] = [
-      [0, 1], // element 0
-      [1, 2], // element 1
+      [0, 1], // left column
+      [1, 2], // beam
+      [2, 3], // right column
     ];
     const supports: Mesh["supports"]["val"] = new Map([
-      [0, [true, true, true, true, true, true]], // fixed
-      [2, [true, true, true, false, false, false]], // pin (translations only)
-    ]);
-    const P = -10; // kN downward
-    const loads: Mesh["loads"]["val"] = new Map([[1, [0, P, 0, 0, 0, 0]]]);
-
-    const E = 200e6; // kN/m²
-    const I = 1e-4; // m⁴
-    const A = 1e-2; // m²
-    const elementsProps: Mesh["elementsProps"]["val"] = new Map([
-      [0, { elasticity: E, area: A, momentInertia: I }],
-      [1, { elasticity: E, area: A, momentInertia: I }],
-    ]);
-
-    // Release Mz at end of element 1 (node 2)
-    const releases: Mesh["releases"]["val"] = new Map([
-      [1, [false, false, false, true]], // Mz_end released
-    ]);
-
-    const { internalForces } = getPositionsAndForces(
-      nodes,
-      elements,
-      loads,
-      supports,
-      elementsProps,
-      releases,
-    );
-
-    // Mz at the released end (end of element 1 = node 2) should be zero
-    expect(internalForces.get(1)?.Mz[1]).toBeCloseTo(0, 10);
-
-    // For a propped cantilever with point load P at midspan:
-    // Fixed end moment Mz = 3PL/16
-    // Here |P| = 10, L = 4, so |Mz_fixed| = 3 * 10 * 4 / 16 = 7.5
-    expect(internalForces.get(0)?.Mz[0]).toBeCloseTo(7.5, 5);
-  });
-
-  test("Frame: from Logan's book example 5.8", () => {
-    const nodes: Mesh["nodes"]["val"] = [
-      [2.5, 0, 0],
-      [0, 0, 0],
-      [2.5, 0, -2.5],
-      [2.5, -2.5, 0],
-    ];
-    const elements: Mesh["elements"]["val"] = [
-      [1, 0],
-      [2, 0],
-      [3, 0],
-    ];
-    const supports: Mesh["supports"]["val"] = new Map([
-      [1, [true, true, true, true, true, true]],
-      [2, [true, true, true, true, true, true]],
-      [3, [true, true, true, true, true, true]],
+      [0, [true, true, true, false, false, false]], // pin
+      [3, [false, true, true, false, false, false]], // horizontal-roller
     ]);
     const loads: Mesh["loads"]["val"] = new Map([
-      [0, [0, -200e3, 0, -100e3, 0, 0]],
+      [1, [50, 0, 0, 0, 0, 0]], // 50 kN horizontal at top left
+      [2, [0, -30, 0, 0, 0, 0]], // 30 kN downward at top right
     ]);
-
     const elementsProps: Mesh["elementsProps"]["val"] = new Map(
-      elements.map((_, i) => {
-        return [
-          i,
-          {
-            elasticity: 200e9,
-            shearModulus: 60e9,
-            momentInertia: 40e-6,
-            torsionalConstant: 20e-6,
-            area: 6.25e-3,
-          },
-        ];
-      }),
+      elements.map((_, i) => [i, { ...genericMemberProps }]),
     );
 
     const { positions, internalForces } = getPositionsAndForces(
@@ -154,46 +91,156 @@ describe("positions and forces", () => {
       elementsProps,
     );
 
-    expect(positions[0]).toBeCloseTo(2.5 + 0.0000017466534414748466);
-    expect(positions[1]).toBeCloseTo(0 - 0.0003356441727126348);
-    expect(positions[2]).toBeCloseTo(0 - 0.00005650787769304768);
+    expect(positions.length).toBe(nodes.length * 3);
+    // Node 0: pin support, no translation
+    expect(positions[0]).toBeCloseTo(0);
+    expect(positions[1]).toBeCloseTo(0);
+    expect(positions[2]).toBeCloseTo(0);
+    // Node 1: top left, sways under horizontal load
+    expect(positions[3]).toBeCloseTo(0.2496085216231015);
+    expect(positions[4]).toBeCloseTo(4.000064969342591);
+    expect(positions[5]).toBeCloseTo(0);
+    // Node 2: top right
+    expect(positions[6]).toBeCloseTo(6.249608521623101);
+    expect(positions[7]).toBeCloseTo(3.9998765582490763);
+    expect(positions[8]).toBeCloseTo(0);
+    // Node 3: roller, free in X
+    expect(positions[9]).toBeCloseTo(6.324327788495652);
+    expect(positions[10]).toBeCloseTo(0);
+    expect(positions[11]).toBeCloseTo(0);
 
-    expect(internalForces).toEqual(
-      new Map([
-        [
-          0,
-          {
-            N: [-873.3267207374233, -873.3267207374233],
-            Vy: [1299.1563606221894, 1299.1563606221894],
-            Vz: [215.43623884405804, 215.43623884405804],
-            Mx: [1801.0349678696236, 1801.0349678696236],
-            My: [-324.19036593091715, 214.40023117922803],
-            Mz: [1941.8793826628362, -1306.0115188926368],
-          },
-        ],
-        [
-          1,
-          {
-            N: [28253.93884652384, 28253.93884652384],
-            Vy: [30878.75728306041, 30878.75728306041],
-            Vz: [-121.0167229576055, -121.0167229576055],
-            Mx: [47.69008978276494, 47.69008978276494],
-            My: [96.37583632116228, -206.1659710728514],
-            Mz: [26591.54681802802, -50605.346389623],
-          },
-        ],
-        [
-          2,
-          {
-            N: [167822.0863563174, 167822.0863563174],
-            Vy: [-752.3099977798178, -752.3099977798178],
-            Vz: [-28469.375085367898, -28469.375085367898],
-            Mx: [-8.234260106376682, -8.234260106376682],
-            My: [23579.819070912377, -47593.61864250736],
-            Mz: [-622.4535653396724, 1258.3214291098718],
-          },
-        ],
-      ]),
+    // Left column: carries 50 kN shear, pin at base (Mz=0), moment at top
+    const f0 = internalForces.get(0)!;
+    expect(f0.N[0]).toBeCloseTo(-33.333333333325314);
+    expect(f0.N[1]).toBeCloseTo(-33.333333333325314);
+    expect(f0.Vy[0]).toBeCloseTo(49.999999999988034);
+    expect(f0.Vy[1]).toBeCloseTo(49.999999999988034);
+    expect(f0.Mz[0]).toBeCloseTo(0); // pin support: Mz at base = 0
+    expect(f0.Mz[1]).toBeCloseTo(-199.99999999995185);
+
+    // Beam: transfers moment and vertical load
+    const f1 = internalForces.get(1)!;
+    expect(f1.N[0]).toBeCloseTo(0);
+    expect(f1.N[1]).toBeCloseTo(0);
+    expect(f1.Vy[0]).toBeCloseTo(-33.33333333332531);
+    expect(f1.Vy[1]).toBeCloseTo(-33.33333333332531);
+    expect(f1.Mz[0]).toBeCloseTo(-199.9999999999518);
+    expect(f1.Mz[1]).toBeCloseTo(0);
+
+    // Right column: roller support, no moment anywhere
+    const f2 = internalForces.get(2)!;
+    expect(f2.N[0]).toBeCloseTo(63.33333333332531);
+    expect(f2.N[1]).toBeCloseTo(63.33333333332531);
+    expect(f2.Vy[0]).toBeCloseTo(0);
+    expect(f2.Vy[1]).toBeCloseTo(0);
+    expect(f2.Mz[0]).toBeCloseTo(0);
+    expect(f2.Mz[1]).toBeCloseTo(0);
+  });
+
+  test("2-story frame: fixed supports with releases on beams", () => {
+    const nodes: Mesh["nodes"]["val"] = [
+      [0, 0, 0], // base left, fixed
+      [8, 0, 0], // base right, fixed
+      [0, 4, 0], // 1st floor left
+      [8, 4, 0], // 1st floor right
+      [0, 8, 0], // 2nd floor left
+      [8, 8, 0], // 2nd floor right
+    ];
+    const elements: Mesh["elements"]["val"] = [
+      [0, 2], // left column, ground to 1st floor
+      [1, 3], // right column, ground to 1st floor
+      [2, 3], // 1st floor beam
+      [2, 4], // left column, 1st to 2nd floor
+      [3, 5], // right column, 1st to 2nd floor
+      [4, 5], // roof beam
+    ];
+    const supports: Mesh["supports"]["val"] = new Map([
+      [0, [true, true, true, true, true, true]], // fixed
+      [1, [true, true, true, true, true, true]], // fixed
+    ]);
+    const loads: Mesh["loads"]["val"] = new Map([
+      [2, [80, 0, 0, 0, 0, 0]], // 80 kN horizontal at 1st floor left
+      [4, [40, -20, 0, 0, 0, 0]], // 40 kN horizontal + 20 kN downward at roof left
+    ]);
+    const elementsProps: Mesh["elementsProps"]["val"] = new Map(
+      elements.map((_, i) => [i, { ...genericMemberProps }]),
     );
+    const releases: Mesh["releases"]["val"] = new Map([
+      [2, [true, true, true, true]], // both-ends on 1st floor beam
+      [5, [false, false, true, true]], // end release on roof beam
+    ]);
+
+    const { positions, internalForces } = getPositionsAndForces(
+      nodes,
+      elements,
+      loads,
+      supports,
+      elementsProps,
+      releases,
+    );
+
+    expect(positions.length).toBe(nodes.length * 3);
+    // Nodes 0 and 1: fixed bases, no displacement
+    expect(positions[0]).toBeCloseTo(0);
+    expect(positions[1]).toBeCloseTo(0);
+    expect(positions[2]).toBeCloseTo(0);
+    expect(positions[3]).toBeCloseTo(8);
+    expect(positions[4]).toBeCloseTo(0);
+    expect(positions[5]).toBeCloseTo(0);
+    // 1st floor nodes
+    expect(positions[6]).toBeCloseTo(0.1301618401584386);
+    expect(positions[7]).toBeCloseTo(3.9999933090545716);
+    expect(positions[8]).toBeCloseTo(0);
+    expect(positions[9]).toBeCloseTo(8.129896394476514);
+    expect(positions[10]).toBeCloseTo(3.999967709339874);
+    expect(positions[11]).toBeCloseTo(0);
+    // 2nd floor nodes
+    expect(positions[12]).toBeCloseTo(0.3205277894007078);
+    expect(positions[13]).toBeCloseTo(7.999986618109143);
+    expect(positions[14]).toBeCloseTo(0);
+    expect(positions[15]).toBeCloseTo(8.320532486375086);
+    expect(positions[16]).toBeCloseTo(7.999935418679748);
+    expect(positions[17]).toBeCloseTo(0);
+
+    // Verify releases: moments at released DOFs must be zero
+    const beam1 = internalForces.get(2)!;
+    expect(beam1.My[0]).toBeCloseTo(0);
+    expect(beam1.Mz[0]).toBeCloseTo(0);
+    expect(beam1.My[1]).toBeCloseTo(0);
+    expect(beam1.Mz[1]).toBeCloseTo(0);
+
+    const roofBeam = internalForces.get(5)!;
+    expect(roofBeam.My[1]).toBeCloseTo(0);
+    expect(roofBeam.Mz[1]).toBeCloseTo(0);
+
+    // Internal forces regression values
+    const f0 = internalForces.get(0)!;
+    expect(f0.N[0]).toBeCloseTo(3.432873188960432);
+    expect(f0.Vy[0]).toBeCloseTo(53.10980811721004);
+    expect(f0.Mz[0]).toBeCloseTo(244.72190081388828);
+    expect(f0.Mz[1]).toBeCloseTo(32.28266834504814);
+
+    const f1 = internalForces.get(1)!;
+    expect(f1.N[0]).toBeCloseTo(16.567126811039568);
+    expect(f1.Vy[0]).toBeCloseTo(66.89019188280238);
+    expect(f1.Mz[0]).toBeCloseTo(262.7410846978674);
+    expect(f1.Mz[1]).toBeCloseTo(-4.819682833342085);
+
+    const f3 = internalForces.get(3)!;
+    expect(f3.N[0]).toBeCloseTo(3.432873188960432);
+    expect(f3.Vy[0]).toBeCloseTo(41.204920708341206);
+    expect(f3.Mz[0]).toBeCloseTo(32.28266834504802);
+    expect(f3.Mz[1]).toBeCloseTo(-132.5370144883167);
+
+    const f4 = internalForces.get(4)!;
+    expect(f4.N[0]).toBeCloseTo(16.567126811039568);
+    expect(f4.Vy[0]).toBeCloseTo(-1.2049207083355213);
+    expect(f4.Mz[0]).toBeCloseTo(-4.819682833342085);
+    expect(f4.Mz[1]).toBeCloseTo(0);
+
+    expect(roofBeam.N[0]).toBeCloseTo(-1.2049207083327929);
+    expect(roofBeam.Vy[0]).toBeCloseTo(-16.567126811039568);
+    expect(roofBeam.Mz[0]).toBeCloseTo(-132.53701448831654);
+    expect(roofBeam.Mz[1]).toBeCloseTo(0);
   });
 });
