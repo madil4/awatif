@@ -20,7 +20,7 @@ describe("getPositionsAndForces", () => {
       [0, [true, true, true, true, true, true]], // fixed
     ]);
     const loads: Mesh["loads"]["val"] = new Map([
-      [1, [100, 0, 0, 0, 0, 0]], // 100 kN in +X at tip
+      [1, [10, -2000, 0, 0, 0, 0]], // 10 kN in +X, 2000 kN downward at tip
     ]);
     const elementsProps: Mesh["elementsProps"]["val"] = new Map(
       elements.map((_, i) => [i, { ...genericMemberProps }]),
@@ -39,23 +39,23 @@ describe("getPositionsAndForces", () => {
     expect(positions[0]).toBeCloseTo(0);
     expect(positions[1]).toBeCloseTo(0);
     expect(positions[2]).toBeCloseTo(0);
-    // Node 1: deflects in X due to 100 kN horizontal load
-    expect(positions[3]).toBeCloseTo(0.08420048355177608);
-    expect(positions[4]).toBeCloseTo(3);
+    // Node 1: deflects due to 10 kN in +X and 2000 kN downward
+    expect(positions[3]).toBeCloseTo(0.008420048355177607);
+    expect(positions[4]).toBeCloseTo(2.997076379583384);
     expect(positions[5]).toBeCloseTo(0);
 
     const f0 = internalForces.get(0)!;
-    expect(f0.N[0]).toBeCloseTo(0);
-    expect(f0.N[1]).toBeCloseTo(0);
-    expect(f0.Vy[0]).toBeCloseTo(100); // shear = applied load
-    expect(f0.Vy[1]).toBeCloseTo(100);
+    expect(f0.N[0]).toBeCloseTo(2000); // axial = applied downward load
+    expect(f0.N[1]).toBeCloseTo(2000);
+    expect(f0.Vy[0]).toBeCloseTo(10); // shear = applied horizontal load
+    expect(f0.Vy[1]).toBeCloseTo(10);
     expect(f0.Vz[0]).toBeCloseTo(0);
     expect(f0.Vz[1]).toBeCloseTo(0);
     expect(f0.Mx[0]).toBeCloseTo(0);
     expect(f0.Mx[1]).toBeCloseTo(0);
     expect(f0.My[0]).toBeCloseTo(0);
     expect(f0.My[1]).toBeCloseTo(0);
-    expect(f0.Mz[0]).toBeCloseTo(300); // moment at base = P × L = 100 × 3
+    expect(f0.Mz[0]).toBeCloseTo(30); // moment at base = P × L = 10 × 3
     expect(f0.Mz[1]).toBeCloseTo(0); // moment at free end = 0
   });
 
@@ -76,8 +76,7 @@ describe("getPositionsAndForces", () => {
       [3, [false, true, true, false, false, false]], // horizontal-roller
     ]);
     const loads: Mesh["loads"]["val"] = new Map([
-      [1, [50, 0, 0, 0, 0, 0]], // 50 kN horizontal at top left
-      [2, [0, -30, 0, 0, 0, 0]], // 30 kN downward at top right
+      [1, [10, -500, 0, 0, 0, 0]], // 10 kN in +X, 500 kN downward at top left
     ]);
     const elementsProps: Mesh["elementsProps"]["val"] = new Map(
       elements.map((_, i) => [i, { ...genericMemberProps }]),
@@ -96,41 +95,41 @@ describe("getPositionsAndForces", () => {
     expect(positions[0]).toBeCloseTo(0);
     expect(positions[1]).toBeCloseTo(0);
     expect(positions[2]).toBeCloseTo(0);
-    // Node 1: top left, sways under horizontal load
-    expect(positions[3]).toBeCloseTo(0.2496085216231015);
-    expect(positions[4]).toBeCloseTo(4.000064969342591);
+    // Node 1: top left, sways under load
+    expect(positions[3]).toBeCloseTo(0.049264214577594834);
+    expect(positions[4]).toBeCloseTo(3.9990384537296464);
     expect(positions[5]).toBeCloseTo(0);
     // Node 2: top right
-    expect(positions[6]).toBeCloseTo(6.249608521623101);
-    expect(positions[7]).toBeCloseTo(3.9998765582490763);
+    expect(positions[6]).toBeCloseTo(6.049264214577595);
+    expect(positions[7]).toBeCloseTo(3.9999870061314815);
     expect(positions[8]).toBeCloseTo(0);
     // Node 3: roller, free in X
-    expect(positions[9]).toBeCloseTo(6.324327788495652);
+    expect(positions[9]).toBeCloseTo(6.064865557699131);
     expect(positions[10]).toBeCloseTo(0);
     expect(positions[11]).toBeCloseTo(0);
 
-    // Left column: carries 50 kN shear, pin at base (Mz=0), moment at top
+    // Left column: carries 10 kN shear, pin at base (Mz=0), moment at top
     const f0 = internalForces.get(0)!;
-    expect(f0.N[0]).toBeCloseTo(-33.333333333325314);
-    expect(f0.N[1]).toBeCloseTo(-33.333333333325314);
-    expect(f0.Vy[0]).toBeCloseTo(49.999999999988034);
-    expect(f0.Vy[1]).toBeCloseTo(49.999999999988034);
+    expect(f0.N[0]).toBeCloseTo(493.3333333333349);
+    expect(f0.N[1]).toBeCloseTo(493.3333333333349);
+    expect(f0.Vy[0]).toBeCloseTo(9.999999999997627);
+    expect(f0.Vy[1]).toBeCloseTo(9.999999999997627);
     expect(f0.Mz[0]).toBeCloseTo(0); // pin support: Mz at base = 0
-    expect(f0.Mz[1]).toBeCloseTo(-199.99999999995185);
+    expect(f0.Mz[1]).toBeCloseTo(-39.99999999999049);
 
     // Beam: transfers moment and vertical load
     const f1 = internalForces.get(1)!;
     expect(f1.N[0]).toBeCloseTo(0);
     expect(f1.N[1]).toBeCloseTo(0);
-    expect(f1.Vy[0]).toBeCloseTo(-33.33333333332531);
-    expect(f1.Vy[1]).toBeCloseTo(-33.33333333332531);
-    expect(f1.Mz[0]).toBeCloseTo(-199.9999999999518);
+    expect(f1.Vy[0]).toBeCloseTo(-6.666666666665087);
+    expect(f1.Vy[1]).toBeCloseTo(-6.666666666665087);
+    expect(f1.Mz[0]).toBeCloseTo(-39.999999999990514);
     expect(f1.Mz[1]).toBeCloseTo(0);
 
     // Right column: roller support, no moment anywhere
     const f2 = internalForces.get(2)!;
-    expect(f2.N[0]).toBeCloseTo(63.33333333332531);
-    expect(f2.N[1]).toBeCloseTo(63.33333333332531);
+    expect(f2.N[0]).toBeCloseTo(6.6666666666650825);
+    expect(f2.N[1]).toBeCloseTo(6.6666666666650825);
     expect(f2.Vy[0]).toBeCloseTo(0);
     expect(f2.Vy[1]).toBeCloseTo(0);
     expect(f2.Mz[0]).toBeCloseTo(0);
@@ -159,8 +158,8 @@ describe("getPositionsAndForces", () => {
       [1, [true, true, true, true, true, true]], // fixed
     ]);
     const loads: Mesh["loads"]["val"] = new Map([
-      [2, [80, 0, 0, 0, 0, 0]], // 80 kN horizontal at 1st floor left
-      [4, [40, -20, 0, 0, 0, 0]], // 40 kN horizontal + 20 kN downward at roof left
+      [2, [10, -500, 0, 0, 0, 0]], // 10 kN in +X, 500 kN downward at 1st floor left
+      [4, [10, -500, 0, 0, 0, 0]], // 10 kN in +X, 500 kN downward at roof left
     ]);
     const elementsProps: Mesh["elementsProps"]["val"] = new Map(
       elements.map((_, i) => [i, { ...genericMemberProps }]),
@@ -188,18 +187,18 @@ describe("getPositionsAndForces", () => {
     expect(positions[4]).toBeCloseTo(0);
     expect(positions[5]).toBeCloseTo(0);
     // 1st floor nodes
-    expect(positions[6]).toBeCloseTo(0.1301618401584386);
-    expect(positions[7]).toBeCloseTo(3.9999933090545716);
+    expect(positions[6]).toBeCloseTo(0.024413442851907143);
+    expect(positions[7]).toBeCloseTo(3.998057778802822);
     expect(positions[8]).toBeCloseTo(0);
-    expect(positions[9]).toBeCloseTo(8.129896394476514);
-    expect(positions[10]).toBeCloseTo(3.999967709339874);
+    expect(positions[9]).toBeCloseTo(8.024370623690778);
+    expect(positions[10]).toBeCloseTo(3.999993140919434);
     expect(positions[11]).toBeCloseTo(0);
     // 2nd floor nodes
-    expect(positions[12]).toBeCloseTo(0.3205277894007078);
-    expect(positions[13]).toBeCloseTo(7.999986618109143);
+    expect(positions[12]).toBeCloseTo(0.06264148101180284);
+    expect(positions[13]).toBeCloseTo(7.9970900977445165);
     expect(positions[14]).toBeCloseTo(0);
-    expect(positions[15]).toBeCloseTo(8.320532486375086);
-    expect(positions[16]).toBeCloseTo(7.999935418679748);
+    expect(positions[15]).toBeCloseTo(8.062639569175237);
+    expect(positions[16]).toBeCloseTo(7.999986281838868);
     expect(positions[17]).toBeCloseTo(0);
 
     // Verify releases: moments at released DOFs must be zero
@@ -215,32 +214,32 @@ describe("getPositionsAndForces", () => {
 
     // Internal forces regression values
     const f0 = internalForces.get(0)!;
-    expect(f0.N[0]).toBeCloseTo(3.432873188960432);
-    expect(f0.Vy[0]).toBeCloseTo(53.10980811721004);
-    expect(f0.Mz[0]).toBeCloseTo(244.72190081388828);
-    expect(f0.Mz[1]).toBeCloseTo(32.28266834504814);
+    expect(f0.N[0]).toBeCloseTo(996.480862977086);
+    expect(f0.Vy[0]).toBeCloseTo(8.525101247765349);
+    expect(f0.Mz[0]).toBeCloseTo(43.985525511640844);
+    expect(f0.Mz[1]).toBeCloseTo(9.885120520579463);
 
     const f1 = internalForces.get(1)!;
-    expect(f1.N[0]).toBeCloseTo(16.567126811039568);
-    expect(f1.Vy[0]).toBeCloseTo(66.89019188280238);
-    expect(f1.Mz[0]).toBeCloseTo(262.7410846978674);
-    expect(f1.Mz[1]).toBeCloseTo(-4.819682833342085);
+    expect(f1.N[0]).toBeCloseTo(3.519137022913958);
+    expect(f1.Vy[0]).toBeCloseTo(11.474898752237017);
+    expect(f1.Mz[0]).toBeCloseTo(47.861378305061365);
+    expect(f1.Mz[1]).toBeCloseTo(1.9617832961133104);
 
     const f3 = internalForces.get(3)!;
-    expect(f3.N[0]).toBeCloseTo(3.432873188960432);
-    expect(f3.Vy[0]).toBeCloseTo(41.204920708341206);
-    expect(f3.Mz[0]).toBeCloseTo(32.28266834504802);
-    expect(f3.Mz[1]).toBeCloseTo(-132.5370144883167);
+    expect(f3.N[0]).toBeCloseTo(496.48086297708596);
+    expect(f3.Vy[0]).toBeCloseTo(9.509554175972795);
+    expect(f3.Mz[0]).toBeCloseTo(9.885120520579449);
+    expect(f3.Mz[1]).toBeCloseTo(-28.153096183311703);
 
     const f4 = internalForces.get(4)!;
-    expect(f4.N[0]).toBeCloseTo(16.567126811039568);
-    expect(f4.Vy[0]).toBeCloseTo(-1.2049207083355213);
-    expect(f4.Mz[0]).toBeCloseTo(-4.819682833342085);
+    expect(f4.N[0]).toBeCloseTo(3.519137022913958);
+    expect(f4.Vy[0]).toBeCloseTo(0.4904458240283276);
+    expect(f4.Mz[0]).toBeCloseTo(1.9617832961133175);
     expect(f4.Mz[1]).toBeCloseTo(0);
 
-    expect(roofBeam.N[0]).toBeCloseTo(-1.2049207083327929);
-    expect(roofBeam.Vy[0]).toBeCloseTo(-16.567126811039568);
-    expect(roofBeam.Mz[0]).toBeCloseTo(-132.53701448831654);
+    expect(roofBeam.N[0]).toBeCloseTo(0.49044582402711967);
+    expect(roofBeam.Vy[0]).toBeCloseTo(-3.5191370229139585);
+    expect(roofBeam.Mz[0]).toBeCloseTo(-28.153096183311668);
     expect(roofBeam.Mz[1]).toBeCloseTo(0);
   });
 });
