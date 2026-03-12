@@ -34,6 +34,7 @@ export function getReport({
     activeLoadCase && activeLoadCase in ULS_COMBINATIONS
       ? ULS_COMBINATIONS[activeLoadCase as keyof typeof ULS_COMBINATIONS]
       : null;
+  const hasMembers = designComponents.some((c) => c.geometry.length > 0);
 
   const renderReport = () => {
     let isFirstLine = true;
@@ -44,13 +45,29 @@ export function getReport({
           ? html`<div
               style="margin-bottom: 10px; padding: 6px 12px; border-radius: 4px; background: var(--bg-secondary); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-secondary);"
             >
-              <span style="font-weight: 500; color: var(--text-primary);">Load case:</span>
+              <span style="font-weight: 500; color: var(--text-primary);"
+                >Load case:</span
+              >
               ${ulsFactors
                 ? html`<span style="margin-left: 6px;"
                     >${loadCaseLabel} — ${ulsFactors.dead}·G +
                     ${ulsFactors.live}·Q + ${ulsFactors.wind}·W</span
                   >`
                 : html`<span style="margin-left: 6px;">${loadCaseLabel}</span>`}
+            </div>`
+          : null}
+        ${!hasMembers
+          ? html`<div
+              style="padding: 24px; text-align: center; color: var(--text-secondary); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; display: flex; flex-direction: column; gap: 8px; align-items: center;"
+            >
+              <span style="font-size: 1.2rem; opacity: 0.5;">📋</span>
+              <div style="font-weight: 500; color: var(--text-primary);">
+                No Report Available
+              </div>
+              <div style="font-size: 0.85rem; line-height: 1.4;">
+                Add a design component to your model to generate a detailed
+                report for your members.
+              </div>
             </div>`
           : null}
         ${designComponents.map((component) => {
