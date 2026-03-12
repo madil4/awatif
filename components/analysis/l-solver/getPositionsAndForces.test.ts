@@ -139,11 +139,11 @@ describe("getPositionsAndForces", () => {
   test("2-story frame: fixed supports with releases on beams", () => {
     const nodes: Mesh["nodes"]["val"] = [
       [0, 0, 0], // base left, fixed
-      [8, 0, 0], // base right, fixed
+      [6, 0, 0], // base right, fixed
       [0, 4, 0], // 1st floor left
-      [8, 4, 0], // 1st floor right
+      [6, 4, 0], // 1st floor right
       [0, 8, 0], // 2nd floor left
-      [8, 8, 0], // 2nd floor right
+      [6, 8, 0], // 2nd floor right
     ];
     const elements: Mesh["elements"]["val"] = [
       [0, 2], // left column, ground to 1st floor
@@ -183,22 +183,22 @@ describe("getPositionsAndForces", () => {
     expect(positions[0]).toBeCloseTo(0);
     expect(positions[1]).toBeCloseTo(0);
     expect(positions[2]).toBeCloseTo(0);
-    expect(positions[3]).toBeCloseTo(8);
+    expect(positions[3]).toBeCloseTo(6);
     expect(positions[4]).toBeCloseTo(0);
     expect(positions[5]).toBeCloseTo(0);
     // 1st floor nodes
-    expect(positions[6]).toBeCloseTo(0.024413442851907143);
-    expect(positions[7]).toBeCloseTo(3.998057778802822);
+    expect(positions[6]).toBeCloseTo(0.023267154105259393);
+    expect(positions[7]).toBeCloseTo(3.9980610563981953);
     expect(positions[8]).toBeCloseTo(0);
-    expect(positions[9]).toBeCloseTo(8.024370623690778);
-    expect(positions[10]).toBeCloseTo(3.999993140919434);
+    expect(positions[9]).toBeCloseTo(6.023233100725922);
+    expect(positions[10]).toBeCloseTo(3.999989863324061);
     expect(positions[11]).toBeCloseTo(0);
     // 2nd floor nodes
-    expect(positions[12]).toBeCloseTo(0.06264148101180284);
-    expect(positions[13]).toBeCloseTo(7.9970900977445165);
+    expect(positions[12]).toBeCloseTo(0.05807289754970511);
+    expect(positions[13]).toBeCloseTo(7.997096652935262);
     expect(positions[14]).toBeCloseTo(0);
-    expect(positions[15]).toBeCloseTo(8.062639569175237);
-    expect(positions[16]).toBeCloseTo(7.999986281838868);
+    expect(positions[15]).toBeCloseTo(6.058072905791333);
+    expect(positions[16]).toBeCloseTo(7.999979726648122);
     expect(positions[17]).toBeCloseTo(0);
 
     // Verify releases: moments at released DOFs must be zero
@@ -214,32 +214,32 @@ describe("getPositionsAndForces", () => {
 
     // Internal forces regression values
     const f0 = internalForces.get(0)!;
-    expect(f0.N[0]).toBeCloseTo(996.480862977086);
-    expect(f0.Vy[0]).toBeCloseTo(8.525101247765349);
-    expect(f0.Mz[0]).toBeCloseTo(43.985525511640844);
-    expect(f0.Mz[1]).toBeCloseTo(9.885120520579463);
+    expect(f0.N[0]).toBeCloseTo(994.7992517009686);
+    expect(f0.Vy[0]).toBeCloseTo(8.35514435598531);
+    expect(f0.Mz[0]).toBeCloseTo(42.22736355047718);
+    expect(f0.Mz[1]).toBeCloseTo(8.80678612653594);
 
     const f1 = internalForces.get(1)!;
-    expect(f1.N[0]).toBeCloseTo(3.519137022913958);
-    expect(f1.Vy[0]).toBeCloseTo(11.474898752237017);
-    expect(f1.Mz[0]).toBeCloseTo(47.861378305061365);
-    expect(f1.Mz[1]).toBeCloseTo(1.9617832961133104);
+    expect(f1.N[0]).toBeCloseTo(5.200748299031218);
+    expect(f1.Vy[0]).toBeCloseTo(11.64485564401214);
+    expect(f1.Mz[0]).toBeCloseTo(46.568146655322266);
+    expect(f1.Mz[1]).toBeCloseTo(-0.011275920726276922);
 
     const f3 = internalForces.get(3)!;
-    expect(f3.N[0]).toBeCloseTo(496.48086297708596);
-    expect(f3.Vy[0]).toBeCloseTo(9.509554175972795);
-    expect(f3.Mz[0]).toBeCloseTo(9.885120520579449);
-    expect(f3.Mz[1]).toBeCloseTo(-28.153096183311703);
+    expect(f3.N[0]).toBeCloseTo(494.7992517009686);
+    expect(f3.Vy[0]).toBeCloseTo(10.002818980180823);
+    expect(f3.Mz[0]).toBeCloseTo(8.806786126535933);
+    expect(f3.Mz[1]).toBeCloseTo(-31.204489794187324);
 
     const f4 = internalForces.get(4)!;
-    expect(f4.N[0]).toBeCloseTo(3.519137022913958);
-    expect(f4.Vy[0]).toBeCloseTo(0.4904458240283276);
-    expect(f4.Mz[0]).toBeCloseTo(1.9617832961133175);
+    expect(f4.N[0]).toBeCloseTo(5.200748299031218);
+    expect(f4.Vy[0]).toBeCloseTo(-0.0028189801815585724);
+    expect(f4.Mz[0]).toBeCloseTo(-0.011275920726291133);
     expect(f4.Mz[1]).toBeCloseTo(0);
 
-    expect(roofBeam.N[0]).toBeCloseTo(0.49044582402711967);
-    expect(roofBeam.Vy[0]).toBeCloseTo(-3.5191370229139585);
-    expect(roofBeam.Mz[0]).toBeCloseTo(-28.153096183311668);
+    expect(roofBeam.N[0]).toBeCloseTo(-0.0028189801814733073);
+    expect(roofBeam.Vy[0]).toBeCloseTo(-5.200748299031219);
+    expect(roofBeam.Mz[0]).toBeCloseTo(-31.20448979418731);
     expect(roofBeam.Mz[1]).toBeCloseTo(0);
   });
 });
