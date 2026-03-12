@@ -7,7 +7,7 @@ import { applyImperfections } from "../imperfections/applyImperfections";
  *
  * For each line:
  * - If a mesh component is assigned → uses that component's template and params
- * - If no component → auto-applies the "line-mesh" template with default spacing
+ * - If no component → auto-applies a single element mesh (no subdivision)
  */
 export function getMesh({
   geometry,
@@ -94,34 +94,13 @@ export function getMesh({
         lineToElements,
       );
     } else {
-      // No component: auto-apply line-mesh template
-      const defaultTemplate = templates
-        .get(ComponentsType.MESH)
-        ?.get("line-mesh") as MeshTemplate<any> | undefined;
-
-      if (!defaultTemplate) {
-        meshLineAsSimpleElement(
-          lineId,
-          startId,
-          endId,
-          startPoint,
-          endPoint,
-          allNodes,
-          allElements,
-          pointToNodes,
-          lineToElements,
-        );
-        return;
-      }
-
-      meshLineWithTemplate(
+      // No component: auto-apply a simple element (no subdivision)
+      meshLineAsSimpleElement(
         lineId,
         startId,
         endId,
         startPoint,
         endPoint,
-        defaultTemplate,
-        defaultTemplate.defaultParams,
         allNodes,
         allElements,
         pointToNodes,
