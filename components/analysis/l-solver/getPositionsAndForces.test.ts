@@ -10,7 +10,7 @@ describe("getPositionsAndForces", () => {
     momentInertia: 0.00032552, // m⁴ (32552 cm⁴ / 1e8)
   };
 
-  test("Cantilever column: single vertical member with horizontal tip load", () => {
+  test("1- Cantilever column: single vertical member with horizontal tip load", () => {
     const nodes: Mesh["nodes"]["val"] = [
       [0, 0, 0], // base, fixed
       [0, 3, 0], // top, free
@@ -59,7 +59,7 @@ describe("getPositionsAndForces", () => {
     expect(f0.Mz[1]).toBeCloseTo(0); // moment at free end = 0
   });
 
-  test("Portal frame: pin and roller supports with horizontal and vertical loads", () => {
+  test("2- Portal frame: pin and roller supports with horizontal and vertical loads", () => {
     const nodes: Mesh["nodes"]["val"] = [
       [0, 0, 0], // base left, pin
       [0, 4, 0], // top left
@@ -136,7 +136,7 @@ describe("getPositionsAndForces", () => {
     expect(f2.Mz[1]).toBeCloseTo(0);
   });
 
-  test("2-story frame: fixed supports with releases on beams", () => {
+  test("3- 2-story frame: fixed supports with releases on beams", () => {
     const nodes: Mesh["nodes"]["val"] = [
       [0, 0, 0], // base left, fixed
       [6, 0, 0], // base right, fixed
