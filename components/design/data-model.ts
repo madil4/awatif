@@ -39,7 +39,7 @@ export type DesignTemplate<
     design,
   }: {
     params: Params;
-    design?: Design;
+    design: Design;
   }) => TemplateResult;
 
   getDesign?: ({
