@@ -49,11 +49,9 @@ export function applyImperfections(
         y_max = Math.max(y_max, allNodes[ni][1]);
       }
       const height = y_max - y_base;
-      const thetaI = params.theta0;
-
       // Apply inclination relative to the base
       for (const ni of nodeIndices) {
-        allNodes[ni][0] += sign * thetaI * (allNodes[ni][1] - y_base);
+        allNodes[ni][0] += sign * params.theta0 * (allNodes[ni][1] - y_base);
       }
     }
 
