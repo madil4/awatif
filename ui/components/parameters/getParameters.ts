@@ -42,7 +42,7 @@ export function getParameters({
 
     templateContent.val = template.getParamsTemplate({
       params,
-      activeAnalysis: activeAnalysis?.val,
+      activeAnalysis: activeAnalysis?.val ?? "linear",
     });
   });
 

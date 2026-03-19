@@ -15,7 +15,7 @@ export type DesignTemplate<
     activeAnalysis,
   }: {
     params: State<Params>;
-    activeAnalysis?: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis["val"];
   }) => TemplateResult;
 
   getElementsProps: ({
