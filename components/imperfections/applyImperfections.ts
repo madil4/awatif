@@ -1,5 +1,5 @@
 import { ComponentsType, Geometry } from "../data-model";
-import { ImperfectionsParams, computeThetaI } from "./imperfections";
+import { ImperfectionsParams } from "./imperfections";
 
 export function applyImperfections(
   imperfectionComponents: {
@@ -49,7 +49,7 @@ export function applyImperfections(
         y_max = Math.max(y_max, allNodes[ni][1]);
       }
       const height = y_max - y_base;
-      const thetaI = computeThetaI(params, height);
+      const thetaI = params.theta0;
 
       // Apply inclination relative to the base
       for (const ni of nodeIndices) {

@@ -114,15 +114,3 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   },
 };
 
-// Helpers
-export function computeAlphaH(height: number): number {
-  return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
-}
-
-export function computeThetaI(
-  params: ImperfectionsParams,
-  height: number,
-): number {
-  const theta0 = params.theta0;
-  return theta0 * computeAlphaH(height);
-}
