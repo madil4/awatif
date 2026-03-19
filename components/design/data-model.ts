@@ -52,7 +52,7 @@ export type DesignTemplate<
     params: Params;
     lineElementForces: LineElementForces;
     length: number;
-    activeAnalysis?: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis["val"];
     imperfections?: Record<string, unknown>;
   }) => Design;
 
