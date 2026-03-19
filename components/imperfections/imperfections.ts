@@ -6,8 +6,6 @@ export type ImperfectionsParams = {
   // Global Inclination — EC2 §5.2(5)
   globalInclination: boolean;
   theta0: number; // Basic value θ₀ [rad] (default 1/200 = 0.005)
-  memberCount: number; // m for αₘ = √(0.5·(1+1/m))
-
   // Local Initial Bow — EC2 §5.2(7), Table 5.1
   localBow: boolean;
   bowRatioDenominator: number; // d where e₀ = L/d (default 400)
@@ -20,7 +18,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
   defaultParams: {
     globalInclination: true,
     theta0: 0.005,
-    memberCount: 2,
     localBow: false,
     bowRatioDenominator: 400,
     direction: "positive",
@@ -62,20 +59,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
               />
             </div>
 
-            <div>
-              <label>Member count m:</label>
-              <input
-                type="number"
-                step="1"
-                min="1"
-                .value=${live(p.memberCount)}
-                @input=${(e: Event) => {
-                  const value = (e.target as HTMLInputElement).valueAsNumber;
-                  if (isNaN(value)) return;
-                  params.val = { ...params.val, memberCount: value };
-                }}
-              />
-            </div>
           `
         : html``}
 
@@ -136,15 +119,10 @@ export function computeAlphaH(height: number): number {
   return Math.min(1, Math.max(2 / 3, 2 / Math.sqrt(height)));
 }
 
-export function computeAlphaM(memberCount: number): number {
-  return Math.sqrt(0.5 * (1 + 1 / memberCount));
-}
-
 export function computeThetaI(
   params: ImperfectionsParams,
   height: number,
 ): number {
   const theta0 = params.theta0;
-  const m = params.memberCount;
-  return theta0 * computeAlphaH(height) * computeAlphaM(m);
+  return theta0 * computeAlphaH(height);
 }
