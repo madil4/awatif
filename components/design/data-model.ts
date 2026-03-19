@@ -23,7 +23,7 @@ export type DesignTemplate<
     activeAnalysis,
   }: {
     params: Params;
-    activeAnalysis?: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis["val"];
   }) => {
     elasticity: number;
     area: number;

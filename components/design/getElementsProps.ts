@@ -50,7 +50,7 @@ export function getElementsProps({
 
       const props = template.getElementsProps({
         params: (component.params ?? template.defaultParams) as any,
-        activeAnalysis,
+        activeAnalysis: activeAnalysis ?? "linear",
       });
 
       // Apply properties to all elements that map to this geometry line
