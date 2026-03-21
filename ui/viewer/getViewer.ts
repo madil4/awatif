@@ -17,6 +17,7 @@ import { getMemberIndex } from "./memberIndex/getMemberIndex";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
+import { getShortcuts } from "./shortcuts/getShortcuts";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -185,6 +186,8 @@ export function getViewer({
       }),
     );
   }
+
+  getShortcuts({ camera, controls, scene, render });
 
   render();
 
