@@ -129,13 +129,3 @@ body {
     grid-area: 1 / 1 / 5 / 2;
   }
 }
-
-@media print {
-  html body * :not(#canvas, #canvas *) {
-    visibility: hidden !important;
-  }
-  #canvas,
-  #canvas * {
-    visibility: visible !important;
-  }
-}
