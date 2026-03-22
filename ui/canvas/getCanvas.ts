@@ -19,7 +19,7 @@ export function getCanvas({
         <h2>${canvasButton.val}</h2>
         <div class="canvas-header-actions">
           <button
-            @click=${() => window.print()}
+            @click=${() => printCanvas(canvas)}
             class="print-button"
             title="Print"
           >
@@ -43,4 +43,35 @@ export function getCanvas({
   });
 
   return container.firstElementChild as HTMLElement;
+}
+
+function printCanvas(canvas: State<HTMLDivElement | null>) {
+  if (canvas.val == null) return;
+
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "none";
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentDocument;
+  if (doc == null) return;
+
+  document.querySelectorAll('style, link[rel="stylesheet"]').forEach((node) => {
+    doc.head.appendChild(node.cloneNode(true));
+  });
+
+  const style = doc.createElement("style");
+  style.textContent =
+    "* { overflow: visible !important; color: black !important; }";
+  doc.head.appendChild(style);
+
+  doc.body.appendChild(canvas.val.cloneNode(true));
+  doc.close();
+
+  iframe.contentWindow?.focus();
+  iframe.contentWindow?.print();
+
+  document.body.removeChild(iframe);
 }
