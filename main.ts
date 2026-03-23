@@ -252,6 +252,11 @@ van.derive(() => {
       templates,
       activeLoadCase: display.loadCase?.val,
     });
+  } else if (canvasButton.val === CanvasButtons.DOCS) {
+    display.memberIndex.val = false;
+
+    const docs = document.createElement("div");
+    canvas.val = docs;
   } else {
     display.memberIndex.val = false;
 

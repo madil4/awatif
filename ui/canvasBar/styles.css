@@ -4,6 +4,8 @@
 }
 
 #toolbar button {
+  display: flex;
+  align-items: center;
   padding: 6px 12px;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -21,4 +23,12 @@
   background: var(--bg-hover);
   border-color: var(--accent);
   transform: translateY(-1px);
+}
+
+#toolbar button.docs-button {
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  justify-content: center;
 }
