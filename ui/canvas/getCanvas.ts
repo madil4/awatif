@@ -63,15 +63,17 @@ function printCanvas(canvas: State<HTMLDivElement | null>) {
   });
 
   const style = doc.createElement("style");
-  style.textContent =
-    "* { overflow: visible !important; color: black !important; }";
+  style.textContent = "* { overflow: visible !important; }";
   doc.head.appendChild(style);
 
   doc.body.appendChild(canvas.val.cloneNode(true));
   doc.close();
 
   iframe.contentWindow?.focus();
-  iframe.contentWindow?.print();
 
-  document.body.removeChild(iframe);
+  iframe.contentWindow?.addEventListener("afterprint", () => {
+    document.body.removeChild(iframe);
+  });
+
+  iframe.contentWindow?.print();
 }
