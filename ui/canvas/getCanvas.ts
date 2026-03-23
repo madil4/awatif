@@ -16,25 +16,40 @@ export function getCanvas({
   const template = () => html`
     <div id="canvas" class=" ${canvasButton.val ? "open" : ""}">
       <div class="canvas-header">
-        <h2>${canvasButton.val}</h2>
-        <div class="canvas-header-actions">
+        <div class="canvas-header-left">
+          <h2>${canvasButton.val}</h2>
           ${canvasButton.val === CanvasButtons.REPORT
             ? html`<button
                 @click=${() => printCanvas(canvas)}
                 class="print-button"
                 title="Print"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
                 Print
               </button>`
             : ""}
-          <button
-            class="close-button"
-            @click=${() => (canvasButton.val = null)}
-            title="Close"
-          >
-            ×
-          </button>
         </div>
+        <button
+          class="close-button"
+          @click=${() => (canvasButton.val = null)}
+          title="Close"
+        >
+          ×
+        </button>
       </div>
       <div class="canvas-body">${canvas.val}</div>
     </div>
