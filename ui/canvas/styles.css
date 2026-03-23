@@ -92,3 +92,49 @@
   overflow-x: hidden;
   background: var(--bg-primary);
 }
+
+@media print {
+  /* Force background colors to print */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove opacity from beta notice so text stays crisp */
+  [style*="opacity: 0.6"] {
+    opacity: 1 !important;
+  }
+
+  /* Warning/amber — replace near-transparent bg with solid light yellow */
+  [style*="background: #f59e0b"],
+  [style*="background:#f59e0b"] {
+    background: #fff8e1 !important;
+    color: #7a5800 !important;
+    border: 1px solid #d97706 !important;
+  }
+  [style*="color: #f59e0b"] {
+    color: #7a5800 !important;
+  }
+
+  /* Pass/green — replace near-transparent bg with solid light green */
+  [style*="background: #10b981"],
+  [style*="background:#10b981"] {
+    background: #ecfdf5 !important;
+    color: #065f46 !important;
+    border: 1px solid #059669 !important;
+  }
+  [style*="color: #10b981"] {
+    color: #065f46 !important;
+  }
+
+  /* Fail/red — replace near-transparent bg with solid light red */
+  [style*="background: #ef4444"],
+  [style*="background:#ef4444"] {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+    border: 1px solid #dc2626 !important;
+  }
+  [style*="color: #ef4444"] {
+    color: #991b1b !important;
+  }
+}
