@@ -8,6 +8,7 @@ import {
   templates as Templates,
 } from "@awatif/components";
 import { getGrid } from "./grid/getGrid";
+import { getAxes } from "./axes/getAxes";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
@@ -85,6 +86,7 @@ export function getViewer({
   controls.update();
 
   scene.add(getGrid({ grid, render }));
+  scene.add(getAxes({ size: grid.size, render }));
 
   if (geometry)
     scene.add(
