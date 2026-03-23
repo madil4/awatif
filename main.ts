@@ -19,7 +19,7 @@ import {
 } from "@awatif/components";
 import {
   getDisplay,
-  getTooltips,
+  getDocs,
   getAnalysisStatus,
   getLayout,
   getViewer,
@@ -255,8 +255,7 @@ van.derive(() => {
   } else if (canvasButton.val === CanvasButtons.DOCS) {
     display.memberIndex.val = false;
 
-    const docs = document.createElement("div");
-    canvas.val = docs;
+    canvas.val = getDocs();
   } else {
     display.memberIndex.val = false;
 
@@ -277,6 +276,6 @@ document.body.append(
       templates,
       loadCase: display.loadCase,
     }),
-    footer: [getAnalysisStatus(analysisStatus, display), getTooltips()],
+    footer: [getAnalysisStatus(analysisStatus, display)],
   }),
 );
