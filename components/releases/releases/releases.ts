@@ -24,7 +24,7 @@ export const releases: ReleaseTemplate<ReleasesParams> = {
   getParamsTemplate: ({ params }) => {
     return html`
       <div>
-        <label>Release At:</label>
+        <label>Bending Release At:</label>
         <select
           @change=${(e: Event) =>
             (params.val = {
