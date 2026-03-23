@@ -25,10 +25,10 @@
   background: var(--bg-tertiary);
 }
 
-.canvas-header-actions {
+.canvas-header-left {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
 }
 
 .canvas-header h2 {
@@ -39,12 +39,15 @@
 }
 
 .canvas-header .print-button {
-  padding: 6px 12px;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   border: 1px solid var(--border);
   border-radius: 3px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -52,8 +55,8 @@
 
 .canvas-header .print-button:hover {
   background: var(--bg-hover);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
 }
 
 .canvas-header .close-button {
