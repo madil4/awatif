@@ -3,6 +3,7 @@ export type {
   Mesh,
   Components,
   ActiveComponent,
+  ComponentEntry,
 } from "./data-model";
 export { ComponentsType } from "./data-model";
 
