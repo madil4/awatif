@@ -6,6 +6,7 @@ import "./styles.css";
 
 export enum CanvasButtons {
   REPORT = "Report",
+  DOCS = "Docs",
 }
 
 export function getCanvasBar({
@@ -13,7 +14,7 @@ export function getCanvasBar({
 }: {
   canvasButton: State<CanvasButtons | null>;
 }): HTMLElement {
-  const buttons = [CanvasButtons.REPORT];
+  const buttons = [CanvasButtons.DOCS, CanvasButtons.REPORT];
 
   const container = document.createElement("div");
   container.id = "toolbar";
@@ -22,13 +23,14 @@ export function getCanvasBar({
     ${buttons.map(
       (button) => html`
         <button
+          class=${button === CanvasButtons.DOCS ? "docs-button" : ""}
           @click=${() => {
             canvasButton.val = canvasButton.val === button ? null : button;
           }}
         >
-          ${button}
+          ${button === CanvasButtons.DOCS ? "?" : button}
         </button>
-      `
+      `,
     )}
   `;
 

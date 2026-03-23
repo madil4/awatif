@@ -18,13 +18,15 @@ export function getCanvas({
       <div class="canvas-header">
         <h2>${canvasButton.val}</h2>
         <div class="canvas-header-actions">
-          <button
-            @click=${() => printCanvas(canvas)}
-            class="print-button"
-            title="Print"
-          >
-            Print
-          </button>
+          ${canvasButton.val === CanvasButtons.REPORT
+            ? html`<button
+                @click=${() => printCanvas(canvas)}
+                class="print-button"
+                title="Print"
+              >
+                Print
+              </button>`
+            : ""}
           <button
             class="close-button"
             @click=${() => (canvasButton.val = null)}
