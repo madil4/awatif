@@ -72,10 +72,7 @@ export function getViewer({
     spacing: display?.grid?.spacing ?? van.state(1),
   };
 
-  const displayScale = van.state(grid.size.rawVal / 10);
-  van.derive(() => {
-    displayScale.val = grid.size.val / 10;
-  });
+  const displayScale = display?.displayScale ?? van.state(1);
 
   camera.position.set(
     grid.size.rawVal / 2,
