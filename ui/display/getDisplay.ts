@@ -61,48 +61,44 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
             </select>
           </div>`
         : ""}
-      ${display?.displayScale
+      ${display?.geometry
         ? html`
             <div class="display-item">
-              <label>Display Scale</label>
-              <input
-                type="range"
-                min="0.1"
-                max="5"
-                step="0.1"
-                .value=${display.displayScale.val}
-                @input=${(e: Event) =>
-                  (display.displayScale!.val = Number(
-                    (e.target as HTMLInputElement).value,
-                  ))}
-              />
-              <span class="value-display">${display.displayScale.val}</span>
+              <label>Geometry</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <span
+                    style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
+                    >Line</span
+                  >
+                  <input
+                    type="checkbox"
+                    .checked=${display.geometry.val}
+                    @change=${(e: Event) =>
+                      (display.geometry.val = (
+                        e.target as HTMLInputElement
+                      ).checked)}
+                  />
+                </div>
+                <div
+                  style="display: flex; align-items: center; gap: 4px; border-left: 1px solid var(--border); padding-left: 8px;"
+                >
+                  <span
+                    style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
+                    >Index</span
+                  >
+                  <input
+                    type="checkbox"
+                    .checked=${display.memberIndex.val}
+                    @change=${(e: Event) =>
+                      (display.memberIndex.val = (
+                        e.target as HTMLInputElement
+                      ).checked)}
+                  />
+                </div>
+              </div>
             </div>
           `
-        : ""}
-      ${display?.geometry
-        ? html` <div class="display-item">
-            <label>Geometry</label>
-            <input
-              type="checkbox"
-              .checked=${display.geometry.val}
-              @change=${(e: Event) =>
-                (display.geometry.val = (e.target as HTMLInputElement).checked)}
-            />
-          </div>`
-        : ""}
-      ${display?.memberIndex
-        ? html` <div class="display-item">
-            <label>Member Index</label>
-            <input
-              type="checkbox"
-              .checked=${display.memberIndex.val}
-              @change=${(e: Event) =>
-                (display.memberIndex.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
-          </div>`
         : ""}
       ${display?.mesh
         ? html` <div class="display-item">
@@ -204,6 +200,25 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   Reactions
                 </option>
               </select>
+            </div>
+          `
+        : ""}
+      ${display?.displayScale
+        ? html`
+            <div class="display-item">
+              <label>Display Scale</label>
+              <input
+                type="range"
+                min="0.1"
+                max="5"
+                step="0.1"
+                .value=${display.displayScale.val}
+                @input=${(e: Event) =>
+                  (display.displayScale!.val = Number(
+                    (e.target as HTMLInputElement).value,
+                  ))}
+              />
+              <span class="value-display">${display.displayScale.val}</span>
             </div>
           `
         : ""}
