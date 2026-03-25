@@ -58,7 +58,7 @@
   font-size: 0.8rem;
 }
 
-#display .display-item input {
+#display .display-item input[type="number"] {
   max-width: 50px;
   padding: 3px 6px;
 
@@ -70,7 +70,20 @@
   transition: border-color 0.2s ease;
 }
 
-#display .display-item input:focus {
+#display .display-item input[type="range"] {
+  width: 50px;
+  margin: 0;
+  cursor: pointer;
+}
+
+#display .display-item input[type="number"]:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+#display .value-display {
+  min-width: 25px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: right;
 }

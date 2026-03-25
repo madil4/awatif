@@ -61,6 +61,25 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
             </select>
           </div>`
         : ""}
+      ${display?.displayScale
+        ? html`
+            <div class="display-item">
+              <label>Display Scale</label>
+              <input
+                type="range"
+                min="0.1"
+                max="5"
+                step="0.1"
+                .value=${display.displayScale.val}
+                @input=${(e: Event) =>
+                  (display.displayScale!.val = Number(
+                    (e.target as HTMLInputElement).value,
+                  ))}
+              />
+              <span class="value-display">${display.displayScale.val}</span>
+            </div>
+          `
+        : ""}
       ${display?.geometry
         ? html` <div class="display-item">
             <label>Geometry</label>
@@ -79,7 +98,9 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               type="checkbox"
               .checked=${display.memberIndex.val}
               @change=${(e: Event) =>
-                (display.memberIndex.val = (e.target as HTMLInputElement).checked)}
+                (display.memberIndex.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
             />
           </div>`
         : ""}
@@ -136,7 +157,9 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
               type="checkbox"
               .checked=${display.releases.val}
               @change=${(e: Event) =>
-                (display.releases!.val = (e.target as HTMLInputElement).checked)}
+                (display.releases!.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
             />
           </div>`
         : ""}
@@ -241,24 +264,6 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   `,
                 )}
               </select>
-            </div>
-          `
-        : ""}
-      ${display?.displayScale
-        ? html`
-            <div class="display-item">
-              <label>Display Scale</label>
-              <input
-                type="range"
-                min="0.1"
-                max="5"
-                step="0.1"
-                .value=${display.displayScale.val}
-                @input=${(e: Event) =>
-                  (display.displayScale!.val = Number(
-                    (e.target as HTMLInputElement).value,
-                  ))}
-              />
             </div>
           `
         : ""}
