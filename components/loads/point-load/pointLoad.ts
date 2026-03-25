@@ -67,16 +67,16 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     const Fy = params.Fy;
     const group = new THREE.Group();
 
-    const ARROW_LENGTH = 1 * 0.4 * displayScale;
-    const ARROW_HEAD_LENGTH = 0.3 * 0.4 * displayScale;
-    const ARROW_HEAD_WIDTH = 0.2 * 0.4 * displayScale;
+    const ARROW_LENGTH = 0.3 * displayScale;
+    const ARROW_HEAD_LENGTH = 0.15 * displayScale;
+    const ARROW_HEAD_WIDTH = 0.1 * displayScale;
     const COLOR_X = 0xff0000; // Red for X direction
     const COLOR_Y = 0x00ff00; // Green for Y direction
 
     group.position.set(position[0], position[1], position[2]);
     group.renderOrder = 5;
 
-    const OFFSET = 0.25 * displayScale; // Offset distance from the point
+    const OFFSET = 0.15 * displayScale; // Offset distance from the point
 
     if (Fx !== 0) {
       const direction = new THREE.Vector3(Fx > 0 ? 1 : -1, 0, 0);
@@ -95,13 +95,13 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
       const labelX = getText(
         `${Math.abs(Fx)} KN`,
         [
-          offset.x + direction.x * (ARROW_LENGTH + 0.4 * displayScale),
+          offset.x + direction.x * (ARROW_LENGTH + 0.15 * displayScale),
           offset.y,
           offset.z,
         ],
         "#ffffff",
         0.3 * displayScale,
-        { backgroundColor: "rgba(0, 0, 0, 0.6)", padding: 20 },
+        { backgroundColor: "rgba(0, 0, 0, 0.6)" },
       );
       group.add(labelX);
     }
@@ -124,12 +124,12 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         `${Math.abs(Fy)} KN`,
         [
           offset.x,
-          offset.y + direction.y * (ARROW_LENGTH + 0.3 * displayScale),
+          offset.y + direction.y * (ARROW_LENGTH + 0.15 * displayScale),
           offset.z,
         ],
         "#ffffff",
         0.3 * displayScale,
-        { backgroundColor: "rgba(0, 0, 0, 0.6)", padding: 20 },
+        { backgroundColor: "rgba(0, 0, 0, 0.6)" },
       );
       group.add(labelY);
     }

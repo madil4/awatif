@@ -63,7 +63,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
   getObject3D: ({ params, position, displayScale }) => {
     const group = new THREE.Group();
 
-    const SIZE = 0.4 * displayScale;
+    const SIZE = 0.3 * displayScale;
     const COLOR = 0xff0000;
 
     group.position.set(position[0], position[1], position[2]);
@@ -100,8 +100,8 @@ function drawFixedSupport(
   color: number,
   displayScale: number,
 ) {
-  const groundWidth = size * 1.5 * displayScale;
-  const hatchLength = 0.2 * displayScale;
+  const groundWidth = size * 1.5;
+  const hatchLength = 0.15 * displayScale;
   const lineMaterial = new THREE.LineBasicMaterial({ color, linewidth: 2 });
 
   const groundPoints = [
