@@ -23,6 +23,14 @@ export function getDocs(): HTMLDivElement {
       title: "Assign Components",
       text: "Click a component in the list, then drag to assign geometry; drag the opposite way to unassign.",
     },
+    {
+      title: "Zoom",
+      text: "Scroll the mouse wheel to zoom in and out.",
+    },
+    {
+      title: "Pan",
+      text: "Right-click and drag to move the view.",
+    },
   ];
 
   const template = html`
@@ -31,14 +39,15 @@ export function getDocs(): HTMLDivElement {
     ${tips.map(
       (tip, i) => html`
         <div class="doc-item">
-          <span class="doc-number">${i + 1}</span>
-          <span><strong>${tip.title}</strong> — ${tip.text}</span>
+          <span class="doc-number">${i + 1}.</span>
+          <span><strong>${tip.title}</strong> ${tip.text}</span>
         </div>
       `,
     )}
 
     <div class="doc-contact">
-      Need help? <a href="mailto:mohamed@awatif.co">mohamed@awatif.co</a>
+      For help, feedback, bug reports, or suggestions, please reach out at
+      <a href="mailto:mohamed@awatif.co">mohamed@awatif.co</a>.
     </div>
   `;
 
