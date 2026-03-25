@@ -49,7 +49,7 @@ export function getAnalysisStatus(
     const { success, iterations, unassignedLines } = status.val;
     const hasWarning = unassignedLines && unassignedLines.length > 0;
     const warningSuffix = hasWarning
-      ? ` — lines ${unassignedLines.map((id) => `#${id}`).join(", ")} have no design member assigned`
+      ? ` — lines ${unassignedLines.map((id) => `${id}`).join(", ")} have no design member assigned`
       : "";
 
     if (success) {
