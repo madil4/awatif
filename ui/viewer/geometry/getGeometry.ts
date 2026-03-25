@@ -763,7 +763,20 @@ export function getGeometry({
     // Update coordinate tooltip
     if (isMarkerVisible) {
       const [x, y] = hitPoint.val;
-      coordTooltip.textContent = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+      let text = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+
+      if (mode.val === Mode.APPEND && appendPoint !== null) {
+        const fromPoint = geometry.points.rawVal.get(appendPoint);
+        if (fromPoint) {
+          const dx = x - fromPoint[0];
+          const dy = y - fromPoint[1];
+          const dz = 0 - fromPoint[2];
+          const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          text += ` L: ${length.toFixed(2)}`;
+        }
+      }
+
+      coordTooltip.textContent = text;
 
       // Position tooltip near the marker in screen space
       const vec = new THREE.Vector3(
