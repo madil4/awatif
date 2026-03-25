@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
+import { getText } from "../../../ui/viewer/text/getText";
 
 type PointLoadParams = {
   Fx: number;
@@ -90,6 +91,19 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
       );
       setMaterialOnTop(arrowX);
       group.add(arrowX);
+
+      const labelX = getText(
+        `${Math.abs(Fx)} KN`,
+        [
+          offset.x + direction.x * (ARROW_LENGTH + 0.4 * displayScale),
+          offset.y,
+          offset.z,
+        ],
+        "#ffffff",
+        0.3 * displayScale,
+        { backgroundColor: "rgba(0, 0, 0, 0.6)", padding: 20 },
+      );
+      group.add(labelX);
     }
 
     if (Fy !== 0) {
@@ -105,6 +119,19 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
       );
       setMaterialOnTop(arrowY);
       group.add(arrowY);
+
+      const labelY = getText(
+        `${Math.abs(Fy)} KN`,
+        [
+          offset.x,
+          offset.y + direction.y * (ARROW_LENGTH + 0.3 * displayScale),
+          offset.z,
+        ],
+        "#ffffff",
+        0.3 * displayScale,
+        { backgroundColor: "rgba(0, 0, 0, 0.6)", padding: 20 },
+      );
+      group.add(labelY);
     }
 
     return group;
