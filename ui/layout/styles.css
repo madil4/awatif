@@ -114,18 +114,6 @@ body {
   grid-column: 1 / -1;
 }
 
-@media print {
-  :root {
-    --text-primary: #111111;
-    --text-secondary: #555555;
-    --border: #cccccc;
-    --bg: #ffffff;
-    --bg-primary: #ffffff;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f5f5f5;
-    --shadow: none;
-  }
-}
 
 @media (max-width: 768px) {
   #layout {
