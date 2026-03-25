@@ -20,6 +20,7 @@ export type Display = {
   pointResult?: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
   loadCase?: State<LoadSelection>;
+  displayScale?: State<number>;
 };
 
 export function getDisplay({ display }: { display?: Display }): HTMLElement {
@@ -240,6 +241,24 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   `,
                 )}
               </select>
+            </div>
+          `
+        : ""}
+      ${display?.displayScale
+        ? html`
+            <div class="display-item">
+              <label>Display Scale</label>
+              <input
+                type="range"
+                min="0.1"
+                max="5"
+                step="0.1"
+                .value=${display.displayScale.val}
+                @input=${(e: Event) =>
+                  (display.displayScale!.val = Number(
+                    (e.target as HTMLInputElement).value,
+                  ))}
+              />
             </div>
           `
         : ""}
