@@ -83,7 +83,7 @@ export function getViewer({
   controls.update();
 
   scene.add(getGrid({ grid, render }));
-  scene.add(getAxes({ size: grid.size, render }));
+  scene.add(getAxes({ displayScale, render }));
 
   if (geometry)
     scene.add(
