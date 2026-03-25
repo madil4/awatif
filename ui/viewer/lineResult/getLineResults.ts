@@ -5,6 +5,11 @@ import { getText } from "../text/getText";
 
 export type LineResultsDisplay = "None" | "Normals" | "Bendings" | "Shears";
 
+type Forces =
+  NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V>
+    ? V
+    : never;
+
 export function getLineResults({
   mesh,
   display,
@@ -34,6 +39,7 @@ export function getLineResults({
     const nodes = mesh.nodes.val;
     const elements = mesh.elements.val;
     const internalForces = mesh.internalForces?.val;
+    const lineToElements = mesh.geometryMapping.val.lineToElements;
 
     if (!nodes?.length || !elements?.length || !internalForces) return render();
     if (display.val === "None") return render();
@@ -44,109 +50,98 @@ export function getLineResults({
     const lineMaterial = new THREE.LineBasicMaterial({ color });
     lineMaterial.depthTest = false; // Todo: fix it properly
 
-    // Find maximum force value for normalization
+    // Normalize scale
     let maxForceValue = 0;
-    internalForces.forEach((forces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V : never) => {
-      let values: [number, number] = [0, 0];
-      switch (mode) {
-        case "Normals":
-          values = forces.N;
-          break;
-        case "Shears":
-          values = forces.Vy;
-          break;
-        case "Bendings":
-          values = forces.Mz;
-          break;
-      }
-      const [valStart, valEnd] = values;
-      maxForceValue = Math.max(
-        maxForceValue,
-        Math.abs(valStart),
-        Math.abs(valEnd),
-      );
+    internalForces.forEach((forces: Forces) => {
+      const [a, b] = getValues(forces, mode);
+      maxForceValue = Math.max(maxForceValue, Math.abs(a), Math.abs(b));
     });
+    const scale = maxForceValue > 0 ? s / maxForceValue : 0.05;
+    const textSize = 0.5 * s;
 
-    // Normalize scale: target max diagram width
-    const targetMaxWidth = 1 * s;
-    const scale = maxForceValue > 0 ? targetMaxWidth / maxForceValue : 0.05;
+    lineToElements.forEach((elementIndices: number[]) => {
+      // Collect per-endpoint data for this line
+      const endpoints: {
+        pos: THREE.Vector3;
+        diagramPos: THREE.Vector3;
+        value: number;
+      }[] = [];
 
-    internalForces.forEach((forces: NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V> ? V : never, elementIdx: number) => {
-      const element = elements[elementIdx];
-      if (!element || element.length < 2) return;
+      elementIndices.forEach((elementIdx) => {
+        const forces = internalForces.get(elementIdx);
+        if (!forces) return;
 
-      const [n1Idx, n2Idx] = element;
-      const n1 = nodes[n1Idx];
-      const n2 = nodes[n2Idx];
-      if (!n1 || !n2) return;
+        const element = elements[elementIdx];
+        if (!element || element.length < 2) return;
 
-      const start = new THREE.Vector3(n1[0], n1[1], n1[2] ?? 0);
-      const end = new THREE.Vector3(n2[0], n2[1], n2[2] ?? 0);
-      const elementDir = new THREE.Vector3().subVectors(end, start).normalize();
+        const n1 = nodes[element[0]];
+        const n2 = nodes[element[1]];
+        if (!n1 || !n2) return;
 
-      // Perpendicular direction for diagram offsets
-      const perpDir = new THREE.Vector3(
-        -elementDir.y,
-        elementDir.x,
-        0,
-      ).normalize();
+        const start = new THREE.Vector3(n1[0], n1[1], n1[2] ?? 0);
+        const end = new THREE.Vector3(n2[0], n2[1], n2[2] ?? 0);
+        const perp = getPerpendicular(start, end);
+        const [valStart, valEnd] = getValues(forces, mode);
 
-      // Select data based on mode
-      let values: [number, number] = [0, 0];
-      let label = "";
+        // Draw element diagram
+        if (Math.abs(valStart) > 0.001 || Math.abs(valEnd) > 0.001) {
+          const dStart = start
+            .clone()
+            .add(perp.clone().multiplyScalar(valStart * scale));
+          const dEnd = end
+            .clone()
+            .add(perp.clone().multiplyScalar(valEnd * scale));
+          const geo = new THREE.BufferGeometry().setFromPoints([
+            start,
+            dStart,
+            dEnd,
+            end,
+          ]);
+          group.add(new THREE.Line(geo, lineMaterial));
+        }
 
-      switch (mode) {
-        case "Normals":
-          values = forces.N;
-          label = "N";
-          break;
-        case "Shears":
-          values = forces.Vy;
-          label = "V";
-          break;
-        case "Bendings":
-          values = forces.Mz;
-          label = "M";
-          break;
-      }
+        endpoints.push({
+          pos: start,
+          diagramPos: start
+            .clone()
+            .add(perp.clone().multiplyScalar(valStart * scale)),
+          value: valStart,
+        });
+        endpoints.push({
+          pos: end,
+          diagramPos: end
+            .clone()
+            .add(perp.clone().multiplyScalar(valEnd * scale)),
+          value: valEnd,
+        });
+      });
 
-      const [valStart, valEnd] = values;
+      // Show only max and min labels per line
+      if (endpoints.length === 0) return;
 
-      // Skip if both values are essentially zero
-      if (Math.abs(valStart) < 0.001 && Math.abs(valEnd) < 0.001) return;
+      const sorted = [...endpoints].sort((a, b) => b.value - a.value);
+      const max = sorted[0];
+      const min = sorted[sorted.length - 1];
+      const label = getLabel(mode);
 
-      // Calculate diagram points
-      const diagramStart = start
-        .clone()
-        .add(perpDir.clone().multiplyScalar(valStart * scale));
-      const diagramEnd = end
-        .clone()
-        .add(perpDir.clone().multiplyScalar(valEnd * scale));
-
-      // Draw closed diagram: baseline + diagram line + vertical closers
-      const outlinePoints = [start, diagramStart, diagramEnd, end];
-      const outlineGeometry = new THREE.BufferGeometry().setFromPoints(
-        outlinePoints,
-      );
-      group.add(new THREE.Line(outlineGeometry, lineMaterial));
-
-      // Add text labels
-      const textSize = 0.5 * s;
-      if (Math.abs(valStart) > 0.001) {
+      if (Math.abs(max.value) > 0.001) {
         group.add(
           getText(
-            `${label}: ${valStart.toFixed(2)}`,
-            [diagramStart.x, diagramStart.y, diagramStart.z],
+            `${label}: ${max.value.toFixed(2)}`,
+            [max.diagramPos.x, max.diagramPos.y, max.diagramPos.z],
             color,
             textSize,
           ),
         );
       }
-      if (Math.abs(valEnd) > 0.001 && Math.abs(valEnd - valStart) > 0.01) {
+      if (
+        Math.abs(min.value) > 0.001 &&
+        Math.abs(min.value - max.value) > 0.01
+      ) {
         group.add(
           getText(
-            `${label}: ${valEnd.toFixed(2)}`,
-            [diagramEnd.x, diagramEnd.y, diagramEnd.z],
+            `${label}: ${min.value.toFixed(2)}`,
+            [min.diagramPos.x, min.diagramPos.y, min.diagramPos.z],
             color,
             textSize,
           ),
@@ -162,4 +157,39 @@ export function getLineResults({
   };
 
   return group;
+}
+
+// Helpers
+function getValues(forces: Forces, mode: LineResultsDisplay): [number, number] {
+  switch (mode) {
+    case "Normals":
+      return forces.N;
+    case "Shears":
+      return forces.Vy;
+    case "Bendings":
+      return forces.Mz;
+    default:
+      return [0, 0];
+  }
+}
+
+function getLabel(mode: LineResultsDisplay): string {
+  switch (mode) {
+    case "Normals":
+      return "N";
+    case "Shears":
+      return "V";
+    case "Bendings":
+      return "M";
+    default:
+      return "";
+  }
+}
+
+function getPerpendicular(
+  start: THREE.Vector3,
+  end: THREE.Vector3,
+): THREE.Vector3 {
+  const dir = new THREE.Vector3().subVectors(end, start).normalize();
+  return new THREE.Vector3(-dir.y, dir.x, 0).normalize();
 }
