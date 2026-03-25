@@ -94,10 +94,77 @@
 }
 
 @media print {
+  :root {
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --border: #cccccc;
+    --bg: #ffffff;
+    --bg-primary: #ffffff;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f5f5f5;
+    --shadow: none;
+  }
+
+  /* When printing only the canvas, override layout and overflow controls */
+  html.printing-canvas,
+  body.printing-canvas {
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body.printing-canvas > *:not(#layout) {
+    display: none !important;
+  }
+
+  body.printing-canvas #layout {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body.printing-canvas #layout > div:not(.canvas) {
+    display: none !important;
+  }
+
+  body.printing-canvas #layout .canvas {
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body.printing-canvas #canvas {
+    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body.printing-canvas .canvas-header {
+    display: none !important;
+  }
+
+  body.printing-canvas .canvas-body {
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  /* Specific element coloring adjustments for better print visibility */
+
   /* Force background colors to print */
   * {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Remove opacity from beta notice so text stays crisp */
