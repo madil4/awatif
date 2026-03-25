@@ -18,7 +18,7 @@ export function getText(
     padding?: number;
   } = {}
 ): THREE.Sprite {
-  const { backgroundColor, borderRadius = 20, padding = 40 } = options;
+  const { backgroundColor, borderRadius = 20, padding = 20 } = options;
 
   // Create cache key from text, color and options
   const cacheKey = `${text}|${color}|${backgroundColor}|${borderRadius}|${padding}`;

@@ -16,7 +16,7 @@ export function getAxes({
 
     const s = size.val / 10; // display scale, matches the rest of the viewer
     const axisLen = 0.5 * s; // 1 unit at default size=10
-    const labelSize = 0.4 * s;
+    const labelSize = 0.3 * s;
     const labelOffset = axisLen + 0.2 * s;
 
     // X-axis (red)

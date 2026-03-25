@@ -56,8 +56,8 @@ export function getLineResults({
       const [a, b] = getValues(forces, mode);
       maxForceValue = Math.max(maxForceValue, Math.abs(a), Math.abs(b));
     });
-    const scale = maxForceValue > 0 ? s / maxForceValue : 0.05;
-    const textSize = 0.4 * s;
+    const scale = maxForceValue > 0 ? (s * 0.6) / maxForceValue : 0.05;
+    const textSize = 0.3 * s;
 
     lineToElements.forEach((elementIndices: number[]) => {
       // Collect per-endpoint data for this line

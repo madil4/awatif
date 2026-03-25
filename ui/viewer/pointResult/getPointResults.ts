@@ -51,9 +51,9 @@ export function getPointResults({
 
     const color = isDisp ? 0x00ff00 : 0xff0000;
     const colorStr = isDisp ? "#00ff00" : "#ff0000";
-    const coneGeom = new THREE.ConeGeometry(0.04 * s, 0.08 * s, 8);
+    const coneGeom = new THREE.ConeGeometry(0.05 * s, 0.15 * s, 8);
     const mat = new THREE.MeshBasicMaterial({ color });
-    const scale = (isDisp ? 1 : 0.5) * s;
+    const scale = (isDisp ? 0.6 : 0.3) * s;
     const [p1, p2] = isDisp ? ["U", "R"] : ["R", "M"];
 
     // @ts-ignore
@@ -72,8 +72,8 @@ export function getPointResults({
             origin,
             Math.abs(vx * scale),
             color,
-            0.08 * s,
-            0.04 * s,
+            0.15 * s,
+            0.1 * s,
           ),
         );
         group.add(
@@ -81,7 +81,7 @@ export function getPointResults({
             `${p1}x: ${vx.toFixed(2)}`,
             [n[0] + vx * scale + (vx > 0 ? 0.15 * s : -0.15 * s), n[1], n[2]],
             colorStr,
-            0.15 * s,
+            0.3 * s,
           ),
         );
       }
@@ -95,8 +95,8 @@ export function getPointResults({
             origin,
             Math.abs(vy * scale),
             color,
-            0.08 * s,
-            0.04 * s,
+            0.15 * s,
+            0.1 * s,
           ),
         );
         group.add(
@@ -104,14 +104,14 @@ export function getPointResults({
             `${p1}y: ${vy.toFixed(2)}`,
             [n[0], n[1] + vy * scale + (vy > 0 ? 0.15 * s : -0.15 * s), n[2]],
             colorStr,
-            0.15 * s,
+            0.3 * s,
           ),
         );
       }
 
       // Rotation arc
       if (Math.abs(rz) > 0.0001) {
-        const radius = 0.08 * s,
+        const radius = 0.15 * s,
           start = Math.PI / 4,
           arc = Math.PI * 1.5;
         const ccw = rz < 0;
@@ -150,7 +150,7 @@ export function getPointResults({
             `${p2}z: ${rz.toFixed(3)}`,
             [n[0] - radius - 0.15 * s, n[1], n[2]],
             colorStr,
-            0.15 * s,
+            0.3 * s,
           ),
         );
       }
