@@ -21,6 +21,9 @@
       #layout .bottom-left {
         background: #3a3a4a;
       }
+      #layout .bottom-right {
+        background: #3a5a4a;
+      }
       #layout .components {
         background: #5a3a5a;
       }
@@ -31,7 +34,10 @@
         background: #5a4a4a;
       }
       #layout .canvas {
-        background: #3a5a4a;
+        background: #2e4a3e;
+      }
+      #layout .prompt-panel {
+        background: #5a3a4a;
       }
     </style>
   </head>
@@ -39,22 +45,25 @@
     <script type="module">
       import { getLayout } from "./getLayout.ts";
 
-      const viewer = (document.createElement("div").textContent =
-        "--------- Viewer Element ------------");
-      const display = (document.createElement("div").textContent =
-        "--------- Display Element ------------");
-      const header1 = (document.createElement("div").textContent =
-        "--------- Header Element 1 ------------");
-      const header2 = (document.createElement("div").textContent =
-        "--------- Header Element 2 ------------");
-      const components = (document.createElement("div").textContent =
-        "--------- Components Element ------------");
-      const footer1 = (document.createElement("div").textContent =
-        "--------- Footer Element 1 ------------");
-      const footer2 = (document.createElement("div").textContent =
-        "--------- Footer Element 2 ------------");
-      const canvas = (document.createElement("div").textContent =
-        "--------- Canvas Element ------------");
+      const createElement = (text) => {
+        const element = document.createElement("div");
+        element.textContent = text;
+        return element;
+      };
+
+      const viewer = createElement("--------- Viewer Element ------------");
+      const display = createElement("--------- Display Element ------------");
+      const header1 = createElement("--------- Header Element 1 ------------");
+      const header2 = createElement("--------- Header Element 2 ------------");
+      const components = createElement(
+        "--------- Components Element ------------"
+      );
+      const footer1 = createElement("--------- Footer Element 1 ------------");
+      const footer2 = createElement("--------- Footer Element 2 ------------");
+      const canvas = createElement("--------- Canvas Element ------------");
+      const promptPanel = createElement(
+        "--------- PromptPanel Element ------------"
+      );
 
       document.body.append(
         getLayout({
@@ -64,6 +73,7 @@
           components,
           footer: [footer1, footer2],
           canvas,
+          promptPanel,
         })
       );
     </script>
