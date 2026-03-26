@@ -7,7 +7,6 @@ export function getLayout({
   display,
   header,
   components,
-  footer,
   canvas,
   promptPanel,
 }: {
@@ -15,7 +14,6 @@ export function getLayout({
   display?: HTMLElement;
   header?: HTMLElement[];
   components?: HTMLElement;
-  footer?: HTMLElement[];
   canvas?: HTMLElement;
   promptPanel?: HTMLElement;
 }): HTMLElement {
@@ -26,11 +24,8 @@ export function getLayout({
       <div class="viewer">${viewer}</div>
       <div class="display">${display}</div>
       <div class="header">${header}</div>
-      <div class="bottom-left">
-        ${components}
-        <div class="footer">${footer}</div>
-      </div>
       <div class="canvas">${canvas}</div>
+      <div class="bottom-left">${components}</div>
       <div class="bottom-right">
         <div class="prompt-panel">${promptPanel}</div>
       </div>

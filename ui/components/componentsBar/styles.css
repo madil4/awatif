@@ -48,3 +48,9 @@
 #components-bar .components-bar-button.active .analysis-badge {
   opacity: 0.9;
 }
+
+#components-bar #analysis-status {
+  margin-left: 4px;
+  padding: 4px 6px 4px 10px;
+  border-left: 1px solid var(--border);
+}

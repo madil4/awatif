@@ -100,13 +100,6 @@ body {
   min-width: 0;
 }
 
-#layout .footer {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  width: fit-content; /* Fix blocking the viewer pointer events */
-}
-
 #layout .canvas {
   grid-area: canvas;
   align-self: stretch;
