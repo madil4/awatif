@@ -6,7 +6,6 @@ export { getDocs } from "./docs/getDocs";
 export { getAnalysisStatus } from "./analysisStatus/getAnalysisStatus";
 export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar, CanvasButtons } from "./canvasBar/getCanvasBar";
-export { getPromptPanel } from "./promptPanel/getPromptPanel";
 
 export type { Display } from "./display/getDisplay";
 export type { ActiveAnalysis } from "./components/analysisList/getAnalysisList";
