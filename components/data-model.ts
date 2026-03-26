@@ -80,15 +80,18 @@ export type ActiveComponent = {
   index: number;
 } | null;
 
+export type ComponentEntry = {
+  id?: string;
+  name: string;
+  templateId: string;
+  geometry: number[];
+  params?: Record<string, unknown>;
+  loadCase?: LoadCase;
+};
+
 export type Components = State<
   Map<
     ComponentsType,
-    {
-      name: string;
-      templateId: string;
-      geometry: number[];
-      params?: Record<string, unknown>;
-      loadCase?: LoadCase;
-    }[]
+    ComponentEntry[]
   >
 >;
