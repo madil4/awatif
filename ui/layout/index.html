@@ -30,10 +30,7 @@
       #layout .components-bar {
         background: #4a4a3a;
       }
-      #layout .footer {
-        background: #5a4a4a;
-      }
-      #layout .canvas {
+#layout .canvas {
         background: #2e4a3e;
       }
       #layout .prompt-panel {
@@ -58,9 +55,7 @@
       const components = createElement(
         "--------- Components Element ------------"
       );
-      const footer1 = createElement("--------- Footer Element 1 ------------");
-      const footer2 = createElement("--------- Footer Element 2 ------------");
-      const canvas = createElement("--------- Canvas Element ------------");
+const canvas = createElement("--------- Canvas Element ------------");
       const promptPanel = createElement(
         "--------- PromptPanel Element ------------"
       );
@@ -71,7 +66,6 @@
           display,
           header: [header1, header2],
           components,
-          footer: [footer1, footer2],
           canvas,
           promptPanel,
         })

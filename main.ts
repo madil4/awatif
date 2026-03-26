@@ -20,7 +20,6 @@ import {
 import {
   getDisplay,
   getDocs,
-  getAnalysisStatus,
   getLayout,
   getViewer,
   getComponents,
@@ -275,7 +274,8 @@ document.body.append(
       componentsBarMode,
       templates,
       loadCase: display.loadCase,
+      analysisStatus,
+      display,
     }),
-    footer: [getAnalysisStatus(analysisStatus, display)],
   }),
 );

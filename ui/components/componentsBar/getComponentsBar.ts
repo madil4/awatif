@@ -2,6 +2,7 @@ import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
 import { ComponentsType, LoadSelection, LOAD_SELECTION_LABELS } from "@awatif/components";
 import { ActiveAnalysis } from "../analysisList/getAnalysisList";
+import { getAnalysisStatus, AnalysisStatus } from "../../analysisStatus/getAnalysisStatus";
 
 import "./styles.css";
 
@@ -9,13 +10,18 @@ export function getComponentsBar({
   componentsBarMode,
   activeAnalysis,
   loadCase,
+  analysisStatus,
+  display,
 }: {
   componentsBarMode: State<ComponentsType | null>;
   activeAnalysis?: ActiveAnalysis;
   loadCase?: State<LoadSelection>;
+  analysisStatus?: AnalysisStatus;
+  display?: { memberIndex: State<boolean> };
 }): HTMLElement {
   const container = document.createElement("div");
   const showAnalysis = activeAnalysis && activeAnalysis.val !== undefined;
+  const statusEl = analysisStatus ? getAnalysisStatus(analysisStatus, display) : null;
 
   const template = () => html`
     <div id="components-bar">
@@ -104,6 +110,8 @@ export function getComponentsBar({
       >
         Design
       </button>
+
+      ${statusEl}
     </div>
   `;
 

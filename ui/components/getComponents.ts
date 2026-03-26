@@ -15,6 +15,7 @@ import {
   getAnalysisList,
   ActiveAnalysis,
 } from "./analysisList/getAnalysisList";
+import { AnalysisStatus } from "../analysisStatus/getAnalysisStatus";
 
 import "./styles.css";
 
@@ -49,6 +50,8 @@ export function getComponents({
   templates,
   activeAnalysis,
   loadCase,
+  analysisStatus,
+  display,
 }: {
   geometry: Geometry;
   components: Components;
@@ -56,6 +59,8 @@ export function getComponents({
   templates?: typeof Templates;
   activeAnalysis?: ActiveAnalysis;
   loadCase?: State<LoadSelection>;
+  analysisStatus?: AnalysisStatus;
+  display?: { memberIndex: State<boolean> };
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);
@@ -82,7 +87,7 @@ export function getComponents({
     activeAnalysis,
   });
 
-  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis, loadCase });
+  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis, loadCase, analysisStatus, display });
   const analysisList = getAnalysisList({ componentsBarMode, activeAnalysis });
 
   const template = html`
