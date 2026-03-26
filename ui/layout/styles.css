@@ -118,6 +118,8 @@ body {
 
 #layout .prompt-panel {
   min-width: 0;
+  display: flex;
+  justify-content: flex-end;
   padding: 0 10px 10px;
 }
 

@@ -28,6 +28,7 @@ import {
   getCanvas,
   getCanvasBar,
   CanvasButtons,
+  getPromptPanel,
   AnalysisStatus,
 } from "@awatif/ui";
 
@@ -269,6 +270,7 @@ document.body.append(
     display: getDisplay({ display }),
     header: [getCanvasBar({ canvasButton })],
     canvas: getCanvas({ canvas, canvasButton }),
+    promptPanel: getPromptPanel(),
     components: getComponents({
       geometry,
       components,
