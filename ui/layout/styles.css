@@ -124,17 +124,18 @@ body {
   display: none;
 }
 
-#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty))) .bottom-right {
+#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty)))
+  .bottom-right {
   display: none;
 }
 
-#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty))) .bottom-left {
+#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty)))
+  .bottom-left {
   grid-row: 2 / 4;
   grid-column: 1 / -1;
 }
 
-
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   #layout {
     grid-template-areas:
       "display"
