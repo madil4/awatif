@@ -1,9 +1,9 @@
 #components-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 6px;
   width: fit-content;
-  max-width: 600px;
   margin-bottom: 10px;
 
   background: var(--bg-secondary);
@@ -35,7 +35,9 @@
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--bg-secondary), 0 0 0 3px var(--accent);
+  box-shadow:
+    0 0 0 1px var(--bg-secondary),
+    0 0 0 3px var(--accent);
 }
 
 #components-bar .analysis-badge {
