@@ -73,21 +73,31 @@ export function getGeometry({
   `;
   document.body.appendChild(coordTooltip);
 
-  // Initialize nextPointId based on existing points
-  const getNextPointId = () => {
-    const points = geometry.points.rawVal;
-    if (points.size === 0) return 1;
-    return Math.max(...points.keys()) + 1;
-  };
-  let nextPointId = getNextPointId();
+  let nextPointId = getNextMapId(geometry.points.rawVal);
+  let nextLineId = getNextMapId(geometry.lines.rawVal);
 
-  // Initialize nextLineId based on existing lines
-  const getNextLineId = () => {
-    const lines = geometry.lines.rawVal;
-    if (lines.size === 0) return 1;
-    return Math.max(...lines.keys()) + 1;
-  };
-  let nextLineId = getNextLineId();
+  // Project loading swaps in fresh geometry maps, so editor-local IDs and
+  // point references must follow the currently loaded model rather than the
+  // initial app boot state.
+  van.derive(() => {
+    const pointsMap = geometry.points.val;
+    const linesMap = geometry.lines.val;
+
+    nextPointId = getNextMapId(pointsMap);
+    nextLineId = getNextMapId(linesMap);
+
+    const nextDragPoint = reconcilePointReference(dragPoint, pointsMap);
+    if (nextDragPoint !== dragPoint) {
+      dragPoint = nextDragPoint;
+      if (mode.rawVal === Mode.DRAG) mode.val = Mode.EDIT;
+    }
+
+    const nextAppendPoint = reconcilePointReference(appendPoint, pointsMap);
+    if (nextAppendPoint !== appendPoint) {
+      appendPoint = nextAppendPoint;
+      if (mode.rawVal === Mode.APPEND) mode.val = Mode.EDIT;
+    }
+  });
 
   /* ---- Rendering ---- */
 
@@ -845,4 +855,20 @@ export function getGeometry({
   });
 
   return group;
+}
+
+// Helpers
+function getNextMapId<T>(items: ReadonlyMap<number, T>): number {
+  if (items.size === 0) return 1;
+
+  return Math.max(...items.keys()) + 1;
+}
+
+function reconcilePointReference<T>(
+  pointId: number | null,
+  points: ReadonlyMap<number, T>,
+): number | null {
+  if (pointId === null) return null;
+
+  return points.has(pointId) ? pointId : null;
 }
