@@ -23,7 +23,10 @@ export function getCanvasBar({
     ${buttons.map(
       (button) => html`
         <button
-          class=${button === CanvasButtons.DOCS ? "docs-button" : ""}
+          class="${button === CanvasButtons.DOCS ? "docs-button " : ""}${canvasButton
+            .val === button
+            ? "active"
+            : ""}"
           @click=${() => {
             canvasButton.val = canvasButton.val === button ? null : button;
           }}
