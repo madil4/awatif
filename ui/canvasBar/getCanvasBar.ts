@@ -17,7 +17,7 @@ export function getCanvasBar({
   const buttons = [CanvasButtons.DOCS, CanvasButtons.REPORT];
 
   const container = document.createElement("div");
-  container.id = "toolbar";
+  container.id = "canvas-bar";
 
   const template = () => html`
     ${buttons.map(
