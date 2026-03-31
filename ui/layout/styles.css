@@ -79,6 +79,7 @@ body {
   justify-self: end;
   align-self: start;
   display: flex;
+  align-items: flex-start;
   gap: 8px;
   padding: 6px 6px 0 0;
 }
