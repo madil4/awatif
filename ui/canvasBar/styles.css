@@ -1,9 +1,9 @@
-#toolbar {
+#canvas-bar {
   display: flex;
   gap: 8px;
 }
 
-#toolbar button {
+#canvas-bar button {
   display: flex;
   align-items: center;
   padding: 6px 12px;
@@ -19,13 +19,13 @@
   -webkit-user-select: none;
 }
 
-#toolbar button:hover {
+#canvas-bar button:hover {
   background: var(--bg-hover);
   border-color: var(--accent);
   transform: translateY(-1px);
 }
 
-#toolbar button.active {
+#canvas-bar button.active {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
@@ -34,7 +34,7 @@
     0 0 0 3px var(--accent);
 }
 
-#toolbar button.docs-button {
+#canvas-bar button.docs-button {
   padding: 0;
   width: 28px;
   height: 28px;
