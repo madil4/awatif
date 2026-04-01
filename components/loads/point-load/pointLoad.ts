@@ -95,7 +95,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
       const labelX = getText(
         `${Math.abs(Fx)} KN`,
         [
-          offset.x + direction.x * (ARROW_LENGTH + 0.15 * displayScale),
+          offset.x + direction.x * (ARROW_LENGTH + 0.4 * displayScale),
           offset.y,
           offset.z,
         ],
@@ -124,7 +124,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         `${Math.abs(Fy)} KN`,
         [
           offset.x,
-          offset.y + direction.y * (ARROW_LENGTH + 0.15 * displayScale),
+          offset.y + direction.y * (ARROW_LENGTH + 0.3 * displayScale),
           offset.z,
         ],
         "#ffffff",
