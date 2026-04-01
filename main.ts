@@ -130,7 +130,7 @@ const display: Display = {
   releases: van.state(true),
   memberIndex: van.state(false),
   extrudeSections: van.state(false),
-  lineResult: van.state("Bendings"),
+  lineResult: van.state("None"),
   loadCase: van.state<LoadSelection>("dead"),
 };
 
@@ -266,7 +266,12 @@ document.body.append(
   getLayout({
     viewer: getViewer({ geometry, mesh, components, display, templates }),
     display: getDisplay({ display }),
-    header: [getCanvasBar({ canvasButton, buttons: [CanvasButtons.DOCS, CanvasButtons.REPORT] })],
+    header: [
+      getCanvasBar({
+        canvasButton,
+        buttons: [CanvasButtons.DOCS, CanvasButtons.REPORT],
+      }),
+    ],
     canvas: getCanvas({ canvas, canvasButton }),
     components: getComponents({
       geometry,
