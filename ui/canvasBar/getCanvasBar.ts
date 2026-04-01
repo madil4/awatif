@@ -7,14 +7,16 @@ import "./styles.css";
 export enum CanvasButtons {
   REPORT = "Report",
   DOCS = "Docs",
+  UPGRADE = "Upgrade",
 }
 
 export function getCanvasBar({
   canvasButton,
+  buttons = [CanvasButtons.UPGRADE, CanvasButtons.DOCS, CanvasButtons.REPORT],
 }: {
   canvasButton: State<CanvasButtons | null>;
+  buttons?: CanvasButtons[];
 }): HTMLElement {
-  const buttons = [CanvasButtons.DOCS, CanvasButtons.REPORT];
 
   const container = document.createElement("div");
   container.id = "canvas-bar";
@@ -23,15 +25,20 @@ export function getCanvasBar({
     ${buttons.map(
       (button) => html`
         <button
-          class="${button === CanvasButtons.DOCS ? "docs-button " : ""}${canvasButton
-            .val === button
-            ? "active"
-            : ""}"
+          class="${button === CanvasButtons.DOCS
+            ? "docs-button "
+            : ""}${button === CanvasButtons.UPGRADE
+            ? "upgrade-button "
+            : ""}${canvasButton.val === button ? "active" : ""}"
           @click=${() => {
             canvasButton.val = canvasButton.val === button ? null : button;
           }}
         >
-          ${button === CanvasButtons.DOCS ? "?" : button}
+          ${button === CanvasButtons.DOCS
+            ? "?"
+            : button === CanvasButtons.UPGRADE
+              ? "★"
+              : button}
         </button>
       `,
     )}

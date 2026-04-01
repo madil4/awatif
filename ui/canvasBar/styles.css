@@ -41,3 +41,11 @@
   border-radius: 50%;
   justify-content: center;
 }
+
+#canvas-bar button.upgrade-button {
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  justify-content: center;
+}
