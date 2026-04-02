@@ -166,7 +166,7 @@ export function getViewer({
     getExtrudeSectionAnimation({
       camera,
       controls,
-      display: display.extrudeSections,
+      display,
       render,
     });
   }
