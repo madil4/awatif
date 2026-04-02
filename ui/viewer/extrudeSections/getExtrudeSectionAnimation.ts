@@ -17,7 +17,7 @@ export function getExtrudeSectionAnimation({
   const dist2D = camera.position.distanceTo(controls.target);
 
   const R3D = dist2D * 1.3;
-  const phi3D = THREE.MathUtils.degToRad(35);
+  const phi3D = THREE.MathUtils.degToRad(55);
   const theta3D = -Math.PI / 6;
 
   let cancelAnim: (() => void) | null = null;
@@ -69,16 +69,16 @@ function smoothstep(t: number): number {
 function cartesianToSpherical(offset: THREE.Vector3) {
   const r = offset.length();
   if (r < 1e-9) return { r: 0, phi: 0, theta: 0 };
-  const phi = Math.acos(Math.min(1, Math.max(-1, offset.z / r)));
-  const theta = Math.atan2(offset.x, -offset.y);
+  const phi = Math.atan2(offset.y, Math.hypot(offset.x, offset.z));
+  const theta = Math.atan2(offset.x, offset.z);
   return { r, phi, theta };
 }
 
 function sphericalToCartesian(r: number, phi: number, theta: number) {
   return new THREE.Vector3(
-    r * Math.sin(phi) * Math.sin(theta),
-    -r * Math.sin(phi) * Math.cos(theta),
-    r * Math.cos(phi),
+    r * Math.cos(phi) * Math.sin(theta),
+    r * Math.sin(phi),
+    r * Math.cos(phi) * Math.cos(theta),
   );
 }
 
