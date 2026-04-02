@@ -93,6 +93,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   <input
                     type="checkbox"
                     .checked=${display.geometry.val}
+                    ?disabled=${display.extrudeSections?.val}
                     @change=${(e: Event) =>
                       (display.geometry.val = (
                         e.target as HTMLInputElement
@@ -109,6 +110,7 @@ export function getDisplay({ display }: { display?: Display }): HTMLElement {
                   <input
                     type="checkbox"
                     .checked=${display.memberIndex.val}
+                    ?disabled=${display.extrudeSections?.val}
                     @change=${(e: Event) =>
                       (display.memberIndex.val = (
                         e.target as HTMLInputElement
