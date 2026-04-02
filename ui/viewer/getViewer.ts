@@ -18,6 +18,7 @@ import { getMemberIndex } from "./memberIndex/getMemberIndex";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
+import { getExtrudeSectionAnimation } from "./extrudeSections/getExtrudeSectionAnimation";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -161,6 +162,13 @@ export function getViewer({
         render,
       }),
     );
+
+    getExtrudeSectionAnimation({
+      camera,
+      controls,
+      display: display.extrudeSections,
+      render,
+    });
   }
 
   if (mesh && display?.pointResult) {
