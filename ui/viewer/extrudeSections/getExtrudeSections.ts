@@ -7,6 +7,41 @@ import {
   ComponentsType,
 } from "@awatif/components";
 
+type SectionPalette = {
+  fill: number;
+  edge: number;
+};
+
+function getSectionPalette(templateName?: string): SectionPalette {
+  const name = templateName?.toLowerCase() ?? "";
+
+  if (name.includes("steel")) {
+    return {
+      fill: 0x8fa6b8,
+      edge: 0x4e6170,
+    };
+  }
+
+  if (name.includes("concrete")) {
+    return {
+      fill: 0xcfc5b8,
+      edge: 0x8a7d70,
+    };
+  }
+
+  if (name.includes("timber")) {
+    return {
+      fill: 0xbe955f,
+      edge: 0x7a5631,
+    };
+  }
+
+  return {
+    fill: 0xb4b4b4,
+    edge: 0x6e6e6e,
+  };
+}
+
 export function getExtrudeSections({
   geometry,
   components,
@@ -38,6 +73,8 @@ export function getExtrudeSections({
 
       const params = component.params ?? template.defaultParams;
       const sectionPts = template.getSection(params as any);
+      if (sectionPts.length < 3) return;
+      const palette = getSectionPalette(template.name);
 
       component.geometry.forEach((lineId) => {
         const linePair = lines.get(lineId);
@@ -82,17 +119,27 @@ export function getExtrudeSections({
           bevelEnabled: false,
         });
 
-        const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x888888 });
+        const fillMaterial = new THREE.MeshBasicMaterial({
+          color: palette.fill,
+          transparent: true,
+          opacity: 0.72,
+          side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(geo, fillMaterial);
+
+        const edgeMaterial = new THREE.LineBasicMaterial({ color: palette.edge });
         const edges = new THREE.EdgesGeometry(geo, 15);
         const edgeLines = new THREE.LineSegments(edges, edgeMaterial);
-        edgeLines.position.copy(startV);
+        const sectionGroup = new THREE.Group();
+        sectionGroup.add(mesh, edgeLines);
+        sectionGroup.position.copy(startV);
 
         // Align: geometry X → localY, geometry Y → localZ, geometry Z (extrusion) → dir
         const rotMatrix = new THREE.Matrix4();
         rotMatrix.makeBasis(localY, localZ, dir);
-        edgeLines.setRotationFromMatrix(rotMatrix);
+        sectionGroup.setRotationFromMatrix(rotMatrix);
 
-        group.add(edgeLines);
+        group.add(sectionGroup);
       });
     });
 
