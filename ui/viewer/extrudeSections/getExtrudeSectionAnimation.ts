@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import van, { State } from "vanjs-core";
+import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Display } from "../../display/getDisplay";
 
 export function getExtrudeSectionAnimation({
   camera,
@@ -10,9 +11,12 @@ export function getExtrudeSectionAnimation({
 }: {
   camera: THREE.PerspectiveCamera;
   controls: OrbitControls;
-  display: State<boolean>;
+  display: Display;
   render: () => void;
 }): void {
+  const extrudeSections = display.extrudeSections;
+  if (!extrudeSections) return;
+
   const pivot = controls.target.clone();
   const dist2D = camera.position.distanceTo(controls.target);
 
@@ -21,9 +25,46 @@ export function getExtrudeSectionAnimation({
   const theta3D = Math.PI / 6;
 
   let cancelAnim: (() => void) | null = null;
+  let previousVisibility: {
+    geometry: boolean;
+    memberIndex: boolean;
+    mesh: boolean;
+  } | null = null;
 
   van.derive(() => {
-    const extruding = display.val;
+    const extruding = extrudeSections.val;
+    const geometryVisible = display.geometry.val;
+    const memberIndexVisible = display.memberIndex.val;
+    const meshVisible = display.mesh.val;
+
+    if (extruding) {
+      previousVisibility ??= {
+        geometry: geometryVisible,
+        memberIndex: memberIndexVisible,
+        mesh: meshVisible,
+      };
+
+      if (geometryVisible) display.geometry.val = false;
+      if (memberIndexVisible) display.memberIndex.val = false;
+      if (meshVisible) display.mesh.val = false;
+      return;
+    }
+
+    if (!previousVisibility) return;
+
+    const visibilityToRestore = previousVisibility;
+    previousVisibility = null;
+
+    if (display.geometry.val !== visibilityToRestore.geometry)
+      display.geometry.val = visibilityToRestore.geometry;
+    if (display.memberIndex.val !== visibilityToRestore.memberIndex)
+      display.memberIndex.val = visibilityToRestore.memberIndex;
+    if (display.mesh.val !== visibilityToRestore.mesh)
+      display.mesh.val = visibilityToRestore.mesh;
+  });
+
+  van.derive(() => {
+    const extruding = extrudeSections.val;
 
     if (cancelAnim) {
       cancelAnim();
