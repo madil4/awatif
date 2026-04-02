@@ -36,7 +36,6 @@ export function getViewer({
   display?: Display;
   templates?: typeof Templates;
 }): HTMLDivElement {
-  THREE.Object3D.DEFAULT_UP = new THREE.Vector3(0, 0, 1);
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(
@@ -45,6 +44,7 @@ export function getViewer({
     0.1,
     1000,
   );
+  camera.up.set(0, 1, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
