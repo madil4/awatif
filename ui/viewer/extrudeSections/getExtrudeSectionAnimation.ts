@@ -17,8 +17,8 @@ export function getExtrudeSectionAnimation({
   const dist2D = camera.position.distanceTo(controls.target);
 
   const R3D = dist2D * 1.3;
-  const phi3D = THREE.MathUtils.degToRad(55);
-  const theta3D = -Math.PI / 6;
+  const phi3D = THREE.MathUtils.degToRad(25);
+  const theta3D = Math.PI / 6;
 
   let cancelAnim: (() => void) | null = null;
 
