@@ -27,6 +27,7 @@ export function getExtrudeSectionAnimation({
   let cancelAnim: (() => void) | null = null;
   let previousVisibility: {
     geometry: boolean;
+    loads: boolean;
     memberIndex: boolean;
     mesh: boolean;
   } | null = null;
@@ -34,17 +35,20 @@ export function getExtrudeSectionAnimation({
   van.derive(() => {
     const extruding = extrudeSections.val;
     const geometryVisible = display.geometry.val;
+    const loadsVisible = display.loads.val;
     const memberIndexVisible = display.memberIndex.val;
     const meshVisible = display.mesh.val;
 
     if (extruding) {
       previousVisibility ??= {
         geometry: geometryVisible,
+        loads: loadsVisible,
         memberIndex: memberIndexVisible,
         mesh: meshVisible,
       };
 
       if (geometryVisible) display.geometry.val = false;
+      if (loadsVisible) display.loads.val = false;
       if (memberIndexVisible) display.memberIndex.val = false;
       if (meshVisible) display.mesh.val = false;
       return;
@@ -57,6 +61,8 @@ export function getExtrudeSectionAnimation({
 
     if (display.geometry.val !== visibilityToRestore.geometry)
       display.geometry.val = visibilityToRestore.geometry;
+    if (display.loads.val !== visibilityToRestore.loads)
+      display.loads.val = visibilityToRestore.loads;
     if (display.memberIndex.val !== visibilityToRestore.memberIndex)
       display.memberIndex.val = visibilityToRestore.memberIndex;
     if (display.mesh.val !== visibilityToRestore.mesh)
