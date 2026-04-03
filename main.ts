@@ -52,7 +52,7 @@ const components: Components = van.state(
           templateId: "point-load",
           geometry: [2],
           params: {
-            Fx: 400,
+            Fx: 300,
             Fy: 0,
             Fz: 0,
             Mx: 0,
