@@ -12,40 +12,39 @@ export enum CanvasButtons {
 
 export function getCanvasBar({
   canvasButton,
-  buttons = [CanvasButtons.UPGRADE, CanvasButtons.DOCS, CanvasButtons.REPORT],
+  buttons = [CanvasButtons.DOCS, CanvasButtons.UPGRADE, CanvasButtons.REPORT],
+  upgraded,
 }: {
   canvasButton: State<CanvasButtons | null>;
   buttons?: CanvasButtons[];
+  upgraded?: State<boolean>;
 }): HTMLElement {
-
   const container = document.createElement("div");
   container.id = "canvas-bar";
 
-  const template = () => html`
-    ${buttons.map(
-      (button) => html`
-        <button
-          class="${button === CanvasButtons.DOCS
-            ? "docs-button "
-            : ""}${button === CanvasButtons.UPGRADE
-            ? "upgrade-button "
-            : ""}${canvasButton.val === button ? "active" : ""}"
-          @click=${() => {
-            canvasButton.val = canvasButton.val === button ? null : button;
-          }}
-        >
-          ${button === CanvasButtons.DOCS
-            ? "?"
-            : button === CanvasButtons.UPGRADE
-              ? "★"
-              : button}
-        </button>
-      `,
-    )}
-  `;
-
   van.derive(() => {
-    render(template(), container);
+    const buttonList = upgraded?.val
+      ? buttons.filter((b) => b !== CanvasButtons.UPGRADE)
+      : buttons;
+    render(
+      html`
+        ${buttonList.map(
+          (button) => html`
+            <button
+              class="${button === CanvasButtons.DOCS
+                ? "docs-button "
+                : ""}${canvasButton.val === button ? "active" : ""}"
+              @click=${() => {
+                canvasButton.val = canvasButton.val === button ? null : button;
+              }}
+            >
+              ${button === CanvasButtons.DOCS ? "?" : button}
+            </button>
+          `,
+        )}
+      `,
+      container,
+    );
   });
 
   return container;
