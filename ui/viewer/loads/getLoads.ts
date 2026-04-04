@@ -53,6 +53,7 @@ export function getLoads({
           )
         : allLoadComponents;
     const points = geometry.points.val;
+    const lines = geometry.lines.val;
 
     loadComponents.forEach((component) => {
       // Get the template for this component
@@ -60,23 +61,46 @@ export function getLoads({
       if (!loadTemplates) return;
 
       const template = loadTemplates.get(component.templateId);
-      if (!template || !("getObject3D" in template)) return;
+      if (!template) return;
 
-      // For each geometry point in the component, create a visualization
-      component.geometry.forEach((pointId) => {
-        const position = points.get(pointId);
-        if (!position) return;
+      if (template.geometryKind === "line") {
+        // Line-based template: use getLineObject3D
+        if (!("getLineObject3D" in template)) return;
 
-        // Call the template's getObject3D function
-        const loadObject = template.getObject3D?.({
-          params: ({ ...template.defaultParams, ...component.params }) as any,
-          position: position as [number, number, number],
-          displayScale: s,
+        component.geometry.forEach((lineId) => {
+          const linePair = lines.get(lineId);
+          if (!linePair) return;
+
+          const startPos = points.get(linePair[0]);
+          const endPos = points.get(linePair[1]);
+          if (!startPos || !endPos) return;
+
+          const loadObject = template.getLineObject3D?.({
+            params: ({ ...template.defaultParams, ...component.params }) as any,
+            startPosition: startPos as [number, number, number],
+            endPosition: endPos as [number, number, number],
+            displayScale: s,
+          });
+
+          if (loadObject) group.add(loadObject);
         });
+      } else {
+        // Point-based template (default): use getObject3D
+        if (!("getObject3D" in template)) return;
 
-        // Add to the group
-        if (loadObject) group.add(loadObject);
-      });
+        component.geometry.forEach((pointId) => {
+          const position = points.get(pointId);
+          if (!position) return;
+
+          const loadObject = template.getObject3D?.({
+            params: ({ ...template.defaultParams, ...component.params }) as any,
+            position: position as [number, number, number],
+            displayScale: s,
+          });
+
+          if (loadObject) group.add(loadObject);
+        });
+      }
     });
 
     render();
