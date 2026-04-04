@@ -19,9 +19,10 @@ import { AnalysisStatus } from "../analysisStatus/getAnalysisStatus";
 
 import "./styles.css";
 
-function getTypesForMode(
-  mode: ComponentsType | null,
-): { types: ComponentsType[]; geometryKind: "point" | "line" | null } {
+function getTypesForMode(mode: ComponentsType | null): {
+  types: ComponentsType[];
+  geometryKind: "point" | "line" | null;
+} {
   switch (mode) {
     case ComponentsType.LOADS:
       return { types: [ComponentsType.LOADS], geometryKind: "point" };
@@ -35,7 +36,11 @@ function getTypesForMode(
       return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
     case ComponentsType.SPECIAL:
       return {
-        types: [ComponentsType.MESH, ComponentsType.IMPERFECTIONS, ComponentsType.RELEASES],
+        types: [
+          ComponentsType.MESH,
+          ComponentsType.IMPERFECTIONS,
+          ComponentsType.RELEASES,
+        ],
         geometryKind: "line",
       };
     default:
@@ -97,7 +102,13 @@ export function getComponents({
     activeAnalysis,
   });
 
-  const componentsBar = getComponentsBar({ componentsBarMode, activeAnalysis, loadCase, analysisStatus, display });
+  const componentsBar = getComponentsBar({
+    componentsBarMode,
+    activeAnalysis,
+    loadCase,
+    analysisStatus,
+    display,
+  });
   const analysisList = getAnalysisList({ componentsBarMode, activeAnalysis });
 
   const template = html`
