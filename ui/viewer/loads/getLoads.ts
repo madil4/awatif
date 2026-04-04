@@ -69,7 +69,7 @@ export function getLoads({
 
         // Call the template's getObject3D function
         const loadObject = template.getObject3D?.({
-          params: (component.params ?? template.defaultParams) as any,
+          params: ({ ...template.defaultParams, ...component.params }) as any,
           position: position as [number, number, number],
           displayScale: s,
         });

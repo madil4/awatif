@@ -24,7 +24,7 @@ export function getReleases({
     if (!template) return;
 
     const { release } = template.getRelease({
-      params: (component.params ?? template.defaultParams) as Parameters<
+      params: ({ ...template.defaultParams, ...component.params }) as Parameters<
         typeof template.getRelease
       >[0]["params"],
     });

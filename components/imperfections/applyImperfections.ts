@@ -25,8 +25,7 @@ export function applyImperfections(
   if (!template) return;
 
   for (const component of imperfectionComponents) {
-    const params = (component.params ??
-      template.defaultParams) as ImperfectionsParams;
+    const params = ({ ...template.defaultParams, ...component.params }) as ImperfectionsParams;
     const selectedLineIds = component.geometry;
     if (selectedLineIds.length === 0) continue;
 

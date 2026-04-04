@@ -71,7 +71,7 @@ export function getExtrudeSections({
       const template = designTemplates?.get(component.templateId);
       if (!template?.getSection) return;
 
-      const params = component.params ?? template.defaultParams;
+      const params = { ...template.defaultParams, ...component.params };
       const sectionPts = template.getSection(params as any);
       if (sectionPts.length < 3) return;
       const palette = getSectionPalette(template.name);

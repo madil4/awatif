@@ -87,7 +87,7 @@ export function getMesh({
         startPoint,
         endPoint,
         template,
-        component.params ?? template.defaultParams,
+        { ...template.defaultParams, ...component.params },
         allNodes,
         allElements,
         pointToNodes,

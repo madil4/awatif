@@ -49,7 +49,7 @@ export function getElementsProps({
       if (!elementIndices) return;
 
       const props = template.getElementsProps({
-        params: (component.params ?? template.defaultParams) as any,
+        params: ({ ...template.defaultParams, ...component.params }) as any,
         activeAnalysis: activeAnalysis ?? "linear",
       });
 
