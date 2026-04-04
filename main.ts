@@ -168,6 +168,8 @@ van.derive(() => {
       geometryMapping: mesh.geometryMapping.val,
       templates,
       activeLoadCase: display.loadCase?.val,
+      nodes: mesh.nodes.val,
+      elements: mesh.elements.val,
     });
 
     // Supports events
