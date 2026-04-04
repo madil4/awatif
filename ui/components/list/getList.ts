@@ -15,7 +15,13 @@ import "./styles.css";
 type TaggedItem = {
   type: ComponentsType;
   index: number;
-  item: { name: string; templateId: string; geometry: number[]; params?: Record<string, unknown>; loadCase?: LoadCase };
+  item: {
+    name: string;
+    templateId: string;
+    geometry: number[];
+    params?: Record<string, unknown>;
+    loadCase?: LoadCase;
+  };
 };
 
 export function getList({
@@ -192,19 +198,27 @@ export function getList({
     if (deletedPoints.size > 0 || deletedLines.size > 0) {
       const updated = new Map(components.val);
 
+      const pointBasedComponentsTypes = [ComponentsType.SUPPORTS];
+      if (geometryKind.val == "point")
+        pointBasedComponentsTypes.push(ComponentsType.LOADS);
+
       if (deletedPoints.size > 0) {
         removeDeletedFromTypes(
           updated,
-          [ComponentsType.LOADS, ComponentsType.SUPPORTS],
+          pointBasedComponentsTypes,
           deletedPoints,
         );
       }
+      const lineBasedComponentsTypes = [
+        ComponentsType.MESH,
+        ComponentsType.DESIGN,
+        ComponentsType.IMPERFECTIONS,
+      ];
+      if (geometryKind.val == "line")
+        lineBasedComponentsTypes.push(ComponentsType.LOADS);
+
       if (deletedLines.size > 0) {
-        removeDeletedFromTypes(
-          updated,
-          [ComponentsType.MESH, ComponentsType.DESIGN, ComponentsType.IMPERFECTIONS],
-          deletedLines,
-        );
+        removeDeletedFromTypes(updated, lineBasedComponentsTypes, deletedLines);
       }
 
       components.val = updated;
@@ -359,7 +373,13 @@ export function getList({
     const defaultParams = {
       ...templates?.get(targetType)?.get(templateId)?.defaultParams,
     };
-    const newComponent: { name: string; templateId: string; geometry: number[]; params: Record<string, unknown>; loadCase?: LoadCase } = {
+    const newComponent: {
+      name: string;
+      templateId: string;
+      geometry: number[];
+      params: Record<string, unknown>;
+      loadCase?: LoadCase;
+    } = {
       name,
       templateId,
       geometry: [],
