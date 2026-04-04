@@ -55,9 +55,9 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
     const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
     if (L === 0) return group;
 
-    // Local y unit vector (perpendicular to member, 90° CCW in XY plane)
-    const perpX = -dy / L;
-    const perpY = dx / L;
+    // Local y unit vector (perpendicular to member, 90° clockwise in XY plane)
+    const perpX = dy / L;
+    const perpY = -dx / L;
 
     const ARROW_LENGTH = 0.25 * displayScale;
     const ARROW_HEAD_LENGTH = 0.12 * displayScale;
@@ -86,13 +86,13 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
       const pz = z1 + t * dz;
 
       const origin = new THREE.Vector3(
-        px + offset.x,
-        py + offset.y,
-        pz + offset.z,
+        px - offset.x,
+        py - offset.y,
+        pz - offset.z,
       );
 
       const arrow = new THREE.ArrowHelper(
-        direction.clone().negate(),
+        direction.clone(),
         origin,
         ARROW_LENGTH,
         COLOR,
@@ -105,14 +105,14 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
 
     // Cap line connecting arrow tips
     const capStart = new THREE.Vector3(
-      x1 + offset.x,
-      y1 + offset.y,
-      z1 + offset.z,
+      x1 - offset.x,
+      y1 - offset.y,
+      z1 - offset.z,
     );
     const capEnd = new THREE.Vector3(
-      x2 + offset.x,
-      y2 + offset.y,
-      z2 + offset.z,
+      x2 - offset.x,
+      y2 - offset.y,
+      z2 - offset.z,
     );
     const capGeometry = new THREE.BufferGeometry().setFromPoints([
       capStart,
