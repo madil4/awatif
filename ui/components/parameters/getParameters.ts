@@ -38,7 +38,7 @@ export function getParameters({
     const template = templates.get(active.type)?.get(component?.templateId);
     if (!template?.getParamsTemplate) return;
 
-    params.val = component.params || template.defaultParams || {};
+    params.val = { ...template.defaultParams, ...component.params };
 
     templateContent.val = template.getParamsTemplate({
       params,

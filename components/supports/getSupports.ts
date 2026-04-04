@@ -27,7 +27,7 @@ export function getSupports({
     if (!template) return;
 
     const { support } = template.getSupport({
-      params: (component.params ?? template.defaultParams) as Parameters<
+      params: ({ ...template.defaultParams, ...component.params }) as Parameters<
         typeof template.getSupport
       >[0]["params"],
     });

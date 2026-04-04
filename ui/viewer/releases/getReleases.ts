@@ -59,7 +59,7 @@ export function getReleases({
         if (!startPosition || !endPosition) return;
 
         const releaseObject = template.getObject3D?.({
-          params: (component.params ?? template.defaultParams) as any,
+          params: ({ ...template.defaultParams, ...component.params }) as any,
           startPosition: startPosition as [number, number, number],
           endPosition: endPosition as [number, number, number],
           displayScale: s,

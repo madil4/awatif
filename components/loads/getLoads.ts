@@ -44,7 +44,7 @@ export function getLoads({
     if (!template) return;
 
     const { load: rawLoad } = template.getLoad({
-      params: (component.params ?? template.defaultParams) as Parameters<
+      params: ({ ...template.defaultParams, ...component.params }) as Parameters<
         typeof template.getLoad
       >[0]["params"],
     });

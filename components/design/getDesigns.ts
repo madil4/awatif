@@ -38,7 +38,7 @@ export const getDesigns = ({
     const impTemplate = templates
       .get(ComponentsType.IMPERFECTIONS)
       ?.get(mc.templateId);
-    const impParams = (mc.params ?? impTemplate?.defaultParams) as
+    const impParams = ({ ...impTemplate?.defaultParams, ...mc.params }) as
       | Record<string, unknown>
       | undefined;
     if (!impParams) continue;
@@ -103,7 +103,7 @@ export const getDesigns = ({
 
       // Compute design result
       const designResult = template.getDesign({
-        params: component.params ?? template.defaultParams,
+        params: { ...template.defaultParams, ...component.params },
         lineElementForces,
         length,
         activeAnalysis,
