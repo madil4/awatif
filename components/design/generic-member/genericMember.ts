@@ -74,7 +74,7 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
   },
 
   getSection: () => {
-    const halfSize = 0.15; // 300 mm / 2
+    const halfSize = 0.05; // 300 mm / 2
 
     return [
       [-halfSize, -halfSize],
