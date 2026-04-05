@@ -20,7 +20,7 @@ export function getAnalysisList({
       <div id="list" ?open=${true}>
         <summary>Components</summary>
         ${analysisItem("Linear Analysis", "linear")}
-        ${analysisItem("Geometric Nonlinear Analysis", "nonlinear")}
+        ${analysisItem("Nonlinear 2nd-Order Analysis", "nonlinear")}
       </div>
     `;
   };
