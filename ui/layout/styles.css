@@ -99,6 +99,13 @@ body {
   grid-area: bottom-right;
   align-self: end;
   min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 10px 10px;
+}
+
+#layout .bottom-right:empty {
+  display: none;
 }
 
 #layout .canvas {
@@ -110,27 +117,11 @@ body {
   min-height: 0;
 }
 
-#layout .prompt-panel {
-  min-width: 0;
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 10px 10px;
-}
-
-#layout .prompt-panel:empty {
-  display: none;
-}
-
 #layout:has(#canvas:not(.open)) .canvas {
   display: none;
 }
 
-#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty)))
-  .bottom-right {
-  display: none;
-}
-
-#layout:has(#canvas:not(.open)):not(:has(.prompt-panel:not(:empty)))
+#layout:has(#canvas:not(.open)):has(.bottom-right:empty)
   .bottom-left {
   grid-row: 2 / 4;
   grid-column: 1 / -1;
