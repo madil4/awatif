@@ -1,15 +1,14 @@
 # Awatif
 
-Awatif is the first open-source structural analysis and design tool built for the modern web. It is super-fast, transparent, and effortlessly accessible. Whether designing individual members like columns and beams or analyzing complex 2D frames, Awatif delivers a clean user interface and comprehensive structural reports.
+Open-source 2D structural analysis — from model to signed-off report in minutes.
 
-> **Note:** We are currently preparing for **Awatif v3.0**, which involves a complete rewrite of the codebase. No libraries have been removed.
+Awatif is a web-based tool for analyzing and designing 2D frames, beams, and columns. It combines real-time results, AI-assisted modeling, nonlinear 2nd-order analysis, and transparent reports that show every code clause and formula so reviewers can sign off faster.
 
-For the latest stable v2 release, please see:
-https://github.com/madil4/awatif/tree/v2.0.0
+## Quick Start
 
-## Getting Started
+**Hosted version** — skip the setup and start modeling at [app.awatif.co](https://app.awatif.co) ($25/mo). Includes AI-assisted modeling, transparent reports, and managed infrastructure.
 
-Requirements: Node.js 22+
+**Self-hosted / development** — requires Node.js 22+:
 
 ```bash
 git clone https://github.com/madil4/awatif.git
@@ -18,16 +17,27 @@ npm install
 npm run dev
 ```
 
-## Coding Style
+> **Note:** We are currently preparing for **Awatif v3.0**, which involves a complete rewrite of the codebase. For the latest stable v2 release, see the [v2.0.0 tag](https://github.com/madil4/awatif/tree/v2.0.0).
 
-- Keep it simple. Focus on core features and minimum viable product. The system is already complex
+## Contributing
+
+### Coding Style
+
+- Keep it simple. Focus on core features and minimum viable product. The system is already complex.
 - Use types. Functions should fully describe inputs and outputs.
 - Avoid global state. If unavoidable, use reactive objects with the signal approach.
 
-## Code Formatting
+### Code Formatting
 
 Install the [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for automatic code formatting with default settings.
 
-## Syntax Highlighting
+### Syntax Highlighting
 
 For better syntax highlighting of HTML strings, we recommend the [lit-html VS Code extension](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html).
+
+## Links
+
+- [Website](https://awatif.co)
+- [Blog](https://awatif.co/blog/)
+- [YouTube](https://www.youtube.com/@awatifsoftware)
+- [LinkedIn](https://www.linkedin.com/in/madil4/)
