@@ -161,6 +161,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             ).checked)}
         />
       </div>
+      <!-- Point Results is hidden until reactions are unblocked.
       <div class="display-item">
         <label>Point Results</label>
         <select
@@ -185,6 +186,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           </option>
         </select>
       </div>
+      -->
       <div class="display-item">
         <label>Line Results</label>
         <select
