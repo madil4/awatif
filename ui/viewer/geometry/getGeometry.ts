@@ -300,7 +300,7 @@ export function getGeometry({
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.pointerType === "touch" || e.button !== 0) return;
     if (mode.val === Mode.DISABLED) return;
 
     // Selection mode: only when selection is not null
@@ -394,7 +394,7 @@ export function getGeometry({
   });
 
   rendererElm.addEventListener("pointerup", (e: PointerEvent) => {
-    if (e.button !== 0) return;
+    if (e.pointerType === "touch" || e.button !== 0) return;
     if (mode.val === Mode.DISABLED) return;
 
     const pointHits = raycaster.intersectObject(points, false);
