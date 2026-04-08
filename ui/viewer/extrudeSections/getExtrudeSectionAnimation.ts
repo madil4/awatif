@@ -15,7 +15,6 @@ export function getExtrudeSectionAnimation({
   render: () => void;
 }): void {
   const extrudeSections = display.extrudeSections;
-  if (!extrudeSections) return;
 
   const pivot = controls.target.clone();
   const dist2D = camera.position.distanceTo(controls.target);
