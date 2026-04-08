@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
   Geometry,
@@ -33,7 +32,7 @@ export function getViewer({
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
-  display?: Display;
+  display: Display;
   templates?: typeof Templates;
 }): HTMLDivElement {
   const scene = new THREE.Scene();
@@ -68,12 +67,8 @@ export function getViewer({
   controls.addEventListener("change", render);
 
   // Objects
-  const grid = {
-    size: display?.grid?.size ?? van.state(10),
-    spacing: display?.grid?.spacing ?? van.state(1),
-  };
-
-  const displayScale = display?.displayScale ?? van.state(1);
+  const grid = display.grid;
+  const displayScale = display.displayScale;
 
   camera.position.set(
     grid.size.rawVal / 2,
@@ -99,7 +94,7 @@ export function getViewer({
       }),
     );
 
-  if (mesh)
+  if (mesh) {
     scene.add(
       getMesh({
         mesh,
@@ -107,6 +102,25 @@ export function getViewer({
         display,
       }),
     );
+
+    scene.add(
+      getPointResults({
+        mesh,
+        display: display.pointResult,
+        displayScale,
+        render,
+      }),
+    );
+
+    scene.add(
+      getLineResults({
+        mesh,
+        display: display.lineResult,
+        displayScale,
+        render,
+      }),
+    );
+  }
 
   if (components && geometry && templates) {
     scene.add(
@@ -150,9 +164,7 @@ export function getViewer({
         display,
       }),
     );
-  }
 
-  if (geometry && components && templates && display?.extrudeSections) {
     scene.add(
       getExtrudeSections({
         geometry,
@@ -169,28 +181,6 @@ export function getViewer({
       display,
       render,
     });
-  }
-
-  if (mesh && display?.pointResult) {
-    scene.add(
-      getPointResults({
-        mesh,
-        display: display.pointResult,
-        displayScale,
-        render,
-      }),
-    );
-  }
-
-  if (mesh && display?.lineResult) {
-    scene.add(
-      getLineResults({
-        mesh,
-        display: display.lineResult,
-        displayScale,
-        render,
-      }),
-    );
   }
 
   render();

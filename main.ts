@@ -122,6 +122,7 @@ const display: Display = {
     size: van.state(10),
     spacing: van.state(0.5),
   },
+  displayScale: van.state(1),
   geometry: van.state(true),
   mesh: van.state(true),
   deformedShape: van.state(true),
@@ -130,6 +131,7 @@ const display: Display = {
   releases: van.state(true),
   memberIndex: van.state(false),
   extrudeSections: van.state(false),
+  pointResult: van.state("None"),
   lineResult: van.state("None"),
   loadCase: van.state<LoadSelection>("dead"),
 };
