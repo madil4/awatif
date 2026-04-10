@@ -6,9 +6,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite --open --port 4600",
+    "dev": "vite --open",
     "build": "vite build",
-    "preview": "vite preview --open --port 4600",
+    "preview": "vite preview --open",
     "test": "vitest"
   },
   "engines": {
