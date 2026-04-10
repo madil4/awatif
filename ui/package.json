@@ -8,6 +8,7 @@
   "module": "index.ts",
   "types": "index.ts",
   "dependencies": {
+    "@awatif/components": "^3.0.0",
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.2.1",
     "three": "^0.180.0"

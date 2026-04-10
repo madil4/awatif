@@ -1,8 +1,9 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import { ImperfectionsParams } from "../imperfections/imperfections";
-import type { ActiveAnalysis } from "@awatif/ui";
 import type { Mesh } from "../data-model";
+
+export type ActiveAnalysis = "linear" | "nonlinear";
 
 export type DesignTemplate<
   Params extends Record<string, unknown>,
@@ -16,7 +17,7 @@ export type DesignTemplate<
     activeAnalysis,
   }: {
     params: State<Params>;
-    activeAnalysis: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis;
   }) => TemplateResult;
 
   getElementsProps: ({
@@ -24,7 +25,7 @@ export type DesignTemplate<
     activeAnalysis,
   }: {
     params: Params;
-    activeAnalysis: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis;
   }) => {
     elasticity: number;
     area: number;
@@ -51,7 +52,7 @@ export type DesignTemplate<
     params: Params;
     lineElementForces: LineElementForces;
     length: number;
-    activeAnalysis: ActiveAnalysis["val"];
+    activeAnalysis: ActiveAnalysis;
     imperfections?: ImperfectionsParams;
   }) => Design;
 
