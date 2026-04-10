@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
-import { getText } from "../../../ui/viewer/text/getText";
+import { getText } from "../getText";
 
 type PointLoadParams = {
   Fx: number;

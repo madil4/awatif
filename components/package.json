@@ -10,11 +10,13 @@
   "dependencies": {
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.2.1",
-    "mathjs": "^14.4.0"
+    "mathjs": "^14.4.0",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "vite": "^7.1.9",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "@types/three": "^0.180.0"
   },
   "engines": {
     "node": ">=22"

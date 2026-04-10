@@ -1,6 +1,7 @@
 import { Mesh, Components, ComponentsType } from "../data-model";
 import type { DesignTemplate, LineElementForces } from "./data-model";
-import type { ActiveAnalysis } from "@awatif/ui";
+import type { ActiveAnalysis } from "./data-model";
+import type { ImperfectionsParams } from "../imperfections/imperfections";
 
 export const getDesigns = ({
   mesh,
@@ -16,7 +17,7 @@ export const getDesigns = ({
   };
   components: Components["val"];
   templates: Map<ComponentsType, Map<string, any>>;
-  activeAnalysis?: ActiveAnalysis["val"];
+  activeAnalysis?: ActiveAnalysis;
 }): Map<number, Record<string, any>> => {
   // Get design components
   const designComponents = components.get(ComponentsType.DESIGN) || [];
@@ -33,13 +34,13 @@ export const getDesigns = ({
   // Build line → imperfection params lookup from imperfection components
   const imperfectionComponents =
     components.get(ComponentsType.IMPERFECTIONS) ?? [];
-  const lineToImperfections = new Map<number, Record<string, unknown>>();
+  const lineToImperfections = new Map<number, ImperfectionsParams>();
   for (const mc of imperfectionComponents) {
     const impTemplate = templates
       .get(ComponentsType.IMPERFECTIONS)
       ?.get(mc.templateId);
     const impParams = ({ ...impTemplate?.defaultParams, ...mc.params }) as
-      | Record<string, unknown>
+      | ImperfectionsParams
       | undefined;
     if (!impParams) continue;
     for (const lineId of mc.geometry) {
@@ -106,7 +107,7 @@ export const getDesigns = ({
         params: { ...template.defaultParams, ...component.params },
         lineElementForces,
         length,
-        activeAnalysis,
+        activeAnalysis: activeAnalysis ?? "linear",
         imperfections: lineToImperfections.get(lineId),
       });
 
