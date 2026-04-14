@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
+    "// build": "`npm run build -w awatif` also tries to build `components` and `ui`.",
     "build": "vite build",
     "preview": "vite preview --open",
     "test": "vitest"
