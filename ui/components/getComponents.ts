@@ -5,7 +5,6 @@ import {
   Components,
   ComponentsType,
   ActiveComponent,
-  LoadSelection,
   templates as Templates,
 } from "@awatif/components";
 import { getList } from "./list/getList";
@@ -16,6 +15,7 @@ import {
   ActiveAnalysis,
 } from "./analysisList/getAnalysisList";
 import { AnalysisStatus } from "../analysisStatus/getAnalysisStatus";
+import type { Display } from "../display/getDisplay";
 
 import "./styles.css";
 
@@ -54,7 +54,6 @@ export function getComponents({
   componentsBarMode,
   templates,
   activeAnalysis,
-  loadCase,
   analysisStatus,
   display,
 }: {
@@ -63,12 +62,12 @@ export function getComponents({
   componentsBarMode: State<ComponentsType | null>;
   templates?: typeof Templates;
   activeAnalysis?: ActiveAnalysis;
-  loadCase?: State<LoadSelection>;
   analysisStatus?: AnalysisStatus;
-  display?: { memberIndex: State<boolean> };
+  display?: Display;
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);
+  const loadCase = display?.loadCase;
 
   const types = van.derive(() => getTypesForMode(componentsBarMode.val).types);
   const geometryKind = van.derive(() => {
