@@ -10,12 +10,12 @@
   "dependencies": {
     "@awatif/components": "^3.0.0",
     "vanjs-core": "^1.6.0",
-    "lit-html": "^3.2.1",
-    "three": "^0.180.0"
+    "lit-html": "^3.3.2",
+    "three": "^0.183.2"
   },
   "devDependencies": {
-    "vite": "^7.1.9",
-    "@types/three": "^0.180.0"
+    "vite": "^8.0.8",
+    "@types/three": "^0.183.1"
   },
   "engines": {
     "node": ">=22"
