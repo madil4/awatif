@@ -282,7 +282,6 @@ document.body.append(
       components,
       componentsBarMode,
       templates,
-      loadCase: display.loadCase,
       analysisStatus,
       display,
     }),
