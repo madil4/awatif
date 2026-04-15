@@ -246,13 +246,14 @@ describe("getPositionsAndForces", () => {
   test("4- 3D portal frame: out-of-plane bending and torsion", () => {
     // Same geometry as case 2 but both bases fixed and 3D loads applied at top-left node:
     // Fz=10 kN (out-of-plane), Fy=-500 kN (axial compression), Mx=20 kN·m (torsion).
-    // Section includes shearModulus and torsionalConstant for active torsion stiffness.
+    // Section properties match a 0.25 m × 0.25 m square (physical values):
+    //   A = a², I = a⁴/12, J = 0.140577 a⁴, G = E / (2(1+ν)) with ν = 0.2
     const props3D = {
       elasticity: 32_836_000, // kN/m²
-      area: 0.0625, // m²
-      momentInertia: 0.00032552, // m⁴ (symmetric: Iy = Iz)
-      shearModulus: 13_681_667, // kN/m² (E / (2*(1+0.2)))
-      torsionalConstant: 0.00065104, // m⁴ (≈ 2*Iz)
+      area: 0.0625, // m² (0.25²)
+      momentInertia: 0.0003255208333333333, // m⁴ (0.25⁴/12, symmetric: Iy = Iz)
+      shearModulus: 13_681_666.666666666, // kN/m² (E / (2*(1+0.2)))
+      torsionalConstant: 0.000549128125, // m⁴ (0.140577 × 0.25⁴)
     };
 
     const nodes: Mesh["nodes"]["val"] = [
@@ -291,13 +292,13 @@ describe("getPositionsAndForces", () => {
     expect(positions[1]).toBeCloseTo(0);
     expect(positions[2]).toBeCloseTo(0);
     // Node 1: top left — settles in Y, displaces in Z (out-of-plane)
-    expect(positions[3]).toBeCloseTo(-0.00025975711275114333);
-    expect(positions[4]).toBeCloseTo(3.9990256853441557);
-    expect(positions[5]).toBeCloseTo(0.025148340140413915);
+    expect(positions[3]).toBeCloseTo(-0.0002597571124434302);
+    expect(positions[4]).toBeCloseTo(3.9990256853447326);
+    expect(positions[5]).toBeCloseTo(0.025803301083595);
     // Node 2: top right — displaces in Z (torsion/shear carried through beam)
-    expect(positions[6]).toBeCloseTo(5.999740242887249);
-    expect(positions[7]).toBeCloseTo(3.9999997745169726);
-    expect(positions[8]).toBeCloseTo(0.009779267851433928);
+    expect(positions[6]).toBeCloseTo(5.999740242887556);
+    expect(positions[7]).toBeCloseTo(3.9999997745163953);
+    expect(positions[8]).toBeCloseTo(0.009124217493576428);
     // Node 3: fixed base, no displacement
     expect(positions[9]).toBeCloseTo(6);
     expect(positions[10]).toBeCloseTo(0);
@@ -305,35 +306,35 @@ describe("getPositionsAndForces", () => {
 
     // Left column: Fz → Vz and My (minor-axis bending); Mx (torsion) from applied Mx
     const f0 = internalForces.get(0)!;
-    expect(f0.N[0]).toBeCloseTo(499.88431311416184); // axial ≈ 500 kN
-    expect(f0.N[1]).toBeCloseTo(499.88431311416184);
+    expect(f0.N[0]).toBeCloseTo(499.88431281813973); // axial ≈ 500 kN
+    expect(f0.N[1]).toBeCloseTo(499.88431281813973);
     expect(f0.Vy[0]).toBeCloseTo(0); // no in-plane horizontal load
     expect(f0.Vy[1]).toBeCloseTo(0);
-    expect(f0.Vz[0]).toBeCloseTo(-8.426469782906189); // out-of-plane shear
-    expect(f0.Vz[1]).toBeCloseTo(-8.426469782906189);
-    expect(f0.Mx[0]).toBeCloseTo(-4.720590651281419); // torsion
-    expect(f0.Mx[1]).toBeCloseTo(-4.720590651281419);
-    expect(f0.My[0]).toBeCloseTo(44.8359108367271); // minor-axis moment at base
-    expect(f0.My[1]).toBeCloseTo(11.130031705102354); // at top
+    expect(f0.Vz[0]).toBeCloseTo(-8.51970556489362); // out-of-plane shear
+    expect(f0.Vz[1]).toBeCloseTo(-8.51970556489362);
+    expect(f0.Mx[0]).toBeCloseTo(-4.440883305319135); // torsion
+    expect(f0.Mx[1]).toBeCloseTo(-4.440883305319135);
+    expect(f0.My[0]).toBeCloseTo(45.83540471725909); // minor-axis moment at base
+    expect(f0.My[1]).toBeCloseTo(11.756582457684615); // at top
 
     // Beam: Mx constant (no distributed torsion); My antisymmetric from Fz path
     const f1 = internalForces.get(1)!;
-    expect(f1.Vz[0]).toBeCloseTo(1.5735302170938068);
-    expect(f1.Vz[1]).toBeCloseTo(1.5735302170938068);
-    expect(f1.Mx[0]).toBeCloseTo(8.869968294897648); // torsion constant along beam
-    expect(f1.Mx[1]).toBeCloseTo(8.869968294897648);
-    expect(f1.My[0]).toBeCloseTo(-4.720590651281423); // minor-axis end moments
-    expect(f1.My[1]).toBeCloseTo(4.7205906512814195);
+    expect(f1.Vz[0]).toBeCloseTo(1.4802944351063774);
+    expect(f1.Vz[1]).toBeCloseTo(1.4802944351063774);
+    expect(f1.Mx[0]).toBeCloseTo(8.243417542315406); // torsion constant along beam
+    expect(f1.Mx[1]).toBeCloseTo(8.243417542315406);
+    expect(f1.My[0]).toBeCloseTo(-4.440883305319138); // minor-axis end moments
+    expect(f1.My[1]).toBeCloseTo(4.4408833053191366);
 
     // Right column: Vz and My from Fz path; Mx torsion continues to base
     const f2 = internalForces.get(2)!;
-    expect(f2.N[0]).toBeCloseTo(0.11568688583811504); // minimal axial
-    expect(f2.N[1]).toBeCloseTo(0.11568688583811504);
-    expect(f2.Vz[0]).toBeCloseTo(1.5735302170938006);
-    expect(f2.Vz[1]).toBeCloseTo(1.5735302170938006);
-    expect(f2.Mx[0]).toBeCloseTo(-4.720590651281419); // torsion
-    expect(f2.Mx[1]).toBeCloseTo(-4.720590651281419);
-    expect(f2.My[0]).toBeCloseTo(8.86996829489766); // minor-axis moment at top
-    expect(f2.My[1]).toBeCloseTo(15.164089163272859); // at fixed base
+    expect(f2.N[0]).toBeCloseTo(0.1156871818602505); // minimal axial
+    expect(f2.N[1]).toBeCloseTo(0.1156871818602505);
+    expect(f2.Vz[0]).toBeCloseTo(1.4802944351063871);
+    expect(f2.Vz[1]).toBeCloseTo(1.4802944351063871);
+    expect(f2.Mx[0]).toBeCloseTo(-4.440883305319135); // torsion
+    expect(f2.Mx[1]).toBeCloseTo(-4.440883305319135);
+    expect(f2.My[0]).toBeCloseTo(8.243417542315406); // minor-axis moment at top
+    expect(f2.My[1]).toBeCloseTo(14.164595282740951); // at fixed base
   });
 });
