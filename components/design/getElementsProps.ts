@@ -1,6 +1,7 @@
 import { DesignTemplate } from "./data-model";
-import { Components, ComponentsType } from "../data-model";
+import { Components, ComponentsType, ElementProps } from "../data-model";
 import type { ActiveAnalysis } from "./data-model";
+import { genericMember } from "./generic-member/genericMember";
 
 export function getElementsProps({
   components,
@@ -15,28 +16,8 @@ export function getElementsProps({
   };
   templates: Map<ComponentsType, Map<string, any>>;
   activeAnalysis?: ActiveAnalysis;
-}): Map<
-  number,
-  {
-    elasticity: number;
-    area: number;
-    momentInertiaZ?: number;
-    momentInertiaY?: number;
-    shearModulus?: number;
-    torsionalConstant?: number;
-  }
-> {
-  const elementsProps = new Map<
-    number,
-    {
-      elasticity: number;
-      area: number;
-      momentInertiaZ?: number;
-      momentInertiaY?: number;
-      shearModulus?: number;
-      torsionalConstant?: number;
-    }
-  >();
+}): Map<number, ElementProps> {
+  const elementsProps = new Map<number, ElementProps>();
 
   const designComponents = components.get(ComponentsType.DESIGN) ?? [];
 
@@ -57,25 +38,15 @@ export function getElementsProps({
 
       // Apply properties to all elements that map to this geometry line
       elementIndices.forEach((elementIdx) => {
-        elementsProps.set(elementIdx, {
-          elasticity: props.elasticity,
-          area: props.area,
-          momentInertiaZ: props.momentInertiaZ,
-          momentInertiaY: props.momentInertiaY,
-          shearModulus: props.shearModulus,
-          torsionalConstant: props.torsionalConstant,
-        });
+        elementsProps.set(elementIdx, props);
       });
     });
   });
 
-  // Fill default RC-beam props for elements with no design assigned
-  const DEFAULT_PROPS = {
-    elasticity: 32_836_580,    // kN/m² — C30 Ecm, uncracked
-    area: 0.0625,              // m²    — 250×250 mm
-    momentInertiaZ: 3.2552e-4, // m⁴   — 250×250 mm rectangular (bh³/12)
-    momentInertiaY: 3.2552e-4, // m⁴   — 250×250 mm rectangular (hb³/12, symmetric)
-  };
+  const DEFAULT_PROPS = genericMember.getElementsProps({
+    params: genericMember.defaultParams,
+    activeAnalysis: activeAnalysis ?? "linear",
+  });
 
   geometryMapping.lineToElements.forEach((elementIndices) => {
     elementIndices.forEach((elementIdx) => {
