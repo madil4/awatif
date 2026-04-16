@@ -3,7 +3,7 @@ import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Display } from "../../display/getDisplay";
 
-export function getExtrudeSectionAnimation({
+export function getView3D({
   camera,
   controls,
   display,

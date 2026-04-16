@@ -18,7 +18,7 @@ import { getOrientation } from "./orientation/getOrientation";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
-import { getExtrudeSectionAnimation } from "./extrudeSections/getExtrudeSectionAnimation";
+import { getView3D } from "./view3D/getView3D";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -183,7 +183,7 @@ export function getViewer({
       }),
     );
 
-    getExtrudeSectionAnimation({
+    getView3D({
       camera,
       controls,
       display,
