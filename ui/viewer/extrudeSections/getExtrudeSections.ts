@@ -6,6 +6,7 @@ import {
   templates as Templates,
   ComponentsType,
 } from "@awatif/components";
+import { getElementLocalAxes } from "../common/getElementLocalAxes";
 
 type SectionPalette = {
   fill: number;
@@ -86,29 +87,9 @@ export function getExtrudeSections({
 
         const startV = new THREE.Vector3(...start);
         const endV = new THREE.Vector3(...end);
-        const dir = endV.clone().sub(startV);
-        const length = dir.length();
-        if (length < 1e-9) return;
-        dir.normalize();
-
-        // Compute local axes matching the FEM transformation (getTransformationMatrix.ts)
-        const l = dir.x;
-        const m = dir.y;
-        const n = dir.z;
-        const D = Math.sqrt(l * l + m * m);
-
-        let localY: THREE.Vector3;
-        let localZ: THREE.Vector3;
-        if (Math.abs(n - 1) < 1e-9) {
-          localY = new THREE.Vector3(0, 1, 0);
-          localZ = new THREE.Vector3(-1, 0, 0);
-        } else if (Math.abs(n + 1) < 1e-9) {
-          localY = new THREE.Vector3(0, 1, 0);
-          localZ = new THREE.Vector3(1, 0, 0);
-        } else {
-          localY = new THREE.Vector3(-m / D, l / D, 0);
-          localZ = new THREE.Vector3((-l * n) / D, (-m * n) / D, D);
-        }
+        const axes = getElementLocalAxes(startV, endV);
+        if (!axes) return;
+        const { localX, localY, localZ, length } = axes;
 
         // Section x → FEM local y, section y → FEM local z
         const shape = new THREE.Shape(
@@ -136,7 +117,7 @@ export function getExtrudeSections({
 
         // Align: geometry X → localY, geometry Y → localZ, geometry Z (extrusion) → dir
         const rotMatrix = new THREE.Matrix4();
-        rotMatrix.makeBasis(localY, localZ, dir);
+        rotMatrix.makeBasis(localY, localZ, localX);
         sectionGroup.setRotationFromMatrix(rotMatrix);
 
         group.add(sectionGroup);

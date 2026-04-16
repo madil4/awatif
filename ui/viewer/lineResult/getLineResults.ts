@@ -2,13 +2,68 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { Mesh } from "@awatif/components";
 import { getText } from "../text/getText";
+import { getElementLocalAxes } from "../common/getElementLocalAxes";
 
-export type LineResultsDisplay = "None" | "Normals" | "Bendings" | "Shears";
+export type LineResultsDisplay =
+  | "None"
+  | "Axial"
+  | "ShearY"
+  | "ShearZ"
+  | "BendingY"
+  | "BendingZ"
+  | "Torsion";
 
 type Forces =
   NonNullable<Mesh["internalForces"]["val"]> extends Map<number, infer V>
     ? V
     : never;
+
+type Endpoint = {
+  diagramPos: THREE.Vector3;
+  value: number;
+};
+
+type ResultConfig = {
+  axis: "localY" | "localZ" | "torsion";
+  label: string;
+  getValues: (forces: Forces) => [number, number];
+};
+
+const RESULT_CONFIGS: Record<
+  Exclude<LineResultsDisplay, "None">,
+  ResultConfig
+> = {
+  Axial: {
+    axis: "localY",
+    label: "N",
+    getValues: (forces) => forces.N,
+  },
+  ShearY: {
+    axis: "localY",
+    label: "Vy",
+    getValues: (forces) => forces.Vy,
+  },
+  ShearZ: {
+    axis: "localZ",
+    label: "Vz",
+    getValues: (forces) => forces.Vz,
+  },
+  BendingY: {
+    axis: "localZ",
+    label: "My",
+    getValues: (forces) => forces.My,
+  },
+  BendingZ: {
+    axis: "localY",
+    label: "Mz",
+    getValues: (forces) => forces.Mz,
+  },
+  Torsion: {
+    axis: "torsion",
+    label: "Mx",
+    getValues: (forces) => forces.Mx,
+  },
+};
 
 export function getLineResults({
   mesh,
@@ -26,11 +81,9 @@ export function getLineResults({
 
   const clearGroup = () => {
     while (group.children.length) {
-      const c = group.children[0];
-      if (c instanceof THREE.Sprite)
-        (c.material.map?.dispose(), c.material.dispose());
-      if (c instanceof THREE.Line) c.geometry.dispose();
-      group.remove(c);
+      const child = group.children[0];
+      disposeObject(child);
+      group.remove(child);
     }
   };
 
@@ -44,28 +97,22 @@ export function getLineResults({
     if (!nodes?.length || !elements?.length || !internalForces) return render();
     if (display.val === "None") return render();
 
+    const config = RESULT_CONFIGS[display.val];
     const s = displayScale.val;
-    const mode = display.val;
     const color = "#0066cc";
-    const lineMaterial = new THREE.LineBasicMaterial({ color });
-    lineMaterial.depthTest = false; // Todo: fix it properly
+    const lineMaterial = new THREE.LineBasicMaterial({ color, depthTest: false });
 
-    // Normalize scale
     let maxForceValue = 0;
     internalForces.forEach((forces: Forces) => {
-      const [a, b] = getValues(forces, mode);
+      const [a, b] = config.getValues(forces);
       maxForceValue = Math.max(maxForceValue, Math.abs(a), Math.abs(b));
     });
+
     const scale = maxForceValue > 0 ? (s * 0.6) / maxForceValue : 0.05;
     const textSize = 0.3 * s;
 
     lineToElements.forEach((elementIndices: number[]) => {
-      // Collect per-endpoint data for this line
-      const endpoints: {
-        pos: THREE.Vector3;
-        diagramPos: THREE.Vector3;
-        value: number;
-      }[] = [];
+      const endpoints: Endpoint[] = [];
 
       elementIndices.forEach((elementIdx) => {
         const forces = internalForces.get(elementIdx);
@@ -80,54 +127,51 @@ export function getLineResults({
 
         const start = new THREE.Vector3(n1[0], n1[1], n1[2] ?? 0);
         const end = new THREE.Vector3(n2[0], n2[1], n2[2] ?? 0);
-        const perp = getPerpendicular(start, end);
-        const [valStart, valEnd] = getValues(forces, mode);
+        const axes = getElementLocalAxes(start, end);
+        if (!axes) return;
 
-        // Draw element diagram
-        if (Math.abs(valStart) > 0.001 || Math.abs(valEnd) > 0.001) {
-          const dStart = start
-            .clone()
-            .add(perp.clone().multiplyScalar(valStart * scale));
-          const dEnd = end
-            .clone()
-            .add(perp.clone().multiplyScalar(valEnd * scale));
-          const geo = new THREE.BufferGeometry().setFromPoints([
-            start,
-            dStart,
-            dEnd,
-            end,
-          ]);
-          group.add(new THREE.Line(geo, lineMaterial));
-        }
+        const [valStart, valEnd] = config.getValues(forces);
 
-        endpoints.push({
-          pos: start,
-          diagramPos: start
-            .clone()
-            .add(perp.clone().multiplyScalar(valStart * scale)),
-          value: valStart,
-        });
-        endpoints.push({
-          pos: end,
-          diagramPos: end
-            .clone()
-            .add(perp.clone().multiplyScalar(valEnd * scale)),
-          value: valEnd,
-        });
+        const elementEndpoints =
+          config.axis === "torsion"
+            ? drawTorsionDiagram({
+                group,
+                lineMaterial,
+                start,
+                end,
+                localX: axes.localX,
+                localY: axes.localY,
+                localZ: axes.localZ,
+                length: axes.length,
+                valStart,
+                valEnd,
+                scale,
+              })
+            : drawPlanarDiagram({
+                group,
+                lineMaterial,
+                start,
+                end,
+                axis:
+                  config.axis === "localY" ? axes.localY : axes.localZ,
+                valStart,
+                valEnd,
+                scale,
+              });
+
+        endpoints.push(...elementEndpoints);
       });
 
-      // Show only max and min labels per line
       if (endpoints.length === 0) return;
 
       const sorted = [...endpoints].sort((a, b) => b.value - a.value);
       const max = sorted[0];
       const min = sorted[sorted.length - 1];
-      const label = getLabel(mode);
 
       if (Math.abs(max.value) > 0.001) {
         group.add(
           getText(
-            `${label}: ${max.value.toFixed(2)}`,
+            `${config.label}: ${max.value.toFixed(2)}`,
             [max.diagramPos.x, max.diagramPos.y, max.diagramPos.z],
             color,
             textSize,
@@ -140,7 +184,7 @@ export function getLineResults({
       ) {
         group.add(
           getText(
-            `${label}: ${min.value.toFixed(2)}`,
+            `${config.label}: ${min.value.toFixed(2)}`,
             [min.diagramPos.x, min.diagramPos.y, min.diagramPos.z],
             color,
             textSize,
@@ -159,37 +203,192 @@ export function getLineResults({
   return group;
 }
 
-// Helpers
-function getValues(forces: Forces, mode: LineResultsDisplay): [number, number] {
-  switch (mode) {
-    case "Normals":
-      return forces.N;
-    case "Shears":
-      return forces.Vy;
-    case "Bendings":
-      return forces.Mz;
-    default:
-      return [0, 0];
+function drawPlanarDiagram({
+  group,
+  lineMaterial,
+  start,
+  end,
+  axis,
+  valStart,
+  valEnd,
+  scale,
+}: {
+  group: THREE.Group;
+  lineMaterial: THREE.LineBasicMaterial;
+  start: THREE.Vector3;
+  end: THREE.Vector3;
+  axis: THREE.Vector3;
+  valStart: number;
+  valEnd: number;
+  scale: number;
+}): Endpoint[] {
+  const diagramStart = start
+    .clone()
+    .add(axis.clone().multiplyScalar(valStart * scale));
+  const diagramEnd = end.clone().add(axis.clone().multiplyScalar(valEnd * scale));
+
+  if (Math.abs(valStart) > 0.001 || Math.abs(valEnd) > 0.001) {
+    const geometry = new THREE.BufferGeometry().setFromPoints([
+      start,
+      diagramStart,
+      diagramEnd,
+      end,
+    ]);
+    group.add(new THREE.Line(geometry, lineMaterial));
   }
+
+  return [
+    { diagramPos: diagramStart, value: valStart },
+    { diagramPos: diagramEnd, value: valEnd },
+  ];
 }
 
-function getLabel(mode: LineResultsDisplay): string {
-  switch (mode) {
-    case "Normals":
-      return "N";
-    case "Shears":
-      return "V";
-    case "Bendings":
-      return "M";
-    default:
-      return "";
+function drawTorsionDiagram({
+  group,
+  lineMaterial,
+  start,
+  end,
+  localX,
+  localY,
+  localZ,
+  length,
+  valStart,
+  valEnd,
+  scale,
+}: {
+  group: THREE.Group;
+  lineMaterial: THREE.LineBasicMaterial;
+  start: THREE.Vector3;
+  end: THREE.Vector3;
+  localX: THREE.Vector3;
+  localY: THREE.Vector3;
+  localZ: THREE.Vector3;
+  length: number;
+  valStart: number;
+  valEnd: number;
+  scale: number;
+}): Endpoint[] {
+  const radiusStart = Math.abs(valStart * scale);
+  const radiusEnd = Math.abs(valEnd * scale);
+  const angleEnd = getTorsionRotation(valStart, valEnd) * Math.PI * 2;
+
+  const startRadial = localY.clone().multiplyScalar(radiusStart);
+  const endRadial = localY
+    .clone()
+    .multiplyScalar(Math.cos(angleEnd) * radiusEnd)
+    .add(localZ.clone().multiplyScalar(Math.sin(angleEnd) * radiusEnd));
+
+  if (Math.abs(valStart) > 0.001 || Math.abs(valEnd) > 0.001) {
+    const helixPoints = getTorsionHelixPoints({
+      start,
+      localX,
+      localY,
+      localZ,
+      length,
+      radiusStart,
+      radiusEnd,
+      rotation: angleEnd,
+    });
+
+    group.add(
+      new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(helixPoints),
+        lineMaterial,
+      ),
+    );
+
+    group.add(
+      new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+          start,
+          start.clone().add(startRadial),
+        ]),
+        lineMaterial,
+      ),
+    );
+
+    group.add(
+      new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([end, end.clone().add(endRadial)]),
+        lineMaterial,
+      ),
+    );
   }
+
+  return [
+    {
+      diagramPos: start.clone().add(startRadial),
+      value: valStart,
+    },
+    {
+      diagramPos: end.clone().add(endRadial),
+      value: valEnd,
+    },
+  ];
 }
 
-function getPerpendicular(
-  start: THREE.Vector3,
-  end: THREE.Vector3,
-): THREE.Vector3 {
-  const dir = new THREE.Vector3().subVectors(end, start).normalize();
-  return new THREE.Vector3(-dir.y, dir.x, 0).normalize();
+function getTorsionHelixPoints({
+  start,
+  localX,
+  localY,
+  localZ,
+  length,
+  radiusStart,
+  radiusEnd,
+  rotation,
+}: {
+  start: THREE.Vector3;
+  localX: THREE.Vector3;
+  localY: THREE.Vector3;
+  localZ: THREE.Vector3;
+  length: number;
+  radiusStart: number;
+  radiusEnd: number;
+  rotation: number;
+}): THREE.Vector3[] {
+  const segments = 32;
+  const points: THREE.Vector3[] = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const radius = THREE.MathUtils.lerp(radiusStart, radiusEnd, t);
+    const angle = rotation * t;
+    const radial = localY
+      .clone()
+      .multiplyScalar(Math.cos(angle) * radius)
+      .add(localZ.clone().multiplyScalar(Math.sin(angle) * radius));
+
+    points.push(
+      start
+        .clone()
+        .add(localX.clone().multiplyScalar(length * t))
+        .add(radial),
+    );
+  }
+
+  return points;
+}
+
+function getTorsionRotation(valStart: number, valEnd: number): number {
+  const dominantValue =
+    Math.abs(valStart) >= Math.abs(valEnd) ? valStart : valEnd;
+  const direction = Math.sign(dominantValue || valStart || valEnd || 1);
+  return 1.25 * direction;
+}
+
+function disposeObject(object: THREE.Object3D) {
+  if (object instanceof THREE.Sprite) {
+    object.material.map?.dispose();
+    object.material.dispose();
+  }
+
+  if (object instanceof THREE.Line || object instanceof THREE.Mesh) {
+    object.geometry.dispose();
+
+    if (Array.isArray(object.material)) {
+      object.material.forEach((material) => material.dispose());
+    } else {
+      object.material.dispose();
+    }
+  }
 }

@@ -222,22 +222,40 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             None
           </option>
           <option
-            value="Normals"
-            ?selected=${display.lineResult.val === "Normals"}
+            value="Axial"
+            ?selected=${display.lineResult.val === "Axial"}
           >
-            Normals
+            Axial (N)
           </option>
           <option
-            value="Shears"
-            ?selected=${display.lineResult.val === "Shears"}
+            value="ShearY"
+            ?selected=${display.lineResult.val === "ShearY"}
           >
-            Shears
+            Shear Y (Vy)
           </option>
           <option
-            value="Bendings"
-            ?selected=${display.lineResult.val === "Bendings"}
+            value="ShearZ"
+            ?selected=${display.lineResult.val === "ShearZ"}
           >
-            Bendings
+            Shear Z (Vz)
+          </option>
+          <option
+            value="BendingZ"
+            ?selected=${display.lineResult.val === "BendingZ"}
+          >
+            Bending Z (Mz)
+          </option>
+          <option
+            value="BendingY"
+            ?selected=${display.lineResult.val === "BendingY"}
+          >
+            Bending Y (My)
+          </option>
+          <option
+            value="Torsion"
+            ?selected=${display.lineResult.val === "Torsion"}
+          >
+            Torsion (Mx)
           </option>
         </select>
       </div>
