@@ -1,3 +1,5 @@
+// NOTE: This file is duplicated in app/components/design/generic-member/genericMember.ts
+// Keep both files in sync when making changes here.
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import type { DesignTemplate } from "../data-model";
@@ -7,6 +9,8 @@ type GenericMemberParams = {
   area: number; // cm²
   momentInertiaZ: number; // cm⁴
   momentInertiaY: number; // cm⁴
+  shearModulus: number; // MPa
+  torsionalConstant: number; // cm⁴
 };
 
 export const genericMember: DesignTemplate<GenericMemberParams, any> = {
@@ -16,6 +20,8 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
     area: 625, // cm² = 250×250 mm
     momentInertiaZ: 32552, // cm⁴ = (250×250³)/12 mm⁴ → cm⁴
     momentInertiaY: 32552, // cm⁴ = (250³×250)/12 mm⁴ → cm⁴ (symmetric square)
+    shearModulus: 13682, // MPa ≈ C30 Gcm = E/(2(1+0.2))
+    torsionalConstant: 54912, // cm⁴ ≈ 0.1406×250⁴ mm⁴ → cm⁴ (square section)
   },
 
   getParamsTemplate: ({ params }) => {
@@ -79,6 +85,36 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
           }}
         />
       </div>
+
+      <div>
+        <label>Shear Modulus (MPa):</label>
+        <input
+          type="number"
+          min="1"
+          step="1000"
+          .value=${live(params.val.shearModulus)}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, shearModulus: value };
+          }}
+        />
+      </div>
+
+      <div>
+        <label>Torsional Constant J (cm⁴):</label>
+        <input
+          type="number"
+          min="0.0001"
+          step="100"
+          .value=${live(params.val.torsionalConstant)}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, torsionalConstant: value };
+          }}
+        />
+      </div>
     `;
   },
 
@@ -88,8 +124,8 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
       area: params.area / 1e4, // cm² → m²
       momentInertiaZ: params.momentInertiaZ / 1e8, // cm⁴ → m⁴
       momentInertiaY: params.momentInertiaY / 1e8, // cm⁴ → m⁴
-      shearModulus: 0,
-      torsionalConstant: 0,
+      shearModulus: params.shearModulus * 1e3, // MPa → kN/m²
+      torsionalConstant: params.torsionalConstant / 1e8, // cm⁴ → m⁴
     };
   },
 
@@ -133,6 +169,16 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
             >Moment of Inertia I<sub>y</sub>:</span
           >
           ${params.momentInertiaY.toFixed(0)} cm⁴
+        </div>
+        <div>
+          <span style="color: var(--text-secondary);">Shear Modulus G:</span>
+          ${params.shearModulus.toFixed(0)} MPa
+        </div>
+        <div>
+          <span style="color: var(--text-secondary);"
+            >Torsional Constant J:</span
+          >
+          ${params.torsionalConstant.toFixed(0)} cm⁴
         </div>
       </div>
     `;
