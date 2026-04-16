@@ -7,7 +7,7 @@ describe("getPositionsAndForces", () => {
   const genericMemberProps = {
     elasticity: 32_836_000, // kN/m² (32836 MPa × 1e3)
     area: 0.0625, // m² (625 cm² / 1e4)
-    momentInertia: 0.00032552, // m⁴ (32552 cm⁴ / 1e8)
+    momentInertiaZ: 0.00032552, momentInertiaY: 0.00032552, // m⁴ (32552 cm⁴ / 1e8)
   };
 
   test("1- Cantilever column: single vertical member with horizontal tip load", () => {
@@ -251,7 +251,7 @@ describe("getPositionsAndForces", () => {
     const props3D = {
       elasticity: 32_836_000, // kN/m²
       area: 0.0625, // m² (0.25²)
-      momentInertia: 0.0003255208333333333, // m⁴ (0.25⁴/12, symmetric: Iy = Iz)
+      momentInertiaZ: 0.00032552, momentInertiaY: 0.0003255208333333333, // m⁴ (0.25⁴/12, symmetric: Iy = Iz)
       shearModulus: 13_681_666.666666666, // kN/m² (E / (2*(1+0.2)))
       torsionalConstant: 0.000549128125, // m⁴ (0.140577 × 0.25⁴)
     };
