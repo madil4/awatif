@@ -91,19 +91,9 @@ export function getExtrudeSectionAnimation({
         },
       });
     } else {
-      cancelAnim = animateCamera({
-        camera,
-        controls,
-        pivot,
-        targetR: dist2D,
-        targetPhi: 0,
-        targetTheta: 0,
-        render,
-        onComplete: () => {
-          controls.enableRotate = false;
-          cancelAnim = null;
-        },
-      });
+      controls.enableRotate = true;
+      controls.enabled = true;
+      render();
     }
   });
 }
