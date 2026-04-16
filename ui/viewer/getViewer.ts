@@ -73,7 +73,7 @@ export function getViewer({
   camera.position.set(
     grid.size.rawVal / 2,
     grid.size.rawVal / 2,
-    8 * (grid.size.rawVal / 10),
+    5 * (grid.size.rawVal / 10),
   );
   controls.target.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 0);
   controls.update();
