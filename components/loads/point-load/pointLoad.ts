@@ -55,6 +55,21 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
           }}
         />
       </div>
+
+      <div>
+        <label>Force Z (KN):</label>
+        <input
+          type="number"
+          placeholder="0"
+          step="10"
+          .value=${live(params.val.Fz)}
+          @input=${(e: Event) => {
+            const Fz = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(Fz)) return;
+            params.val = { ...params.val, Fz };
+          }}
+        />
+      </div>
     `;
   },
 
@@ -65,6 +80,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
   getObject3D: ({ params, position, displayScale }) => {
     const Fx = params.Fx;
     const Fy = params.Fy;
+    const Fz = params.Fz;
     const group = new THREE.Group();
 
     const ARROW_LENGTH = 0.3 * displayScale;
@@ -72,6 +88,7 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
     const ARROW_HEAD_WIDTH = 0.1 * displayScale;
     const COLOR_X = 0xff0000; // Red for X direction
     const COLOR_Y = 0x00ff00; // Green for Y direction
+    const COLOR_Z = 0x0088ff; // Blue for Z direction
 
     group.position.set(position[0], position[1], position[2]);
     group.renderOrder = 5;
@@ -132,6 +149,34 @@ export const pointLoad: LoadTemplate<PointLoadParams> = {
         { backgroundColor: "rgba(0, 0, 0, 0.6)" },
       );
       group.add(labelY);
+    }
+
+    if (Fz !== 0) {
+      const direction = new THREE.Vector3(0, 0, Fz > 0 ? 1 : -1);
+      const offset = new THREE.Vector3(0, 0, (Fz > 0 ? 1 : -1) * OFFSET);
+      const arrowZ = new THREE.ArrowHelper(
+        direction,
+        offset,
+        ARROW_LENGTH,
+        COLOR_Z,
+        ARROW_HEAD_LENGTH,
+        ARROW_HEAD_WIDTH,
+      );
+      setMaterialOnTop(arrowZ);
+      group.add(arrowZ);
+
+      const labelZ = getText(
+        `${Math.abs(Fz)} KN`,
+        [
+          offset.x,
+          offset.y,
+          offset.z + direction.z * (ARROW_LENGTH + 0.3 * displayScale),
+        ],
+        "#ffffff",
+        0.3 * displayScale,
+        { backgroundColor: "rgba(0, 0, 0, 0.6)" },
+      );
+      group.add(labelZ);
     }
 
     return group;
