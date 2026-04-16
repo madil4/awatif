@@ -131,6 +131,7 @@ const display: Display = {
   supports: van.state(true),
   releases: van.state(true),
   memberIndex: van.state(false),
+  orientation: van.state(false),
   extrudeSections: van.state(false),
   pointResult: van.state("None"),
   lineResult: van.state("None"),

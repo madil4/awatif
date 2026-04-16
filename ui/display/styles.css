@@ -58,6 +58,29 @@
   font-size: 0.8rem;
 }
 
+#display .display-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#display .display-toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#display .display-toggle-option-separated {
+  padding-left: 8px;
+  border-left: 1px solid var(--border);
+}
+
+#display .display-toggle-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
 #display .display-item input[type="number"] {
   max-width: 50px;
   padding: 3px 6px;

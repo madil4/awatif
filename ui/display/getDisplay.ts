@@ -18,6 +18,7 @@ export type Display = {
   supports: State<boolean>;
   releases: State<boolean>;
   memberIndex: State<boolean>;
+  orientation: State<boolean>;
   extrudeSections: State<boolean>;
   pointResult: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
@@ -69,12 +70,9 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <label>3D</label>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <span
-              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
-              >View</span
-            >
+        <div class="display-toggle-group">
+          <div class="display-toggle-option">
+            <span class="display-toggle-label">On</span>
             <input
               type="checkbox"
               .checked=${display.view3D.val}
@@ -84,13 +82,8 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
                 ).checked)}
             />
           </div>
-          <div
-            style="display: flex; align-items: center; gap: 4px; border-left: 1px solid var(--border); padding-left: 8px;"
-          >
-            <span
-              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
-              >Extrude</span
-            >
+          <div class="display-toggle-option display-toggle-option-separated">
+            <span class="display-toggle-label">Extrude</span>
             <input
               type="checkbox"
               .checked=${display.extrudeSections.val}
@@ -105,12 +98,9 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <label>Geometry</label>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <span
-              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
-              >Line</span
-            >
+        <div class="display-toggle-group">
+          <div class="display-toggle-option">
+            <span class="display-toggle-label">On</span>
             <input
               type="checkbox"
               .checked=${display.geometry.val}
@@ -120,13 +110,8 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
                 ).checked)}
             />
           </div>
-          <div
-            style="display: flex; align-items: center; gap: 4px; border-left: 1px solid var(--border); padding-left: 8px;"
-          >
-            <span
-              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
-              >Index</span
-            >
+          <div class="display-toggle-option display-toggle-option-separated">
+            <span class="display-toggle-label">Index</span>
             <input
               type="checkbox"
               .checked=${display.memberIndex.val}
@@ -140,20 +125,37 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <label>Mesh</label>
-        <input
-          type="checkbox"
-          .checked=${display.mesh.val}
-          @change=${(e: Event) =>
-            (display.mesh.val = (e.target as HTMLInputElement).checked)}
-        />
+        <div class="display-toggle-group">
+          <div class="display-toggle-option">
+            <span class="display-toggle-label">On</span>
+            <input
+              type="checkbox"
+              .checked=${display.mesh.val}
+              @change=${(e: Event) =>
+                (display.mesh.val = (e.target as HTMLInputElement).checked)}
+            />
+          </div>
+          <div class="display-toggle-option display-toggle-option-separated">
+            <span class="display-toggle-label">Deformed</span>
+            <input
+              type="checkbox"
+              .checked=${display.deformedShape.val}
+              @change=${(e: Event) => {
+                const checked = (e.target as HTMLInputElement).checked;
+                display.deformedShape.val = checked;
+                if (checked) display.mesh.val = true;
+              }}
+            />
+          </div>
+        </div>
       </div>
       <div class="display-item">
-        <label>Deformed Shape</label>
+        <label>Orientation</label>
         <input
           type="checkbox"
-          .checked=${display.deformedShape.val}
+          .checked=${display.orientation.val}
           @change=${(e: Event) =>
-            (display.deformedShape.val = (
+            (display.orientation.val = (
               e.target as HTMLInputElement
             ).checked)}
         />
