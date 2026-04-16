@@ -18,7 +18,7 @@ export function getGeometry({
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
   render: () => void;
-  display?: { geometry: State<boolean> };
+  display?: { geometry: State<boolean>; view3D?: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -141,7 +141,10 @@ export function getGeometry({
 
   van.derive(() => {
     if (!display?.geometry) return;
-    if (!display.geometry.val) {
+    const geometryVisible = display.geometry.val;
+    const viewing3D = display.view3D?.val ?? false;
+
+    if (!geometryVisible || viewing3D) {
       mode.val = Mode.DISABLED;
     } else if (mode.rawVal === Mode.DISABLED) {
       mode.val = Mode.EDIT;
