@@ -77,7 +77,13 @@ export function getOrientation({
       helper.setRotationFromMatrix(rotation);
       helper.setColors(0xff0000, 0x00ff00, 0x0000ff);
       helper.renderOrder = 100;
-      helper.material.depthTest = false;
+      if (Array.isArray(helper.material)) {
+        helper.material.forEach((material) => {
+          material.depthTest = false;
+        });
+      } else {
+        helper.material.depthTest = false;
+      }
 
       group.add(helper);
     });
