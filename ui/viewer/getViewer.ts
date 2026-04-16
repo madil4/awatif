@@ -37,14 +37,12 @@ export function getViewer({
   templates?: typeof Templates;
 }): HTMLDivElement {
   const scene = new THREE.Scene();
-
   const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
     1000,
   );
-  camera.up.set(0, 1, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -67,7 +65,6 @@ export function getViewer({
   controls.enableRotate = false;
   controls.addEventListener("change", render);
 
-  // Objects
   const grid = display.grid;
   const displayScale = display.displayScale;
 
@@ -79,6 +76,7 @@ export function getViewer({
   controls.target.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 0);
   controls.update();
 
+  // Objects
   scene.add(getGrid({ grid, render }));
   scene.add(getAxes({ displayScale, render }));
 
