@@ -20,7 +20,8 @@ export function getElementsProps({
   {
     elasticity: number;
     area: number;
-    momentInertia?: number;
+    momentInertiaZ?: number;
+    momentInertiaY?: number;
     shearModulus?: number;
     torsionalConstant?: number;
   }
@@ -30,7 +31,8 @@ export function getElementsProps({
     {
       elasticity: number;
       area: number;
-      momentInertia?: number;
+      momentInertiaZ?: number;
+      momentInertiaY?: number;
       shearModulus?: number;
       torsionalConstant?: number;
     }
@@ -58,7 +60,8 @@ export function getElementsProps({
         elementsProps.set(elementIdx, {
           elasticity: props.elasticity,
           area: props.area,
-          momentInertia: props.momentInertia,
+          momentInertiaZ: props.momentInertiaZ,
+          momentInertiaY: props.momentInertiaY,
           shearModulus: props.shearModulus,
           torsionalConstant: props.torsionalConstant,
         });
@@ -68,9 +71,10 @@ export function getElementsProps({
 
   // Fill default RC-beam props for elements with no design assigned
   const DEFAULT_PROPS = {
-    elasticity: 32_836_580,   // kN/m² — C30 Ecm, uncracked
-    area: 0.0625,             // m²    — 250×250 mm
-    momentInertia: 3.2552e-4, // m⁴   — 250×250 mm rectangular
+    elasticity: 32_836_580,    // kN/m² — C30 Ecm, uncracked
+    area: 0.0625,              // m²    — 250×250 mm
+    momentInertiaZ: 3.2552e-4, // m⁴   — 250×250 mm rectangular (bh³/12)
+    momentInertiaY: 3.2552e-4, // m⁴   — 250×250 mm rectangular (hb³/12, symmetric)
   };
 
   geometryMapping.lineToElements.forEach((elementIndices) => {

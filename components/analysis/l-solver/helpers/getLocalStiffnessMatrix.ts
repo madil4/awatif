@@ -11,8 +11,8 @@ export function getLocalStiffnessMatrix(
 
   const elementProps = elementsProps?.get(index);
 
-  const Iz = elementProps?.momentInertia ?? 0;
-  const Iy = elementProps?.momentInertia ?? 0;
+  const Iz = elementProps?.momentInertiaZ ?? 0;
+  const Iy = elementProps?.momentInertiaY ?? 0;
   const E = elementProps?.elasticity ?? 0;
   const A = elementProps?.area ?? 0;
   const G = elementProps?.shearModulus ?? 0;

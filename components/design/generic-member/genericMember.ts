@@ -5,7 +5,8 @@ import type { DesignTemplate } from "../data-model";
 type GenericMemberParams = {
   elasticity: number; // MPa
   area: number; // cm²
-  momentInertia: number; // cm⁴
+  momentInertiaZ: number; // cm⁴
+  momentInertiaY: number; // cm⁴
 };
 
 export const genericMember: DesignTemplate<GenericMemberParams, any> = {
@@ -13,7 +14,8 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
   defaultParams: {
     elasticity: 32836, // MPa ≈ C30 Ecm
     area: 625, // cm² = 250×250 mm
-    momentInertia: 32552, // cm⁴ = (250×250³)/12 mm⁴ → cm⁴
+    momentInertiaZ: 32552, // cm⁴ = (250×250³)/12 mm⁴ → cm⁴
+    momentInertiaY: 32552, // cm⁴ = (250³×250)/12 mm⁴ → cm⁴ (symmetric square)
   },
 
   getParamsTemplate: ({ params }) => {
@@ -49,16 +51,31 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
       </div>
 
       <div>
-        <label>Moment of Inertia (cm⁴):</label>
+        <label>Moment of Inertia I<sub>z</sub> (cm⁴):</label>
         <input
           type="number"
           min="0.0001"
           step="100"
-          .value=${live(params.val.momentInertia)}
+          .value=${live(params.val.momentInertiaZ)}
           @input=${(e: Event) => {
             const value = (e.target as HTMLInputElement).valueAsNumber;
             if (isNaN(value)) return;
-            params.val = { ...params.val, momentInertia: value };
+            params.val = { ...params.val, momentInertiaZ: value };
+          }}
+        />
+      </div>
+
+      <div>
+        <label>Moment of Inertia I<sub>y</sub> (cm⁴):</label>
+        <input
+          type="number"
+          min="0.0001"
+          step="100"
+          .value=${live(params.val.momentInertiaY)}
+          @input=${(e: Event) => {
+            const value = (e.target as HTMLInputElement).valueAsNumber;
+            if (isNaN(value)) return;
+            params.val = { ...params.val, momentInertiaY: value };
           }}
         />
       </div>
@@ -69,7 +86,8 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
     return {
       elasticity: params.elasticity * 1e3, // MPa → kN/m²
       area: params.area / 1e4, // cm² → m²
-      momentInertia: params.momentInertia / 1e8, // cm⁴ → m⁴
+      momentInertiaZ: params.momentInertiaZ / 1e8, // cm⁴ → m⁴
+      momentInertiaY: params.momentInertiaY / 1e8, // cm⁴ → m⁴
     };
   },
 
@@ -106,7 +124,13 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
           <span style="color: var(--text-secondary);"
             >Moment of Inertia I<sub>z</sub>:</span
           >
-          ${params.momentInertia.toFixed(0)} cm⁴
+          ${params.momentInertiaZ.toFixed(0)} cm⁴
+        </div>
+        <div>
+          <span style="color: var(--text-secondary);"
+            >Moment of Inertia I<sub>y</sub>:</span
+          >
+          ${params.momentInertiaY.toFixed(0)} cm⁴
         </div>
       </div>
     `;
