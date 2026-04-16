@@ -63,19 +63,30 @@ export function getViewer({
   });
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableRotate = false;
+  controls.enableRotate = true;
   controls.addEventListener("change", render);
 
   // Objects
   const grid = display.grid;
   const displayScale = display.displayScale;
 
-  camera.position.set(
+  const pivot = new THREE.Vector3(
     grid.size.rawVal / 2,
     grid.size.rawVal / 2,
-    8 * (grid.size.rawVal / 10),
+    0,
   );
-  controls.target.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 0);
+  const baseDistance = 8 * (grid.size.rawVal / 10);
+  const radius3D = baseDistance * 1.3;
+  const phi3D = THREE.MathUtils.degToRad(25);
+  const theta3D = Math.PI / 6;
+  const initialOffset = new THREE.Vector3(
+    radius3D * Math.cos(phi3D) * Math.sin(theta3D),
+    radius3D * Math.sin(phi3D),
+    radius3D * Math.cos(phi3D) * Math.cos(theta3D),
+  );
+
+  camera.position.copy(pivot).add(initialOffset);
+  controls.target.copy(pivot);
   controls.update();
 
   scene.add(getGrid({ grid, render }));
