@@ -30,19 +30,7 @@ export type Mesh = {
   releases: State<
     Map<number, [boolean, boolean, boolean, boolean]> // [My_start, Mz_start, My_end, Mz_end]
   >;
-  elementsProps: State<
-    Map<
-      number,
-      {
-        elasticity: number;
-        area: number;
-        momentInertiaZ?: number;
-        momentInertiaY?: number;
-        shearModulus?: number;
-        torsionalConstant?: number;
-      }
-    >
-  >;
+  elementsProps: State<Map<number, ElementProps>>;
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]
   displacements: State<number[]>; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
@@ -59,6 +47,15 @@ export type Mesh = {
       }
     >
   >;
+};
+
+export type ElementProps = {
+  elasticity: number;
+  area: number;
+  momentInertiaZ: number;
+  momentInertiaY: number;
+  shearModulus: number;
+  torsionalConstant: number;
 };
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];

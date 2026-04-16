@@ -88,6 +88,8 @@ export const genericMember: DesignTemplate<GenericMemberParams, any> = {
       area: params.area / 1e4, // cm² → m²
       momentInertiaZ: params.momentInertiaZ / 1e8, // cm⁴ → m⁴
       momentInertiaY: params.momentInertiaY / 1e8, // cm⁴ → m⁴
+      shearModulus: 0,
+      torsionalConstant: 0,
     };
   },
 

@@ -1,7 +1,7 @@
 import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import { ImperfectionsParams } from "../imperfections/imperfections";
-import type { Mesh } from "../data-model";
+import type { Mesh, ElementProps } from "../data-model";
 
 export type ActiveAnalysis = "linear" | "nonlinear";
 
@@ -26,14 +26,7 @@ export type DesignTemplate<
   }: {
     params: Params;
     activeAnalysis: ActiveAnalysis;
-  }) => {
-    elasticity: number;
-    area: number;
-    momentInertiaZ?: number;
-    momentInertiaY?: number;
-    shearModulus?: number;
-    torsionalConstant?: number;
-  };
+  }) => ElementProps;
 
   getReport?: ({
     params,
