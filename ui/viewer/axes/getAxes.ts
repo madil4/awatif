@@ -45,6 +45,19 @@ export function getAxes({
     group.add(yLine);
     group.add(getText("Y", [0, labelOffset, 0], "#00ff00", labelSize));
 
+    // Z-axis (blue)
+    const zGeom = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, axisLen),
+    ]);
+    const zLine = new THREE.Line(
+      zGeom,
+      new THREE.LineBasicMaterial({ color: 0x0000ff, depthTest: false }),
+    );
+    zLine.renderOrder = 1;
+    group.add(zLine);
+    group.add(getText("Z", [0, 0, labelOffset], "#0000ff", labelSize));
+
     render();
   });
 
