@@ -14,7 +14,7 @@ export function getExtrudeSectionAnimation({
   display: Display;
   render: () => void;
 }): void {
-  const extrudeSections = display.extrudeSections;
+  const view3D = display.view3D;
 
   const pivot = controls.target.clone();
   const dist2D = camera.position.distanceTo(controls.target);
@@ -24,59 +24,16 @@ export function getExtrudeSectionAnimation({
   const theta3D = Math.PI / 6;
 
   let cancelAnim: (() => void) | null = null;
-  let previousVisibility: {
-    geometry: boolean;
-    loads: boolean;
-    memberIndex: boolean;
-    mesh: boolean;
-  } | null = null;
 
   van.derive(() => {
-    const extruding = extrudeSections.val;
-    const geometryVisible = display.geometry.val;
-    const loadsVisible = display.loads.val;
-    const memberIndexVisible = display.memberIndex.val;
-    const meshVisible = display.mesh.val;
-
-    if (extruding) {
-      previousVisibility ??= {
-        geometry: geometryVisible,
-        loads: loadsVisible,
-        memberIndex: memberIndexVisible,
-        mesh: meshVisible,
-      };
-
-      if (geometryVisible) display.geometry.val = false;
-      if (loadsVisible) display.loads.val = false;
-      if (memberIndexVisible) display.memberIndex.val = false;
-      if (meshVisible) display.mesh.val = false;
-      return;
-    }
-
-    if (!previousVisibility) return;
-
-    const visibilityToRestore = previousVisibility;
-    previousVisibility = null;
-
-    if (display.geometry.val !== visibilityToRestore.geometry)
-      display.geometry.val = visibilityToRestore.geometry;
-    if (display.loads.val !== visibilityToRestore.loads)
-      display.loads.val = visibilityToRestore.loads;
-    if (display.memberIndex.val !== visibilityToRestore.memberIndex)
-      display.memberIndex.val = visibilityToRestore.memberIndex;
-    if (display.mesh.val !== visibilityToRestore.mesh)
-      display.mesh.val = visibilityToRestore.mesh;
-  });
-
-  van.derive(() => {
-    const extruding = extrudeSections.val;
+    const viewing3D = view3D.val;
 
     if (cancelAnim) {
       cancelAnim();
       cancelAnim = null;
     }
 
-    if (extruding) {
+    if (viewing3D) {
       cancelAnim = animateCamera({
         camera,
         controls,

@@ -10,6 +10,7 @@ import "./styles.css";
 export type Display = {
   grid: Grid;
   displayScale: State<number>;
+  view3D: State<boolean>;
   geometry: State<boolean>;
   mesh: State<boolean>;
   deformedShape: State<boolean>;
@@ -67,6 +68,42 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <span class="value-display">${display.displayScale.val}</span>
       </div>
       <div class="display-item">
+        <label>3D</label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span
+              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
+              >View</span
+            >
+            <input
+              type="checkbox"
+              .checked=${display.view3D.val}
+              @change=${(e: Event) =>
+                (display.view3D.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
+            />
+          </div>
+          <div
+            style="display: flex; align-items: center; gap: 4px; border-left: 1px solid var(--border); padding-left: 8px;"
+          >
+            <span
+              style="font-size: 0.7rem; color: var(--text-secondary); letter-spacing: 0.05em;"
+              >Extrude</span
+            >
+            <input
+              type="checkbox"
+              .checked=${display.extrudeSections.val}
+              @change=${(e: Event) => {
+                const checked = (e.target as HTMLInputElement).checked;
+                display.extrudeSections.val = checked;
+                if (checked) display.view3D.val = true;
+              }}
+            />
+          </div>
+        </div>
+      </div>
+      <div class="display-item">
         <label>Geometry</label>
         <div style="display: flex; gap: 8px; align-items: center;">
           <div style="display: flex; align-items: center; gap: 4px;">
@@ -77,7 +114,6 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             <input
               type="checkbox"
               .checked=${display.geometry.val}
-              ?disabled=${display.extrudeSections.val}
               @change=${(e: Event) =>
                 (display.geometry.val = (
                   e.target as HTMLInputElement
@@ -94,7 +130,6 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             <input
               type="checkbox"
               .checked=${display.memberIndex.val}
-              ?disabled=${display.extrudeSections.val}
               @change=${(e: Event) =>
                 (display.memberIndex.val = (
                   e.target as HTMLInputElement
@@ -148,17 +183,6 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           .checked=${display.releases.val}
           @change=${(e: Event) =>
             (display.releases.val = (e.target as HTMLInputElement).checked)}
-        />
-      </div>
-      <div class="display-item">
-        <label>Extrude Sections</label>
-        <input
-          type="checkbox"
-          .checked=${display.extrudeSections.val}
-          @change=${(e: Event) =>
-            (display.extrudeSections.val = (
-              e.target as HTMLInputElement
-            ).checked)}
         />
       </div>
       <!-- Point Results is hidden until reactions are unblocked.
