@@ -29,28 +29,41 @@ export function applyImperfections(
     const selectedLineIds = component.geometry;
     if (selectedLineIds.length === 0) continue;
 
-    const sign = params.direction === "negative" ? -1 : 1;
+    const sign = params.direction.includes("negative") ? -1 : 1;
 
-    // Global inclination: offset x by θᵢ × (y - y_base) for all nodes of selected lines
-    // This creates a rotation about the base, keeping bottom nodes fixed
+    // Global inclination: offset each line's nodes along local Y by θ₀ × (distance from base)
     if (params.globalInclination) {
-      const nodeIndices = collectNodesFromLines(
-        selectedLineIds,
-        lineToElements,
-        allElements,
-      );
-
-      // Find the base and top of the structure to compute height
-      let y_base = Infinity;
-      let y_max = -Infinity;
-      for (const ni of nodeIndices) {
-        y_base = Math.min(y_base, allNodes[ni][1]);
-        y_max = Math.max(y_max, allNodes[ni][1]);
-      }
-      const height = y_max - y_base;
-      // Apply inclination relative to the base
-      for (const ni of nodeIndices) {
-        allNodes[ni][0] += sign * params.theta0 * (allNodes[ni][1] - y_base);
+      for (const lineId of selectedLineIds) {
+        const line = geometry.lines.get(lineId);
+        if (!line) continue;
+        const [startPtId, endPtId] = line;
+        const startNi = (pointToNodes.get(startPtId) ?? [])[0];
+        const endNi = (pointToNodes.get(endPtId) ?? [])[0];
+        if (startNi === undefined || endNi === undefined) continue;
+        const p0 = allNodes[startNi];
+        const p1 = allNodes[endNi];
+        const dx = p1[0] - p0[0], dy = p1[1] - p0[1], dz = p1[2] - p0[2];
+        const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (L < 1e-10) continue;
+        const axes = getLocalAxes(p0, p1);
+        if (!axes) continue;
+        const localDir = params.direction.startsWith("z") ? axes.localZ : axes.localY;
+        const elementIndices = lineToElements.get(lineId);
+        if (!elementIndices) continue;
+        const lineNodeSet = new Set<number>();
+        for (const ei of elementIndices) {
+          for (const ni of allElements[ei]) lineNodeSet.add(ni);
+        }
+        for (const ni of lineNodeSet) {
+          const px = allNodes[ni][0] - p0[0];
+          const py = allNodes[ni][1] - p0[1];
+          const pz = allNodes[ni][2] - p0[2];
+          const t = (px * dx + py * dy + pz * dz) / (L * L);
+          const offset = sign * params.theta0 * t * L;
+          allNodes[ni][0] += offset * localDir[0];
+          allNodes[ni][1] += offset * localDir[1];
+          allNodes[ni][2] += offset * localDir[2];
+        }
       }
     }
 
@@ -62,6 +75,7 @@ export function applyImperfections(
           lineId,
           d,
           sign,
+          params.direction.startsWith("z"),
           geometry,
           allNodes,
           allElements,
@@ -73,28 +87,12 @@ export function applyImperfections(
   }
 }
 
-function collectNodesFromLines(
-  lineIds: number[],
-  lineToElements: Map<number, number[]>,
-  allElements: number[][],
-): Set<number> {
-  const nodeIndices = new Set<number>();
-  for (const lineId of lineIds) {
-    const elementIndices = lineToElements.get(lineId);
-    if (!elementIndices) continue;
-    for (const ei of elementIndices) {
-      for (const ni of allElements[ei]) {
-        nodeIndices.add(ni);
-      }
-    }
-  }
-  return nodeIndices;
-}
 
 function applyLocalBow(
   lineId: number,
   d: number,
   sign: number,
+  useLocalZ: boolean,
   geometry: {
     points: Geometry["points"]["val"];
     lines: Geometry["lines"]["val"];
@@ -137,30 +135,43 @@ function applyLocalBow(
   const endNi = endNodeIndices.values().next().value;
   if (startNi === undefined || endNi === undefined) return;
 
-  const x0 = allNodes[startNi][0];
-  const y0 = allNodes[startNi][1];
-  const x1 = allNodes[endNi][0];
-  const y1 = allNodes[endNi][1];
-
-  const dx = x1 - x0;
-  const dy = y1 - y0;
-  const L = Math.sqrt(dx * dx + dy * dy);
+  const p0 = allNodes[startNi];
+  const p1 = allNodes[endNi];
+  const dx = p1[0] - p0[0], dy = p1[1] - p0[1], dz = p1[2] - p0[2];
+  const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
   if (L < 1e-10) return;
 
   const e0 = L / d;
+  const axes = getLocalAxes(p0, p1);
+  if (!axes) return;
+  const localDir = useLocalZ ? axes.localZ : axes.localY;
 
-  // Perpendicular normal to the chord
-  const nx = (-dy / L) * sign;
-  const ny = (dx / L) * sign;
-
-  // Offset each internal node by e₀·sin(π·t)
+  // Offset each internal node by e₀·sin(π·t) along local Y or Z
   for (const ni of internalNodeIndices) {
-    const px = allNodes[ni][0] - x0;
-    const py = allNodes[ni][1] - y0;
-    const t = (px * dx + py * dy) / (L * L);
-
-    const bow = e0 * Math.sin(Math.PI * t);
-    allNodes[ni][0] += bow * nx;
-    allNodes[ni][1] += bow * ny;
+    const px = allNodes[ni][0] - p0[0];
+    const py = allNodes[ni][1] - p0[1];
+    const pz = allNodes[ni][2] - p0[2];
+    const t = (px * dx + py * dy + pz * dz) / (L * L);
+    const bow = e0 * Math.sin(Math.PI * t) * sign;
+    allNodes[ni][0] += bow * localDir[0];
+    allNodes[ni][1] += bow * localDir[1];
+    allNodes[ni][2] += bow * localDir[2];
   }
+}
+
+function getLocalAxes(
+  p0: number[],
+  p1: number[],
+): { localY: [number, number, number]; localZ: [number, number, number] } | null {
+  const dx = p1[0] - p0[0], dy = p1[1] - p0[1], dz = p1[2] - p0[2];
+  const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
+  if (L < 1e-9) return null;
+  const l = dx / L, m = dy / L, n = dz / L;
+  const D = Math.sqrt(l * l + m * m);
+  if (Math.abs(n - 1) < 1e-9) return { localY: [0, 1, 0], localZ: [-1, 0, 0] };
+  if (Math.abs(n + 1) < 1e-9) return { localY: [0, 1, 0], localZ: [1, 0, 0] };
+  return {
+    localY: [-m / D, l / D, 0],
+    localZ: [(-l * n) / D, (-m * n) / D, D],
+  };
 }
