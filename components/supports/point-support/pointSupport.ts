@@ -3,7 +3,12 @@ import { SupportTemplate } from "../data-model";
 import * as THREE from "three";
 
 type PointSupportParams = {
-  type: "fixed" | "pinned" | "horizontal-roller" | "vertical-roller";
+  type:
+    | "fixed"
+    | "pinned"
+    | "horizontal-roller"
+    | "vertical-roller"
+    | "z-roller";
 };
 
 const supportMap: Record<
@@ -14,6 +19,7 @@ const supportMap: Record<
   pinned: [true, true, true, false, false, false],
   "horizontal-roller": [false, true, true, false, false, false],
   "vertical-roller": [true, false, true, false, false, false],
+  "z-roller": [true, true, false, false, false, false],
 };
 
 export const pointSupport: SupportTemplate<PointSupportParams> = {
@@ -43,13 +49,16 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
             value="horizontal-roller"
             .selected=${params.val.type === "horizontal-roller"}
           >
-            Horizontal Roller
+            X Roller
           </option>
           <option
             value="vertical-roller"
             .selected=${params.val.type === "vertical-roller"}
           >
-            Vertical Roller
+            Y Roller
+          </option>
+          <option value="z-roller" .selected=${params.val.type === "z-roller"}>
+            Z Roller
           </option>
         </select>
       </div>
@@ -74,9 +83,11 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
     } else if (params.type === "pinned") {
       drawPinnedSupport(group, SIZE, COLOR, displayScale);
     } else if (params.type === "horizontal-roller") {
-      drawRollerSupport(group, SIZE, COLOR, "horizontal", displayScale);
+      drawRollerSupport(group, SIZE, COLOR, "x", displayScale);
+    } else if (params.type === "vertical-roller") {
+      drawRollerSupport(group, SIZE, COLOR, "y", displayScale);
     } else {
-      drawRollerSupport(group, SIZE, COLOR, "vertical", displayScale);
+      drawRollerSupport(group, SIZE, COLOR, "z", displayScale);
     }
 
     setMaterialOnTop(group);
@@ -173,12 +184,15 @@ function drawRollerSupport(
   group: THREE.Group,
   size: number,
   color: number,
-  direction: "horizontal" | "vertical",
+  freeAxis: "x" | "y" | "z",
   displayScale: number,
 ) {
-  const rotation = direction === "vertical" ? Math.PI / 2 : 0;
   const subGroup = new THREE.Group();
-  subGroup.rotation.z = rotation;
+  if (freeAxis === "y") {
+    subGroup.rotation.z = Math.PI / 2;
+  } else if (freeAxis === "z") {
+    subGroup.rotation.y = Math.PI / 2;
+  }
 
   // Draw triangle
   const trianglePoints = [
