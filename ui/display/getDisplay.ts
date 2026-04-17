@@ -90,7 +90,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
               @change=${(e: Event) => {
                 const checked = (e.target as HTMLInputElement).checked;
                 display.extrudeSections.val = checked;
-                if (checked) display.view3D.val = true;
+                display.view3D.val = checked;
               }}
             />
           </div>
