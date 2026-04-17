@@ -10,7 +10,7 @@ export type ImperfectionsParams = {
   localBow: boolean;
   bowRatioDenominator: number; // d where e₀ = L/d (default 400)
 
-  direction: string; // "positive" | "negative" (local Y) | "z-positive" | "z-negative" (local Z)
+  direction: string; // "y-positive" | "y-negative" | "z-positive" | "z-negative"
 };
 
 export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
@@ -20,7 +20,7 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
     theta0: 0.005,
     localBow: false,
     bowRatioDenominator: 400,
-    direction: "positive",
+    direction: "y-negative",
   },
 
   getParamsTemplate: ({ params }) => {
@@ -58,7 +58,6 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
                 }}
               />
             </div>
-
           `
         : html``}
 
@@ -106,8 +105,8 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
               direction: (e.target as HTMLSelectElement).value,
             })}
         >
-          <option value="positive">Local +Y</option>
-          <option value="negative">Local -Y</option>
+          <option value="y-positive">Local +Y</option>
+          <option value="y-negative">Local -Y</option>
           <option value="z-positive">Local +Z</option>
           <option value="z-negative">Local -Z</option>
         </select>
@@ -115,4 +114,3 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
     `;
   },
 };
-
