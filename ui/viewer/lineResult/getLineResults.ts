@@ -24,7 +24,7 @@ type Endpoint = {
 };
 
 type ResultConfig = {
-  axis: "localY" | "localZ" | "torsion";
+  axis: "localY" | "localZ";
   label: string;
   getValues: (forces: Forces) => [number, number];
 };
@@ -59,7 +59,7 @@ const RESULT_CONFIGS: Record<
     getValues: (forces) => forces.Mz,
   },
   Torsion: {
-    axis: "torsion",
+    axis: "localY",
     label: "Mx",
     getValues: (forces) => forces.Mx,
   },
@@ -132,32 +132,16 @@ export function getLineResults({
 
         const [valStart, valEnd] = config.getValues(forces);
 
-        const elementEndpoints =
-          config.axis === "torsion"
-            ? drawTorsionDiagram({
-                group,
-                lineMaterial,
-                start,
-                end,
-                localX: axes.localX,
-                localY: axes.localY,
-                localZ: axes.localZ,
-                length: axes.length,
-                valStart,
-                valEnd,
-                scale,
-              })
-            : drawPlanarDiagram({
-                group,
-                lineMaterial,
-                start,
-                end,
-                axis:
-                  config.axis === "localY" ? axes.localY : axes.localZ,
-                valStart,
-                valEnd,
-                scale,
-              });
+        const elementEndpoints = drawPlanarDiagram({
+          group,
+          lineMaterial,
+          start,
+          end,
+          axis: config.axis === "localY" ? axes.localY : axes.localZ,
+          valStart,
+          valEnd,
+          scale,
+        });
 
         endpoints.push(...elementEndpoints);
       });
@@ -241,139 +225,6 @@ function drawPlanarDiagram({
     { diagramPos: diagramStart, value: valStart },
     { diagramPos: diagramEnd, value: valEnd },
   ];
-}
-
-function drawTorsionDiagram({
-  group,
-  lineMaterial,
-  start,
-  end,
-  localX,
-  localY,
-  localZ,
-  length,
-  valStart,
-  valEnd,
-  scale,
-}: {
-  group: THREE.Group;
-  lineMaterial: THREE.LineBasicMaterial;
-  start: THREE.Vector3;
-  end: THREE.Vector3;
-  localX: THREE.Vector3;
-  localY: THREE.Vector3;
-  localZ: THREE.Vector3;
-  length: number;
-  valStart: number;
-  valEnd: number;
-  scale: number;
-}): Endpoint[] {
-  const radiusStart = Math.abs(valStart * scale);
-  const radiusEnd = Math.abs(valEnd * scale);
-  const angleEnd = getTorsionRotation(valStart, valEnd) * Math.PI * 2;
-
-  const startRadial = localY.clone().multiplyScalar(radiusStart);
-  const endRadial = localY
-    .clone()
-    .multiplyScalar(Math.cos(angleEnd) * radiusEnd)
-    .add(localZ.clone().multiplyScalar(Math.sin(angleEnd) * radiusEnd));
-
-  if (Math.abs(valStart) > 0.001 || Math.abs(valEnd) > 0.001) {
-    const helixPoints = getTorsionHelixPoints({
-      start,
-      localX,
-      localY,
-      localZ,
-      length,
-      radiusStart,
-      radiusEnd,
-      rotation: angleEnd,
-    });
-
-    group.add(
-      new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(helixPoints),
-        lineMaterial,
-      ),
-    );
-
-    group.add(
-      new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([
-          start,
-          start.clone().add(startRadial),
-        ]),
-        lineMaterial,
-      ),
-    );
-
-    group.add(
-      new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([end, end.clone().add(endRadial)]),
-        lineMaterial,
-      ),
-    );
-  }
-
-  return [
-    {
-      diagramPos: start.clone().add(startRadial),
-      value: valStart,
-    },
-    {
-      diagramPos: end.clone().add(endRadial),
-      value: valEnd,
-    },
-  ];
-}
-
-function getTorsionHelixPoints({
-  start,
-  localX,
-  localY,
-  localZ,
-  length,
-  radiusStart,
-  radiusEnd,
-  rotation,
-}: {
-  start: THREE.Vector3;
-  localX: THREE.Vector3;
-  localY: THREE.Vector3;
-  localZ: THREE.Vector3;
-  length: number;
-  radiusStart: number;
-  radiusEnd: number;
-  rotation: number;
-}): THREE.Vector3[] {
-  const segments = 32;
-  const points: THREE.Vector3[] = [];
-
-  for (let i = 0; i <= segments; i++) {
-    const t = i / segments;
-    const radius = THREE.MathUtils.lerp(radiusStart, radiusEnd, t);
-    const angle = rotation * t;
-    const radial = localY
-      .clone()
-      .multiplyScalar(Math.cos(angle) * radius)
-      .add(localZ.clone().multiplyScalar(Math.sin(angle) * radius));
-
-    points.push(
-      start
-        .clone()
-        .add(localX.clone().multiplyScalar(length * t))
-        .add(radial),
-    );
-  }
-
-  return points;
-}
-
-function getTorsionRotation(valStart: number, valEnd: number): number {
-  const dominantValue =
-    Math.abs(valStart) >= Math.abs(valEnd) ? valStart : valEnd;
-  const direction = Math.sign(dominantValue || valStart || valEnd || 1);
-  return 1.25 * direction;
 }
 
 function disposeObject(object: THREE.Object3D) {
