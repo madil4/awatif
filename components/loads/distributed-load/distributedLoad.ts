@@ -137,11 +137,11 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
     }
 
     const colorMap: Record<DistributedLoadParams["direction"], number> = {
-      "local-y": 0x00aaff,
-      "local-z": 0x00aaff,
-      "global-x": 0xff4400,
-      "global-y": 0x00cc44,
-      "global-z": 0xaa44ff,
+      "local-y": 0x00ff00,
+      "local-z": 0x0000ff,
+      "global-x": 0xff0000,
+      "global-y": 0x00ff00,
+      "global-z": 0x0000ff,
     };
     const COLOR = colorMap[direction];
 
