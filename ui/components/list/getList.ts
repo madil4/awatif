@@ -64,21 +64,34 @@ export function getList({
     return result;
   };
 
-  const isPointBased = () => geometryKind.val === "point";
-  const isLineBased = () => geometryKind.val === "line";
+  // Resolve a load component's geometry kind from its template; falls back
+  // to the panel's current geometryKind for non-load types.
+  const getComponentKind = (
+    type: ComponentsType,
+    component: { templateId: string },
+  ): "point" | "line" | null => {
+    if (type === ComponentsType.LOADS) {
+      const template = templates?.get(type)?.get(component.templateId) as
+        | { geometryKind?: "point" | "line" }
+        | undefined;
+      return template?.geometryKind ?? "point";
+    }
+    return geometryKind.val;
+  };
 
-  const getSelectedGeometry = () => {
+  const getSelectedGeometry = (kind: "point" | "line" | null) => {
     const sel = geometry.selection.val;
-    if (isPointBased()) return sel?.points ?? [];
-    if (isLineBased()) return sel?.lines ?? [];
+    if (kind === "point") return sel?.points ?? [];
+    if (kind === "line") return sel?.lines ?? [];
     return [];
   };
 
-  const setSelection = (indices: number[]) => {
-    if (isPointBased()) {
-      geometry.selection.val = { points: indices, lines: [] };
-    } else if (isLineBased()) {
-      geometry.selection.val = { points: [], lines: indices };
+  const setSelection = (indices: number[], kind: "point" | "line" | null) => {
+    const current = geometry.selection.val ?? { points: [], lines: [] };
+    if (kind === "point") {
+      geometry.selection.val = { points: indices, lines: current.lines };
+    } else if (kind === "line") {
+      geometry.selection.val = { points: current.points, lines: indices };
     } else {
       geometry.selection.val = null;
     }
@@ -118,9 +131,12 @@ export function getList({
     if (active === null || types.val.length === 0) return;
 
     const list = components.val.get(active.type) ?? [];
-    const componentGeometry = list[active.index]?.geometry ?? [];
+    const current = list[active.index];
+    if (!current) return;
+    const componentGeometry = current.geometry ?? [];
+    const activeKind = getComponentKind(active.type, current);
     isSyncing = true;
-    setSelection(componentGeometry);
+    setSelection(componentGeometry, activeKind);
     isSyncing = false;
   });
 
@@ -134,21 +150,26 @@ export function getList({
     const current = list[active.index];
     if (!current) return;
 
-    const selectedGeometry = getSelectedGeometry();
+    const activeKind = getComponentKind(active.type, current);
+    const selectedGeometry = getSelectedGeometry(activeKind);
     if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
 
     const selectedSet = new Set(selectedGeometry);
 
-    // Update the active component's geometry and remove those indices from others of the same type.
-    // For load components, only steal geometry from components in the same load case —
-    // different load cases may share the same node.
+    // Update the active component's geometry and remove those indices from siblings.
+    // Only steal from siblings of the SAME geometry kind — point IDs and line IDs
+    // are independent number spaces, so a line load and a point load can both
+    // legitimately reference index 3. For load components, also restrict to
+    // siblings in the same load case (different load cases may share a node).
     const activeLoadCase = current.loadCase ?? "dead";
     const updatedList = list.map((c, i) => {
       if (i === active.index) return { ...c, geometry: [...selectedGeometry] };
-      const isSameLoadCase =
+      const sameKind = getComponentKind(active.type, c) === activeKind;
+      if (!sameKind) return c;
+      const sameLoadCase =
         active.type !== ComponentsType.LOADS ||
         (c.loadCase ?? "dead") === activeLoadCase;
-      if (!isSameLoadCase) return c;
+      if (!sameLoadCase) return c;
       return {
         ...c,
         geometry: (c.geometry ?? []).filter((g) => !selectedSet.has(g)),
