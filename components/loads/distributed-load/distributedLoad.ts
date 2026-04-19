@@ -5,7 +5,8 @@ import { LoadTemplate } from "../data-model";
 import { getText } from "../getText";
 
 type DistributedLoadParams = {
-  w: number; // kN/m, perpendicular to member (local y-axis)
+  w: number; // kN/m
+  direction: "local-y" | "local-z" | "global-x" | "global-y" | "global-z";
 };
 
 export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
@@ -13,6 +14,7 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
   geometryKind: "line",
   defaultParams: {
     w: 0,
+    direction: "local-y",
   },
 
   getParamsTemplate: ({ params }) => {
@@ -31,18 +33,59 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
           }}
         />
       </div>
+      <div>
+        <label>Direction:</label>
+        <select
+          .value=${live(params.val.direction)}
+          @change=${(e: Event) => {
+            const direction = (e.target as HTMLSelectElement)
+              .value as DistributedLoadParams["direction"];
+            params.val = { ...params.val, direction };
+          }}
+        >
+          <option value="local-y">Local Y</option>
+          <option value="local-z">Local Z</option>
+          <option value="global-x">Global X</option>
+          <option value="global-y">Global Y</option>
+          <option value="global-z">Global Z</option>
+        </select>
+      </div>
     `;
   },
 
-  // Returns load per unit length in LOCAL element coordinates [Nx, Qy, Qz, Mx, My, Mz]
-  // The aggregator transforms to global axes using the element's direction vector
-  getLoad: ({ params }) => ({
-    load: [0, params.w, 0, 0, 0, 0],
-  }),
+  // Returns load per unit length.
+  // For "local" coordinateSystem: [Nx, Qy, Qz, Mx, My, Mz] in element local coords.
+  // For "global" coordinateSystem: [Fx, Fy, Fz, Mx, My, Mz] in global coords.
+  getLoad: ({ params }) => {
+    const w = params.w;
+    const direction = params.direction ?? "local-y";
+    switch (direction) {
+      case "local-y":
+        return { load: [0, w, 0, 0, 0, 0], coordinateSystem: "local" };
+      case "local-z":
+        return { load: [0, 0, w, 0, 0, 0], coordinateSystem: "local" };
+      case "global-x":
+        return {
+          load: [w, 0, 0, 0, 0, 0],
+          coordinateSystem: "global",
+        };
+      case "global-y":
+        return {
+          load: [0, w, 0, 0, 0, 0],
+          coordinateSystem: "global",
+        };
+      case "global-z":
+        return {
+          load: [0, 0, w, 0, 0, 0],
+          coordinateSystem: "global",
+        };
+    }
+  },
 
   getLineObject3D: ({ params, startPosition, endPosition, displayScale }) => {
     const group = new THREE.Group();
     const w = params.w;
+    const direction = params.direction ?? "local-y";
 
     if (w === 0) return group;
 
@@ -55,21 +98,58 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
     const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
     if (L === 0) return group;
 
-    // Local y unit vector (perpendicular to member, 90° clockwise in XY plane)
-    const perpX = dy / L;
-    const perpY = -dx / L;
+    // Compute arrow direction vector
+    let arrowDir: THREE.Vector3;
+    const sign = w > 0 ? 1 : -1;
+
+    if (direction === "local-y") {
+      // Perpendicular to element, 90° clockwise in XY plane (legacy 2D convention)
+      const perpX = dy / L;
+      const perpY = -dx / L;
+      arrowDir = new THREE.Vector3(sign * perpX, sign * perpY, 0);
+    } else if (direction === "local-z") {
+      // Local z: project global Z perpendicular to element axis
+      const lxVec = new THREE.Vector3(dx / L, dy / L, dz / L);
+      const globalZ = new THREE.Vector3(0, 0, 1);
+      const dot = lxVec.dot(globalZ);
+      let lzVec: THREE.Vector3;
+      if (Math.abs(dot) < 0.99) {
+        lzVec = globalZ
+          .clone()
+          .sub(lxVec.clone().multiplyScalar(dot))
+          .normalize();
+      } else {
+        // Vertical member: use global X as reference
+        const globalX = new THREE.Vector3(1, 0, 0);
+        const dotX = lxVec.dot(globalX);
+        lzVec = globalX
+          .clone()
+          .sub(lxVec.clone().multiplyScalar(dotX))
+          .normalize();
+      }
+      arrowDir = lzVec.multiplyScalar(sign);
+    } else {
+      // Global directions
+      if (direction === "global-x") arrowDir = new THREE.Vector3(sign, 0, 0);
+      else if (direction === "global-y")
+        arrowDir = new THREE.Vector3(0, sign, 0);
+      else arrowDir = new THREE.Vector3(0, 0, sign); // global-z
+    }
+
+    const colorMap: Record<DistributedLoadParams["direction"], number> = {
+      "local-y": 0x00aaff,
+      "local-z": 0x00aaff,
+      "global-x": 0xff4400,
+      "global-y": 0x00cc44,
+      "global-z": 0xaa44ff,
+    };
+    const COLOR = colorMap[direction];
 
     const ARROW_LENGTH = 0.25 * displayScale;
     const ARROW_HEAD_LENGTH = 0.12 * displayScale;
     const ARROW_HEAD_WIDTH = 0.08 * displayScale;
-    const COLOR = 0x00aaff; // Blue for distributed loads
 
-    const direction = new THREE.Vector3(
-      w > 0 ? perpX : -perpX,
-      w > 0 ? perpY : -perpY,
-      0,
-    );
-    const offset = direction
+    const offset = arrowDir
       .clone()
       .multiplyScalar(ARROW_LENGTH + 0.05 * displayScale);
 
@@ -92,7 +172,7 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
       );
 
       const arrow = new THREE.ArrowHelper(
-        direction.clone(),
+        arrowDir.clone(),
         origin,
         ARROW_LENGTH,
         COLOR,
@@ -103,7 +183,7 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
       group.add(arrow);
     }
 
-    // Cap line connecting arrow tips
+    // Cap line connecting arrow tails
     const capStart = new THREE.Vector3(
       x1 - offset.x,
       y1 - offset.y,
@@ -127,12 +207,21 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
     group.add(capLine);
 
     // Label at midpoint
-    const midX = (x1 + x2) / 2 + offset.x + direction.x * 0.15 * displayScale;
-    const midY = (y1 + y2) / 2 + offset.y + direction.y * 0.15 * displayScale;
-    const midZ = (z1 + z2) / 2 + offset.z;
+    const dirLabelsMap: Record<DistributedLoadParams["direction"], string> = {
+      "local-y": "Local Y",
+      "local-z": "Local Z",
+      "global-x": "Global X",
+      "global-y": "Global Y",
+      "global-z": "Global Z",
+    };
+    const dirLabel = dirLabelsMap[direction];
+
+    const midX = (x1 + x2) / 2 + offset.x + arrowDir.x * 0.15 * displayScale;
+    const midY = (y1 + y2) / 2 + offset.y + arrowDir.y * 0.15 * displayScale;
+    const midZ = (z1 + z2) / 2 + offset.z + arrowDir.z * 0.15 * displayScale;
 
     const label = getText(
-      `${Math.abs(w)} kN/m`,
+      `${Math.abs(w)} kN/m (${dirLabel})`,
       [midX, midY, midZ],
       "#ffffff",
       0.3 * displayScale,

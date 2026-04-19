@@ -47,7 +47,7 @@ export function getLoads({
       ?.get(component.templateId) as LoadTemplate<any>;
     if (!template) return;
 
-    const { load: rawLoad } = template.getLoad({
+    const { load: rawLoad, coordinateSystem = "local" } = template.getLoad({
       params: ({ ...template.defaultParams, ...component.params }) as Parameters<
         typeof template.getLoad
       >[0]["params"],
@@ -60,8 +60,9 @@ export function getLoads({
       : 1;
 
     if (template.geometryKind === "line") {
-      // Line-based template: rawLoad is in LOCAL element coordinates [Nx, Qy, Qz, Mx, My, Mz]
-      // Convert to equivalent global nodal loads using the element direction vector
+      // Line-based template: convert distributed load to equivalent global nodal loads.
+      // coordinateSystem "local": rawLoad is [Nx, Qy, Qz, ...] in element local coords.
+      // coordinateSystem "global": rawLoad is [Fx, Fy, Fz, ...] in global coords.
       if (!nodes || !elements) return;
 
       component.geometry.forEach((lineId) => {
@@ -79,27 +80,59 @@ export function getLoads({
 
           const dx = pos2[0] - pos1[0];
           const dy = pos2[1] - pos1[1];
-          const L = Math.sqrt(dx * dx + dy * dy);
+          const dz = (pos2[2] ?? 0) - (pos1[2] ?? 0);
+          const L = Math.sqrt(dx * dx + dy * dy + dz * dz);
           if (L === 0) return;
 
-          // Local y unit vector (perpendicular to member, 90° clockwise in XY plane)
-          const perpX = dy / L;
-          const perpY = -dx / L;
+          let nodalLoad: [number, number, number, number, number, number];
 
-          // rawLoad[1] is the load per unit length in the local y direction
-          // Equivalent nodal load at each end = w * L / 2 in global coords
-          const qy = rawLoad[1] * factor;
-          const nodalFx = qy * perpX * L * 0.5;
-          const nodalFy = qy * perpY * L * 0.5;
+          if (coordinateSystem === "global") {
+            // Global load: apply directly scaled by L/2 at each end
+            nodalLoad = [
+              rawLoad[0] * factor * L * 0.5,
+              rawLoad[1] * factor * L * 0.5,
+              rawLoad[2] * factor * L * 0.5,
+              0,
+              0,
+              0,
+            ];
+          } else {
+            // Local coordinate system
+            // Local y: perpendicular to member, 90° clockwise in XY plane (legacy 2D convention)
+            const perpX = dy / L;
+            const perpY = -dx / L;
+            const qy = rawLoad[1] * factor;
 
-          const nodalLoad: [number, number, number, number, number, number] = [
-            nodalFx,
-            nodalFy,
-            0,
-            0,
-            0,
-            0,
-          ];
+            // Local z: project global Z perpendicular to element axis
+            const lx = [dx / L, dy / L, dz / L];
+            const dotZ = lx[2]; // dot with [0, 0, 1]
+            let lz: [number, number, number];
+            if (Math.abs(dotZ) < 0.99) {
+              const lzx = -dotZ * lx[0];
+              const lzy = -dotZ * lx[1];
+              const lzz = 1 - dotZ * lx[2];
+              const lzLen = Math.sqrt(lzx * lzx + lzy * lzy + lzz * lzz);
+              lz = [lzx / lzLen, lzy / lzLen, lzz / lzLen];
+            } else {
+              // Vertical member: use global X as reference
+              const dotX = lx[0];
+              const lzx = 1 - dotX * lx[0];
+              const lzy = -dotX * lx[1];
+              const lzz = -dotX * lx[2];
+              const lzLen = Math.sqrt(lzx * lzx + lzy * lzy + lzz * lzz);
+              lz = [lzx / lzLen, lzy / lzLen, lzz / lzLen];
+            }
+            const qz = rawLoad[2] * factor;
+
+            nodalLoad = [
+              (qy * perpX + qz * lz[0]) * L * 0.5,
+              (qy * perpY + qz * lz[1]) * L * 0.5,
+              qz * lz[2] * L * 0.5,
+              0,
+              0,
+              0,
+            ];
+          }
 
           accumulateLoad(loads, n1, nodalLoad);
           accumulateLoad(loads, n2, nodalLoad);
