@@ -90,6 +90,7 @@ export function getViewer({
         rendererElm: renderer.domElement,
         render,
         display,
+        controls,
       }),
     );
 

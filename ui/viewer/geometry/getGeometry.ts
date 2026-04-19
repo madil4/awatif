@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Grid } from "../grid/getGrid";
 import { Geometry } from "@awatif/components";
 
@@ -11,6 +12,7 @@ export function getGeometry({
   rendererElm,
   render,
   display,
+  controls,
 }: {
   geometry: Geometry;
   grid: Grid;
@@ -19,6 +21,7 @@ export function getGeometry({
   rendererElm: HTMLCanvasElement;
   render: () => void;
   display?: { geometry: State<boolean>; view3D?: State<boolean> };
+  controls?: OrbitControls;
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -39,6 +42,7 @@ export function getGeometry({
   let dragPoint: number | null = null; // Point ID
   let appendPoint: number | null = null; // Point ID
   let isPointerDown = false;
+  let pointerDownPos: { x: number; y: number } | null = null;
 
   // Selection box state
   let selectionStart: { x: number; y: number } | null = null;
@@ -142,9 +146,8 @@ export function getGeometry({
   van.derive(() => {
     if (!display?.geometry) return;
     const geometryVisible = display.geometry.val;
-    const viewing3D = display.view3D?.val ?? false;
 
-    if (!geometryVisible || viewing3D) {
+    if (!geometryVisible) {
       mode.val = Mode.DISABLED;
     } else if (mode.rawVal === Mode.DISABLED) {
       mode.val = Mode.EDIT;
@@ -304,25 +307,31 @@ export function getGeometry({
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.pointerType === "touch" || e.button !== 0) return;
-    if (mode.val === Mode.DISABLED) return;
 
-    // Selection mode: only when selection is not null
+    // Selection mode: only when selection is not null (works even when DISABLED)
     if (geometry.selection.rawVal !== null) {
       selectionStart = { x: e.clientX, y: e.clientY };
       selectionEnd = { x: e.clientX, y: e.clientY };
       isPointerDown = true;
+      if (controls) controls.enabled = false;
       return;
     }
 
+    if (mode.val === Mode.DISABLED) return;
     if (mode.val !== Mode.EDIT && mode.val !== Mode.APPEND) return;
 
     const hits = raycaster.intersectObject(points, false);
     if (!hits.length) {
+      // Empty space: let OrbitControls handle rotation.
+      // We still track isPointerDown so a click (no drag) can create a new point on pointerup.
       isPointerDown = true;
+      pointerDownPos = { x: e.clientX, y: e.clientY };
       return;
     }
 
     isPointerDown = true;
+    pointerDownPos = { x: e.clientX, y: e.clientY };
+    if (controls) controls.enabled = false;
     // Convert hit index to point ID
     const hitIndex = hits[0].index ?? null;
     if (hitIndex !== null) {
@@ -339,6 +348,15 @@ export function getGeometry({
     pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     raycaster.setFromCamera(pointer, camera);
+
+    // Handle selection box update first — works even when DISABLED
+    if (isPointerDown && selectionStart && geometry.selection.rawVal !== null) {
+      selectionEnd = { x: e.clientX, y: e.clientY };
+      mode.val = Mode.SELECT;
+      updateSelectionBox();
+      return;
+    }
+
     if (mode.val === Mode.DISABLED) return;
 
     // Update hit point on grid
@@ -354,14 +372,6 @@ export function getGeometry({
       }
     } else {
       hitPoint.val = null;
-    }
-
-    // Handle selection box update (only when selection is not null)
-    if (isPointerDown && selectionStart && geometry.selection.rawVal !== null) {
-      selectionEnd = { x: e.clientX, y: e.clientY };
-      mode.val = Mode.SELECT;
-      updateSelectionBox();
-      return;
     }
 
     // Handle drag mode transition
@@ -398,20 +408,38 @@ export function getGeometry({
 
   rendererElm.addEventListener("pointerup", (e: PointerEvent) => {
     if (e.pointerType === "touch" || e.button !== 0) return;
-    if (mode.val === Mode.DISABLED) return;
 
     const pointHits = raycaster.intersectObject(points, false);
 
-    // In Select mode, only handle selection - no editing or dragging
+    // In Select mode, only handle selection - no editing or dragging.
+    // Works even when DISABLED; restore DISABLED afterwards if geometry is hidden / 3D view.
     if (geometry.selection.rawVal !== null) {
       handleSelection();
       selectionStart = null;
       selectionEnd = null;
       selectionBox.style.display = "none";
-      mode.val = Mode.EDIT;
+      const shouldDisable = !(display?.geometry.val ?? true);
+      mode.val = shouldDisable ? Mode.DISABLED : Mode.EDIT;
       isPointerDown = false;
+      pointerDownPos = null;
+      if (controls) controls.enabled = true;
       return;
     }
+
+    if (mode.val === Mode.DISABLED) {
+      if (controls) controls.enabled = true;
+      isPointerDown = false;
+      pointerDownPos = null;
+      return;
+    }
+
+    // Treat a pointerup as a "click" (not a drag) only if the pointer moved less than a small threshold.
+    // Empty-space drags rotate the camera and must not create/append geometry.
+    const CLICK_THRESHOLD_PX = 4;
+    const wasClick =
+      pointerDownPos === null ||
+      (Math.abs(e.clientX - pointerDownPos.x) <= CLICK_THRESHOLD_PX &&
+        Math.abs(e.clientY - pointerDownPos.y) <= CLICK_THRESHOLD_PX);
 
     if (mode.val === Mode.SELECT) {
       handleSelection();
@@ -429,17 +457,21 @@ export function getGeometry({
             appendPoint = pointsEntries[hitIndex][0]; // Get the key (ID)
           }
         }
-      } else {
+      } else if (wasClick) {
         handleNewGeometry();
       }
     } else if (mode.val === Mode.DRAG) {
       mode.val = Mode.EDIT;
       dragPoint = null;
     } else if (mode.val === Mode.APPEND) {
-      handleAppendPoint();
+      if (wasClick) handleAppendPoint();
+      else mode.val = Mode.EDIT;
     }
 
+    pointerDownPos = null;
+
     isPointerDown = false; // important to be at this level
+    if (controls) controls.enabled = true;
   });
 
   function toScreenCoords(point: [number, number, number]): {
@@ -565,13 +597,14 @@ export function getGeometry({
 
   rendererElm.addEventListener("contextmenu", (e: PointerEvent) => {
     e.preventDefault();
-    if (mode.val === Mode.DISABLED) return;
 
-    // In Select mode, right-click exits select mode
+    // In Select mode, right-click exits select mode (works even when DISABLED)
     if (geometry.selection.rawVal !== null) {
       geometry.selection.val = null;
       return;
     }
+
+    if (mode.val === Mode.DISABLED) return;
 
     const pointHits = raycaster.intersectObject(points, false);
 
