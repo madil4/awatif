@@ -31,6 +31,7 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
   getLoad: ({ params }: { params: Params }) => {
     load: [number, number, number, number, number, number]; //[Fx, Fy, Fz, Mx, My, Mz]
+    coordinateSystem?: "local" | "global";
   };
 
   getObject3D?: ({
