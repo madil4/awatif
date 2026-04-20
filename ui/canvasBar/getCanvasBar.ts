@@ -7,6 +7,7 @@ import "./styles.css";
 export enum CanvasButtons {
   REPORT = "Report",
   DOCS = "Docs",
+  AI_ASSISTANT = "AI-Assistant",
   UPGRADE = "Upgrade",
 }
 
