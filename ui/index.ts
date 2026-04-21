@@ -2,7 +2,6 @@ export { getLayout } from "./layout/getLayout";
 export { getViewer } from "./viewer/getViewer";
 export { getDisplay } from "./display/getDisplay";
 export { getComponents } from "./components/getComponents";
-export { getDocs } from "./docs/getDocs";
 export { getAnalysisStatus } from "./analysisStatus/getAnalysisStatus";
 export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar, CanvasButtons } from "./canvasBar/getCanvasBar";

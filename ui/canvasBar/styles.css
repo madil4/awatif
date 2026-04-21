@@ -33,11 +33,3 @@
     0 0 0 1px var(--bg-secondary),
     0 0 0 3px var(--accent);
 }
-
-#canvas-bar button.docs-button {
-  padding: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  justify-content: center;
-}

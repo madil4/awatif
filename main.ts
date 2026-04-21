@@ -19,7 +19,6 @@ import {
 } from "@awatif/components";
 import {
   getDisplay,
-  getDocs,
   getLayout,
   getViewer,
   getComponents,
@@ -259,10 +258,6 @@ van.derive(() => {
       templates,
       activeLoadCase: display.loadCase?.val,
     });
-  } else if (canvasButton.val === CanvasButtons.DOCS) {
-    display.lineIndex.val = false;
-
-    canvas.val = getDocs();
   } else {
     display.lineIndex.val = false;
 
@@ -277,7 +272,7 @@ document.body.append(
     header: [
       getCanvasBar({
         canvasButton,
-        buttons: [CanvasButtons.DOCS, CanvasButtons.REPORT],
+        buttons: [CanvasButtons.REPORT],
       }),
     ],
     canvas: getCanvas({ canvas, canvasButton }),

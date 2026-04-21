@@ -6,14 +6,13 @@ import "./styles.css";
 
 export enum CanvasButtons {
   REPORT = "Report",
-  DOCS = "Docs",
   AI_ASSISTANT = "AI-Assistant",
   UPGRADE = "Upgrade",
 }
 
 export function getCanvasBar({
   canvasButton,
-  buttons = [CanvasButtons.DOCS, CanvasButtons.UPGRADE, CanvasButtons.REPORT],
+  buttons = [CanvasButtons.UPGRADE, CanvasButtons.REPORT],
   upgraded,
 }: {
   canvasButton: State<CanvasButtons | null>;
@@ -32,14 +31,12 @@ export function getCanvasBar({
         ${buttonList.map(
           (button) => html`
             <button
-              class="${button === CanvasButtons.DOCS
-                ? "docs-button "
-                : ""}${canvasButton.val === button ? "active" : ""}"
+              class="${canvasButton.val === button ? "active" : ""}"
               @click=${() => {
                 canvasButton.val = canvasButton.val === button ? null : button;
               }}
             >
-              ${button === CanvasButtons.DOCS ? "?" : button}
+              ${button}
             </button>
           `,
         )}
