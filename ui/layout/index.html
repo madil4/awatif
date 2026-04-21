@@ -21,16 +21,13 @@
       #layout .bottom-left {
         background: #3a3a4a;
       }
-      #layout .bottom-right {
-        background: #3a5a4a;
-      }
       #layout .components {
         background: #5a3a5a;
       }
       #layout .components-bar {
         background: #4a4a3a;
       }
-#layout .canvas {
+      #layout .canvas {
         background: #2e4a3e;
       }
     </style>
@@ -52,10 +49,7 @@
       const components = createElement(
         "--------- Components Element ------------"
       );
-const canvas = createElement("--------- Canvas Element ------------");
-      const promptPanel = createElement(
-        "--------- PromptPanel Element ------------"
-      );
+      const canvas = createElement("--------- Canvas Element ------------");
 
       document.body.append(
         getLayout({
@@ -64,7 +58,6 @@ const canvas = createElement("--------- Canvas Element ------------");
           header: [header1, header2],
           components,
           canvas,
-          promptPanel,
         })
       );
     </script>
