@@ -10,6 +10,7 @@ import "./styles.css";
 export type Display = {
   grid: Grid;
   displayScale: State<number>;
+  deformationScale: State<number>;
   view3D: State<boolean>;
   geometry: State<boolean>;
   mesh: State<boolean>;
@@ -67,6 +68,21 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             ))}
         />
         <span class="value-display">${display.displayScale.val}</span>
+      </div>
+      <div class="display-item">
+        <label>Deformation Scale</label>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          .value=${display.deformationScale.val}
+          @input=${(e: Event) =>
+            (display.deformationScale.val = Number(
+              (e.target as HTMLInputElement).value,
+            ))}
+        />
+        <span class="value-display">${display.deformationScale.val}</span>
       </div>
       <div class="display-item">
         <label>3D</label>

@@ -123,6 +123,7 @@ const display: Display = {
     spacing: van.state(0.5),
   },
   displayScale: van.state(1),
+  deformationScale: van.state(1),
   view3D: van.state(false),
   geometry: van.state(true),
   mesh: van.state(true),
