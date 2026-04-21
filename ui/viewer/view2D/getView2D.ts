@@ -3,7 +3,7 @@ import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Display } from "../../display/getDisplay";
 
-export function getBackTo2D({
+export function getView2D({
   camera,
   controls,
   display,
@@ -14,7 +14,7 @@ export function getBackTo2D({
   display: Display;
   render: () => void;
 }): void {
-  const backTo2D = display.backTo2D;
+  const view2D = display.view2D;
   const grid = display.grid;
   let initialized = false;
   let cancelAnim: (() => void) | null = null;
@@ -27,12 +27,12 @@ export function getBackTo2D({
 
   // STATE 0 = ROTATE in OrbitControls internals
   controls.addEventListener("start", () => {
-    if ((controls as any).state === 0 && backTo2D.rawVal)
-      backTo2D.val = false;
+    if ((controls as any).state === 0 && view2D.rawVal)
+      view2D.val = false;
   });
 
   van.derive(() => {
-    if (!backTo2D.val) return;
+    if (!view2D.val) return;
 
     if (!initialized) {
       initialized = true;

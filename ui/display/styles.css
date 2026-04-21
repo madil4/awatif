@@ -58,6 +58,21 @@
   font-size: 0.8rem;
 }
 
+#display .display-pair {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 6px;
+}
+
+#display .display-pair-separator {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
 #display .display-toggle-group {
   display: flex;
   align-items: center;

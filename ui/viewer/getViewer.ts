@@ -19,7 +19,7 @@ import { getOrientation } from "./orientation/getOrientation";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
-import { getBackTo2D } from "./backTo2D/getBackTo2D";
+import { getView2D } from "./view2D/getView2D";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -69,7 +69,7 @@ export function getViewer({
   const grid = display.grid;
   const displayScale = display.displayScale;
 
-  getBackTo2D({
+  getView2D({
     camera,
     controls,
     display,

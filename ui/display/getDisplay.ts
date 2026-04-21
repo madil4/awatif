@@ -11,7 +11,7 @@ export type Display = {
   grid: Grid;
   displayScale: State<number>;
   deformationScale: State<number>;
-  backTo2D: State<boolean>;
+  view2D: State<boolean>;
   geometry: State<boolean>;
   mesh: State<boolean>;
   deformedShape: State<boolean>;
@@ -86,126 +86,113 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <span class="value-display">${display.deformationScale.val}</span>
       </div>
       <div class="display-item">
-        <label>Back to 2D</label>
-        <input
-          type="checkbox"
-          .checked=${display.backTo2D.val}
-          @change=${(e: Event) =>
-            (display.backTo2D.val = (e.target as HTMLInputElement).checked)}
-        />
-      </div>
-      <div class="display-item">
-        <label>Extrude</label>
-        <input
-          type="checkbox"
-          .checked=${display.extrudeSections.val}
-          @change=${(e: Event) =>
-            (display.extrudeSections.val = (
-              e.target as HTMLInputElement
-            ).checked)}
-        />
-      </div>
-      <div class="display-item">
-        <label>Geometry</label>
-        <div class="display-toggle-group">
-          <div class="display-toggle-option">
-            <span class="display-toggle-label">On</span>
-            <input
-              type="checkbox"
-              .checked=${display.geometry.val}
-              @change=${(e: Event) =>
-                (display.geometry.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
-          </div>
-          <div class="display-toggle-option display-toggle-option-separated">
-            <span class="display-toggle-label">Line Index</span>
-            <input
-              type="checkbox"
-              .checked=${display.lineIndex.val}
-              @change=${(e: Event) =>
-                (display.lineIndex.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
-          </div>
-          <div class="display-toggle-option display-toggle-option-separated">
-            <span class="display-toggle-label">Point Index</span>
-            <input
-              type="checkbox"
-              .checked=${display.pointIndex.val}
-              @change=${(e: Event) =>
-                (display.pointIndex.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
-          </div>
+        <div class="display-pair">
+          <label>2D View</label>
+          <input
+            type="checkbox"
+            .checked=${display.view2D.val}
+            @change=${(e: Event) =>
+              (display.view2D.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+        <div class="display-pair-separator"></div>
+        <div class="display-pair">
+          <label>Extrude</label>
+          <input
+            type="checkbox"
+            .checked=${display.extrudeSections.val}
+            @change=${(e: Event) =>
+              (display.extrudeSections.val = (
+                e.target as HTMLInputElement
+              ).checked)}
+          />
         </div>
       </div>
       <div class="display-item">
-        <label>Mesh</label>
-        <div class="display-toggle-group">
-          <div class="display-toggle-option">
-            <span class="display-toggle-label">On</span>
-            <input
-              type="checkbox"
-              .checked=${display.mesh.val}
-              @change=${(e: Event) =>
-                (display.mesh.val = (e.target as HTMLInputElement).checked)}
-            />
-          </div>
-          <div class="display-toggle-option display-toggle-option-separated">
-            <span class="display-toggle-label">Deformed</span>
-            <input
-              type="checkbox"
-              .checked=${display.deformedShape.val}
-              @change=${(e: Event) => {
-                const checked = (e.target as HTMLInputElement).checked;
-                display.deformedShape.val = checked;
-                if (checked) display.mesh.val = true;
-              }}
-            />
-          </div>
+        <div class="display-pair">
+          <label>Geometry</label>
+          <input
+            type="checkbox"
+            .checked=${display.geometry.val}
+            @change=${(e: Event) =>
+              (display.geometry.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+        <div class="display-pair-separator"></div>
+        <div class="display-pair">
+          <label>Mesh</label>
+          <input
+            type="checkbox"
+            .checked=${display.mesh.val}
+            @change=${(e: Event) =>
+              (display.mesh.val = (e.target as HTMLInputElement).checked)}
+          />
         </div>
       </div>
       <div class="display-item">
-        <label>Orientation</label>
-        <input
-          type="checkbox"
-          .checked=${display.orientation.val}
-          @change=${(e: Event) =>
-            (display.orientation.val = (
-              e.target as HTMLInputElement
-            ).checked)}
-        />
+        <div class="display-pair">
+          <label>Line Index</label>
+          <input
+            type="checkbox"
+            .checked=${display.lineIndex.val}
+            @change=${(e: Event) =>
+              (display.lineIndex.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+        <div class="display-pair-separator"></div>
+        <div class="display-pair">
+          <label>Point Index</label>
+          <input
+            type="checkbox"
+            .checked=${display.pointIndex.val}
+            @change=${(e: Event) =>
+              (display.pointIndex.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
       </div>
       <div class="display-item">
-        <label>Loads</label>
-        <input
-          type="checkbox"
-          .checked=${display.loads.val}
-          @change=${(e: Event) =>
-            (display.loads.val = (e.target as HTMLInputElement).checked)}
-        />
+        <div class="display-pair">
+          <label>Loads</label>
+          <input
+            type="checkbox"
+            .checked=${display.loads.val}
+            @change=${(e: Event) =>
+              (display.loads.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+        <div class="display-pair-separator"></div>
+        <div class="display-pair">
+          <label>Supports</label>
+          <input
+            type="checkbox"
+            .checked=${display.supports.val}
+            @change=${(e: Event) =>
+              (display.supports.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
       </div>
       <div class="display-item">
-        <label>Supports</label>
-        <input
-          type="checkbox"
-          .checked=${display.supports.val}
-          @change=${(e: Event) =>
-            (display.supports.val = (e.target as HTMLInputElement).checked)}
-        />
-      </div>
-      <div class="display-item">
-        <label>Releases</label>
-        <input
-          type="checkbox"
-          .checked=${display.releases.val}
-          @change=${(e: Event) =>
-            (display.releases.val = (e.target as HTMLInputElement).checked)}
-        />
+        <div class="display-pair">
+          <label>Releases</label>
+          <input
+            type="checkbox"
+            .checked=${display.releases.val}
+            @change=${(e: Event) =>
+              (display.releases.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+        <div class="display-pair-separator"></div>
+        <div class="display-pair">
+          <label>Orientation</label>
+          <input
+            type="checkbox"
+            .checked=${display.orientation.val}
+            @change=${(e: Event) =>
+              (display.orientation.val = (
+                e.target as HTMLInputElement
+              ).checked)}
+          />
+        </div>
       </div>
       <!-- Point Results is hidden until reactions are unblocked.
       <div class="display-item">
