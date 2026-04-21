@@ -49,6 +49,8 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           @change=${(e: Event) =>
             (grid.spacing.val = Number((e.target as HTMLSelectElement).value))}
         >
+          <option value="10" ?selected=${grid.spacing.val === 10}>10</option>
+          <option value="5" ?selected=${grid.spacing.val === 5}>5</option>
           <option value="1" ?selected=${grid.spacing.val === 1}>1</option>
           <option value="0.5" ?selected=${grid.spacing.val === 0.5}>0.5</option>
           <option value="0.2" ?selected=${grid.spacing.val === 0.2}>0.2</option>
@@ -60,7 +62,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <input
           type="range"
           min="0.1"
-          max="5"
+          max="10"
           step="0.1"
           .value=${display.displayScale.val}
           @input=${(e: Event) =>
