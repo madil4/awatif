@@ -12,7 +12,7 @@ export enum CanvasButtons {
 
 export function getCanvasBar({
   canvasButton,
-  buttons = [CanvasButtons.UPGRADE, CanvasButtons.REPORT],
+  buttons = [CanvasButtons.REPORT],
   upgraded,
 }: {
   canvasButton: State<CanvasButtons | null>;
