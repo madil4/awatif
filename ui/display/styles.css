@@ -81,22 +81,6 @@
   letter-spacing: 0.05em;
 }
 
-#display .display-action-button {
-  padding: 3px 7px;
-
-  background: var(--bg-primary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.75rem;
-}
-
-#display .display-action-button:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
 #display .display-item input[type="number"] {
   max-width: 50px;
   padding: 3px 6px;

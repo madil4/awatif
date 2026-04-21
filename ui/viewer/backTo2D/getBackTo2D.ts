@@ -25,8 +25,14 @@ export function getBackTo2D({
     pose: getGridFitPose({ camera, gridSize: grid.size.rawVal }),
   });
 
+  // STATE 0 = ROTATE in OrbitControls internals
+  controls.addEventListener("start", () => {
+    if ((controls as any).state === 0 && backTo2D.rawVal)
+      backTo2D.val = false;
+  });
+
   van.derive(() => {
-    backTo2D.val;
+    if (!backTo2D.val) return;
 
     if (!initialized) {
       initialized = true;

@@ -86,29 +86,24 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <span class="value-display">${display.deformationScale.val}</span>
       </div>
       <div class="display-item">
-        <label>View</label>
-        <div class="display-toggle-group">
-          <div class="display-toggle-option">
-            <button
-              type="button"
-              class="display-action-button"
-              @click=${() => (display.backTo2D.val = !display.backTo2D.rawVal)}
-            >
-              Back to 2D
-            </button>
-          </div>
-          <div class="display-toggle-option display-toggle-option-separated">
-            <span class="display-toggle-label">Extrude</span>
-            <input
-              type="checkbox"
-              .checked=${display.extrudeSections.val}
-              @change=${(e: Event) =>
-                (display.extrudeSections.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
-          </div>
-        </div>
+        <label>Back to 2D</label>
+        <input
+          type="checkbox"
+          .checked=${display.backTo2D.val}
+          @change=${(e: Event) =>
+            (display.backTo2D.val = (e.target as HTMLInputElement).checked)}
+        />
+      </div>
+      <div class="display-item">
+        <label>Extrude</label>
+        <input
+          type="checkbox"
+          .checked=${display.extrudeSections.val}
+          @change=${(e: Event) =>
+            (display.extrudeSections.val = (
+              e.target as HTMLInputElement
+            ).checked)}
+        />
       </div>
       <div class="display-item">
         <label>Geometry</label>
