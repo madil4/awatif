@@ -124,7 +124,7 @@ const display: Display = {
   },
   displayScale: van.state(1),
   deformationScale: van.state(1),
-  view3D: van.state(false),
+  backTo2D: van.state(false),
   geometry: van.state(true),
   mesh: van.state(true),
   deformedShape: van.state(true),

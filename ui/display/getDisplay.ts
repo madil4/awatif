@@ -11,7 +11,7 @@ export type Display = {
   grid: Grid;
   displayScale: State<number>;
   deformationScale: State<number>;
-  view3D: State<boolean>;
+  backTo2D: State<boolean>;
   geometry: State<boolean>;
   mesh: State<boolean>;
   deformedShape: State<boolean>;
@@ -85,29 +85,26 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <span class="value-display">${display.deformationScale.val}</span>
       </div>
       <div class="display-item">
-        <label>3D</label>
+        <label>View</label>
         <div class="display-toggle-group">
           <div class="display-toggle-option">
-            <span class="display-toggle-label">On</span>
-            <input
-              type="checkbox"
-              .checked=${display.view3D.val}
-              @change=${(e: Event) =>
-                (display.view3D.val = (
-                  e.target as HTMLInputElement
-                ).checked)}
-            />
+            <button
+              type="button"
+              class="display-action-button"
+              @click=${() => (display.backTo2D.val = !display.backTo2D.rawVal)}
+            >
+              Back to 2D
+            </button>
           </div>
           <div class="display-toggle-option display-toggle-option-separated">
             <span class="display-toggle-label">Extrude</span>
             <input
               type="checkbox"
               .checked=${display.extrudeSections.val}
-              @change=${(e: Event) => {
-                const checked = (e.target as HTMLInputElement).checked;
-                display.extrudeSections.val = checked;
-                display.view3D.val = checked;
-              }}
+              @change=${(e: Event) =>
+                (display.extrudeSections.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
             />
           </div>
         </div>

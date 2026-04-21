@@ -18,7 +18,7 @@ import { getOrientation } from "./orientation/getOrientation";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
-import { getView3D } from "./view3D/getView3D";
+import { getBackTo2D } from "./backTo2D/getBackTo2D";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -62,19 +62,18 @@ export function getViewer({
   });
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableRotate = false;
+  controls.enableRotate = true;
   controls.addEventListener("change", render);
 
   const grid = display.grid;
   const displayScale = display.displayScale;
 
-  camera.position.set(
-    grid.size.rawVal / 2,
-    grid.size.rawVal / 2,
-    5 * (grid.size.rawVal / 10),
-  );
-  controls.target.set(grid.size.rawVal / 2, grid.size.rawVal / 2, 0);
-  controls.update();
+  getBackTo2D({
+    camera,
+    controls,
+    display,
+    render,
+  });
 
   // Objects
   scene.add(getGrid({ grid, render }));
@@ -183,13 +182,6 @@ export function getViewer({
         render,
       }),
     );
-
-    getView3D({
-      camera,
-      controls,
-      display,
-      render,
-    });
   }
 
   render();

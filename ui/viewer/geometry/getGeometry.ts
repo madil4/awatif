@@ -20,7 +20,7 @@ export function getGeometry({
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
   render: () => void;
-  display?: { geometry: State<boolean>; view3D?: State<boolean> };
+  display?: { geometry: State<boolean> };
   controls?: OrbitControls;
 }): THREE.Group {
   const group = new THREE.Group();
