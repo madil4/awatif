@@ -11,7 +11,7 @@ export type AnalysisStatus = State<{
 
 export function getAnalysisStatus(
   status: AnalysisStatus,
-  display?: { memberIndex: State<boolean> },
+  display?: { lineIndex: State<boolean> },
 ): HTMLElement {
   const container = document.createElement("div");
 
@@ -30,17 +30,17 @@ export function getAnalysisStatus(
   const label = el.querySelector(".label") as HTMLElement;
   const tooltip = el.querySelector(".tooltip") as HTMLElement;
 
-  if (display?.memberIndex) {
-    let previousMemberIndex = false;
+  if (display?.lineIndex) {
+    let previousLineIndex = false;
     el.addEventListener("mouseenter", () => {
       if (status.val.unassignedLines?.length) {
-        previousMemberIndex = display.memberIndex.val;
-        display.memberIndex.val = true;
+        previousLineIndex = display.lineIndex.val;
+        display.lineIndex.val = true;
       }
     });
     el.addEventListener("mouseleave", () => {
       if (status.val.unassignedLines?.length) {
-        display.memberIndex.val = previousMemberIndex;
+        display.lineIndex.val = previousLineIndex;
       }
     });
   }

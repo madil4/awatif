@@ -131,7 +131,8 @@ const display: Display = {
   loads: van.state(true),
   supports: van.state(true),
   releases: van.state(true),
-  memberIndex: van.state(false),
+  lineIndex: van.state(false),
+  pointIndex: van.state(false),
   orientation: van.state(false),
   extrudeSections: van.state(false),
   pointResult: van.state("None"),
@@ -248,7 +249,7 @@ const canvas = van.state<HTMLDivElement | null>(null);
 const canvasButton = van.state<CanvasButtons | null>(null);
 van.derive(() => {
   if (canvasButton.val === CanvasButtons.REPORT) {
-    display.memberIndex.val = true;
+    display.lineIndex.val = true;
 
     canvas.val = getReport({
       components: components.val,
@@ -259,11 +260,11 @@ van.derive(() => {
       activeLoadCase: display.loadCase?.val,
     });
   } else if (canvasButton.val === CanvasButtons.DOCS) {
-    display.memberIndex.val = false;
+    display.lineIndex.val = false;
 
     canvas.val = getDocs();
   } else {
-    display.memberIndex.val = false;
+    display.lineIndex.val = false;
 
     canvas.val = null;
   }

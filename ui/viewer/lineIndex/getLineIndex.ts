@@ -3,7 +3,7 @@ import van, { State } from "vanjs-core";
 import { Geometry } from "@awatif/components";
 import { getText } from "../text/getText";
 
-export function getMemberIndex({
+export function getLineIndex({
   geometry,
   displayScale,
   render,
@@ -12,13 +12,13 @@ export function getMemberIndex({
   geometry: Geometry;
   displayScale: State<number>;
   render: () => void;
-  display?: { memberIndex: State<boolean> };
+  display?: { lineIndex: State<boolean> };
 }): THREE.Group {
   const group = new THREE.Group();
 
-  if (display?.memberIndex) {
+  if (display?.lineIndex) {
     van.derive(() => {
-      group.visible = display.memberIndex.val;
+      group.visible = display.lineIndex.val;
       render();
     });
   }

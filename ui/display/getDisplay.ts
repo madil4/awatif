@@ -18,7 +18,8 @@ export type Display = {
   loads: State<boolean>;
   supports: State<boolean>;
   releases: State<boolean>;
-  memberIndex: State<boolean>;
+  lineIndex: State<boolean>;
+  pointIndex: State<boolean>;
   orientation: State<boolean>;
   extrudeSections: State<boolean>;
   pointResult: State<PointResultsDisplay>;
@@ -124,12 +125,23 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             />
           </div>
           <div class="display-toggle-option display-toggle-option-separated">
-            <span class="display-toggle-label">Index</span>
+            <span class="display-toggle-label">Line Index</span>
             <input
               type="checkbox"
-              .checked=${display.memberIndex.val}
+              .checked=${display.lineIndex.val}
               @change=${(e: Event) =>
-                (display.memberIndex.val = (
+                (display.lineIndex.val = (
+                  e.target as HTMLInputElement
+                ).checked)}
+            />
+          </div>
+          <div class="display-toggle-option display-toggle-option-separated">
+            <span class="display-toggle-label">Point Index</span>
+            <input
+              type="checkbox"
+              .checked=${display.pointIndex.val}
+              @change=${(e: Event) =>
+                (display.pointIndex.val = (
                   e.target as HTMLInputElement
                 ).checked)}
             />

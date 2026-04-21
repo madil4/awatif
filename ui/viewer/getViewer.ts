@@ -13,7 +13,8 @@ import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
 import { getSupports } from "./supports/getSupports";
 import { getReleases } from "./releases/getReleases";
-import { getMemberIndex } from "./memberIndex/getMemberIndex";
+import { getLineIndex } from "./lineIndex/getLineIndex";
+import { getPointIndex } from "./pointIndex/getPointIndex";
 import { getOrientation } from "./orientation/getOrientation";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
@@ -156,7 +157,16 @@ export function getViewer({
     );
 
     scene.add(
-      getMemberIndex({
+      getLineIndex({
+        geometry,
+        displayScale,
+        render,
+        display,
+      }),
+    );
+
+    scene.add(
+      getPointIndex({
         geometry,
         displayScale,
         render,

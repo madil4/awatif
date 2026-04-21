@@ -17,7 +17,7 @@ export function getComponentsBar({
   activeAnalysis?: ActiveAnalysis;
   loadCase?: State<LoadSelection>;
   analysisStatus?: AnalysisStatus;
-  display?: { memberIndex: State<boolean> };
+  display?: { lineIndex: State<boolean> };
 }): HTMLElement {
   const container = document.createElement("div");
   const showAnalysis = activeAnalysis && activeAnalysis.val !== undefined;
