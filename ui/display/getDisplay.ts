@@ -49,8 +49,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           @change=${(e: Event) =>
             (grid.spacing.val = Number((e.target as HTMLSelectElement).value))}
         >
-          <option value="10" ?selected=${grid.spacing.val === 10}>10</option>
-          <option value="5" ?selected=${grid.spacing.val === 5}>5</option>
+          <option value="2" ?selected=${grid.spacing.val === 2}>2</option>
           <option value="1" ?selected=${grid.spacing.val === 1}>1</option>
           <option value="0.5" ?selected=${grid.spacing.val === 0.5}>0.5</option>
           <option value="0.2" ?selected=${grid.spacing.val === 0.2}>0.2</option>
@@ -201,8 +200,8 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <label>Point Results</label>
         <select
           @change=${(e: Event) =>
-            (display.pointResult.val = (e.target as HTMLSelectElement)
-              .value as PointResultsDisplay)}
+        (display.pointResult.val = (e.target as HTMLSelectElement)
+          .value as PointResultsDisplay)}
         >
           <option value="None" ?selected=${display.pointResult.val === "None"}>
             None
@@ -232,10 +231,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           <option value="None" ?selected=${display.lineResult.val === "None"}>
             None
           </option>
-          <option
-            value="Axial"
-            ?selected=${display.lineResult.val === "Axial"}
-          >
+          <option value="Axial" ?selected=${display.lineResult.val === "Axial"}>
             Axial (N)
           </option>
           <option
