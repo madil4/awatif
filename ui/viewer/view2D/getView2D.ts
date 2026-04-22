@@ -17,25 +17,36 @@ export function getView2D({
   const view2D = display.view2D;
   const grid = display.grid;
   let initialized = false;
+  let skipNextAnimation = false;
   let cancelAnim: (() => void) | null = null;
 
   setCameraPose({
     camera,
     controls,
-    pose: getGridFitPose({ camera, gridSize: grid.size.rawVal }),
+    pose: getGridFitPose({
+      camera,
+      gridSize: grid.size.rawVal,
+      viewing2D: view2D.rawVal,
+    }),
   });
 
-  // STATE 0 = ROTATE in OrbitControls internals
   controls.addEventListener("start", () => {
-    if ((controls as any).state === 0 && view2D.rawVal)
+    if ((controls as any).state === 0 && view2D.rawVal) {
+      skipNextAnimation = true;
       view2D.val = false;
+    }
   });
 
   van.derive(() => {
-    if (!view2D.val) return;
+    const viewing2D = view2D.val;
 
     if (!initialized) {
       initialized = true;
+      return;
+    }
+
+    if (skipNextAnimation) {
+      skipNextAnimation = false;
       return;
     }
 
@@ -47,6 +58,7 @@ export function getView2D({
     const pose = getGridFitPose({
       camera,
       gridSize: grid.size.rawVal,
+      viewing2D,
     });
 
     cancelAnim = animateCamera({
@@ -83,15 +95,21 @@ function setCameraPose({
 function getGridFitPose({
   camera,
   gridSize,
+  viewing2D,
 }: {
   camera: THREE.PerspectiveCamera;
   gridSize: number;
+  viewing2D: boolean;
 }): { position: THREE.Vector3; target: THREE.Vector3 } {
   const target = new THREE.Vector3(gridSize / 2, gridSize / 2, 0);
-  const fitDistance = getGridFitDistance({ camera, gridSize }) * 1.2;
+  const direction = viewing2D
+    ? new THREE.Vector3(0, 0, 1)
+    : new THREE.Vector3(0.453, 0.423, 0.785).normalize();
+  const fitDistance =
+    getGridFitDistance({ camera, gridSize }) * (viewing2D ? 1.2 : 1.55);
 
   return {
-    position: target.clone().add(new THREE.Vector3(0, 0, fitDistance)),
+    position: target.clone().add(direction.multiplyScalar(fitDistance)),
     target,
   };
 }
@@ -110,8 +128,7 @@ function getGridFitDistance({
 
   return Math.max(
     camera.near + 1,
-    halfSize / Math.tan(verticalFov / 2),
-    halfSize / Math.tan(horizontalFov / 2),
+    halfSize / Math.tan(Math.min(verticalFov, horizontalFov) / 2),
   );
 }
 
