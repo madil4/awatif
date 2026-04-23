@@ -3,7 +3,6 @@ import van, { State } from "vanjs-core";
 import { Mesh } from "@awatif/components";
 import { getText } from "../text/getText";
 
-// Todo: Reaction are still not implemented in the solver
 export type PointResultsDisplay = "None" | "Displacements" | "Reactions";
 
 export function getPointResults({
@@ -39,13 +38,11 @@ export function getPointResults({
     const s = displayScale.val;
 
     const isDisp = display.val === "Displacements" && mesh.displacements?.val;
-    // @ts-ignore
     const isReact = display.val === "Reactions" && mesh.reactions?.val;
     const data = isDisp
       ? mesh.displacements!.val
       : isReact
-        ? // @ts-ignore
-          mesh.reactions!.val
+        ? mesh.reactions!.val
         : null;
     if (!data) return render();
 

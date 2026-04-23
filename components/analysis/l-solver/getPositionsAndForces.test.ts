@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import type { Mesh } from "../../data-model";
 import { getPositionsAndForces } from "./getPositionsAndForces";
+import { getReactions } from "../getReactions";
 
 describe("getPositionsAndForces", () => {
   // Generic member default props (converted to analysis units)
@@ -60,6 +61,18 @@ describe("getPositionsAndForces", () => {
     expect(f0.My[1]).toBeCloseTo(0);
     expect(f0.Mz[0]).toBeCloseTo(30); // moment at base = P × L = 10 × 3
     expect(f0.Mz[1]).toBeCloseTo(0); // moment at free end = 0
+
+    const reactions = getReactions(
+      nodes,
+      elements,
+      internalForces,
+      loads,
+      supports,
+    );
+    expect(reactions[0][0]).toBeCloseTo(-10);
+    expect(reactions[0][1]).toBeCloseTo(2000);
+    expect(reactions[0][5]).toBeCloseTo(30);
+    reactions[1].forEach((value) => expect(value).toBeCloseTo(0));
   });
 
   test("2- Portal frame: pin and roller supports with horizontal and vertical loads", () => {
@@ -340,5 +353,36 @@ describe("getPositionsAndForces", () => {
     expect(f2.Mx[1]).toBeCloseTo(-4.440883305319135);
     expect(f2.My[0]).toBeCloseTo(8.243417542315406); // minor-axis moment at top
     expect(f2.My[1]).toBeCloseTo(14.164595282740951); // at fixed base
+  });
+
+  test("5- Fully restrained node: reactions balance nodal loads without elements", () => {
+    const nodes: Mesh["nodes"]["val"] = [[0, 0, 0]];
+    const elements: Mesh["elements"]["val"] = [];
+    const supports: Mesh["supports"]["val"] = new Map([
+      [0, [true, true, true, true, true, true]],
+    ]);
+    const loads: Mesh["loads"]["val"] = new Map([
+      [0, [5, -7, 0, 0, 0, 11]],
+    ]);
+    const elementsProps: Mesh["elementsProps"]["val"] = new Map();
+
+    const { internalForces } = getPositionsAndForces(
+      nodes,
+      elements,
+      loads,
+      supports,
+      elementsProps,
+    );
+
+    const reactions = getReactions(
+      nodes,
+      elements,
+      internalForces,
+      loads,
+      supports,
+    );
+    expect(reactions[0][0]).toBeCloseTo(-5);
+    expect(reactions[0][1]).toBeCloseTo(7);
+    expect(reactions[0][5]).toBeCloseTo(-11);
   });
 });

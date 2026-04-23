@@ -10,6 +10,7 @@ import {
   getElementsProps,
   getReport,
   getPositionsAndForces,
+  getReactions,
   getDesigns,
   Geometry,
   Mesh,
@@ -113,6 +114,7 @@ const mesh: Mesh = {
   elementsProps: van.state(new Map()),
   positions: van.state([]),
   displacements: van.state([]),
+  reactions: van.state([]),
   internalForces: van.state(new Map()),
 };
 
@@ -210,11 +212,19 @@ van.derive(() => {
 
     mesh.positions.val = positions;
     mesh.internalForces.val = internalForces;
+    mesh.reactions.val = getReactions(
+      mesh.nodes.val,
+      mesh.elements.val,
+      mesh.internalForces.val,
+      mesh.loads.val,
+      mesh.supports.val,
+    );
 
     analysisStatus.val = { success: true, ...warningPayload };
   } catch (e) {
     mesh.positions.val = [];
     mesh.displacements.val = [];
+    mesh.reactions.val = [];
     mesh.internalForces.val = new Map();
 
     analysisStatus.val = { success: false, ...warningPayload };
