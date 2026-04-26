@@ -40,83 +40,70 @@ export function getPointResults({
     const s = displayScale.val;
     const reactions = mesh.reactions.val;
     const color = 0xff0000;
-    const colorStr = "#ff0000";
+    const labelColor = "#ffffff";
+    const arrowLength = 0.3 * s;
+    const arrowHeadLength = 0.15 * s;
+    const arrowHeadWidth = 0.1 * s;
+    const offsetDistance = 0.15 * s;
+    const momentRadius = 0.18 * s;
     const coneGeom = new THREE.ConeGeometry(0.05 * s, 0.15 * s, 8);
     const mat = new THREE.MeshBasicMaterial({ color });
-    const maxArrowLength = 0.3 * s;
-    const maxArcRadius = 0.15 * s;
-    const maxAppliedForce = getMaxComponentMagnitude(mesh.loads.val, 0, 3);
-    const maxReactionForce = getMaxComponentMagnitude(reactions, 0, 3);
-    const forceReference = Math.max(maxAppliedForce, maxReactionForce, 1);
-    const maxAppliedMoment = getMaxComponentMagnitude(mesh.loads.val, 3, 6);
-    const maxReactionMoment = getMaxComponentMagnitude(reactions, 3, 6);
-    const momentReference = Math.max(maxAppliedMoment, maxReactionMoment, 1);
+    mat.depthTest = false;
 
     reactions.forEach((r, i) => {
       const n = nodes[i];
       if (!n) return;
       const [vx, vy, , , , rz] = r;
-      const origin = new THREE.Vector3(n[0], n[1], n[2]);
-      const xLength = (Math.abs(vx) / forceReference) * maxArrowLength;
-      const yLength = (Math.abs(vy) / forceReference) * maxArrowLength;
-      const radius = (Math.abs(rz) / momentReference) * maxArcRadius;
+      const labels: string[] = [];
 
       // X arrow
       if (Math.abs(vx) > 0.001) {
         const dir = new THREE.Vector3(vx > 0 ? 1 : -1, 0, 0);
+        const offset = new THREE.Vector3(dir.x * offsetDistance, 0, 0);
         group.add(
-          new THREE.ArrowHelper(
-            dir,
-            origin,
-            xLength,
-            color,
-            getArrowHeadLength(xLength, s),
-            getArrowHeadWidth(xLength, s),
+          setMaterialOnTop(
+            new THREE.ArrowHelper(
+              dir,
+              new THREE.Vector3(n[0] + offset.x, n[1], n[2]),
+              arrowLength,
+              color,
+              arrowHeadLength,
+              arrowHeadWidth,
+            ),
           ),
         );
-        group.add(
-          getText(
-            `Rx: ${vx.toFixed(2)}`,
-            [n[0] + dir.x * (xLength + 0.15 * s), n[1], n[2]],
-            colorStr,
-            0.3 * s,
-          ),
-        );
+        labels.push(`Rx: ${vx.toFixed(2)}`);
       }
 
       // Y arrow
       if (Math.abs(vy) > 0.001) {
         const dir = new THREE.Vector3(0, vy > 0 ? 1 : -1, 0);
+        const offset = new THREE.Vector3(0, dir.y * offsetDistance, 0);
         group.add(
-          new THREE.ArrowHelper(
-            dir,
-            origin,
-            yLength,
-            color,
-            getArrowHeadLength(yLength, s),
-            getArrowHeadWidth(yLength, s),
+          setMaterialOnTop(
+            new THREE.ArrowHelper(
+              dir,
+              new THREE.Vector3(n[0], n[1] + offset.y, n[2]),
+              arrowLength,
+              color,
+              arrowHeadLength,
+              arrowHeadWidth,
+            ),
           ),
         );
-        group.add(
-          getText(
-            `Ry: ${vy.toFixed(2)}`,
-            [n[0], n[1] + dir.y * (yLength + 0.15 * s), n[2]],
-            colorStr,
-            0.3 * s,
-          ),
-        );
+        labels.unshift(`Ry: ${vy.toFixed(2)}`);
       }
 
       // Rotation arc
-      if (Math.abs(rz) > 0.0001 && radius > 0) {
+      if (Math.abs(rz) > 0.0001) {
         const start = Math.PI / 4;
         const arc = Math.PI * 1.5;
         const ccw = rz < 0;
         const curve = new THREE.EllipseCurve(
           n[0],
           n[1],
-          radius,
-          radius,
+          momentRadius,
+          momentRadius,
           start,
           start + arc,
           ccw,
@@ -124,12 +111,12 @@ export function getPointResults({
         const pts = curve
           .getPoints(24)
           .map((p) => new THREE.Vector3(p.x, p.y, n[2]));
-        group.add(
-          new THREE.Line(
-            new THREE.BufferGeometry().setFromPoints(pts),
-            new THREE.LineBasicMaterial({ color }),
-          ),
+        const line = new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({ color, depthTest: false }),
         );
+        line.renderOrder = 5;
+        group.add(line);
 
         // Cone arrowhead at arc end
         const endPt = pts[pts.length - 1];
@@ -140,16 +127,28 @@ export function getPointResults({
         const cone = new THREE.Mesh(coneGeom, mat);
         cone.position.copy(endPt);
         cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent);
+        cone.renderOrder = 5;
         group.add(cone);
 
-        group.add(
-          getText(
-            `Mz: ${rz.toFixed(3)}`,
-            [n[0] - radius - 0.15 * s, n[1], n[2]],
-            colorStr,
-            0.3 * s,
-          ),
-        );
+        labels.push(`Mz: ${rz.toFixed(3)}`);
+      }
+
+      if (labels.length > 0) {
+        const labelX = n[0] - 0.7 * s;
+        const labelTopY = n[1] + 0.45 * s;
+        const labelSpacing = 0.22 * s;
+
+        labels.forEach((text, index) => {
+          group.add(
+            getText(
+              text,
+              [labelX, labelTopY - index * labelSpacing, n[2]],
+              labelColor,
+              0.3 * s,
+              { backgroundColor: "rgba(120, 0, 0, 0.75)" },
+            ),
+          );
+        });
       }
     });
 
@@ -163,34 +162,12 @@ export function getPointResults({
   return group;
 }
 
-function getMaxComponentMagnitude(
-  data:
-    | Map<number, [number, number, number, number, number, number]>
-    | [number, number, number, number, number, number][],
-  startIndex: number,
-  endIndex: number,
-): number {
-  if (data instanceof Map) {
-    return Math.max(
-      0,
-      ...Array.from(data.values()).flatMap((values) =>
-        values.slice(startIndex, endIndex).map((value) => Math.abs(value)),
-      ),
-    );
-  }
-
-  return Math.max(
-    0,
-    ...data.flatMap((values) =>
-      values.slice(startIndex, endIndex).map((value) => Math.abs(value)),
-    ),
-  );
-}
-
-function getArrowHeadLength(length: number, displayScale: number): number {
-  return Math.min(0.15 * displayScale, length * 0.6);
-}
-
-function getArrowHeadWidth(length: number, displayScale: number): number {
-  return Math.min(0.1 * displayScale, length * 0.4);
+function setMaterialOnTop<T extends THREE.Object3D>(object: T): T {
+  object.traverse((child) => {
+    if ((child as THREE.Mesh).material) {
+      const material = (child as THREE.Mesh).material as THREE.Material;
+      material.depthTest = false;
+    }
+  });
+  return object;
 }
