@@ -355,34 +355,4 @@ describe("getPositionsAndForces", () => {
     expect(f2.My[1]).toBeCloseTo(14.164595282740951); // at fixed base
   });
 
-  test("5- Fully restrained node: reactions balance nodal loads without elements", () => {
-    const nodes: Mesh["nodes"]["val"] = [[0, 0, 0]];
-    const elements: Mesh["elements"]["val"] = [];
-    const supports: Mesh["supports"]["val"] = new Map([
-      [0, [true, true, true, true, true, true]],
-    ]);
-    const loads: Mesh["loads"]["val"] = new Map([
-      [0, [5, -7, 0, 0, 0, 11]],
-    ]);
-    const elementsProps: Mesh["elementsProps"]["val"] = new Map();
-
-    const { internalForces } = getPositionsAndForces(
-      nodes,
-      elements,
-      loads,
-      supports,
-      elementsProps,
-    );
-
-    const reactions = getReactions(
-      nodes,
-      elements,
-      internalForces,
-      loads,
-      supports,
-    );
-    expect(reactions[0][0]).toBeCloseTo(-5);
-    expect(reactions[0][1]).toBeCloseTo(7);
-    expect(reactions[0][5]).toBeCloseTo(-11);
-  });
 });

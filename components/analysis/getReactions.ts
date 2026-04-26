@@ -19,6 +19,7 @@ export function getReactions(
     (): NodalDofVector => [0, 0, 0, 0, 0, 0],
   );
 
+  // Todo: optimize by looping through supports instead of elements
   elements?.forEach((element, elementIndex) => {
     const forces = internalForces.get(elementIndex);
     if (!forces) return;
