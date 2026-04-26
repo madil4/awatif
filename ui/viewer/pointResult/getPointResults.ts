@@ -72,7 +72,7 @@ export function getPointResults({
             ),
           ),
         );
-        labels.push(`Rx: ${vx.toFixed(2)}`);
+        labels.push(`Rx: ${vx.toFixed(2)} KN`);
       }
 
       // Y arrow
@@ -91,7 +91,7 @@ export function getPointResults({
             ),
           ),
         );
-        labels.unshift(`Ry: ${vy.toFixed(2)}`);
+        labels.unshift(`Ry: ${vy.toFixed(2)} KN`);
       }
 
       // Rotation arc
@@ -130,7 +130,7 @@ export function getPointResults({
         cone.renderOrder = 5;
         group.add(cone);
 
-        labels.push(`Mz: ${rz.toFixed(3)}`);
+        labels.push(`Mz: ${rz.toFixed(3)} kNm`);
       }
 
       if (labels.length > 0) {
