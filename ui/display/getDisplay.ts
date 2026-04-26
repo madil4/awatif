@@ -195,22 +195,15 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           />
         </div>
       </div>
-      <!-- Point Results is hidden until reactions are unblocked.
       <div class="display-item">
         <label>Point Results</label>
         <select
           @change=${(e: Event) =>
-        (display.pointResult.val = (e.target as HTMLSelectElement)
-          .value as PointResultsDisplay)}
+            (display.pointResult.val = (e.target as HTMLSelectElement)
+              .value as PointResultsDisplay)}
         >
           <option value="None" ?selected=${display.pointResult.val === "None"}>
             None
-          </option>
-          <option
-            value="Displacements"
-            ?selected=${display.pointResult.val === "Displacements"}
-          >
-            Displacements
           </option>
           <option
             value="Reactions"
@@ -220,7 +213,6 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           </option>
         </select>
       </div>
-      -->
       <div class="display-item">
         <label>Line Results</label>
         <select

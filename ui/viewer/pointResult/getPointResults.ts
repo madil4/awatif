@@ -35,31 +35,32 @@ export function getPointResults({
     const nodes = mesh.nodes.val;
     if (!nodes?.length) return render();
 
+    if (display.val !== "Reactions" || !mesh.reactions?.val) return render();
+
     const s = displayScale.val;
-
-    const isDisp = display.val === "Displacements" && mesh.displacements?.val;
-    const isReact = display.val === "Reactions" && mesh.reactions?.val;
-    const data = isDisp
-      ? mesh.displacements!.val
-      : isReact
-        ? mesh.reactions!.val
-        : null;
-    if (!data) return render();
-
-    const color = isDisp ? 0x00ff00 : 0xff0000;
-    const colorStr = isDisp ? "#00ff00" : "#ff0000";
+    const reactions = mesh.reactions.val;
+    const color = 0xff0000;
+    const colorStr = "#ff0000";
     const coneGeom = new THREE.ConeGeometry(0.05 * s, 0.15 * s, 8);
     const mat = new THREE.MeshBasicMaterial({ color });
-    const scale = (isDisp ? 0.6 : 0.3) * s;
-    const [p1, p2] = isDisp ? ["U", "R"] : ["R", "M"];
+    const maxArrowLength = 0.3 * s;
+    const maxArcRadius = 0.15 * s;
+    const maxAppliedForce = getMaxComponentMagnitude(mesh.loads.val, 0, 3);
+    const maxReactionForce = getMaxComponentMagnitude(reactions, 0, 3);
+    const forceReference = Math.max(maxAppliedForce, maxReactionForce, 1);
+    const maxAppliedMoment = getMaxComponentMagnitude(mesh.loads.val, 3, 6);
+    const maxReactionMoment = getMaxComponentMagnitude(reactions, 3, 6);
+    const momentReference = Math.max(maxAppliedMoment, maxReactionMoment, 1);
 
-    // @ts-ignore
-    data.forEach((r, i) => {
+    reactions.forEach((r, i) => {
       const n = nodes[i];
       if (!n) return;
-      // @ts-ignore
-      const [vx, vy, vz, rx, ry, rz] = r;
+      const [vx, vy, , , , rz] = r;
       const origin = new THREE.Vector3(n[0], n[1], n[2]);
+      const xLength = (Math.abs(vx) / forceReference) * maxArrowLength;
+      const yLength = (Math.abs(vy) / forceReference) * maxArrowLength;
+      const radius = (Math.abs(rz) / momentReference) * maxArcRadius;
+
       // X arrow
       if (Math.abs(vx) > 0.001) {
         const dir = new THREE.Vector3(vx > 0 ? 1 : -1, 0, 0);
@@ -67,16 +68,16 @@ export function getPointResults({
           new THREE.ArrowHelper(
             dir,
             origin,
-            Math.abs(vx * scale),
+            xLength,
             color,
-            0.15 * s,
-            0.1 * s,
+            getArrowHeadLength(xLength, s),
+            getArrowHeadWidth(xLength, s),
           ),
         );
         group.add(
           getText(
-            `${p1}x: ${vx.toFixed(2)}`,
-            [n[0] + vx * scale + (vx > 0 ? 0.15 * s : -0.15 * s), n[1], n[2]],
+            `Rx: ${vx.toFixed(2)}`,
+            [n[0] + dir.x * (xLength + 0.15 * s), n[1], n[2]],
             colorStr,
             0.3 * s,
           ),
@@ -90,16 +91,16 @@ export function getPointResults({
           new THREE.ArrowHelper(
             dir,
             origin,
-            Math.abs(vy * scale),
+            yLength,
             color,
-            0.15 * s,
-            0.1 * s,
+            getArrowHeadLength(yLength, s),
+            getArrowHeadWidth(yLength, s),
           ),
         );
         group.add(
           getText(
-            `${p1}y: ${vy.toFixed(2)}`,
-            [n[0], n[1] + vy * scale + (vy > 0 ? 0.15 * s : -0.15 * s), n[2]],
+            `Ry: ${vy.toFixed(2)}`,
+            [n[0], n[1] + dir.y * (yLength + 0.15 * s), n[2]],
             colorStr,
             0.3 * s,
           ),
@@ -107,10 +108,9 @@ export function getPointResults({
       }
 
       // Rotation arc
-      if (Math.abs(rz) > 0.0001) {
-        const radius = 0.15 * s,
-          start = Math.PI / 4,
-          arc = Math.PI * 1.5;
+      if (Math.abs(rz) > 0.0001 && radius > 0) {
+        const start = Math.PI / 4;
+        const arc = Math.PI * 1.5;
         const ccw = rz < 0;
         const curve = new THREE.EllipseCurve(
           n[0],
@@ -144,7 +144,7 @@ export function getPointResults({
 
         group.add(
           getText(
-            `${p2}z: ${rz.toFixed(3)}`,
+            `Mz: ${rz.toFixed(3)}`,
             [n[0] - radius - 0.15 * s, n[1], n[2]],
             colorStr,
             0.3 * s,
@@ -161,4 +161,36 @@ export function getPointResults({
     clearGroup();
   };
   return group;
+}
+
+function getMaxComponentMagnitude(
+  data:
+    | Map<number, [number, number, number, number, number, number]>
+    | [number, number, number, number, number, number][],
+  startIndex: number,
+  endIndex: number,
+): number {
+  if (data instanceof Map) {
+    return Math.max(
+      0,
+      ...Array.from(data.values()).flatMap((values) =>
+        values.slice(startIndex, endIndex).map((value) => Math.abs(value)),
+      ),
+    );
+  }
+
+  return Math.max(
+    0,
+    ...data.flatMap((values) =>
+      values.slice(startIndex, endIndex).map((value) => Math.abs(value)),
+    ),
+  );
+}
+
+function getArrowHeadLength(length: number, displayScale: number): number {
+  return Math.min(0.15 * displayScale, length * 0.6);
+}
+
+function getArrowHeadWidth(length: number, displayScale: number): number {
+  return Math.min(0.1 * displayScale, length * 0.4);
 }
