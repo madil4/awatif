@@ -44,6 +44,7 @@ export function getViewer({
     0.1,
     1000,
   );
+  camera.up.set(0, 0, 1); // Z is the vertical axis; without this OrbitControls orbits around Y and the view flips
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);

@@ -20,7 +20,7 @@ export const imperfections: ImperfectionsTemplate<ImperfectionsParams> = {
     theta0: 0.005,
     localBow: false,
     bowRatioDenominator: 400,
-    direction: "y-negative",
+    direction: "z-negative",
   },
 
   getParamsTemplate: ({ params }) => {

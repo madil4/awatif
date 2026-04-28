@@ -101,10 +101,10 @@ function getGridFitPose({
   gridSize: number;
   viewing2D: boolean;
 }): { position: THREE.Vector3; target: THREE.Vector3 } {
-  const target = new THREE.Vector3(gridSize / 2, gridSize / 2, 0);
+  const target = new THREE.Vector3(gridSize / 2, 0, gridSize / 2);
   const direction = viewing2D
-    ? new THREE.Vector3(0, 0, 1)
-    : new THREE.Vector3(0.453, 0.423, 0.785).normalize();
+    ? new THREE.Vector3(0, -1, 0)
+    : new THREE.Vector3(0.423, -0.785, 0.453).normalize();
   const fitDistance =
     getGridFitDistance({ camera, gridSize }) * (viewing2D ? 1.2 : 1.55);
 
