@@ -4,28 +4,18 @@ import { State } from "vanjs-core";
 
 import "./styles.css";
 
-export enum CanvasButtons {
-  REPORT = "Report",
-  AI_ASSISTANT = "AI-Assistant",
-  UPGRADE = "Upgrade",
-}
-
 export function getCanvasBar({
   canvasButton,
-  buttons = [CanvasButtons.REPORT],
-  upgraded,
+  buttons = [],
 }: {
-  canvasButton: State<CanvasButtons | null>;
-  buttons?: CanvasButtons[];
-  upgraded?: State<boolean>;
+  canvasButton: State<string | null>;
+  buttons?: string[] | State<string[]>;
 }): HTMLElement {
   const container = document.createElement("div");
   container.id = "canvas-bar";
 
   van.derive(() => {
-    const buttonList = upgraded?.val
-      ? buttons.filter((b) => b !== CanvasButtons.UPGRADE)
-      : buttons;
+    const buttonList = buttons instanceof Array ? buttons : buttons.val;
     render(
       html`
         ${buttonList.map(

@@ -26,7 +26,6 @@ import {
   Display,
   getCanvas,
   getCanvasBar,
-  CanvasButtons,
   AnalysisStatus,
 } from "@awatif/ui";
 
@@ -255,9 +254,9 @@ van.derive(() => {
 
 // Canvas events
 const canvas = van.state<HTMLDivElement | null>(null);
-const canvasButton = van.state<CanvasButtons | null>(null);
+const canvasButton = van.state<string | null>(null);
 van.derive(() => {
-  if (canvasButton.val === CanvasButtons.REPORT) {
+  if (canvasButton.val === "Report") {
     display.lineIndex.val = true;
 
     canvas.val = getReport({
@@ -275,6 +274,7 @@ van.derive(() => {
   }
 });
 
+// HTML structure
 document.body.append(
   getLayout({
     viewer: getViewer({ geometry, mesh, components, display, templates }),
@@ -282,7 +282,7 @@ document.body.append(
     header: [
       getCanvasBar({
         canvasButton,
-        buttons: [CanvasButtons.REPORT],
+        buttons: ["Report"],
       }),
     ],
     canvas: getCanvas({ canvas, canvasButton }),

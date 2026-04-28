@@ -1,6 +1,5 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
-import { CanvasButtons } from "../canvasBar/getCanvasBar";
 
 import "./styles.css";
 
@@ -9,7 +8,7 @@ export function getCanvas({
   canvasButton,
 }: {
   canvas: State<HTMLDivElement | null>;
-  canvasButton: State<CanvasButtons | null>;
+  canvasButton: State<string | null>;
 }): HTMLElement {
   const container = document.createElement("div");
 
@@ -18,7 +17,7 @@ export function getCanvas({
       <div class="canvas-header">
         <div class="canvas-header-left">
           <h2>${canvasButton.val}</h2>
-          ${canvasButton.val === CanvasButtons.REPORT
+          ${canvasButton.val === "Report"
             ? html`<button
                 @click=${() => printCanvas()}
                 class="print-button"
