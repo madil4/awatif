@@ -195,12 +195,12 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           />
         </div>
       </div>
-      <div class="display-item">
+      <!-- <div class="display-item">
         <label>Point Results</label>
         <select
           @change=${(e: Event) =>
-            (display.pointResult.val = (e.target as HTMLSelectElement)
-              .value as PointResultsDisplay)}
+        (display.pointResult.val = (e.target as HTMLSelectElement)
+          .value as PointResultsDisplay)}
         >
           <option value="None" ?selected=${display.pointResult.val === "None"}>
             None
@@ -212,7 +212,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             Reactions
           </option>
         </select>
-      </div>
+      </div> -->
       <div class="display-item">
         <label>Line Results</label>
         <select
