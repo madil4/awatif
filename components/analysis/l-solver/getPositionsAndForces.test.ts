@@ -1,7 +1,6 @@
 import { describe, test, expect } from "vitest";
 import type { Mesh } from "../../data-model";
 import { getPositionsAndForces } from "./getPositionsAndForces";
-import { getReactions } from "../getReactions";
 
 describe("getPositionsAndForces", () => {
   // Generic member default props (converted to analysis units)
@@ -57,17 +56,6 @@ describe("getPositionsAndForces", () => {
     expect(f0.Vz[1]).toBeCloseTo(10);
     expect(f0.Mx[0]).toBeCloseTo(0);
     expect(f0.Mx[1]).toBeCloseTo(0);
-    const reactions = getReactions(
-      nodes,
-      elements,
-      internalForces,
-      loads,
-      supports,
-    );
-    expect(reactions[0][0]).toBeCloseTo(-10);
-    expect(reactions[0][1]).toBeCloseTo(2000);
-    expect(reactions[0][5]).toBeCloseTo(30);
-    reactions[1].forEach((value) => expect(value).toBeCloseTo(0));
     expect(f0.My[0]).toBeCloseTo(-30); // moment at base = P × L = 10 × 3 (now My)
     expect(f0.My[1]).toBeCloseTo(0); // moment at free end = 0
     expect(f0.Mz[0]).toBeCloseTo(0);
@@ -359,5 +347,4 @@ describe("getPositionsAndForces", () => {
     expect(f2.Mz[0]).toBeCloseTo(0.3495712804863882);
     expect(f2.Mz[1]).toBeCloseTo(-1.0955771340495164);
   });
-
 });

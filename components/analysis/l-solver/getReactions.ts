@@ -1,6 +1,6 @@
 import { multiply, transpose } from "mathjs";
-import type { Mesh, NodalDofVector } from "../data-model";
-import { getTransformationMatrix } from "./l-solver/helpers/getTransformationMatrix";
+import type { Mesh } from "../../data-model";
+import { getTransformationMatrix } from "./helpers/getTransformationMatrix";
 
 export function getReactions(
   nodes: Mesh["nodes"]["val"],
@@ -16,7 +16,7 @@ export function getReactions(
   // Accumulate element forces at each node in global coordinates
   const globalForces = Array.from(
     { length: nodeCount },
-    (): NodalDofVector => [0, 0, 0, 0, 0, 0],
+    (): [number, number, number, number, number, number] => [0, 0, 0, 0, 0, 0],
   );
 
   // Todo: optimize by looping through supports instead of elements
@@ -68,7 +68,7 @@ export function getReactions(
       reactionDof(support?.[3], forces[3], load?.[3]),
       reactionDof(support?.[4], forces[4], load?.[4]),
       reactionDof(support?.[5], forces[5], load?.[5]),
-    ] as NodalDofVector;
+    ] as [number, number, number, number, number, number];
   });
 }
 

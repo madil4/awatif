@@ -1,15 +1,6 @@
 import type { State } from "vanjs-core";
 import { LoadCase } from "./loads/data-model";
 
-export type NodalDofVector = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-];
-
 // Geometry
 export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
@@ -35,7 +26,7 @@ export type Mesh = {
   supports: State<
     Map<number, [boolean, boolean, boolean, boolean, boolean, boolean]>
   >;
-  loads: State<Map<number, NodalDofVector>>;
+  loads: State<Map<number, [number, number, number, number, number, number]>>; // [Fx, Fy, Fz, Mx, My, Mz]
   releases: State<
     Map<number, [boolean, boolean, boolean, boolean]> // [My_start, Mz_start, My_end, Mz_end]
   >;
@@ -43,7 +34,7 @@ export type Mesh = {
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]
   displacements: State<number[]>; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
-  reactions: State<NodalDofVector[]>;
+  reactions: State<[number, number, number, number, number, number][]>;
   internalForces: State<
     Map<
       number,
@@ -97,9 +88,4 @@ export type ComponentEntry = {
   loadCase?: LoadCase;
 };
 
-export type Components = State<
-  Map<
-    ComponentsType,
-    ComponentEntry[]
-  >
->;
+export type Components = State<Map<ComponentsType, ComponentEntry[]>>;
