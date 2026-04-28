@@ -72,6 +72,7 @@ export function getReactions(
   });
 }
 
+// Helpers
 function reactionDof(
   isRestrained: boolean | undefined,
   elementForce: number,

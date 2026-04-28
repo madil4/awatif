@@ -68,7 +68,12 @@ export function getPositionsAndForces(
     const T = getTransformationMatrix(elmNodes);
     const dxLocal = multiply(T, dxGlobal);
 
-    const kLocal = getLocalStiffnessMatrix(elmNodes, elementsProps, i, releases);
+    const kLocal = getLocalStiffnessMatrix(
+      elmNodes,
+      elementsProps,
+      i,
+      releases,
+    );
     let fLocal = multiply(kLocal, dxLocal) as number[];
 
     // Zero out forces at released DOFs to guard against floating-point noise
@@ -93,7 +98,7 @@ export function getPositionsAndForces(
   return { positions, internalForces };
 }
 
-// Utils
+// Helpers
 function getFreeIndices(
   supports: Mesh["supports"]["val"] | undefined,
   dof: number,

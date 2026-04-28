@@ -100,23 +100,6 @@ const components: Components = van.state(
   ]),
 );
 
-const mesh: Mesh = {
-  nodes: van.state([]),
-  elements: van.state([]),
-  geometryMapping: van.state({
-    pointToNodes: new Map(),
-    lineToElements: new Map(),
-  }),
-  loads: van.state(new Map()),
-  supports: van.state(new Map()),
-  releases: van.state(new Map()),
-  elementsProps: van.state(new Map()),
-  positions: van.state([]),
-  displacements: van.state([]),
-  reactions: van.state([]),
-  internalForces: van.state(new Map()),
-};
-
 const display: Display = {
   grid: {
     size: van.state(10),
@@ -140,8 +123,26 @@ const display: Display = {
   loadCase: van.state<LoadSelection>("dead"),
 };
 
+const mesh: Mesh = {
+  nodes: van.state([]),
+  elements: van.state([]),
+  geometryMapping: van.state({
+    pointToNodes: new Map(),
+    lineToElements: new Map(),
+  }),
+  loads: van.state(new Map()),
+  supports: van.state(new Map()),
+  releases: van.state(new Map()),
+  elementsProps: van.state(new Map()),
+  positions: van.state([]),
+  displacements: van.state([]),
+  reactions: van.state([]),
+  internalForces: van.state(new Map()),
+};
+
 const analysisStatus: AnalysisStatus = van.state({ success: true });
 
+// Events
 // Analysis events
 van.derive(() => {
   const assignedLineIds = new Set<number>();
