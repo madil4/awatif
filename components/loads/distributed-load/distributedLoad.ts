@@ -14,7 +14,7 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
   geometryKind: "line",
   defaultParams: {
     w: 0,
-    direction: "local-y",
+    direction: "local-z",
   },
 
   getParamsTemplate: ({ params }) => {
