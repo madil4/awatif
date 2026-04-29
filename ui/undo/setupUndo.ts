@@ -26,8 +26,10 @@ export function setupUndo({
   let applying = false;
   let pendingTimer: number | null = null;
 
+  // Append mode creates a temporary standalone point before the first line.
+  // Undo history should only keep points that are part of committed geometry.
   const snapshot = (): Snapshot => ({
-    points: new Map(geometry.points.val),
+    points: getCommittedPoints(geometry.points.val, geometry.lines.val),
     lines: new Map(geometry.lines.val),
     components: structuredClone(components.val),
   });
@@ -83,4 +85,25 @@ export function setupUndo({
       applying = false;
     });
   });
+}
+
+// Helpers
+function getCommittedPoints(
+  points: Map<number, [number, number, number]>,
+  lines: Map<number, [number, number]>,
+): Map<number, [number, number, number]> {
+  const usedPointIds = new Set<number>();
+  for (const [startId, endId] of lines.values()) {
+    usedPointIds.add(startId);
+    usedPointIds.add(endId);
+  }
+
+  const committedPoints = new Map<number, [number, number, number]>();
+  for (const [pointId, point] of points) {
+    if (usedPointIds.has(pointId)) {
+      committedPoints.set(pointId, point);
+    }
+  }
+
+  return committedPoints;
 }
