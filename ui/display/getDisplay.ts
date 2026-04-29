@@ -21,7 +21,7 @@ export type Display = {
   lineIndex: State<boolean>;
   pointIndex: State<boolean>;
   orientation: State<boolean>;
-  extrudeSections: State<boolean>;
+  extrude: State<boolean>;
   pointResult: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
   loadCase: State<LoadSelection>;
@@ -101,9 +101,9 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           <label>Extrude</label>
           <input
             type="checkbox"
-            .checked=${display.extrudeSections.val}
+            .checked=${display.extrude.val}
             @change=${(e: Event) =>
-              (display.extrudeSections.val = (
+              (display.extrude.val = (
                 e.target as HTMLInputElement
               ).checked)}
           />

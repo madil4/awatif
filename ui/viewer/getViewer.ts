@@ -18,7 +18,7 @@ import { getPointIndex } from "./pointIndex/getPointIndex";
 import { getOrientation } from "./orientation/getOrientation";
 import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
-import { getExtrudeSections } from "./extrudeSections/getExtrudeSections";
+import { getExtrude } from "./extrude/getExtrude";
 import { getView2D } from "./view2D/getView2D";
 import { Display } from "../display/getDisplay";
 
@@ -185,11 +185,11 @@ export function getViewer({
     );
 
     scene.add(
-      getExtrudeSections({
+      getExtrude({
         geometry,
         components,
         templates,
-        display: display.extrudeSections,
+        display: display.extrude,
         render,
       }),
     );

@@ -117,7 +117,7 @@ const display: Display = {
   lineIndex: van.state(false),
   pointIndex: van.state(false),
   orientation: van.state(false),
-  extrudeSections: van.state(false),
+  extrude: van.state(false),
   pointResult: van.state("None"),
   lineResult: van.state("None"),
   loadCase: van.state<LoadSelection>("dead"),

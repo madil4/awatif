@@ -43,7 +43,7 @@ function getSectionPalette(templateName?: string): SectionPalette {
   };
 }
 
-export function getExtrudeSections({
+export function getExtrude({
   geometry,
   components,
   templates,
