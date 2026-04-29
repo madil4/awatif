@@ -5,6 +5,7 @@ export { getComponents } from "./components/getComponents";
 export { getAnalysisStatus } from "./analysisStatus/getAnalysisStatus";
 export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar } from "./canvasBar/getCanvasBar";
+export { setupUndo } from "./undo/setupUndo";
 
 export type { Display } from "./display/getDisplay";
 export type { ActiveAnalysis } from "./components/analysisList/getAnalysisList";

@@ -27,6 +27,7 @@ import {
   getCanvas,
   getCanvasBar,
   AnalysisStatus,
+  setupUndo,
 } from "@awatif/ui";
 
 const geometry: Geometry = {
@@ -141,6 +142,8 @@ const mesh: Mesh = {
 };
 
 const analysisStatus: AnalysisStatus = van.state({ success: true });
+
+setupUndo({ geometry, components });
 
 // Events
 // Analysis events
