@@ -34,7 +34,7 @@ const RESULT_CONFIGS: Record<
   ResultConfig
 > = {
   Axial: {
-    axis: "localY",
+    axis: "localZ",
     label: "N",
     getValues: (forces) => forces.N,
   },
@@ -54,12 +54,12 @@ const RESULT_CONFIGS: Record<
     getValues: (forces) => forces.My,
   },
   BendingZ: {
-    axis: "localY",
+    axis: "localZ",
     label: "Mz",
     getValues: (forces) => forces.Mz,
   },
   Torsion: {
-    axis: "localY",
+    axis: "localZ",
     label: "Mx",
     getValues: (forces) => forces.Mx,
   },

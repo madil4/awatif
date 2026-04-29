@@ -76,6 +76,7 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
     const COLOR = 0xff0000;
 
     group.position.set(position[0], position[1], position[2]);
+    group.rotateX(Math.PI / 2); // Support geometry is built in X-Y; rotate to face -Y camera in X-Z plane
     group.renderOrder = 5;
 
     if (params.type === "fixed") {

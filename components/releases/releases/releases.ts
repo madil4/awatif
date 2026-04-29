@@ -98,6 +98,7 @@ function createHingeCircle(
   });
   const circle = new THREE.Mesh(geometry, material);
   circle.position.set(x, y, z);
+  circle.rotateX(Math.PI / 2); // RingGeometry is in X-Y by default; rotate to face the -Y camera
   return circle;
 }
 
