@@ -1,6 +1,6 @@
 # Awatif
 
-Awatif is a web-based tool for analyzing and designing 2D frames, beams, and columns. It combines real-time results, AI-assisted modeling, nonlinear 2nd-order analysis, and transparent reports that show every code clause and formula so reviewers can sign off faster.
+Awatif is a web-based tool for analyzing and designing frames, beams, and columns. It combines real-time results, AI-assisted modeling, nonlinear 2nd-order analysis, and transparent reports that show every code clause and formula so reviewers can sign off faster.
 
 ## Quick Start
 
