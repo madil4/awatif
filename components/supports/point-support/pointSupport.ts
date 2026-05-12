@@ -8,7 +8,7 @@ type PointSupportParams = {
     | "pinned"
     | "horizontal-roller"
     | "vertical-roller"
-    | "z-roller";
+    | "y-roller";
 };
 
 const supportMap: Record<
@@ -18,8 +18,8 @@ const supportMap: Record<
   fixed: [true, true, true, true, true, true],
   pinned: [true, true, true, false, false, false],
   "horizontal-roller": [false, true, true, false, false, false],
-  "vertical-roller": [true, false, true, false, false, false],
-  "z-roller": [true, true, false, false, false, false],
+  "vertical-roller": [true, true, false, false, false, false],
+  "y-roller": [true, false, true, false, false, false],
 };
 
 export const pointSupport: SupportTemplate<PointSupportParams> = {
@@ -55,10 +55,10 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
             value="vertical-roller"
             .selected=${params.val.type === "vertical-roller"}
           >
-            Y Roller
-          </option>
-          <option value="z-roller" .selected=${params.val.type === "z-roller"}>
             Z Roller
+          </option>
+          <option value="y-roller" .selected=${params.val.type === "y-roller"}>
+            Y Roller
           </option>
         </select>
       </div>
