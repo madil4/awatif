@@ -17,7 +17,7 @@ describe("pointSupport", () => {
 
     expect(
       pointSupport.getSupport({
-        params: { type: "y-roller" },
+        params: { type: "z-roller" },
       }).support,
     ).toEqual([true, true, false, false, false, false]);
   });
