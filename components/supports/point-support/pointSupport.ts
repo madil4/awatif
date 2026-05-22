@@ -2,23 +2,25 @@ import { html } from "lit-html";
 import { SupportTemplate } from "../data-model";
 import * as THREE from "three";
 
+type PointSupportType =
+  | "fixed"
+  | "pinned"
+  | "x-roller"
+  | "y-roller"
+  | "z-roller";
+
 type PointSupportParams = {
-  type:
-    | "fixed"
-    | "pinned"
-    | "horizontal-roller"
-    | "vertical-roller"
-    | "z-roller";
+  type: PointSupportType;
 };
 
 const supportMap: Record<
-  PointSupportParams["type"],
+  PointSupportType,
   [boolean, boolean, boolean, boolean, boolean, boolean]
 > = {
   fixed: [true, true, true, true, true, true],
   pinned: [true, true, true, false, false, false],
-  "horizontal-roller": [false, true, true, false, false, false],
-  "vertical-roller": [true, false, true, false, false, false],
+  "x-roller": [false, true, true, false, false, false],
+  "y-roller": [true, false, true, false, false, false],
   "z-roller": [true, true, false, false, false, false],
 };
 
@@ -46,18 +48,21 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
             Pinned
           </option>
           <option
-            value="horizontal-roller"
-            .selected=${params.val.type === "horizontal-roller"}
+            value="x-roller"
+            .selected=${params.val.type === "x-roller"}
           >
             X Roller
           </option>
           <option
-            value="vertical-roller"
-            .selected=${params.val.type === "vertical-roller"}
+            value="y-roller"
+            .selected=${params.val.type === "y-roller"}
           >
             Y Roller
           </option>
-          <option value="z-roller" .selected=${params.val.type === "z-roller"}>
+          <option
+            value="z-roller"
+            .selected=${params.val.type === "z-roller"}
+          >
             Z Roller
           </option>
         </select>
@@ -76,19 +81,19 @@ export const pointSupport: SupportTemplate<PointSupportParams> = {
     const COLOR = 0xff0000;
 
     group.position.set(position[0], position[1], position[2]);
-    group.rotateX(Math.PI / 2); // Support geometry is built in X-Y; rotate to face -Y camera in X-Z plane
+    group.rotateX(Math.PI / 2); // Match line-result orientation: support symbols live in the X-Z plane.
     group.renderOrder = 5;
 
     if (params.type === "fixed") {
       drawFixedSupport(group, SIZE, COLOR, displayScale);
     } else if (params.type === "pinned") {
       drawPinnedSupport(group, SIZE, COLOR, displayScale);
-    } else if (params.type === "horizontal-roller") {
+    } else if (params.type === "x-roller") {
       drawRollerSupport(group, SIZE, COLOR, "x", displayScale);
-    } else if (params.type === "vertical-roller") {
-      drawRollerSupport(group, SIZE, COLOR, "y", displayScale);
-    } else {
+    } else if (params.type === "y-roller") {
       drawRollerSupport(group, SIZE, COLOR, "z", displayScale);
+    } else {
+      drawRollerSupport(group, SIZE, COLOR, "y", displayScale);
     }
 
     setMaterialOnTop(group);
