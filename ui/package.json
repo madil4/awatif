@@ -7,6 +7,10 @@
   "type": "module",
   "module": "index.ts",
   "types": "index.ts",
+  "scripts": {
+    "build": "node -e \"console.log('No package build for @awatif/ui')\"",
+    "build:wasm": "node -e \"console.log('No WASM build for @awatif/ui')\""
+  },
   "dependencies": {
     "@awatif/components": "^3.0.0",
     "vanjs-core": "^1.6.0",

@@ -7,8 +7,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "// build": "`npm run build -w awatif` also tries to build `components` and `ui`.",
     "build": "vite build",
+    "build:wasm": "emcc ./components/analysis/l-solver/cpp/lSolver.cpp -o ./components/analysis/l-solver/cpp/built/lSolver.js -O3 -s ASSERTIONS -s ALLOW_MEMORY_GROWTH -s MODULARIZE -s EXPORT_ES6 -s EXPORTED_FUNCTIONS=_malloc,_free,_lSolve -s EXPORTED_RUNTIME_METHODS=HEAPF64,HEAPU32,HEAPU8,HEAP32 -I /Users/mohamed/Applications/eigen/",
     "preview": "vite preview --open",
     "test": "vitest"
   },
