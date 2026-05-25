@@ -1,7 +1,7 @@
 {
   "name": "@awatif/ui",
   "description": "Awatif User Interface",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Mohamed Adil",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,7 @@
     "build:wasm": "node -e \"console.log('No WASM build for @awatif/ui')\""
   },
   "dependencies": {
-    "@awatif/components": "^3.0.0",
+    "@awatif/components": "^3.1.0",
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.3.2",
     "three": "^0.183.2"
