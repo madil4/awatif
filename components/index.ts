@@ -27,6 +27,10 @@ export { getElementsProps } from "./design/getElementsProps";
 export { getReport } from "./design/getReport";
 export { getDesigns } from "./design/getDesigns";
 export { getPositionsAndForces } from "./analysis/l-solver/getPositionsAndForces";
+export {
+  getPositionsAndForcesCpp,
+  initPositionsAndForcesCpp,
+} from "./analysis/l-solver/getPositionsAndForcesCpp";
 export { getReactions } from "./analysis/l-solver/getReactions";
 export {
   getLineEndForces,

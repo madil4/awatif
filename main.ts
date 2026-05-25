@@ -9,7 +9,8 @@ import {
   getReleases,
   getElementsProps,
   getReport,
-  getPositionsAndForces,
+  getPositionsAndForcesCpp,
+  initPositionsAndForcesCpp,
   getReactions,
   getDesigns,
   Geometry,
@@ -29,6 +30,8 @@ import {
   AnalysisStatus,
   setupUndo,
 } from "@awatif/ui";
+
+await initPositionsAndForcesCpp();
 
 const geometry: Geometry = {
   points: van.state(
@@ -204,7 +207,7 @@ van.derive(() => {
     });
 
     // Positions events
-    const { positions, internalForces } = getPositionsAndForces(
+    const { positions, internalForces } = getPositionsAndForcesCpp(
       mesh.nodes.val,
       mesh.elements.val,
       mesh.loads.val,
