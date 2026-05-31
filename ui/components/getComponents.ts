@@ -34,6 +34,8 @@ function getTypesForMode(mode: ComponentsType | null): {
       return { types: [ComponentsType.DESIGN], geometryKind: "line" };
     case ComponentsType.IMPERFECTIONS:
       return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
+    case ComponentsType.ANALYSIS:
+      return { types: [ComponentsType.ANALYSIS], geometryKind: "point" };
     case ComponentsType.SPECIAL:
       return {
         types: [
@@ -74,7 +76,10 @@ export function getComponents({
     const mode = componentsBarMode.val;
     const baseKind = getTypesForMode(mode).geometryKind;
     // TODO: extra logic due to inadequate data structure - the geometry kind should really be stored at the template level, not component type
-    if (mode === ComponentsType.LOADS && activeComponent.val !== null) {
+    if (
+      (mode === ComponentsType.LOADS || mode === ComponentsType.ANALYSIS) &&
+      activeComponent.val !== null
+    ) {
       const active = activeComponent.val;
       const templateId = (components.val.get(active.type) ?? [])[active.index]
         ?.templateId;

@@ -2,7 +2,7 @@ import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { ComponentsType } from "@awatif/components";
 
-export type ActiveAnalysis = State<"linear" | "nonlinear">;
+export type ActiveAnalysis = State<"linear" | "nonlinear" | "earthquake">;
 
 export function getAnalysisList({
   componentsBarMode,
@@ -21,6 +21,7 @@ export function getAnalysisList({
         <summary>Components</summary>
         ${analysisItem("Linear Analysis", "linear")}
         ${analysisItem("Nonlinear 2nd-Order Analysis", "nonlinear")}
+        ${analysisItem("Earthquake Analysis", "earthquake")}
       </div>
     `;
   };
@@ -32,7 +33,7 @@ export function getAnalysisList({
       <div
         class="components-item ${isActive ? "active" : ""}"
         @click=${() =>
-          activeAnalysis && (activeAnalysis.val = id as "linear" | "nonlinear")}
+          activeAnalysis && (activeAnalysis.val = id as "linear" | "nonlinear" | "earthquake")}
       >
         <label>${name}</label>
       </div>
