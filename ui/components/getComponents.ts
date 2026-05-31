@@ -35,7 +35,9 @@ function getTypesForMode(mode: ComponentsType | null): {
     case ComponentsType.IMPERFECTIONS:
       return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
     case ComponentsType.ANALYSIS:
-      return { types: [ComponentsType.ANALYSIS], geometryKind: "point" };
+      // Base kind is null; each analysis template declares its own geometryKind
+      // (mass-source → "point", earthquake → none).
+      return { types: [ComponentsType.ANALYSIS], geometryKind: null };
     case ComponentsType.SPECIAL:
       return {
         types: [
