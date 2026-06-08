@@ -39,6 +39,7 @@ export function getView2D({
 
   van.derive(() => {
     const viewing2D = view2D.val;
+    const gridSize = grid.size.val;
 
     if (!initialized) {
       initialized = true;
@@ -57,7 +58,7 @@ export function getView2D({
 
     const pose = getGridFitPose({
       camera,
-      gridSize: grid.size.rawVal,
+      gridSize,
       viewing2D,
     });
 
