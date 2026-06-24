@@ -9,7 +9,6 @@ import { ComponentsType } from "./data-model";
 
 // Todo: Analysis is actually a component and can be added to a geometry
 export const templates = new Map<ComponentsType, Map<string, any>>([
-  [ComponentsType.ANALYSIS, new Map<string, any>()],
   [ComponentsType.MESH, new Map<string, any>([["line-mesh", lineMesh]])],
   [ComponentsType.LOADS, new Map<string, any>([["point-load", pointLoad], ["distributed-load", distributedLoad]])],
   [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
