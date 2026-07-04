@@ -17,7 +17,7 @@ export function getCanvas({
       <div class="canvas-header">
         <div class="canvas-header-left">
           <h2>${canvasButton.val}</h2>
-          ${canvasButton.val === "Report"
+          ${canvasButton.val === "Report" || canvasButton.val === "Drawing"
             ? html`<button
                 @click=${() => printCanvas()}
                 class="print-button"
