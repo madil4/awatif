@@ -1,10 +1,8 @@
-// NOTE: This file is duplicated in app/components/design/generic-member/genericMember.ts
-// Keep both files in sync when making changes here.
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import type { DesignTemplate } from "../data-model";
 
-type GenericMemberParams = {
+export type GenericMemberParams = {
   elasticity: number; // MPa
   area: number; // cm²
   momentInertiaZ: number; // cm⁴

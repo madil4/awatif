@@ -9,7 +9,8 @@
   "types": "index.ts",
   "scripts": {
     "build": "node -e \"console.log('No package build for @awatif/ui')\"",
-    "build:wasm": "node -e \"console.log('No WASM build for @awatif/ui')\""
+    "build:wasm": "node -e \"console.log('No WASM build for @awatif/ui')\"",
+    "test": "node -e \"console.log('No tests for @awatif/ui')\" --"
   },
   "dependencies": {
     "@awatif/components": "^3.1.0",
