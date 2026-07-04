@@ -51,17 +51,18 @@ const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "Lateral Load",
+          name: "Axial + Transverse Load",
           templateId: "point-load",
           geometry: [2],
           params: {
-            Fx: 300,
+            Fx: 10,
             Fy: 0,
-            Fz: 0,
+            Fz: -500,
             Mx: 0,
             My: 0,
             Mz: 0,
           },
+          loadCase: "dead",
         },
       ],
     ],
@@ -95,8 +96,8 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Generic Member",
-          templateId: "generic-member",
+          name: "Concrete Member",
+          templateId: "concrete-member",
           geometry: [1],
         },
       ],
@@ -110,7 +111,7 @@ const display: Display = {
     spacing: van.state(0.5),
   },
   displayScale: van.state(1),
-  deformationScale: van.state(1),
+  deformationScale: van.state(100),
   view2D: van.state(true),
   geometry: van.state(true),
   mesh: van.state(true),
