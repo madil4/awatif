@@ -10,6 +10,7 @@ import {
   getElementsProps,
   getReport,
   getPositionsAndForcesCpp,
+  getNlPositionsAndForcesRemote,
   initPositionsAndForcesCpp,
   getReactions,
   getDesigns,
@@ -111,7 +112,7 @@ const display: Display = {
     spacing: van.state(0.5),
   },
   displayScale: van.state(1),
-  deformationScale: van.state(100),
+  deformationScale: van.state(1),
   view2D: van.state(true),
   geometry: van.state(true),
   mesh: van.state(true),
@@ -146,12 +147,16 @@ const mesh: Mesh = {
 };
 
 const analysisStatus: AnalysisStatus = van.state({ success: true });
+const activeAnalysis = van.state<"linear" | "nonlinear">("linear");
 
 setupUndo({ geometry, components });
 
 // Events
 // Analysis events
-van.derive(() => {
+let latestAnalysis = 0;
+
+van.derive(async () => {
+  const analysis = ++latestAnalysis;
   const assignedLineIds = new Set<number>();
   (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) =>
     c.geometry.forEach((id) => assignedLineIds.add(id)),
@@ -208,17 +213,42 @@ van.derive(() => {
     });
 
     // Positions events
-    const { positions, internalForces } = getPositionsAndForcesCpp(
-      mesh.nodes.val,
-      mesh.elements.val,
-      mesh.loads.val,
-      mesh.supports.val,
-      mesh.elementsProps.val,
-      mesh.releases.val,
-    );
+    const selectedAnalysis = activeAnalysis.val;
+    if (selectedAnalysis === "nonlinear") {
+      analysisStatus.val = {
+        success: true,
+        loading: true,
+        ...warningPayload,
+      };
+    }
 
-    mesh.positions.val = positions;
-    mesh.internalForces.val = internalForces;
+    const result: {
+      positions: Mesh["positions"]["val"];
+      internalForces: Mesh["internalForces"]["val"];
+      iterationCount?: number;
+    } =
+      selectedAnalysis === "nonlinear"
+        ? await getNlPositionsAndForcesRemote(
+            mesh.nodes.val,
+            mesh.elements.val,
+            mesh.loads.val,
+            mesh.supports.val,
+            mesh.elementsProps.val,
+            mesh.releases.val,
+          )
+        : getPositionsAndForcesCpp(
+            mesh.nodes.val,
+            mesh.elements.val,
+            mesh.loads.val,
+            mesh.supports.val,
+            mesh.elementsProps.val,
+            mesh.releases.val,
+          );
+
+    if (analysis !== latestAnalysis) return;
+
+    mesh.positions.val = result.positions;
+    mesh.internalForces.val = result.internalForces;
     mesh.reactions.val = getReactions(
       mesh.nodes.val,
       mesh.elements.val,
@@ -227,8 +257,15 @@ van.derive(() => {
       mesh.supports.val,
     );
 
-    analysisStatus.val = { success: true, ...warningPayload };
+    analysisStatus.val = {
+      success: true,
+      iterations:
+        selectedAnalysis === "nonlinear" ? result.iterationCount : undefined,
+      ...warningPayload,
+    };
   } catch (e) {
+    if (analysis !== latestAnalysis) return;
+
     mesh.positions.val = [];
     mesh.displacements.val = [];
     mesh.reactions.val = [];
@@ -300,6 +337,7 @@ document.body.append(
       componentsBarMode,
       templates,
       analysisStatus,
+      activeAnalysis,
       display,
     }),
   }),

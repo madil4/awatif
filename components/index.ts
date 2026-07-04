@@ -31,6 +31,7 @@ export {
   getPositionsAndForcesCpp,
   initPositionsAndForcesCpp,
 } from "./analysis/l-solver/getPositionsAndForcesCpp";
+export { getNlPositionsAndForcesRemote } from "./analysis/nl-solver/getNlPositionsAndForcesRemote";
 export { getReactions } from "./analysis/l-solver/getReactions";
 export {
   getLineEndForces,

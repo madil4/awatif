@@ -48,6 +48,12 @@
   box-shadow: 0 0 4px #4caf5088;
 }
 
+#analysis-status .dot.loading {
+  background: #42a5f5;
+  box-shadow: 0 0 4px #42a5f588;
+  animation: pulse-loading 1.2s ease-in-out infinite;
+}
+
 #analysis-status .dot.error {
   background: #ff6b6b;
   box-shadow: 0 0 4px #ff6b6b88;
@@ -76,5 +82,15 @@
   }
   50% {
     box-shadow: 0 0 10px #ff6b6bcc;
+  }
+}
+
+@keyframes pulse-loading {
+  0%,
+  100% {
+    box-shadow: 0 0 4px #42a5f588;
+  }
+  50% {
+    box-shadow: 0 0 10px #42a5f5cc;
   }
 }

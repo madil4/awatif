@@ -5,6 +5,7 @@ import "./styles.css";
 
 export type AnalysisStatus = State<{
   success: boolean;
+  loading?: boolean;
   iterations?: number;
   unassignedLines?: number[];
 }>;
@@ -46,11 +47,18 @@ export function getAnalysisStatus(
   }
 
   van.derive(() => {
-    const { success, iterations, unassignedLines } = status.val;
+    const { success, loading, iterations, unassignedLines } = status.val;
     const hasWarning = unassignedLines && unassignedLines.length > 0;
     const warningSuffix = hasWarning
       ? ` — lines ${unassignedLines.map((id) => `${id}`).join(", ")} have no design member assigned`
       : "";
+
+    if (loading) {
+      dot.className = "dot loading" + (hasWarning ? " warning" : "");
+      label.textContent = "Solving";
+      tooltip.textContent = `Nonlinear analysis running${warningSuffix}`;
+      return;
+    }
 
     if (success) {
       dot.className = "dot success" + (hasWarning ? " warning" : "");
