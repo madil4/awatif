@@ -8,9 +8,10 @@
   "module": "index.ts",
   "types": "index.ts",
   "scripts": {
+    "test": "vitest",
     "build": "node -e \"console.log('No package build for @awatif/components')\"",
     "build:wasm": "node -e \"console.log('build:wasm is owned by the awatif workspace')\"",
-    "test": "vitest"
+    "deploy": "node -e \"console.log('No deploy for @awatif/components')\""
   },
   "dependencies": {
     "vanjs-core": "^1.6.0",

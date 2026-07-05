@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node -e \"console.log('No package build for @awatif/ui')\"",
     "build:wasm": "node -e \"console.log('No WASM build for @awatif/ui')\"",
+    "deploy": "node -e \"console.log('No deploy for @awatif/ui')\"",
     "test": "node -e \"console.log('No tests for @awatif/ui')\" --"
   },
   "dependencies": {
