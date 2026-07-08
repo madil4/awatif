@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0 - 2026-07-08
+
+- Added Eurocode-based design components for concrete, steel, and timber members.
+
 ## 3.1.0 - 2026-05-25
 
 - Added a C++/WASM-backed linear solver with TypeScript wrapper tests.
