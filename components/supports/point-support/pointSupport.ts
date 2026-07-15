@@ -26,6 +26,7 @@ const supportMap: Record<
 
 export const pointSupport: SupportTemplate<PointSupportParams> = {
   name: "Point Support",
+  geometryKind: "point",
   defaultParams: {
     type: "pinned",
   },

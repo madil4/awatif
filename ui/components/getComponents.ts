@@ -19,32 +19,26 @@ import type { Display } from "../display/getDisplay";
 
 import "./styles.css";
 
-function getTypesForMode(mode: ComponentsType | null): {
-  types: ComponentsType[];
-  geometryKind: "point" | "line" | null;
-} {
+function getTypesForMode(mode: ComponentsType | null): ComponentsType[] {
   switch (mode) {
     case ComponentsType.LOADS:
-      return { types: [ComponentsType.LOADS], geometryKind: "point" };
+      return [ComponentsType.LOADS];
     case ComponentsType.SUPPORTS:
-      return { types: [ComponentsType.SUPPORTS], geometryKind: "point" };
+      return [ComponentsType.SUPPORTS];
     case ComponentsType.MESH:
-      return { types: [ComponentsType.MESH], geometryKind: "line" };
+      return [ComponentsType.MESH];
     case ComponentsType.DESIGN:
-      return { types: [ComponentsType.DESIGN], geometryKind: "line" };
+      return [ComponentsType.DESIGN];
     case ComponentsType.IMPERFECTIONS:
-      return { types: [ComponentsType.IMPERFECTIONS], geometryKind: "line" };
+      return [ComponentsType.IMPERFECTIONS];
     case ComponentsType.SPECIAL:
-      return {
-        types: [
-          ComponentsType.MESH,
-          ComponentsType.IMPERFECTIONS,
-          ComponentsType.RELEASES,
-        ],
-        geometryKind: "line",
-      };
+      return [
+        ComponentsType.MESH,
+        ComponentsType.IMPERFECTIONS,
+        ComponentsType.RELEASES,
+      ];
     default:
-      return { types: [], geometryKind: null };
+      return [];
   }
 }
 
@@ -69,24 +63,10 @@ export function getComponents({
   const activeComponent = van.state<ActiveComponent>(null);
   const loadCase = display?.loadCase;
 
-  const types = van.derive(() => getTypesForMode(componentsBarMode.val).types);
-  const geometryKind = van.derive(() => {
-    const mode = componentsBarMode.val;
-    const baseKind = getTypesForMode(mode).geometryKind;
-    // TODO: extra logic due to inadequate data structure - the geometry kind should really be stored at the template level, not component type
-    if (mode === ComponentsType.LOADS && activeComponent.val !== null) {
-      const active = activeComponent.val;
-      const templateId = (components.val.get(active.type) ?? [])[active.index]
-        ?.templateId;
-      const template = templates?.get(active.type)?.get(templateId);
-      return (template?.geometryKind ?? baseKind) as "point" | "line" | null;
-    }
-    return baseKind;
-  });
+  const types = van.derive(() => getTypesForMode(componentsBarMode.val));
 
   const list = getList({
     types,
-    geometryKind,
     geometry,
     components,
     activeComponent,

@@ -15,7 +15,8 @@ export const steelMember: DesignTemplate<
   SteelMemberParams,
   SteelMemberDesign
 > = {
-  name: "Steel Member",
+  name: "Steel Frame",
+  geometryKind: "line",
   defaultParams: {
     profile: "IPE 300",
     steelGrade: "S235",

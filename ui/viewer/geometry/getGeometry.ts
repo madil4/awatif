@@ -41,6 +41,8 @@ export function getGeometry({
   const mode = van.state<Mode>(Mode.EDIT);
   let dragPoint: number | null = null; // Point ID
   let appendPoint: number | null = null; // Point ID
+  let appendChainPoints: number[] = []; // ordered point IDs of the current append chain
+  let appendChainLines: number[] = []; // line IDs created by this chain
   let isPointerDown = false;
   let pointerDownPos: { x: number; y: number } | null = null;
 
@@ -79,6 +81,7 @@ export function getGeometry({
 
   let nextPointId = getNextMapId(geometry.points.rawVal);
   let nextLineId = getNextMapId(geometry.lines.rawVal);
+  let nextPolygonId = getNextMapId(geometry.polygons.rawVal);
 
   // Project loading swaps in fresh geometry maps, so editor-local IDs and
   // point references must follow the currently loaded model rather than the
@@ -89,6 +92,7 @@ export function getGeometry({
 
     nextPointId = getNextMapId(pointsMap);
     nextLineId = getNextMapId(linesMap);
+    nextPolygonId = getNextMapId(geometry.polygons.val);
 
     const nextDragPoint = reconcilePointReference(dragPoint, pointsMap);
     if (nextDragPoint !== dragPoint) {
@@ -100,6 +104,8 @@ export function getGeometry({
     if (nextAppendPoint !== appendPoint) {
       appendPoint = nextAppendPoint;
       if (mode.rawVal === Mode.APPEND) mode.val = Mode.EDIT;
+      appendChainPoints = [];
+      appendChainLines = [];
     }
   });
 
@@ -116,6 +122,7 @@ export function getGeometry({
     if (!display?.geometry || !display.geometry.val) return;
 
     const linesMap = geometry.lines.val;
+    const polygonsMap = geometry.polygons.val;
     const pointsMap = geometry.points.val;
     const positions: number[] = [];
 
@@ -126,6 +133,17 @@ export function getGeometry({
       if (start && end) {
         positions.push(...start, ...end);
       }
+    });
+
+    // Polygons render as closed outlines
+    polygonsMap.forEach((polygon) => {
+      polygon.forEach((pointId, i) => {
+        const start = pointsMap.get(pointId);
+        const end = pointsMap.get(polygon[(i + 1) % polygon.length]);
+        if (start && end) {
+          positions.push(...start, ...end);
+        }
+      });
     });
 
     lines.geometry.setAttribute(
@@ -230,6 +248,52 @@ export function getGeometry({
     );
     selectedLines.geometry.computeBoundingSphere();
     selectedLines.visible = true;
+
+    render();
+  });
+
+  // Render selected polygons highlight (closed outlines)
+  const selectedPolygons = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({
+      color: SELECTION_COLOR,
+      depthTest: false,
+      linewidth: 2,
+    }),
+  );
+  selectedPolygons.renderOrder = 5; // Render on top of everything
+  group.add(selectedPolygons);
+
+  van.derive(() => {
+    const selection = geometry.selection.val;
+    if (!selection || selection.polygons.length === 0) {
+      selectedPolygons.visible = false;
+      render();
+      return;
+    }
+
+    const polygonsMap = geometry.polygons.rawVal;
+    const pointsMap = geometry.points.rawVal;
+    const positions: number[] = [];
+
+    for (const polygonId of selection.polygons) {
+      const polygon = polygonsMap.get(polygonId);
+      if (!polygon) continue;
+      polygon.forEach((pointId, i) => {
+        const start = pointsMap.get(pointId);
+        const end = pointsMap.get(polygon[(i + 1) % polygon.length]);
+        if (start && end) {
+          positions.push(...start, ...end);
+        }
+      });
+    }
+
+    selectedPolygons.geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3),
+    );
+    selectedPolygons.geometry.computeBoundingSphere();
+    selectedPolygons.visible = true;
 
     render();
   });
@@ -456,6 +520,8 @@ export function getGeometry({
           const pointsEntries = Array.from(geometry.points.val.entries());
           if (hitIndex < pointsEntries.length) {
             appendPoint = pointsEntries[hitIndex][0]; // Get the key (ID)
+            appendChainPoints = [appendPoint];
+            appendChainLines = [];
           }
         }
       } else if (wasClick) {
@@ -465,8 +531,13 @@ export function getGeometry({
       mode.val = Mode.EDIT;
       dragPoint = null;
     } else if (mode.val === Mode.APPEND) {
-      if (wasClick) handleAppendPoint();
-      else mode.val = Mode.EDIT;
+      if (wasClick) {
+        handleAppendPoint();
+      } else {
+        mode.val = Mode.EDIT;
+        appendChainPoints = [];
+        appendChainLines = [];
+      }
     }
 
     pointerDownPos = null;
@@ -580,19 +651,52 @@ export function getGeometry({
       }
     });
 
+    // Find polygons in box (any edge, including the closing one, intersects)
+    const polygonsInBox: number[] = [];
+    geometry.polygons.rawVal.forEach((polygon, polygonId) => {
+      for (let i = 0; i < polygon.length; i++) {
+        const start = pointsMap.get(polygon[i]);
+        const end = pointsMap.get(polygon[(i + 1) % polygon.length]);
+        if (!start || !end) continue;
+
+        const startScreen = toScreenCoords(start);
+        const endScreen = toScreenCoords(end);
+
+        if (
+          lineIntersectsBox(startScreen, endScreen, left, top, right, bottom)
+        ) {
+          polygonsInBox.push(polygonId);
+          break;
+        }
+      }
+    });
+
     const currentPoints = geometry.selection.rawVal?.points ?? [];
     const currentLines = geometry.selection.rawVal?.lines ?? [];
+    const currentPolygons = geometry.selection.rawVal?.polygons ?? [];
 
     if (isAddMode) {
       // Add to selection
       const newPoints = [...new Set([...currentPoints, ...pointsInBox])];
       const newLines = [...new Set([...currentLines, ...linesInBox])];
-      geometry.selection.val = { points: newPoints, lines: newLines };
+      const newPolygons = [...new Set([...currentPolygons, ...polygonsInBox])];
+      geometry.selection.val = {
+        points: newPoints,
+        lines: newLines,
+        polygons: newPolygons,
+      };
     } else {
       // Remove from selection
       const newPoints = currentPoints.filter((id) => !pointsInBox.includes(id));
       const newLines = currentLines.filter((id) => !linesInBox.includes(id));
-      geometry.selection.val = { points: newPoints, lines: newLines };
+      const newPolygons = currentPolygons.filter(
+        (id) => !polygonsInBox.includes(id),
+      );
+      geometry.selection.val = {
+        points: newPoints,
+        lines: newLines,
+        polygons: newPolygons,
+      };
     }
   }
 
@@ -631,6 +735,8 @@ export function getGeometry({
       mode.val = Mode.EDIT;
     }
     appendPoint = null;
+    appendChainPoints = [];
+    appendChainLines = [];
   });
 
   function handleRemovePoint(pointId: number | null) {
@@ -644,17 +750,24 @@ export function getGeometry({
     // Remove the point
     pointsMap.delete(pointId);
 
-    // Filter out lines that reference this point
+    // Filter out lines and polygons that reference this point
     const adjustedLines = new Map<number, [number, number]>();
     linesMap.forEach((line, id) => {
       if (line[0] !== pointId && line[1] !== pointId) {
         adjustedLines.set(id, line);
       }
     });
+    const adjustedPolygons = new Map<number, number[]>();
+    geometry.polygons.rawVal.forEach((polygon, id) => {
+      if (!polygon.includes(pointId)) {
+        adjustedPolygons.set(id, polygon);
+      }
+    });
 
-    if (adjustedLines.size === 0) {
+    if (adjustedLines.size === 0 && adjustedPolygons.size === 0) {
       geometry.points.val = new Map();
       geometry.lines.val = new Map();
+      geometry.polygons.val = new Map();
       appendPoint = null;
       mode.val = Mode.EDIT;
       return;
@@ -666,6 +779,9 @@ export function getGeometry({
       usedPointIds.add(line[0]);
       usedPointIds.add(line[1]);
     });
+    adjustedPolygons.forEach((polygon) => {
+      polygon.forEach((id) => usedPointIds.add(id));
+    });
     const compactPoints = new Map<number, [number, number, number]>();
     pointsMap.forEach((point, id) => {
       if (usedPointIds.has(id)) {
@@ -675,6 +791,7 @@ export function getGeometry({
 
     geometry.points.val = compactPoints;
     geometry.lines.val = adjustedLines;
+    geometry.polygons.val = adjustedPolygons;
 
     if (appendPoint === pointId) {
       appendPoint = null;
@@ -713,6 +830,24 @@ export function getGeometry({
       geometry.points.val = newPointsMap;
     }
 
+    // Clicking the chain's first point closes the loop into a polygon; the
+    // chain's lines are replaced since polygon edges are not frame elements
+    if (targetId === appendChainPoints[0] && appendChainPoints.length >= 3) {
+      const newLinesMap = new Map(linesMap);
+      appendChainLines.forEach((id) => newLinesMap.delete(id));
+      geometry.lines.val = newLinesMap;
+
+      const newPolygonsMap = new Map(geometry.polygons.rawVal);
+      newPolygonsMap.set(nextPolygonId++, [...appendChainPoints]);
+      geometry.polygons.val = newPolygonsMap;
+
+      appendChainPoints = [];
+      appendChainLines = [];
+      appendPoint = null;
+      mode.val = Mode.EDIT;
+      return;
+    }
+
     // Create new line
     const newLineId = nextLineId++;
     const newLinesMap = new Map(linesMap);
@@ -720,6 +855,8 @@ export function getGeometry({
     geometry.lines.val = newLinesMap;
 
     appendPoint = targetId;
+    appendChainPoints.push(targetId);
+    appendChainLines.push(newLineId);
   }
 
   function handleNewGeometry() {
@@ -733,6 +870,8 @@ export function getGeometry({
     for (const [id, point] of pointsMap) {
       if (point.every((val: number, i: number) => val === hp[i])) {
         appendPoint = id;
+        appendChainPoints = [id];
+        appendChainLines = [];
         return;
       }
     }
@@ -743,17 +882,26 @@ export function getGeometry({
     newPointsMap.set(newId, hp as [number, number, number]);
     geometry.points.val = newPointsMap;
     appendPoint = newId;
+    appendChainPoints = [newId];
+    appendChainLines = [];
   }
 
   function removeOrphanAppendPoint() {
     if (appendPoint === null) return;
 
-    const linesMap = geometry.lines.rawVal;
     let isUsed = false;
-    for (const line of linesMap.values()) {
+    for (const line of geometry.lines.rawVal.values()) {
       if (line[0] === appendPoint || line[1] === appendPoint) {
         isUsed = true;
         break;
+      }
+    }
+    if (!isUsed) {
+      for (const polygon of geometry.polygons.rawVal.values()) {
+        if (polygon.includes(appendPoint)) {
+          isUsed = true;
+          break;
+        }
       }
     }
 
@@ -880,6 +1028,17 @@ export function getGeometry({
       render();
       return;
     }
+
+    // Cue that the next click closes the chain into a polygon
+    const chainStart =
+      appendChainPoints.length >= 3
+        ? geometry.points.rawVal.get(appendChainPoints[0])
+        : undefined;
+    const isClosing =
+      !!chainStart && chainStart.every((val, i) => val === toPoint[i]);
+    (previewLine.material as THREE.LineDashedMaterial).color.set(
+      isClosing ? SELECTION_COLOR : GEOMETRY_COLOR,
+    );
 
     previewLine.geometry.setAttribute(
       "position",

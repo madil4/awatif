@@ -1,8 +1,26 @@
-import { dot, identity, kron, MathCollection, norm, subtract } from "mathjs";
+import {
+  dot,
+  identity,
+  kron,
+  MathCollection,
+  norm,
+  subtract,
+} from "mathjs";
 import type { Mesh } from "../../../data-model";
+import { getShellTransformationMatrix } from "./getShellLocalStiffnessMatrix";
+
+export { getShellLocalAxes } from "./getShellLocalStiffnessMatrix";
 
 // from global to local
 export function getTransformationMatrix(
+  nodes: Mesh["nodes"]["val"],
+): number[][] {
+  if (nodes.length === 3) return getShellTransformationMatrix(nodes);
+
+  return getTransformationMatrixFrame(nodes);
+}
+
+function getTransformationMatrixFrame(
   nodes: Mesh["nodes"]["val"],
 ): number[][] {
   const vector = subtract(nodes[1], nodes[0]) as number[];

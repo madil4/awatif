@@ -26,7 +26,6 @@ type TaggedItem = {
 
 export function getList({
   types,
-  geometryKind,
   geometry,
   components,
   activeComponent,
@@ -34,7 +33,6 @@ export function getList({
   loadCase,
 }: {
   types: State<ComponentsType[]>;
-  geometryKind: State<"point" | "line" | null>;
   geometry: Geometry;
   components: Components;
   activeComponent: State<ActiveComponent>;
@@ -64,34 +62,40 @@ export function getList({
     return result;
   };
 
-  // Resolve a load component's geometry kind from its template; falls back
-  // to the panel's current geometryKind for non-load types.
+  // A component's geometry kind is declared at the template level
   const getComponentKind = (
     type: ComponentsType,
     component: { templateId: string },
-  ): "point" | "line" | null => {
-    if (type === ComponentsType.LOADS) {
-      const template = templates?.get(type)?.get(component.templateId) as
-        | { geometryKind?: "point" | "line" }
-        | undefined;
-      return template?.geometryKind ?? "point";
-    }
-    return geometryKind.val;
+  ): "point" | "line" | "polygon" | null => {
+    const template = templates?.get(type)?.get(component.templateId) as
+      | { geometryKind?: "point" | "line" | "polygon" }
+      | undefined;
+    return template?.geometryKind ?? null;
   };
 
-  const getSelectedGeometry = (kind: "point" | "line" | null) => {
+  const getSelectedGeometry = (kind: "point" | "line" | "polygon" | null) => {
     const sel = geometry.selection.val;
     if (kind === "point") return sel?.points ?? [];
     if (kind === "line") return sel?.lines ?? [];
+    if (kind === "polygon") return sel?.polygons ?? [];
     return [];
   };
 
-  const setSelection = (indices: number[], kind: "point" | "line" | null) => {
-    const current = geometry.selection.val ?? { points: [], lines: [] };
+  const setSelection = (
+    indices: number[],
+    kind: "point" | "line" | "polygon" | null,
+  ) => {
+    const current = geometry.selection.val ?? {
+      points: [],
+      lines: [],
+      polygons: [],
+    };
     if (kind === "point") {
-      geometry.selection.val = { points: indices, lines: current.lines };
+      geometry.selection.val = { ...current, points: indices };
     } else if (kind === "line") {
-      geometry.selection.val = { points: current.points, lines: indices };
+      geometry.selection.val = { ...current, lines: indices };
+    } else if (kind === "polygon") {
+      geometry.selection.val = { ...current, polygons: indices };
     } else {
       geometry.selection.val = null;
     }
@@ -135,6 +139,7 @@ export function getList({
     if (!current) return;
     const componentGeometry = current.geometry ?? [];
     const activeKind = getComponentKind(active.type, current);
+    if (activeKind === null) return; // unknown template: don't touch selection
     isSyncing = true;
     setSelection(componentGeometry, activeKind);
     isSyncing = false;
@@ -151,16 +156,18 @@ export function getList({
     if (!current) return;
 
     const activeKind = getComponentKind(active.type, current);
+    if (activeKind === null) return; // unknown template: don't wipe geometry
+
     const selectedGeometry = getSelectedGeometry(activeKind);
     if (arraysEqual(current.geometry ?? [], selectedGeometry)) return;
 
     const selectedSet = new Set(selectedGeometry);
 
     // Update the active component's geometry and remove those indices from siblings.
-    // Only steal from siblings of the SAME geometry kind — point IDs and line IDs
-    // are independent number spaces, so a line load and a point load can both
-    // legitimately reference index 3. For load components, also restrict to
-    // siblings in the same load case (different load cases may share a node).
+    // Only steal from siblings of the SAME geometry kind — point, line and
+    // polygon IDs are independent number spaces, so a line load and a point
+    // load can both legitimately reference index 3. For load components, also
+    // restrict to siblings in the same load case (different load cases may share a node).
     const activeLoadCase = current.loadCase ?? "dead";
     const updatedList = list.map((c, i) => {
       if (i === active.index) return { ...c, geometry: [...selectedGeometry] };
@@ -181,6 +188,7 @@ export function getList({
   // Sync geometry deletions -> remove deleted indices from components
   let prevPointKeys = new Set(geometry.points.val.keys());
   let prevLineKeys = new Set(geometry.lines.val.keys());
+  let prevPolygonKeys = new Set(geometry.polygons.val.keys());
 
   const findDeleted = (prev: Set<number>, current: Set<number>) => {
     const deleted = new Set<number>();
@@ -190,63 +198,59 @@ export function getList({
     return deleted;
   };
 
-  const removeDeletedFromTypes = (
-    componentsMap: Map<ComponentsType, { geometry: number[] }[]>,
-    typesToClean: ComponentsType[],
+  // Clean the deleted IDs from every component whose template's geometryKind
+  // matches - point, line and polygon IDs are independent number spaces
+  const removeDeletedOfKind = (
+    componentsMap: Map<
+      ComponentsType,
+      { geometry: number[]; templateId: string }[]
+    >,
     deleted: Set<number>,
+    deletedKind: "point" | "line" | "polygon",
   ) => {
-    for (const type of typesToClean) {
-      const list = componentsMap.get(type);
-      if (list) {
-        componentsMap.set(
-          type,
-          list.map((c) => ({
-            ...c,
-            geometry: c.geometry.filter((idx) => !deleted.has(idx)),
-          })),
-        );
-      }
-    }
+    if (deleted.size === 0) return;
+
+    componentsMap.forEach((list, type) => {
+      componentsMap.set(
+        type,
+        list.map((c) =>
+          getComponentKind(type, c) === deletedKind
+            ? {
+                ...c,
+                geometry: c.geometry.filter((idx) => !deleted.has(idx)),
+              }
+            : c,
+        ),
+      );
+    });
   };
 
   van.derive(() => {
     const currentPointKeys = new Set(geometry.points.val.keys());
     const currentLineKeys = new Set(geometry.lines.val.keys());
+    const currentPolygonKeys = new Set(geometry.polygons.val.keys());
 
     const deletedPoints = findDeleted(prevPointKeys, currentPointKeys);
     const deletedLines = findDeleted(prevLineKeys, currentLineKeys);
+    const deletedPolygons = findDeleted(prevPolygonKeys, currentPolygonKeys);
 
-    if (deletedPoints.size > 0 || deletedLines.size > 0) {
+    if (
+      deletedPoints.size > 0 ||
+      deletedLines.size > 0 ||
+      deletedPolygons.size > 0
+    ) {
       const updated = new Map(components.val);
 
-      const pointBasedComponentsTypes = [ComponentsType.SUPPORTS];
-      if (geometryKind.val == "point")
-        pointBasedComponentsTypes.push(ComponentsType.LOADS);
-
-      if (deletedPoints.size > 0) {
-        removeDeletedFromTypes(
-          updated,
-          pointBasedComponentsTypes,
-          deletedPoints,
-        );
-      }
-      const lineBasedComponentsTypes = [
-        ComponentsType.MESH,
-        ComponentsType.DESIGN,
-        ComponentsType.IMPERFECTIONS,
-      ];
-      if (geometryKind.val == "line")
-        lineBasedComponentsTypes.push(ComponentsType.LOADS);
-
-      if (deletedLines.size > 0) {
-        removeDeletedFromTypes(updated, lineBasedComponentsTypes, deletedLines);
-      }
+      removeDeletedOfKind(updated, deletedPoints, "point");
+      removeDeletedOfKind(updated, deletedLines, "line");
+      removeDeletedOfKind(updated, deletedPolygons, "polygon");
 
       components.val = updated;
     }
 
     prevPointKeys = currentPointKeys;
     prevLineKeys = currentLineKeys;
+    prevPolygonKeys = currentPolygonKeys;
   });
 
   // Render

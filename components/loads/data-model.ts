@@ -25,8 +25,8 @@ export const LOAD_SELECTION_LABELS: Record<LoadSelection, string> = {
 
 export type LoadTemplate<Params extends Record<string, unknown>> = {
   name: string;
+  geometryKind: "point" | "line";
   defaultParams: Params;
-  geometryKind?: "point" | "line";
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;
   getLoad: ({ params }: { params: Params }) => {

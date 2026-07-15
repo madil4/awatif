@@ -9,6 +9,7 @@ import {
 type Snapshot = {
   points: Map<number, [number, number, number]>;
   lines: Map<number, [number, number]>;
+  polygons: Map<number, number[]>;
   components: Map<ComponentsType, ComponentEntry[]>;
 };
 
@@ -29,8 +30,13 @@ export function setupUndo({
   // Append mode creates a temporary standalone point before the first line.
   // Undo history should only keep points that are part of committed geometry.
   const snapshot = (): Snapshot => ({
-    points: getCommittedPoints(geometry.points.val, geometry.lines.val),
+    points: getCommittedPoints(
+      geometry.points.val,
+      geometry.lines.val,
+      geometry.polygons.val,
+    ),
     lines: new Map(geometry.lines.val),
+    polygons: new Map(geometry.polygons.val),
     components: structuredClone(components.val),
   });
 
@@ -39,6 +45,7 @@ export function setupUndo({
   van.derive(() => {
     geometry.points.val;
     geometry.lines.val;
+    geometry.polygons.val;
     components.val;
 
     if (applying) return;
@@ -80,6 +87,7 @@ export function setupUndo({
     applying = true;
     geometry.points.val = new Map(prev.points);
     geometry.lines.val = new Map(prev.lines);
+    geometry.polygons.val = new Map(prev.polygons);
     components.val = structuredClone(prev.components);
     queueMicrotask(() => {
       applying = false;
@@ -91,11 +99,15 @@ export function setupUndo({
 function getCommittedPoints(
   points: Map<number, [number, number, number]>,
   lines: Map<number, [number, number]>,
+  polygons: Map<number, number[]>,
 ): Map<number, [number, number, number]> {
   const usedPointIds = new Set<number>();
   for (const [startId, endId] of lines.values()) {
     usedPointIds.add(startId);
     usedPointIds.add(endId);
+  }
+  for (const polygon of polygons.values()) {
+    polygon.forEach((pointId) => usedPointIds.add(pointId));
   }
 
   const committedPoints = new Map<number, [number, number, number]>();

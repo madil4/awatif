@@ -22,7 +22,8 @@ export const concreteMember: DesignTemplate<
   ConcreteMemberParams,
   ConcreteMemberDesign
 > = {
-  name: "Concrete Member",
+  name: "Concrete Frame",
+  geometryKind: "line",
   defaultParams: {
     width: 350,
     depth: 350,

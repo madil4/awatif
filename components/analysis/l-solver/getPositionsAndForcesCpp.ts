@@ -46,9 +46,16 @@ export function getPositionsAndForcesCpp(
     const nodesPtr = allocate(nodesFlat, Float64Array, mod.HEAPF64);
     gc.push(nodesPtr);
 
-    const elementsFlat = elements.flat();
+    const elementSizes = elements.map((element) => element.length);
+    const elementsFlat = elements.flatMap((element) => [
+      element[0],
+      element[1],
+      element[2] ?? 0,
+    ]);
     const elementsPtr = allocate(elementsFlat, Uint32Array, mod.HEAPU32);
     gc.push(elementsPtr);
+    const elementSizesPtr = allocate(elementSizes, Int32Array, mod.HEAP32);
+    gc.push(elementSizesPtr);
 
     const supportKeys = supports ? Array.from(supports.keys()) : [];
     const supportValues = supports
@@ -89,6 +96,8 @@ export function getPositionsAndForcesCpp(
     const momentInertiaYMap = new Map<number, number>();
     const shearModulusMap = new Map<number, number>();
     const torsionalConstantMap = new Map<number, number>();
+    const poissonRatioMap = new Map<number, number>();
+    const thicknessMap = new Map<number, number>();
 
     elementsProps?.forEach((props, idx) => {
       if (props.elasticity !== undefined)
@@ -102,6 +111,10 @@ export function getPositionsAndForcesCpp(
         shearModulusMap.set(idx, props.shearModulus);
       if (props.torsionalConstant !== undefined)
         torsionalConstantMap.set(idx, props.torsionalConstant);
+      if (props.poissonRatio !== undefined)
+        poissonRatioMap.set(idx, props.poissonRatio);
+      if (props.thickness !== undefined)
+        thicknessMap.set(idx, props.thickness);
     });
 
     const elasticities = processElementInput(elasticityMap);
@@ -110,6 +123,8 @@ export function getPositionsAndForcesCpp(
     const momentInertiasY = processElementInput(momentInertiaYMap);
     const shearModuli = processElementInput(shearModulusMap);
     const torsionalConstants = processElementInput(torsionalConstantMap);
+    const poissonRatios = processElementInput(poissonRatioMap);
+    const thicknesses = processElementInput(thicknessMap);
 
     const releaseKeys = releases ? Array.from(releases.keys()) : [];
     const releaseValues = releases
@@ -137,6 +152,7 @@ export function getPositionsAndForcesCpp(
       nodesPtr,
       nodes.length,
       elementsPtr,
+      elementSizesPtr,
       elements.length,
       supportKeysPtr,
       supportValuesPtr,
@@ -162,6 +178,12 @@ export function getPositionsAndForcesCpp(
       torsionalConstants.keysPtr,
       torsionalConstants.valuesPtr,
       torsionalConstants.size,
+      poissonRatios.keysPtr,
+      poissonRatios.valuesPtr,
+      poissonRatios.size,
+      thicknesses.keysPtr,
+      thicknesses.valuesPtr,
+      thicknesses.size,
       releaseKeysPtr,
       releaseValuesPtr,
       releaseKeys.length,
@@ -182,7 +204,7 @@ export function getPositionsAndForcesCpp(
     const forcesDataPtr = mod.HEAPU32[forcesDataPtrOutPtr / 4];
     const forcesSize = mod.HEAPU32[forcesSizeOutPtr / 4];
 
-    if (!positionsDataPtr || !forcesDataPtr) {
+    if (!positionsDataPtr || (forcesSize > 0 && !forcesDataPtr)) {
       throw new Error("Linear WASM function returned null pointers");
     }
 
@@ -191,11 +213,10 @@ export function getPositionsAndForcesCpp(
       positionsDataPtr,
       positionsSize,
     );
-    const forcesFlat = new Float64Array(
-      mod.HEAPF64.buffer,
-      forcesDataPtr,
-      forcesSize,
-    );
+    const forcesFlat =
+      forcesSize > 0
+        ? new Float64Array(mod.HEAPF64.buffer, forcesDataPtr, forcesSize)
+        : new Float64Array();
 
     const positions = Array.from(positionsFlat);
 
@@ -212,7 +233,7 @@ export function getPositionsAndForcesCpp(
     }
 
     gc.push(positionsDataPtr);
-    gc.push(forcesDataPtr);
+    if (forcesDataPtr) gc.push(forcesDataPtr);
 
     return { positions, internalForces };
   } finally {

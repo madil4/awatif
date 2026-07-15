@@ -12,6 +12,7 @@ import {
   getPositionsAndForcesCpp,
   getNlPositionsAndForcesRemote,
   initPositionsAndForcesCpp,
+  initTriangleMesh,
   getReactions,
   getDesigns,
   Geometry,
@@ -33,15 +34,21 @@ import {
 } from "@awatif/ui";
 
 await initPositionsAndForcesCpp();
+await initTriangleMesh();
 
 const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [5, 0, 2]],
-      [2, [5, 0, 8]],
+      [1, [3.5, 0, 2]],
+      [2, [3.5, 0, 8]],
+      [3, [5.5, 0, 2]],
+      [4, [6.5, 0, 2]],
+      [5, [6.5, 0, 8]],
+      [6, [5.5, 0, 8]],
     ]),
   ),
   lines: van.state(new Map([[1, [1, 2]]])),
+  polygons: van.state(new Map([[1, [3, 4, 5, 6]]])),
   selection: van.state(null),
   designs: van.state(new Map()),
 };
@@ -65,6 +72,20 @@ const components: Components = van.state(
           },
           loadCase: "dead",
         },
+        {
+          name: "Wall Load",
+          templateId: "point-load",
+          geometry: [6],
+          params: {
+            Fx: 150,
+            Fy: 0,
+            Fz: -500,
+            Mx: 0,
+            My: 0,
+            Mz: 0,
+          },
+          loadCase: "dead",
+        },
       ],
     ],
     [
@@ -73,7 +94,7 @@ const components: Components = van.state(
         {
           name: "Fixed Support",
           templateId: "point-support",
-          geometry: [1],
+          geometry: [1, 3, 4],
           params: {
             type: "fixed",
           },
@@ -84,11 +105,19 @@ const components: Components = van.state(
       ComponentsType.MESH,
       [
         {
-          name: "Mesh",
+          name: "Line Mesh",
           templateId: "line-mesh",
           geometry: [1],
           params: {
             divisions: 8,
+          },
+        },
+        {
+          name: "Triangle Mesh",
+          templateId: "triangle-mesh",
+          geometry: [1], // polygon id
+          params: {
+            maxTriangleArea: 0.2,
           },
         },
       ],
@@ -97,9 +126,14 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Concrete Member",
+          name: "Concrete Frame",
           templateId: "concrete-member",
           geometry: [1],
+        },
+        {
+          name: "Generic Shell",
+          templateId: "generic-shell",
+          geometry: [1], // polygon id
         },
       ],
     ],
@@ -112,7 +146,7 @@ const display: Display = {
     spacing: van.state(0.5),
   },
   displayScale: van.state(1),
-  deformationScale: van.state(1),
+  deformationScale: van.state(50),
   view2D: van.state(true),
   geometry: van.state(true),
   mesh: van.state(true),
@@ -135,6 +169,7 @@ const mesh: Mesh = {
   geometryMapping: van.state({
     pointToNodes: new Map(),
     lineToElements: new Map(),
+    polygonToElements: new Map(),
   }),
   loads: van.state(new Map()),
   supports: van.state(new Map()),
@@ -158,9 +193,13 @@ let latestAnalysis = 0;
 van.derive(async () => {
   const analysis = ++latestAnalysis;
   const assignedLineIds = new Set<number>();
-  (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) =>
-    c.geometry.forEach((id) => assignedLineIds.add(id)),
-  );
+  (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) => {
+    // Only line-kind design components reference line IDs (polygon designs
+    // reference polygon IDs, an independent number space)
+    const template = templates.get(ComponentsType.DESIGN)?.get(c.templateId);
+    if (template?.geometryKind !== "line") return;
+    c.geometry.forEach((id) => assignedLineIds.add(id));
+  });
   const unassignedLines = [...geometry.lines.val.keys()].filter(
     (id) => !assignedLineIds.has(id),
   );
@@ -172,6 +211,7 @@ van.derive(async () => {
       geometry: {
         points: geometry.points.val,
         lines: geometry.lines.val,
+        polygons: geometry.polygons.val,
       },
       components: components.val,
       templates,
@@ -210,10 +250,14 @@ van.derive(async () => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,
+      elements: mesh.elements.val,
     });
 
     // Positions events
     const selectedAnalysis = activeAnalysis.val;
+    const hasShells = mesh.elements.val.some((e) => e.length === 3);
+    if (selectedAnalysis === "nonlinear" && hasShells)
+      throw new Error("Nonlinear analysis does not support shell elements");
     if (selectedAnalysis === "nonlinear") {
       analysisStatus.val = {
         success: true,
@@ -229,21 +273,21 @@ van.derive(async () => {
     } =
       selectedAnalysis === "nonlinear"
         ? await getNlPositionsAndForcesRemote(
-            mesh.nodes.val,
-            mesh.elements.val,
-            mesh.loads.val,
-            mesh.supports.val,
-            mesh.elementsProps.val,
-            mesh.releases.val,
-          )
+          mesh.nodes.val,
+          mesh.elements.val,
+          mesh.loads.val,
+          mesh.supports.val,
+          mesh.elementsProps.val,
+          mesh.releases.val,
+        )
         : getPositionsAndForcesCpp(
-            mesh.nodes.val,
-            mesh.elements.val,
-            mesh.loads.val,
-            mesh.supports.val,
-            mesh.elementsProps.val,
-            mesh.releases.val,
-          );
+          mesh.nodes.val,
+          mesh.elements.val,
+          mesh.loads.val,
+          mesh.supports.val,
+          mesh.elementsProps.val,
+          mesh.releases.val,
+        );
 
     if (analysis !== latestAnalysis) return;
 

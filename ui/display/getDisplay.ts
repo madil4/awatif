@@ -36,7 +36,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
     <details id="display">
       <summary>Display</summary>
       <div class="display-item">
-        <label>Grid Size & Spacing</label>
+        <label>Grid Size & Spacing (m)</label>
         <input
           type="number"
           min="1"

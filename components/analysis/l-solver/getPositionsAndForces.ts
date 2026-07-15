@@ -60,6 +60,9 @@ export function getPositionsAndForces(
   const positions = add(originalPositions, displacements) as number[];
 
   elements.forEach((e, i) => {
+    // Internal forces are frame-only; shell (3-node) elements get no entry
+    if (e.length !== 2) return;
+
     const elmNodes = e.map((e) => nodes[e]);
     const dxGlobal = e.reduce(
       (a, b) => a.concat(deformations.slice(b * 6, b * 6 + 6)),

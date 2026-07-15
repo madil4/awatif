@@ -19,7 +19,8 @@ export const timberMember: DesignTemplate<
   TimberMemberParams,
   TimberMemberDesign
 > = {
-  name: "Timber Member",
+  name: "Timber Frame",
+  geometryKind: "line",
   defaultParams: {
     width: 100,
     depth: 200,

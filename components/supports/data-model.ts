@@ -4,6 +4,7 @@ import * as THREE from "three";
 
 export type SupportTemplate<Params extends Record<string, unknown>> = {
   name: string;
+  geometryKind: "point";
   defaultParams: Params;
 
   getParamsTemplate: ({ params }: { params: State<Params> }) => TemplateResult;

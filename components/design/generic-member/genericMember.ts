@@ -12,7 +12,8 @@ export type GenericMemberParams = {
 };
 
 export const genericMember: DesignTemplate<GenericMemberParams, any> = {
-  name: "Generic Member",
+  name: "Generic Frame",
+  geometryKind: "line",
   defaultParams: {
     elasticity: 32836, // MPa ≈ C30 Ecm
     area: 625, // cm² = 250×250 mm

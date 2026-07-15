@@ -1,5 +1,6 @@
-import { norm, subtract, multiply, inv } from "mathjs";
+import { inv, multiply, norm, subtract } from "mathjs";
 import type { Mesh } from "../../../data-model";
+import { getShellLocalStiffnessMatrix } from "./getShellLocalStiffnessMatrix";
 
 export function getLocalStiffnessMatrix(
   nodes: Mesh["nodes"]["val"],
@@ -9,8 +10,18 @@ export function getLocalStiffnessMatrix(
 ): number[][] {
   if (!nodes || !elementsProps) return [];
 
-  const elementProps = elementsProps?.get(index);
+  // Releases apply only to two-node frame elements.
+  if (nodes.length === 3) {
+    const properties = elementsProps.get(index);
+    return getShellLocalStiffnessMatrix(
+      nodes,
+      properties?.elasticity ?? 0,
+      properties?.poissonRatio ?? 0,
+      properties?.thickness ?? 0,
+    );
+  }
 
+  const elementProps = elementsProps.get(index);
   const Iz = elementProps?.momentInertiaZ ?? 0;
   const Iy = elementProps?.momentInertiaY ?? 0;
   const E = elementProps?.elasticity ?? 0;
@@ -93,19 +104,17 @@ export function getLocalStiffnessMatrix(
 
   const elementReleases = releases?.get(index);
   if (elementReleases && elementReleases.some(Boolean)) {
-    // Map [My_start, Mz_start, My_end, Mz_end] to local DOF indices
     const releasedDofIndices: number[] = [];
-    if (elementReleases[0]) releasedDofIndices.push(4); // My_start
-    if (elementReleases[1]) releasedDofIndices.push(5); // Mz_start
-    if (elementReleases[2]) releasedDofIndices.push(10); // My_end
-    if (elementReleases[3]) releasedDofIndices.push(11); // Mz_end
+    if (elementReleases[0]) releasedDofIndices.push(4);
+    if (elementReleases[1]) releasedDofIndices.push(5);
+    if (elementReleases[2]) releasedDofIndices.push(10);
+    if (elementReleases[3]) releasedDofIndices.push(11);
     return condenseStiffnessMatrix(K, releasedDofIndices);
   }
 
   return K;
 }
 
-// Helpers
 function condenseStiffnessMatrix(
   K: number[][],
   releasedIndices: number[],
@@ -113,26 +122,19 @@ function condenseStiffnessMatrix(
   const n = K.length;
   const allIndices = Array.from({ length: n }, (_, i) => i);
   const freeIndices = allIndices.filter((i) => !releasedIndices.includes(i));
-
-  // Extract sub-matrices
   const Kff = freeIndices.map((i) => freeIndices.map((j) => K[i][j]));
   const Kfr = freeIndices.map((i) => releasedIndices.map((j) => K[i][j]));
   const Krf = releasedIndices.map((i) => freeIndices.map((j) => K[i][j]));
   const Krr = releasedIndices.map((i) => releasedIndices.map((j) => K[i][j]));
-
-  // K_condensed_ff = Kff - Kfr * inv(Krr) * Krf
   const correction = multiply(Kfr, multiply(inv(Krr), Krf)) as number[][];
   const condensedFf = Kff.map((row, i) =>
-    row.map((val, j) => val - correction[i][j]),
+    row.map((value, j) => value - correction[i][j]),
   );
-
-  // Reconstruct full matrix with zeros at released DOFs
   const result = Array.from({ length: n }, () => Array(n).fill(0));
   for (let i = 0; i < freeIndices.length; i++) {
     for (let j = 0; j < freeIndices.length; j++) {
       result[freeIndices[i]][freeIndices[j]] = condensedFf[i][j];
     }
   }
-
   return result;
 }
