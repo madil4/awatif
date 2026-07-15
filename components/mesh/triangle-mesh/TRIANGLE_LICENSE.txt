@@ -1,0 +1,57 @@
+TRIANGLE — ORIGINAL COPYRIGHT AND REDISTRIBUTION NOTICE
+
+The text below is reproduced unchanged from the Triangle version 1.6
+distribution. It applies to Triangle and to the Triangle code compiled into
+the triangle.out.wasm binary used by this project.
+
+--------------------------------------------------------------------------
+
+Triangle
+A Two-Dimensional Quality Mesh Generator and Delaunay Triangulator.
+Version 1.6
+
+Show Me
+A Display Program for Meshes and More.
+Version 1.6
+
+Copyright 1993, 1995, 1997, 1998, 2002, 2005 Jonathan Richard Shewchuk
+2360 Woolsey #H
+Berkeley, California  94705-1927
+Please send bugs and comments to jrs@cs.berkeley.edu
+
+Created as part of the Quake project (tools for earthquake simulation).
+Supported in part by NSF Grant CMS-9318163 and an NSERC 1967 Scholarship.
+There is no warranty whatsoever.  Use at your own risk.
+
+
+Triangle generates exact Delaunay triangulations, constrained Delaunay
+triangulations, conforming Delaunay triangulations, Voronoi diagrams, and
+high-quality triangular meshes.  The latter can be generated with no small
+or large angles, and are thus suitable for finite element analysis.
+Show Me graphically displays the contents of the geometric files used by
+Triangle.  Show Me can also write images in PostScript form.
+
+Information on the algorithms used by Triangle, including complete
+references, can be found in the comments at the beginning of the triangle.c
+source file.  Another listing of these references, with PostScript copies
+of some of the papers, is available from the Web page
+
+    http://www.cs.cmu.edu/~quake/triangle.research.html
+
+------------------------------------------------------------------------------
+
+These programs may be freely redistributed under the condition that the
+copyright notices (including the copy of this notice in the code comments
+and the copyright notice printed when the `-h' switch is selected) are
+not removed, and no compensation is received.  Private, research, and
+institutional use is free.  You may distribute modified versions of this
+code UNDER THE CONDITION THAT THIS CODE AND ANY MODIFICATIONS MADE TO IT
+IN THE SAME FILE REMAIN UNDER COPYRIGHT OF THE ORIGINAL AUTHOR, BOTH
+SOURCE AND OBJECT CODE ARE MADE FREELY AVAILABLE WITHOUT CHARGE, AND
+CLEAR NOTICE IS GIVEN OF THE MODIFICATIONS.  Distribution of this code as
+part of a commercial system is permissible ONLY BY DIRECT ARRANGEMENT
+WITH THE AUTHOR.  (If you are not directly supplying this code to a
+customer, and you are instead telling them how they can obtain it for
+free, then you are not required to make any arrangement with me.)
+
+------------------------------------------------------------------------------
