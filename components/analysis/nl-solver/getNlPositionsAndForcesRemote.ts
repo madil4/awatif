@@ -1,7 +1,6 @@
 import type { Mesh } from "../../data-model";
 
-const NL_SOLVE_ENDPOINT =
-  "https://phdoimejezjrvplwdcnb.supabase.co/functions/v1/nl-solve";
+const NL_SOLVE_ENDPOINT = "https://awatif.co/api/solve";
 
 type MapEntry<T> = [number, T];
 
