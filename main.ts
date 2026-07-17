@@ -59,13 +59,13 @@ const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "Axial + Transverse Load",
+          name: "Column Load",
           templateId: "point-load",
           geometry: [2],
           params: {
-            Fx: 10,
+            Fx: 800,
             Fy: 0,
-            Fz: -500,
+            Fz: -1000,
             Mx: 0,
             My: 0,
             Mz: 0,
@@ -77,9 +77,9 @@ const components: Components = van.state(
           templateId: "point-load",
           geometry: [6],
           params: {
-            Fx: 150,
+            Fx: 4000,
             Fy: 0,
-            Fz: -500,
+            Fz: -1000,
             Mx: 0,
             My: 0,
             Mz: 0,
@@ -146,7 +146,7 @@ const display: Display = {
     spacing: van.state(0.5),
   },
   displayScale: van.state(1),
-  deformationScale: van.state(50),
+  deformationScale: van.state(1),
   view2D: van.state(true),
   geometry: van.state(true),
   mesh: van.state(true),
