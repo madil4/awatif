@@ -65,7 +65,7 @@ const components: Components = van.state(
           params: {
             Fx: 800,
             Fy: 0,
-            Fz: -1000,
+            Fz: -4000,
             Mx: 0,
             My: 0,
             Mz: 0,
@@ -117,7 +117,7 @@ const components: Components = van.state(
           templateId: "triangle-mesh",
           geometry: [1], // polygon id
           params: {
-            maxTriangleArea: 0.2,
+            maxTriangleArea: 0.25,
           },
         },
       ],
@@ -256,8 +256,6 @@ van.derive(async () => {
     // Positions events
     const selectedAnalysis = activeAnalysis.val;
     const hasShells = mesh.elements.val.some((e) => e.length === 3);
-    if (selectedAnalysis === "nonlinear" && hasShells)
-      throw new Error("Nonlinear analysis does not support shell elements");
     if (selectedAnalysis === "nonlinear") {
       analysisStatus.val = {
         success: true,
