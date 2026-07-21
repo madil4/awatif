@@ -1,5 +1,8 @@
 import type { Mesh } from "../../../data-model";
 
+// Shell-element formulation based on Rama, Marinkovic, and Zehn (2018).
+// DOI: 10.1007/s40430-018-1276-4
+
 type DenseMatrix = number[][];
 type Vector3 = number[];
 type ShellNodes = Mesh["nodes"]["val"];

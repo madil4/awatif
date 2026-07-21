@@ -1,5 +1,8 @@
 #pragma once
 
+// Shell-element formulation based on Rama, Marinkovic, and Zehn (2018).
+// DOI: 10.1007/s40430-018-1276-4
+
 #include <Eigen/Dense>
 #include <algorithm>
 #include <array>
