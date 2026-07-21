@@ -1,7 +1,7 @@
 {
   "name": "@awatif/ui",
   "description": "Awatif User Interface",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": "Mohamed Adil",
   "license": "MIT",
   "type": "module",
@@ -14,7 +14,7 @@
     "test": "node -e \"console.log('No tests for @awatif/ui')\" --"
   },
   "dependencies": {
-    "@awatif/components": "^3.2.0",
+    "@awatif/components": "^3.3.0",
     "vanjs-core": "^1.6.0",
     "lit-html": "^3.3.2",
     "three": "^0.183.2"

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.0 - 2026-07-21
+
+- Added end-to-end shell modeling and analysis with polygon geometry, triangle meshing, shell design properties, unified frame and shell solving, and supporting UI workflows.
+
 ## 3.2.0 - 2026-07-08
 
 - Added Eurocode-based design components for concrete, steel, and timber members.
