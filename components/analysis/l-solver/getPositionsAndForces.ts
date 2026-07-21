@@ -90,11 +90,13 @@ export function getPositionsAndForces(
 
     internalForces.set(i, {
       N: [fLocal[0], -fLocal[6]],
-      Vy: [fLocal[1], -fLocal[7]],
-      Vz: [fLocal[2], -fLocal[8]],
+      // Section-force convention: sagging bending is negative. Transverse
+      // shear is negated with bending so the two diagrams remain consistent.
+      Vy: [-fLocal[1], fLocal[7]],
+      Vz: [-fLocal[2], fLocal[8]],
       Mx: [fLocal[3], -fLocal[9]],
-      My: [fLocal[4], -fLocal[10]],
-      Mz: [fLocal[5], -fLocal[11]],
+      My: [-fLocal[4], fLocal[10]],
+      Mz: [-fLocal[5], fLocal[11]],
     });
   });
 

@@ -28,20 +28,23 @@ export function getReactions(
     const T = getTransformationMatrix(elementNodes); // global → local
     const TT = transpose(T) as number[][]; // local → global
 
-    // Reconstruct the full 12-DOF local force vector from stored internal forces
+    // Reconstruct the full 12-DOF local nodal-force vector. Stored transverse
+    // shear and bending use the opposite sign from the solver's nodal actions
+    // (sagging section moment is negative), so invert them here. Axial force
+    // and torsion retain their existing convention.
     const fLocal = [
       forces.N[0],
-      forces.Vy[0],
-      forces.Vz[0],
+      -forces.Vy[0],
+      -forces.Vz[0],
       forces.Mx[0],
-      forces.My[0],
-      forces.Mz[0],
+      -forces.My[0],
+      -forces.Mz[0],
       -forces.N[1],
-      -forces.Vy[1],
-      -forces.Vz[1],
+      forces.Vy[1],
+      forces.Vz[1],
       -forces.Mx[1],
-      -forces.My[1],
-      -forces.Mz[1],
+      forces.My[1],
+      forces.Mz[1],
     ];
 
     // Transform to global: f_global = T^T * f_local

@@ -43,11 +43,11 @@ export type Mesh = {
       number,
       {
         N: [number, number]; // Axial force at start and end
-        Vy: [number, number]; // Shear force (y-direction) at start and end
-        Vz: [number, number]; // Shear force (z-direction) at start and end
+        Vy: [number, number]; // Local-y shear; paired with sagging-negative bending
+        Vz: [number, number]; // Local-z shear; paired with sagging-negative bending
         Mx: [number, number]; // Torsional moment at start and end
-        My: [number, number]; // Bending moment (about y-axis) at start and end
-        Mz: [number, number]; // Bending moment (about z-axis) at start and end
+        My: [number, number]; // Local-y bending moment; sagging is negative
+        Mz: [number, number]; // Local-z bending moment; sagging is negative
       }
     >
   >;

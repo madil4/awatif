@@ -458,16 +458,18 @@ extern "C"
             (*forces_out)[fidx++] = (double)i;
             (*forces_out)[fidx++] = fLocal(0);
             (*forces_out)[fidx++] = -fLocal(6);
-            (*forces_out)[fidx++] = fLocal(1);
-            (*forces_out)[fidx++] = -fLocal(7);
-            (*forces_out)[fidx++] = fLocal(2);
-            (*forces_out)[fidx++] = -fLocal(8);
+            // Section-force convention: sagging bending is negative. Flip
+            // transverse shear with bending to preserve diagram equilibrium.
+            (*forces_out)[fidx++] = -fLocal(1);
+            (*forces_out)[fidx++] = fLocal(7);
+            (*forces_out)[fidx++] = -fLocal(2);
+            (*forces_out)[fidx++] = fLocal(8);
             (*forces_out)[fidx++] = fLocal(3);
             (*forces_out)[fidx++] = -fLocal(9);
-            (*forces_out)[fidx++] = fLocal(4);
-            (*forces_out)[fidx++] = -fLocal(10);
-            (*forces_out)[fidx++] = fLocal(5);
-            (*forces_out)[fidx++] = -fLocal(11);
+            (*forces_out)[fidx++] = -fLocal(4);
+            (*forces_out)[fidx++] = fLocal(10);
+            (*forces_out)[fidx++] = -fLocal(5);
+            (*forces_out)[fidx++] = fLocal(11);
         }
     }
 }
