@@ -79,7 +79,7 @@ const components: Components = van.state(
           params: {
             Fx: 4000,
             Fy: 0,
-            Fz: -1000,
+            Fz: -4000,
             Mx: 0,
             My: 0,
             Mz: 0,
