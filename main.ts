@@ -313,7 +313,8 @@ van.derive(async () => {
     mesh.reactions.val = [];
     mesh.internalForces.val = new Map();
 
-    analysisStatus.val = { success: false, ...warningPayload };
+    const message = e instanceof Error ? e.message : String(e);
+    analysisStatus.val = { success: false, error: message, ...warningPayload };
   }
 });
 

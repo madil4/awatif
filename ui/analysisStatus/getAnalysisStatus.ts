@@ -8,6 +8,7 @@ export type AnalysisStatus = State<{
   loading?: boolean;
   iterations?: number;
   unassignedLines?: number[];
+  error?: string;
 }>;
 
 export function getAnalysisStatus(
@@ -47,7 +48,7 @@ export function getAnalysisStatus(
   }
 
   van.derive(() => {
-    const { success, loading, iterations, unassignedLines } = status.val;
+    const { success, loading, iterations, unassignedLines, error } = status.val;
     const hasWarning = unassignedLines && unassignedLines.length > 0;
     const warningSuffix = hasWarning
       ? ` — lines ${unassignedLines.map((id) => `${id}`).join(", ")} have no design member assigned`
@@ -70,7 +71,7 @@ export function getAnalysisStatus(
     } else {
       dot.className = "dot error" + (hasWarning ? " warning" : "");
       label.textContent = "";
-      tooltip.textContent = `Unstable structure${warningSuffix}`;
+      tooltip.textContent = `${error || "Unstable structure"}${warningSuffix}`;
     }
   });
 
