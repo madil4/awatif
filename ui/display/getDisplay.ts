@@ -43,11 +43,11 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           max="50"
           value=${grid.size.val}
           @input=${(e: Event) =>
-      (grid.size.val = Number((e.target as HTMLInputElement).value))}
+            (grid.size.val = Number((e.target as HTMLInputElement).value))}
         />
         <select
           @change=${(e: Event) =>
-      (grid.spacing.val = Number((e.target as HTMLSelectElement).value))}
+            (grid.spacing.val = Number((e.target as HTMLSelectElement).value))}
         >
           <option value="2" ?selected=${grid.spacing.val === 2}>2</option>
           <option value="1" ?selected=${grid.spacing.val === 1}>1</option>
@@ -65,9 +65,9 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           step="0.1"
           .value=${display.displayScale.val}
           @input=${(e: Event) =>
-    (display.displayScale.val = Number(
-      (e.target as HTMLInputElement).value,
-    ))}
+            (display.displayScale.val = Number(
+              (e.target as HTMLInputElement).value,
+            ))}
         />
         <span class="value-display">${display.displayScale.val}</span>
       </div>
@@ -80,9 +80,9 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           step="1"
           .value=${display.deformationScale.val}
           @input=${(e: Event) =>
-    (display.deformationScale.val = Number(
-      (e.target as HTMLInputElement).value,
-    ))}
+            (display.deformationScale.val = Number(
+              (e.target as HTMLInputElement).value,
+            ))}
         />
         <span class="value-display">${display.deformationScale.val}</span>
       </div>
@@ -93,7 +93,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.view2D.val}
             @change=${(e: Event) =>
-      (display.view2D.val = (e.target as HTMLInputElement).checked)}
+              (display.view2D.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
         <div class="display-pair-separator"></div>
@@ -103,9 +103,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.extrude.val}
             @change=${(e: Event) =>
-    (display.extrude.val = (
-      e.target as HTMLInputElement
-    ).checked)}
+              (display.extrude.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
       </div>
@@ -116,7 +114,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.geometry.val}
             @change=${(e: Event) =>
-      (display.geometry.val = (e.target as HTMLInputElement).checked)}
+              (display.geometry.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
         <div class="display-pair-separator"></div>
@@ -126,7 +124,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.mesh.val}
             @change=${(e: Event) =>
-      (display.mesh.val = (e.target as HTMLInputElement).checked)}
+              (display.mesh.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
       </div>
@@ -137,7 +135,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.lineIndex.val}
             @change=${(e: Event) =>
-      (display.lineIndex.val = (e.target as HTMLInputElement).checked)}
+              (display.lineIndex.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
         <div class="display-pair-separator"></div>
@@ -147,7 +145,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.pointIndex.val}
             @change=${(e: Event) =>
-      (display.pointIndex.val = (e.target as HTMLInputElement).checked)}
+              (display.pointIndex.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
       </div>
@@ -158,7 +156,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.loads.val}
             @change=${(e: Event) =>
-      (display.loads.val = (e.target as HTMLInputElement).checked)}
+              (display.loads.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
         <div class="display-pair-separator"></div>
@@ -168,7 +166,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.supports.val}
             @change=${(e: Event) =>
-      (display.supports.val = (e.target as HTMLInputElement).checked)}
+              (display.supports.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
       </div>
@@ -179,7 +177,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.releases.val}
             @change=${(e: Event) =>
-      (display.releases.val = (e.target as HTMLInputElement).checked)}
+              (display.releases.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
         <div class="display-pair-separator"></div>
@@ -189,18 +187,18 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             type="checkbox"
             .checked=${display.orientation.val}
             @change=${(e: Event) =>
-    (display.orientation.val = (
-      e.target as HTMLInputElement
-    ).checked)}
+              (display.orientation.val = (
+                e.target as HTMLInputElement
+              ).checked)}
           />
         </div>
       </div>
-      <!-- <div class="display-item">
+      <div class="display-item">
         <label>Point Results</label>
         <select
           @change=${(e: Event) =>
-    (display.pointResult.val = (e.target as HTMLSelectElement)
-      .value as PointResultsDisplay)}
+            (display.pointResult.val = (e.target as HTMLSelectElement)
+              .value as PointResultsDisplay)}
         >
           <option value="None" ?selected=${display.pointResult.val === "None"}>
             None
@@ -212,13 +210,13 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
             Reactions
           </option>
         </select>
-      </div> -->
+      </div>
       <div class="display-item">
         <label>Line Results</label>
         <select
           @change=${(e: Event) =>
-    (display.lineResult.val = (e.target as HTMLSelectElement)
-      .value as LineResultsDisplay)}
+            (display.lineResult.val = (e.target as HTMLSelectElement)
+              .value as LineResultsDisplay)}
         >
           <option value="None" ?selected=${display.lineResult.val === "None"}>
             None
@@ -262,11 +260,11 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
         <label>Load Case</label>
         <select
           @change=${(e: Event) =>
-    (display.loadCase.val = (e.target as HTMLSelectElement)
-      .value as LoadSelection)}
+            (display.loadCase.val = (e.target as HTMLSelectElement)
+              .value as LoadSelection)}
         >
           ${Object.entries(LOAD_SELECTION_LABELS).map(
-        ([value, label]) => html`
+            ([value, label]) => html`
               <option
                 value=${value}
                 ?selected=${display.loadCase.val === value}
@@ -274,7 +272,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
                 ${label}
               </option>
             `,
-      )}
+          )}
         </select>
       </div>
     </details>
