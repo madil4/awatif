@@ -163,7 +163,12 @@ export function getPointResults({
       // [u1x, u1y, u1z, u2x, u2y, u2z, ...] — translations only
       const displacements = mesh.displacements.val;
 
-      nodes.forEach((n, i) => {
+      // Only geometry points; interior meshing nodes are not in this map
+      mesh.geometryMapping.val.pointToNodes.forEach((nodeIndices) => {
+        const i = nodeIndices[0];
+        const n = nodes[i];
+        if (!n) return;
+
         const dx = displacements[i * 3];
         const dy = displacements[i * 3 + 1];
         const dz = displacements[i * 3 + 2];
