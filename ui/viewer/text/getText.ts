@@ -20,6 +20,10 @@ export function getText(
 ): THREE.Sprite {
   const { backgroundColor, borderRadius = 20, padding = 20 } = options;
 
+  const fontSize = 48;
+  const lineHeight = fontSize * 1.2;
+  const lines = text.split("\n");
+
   // Create cache key from text, color and options
   const cacheKey = `${text}|${color}|${backgroundColor}|${borderRadius}|${padding}`;
 
@@ -29,13 +33,13 @@ export function getText(
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d")!;
 
-    const fontSize = 48;
     context.font = `bold ${fontSize}px Inter, system-ui, -apple-system, sans-serif`;
 
-    // Measure text to size canvas appropriately
-    const metrics = context.measureText(text);
-    const textWidth = metrics.width;
-    const textHeight = fontSize;
+    // Measure the widest line to size canvas appropriately
+    const textWidth = Math.max(
+      ...lines.map((line) => context.measureText(line).width),
+    );
+    const textHeight = fontSize + (lines.length - 1) * lineHeight;
 
     // Set canvas size based on text and padding
     canvas.width = textWidth + padding * 2;
@@ -77,8 +81,14 @@ export function getText(
     context.textAlign = "center";
     context.textBaseline = "middle";
 
-    // Draw text
-    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    // Draw text, one line per row
+    lines.forEach((line, index) => {
+      context.fillText(
+        line,
+        canvas.width / 2,
+        padding + fontSize / 2 + index * lineHeight,
+      );
+    });
 
     // Create and cache texture
     texture = new THREE.CanvasTexture(canvas);
@@ -99,9 +109,14 @@ export function getText(
   const sprite = new THREE.Sprite(material);
   sprite.position.set(position[0], position[1], position[2]);
 
-  // Adjust sprite scale based on text aspect ratio
-  const aspectRatio = texture.image.width / texture.image.height;
-  sprite.scale.set(size * aspectRatio, size, 1);
+  // Scale so `size` is the height of a single line, letting a multi-line label
+  // grow proportionally instead of being squashed into `size`
+  const unitsPerPixel = size / (fontSize + padding * 2);
+  sprite.scale.set(
+    texture.image.width * unitsPerPixel,
+    texture.image.height * unitsPerPixel,
+    1,
+  );
 
   sprite.renderOrder = 100;
 

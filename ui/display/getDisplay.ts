@@ -209,6 +209,12 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           >
             Reactions
           </option>
+          <option
+            value="Displacements"
+            ?selected=${display.pointResult.val === "Displacements"}
+          >
+            Displacements
+          </option>
         </select>
       </div>
       <div class="display-item">
