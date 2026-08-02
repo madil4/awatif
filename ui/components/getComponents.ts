@@ -36,6 +36,7 @@ function getTypesForMode(mode: ComponentsType | null): ComponentsType[] {
         ComponentsType.MESH,
         ComponentsType.IMPERFECTIONS,
         ComponentsType.RELEASES,
+        ComponentsType.LOCAL_AXES,
       ];
     default:
       return [];

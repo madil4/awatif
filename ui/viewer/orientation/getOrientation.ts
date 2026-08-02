@@ -1,15 +1,24 @@
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
-import { Geometry } from "@awatif/components";
+import {
+  Components,
+  Geometry,
+  getLocalAxesByLine,
+  templates as Templates,
+} from "@awatif/components";
 import { getElementLocalAxes } from "../common/getElementLocalAxes";
 
 export function getOrientation({
   geometry,
+  components,
+  templates,
   displayScale,
   render,
   display,
 }: {
   geometry: Geometry;
+  components?: Components;
+  templates?: typeof Templates;
   displayScale: State<number>;
   render: () => void;
   display?: { orientation: State<boolean> };
@@ -49,8 +58,12 @@ export function getOrientation({
     const s = displayScale.val;
     const lines = geometry.lines.val;
     const points = geometry.points.val;
+    const localAxesByLine =
+      components && templates
+        ? getLocalAxesByLine({ components: components.val, templates })
+        : new Map<number, number>();
 
-    lines.forEach((line) => {
+    lines.forEach((line, lineId) => {
       const startPoint = points.get(line[0]);
       const endPoint = points.get(line[1]);
       if (!startPoint || !endPoint) return;
@@ -71,7 +84,14 @@ export function getOrientation({
       const axisLength = Math.min(0.45 * s, length * 0.28);
       const helper = new THREE.AxesHelper(axisLength);
       const rotation = new THREE.Matrix4();
-      rotation.makeBasis(localX, localY, localZ);
+      // A 90° local-axes rotation rolls the section frame about the member
+      // axis: localY' = localZ, localZ' = -localY
+      const rotated = localAxesByLine.get(lineId) === 90;
+      rotation.makeBasis(
+        localX,
+        rotated ? localZ : localY,
+        rotated ? localY.clone().negate() : localZ,
+      );
 
       helper.position.copy(origin);
       helper.setRotationFromMatrix(rotation);

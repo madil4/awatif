@@ -5,6 +5,7 @@ import { pointLoad } from "./loads/point-load/pointLoad";
 import { distributedLoad } from "./loads/distributed-load/distributedLoad";
 import { pointSupport } from "./supports/point-support/pointSupport";
 import { releases } from "./releases/releases/releases";
+import { localAxes } from "./local-axes/local-axes/localAxes";
 import { genericMember } from "./design/generic-member/genericMember";
 import { genericShell } from "./design/generic-shell/genericShell";
 import { concreteMember } from "./design/concrete-member/concreteMember";
@@ -30,6 +31,7 @@ export const templates = new Map<ComponentsType, Map<string, any>>([
   ],
   [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
   [ComponentsType.RELEASES, new Map([["releases", releases]])],
+  [ComponentsType.LOCAL_AXES, new Map([["local-axes", localAxes]])],
   [
     ComponentsType.DESIGN,
     new Map<string, any>([
