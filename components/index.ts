@@ -35,6 +35,8 @@ export {
   initPositionsAndForcesCpp,
 } from "./analysis/l-solver/getPositionsAndForcesCpp";
 export { getNlPositionsAndForcesRemote } from "./analysis/nl-solver/getNlPositionsAndForcesRemote";
+export { defaultSimSettings } from "./analysis/nl-solver/data-model";
+export type { SimSettings } from "./analysis/nl-solver/data-model";
 export { getReactions } from "./analysis/l-solver/getReactions";
 export {
   getLineEndForces,

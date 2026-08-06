@@ -1,13 +1,11 @@
 import type { Mesh } from "../../data-model";
+import { defaultSimSettings, type SimSettings } from "./data-model";
 
 const NL_SOLVE_ENDPOINT = "https://awatif.co/api/solve";
 
 type MapEntry<T> = [number, T];
 
-export type SimSettings = {
-  tol: number;
-  maximum_iter: number;
-};
+export type { SimSettings };
 
 type RemoteInternalForce = {
   N: [number, number];
@@ -31,10 +29,7 @@ export async function getNlPositionsAndForcesRemote(
   supports: Mesh["supports"]["val"],
   elementsProps: Mesh["elementsProps"]["val"],
   releases?: Mesh["releases"]["val"],
-  simSettings: SimSettings = {
-    tol: 1e-3,
-    maximum_iter: 1000,
-  },
+  simSettings: SimSettings = defaultSimSettings,
 ): Promise<{
   positions: number[];
   internalForces: Mesh["internalForces"]["val"];
