@@ -1,6 +1,6 @@
 # Awatif
 
-The ultimate open-source toolset for structural analysis and design — FEM, Eurocode checks, and reports, in the browser.
+The open-source toolset for structural analysis and design — FEM, Eurocode checks, and reports, in the browser.
 
 AI-native, MIT-licensed, and no install required: model frames and shells, solve, check, and generate reports in one place. Awatif is also the foundation behind the custom automation work at [awatif.co](https://awatif.co).
 
