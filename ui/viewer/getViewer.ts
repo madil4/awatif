@@ -178,6 +178,8 @@ export function getViewer({
     scene.add(
       getOrientation({
         geometry,
+        components,
+        templates,
         displayScale,
         render,
         display,

@@ -1,30 +1,18 @@
 # Awatif
 
-Awatif is an AI-native platform for building structural engineering automation tools.
+The open-source toolset for structural analysis and design — FEM, Eurocode checks, and reports, in the browser.
 
-It combines super-fast FEM, AI-assisted modeling, design checks, reports, and drawings into simple web-based tools that help engineers automate the work they repeat every week.
+AI-native, MIT-licensed, and no install required: model frames and shells, solve, check, and generate reports in one place. Awatif is also the foundation behind the custom automation work at [awatif.co](https://awatif.co).
 
-Awatif is the foundation behind my work helping structural engineering firms turn manual calculations, reports, model checks, and BIM workflows into practical internal tools.
+## What's inside
 
-## Examples
+- **`components/`** — the engineering core: `analysis` (C++/WASM linear solver, remote nonlinear solver), `design` (Eurocode concrete, steel, timber, and shell checks plus report generation), `mesh`, `loads`, `supports`, `releases`, and `imperfections`.
+- **`ui/`** — the interface: 3D viewer, canvas and canvas bar, layout, display controls, analysis status, and undo.
+- **`main.ts`** — the app entry point that wires components and UI together.
 
-Awatif can be used to build tools such as:
+## Quick start
 
-- IFC to analytical model
-- Sketch to analytical model
-- Beam, frame, and column design tools
-- Automated design checks
-- Calculation report generators
-- Drawing and documentation tools
-- BIM, Excel, PDF, and calculation workflows connected in one place
-
-## Quick Start
-
-**Work with me** — I help small structural engineering firms automate repetitive engineering tasks using Awatif: calculations, reports, internal tools, model checks, BIM workflows, and training. DM me on [LinkedIn](https://www.linkedin.com/in/madil4/) to discuss your automation project.
-
-**Join a workshop** — I run workshops for engineers who want to learn how to build their own structural engineering automation tools. DM me on [LinkedIn](https://www.linkedin.com/in/madil4/) to join the next one.
-
-**Self-hosted / development** — requires Node.js 22+:
+Requires Node.js 22+.
 
 ```bash
 git clone https://github.com/madil4/awatif.git
@@ -33,16 +21,26 @@ npm install
 npm run dev
 ```
 
-## Coding Style
+`npm test` runs the test suite, `npm run build` produces a production bundle.
 
-- Keep it simple. Focus on core features and minimum viable product. The system is already complex.
+## Work with me
+
+I help structural engineering teams turn repetitive work — reports, model checks, BIM handovers, calculations — into internal tools. See [awatif.co](https://awatif.co) for dates and details.
+
+- **Course — Agentic Structural Engineer** (€399) — turn your repetitive workflows into AI agents over four weeks. Monthly cohorts, with private reviews.
+- **Workshop — Quick Start** (€50) — build your first structural engineering app in two hours. Live, no coding required.
+- **Custom automation** (pilots from €2,000) — I build the tool your team runs on. [Book a call](https://awatif.co).
+
+Prefer a direct message? Find me on [LinkedIn](https://www.linkedin.com/in/madil4/).
+
+## Contributing
+
+- Keep it simple. Focus on core features and a minimum viable product — the system is already complex.
 - Use types. Functions should fully describe inputs and outputs.
 - Avoid global state. If unavoidable, use reactive objects with the signal approach.
 
-## Code Formatting
+Install the [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for formatting (default settings) and the [lit-html extension](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html) for HTML string highlighting.
 
-Install the [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for automatic code formatting with default settings.
+## License
 
-## Syntax Highlighting
-
-For better syntax highlighting of HTML strings, we recommend the [lit-html VS Code extension](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html).
+MIT © Mohamed Adil
