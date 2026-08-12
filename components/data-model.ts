@@ -77,6 +77,7 @@ export enum ComponentsType {
   DESIGN,
   IMPERFECTIONS,
   SPECIAL,
+  LOCAL_AXES,
 }
 
 export type ActiveComponent = {

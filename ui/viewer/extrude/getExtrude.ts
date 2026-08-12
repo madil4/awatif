@@ -5,6 +5,7 @@ import {
   Components,
   templates as Templates,
   ComponentsType,
+  getLocalAxesByLine,
 } from "@awatif/components";
 import { getElementLocalAxes } from "../common/getElementLocalAxes";
 
@@ -67,6 +68,10 @@ export function getExtrude({
     const points = geometry.points.val;
     const designComponents = components.val.get(ComponentsType.DESIGN) ?? [];
     const designTemplates = templates.get(ComponentsType.DESIGN);
+    const localAxesByLine = getLocalAxesByLine({
+      components: components.val,
+      templates,
+    });
 
     designComponents.forEach((component) => {
       const template = designTemplates?.get(component.templateId);
@@ -115,9 +120,16 @@ export function getExtrude({
         sectionGroup.add(mesh, edgeLines);
         sectionGroup.position.copy(startV);
 
-        // Align: geometry X → localY, geometry Y → localZ, geometry Z (extrusion) → dir
+        // Align: geometry X → localY, geometry Y → localZ, geometry Z (extrusion) → dir.
+        // A 90° local-axes rotation rolls the section about the member axis,
+        // so it lands on localY' = localZ and localZ' = -localY
+        const rotated = localAxesByLine.get(lineId) === 90;
         const rotMatrix = new THREE.Matrix4();
-        rotMatrix.makeBasis(localY, localZ, localX);
+        rotMatrix.makeBasis(
+          rotated ? localZ : localY,
+          rotated ? localY.clone().negate() : localZ,
+          localX,
+        );
         sectionGroup.setRotationFromMatrix(rotMatrix);
 
         group.add(sectionGroup);

@@ -21,11 +21,24 @@ export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
 export type { MeshTemplate, PolygonMeshTemplate } from "./mesh/data-model";
 
+export type {
+  LocalAxesAngle,
+  LocalAxesTemplate,
+} from "./local-axes/data-model";
+
 export { getMesh } from "./mesh/getMesh";
 export { initTriangleMesh } from "./mesh/triangle-mesh/triangleMesh";
 export { getLoads } from "./loads/getLoads";
 export { getSupports } from "./supports/getSupports";
 export { getReleases } from "./releases/getReleases";
+export {
+  getLocalAxes,
+  getLocalAxesByLine,
+} from "./local-axes/getLocalAxes";
+export {
+  applyLocalAxesToProps,
+  applyLocalAxesToForces,
+} from "./local-axes/applyLocalAxes";
 export { getElementsProps } from "./design/getElementsProps";
 export { getReport } from "./design/getReport";
 export { getDesigns } from "./design/getDesigns";

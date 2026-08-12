@@ -7,6 +7,9 @@ import {
   getLoads,
   getSupports,
   getReleases,
+  getLocalAxes,
+  applyLocalAxesToProps,
+  applyLocalAxesToForces,
   getElementsProps,
   getReport,
   getPositionsAndForcesCpp,
@@ -245,13 +248,24 @@ van.derive(async () => {
       templates,
     });
 
-    // Elements properties events
-    mesh.elementsProps.val = getElementsProps({
+    // Local axes events
+    const localAxes = getLocalAxes({
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,
-      elements: mesh.elements.val,
     });
+
+    // Elements properties events
+    // A 90° section rotation is modelled by swapping Iz/Iy before the solve
+    mesh.elementsProps.val = applyLocalAxesToProps(
+      getElementsProps({
+        components: components.val,
+        geometryMapping: mesh.geometryMapping.val,
+        templates,
+        elements: mesh.elements.val,
+      }),
+      localAxes,
+    );
 
     // Positions events
     const selectedAnalysis = activeAnalysis.val;
@@ -290,13 +304,18 @@ van.derive(async () => {
     if (analysis !== latestAnalysis) return;
 
     mesh.positions.val = result.positions;
-    mesh.internalForces.val = result.internalForces;
+    // getReactions transforms with the coordinate-derived (fixed) local frame,
+    // so it must see the solver's raw forces, not the section-frame ones
     mesh.reactions.val = getReactions(
       mesh.nodes.val,
       mesh.elements.val,
-      mesh.internalForces.val,
+      result.internalForces,
       mesh.loads.val,
       mesh.supports.val,
+    );
+    mesh.internalForces.val = applyLocalAxesToForces(
+      result.internalForces,
+      localAxes,
     );
 
     analysisStatus.val = {
