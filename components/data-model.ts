@@ -36,7 +36,7 @@ export type Mesh = {
   elementsProps: State<Map<number, ElementProps>>;
 
   positions: State<number[]>; // [x1, y1, z1, x2, y2, z2, ...]
-  displacements: State<number[]>; // [u1x, u1y, u1z, r1x, r1y, r1z, u2x, ...]
+  displacements: State<number[]>; // [u1x, u1y, u1z, u2x, u2y, u2z, ...]
   reactions: State<[number, number, number, number, number, number][]>;
   internalForces: State<
     Map<

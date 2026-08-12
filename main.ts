@@ -285,25 +285,30 @@ van.derive(async () => {
     } =
       selectedAnalysis === "nonlinear"
         ? await getNlPositionsAndForcesRemote(
-          mesh.nodes.val,
-          mesh.elements.val,
-          mesh.loads.val,
-          mesh.supports.val,
-          mesh.elementsProps.val,
-          mesh.releases.val,
-        )
+            mesh.nodes.val,
+            mesh.elements.val,
+            mesh.loads.val,
+            mesh.supports.val,
+            mesh.elementsProps.val,
+            mesh.releases.val,
+          )
         : getPositionsAndForcesCpp(
-          mesh.nodes.val,
-          mesh.elements.val,
-          mesh.loads.val,
-          mesh.supports.val,
-          mesh.elementsProps.val,
-          mesh.releases.val,
-        );
+            mesh.nodes.val,
+            mesh.elements.val,
+            mesh.loads.val,
+            mesh.supports.val,
+            mesh.elementsProps.val,
+            mesh.releases.val,
+          );
 
     if (analysis !== latestAnalysis) return;
 
     mesh.positions.val = result.positions;
+
+    mesh.displacements.val = mesh.nodes.val.flat().map((n_coord, i) => {
+      return result.positions[i] - n_coord;
+    });
+    mesh.internalForces.val = result.internalForces;
     // getReactions transforms with the coordinate-derived (fixed) local frame,
     // so it must see the solver's raw forces, not the section-frame ones
     mesh.reactions.val = getReactions(
