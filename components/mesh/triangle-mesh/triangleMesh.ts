@@ -9,25 +9,30 @@ import {
   subtract,
   transpose,
 } from "mathjs";
-import * as triangle from "triangle-wasm";
 import { PolygonMeshTemplate } from "../data-model";
-import triangleWasmUrl from "./assets/triangle.wasm?url";
+// WASM wrapper for the in-house quality mesher (cpp/mesher.cpp).
+import createModule from "./cpp/built/mesher.js";
 
 type TriangleMeshParams = {
   maxTriangleArea: number;
 };
 
-// The Triangle WASM module must be loaded before any polygon can be meshed.
+// Quality refinement bound and the hard Steiner-point cap that guarantees
+// the mesher always terminates (see cpp/mesher.cpp).
+const MIN_ANGLE_DEG = 28;
+const MAX_STEINER_POINTS = 10000;
+
+// The mesher WASM module must be loaded before any polygon can be meshed.
 // Initialization is explicit (not at module load) so importing templates
 // under node/vitest never fetches the wasm file.
-let initialized = false;
+let mod: any = null;
 let initPromise: Promise<void> | null = null;
 
 export function initTriangleMesh(): Promise<void> {
   if (!initPromise) {
-    initPromise = triangle.init(triangleWasmUrl).then(() => {
-      initialized = true;
-    });
+    initPromise = (async () => {
+      mod = await createModule();
+    })();
   }
   return initPromise;
 }
@@ -59,9 +64,9 @@ export const triangleMesh: PolygonMeshTemplate<TriangleMeshParams> = {
   },
 
   getPolygonMesh: ({ points, params }) => {
-    if (!initialized)
+    if (!mod)
       throw new Error(
-        "Triangle WASM module not loaded yet. Call initTriangleMesh() first.",
+        "Mesher WASM module not loaded yet. Call initTriangleMesh() first.",
       );
 
     if (points.length < 3) return { nodes: [], elements: [] };
@@ -80,52 +85,44 @@ export const triangleMesh: PolygonMeshTemplate<TriangleMeshParams> = {
     const points2D = localPoints.map((p) => [p[0], p[1]]);
     const localZOffset = localPoints[0][2];
 
-    // Triangulate using Triangle: p = planar straight-line graph, z = zero
-    // based indexing, q30 = min angle 30°, a = max triangle area. Without the
-    // "j" flag Triangle preserves the input corners as output nodes 0..n-1 in
+    // The mesher preserves the input corners as output nodes 0..n-1 in
     // order — the polygon corner → node mapping in getMesh relies on this.
-    const triInputs = triangle.makeIO({
-      pointlist: points2D.flat(),
-      // @ts-ignore - segmentlist is accepted but missing from the typings
-      segmentlist: toSegments(points.length),
-    });
-    const triOutputs = triangle.makeIO();
-
-    triangle.triangulate(
-      `pzQOq30a${params.maxTriangleArea}`,
-      triInputs,
-      triOutputs,
+    const n = points2D.length;
+    const inPtr = mod._malloc(2 * n * 8);
+    mod.HEAPF64.set(points2D.flat(), inPtr / 8);
+    const code = mod._mesh_polygon(
+      inPtr,
+      n,
+      params.maxTriangleArea,
+      MIN_ANGLE_DEG,
+      MAX_STEINER_POINTS,
     );
+    mod._free(inPtr);
+    if (code !== 0) return { nodes: [], elements: [] };
 
-    const nodes = toNodes(triOutputs.pointlist).map(
-      (n) =>
-        multiply(transformationMatrix, [n[0], n[1], localZOffset]) as [
+    const nPts = mod._mesh_num_points();
+    const nTris = mod._mesh_num_triangles();
+    const ptsPtr = mod._mesh_points() / 8;
+    const trisPtr = mod._mesh_triangles() / 4;
+    const flatPoints = mod.HEAPF64.subarray(ptsPtr, ptsPtr + 2 * nPts);
+    const flatTris = mod.HEAP32.subarray(trisPtr, trisPtr + 3 * nTris);
+
+    const nodes = toNodes(flatPoints).map(
+      (p) =>
+        multiply(transformationMatrix, [p[0], p[1], localZOffset]) as [
           number,
           number,
           number,
         ],
     );
-    const elements = toElements(triOutputs.trianglelist);
-
-    triangle.freeIO(triInputs, true);
-    triangle.freeIO(triOutputs);
+    const elements = toElements(flatTris);
 
     return { nodes, elements };
   },
 };
 
 // Helpers
-function toSegments(cornersCount: number): number[] {
-  const segments: number[] = [];
-
-  for (let i = 0; i < cornersCount; i += 1) {
-    segments.push(i, (i + 1) % cornersCount);
-  }
-
-  return segments;
-}
-
-function toNodes(pointlist: number[]): number[][] {
+function toNodes(pointlist: ArrayLike<number>): number[][] {
   const nodes: number[][] = [];
 
   for (let i = 0; i < pointlist.length; i += 2) {
@@ -135,7 +132,7 @@ function toNodes(pointlist: number[]): number[][] {
   return nodes;
 }
 
-function toElements(trianglelist: number[]): number[][] {
+function toElements(trianglelist: ArrayLike<number>): number[][] {
   const elements: number[][] = [];
 
   for (let i = 0; i < trianglelist.length; i += 3) {
