@@ -102,10 +102,14 @@ function getGridFitPose({
   gridSize: number;
   viewing2D: boolean;
 }): { position: THREE.Vector3; target: THREE.Vector3 } {
-  const target = new THREE.Vector3(gridSize / 2, 0, gridSize / 2);
+  // Both views center on the ground grid (x-y at z=0). 2D looks straight down
+  // at it; the slight -y tilt keeps OrbitControls' theta stable (the view
+  // direction must not be parallel to camera.up) and orients the screen as a
+  // plan: +x right, +y up
+  const target = new THREE.Vector3(gridSize / 2, gridSize / 2, 0);
   const direction = viewing2D
-    ? new THREE.Vector3(0, -1, 0)
-    : new THREE.Vector3(0.423, -0.785, 0.453).normalize();
+    ? new THREE.Vector3(0, -0.02, 1).normalize()
+    : new THREE.Vector3(0, -0.785, 0.453).normalize();
   const fitDistance =
     getGridFitDistance({ camera, gridSize }) * (viewing2D ? 1.2 : 1.55);
 

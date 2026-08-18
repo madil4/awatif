@@ -42,16 +42,27 @@ await initTriangleMesh();
 const geometry: Geometry = {
   points: van.state(
     new Map([
-      [1, [3.5, 0, 2]],
-      [2, [3.5, 0, 8]],
-      [3, [5.5, 0, 2]],
-      [4, [6.5, 0, 2]],
-      [5, [6.5, 0, 8]],
-      [6, [5.5, 0, 8]],
+      // column bases, centered on the 10m grid
+      [1, [3, 3, 0]],
+      [2, [7, 3, 0]],
+      [3, [7, 7, 0]],
+      [4, [3, 7, 0]],
+      // column tops, shared with the slab corners
+      [5, [3, 3, 3]],
+      [6, [7, 3, 3]],
+      [7, [7, 7, 3]],
+      [8, [3, 7, 3]],
     ]),
   ),
-  lines: van.state(new Map([[1, [1, 2]]])),
-  polygons: van.state(new Map([[1, [3, 4, 5, 6]]])),
+  lines: van.state(
+    new Map([
+      [1, [1, 5]],
+      [2, [2, 6]],
+      [3, [3, 7]],
+      [4, [4, 8]],
+    ]),
+  ),
+  polygons: van.state(new Map([[1, [5, 6, 7, 8]]])),
   selection: van.state(null),
   designs: van.state(new Map()),
 };
@@ -62,27 +73,13 @@ const components: Components = van.state(
       ComponentsType.LOADS,
       [
         {
-          name: "Column Load",
-          templateId: "point-load",
-          geometry: [2],
-          params: {
-            Fx: 800,
-            Fy: 0,
-            Fz: -4000,
-            Mx: 0,
-            My: 0,
-            Mz: 0,
-          },
-          loadCase: "dead",
-        },
-        {
-          name: "Wall Load",
+          name: "Lateral Load",
           templateId: "point-load",
           geometry: [6],
           params: {
-            Fx: 4000,
+            Fx: 100,
             Fy: 0,
-            Fz: -4000,
+            Fz: 0,
             Mx: 0,
             My: 0,
             Mz: 0,
@@ -97,7 +94,7 @@ const components: Components = van.state(
         {
           name: "Fixed Support",
           templateId: "point-support",
-          geometry: [1, 3, 4],
+          geometry: [1, 2, 3, 4],
           params: {
             type: "fixed",
           },
@@ -110,9 +107,9 @@ const components: Components = van.state(
         {
           name: "Line Mesh",
           templateId: "line-mesh",
-          geometry: [1],
+          geometry: [1, 2, 3, 4],
           params: {
-            divisions: 8,
+            divisions: 4,
           },
         },
         {
@@ -120,7 +117,7 @@ const components: Components = van.state(
           templateId: "triangle-mesh",
           geometry: [1], // polygon id
           params: {
-            maxTriangleArea: 0.25,
+            maxTriangleArea: 0.5,
           },
         },
       ],
@@ -129,9 +126,9 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Concrete Frame",
+          name: "Concrete Columns",
           templateId: "concrete-member",
-          geometry: [1],
+          geometry: [1, 2, 3, 4],
         },
         {
           name: "Generic Shell",
@@ -150,7 +147,7 @@ const display: Display = {
   },
   displayScale: van.state(1),
   deformationScale: van.state(1),
-  view2D: van.state(true),
+  view2D: van.state(false),
   geometry: van.state(true),
   mesh: van.state(true),
   deformedShape: van.state(true),

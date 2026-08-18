@@ -352,16 +352,17 @@ export function getGeometry({
   });
 
   const hitPoint = van.state<number[] | null>(null);
+  // PlaneGeometry is XY by default, which matches the ground grid (z=0); its
+  // front face points toward +z so the camera can raycast it from above
   const gridObj = new THREE.Mesh(
     new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal),
   );
-  gridObj.rotateX(Math.PI / 2); // PlaneGeometry is XY by default; rotate into X-Z (front face toward -Y so camera can raycast it)
 
   van.derive(() => {
     const gridSize = grid.size.val;
     gridObj.geometry.dispose();
     gridObj.geometry = new THREE.PlaneGeometry(gridSize, gridSize);
-    gridObj.position.set(gridSize / 2, 0, gridSize / 2);
+    gridObj.position.set(gridSize / 2, gridSize / 2, 0);
     gridObj.updateMatrixWorld();
   });
 
@@ -429,8 +430,8 @@ export function getGeometry({
     if (gridHits.length) {
       const snap = getSnapFunction();
       const px = snap(gridHits[0].point.x);
-      const py = 0; // Grid is in X-Z plane, so Y should always be 0
-      const pz = snap(gridHits[0].point.z);
+      const py = snap(gridHits[0].point.y);
+      const pz = 0; // Grid is in the X-Y plane, so Z should always be 0
       const curr = hitPoint.rawVal;
       if (!curr || curr[0] !== px || curr[1] !== py || curr[2] !== pz) {
         hitPoint.val = [px, py, pz];
@@ -921,10 +922,13 @@ export function getGeometry({
     const point = pointsMap.get(dragPoint);
     if (!hp || !point) return;
 
-    if (point.every((val: number, i: number) => val === hp[i])) return;
+    // The grid hit gives the in-plane position; keep the point's own height
+    // so dragging a point above the grid doesn't slam it onto z=0
+    const target = [hp[0], hp[1], point[2]];
+    if (point.every((val: number, i: number) => val === target[i])) return;
 
     const newPointsMap = new Map(pointsMap);
-    newPointsMap.set(dragPoint, hp as [number, number, number]);
+    newPointsMap.set(dragPoint, target as [number, number, number]);
     geometry.points.val = newPointsMap;
   });
 
@@ -957,15 +961,15 @@ export function getGeometry({
 
     // Update coordinate tooltip
     if (isMarkerVisible) {
-      const [x, , z] = hitPoint.val;
-      let text = `(${x.toFixed(2)}, ${z.toFixed(2)})`;
+      const [x, y] = hitPoint.val;
+      let text = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
 
       if (mode.val === Mode.APPEND && appendPoint !== null) {
         const fromPoint = geometry.points.rawVal.get(appendPoint);
         if (fromPoint) {
           const dx = x - fromPoint[0];
-          const dy = 0 - fromPoint[1];
-          const dz = z - fromPoint[2];
+          const dy = y - fromPoint[1];
+          const dz = 0 - fromPoint[2];
           const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
           text += ` L: ${length.toFixed(2)}`;
         }

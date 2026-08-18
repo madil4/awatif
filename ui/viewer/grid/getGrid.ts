@@ -25,7 +25,8 @@ export function getGrid({
     const numDivisions = Math.round(size / spacing);
 
     gridHelper = new THREE.GridHelper(size, numDivisions, 0x505050, 0x303030);
-    gridHelper.position.set(size / 2, 0, size / 2);
+    gridHelper.rotation.x = Math.PI / 2;
+    gridHelper.position.set(size / 2, size / 2, 0);
     group.add(gridHelper);
 
     render();
