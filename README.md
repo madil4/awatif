@@ -28,7 +28,7 @@ npm run dev
 I help structural engineering teams turn repetitive work — reports, model checks, BIM handovers, calculations — into internal tools. See [awatif.co](https://awatif.co) for dates and details.
 
 - **Course — Agentic Structural Engineer** (€399) — turn your repetitive workflows into AI agents over four weeks. Monthly cohorts, with private reviews.
-- **Workshop — Quick Start** (€50) — build your first structural engineering app in two hours. Live, no coding required.
+- **Workshop — Quick Start** (€50) — build your first structural engineering app in two hours. Recorded, watch any time, no coding required.
 - **Custom automation** (pilots from €2,000) — I build the tool your team runs on. [Book a call](https://awatif.co).
 
 Prefer a direct message? Find me on [LinkedIn](https://www.linkedin.com/in/madil4/).
