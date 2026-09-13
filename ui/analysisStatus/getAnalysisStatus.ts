@@ -57,7 +57,7 @@ export function getAnalysisStatus(
     if (loading) {
       dot.className = "dot loading" + (hasWarning ? " warning" : "");
       label.textContent = "Solving";
-      tooltip.textContent = `Nonlinear analysis running${warningSuffix}`;
+      tooltip.textContent = `Analysis running${warningSuffix}`;
       return;
     }
 

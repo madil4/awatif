@@ -40,11 +40,7 @@ export function getComponentsBar({
             >
               Analysis
               ${activeAnalysis?.val
-                ? html`<span class="analysis-badge"
-                    >${activeAnalysis.val === "linear"
-                      ? "Linear"
-                      : "Nonlinear"}</span
-                  >`
+                ? html`<span class="analysis-badge">Linear</span>`
                 : ""}
             </button>
           `

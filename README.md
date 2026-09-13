@@ -6,7 +6,7 @@ AI-native, MIT-licensed, and no install required: model frames and shells, solve
 
 ## What's inside
 
-- **`components/`** — the engineering core: `analysis` (C++/WASM linear solver, remote nonlinear solver), `design` (Eurocode concrete, steel, timber, and shell checks plus report generation), `mesh`, `loads`, `supports`, `releases`, and `imperfections`.
+- **`components/`** — the engineering core: `analysis` (C++/WASM linear solver), `design` (Eurocode concrete, steel, timber, and shell checks plus report generation), `mesh`, `loads`, `supports`, `releases`, and `imperfections`.
 - **`ui/`** — the interface: 3D viewer, canvas and canvas bar, layout, display controls, analysis status, and undo.
 - **`main.ts`** — the app entry point that wires components and UI together.
 

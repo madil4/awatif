@@ -1,5 +1,4 @@
-// Settings for the nonlinear solve. The hosted solver caps `maximum_iter` at 500,
-// so the default matches that ceiling rather than exceeding it.
+// Settings for the nonlinear solve.
 export type SimSettings = {
   tol: number;
   maximum_iter: number;

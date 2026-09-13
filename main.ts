@@ -13,7 +13,6 @@ import {
   getElementsProps,
   getReport,
   getPositionsAndForcesCpp,
-  getNlPositionsAndForcesRemote,
   initPositionsAndForcesCpp,
   initTriangleMesh,
   getReactions,
@@ -265,38 +264,14 @@ van.derive(async () => {
     );
 
     // Positions events
-    const selectedAnalysis = activeAnalysis.val;
-    const hasShells = mesh.elements.val.some((e) => e.length === 3);
-    if (selectedAnalysis === "nonlinear") {
-      analysisStatus.val = {
-        success: true,
-        loading: true,
-        ...warningPayload,
-      };
-    }
-
-    const result: {
-      positions: Mesh["positions"]["val"];
-      internalForces: Mesh["internalForces"]["val"];
-      iterationCount?: number;
-    } =
-      selectedAnalysis === "nonlinear"
-        ? await getNlPositionsAndForcesRemote(
-            mesh.nodes.val,
-            mesh.elements.val,
-            mesh.loads.val,
-            mesh.supports.val,
-            mesh.elementsProps.val,
-            mesh.releases.val,
-          )
-        : getPositionsAndForcesCpp(
-            mesh.nodes.val,
-            mesh.elements.val,
-            mesh.loads.val,
-            mesh.supports.val,
-            mesh.elementsProps.val,
-            mesh.releases.val,
-          );
+    const result = getPositionsAndForcesCpp(
+      mesh.nodes.val,
+      mesh.elements.val,
+      mesh.loads.val,
+      mesh.supports.val,
+      mesh.elementsProps.val,
+      mesh.releases.val,
+    );
 
     if (analysis !== latestAnalysis) return;
 
@@ -322,8 +297,6 @@ van.derive(async () => {
 
     analysisStatus.val = {
       success: true,
-      iterations:
-        selectedAnalysis === "nonlinear" ? result.iterationCount : undefined,
       ...warningPayload,
     };
   } catch (e) {
