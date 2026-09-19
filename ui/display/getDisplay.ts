@@ -1,9 +1,14 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
+import { live } from "lit-html/directives/live.js";
 import { Grid } from "../viewer/grid/getGrid";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
-import { LoadSelection, LOAD_SELECTION_LABELS } from "@awatif/components";
+import {
+  ActiveLoadSelection,
+  Components,
+  ComponentsType,
+} from "@awatif/components";
 
 import "./styles.css";
 
@@ -24,13 +29,64 @@ export type Display = {
   extrude: State<boolean>;
   pointResult: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
-  loadCase: State<LoadSelection>;
+  activeLoadSelection: State<ActiveLoadSelection>;
 };
 
-export function getDisplay({ display }: { display: Display }): HTMLElement {
+export function getDisplay({
+  display,
+  components,
+}: {
+  display: Display;
+  components: Components;
+}): HTMLElement {
   const container = document.createElement("div");
 
   const grid = display.grid;
+
+  // Options come from the load case / load combination components, so the list
+  // reflects whatever the user has defined
+  const loadSelectionSelect = () => {
+    const loadCases = components.val.get(ComponentsType.LOAD_CASES) ?? [];
+    const combinations =
+      components.val.get(ComponentsType.LOAD_COMBINATIONS) ?? [];
+    const selection = display.activeLoadSelection.val;
+
+    if (loadCases.length === 0 && combinations.length === 0)
+      return html`<select disabled>
+        <option>No load cases defined</option>
+      </select>`;
+
+    const option = (kind: "case" | "combination", id: string, name: string) =>
+      html`<option value=${`${kind}:${id}`}>${name}</option>`;
+
+    // The selection also changes programmatically (e.g. adding a load while a
+    // combination is active), so bind the value rather than the attribute
+    return html`
+      <select
+        .value=${live(selection ? `${selection.kind}:${selection.id}` : "")}
+        @change=${(e: Event) => {
+          const value = (e.target as HTMLSelectElement).value;
+          const separator = value.indexOf(":");
+          const kind = value.slice(0, separator) as "case" | "combination";
+          display.activeLoadSelection.val = {
+            kind,
+            id: value.slice(separator + 1),
+          };
+        }}
+      >
+        ${loadCases.length > 0
+          ? html`<optgroup label="Load Cases">
+              ${loadCases.map((c) => option("case", c.id ?? "", c.name))}
+            </optgroup>`
+          : null}
+        ${combinations.length > 0
+          ? html`<optgroup label="Load Combinations">
+              ${combinations.map((c) => option("combination", c.id ?? "", c.name))}
+            </optgroup>`
+          : null}
+      </select>
+    `;
+  };
 
   const template = () => html`
     <details id="display">
@@ -264,22 +320,7 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <label>Load Case</label>
-        <select
-          @change=${(e: Event) =>
-            (display.loadCase.val = (e.target as HTMLSelectElement)
-              .value as LoadSelection)}
-        >
-          ${Object.entries(LOAD_SELECTION_LABELS).map(
-            ([value, label]) => html`
-              <option
-                value=${value}
-                ?selected=${display.loadCase.val === value}
-              >
-                ${label}
-              </option>
-            `,
-          )}
-        </select>
+        ${loadSelectionSelect()}
       </div>
     </details>
   `;

@@ -1,5 +1,4 @@
 import type { State } from "vanjs-core";
-import { LoadCase } from "./loads/data-model";
 
 // Geometry
 export type Geometry = {
@@ -78,6 +77,8 @@ export enum ComponentsType {
   IMPERFECTIONS,
   SPECIAL,
   LOCAL_AXES,
+  LOAD_CASES,
+  LOAD_COMBINATIONS,
 }
 
 export type ActiveComponent = {
@@ -91,7 +92,7 @@ export type ComponentEntry = {
   templateId: string;
   geometry: number[];
   params?: Record<string, unknown>;
-  loadCase?: LoadCase;
+  loadCase?: string; // id of a LOAD_CASES component
 };
 
 export type Components = State<Map<ComponentsType, ComponentEntry[]>>;

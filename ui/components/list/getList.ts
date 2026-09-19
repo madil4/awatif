@@ -6,8 +6,8 @@ import {
   templates as Templates,
   ComponentsType,
   ActiveComponent,
-  LoadCase,
-  LoadSelection,
+  ActiveLoadSelection,
+  LoadCombinationParams,
 } from "@awatif/components";
 
 import "./styles.css";
@@ -16,11 +16,12 @@ type TaggedItem = {
   type: ComponentsType;
   index: number;
   item: {
+    id?: string;
     name: string;
     templateId: string;
     geometry: number[];
     params?: Record<string, unknown>;
-    loadCase?: LoadCase;
+    loadCase?: string;
   };
 };
 
@@ -30,14 +31,14 @@ export function getList({
   components,
   activeComponent,
   templates,
-  loadCase,
+  activeLoadSelection,
 }: {
   types: State<ComponentsType[]>;
   geometry: Geometry;
   components: Components;
   activeComponent: State<ActiveComponent>;
   templates?: typeof Templates;
-  loadCase?: State<LoadSelection>;
+  activeLoadSelection?: State<ActiveLoadSelection>;
 }): HTMLElement {
   const container = document.createElement("div");
   const editingIndex = van.state<number | null>(null);
@@ -48,13 +49,18 @@ export function getList({
     for (const type of types.val) {
       const list = components.val.get(type) ?? [];
       list.forEach((item, i) => {
-        // Filter loads by active load case; hide all loads when combination is active
-        if (type === ComponentsType.LOADS && loadCase) {
-          const isCombination =
-            loadCase.val === "uls-live" || loadCase.val === "uls-wind";
-          if (isCombination || (item.loadCase ?? "dead") !== loadCase.val) {
+        // Filter loads by active load case; hide all loads when a combination
+        // is active. Loads with no case stay visible so they remain reachable
+        // for assignment.
+        if (type === ComponentsType.LOADS && activeLoadSelection) {
+          const selection = activeLoadSelection.val;
+          if (selection?.kind === "combination") return;
+          if (
+            selection?.kind === "case" &&
+            item.loadCase !== undefined &&
+            item.loadCase !== selection.id
+          )
             return;
-          }
         }
         result.push({ type, index: i, item });
       });
@@ -107,7 +113,7 @@ export function getList({
   // Reset activeComponent when types or load case change
   van.derive(() => {
     types.val;
-    loadCase?.val;
+    activeLoadSelection?.val;
     activeComponent.val = null;
   });
 
@@ -168,14 +174,13 @@ export function getList({
     // polygon IDs are independent number spaces, so a line load and a point
     // load can both legitimately reference index 3. For load components, also
     // restrict to siblings in the same load case (different load cases may share a node).
-    const activeLoadCase = current.loadCase ?? "dead";
     const updatedList = list.map((c, i) => {
       if (i === active.index) return { ...c, geometry: [...selectedGeometry] };
       const sameKind = getComponentKind(active.type, c) === activeKind;
       if (!sameKind) return c;
       const sameLoadCase =
         active.type !== ComponentsType.LOADS ||
-        (c.loadCase ?? "dead") === activeLoadCase;
+        c.loadCase === current.loadCase;
       if (!sameLoadCase) return c;
       return {
         ...c,
@@ -399,23 +404,41 @@ export function getList({
       ...templates?.get(targetType)?.get(templateId)?.defaultParams,
     };
     const newComponent: {
+      id?: string;
       name: string;
       templateId: string;
       geometry: number[];
       params: Record<string, unknown>;
-      loadCase?: LoadCase;
+      loadCase?: string;
     } = {
       name,
       templateId,
       geometry: [],
       params: defaultParams,
     };
-    // Auto-assign active load case when creating load components
-    if (targetType === ComponentsType.LOADS && loadCase) {
-      const val = loadCase.val;
-      const isCombination = val === "uls-live" || val === "uls-wind";
-      newComponent.loadCase = isCombination ? "dead" : (val as LoadCase);
-      if (isCombination) loadCase.val = "dead";
+
+    // Load cases and combinations are referenced by id, so they need a stable one
+    if (
+      targetType === ComponentsType.LOAD_CASES ||
+      targetType === ComponentsType.LOAD_COMBINATIONS
+    )
+      newComponent.id = crypto.randomUUID();
+
+    // Auto-assign active load case when creating load components. Loads cannot
+    // be authored into a combination, so fall back to the first load case.
+    if (targetType === ComponentsType.LOADS && activeLoadSelection) {
+      const selection = activeLoadSelection.val;
+      if (selection?.kind === "case") {
+        newComponent.loadCase = selection.id;
+      } else if (selection?.kind === "combination") {
+        const firstCase = (
+          components.val.get(ComponentsType.LOAD_CASES) ?? []
+        ).find((c) => c.id !== undefined);
+        if (firstCase?.id) {
+          newComponent.loadCase = firstCase.id;
+          activeLoadSelection.val = { kind: "case", id: firstCase.id };
+        }
+      }
     }
     const updated = [...list, newComponent];
     components.val = new Map(components.val).set(targetType, updated);
@@ -450,7 +473,46 @@ export function getList({
 
     const list = components.val.get(tagged.type) ?? [];
     const updated = list.filter((_, i) => i !== tagged.index);
-    components.val = new Map(components.val).set(tagged.type, updated);
+    const updatedComponents = new Map(components.val).set(tagged.type, updated);
+
+    const deletedId = tagged.item.id;
+
+    // A deleted load case must not leave dangling references behind
+    if (tagged.type === ComponentsType.LOAD_CASES && deletedId) {
+      updatedComponents.set(
+        ComponentsType.LOADS,
+        (updatedComponents.get(ComponentsType.LOADS) ?? []).map((c) =>
+          c.loadCase === deletedId ? { ...c, loadCase: undefined } : c,
+        ),
+      );
+
+      updatedComponents.set(
+        ComponentsType.LOAD_COMBINATIONS,
+        (updatedComponents.get(ComponentsType.LOAD_COMBINATIONS) ?? []).map(
+          (c) => {
+            const entries =
+              (c.params as LoadCombinationParams | undefined)?.entries ?? [];
+            if (!entries.some((e) => e.loadCaseId === deletedId)) return c;
+            return {
+              ...c,
+              params: {
+                ...c.params,
+                entries: entries.filter((e) => e.loadCaseId !== deletedId),
+              },
+            };
+          },
+        ),
+      );
+    }
+
+    if (
+      deletedId &&
+      activeLoadSelection &&
+      activeLoadSelection.val?.id === deletedId
+    )
+      activeLoadSelection.val = null;
+
+    components.val = updatedComponents;
   }
 
   return container;

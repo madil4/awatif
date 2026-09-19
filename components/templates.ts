@@ -3,6 +3,8 @@ import { triangleMesh } from "./mesh/triangle-mesh/triangleMesh";
 import { imperfections } from "./imperfections/imperfections";
 import { pointLoad } from "./loads/point-load/pointLoad";
 import { distributedLoad } from "./loads/distributed-load/distributedLoad";
+import { loadCase } from "./load-cases/load-case/loadCase";
+import { loadCombination } from "./load-combinations/load-combination/loadCombination";
 import { pointSupport } from "./supports/point-support/pointSupport";
 import { releases } from "./releases/releases/releases";
 import { localAxes } from "./local-axes/local-axes/localAxes";
@@ -28,6 +30,11 @@ export const templates = new Map<ComponentsType, Map<string, any>>([
       ["point-load", pointLoad],
       ["distributed-load", distributedLoad],
     ]),
+  ],
+  [ComponentsType.LOAD_CASES, new Map<string, any>([["load-case", loadCase]])],
+  [
+    ComponentsType.LOAD_COMBINATIONS,
+    new Map<string, any>([["load-combination", loadCombination]]),
   ],
   [ComponentsType.SUPPORTS, new Map([["point-support", pointSupport]])],
   [ComponentsType.RELEASES, new Map([["releases", releases]])],

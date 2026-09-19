@@ -1,6 +1,11 @@
 import { html, render } from "lit-html";
 import van, { State } from "vanjs-core";
-import { ComponentsType, LoadSelection, LOAD_SELECTION_LABELS } from "@awatif/components";
+import {
+  ComponentsType,
+  ActiveLoadSelection,
+  Components,
+  getSelectionName,
+} from "@awatif/components";
 import { ActiveAnalysis } from "../analysisList/getAnalysisList";
 import { getAnalysisStatus, AnalysisStatus } from "../../analysisStatus/getAnalysisStatus";
 
@@ -9,13 +14,15 @@ import "./styles.css";
 export function getComponentsBar({
   componentsBarMode,
   activeAnalysis,
-  loadCase,
+  activeLoadSelection,
+  components,
   analysisStatus,
   display,
 }: {
   componentsBarMode: State<ComponentsType | null>;
   activeAnalysis?: ActiveAnalysis;
-  loadCase?: State<LoadSelection>;
+  activeLoadSelection?: State<ActiveLoadSelection>;
+  components?: Components;
   analysisStatus?: AnalysisStatus;
   display?: { lineIndex: State<boolean> };
 }): HTMLElement {
@@ -62,11 +69,28 @@ export function getComponentsBar({
               : ComponentsType.LOADS)}
       >
         Loads
-        ${loadCase?.val && loadCase.val !== "uls-live" && loadCase.val !== "uls-wind"
+        ${activeLoadSelection?.val?.kind === "case" && components
           ? html`<span class="analysis-badge"
-              >${LOAD_SELECTION_LABELS[loadCase.val]}</span
+              >${getSelectionName(
+                components.val,
+                activeLoadSelection.val,
+              )}</span
             >`
           : ""}
+      </button>
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.LOAD_CASES
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.LOAD_CASES
+              ? null
+              : ComponentsType.LOAD_CASES)}
+      >
+        Load Cases
       </button>
 
       <button

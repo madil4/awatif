@@ -21,7 +21,7 @@ import {
   Geometry,
   Mesh,
   ComponentsType,
-  LoadSelection,
+  ActiveLoadSelection,
   templates,
 } from "@awatif/components";
 import {
@@ -56,8 +56,53 @@ const geometry: Geometry = {
   designs: van.state(new Map()),
 };
 
+const deadCaseId = crypto.randomUUID();
+const liveCaseId = crypto.randomUUID();
+const windCaseId = crypto.randomUUID();
+const uls1Id = crypto.randomUUID();
+const uls2Id = crypto.randomUUID();
+
 const components: Components = van.state(
   new Map([
+    [
+      ComponentsType.LOAD_CASES,
+      [
+        { id: deadCaseId, name: "Dead", templateId: "load-case", geometry: [] },
+        { id: liveCaseId, name: "Live", templateId: "load-case", geometry: [] },
+        { id: windCaseId, name: "Wind", templateId: "load-case", geometry: [] },
+      ],
+    ],
+    [
+      ComponentsType.LOAD_COMBINATIONS,
+      [
+        {
+          id: uls1Id,
+          name: "ULS-1",
+          templateId: "load-combination",
+          geometry: [],
+          params: {
+            entries: [
+              { loadCaseId: deadCaseId, factor: 1.35 },
+              { loadCaseId: liveCaseId, factor: 1.5 },
+              { loadCaseId: windCaseId, factor: 0.9 },
+            ],
+          },
+        },
+        {
+          id: uls2Id,
+          name: "ULS-2",
+          templateId: "load-combination",
+          geometry: [],
+          params: {
+            entries: [
+              { loadCaseId: deadCaseId, factor: 1.35 },
+              { loadCaseId: liveCaseId, factor: 1.05 },
+              { loadCaseId: windCaseId, factor: 1.5 },
+            ],
+          },
+        },
+      ],
+    ],
     [
       ComponentsType.LOADS,
       [
@@ -73,7 +118,7 @@ const components: Components = van.state(
             My: 0,
             Mz: 0,
           },
-          loadCase: "dead",
+          loadCase: deadCaseId,
         },
         {
           name: "Wall Load",
@@ -87,7 +132,7 @@ const components: Components = van.state(
             My: 0,
             Mz: 0,
           },
-          loadCase: "dead",
+          loadCase: deadCaseId,
         },
       ],
     ],
@@ -163,7 +208,10 @@ const display: Display = {
   extrude: van.state(false),
   pointResult: van.state("None"),
   lineResult: van.state("None"),
-  loadCase: van.state<LoadSelection>("dead"),
+  activeLoadSelection: van.state<ActiveLoadSelection>({
+    kind: "case",
+    id: deadCaseId,
+  }),
 };
 
 const mesh: Mesh = {
@@ -229,7 +277,7 @@ van.derive(async () => {
       components: components.val,
       geometryMapping: mesh.geometryMapping.val,
       templates,
-      activeLoadCase: display.loadCase?.val,
+      activeSelection: display.activeLoadSelection?.val,
       nodes: mesh.nodes.val,
       elements: mesh.elements.val,
     });
@@ -359,7 +407,11 @@ van.derive(() => {
 // Components events
 const componentsBarMode = van.state<ComponentsType | null>(null);
 van.derive(() => {
-  if (componentsBarMode.val === ComponentsType.LOADS) display.loads.val = true;
+  if (
+    componentsBarMode.val === ComponentsType.LOADS ||
+    componentsBarMode.val === ComponentsType.LOAD_CASES
+  )
+    display.loads.val = true;
   if (componentsBarMode.val === ComponentsType.SUPPORTS)
     display.supports.val = true;
 });
@@ -377,7 +429,7 @@ van.derive(() => {
       internalForces: mesh.internalForces.val,
       designs: geometry.designs.val,
       templates,
-      activeLoadCase: display.loadCase?.val,
+      activeSelection: display.activeLoadSelection?.val,
     });
   } else {
     display.lineIndex.val = false;
@@ -390,7 +442,7 @@ van.derive(() => {
 document.body.append(
   getLayout({
     viewer: getViewer({ geometry, mesh, components, display, templates }),
-    display: getDisplay({ display }),
+    display: getDisplay({ display, components }),
     header: [
       getCanvasBar({
         canvasButton,

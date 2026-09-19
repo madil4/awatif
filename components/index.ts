@@ -7,15 +7,21 @@ export type {
 } from "./data-model";
 export { ComponentsType } from "./data-model";
 
-export type {
-  LoadCase,
-  LoadCombination,
-  LoadSelection,
-} from "./loads/data-model";
+export type { LoadTemplate } from "./loads/data-model";
+export type { ActiveLoadSelection } from "./loads/activeSelection";
 export {
-  ULS_COMBINATIONS,
-  LOAD_SELECTION_LABELS,
-} from "./loads/data-model";
+  getCombinationFactors,
+  resolveLoadInclusion,
+  getSelectionName,
+  getCombinationBreakdown,
+} from "./loads/activeSelection";
+
+export type { LoadCaseTemplate } from "./load-cases/data-model";
+export type {
+  LoadCombinationEntry,
+  LoadCombinationParams,
+  LoadCombinationTemplate,
+} from "./load-combinations/data-model";
 
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
