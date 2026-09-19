@@ -5,7 +5,9 @@ import {
   Components,
   templates as Templates,
   ComponentsType,
-  LoadSelection,
+  ActiveLoadSelection,
+  getCombinationFactors,
+  resolveLoadInclusion,
 } from "@awatif/components";
 
 export function getLoads({
@@ -21,7 +23,10 @@ export function getLoads({
   templates: typeof Templates;
   displayScale: State<number>;
   render: () => void;
-  display?: { loads: State<boolean>; loadCase?: State<LoadSelection> };
+  display?: {
+    loads: State<boolean>;
+    activeLoadSelection?: State<ActiveLoadSelection>;
+  };
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -42,16 +47,17 @@ export function getLoads({
 
     const s = displayScale.val;
     const allLoadComponents = components.val.get(ComponentsType.LOADS) ?? [];
-    const activeLoadCase = display?.loadCase?.val;
-    const isCombination =
-      activeLoadCase === "uls-live" || activeLoadCase === "uls-wind";
-    // Combinations show all loads; individual cases filter to that case
-    const loadComponents =
-      activeLoadCase && !isCombination
-        ? allLoadComponents.filter(
-            (c) => (c.loadCase ?? "dead") === activeLoadCase,
-          )
-        : allLoadComponents;
+    // Show exactly the loads the active selection analyses, at their
+    // unfactored magnitudes
+    const selection = display?.activeLoadSelection?.val ?? null;
+    const combinationFactors =
+      selection?.kind === "combination"
+        ? getCombinationFactors(components.val, selection.id)
+        : undefined;
+    const loadComponents = allLoadComponents.filter(
+      (c) =>
+        resolveLoadInclusion(c.loadCase, selection, combinationFactors).included,
+    );
     const points = geometry.points.val;
     const lines = geometry.lines.val;
 

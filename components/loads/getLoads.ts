@@ -1,16 +1,16 @@
+import { LoadTemplate } from "./data-model";
 import {
-  LoadTemplate,
-  LoadSelection,
-  LoadCombination,
-  ULS_COMBINATIONS,
-} from "./data-model";
+  ActiveLoadSelection,
+  getCombinationFactors,
+  resolveLoadInclusion,
+} from "./activeSelection";
 import { Components, ComponentsType } from "../data-model";
 
 export function getLoads({
   components,
   geometryMapping,
   templates,
-  activeLoadCase,
+  activeSelection,
   nodes,
   elements,
 }: {
@@ -20,7 +20,7 @@ export function getLoads({
     lineToElements: Map<number, number[]>;
   };
   templates: Map<ComponentsType, Map<string, any>>;
-  activeLoadCase?: LoadSelection;
+  activeSelection?: ActiveLoadSelection;
   nodes?: number[][];
   elements?: number[][];
 }): Map<number, [number, number, number, number, number, number]> {
@@ -29,17 +29,12 @@ export function getLoads({
     [number, number, number, number, number, number]
   >();
 
-  const allLoadComponents = components.get(ComponentsType.LOADS) ?? [];
-  const isCombination =
-    activeLoadCase === "uls-live" || activeLoadCase === "uls-wind";
-
-  // Combinations include all loads; individual cases filter to that case
-  const loadComponents =
-    activeLoadCase && !isCombination
-      ? allLoadComponents.filter(
-          (c) => (c.loadCase ?? "dead") === activeLoadCase,
-        )
-      : allLoadComponents;
+  const loadComponents = components.get(ComponentsType.LOADS) ?? [];
+  const selection = activeSelection ?? null;
+  const combinationFactors =
+    selection?.kind === "combination"
+      ? getCombinationFactors(components, selection.id)
+      : undefined;
 
   loadComponents.forEach((component) => {
     const template = templates
@@ -47,17 +42,19 @@ export function getLoads({
       ?.get(component.templateId) as LoadTemplate<any>;
     if (!template) return;
 
+    // A case applies its loads unfactored; a combination factors each case
+    const { included, factor } = resolveLoadInclusion(
+      component.loadCase,
+      selection,
+      combinationFactors,
+    );
+    if (!included) return;
+
     const { load: rawLoad, coordinateSystem = "local" } = template.getLoad({
       params: ({ ...template.defaultParams, ...component.params }) as Parameters<
         typeof template.getLoad
       >[0]["params"],
     });
-
-    // Combinations apply per-case factors; individual cases are unfactored
-    const componentCase = component.loadCase ?? "dead";
-    const factor = isCombination
-      ? ULS_COMBINATIONS[activeLoadCase as LoadCombination][componentCase]
-      : 1;
 
     if (template.geometryKind === "line") {
       // Line-based template: convert distributed load to equivalent global nodal loads.
