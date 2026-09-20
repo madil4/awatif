@@ -55,6 +55,7 @@ await createApp({
 | `display` | Plain values (`workPlane`, `view2D`, `deformationScale`, `activeLoadCase`, …) |
 | `canvasButtons` | Canvas bar buttons, default `["Report"]` |
 | `analysis` | `"linear"` (default) or `"nonlinear"` |
+| `plugins` | Third-party component packages; their templates join the built-ins |
 | `container` | Mount target, default `document.body`; `null` returns the element unmounted |
 
 `createApp` returns the live state — `geometry`, `components`, `mesh`,
@@ -62,11 +63,68 @@ await createApp({
 `element` — so anything the template does not cover can still be driven
 directly.
 
+## Plugins
+
+Custom components live in their own package — no fork, no pull request. A
+plugin is a name and a set of templates, keyed by component type:
+
+```ts
+// awatif-plugin-wind/index.ts
+import { ComponentsType, definePlugin } from "@awatif/components";
+import { areaLoad } from "./areaLoad";
+
+export default definePlugin({
+  name: "awatif-plugin-wind",
+  templates: {
+    [ComponentsType.LOADS]: { "wind:area-load": areaLoad },
+  },
+});
+```
+
+An app opts in by passing it to `createApp`, and from there the component is
+indistinguishable from a built-in — it shows up in the components bar, the
+viewer, the analysis pipeline and the report:
+
+```ts
+import { createApp, portalFrame } from "./templates";
+import wind from "awatif-plugin-wind";
+
+await createApp({
+  ...portalFrame,
+  plugins: [wind],
+  loads: [
+    {
+      name: "Gust",
+      templateId: "wind:area-load",
+      geometry: [2],
+      params: { pressure: 1.2 },
+      loadCase: "Wind",
+    },
+  ],
+});
+```
+
+A template implements the interface of its component type — `LoadTemplate`,
+`MeshTemplate`, `DesignTemplate`, `LocalAxesTemplate`, … all exported from
+`@awatif/components`.
+
+Template ids are global, so prefix them with the plugin's namespace
+(`wind:area-load`). `resolveTemplates` throws if a plugin shadows a built-in
+or another plugin, rather than silently replacing it. It can also be called
+directly when composing the pieces by hand:
+
+```ts
+const templates = resolveTemplates([wind]);
+runAnalysis({ geometry, components, mesh, display, analysisStatus, activeAnalysis, templates });
+```
+
 ## Models
 
 Ready-made starting points in `models/`: `blank`, `simpleBeam`, `portalFrame`,
-`flatSlab`, `demo` (the one `main.ts` runs). They are plain `AppConfig`
-objects, so spreading and overriding works:
+`flatSlab`, `demo` (the one `main.ts` runs), and `customComponent` — a
+duopitch frame whose snow load comes from a plugin (`models/custom-component/`),
+the worked example of the section above. They are plain `AppConfig` objects,
+so spreading and overriding works:
 
 ```ts
 await createApp({ ...simpleBeam, analysis: "nonlinear" });

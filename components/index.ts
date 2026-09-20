@@ -65,3 +65,5 @@ export {
 } from "./design/helpers";
 
 export { templates } from "./templates";
+export { definePlugin, resolveTemplates } from "./plugins";
+export type { ComponentTemplates, Plugin } from "./plugins";

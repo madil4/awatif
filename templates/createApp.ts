@@ -4,7 +4,7 @@ import {
   getReport,
   initPositionsAndForcesCpp,
   initTriangleMesh,
-  templates as componentTemplates,
+  resolveTemplates,
   type Components,
   type Geometry,
   type Mesh,
@@ -45,6 +45,10 @@ export async function createApp(config: AppConfig = {}): Promise<App> {
   await initPositionsAndForcesCpp();
   await initTriangleMesh();
 
+  // Built-in components plus whatever the app's plugins bring; from here on
+  // nothing distinguishes the two
+  const componentTemplates = resolveTemplates(config.plugins);
+
   const { geometry, components, display, mesh, loadCaseIds } =
     createStates(config);
 
@@ -62,6 +66,7 @@ export async function createApp(config: AppConfig = {}): Promise<App> {
     display,
     analysisStatus,
     activeAnalysis,
+    templates: componentTemplates,
   });
 
   // Components events

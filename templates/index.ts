@@ -13,6 +13,9 @@ export type { LoadCaseIds } from "./createStates";
 
 export { runAnalysis } from "./runAnalysis";
 
+export { definePlugin, resolveTemplates } from "@awatif/components";
+export type { ComponentTemplates, Plugin } from "@awatif/components";
+
 export type {
   AppConfig,
   DisplayOptions,
