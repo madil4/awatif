@@ -2,6 +2,7 @@ import type {
   ComponentEntry,
   ComponentsType,
   ActiveLoadSelection,
+  Plugin,
 } from "@awatif/components";
 import type { Display, WorkPlane } from "@awatif/ui";
 
@@ -77,8 +78,11 @@ export type AppConfig = Model & {
   // Buttons in the canvas bar; "Report" is wired to the design report
   canvasButtons?: string[];
   analysis?: "linear" | "nonlinear";
+  // Third-party component packages; their templates join the built-ins and
+  // are referenced by `templateId` like any other
+  plugins?: Plugin[];
   // Where to mount the layout; `null` mounts nothing and returns the element
   container?: HTMLElement | null;
 };
 
-export type { ActiveLoadSelection };
+export type { ActiveLoadSelection, Plugin };

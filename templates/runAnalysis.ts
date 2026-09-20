@@ -13,7 +13,8 @@ import {
   getReactions,
   getReleases,
   getSupports,
-  templates as componentTemplates,
+  templates as builtInTemplates,
+  type ComponentTemplates,
   type Components,
   type Geometry,
   type Mesh,
@@ -29,6 +30,7 @@ export function runAnalysis({
   display,
   analysisStatus,
   activeAnalysis,
+  templates = builtInTemplates,
 }: {
   geometry: Geometry;
   components: Components;
@@ -36,6 +38,8 @@ export function runAnalysis({
   display: Display;
   analysisStatus: AnalysisStatus;
   activeAnalysis: State<"linear" | "nonlinear">;
+  // Built-ins plus any plugin templates; see `resolveTemplates`
+  templates?: ComponentTemplates;
 }): void {
   let latestAnalysis = 0;
 
@@ -45,7 +49,7 @@ export function runAnalysis({
     (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) => {
       // Only line-kind design components reference line IDs (polygon designs
       // reference polygon IDs, an independent number space)
-      const template = componentTemplates
+      const template = templates
         .get(ComponentsType.DESIGN)
         ?.get(c.templateId);
       if (template?.geometryKind !== "line") return;
@@ -65,7 +69,7 @@ export function runAnalysis({
           polygons: geometry.polygons.val,
         },
         components: components.val,
-        templates: componentTemplates,
+        templates,
       });
 
       mesh.nodes.val = meshData.nodes;
@@ -76,7 +80,7 @@ export function runAnalysis({
       mesh.loads.val = getLoads({
         components: components.val,
         geometryMapping: mesh.geometryMapping.val,
-        templates: componentTemplates,
+        templates,
         activeSelection: display.activeLoadSelection?.val,
         nodes: mesh.nodes.val,
         elements: mesh.elements.val,
@@ -86,21 +90,21 @@ export function runAnalysis({
       mesh.supports.val = getSupports({
         components: components.val,
         geometryMapping: mesh.geometryMapping.val,
-        templates: componentTemplates,
+        templates,
       });
 
       // Releases events
       mesh.releases.val = getReleases({
         components: components.val,
         geometryMapping: mesh.geometryMapping.val,
-        templates: componentTemplates,
+        templates,
       });
 
       // Local axes events
       const localAxes = getLocalAxes({
         components: components.val,
         geometryMapping: mesh.geometryMapping.val,
-        templates: componentTemplates,
+        templates,
       });
 
       // Elements properties events
@@ -109,7 +113,7 @@ export function runAnalysis({
         getElementsProps({
           components: components.val,
           geometryMapping: mesh.geometryMapping.val,
-          templates: componentTemplates,
+          templates,
           elements: mesh.elements.val,
         }),
         localAxes,
@@ -199,7 +203,7 @@ export function runAnalysis({
         internalForces: mesh.internalForces.val,
       },
       components: components.val,
-      templates: componentTemplates,
+      templates,
     });
   });
 }

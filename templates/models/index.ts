@@ -3,3 +3,4 @@ export { simpleBeam } from "./simpleBeam";
 export { portalFrame } from "./portalFrame";
 export { flatSlab } from "./flatSlab";
 export { demo } from "./demo";
+export { customComponent, snowPlugin } from "./custom-component";
