@@ -10,6 +10,7 @@ import {
 } from "../viewer/common/workPlane";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
+import { centerModel } from "../viewer/centerModel/getCenterModel";
 import {
   ActiveLoadSelection,
   Components,
@@ -357,6 +358,16 @@ export function getDisplay({
       <div class="display-item">
         <label>Load Case</label>
         ${loadSelectionSelect()}
+      </div>
+      <div class="display-item">
+        <label>Model</label>
+        <button
+          class="display-button"
+          title="Center the model in the view and scale annotations to match"
+          @click=${() => centerModel()}
+        >
+          Center
+        </button>
       </div>
     </details>
   `;
