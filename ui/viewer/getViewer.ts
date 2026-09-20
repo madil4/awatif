@@ -20,6 +20,8 @@ import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrude } from "./extrude/getExtrude";
 import { getView2D } from "./view2D/getView2D";
+import { setupCenterModel } from "./centerModel/getCenterModel";
+import { createCameraAnimator } from "./common/camera";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -71,10 +73,22 @@ export function getViewer({
   const workPlane = display.workPlane;
   const displayScale = display.displayScale;
 
+  const animator = createCameraAnimator({ camera, controls, render });
+
   getView2D({
     camera,
     controls,
+    animator,
     display,
+  });
+
+  setupCenterModel({
+    camera,
+    controls,
+    animator,
+    display,
+    geometry,
+    mesh,
     render,
   });
 
