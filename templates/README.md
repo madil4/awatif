@@ -55,6 +55,7 @@ await createApp({
 | `display` | Plain values (`workPlane`, `view2D`, `deformationScale`, `activeLoadCase`, …) |
 | `canvasButtons` | Canvas bar buttons, default `["Report"]` |
 | `analysis` | `"linear"` (default) or `"nonlinear"` |
+| `autoCenter` | Frame the model on start, default `true`; `false` keeps the grid framing and `display.displayScale` |
 | `plugins` | Third-party component packages; their templates join the built-ins |
 | `container` | Mount target, default `document.body`; `null` returns the element unmounted |
 

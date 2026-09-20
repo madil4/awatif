@@ -81,6 +81,10 @@ export type AppConfig = Model & {
   // Third-party component packages; their templates join the built-ins and
   // are referenced by `templateId` like any other
   plugins?: Plugin[];
+  // Frame the model in the viewer on start instead of the grid, and scale
+  // annotations to match; default true. `false` keeps the grid framing and the
+  // `display.displayScale` the config asked for
+  autoCenter?: boolean;
   // Where to mount the layout; `null` mounts nothing and returns the element
   container?: HTMLElement | null;
 };
