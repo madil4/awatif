@@ -38,6 +38,7 @@ export function setupCenterModel({
   display,
   geometry,
   mesh,
+  autoCenter = true,
   render,
 }: {
   camera: THREE.PerspectiveCamera;
@@ -46,13 +47,10 @@ export function setupCenterModel({
   display: Display;
   geometry?: Geometry;
   mesh?: Mesh;
+  autoCenter?: boolean;
   render: () => void;
 }): void {
-  // Everything but the request counter is read raw: this reacts to the button,
-  // not to the model changing under it
-  van.derive(() => {
-    if (request.val === 0) return;
-
+  const center = (move: "set" | "animate") => {
     const sphere = getModelBoundingSphere({ geometry, mesh });
     if (!sphere) return;
 
@@ -60,17 +58,35 @@ export function setupCenterModel({
 
     display.displayScale.val = getDisplayScale(radius * 2);
 
-    animator.animate(
-      getModelFitPose({
-        camera,
-        controls,
-        display,
-        center: sphere.center,
-        radius,
-      }),
-    );
+    const pose = getModelFitPose({
+      camera,
+      controls,
+      display,
+      center: sphere.center,
+      radius,
+    });
+
+    if (move === "set") animator.set(pose);
+    else animator.animate(pose);
+
     render();
+  };
+
+  // Everything but the request counter is read raw: this reacts to the button,
+  // not to the model changing under it
+  van.derive(() => {
+    if (request.val === 0) return;
+
+    center("animate");
   });
+
+  // A model that already has extent when the viewer is instantiated is framed
+  // straight away, so an app opens on its model rather than on the grid. It is
+  // a `set` rather than an `animate`: there is no previous view to fly from,
+  // and it overrides the grid framing getView2D just set. A model built after
+  // instantiation (a blank app being drawn in) keeps the grid framing, since
+  // re-framing on the first point placed would yank the view mid-edit
+  if (autoCenter) center("set");
 }
 
 function getModelFitPose({

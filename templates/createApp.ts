@@ -111,6 +111,7 @@ export async function createApp(config: AppConfig = {}): Promise<App> {
       components,
       display,
       templates: componentTemplates,
+      autoCenter: config.autoCenter,
     }),
     display: getDisplay({ display, components }),
     header: [

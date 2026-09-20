@@ -32,12 +32,15 @@ export function getViewer({
   components,
   display,
   templates,
+  autoCenter,
 }: {
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
   display: Display;
   templates?: typeof Templates;
+  // Frame the model on instantiation instead of the grid; default true
+  autoCenter?: boolean;
 }): HTMLDivElement {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
@@ -89,6 +92,7 @@ export function getViewer({
     display,
     geometry,
     mesh,
+    autoCenter,
     render,
   });
 
