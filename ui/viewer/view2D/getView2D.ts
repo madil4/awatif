@@ -2,6 +2,11 @@ import * as THREE from "three";
 import van from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Display } from "../../display/getDisplay";
+import {
+  WorkPlane,
+  getWorkPlaneCenter,
+  getWorkPlaneViewDirection,
+} from "../common/workPlane";
 
 export function getView2D({
   camera,
@@ -16,6 +21,7 @@ export function getView2D({
 }): void {
   const view2D = display.view2D;
   const grid = display.grid;
+  const workPlane = display.workPlane;
   let initialized = false;
   let skipNextAnimation = false;
   let cancelAnim: (() => void) | null = null;
@@ -27,6 +33,8 @@ export function getView2D({
       camera,
       gridSize: grid.size.rawVal,
       viewing2D: view2D.rawVal,
+      plane: workPlane.plane.rawVal,
+      offset: workPlane.offset.rawVal,
     }),
   });
 
@@ -40,6 +48,10 @@ export function getView2D({
   van.derive(() => {
     const viewing2D = view2D.val;
     const gridSize = grid.size.val;
+    // Changing the plane's orientation is a re-frame; sliding it along its
+    // normal is not, or every keystroke in the offset input would fly the camera
+    const plane = workPlane.plane.val;
+    const offset = workPlane.offset.rawVal;
 
     if (!initialized) {
       initialized = true;
@@ -60,6 +72,8 @@ export function getView2D({
       camera,
       gridSize,
       viewing2D,
+      plane,
+      offset,
     });
 
     cancelAnim = animateCamera({
@@ -97,14 +111,20 @@ function getGridFitPose({
   camera,
   gridSize,
   viewing2D,
+  plane,
+  offset,
 }: {
   camera: THREE.PerspectiveCamera;
   gridSize: number;
   viewing2D: boolean;
+  plane: WorkPlane;
+  offset: number;
 }): { position: THREE.Vector3; target: THREE.Vector3 } {
-  const target = new THREE.Vector3(gridSize / 2, 0, gridSize / 2);
+  // Frame the work plane rather than a fixed X-Z one, so 2D view always looks
+  // straight at the plane geometry is currently drawn on
+  const target = getWorkPlaneCenter(plane, offset, gridSize);
   const direction = viewing2D
-    ? new THREE.Vector3(0, -1, 0)
+    ? getWorkPlaneViewDirection(plane)
     : new THREE.Vector3(0.423, -0.785, 0.453).normalize();
   const fitDistance =
     getGridFitDistance({ camera, gridSize }) * (viewing2D ? 1.2 : 1.55);

@@ -33,6 +33,7 @@ import {
   getCanvas,
   getCanvasBar,
   AnalysisStatus,
+  WorkPlane,
   setupUndo,
 } from "@awatif/ui";
 
@@ -192,6 +193,10 @@ const display: Display = {
   grid: {
     size: van.state(10),
     spacing: van.state(0.5),
+  },
+  workPlane: {
+    plane: van.state<WorkPlane>("XZ"),
+    offset: van.state(0),
   },
   displayScale: van.state(1),
   deformationScale: van.state(1),

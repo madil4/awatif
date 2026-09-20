@@ -68,6 +68,7 @@ export function getViewer({
   controls.addEventListener("change", render);
 
   const grid = display.grid;
+  const workPlane = display.workPlane;
   const displayScale = display.displayScale;
 
   getView2D({
@@ -78,7 +79,7 @@ export function getViewer({
   });
 
   // Objects
-  scene.add(getGrid({ grid, render }));
+  scene.add(getGrid({ grid, workPlane, render }));
   scene.add(getAxes({ displayScale, render }));
 
   if (geometry)
@@ -86,6 +87,7 @@ export function getViewer({
       getGeometry({
         geometry,
         grid,
+        workPlane,
         displayScale,
         camera,
         rendererElm: renderer.domElement,

@@ -2,11 +2,19 @@ import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Grid } from "../grid/getGrid";
+import {
+  WorkPlaneDisplay,
+  getWorkPlaneAxes,
+  getWorkPlaneCenter,
+  getWorkPlaneRotation,
+  snapToWorkPlane,
+} from "../common/workPlane";
 import { Geometry } from "@awatif/components";
 
 export function getGeometry({
   geometry,
   grid,
+  workPlane,
   displayScale,
   camera,
   rendererElm,
@@ -16,6 +24,7 @@ export function getGeometry({
 }: {
   geometry: Geometry;
   grid: Grid;
+  workPlane: WorkPlaneDisplay;
   displayScale: State<number>;
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
@@ -352,16 +361,25 @@ export function getGeometry({
   });
 
   const hitPoint = van.state<number[] | null>(null);
+  // PlaneGeometry is XY by default; baking a rotation into the geometry puts it
+  // in the mesh's local X-Z so the work plane rotation applies unchanged, and
+  // DoubleSide keeps it raycastable once the camera orbits behind the plane
+  const makeGridGeometry = (size: number) =>
+    new THREE.PlaneGeometry(size, size).rotateX(Math.PI / 2);
   const gridObj = new THREE.Mesh(
-    new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal),
+    makeGridGeometry(grid.size.rawVal),
+    new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
   );
-  gridObj.rotateX(Math.PI / 2); // PlaneGeometry is XY by default; rotate into X-Z (front face toward -Y so camera can raycast it)
 
   van.derive(() => {
     const gridSize = grid.size.val;
+    const plane = workPlane.plane.val;
+    const offset = workPlane.offset.val;
+
     gridObj.geometry.dispose();
-    gridObj.geometry = new THREE.PlaneGeometry(gridSize, gridSize);
-    gridObj.position.set(gridSize / 2, 0, gridSize / 2);
+    gridObj.geometry = makeGridGeometry(gridSize);
+    gridObj.rotation.copy(getWorkPlaneRotation(plane));
+    gridObj.position.copy(getWorkPlaneCenter(plane, offset, gridSize));
     gridObj.updateMatrixWorld();
   });
 
@@ -427,13 +445,15 @@ export function getGeometry({
     // Update hit point on grid
     const gridHits = raycaster.intersectObject(gridObj, false);
     if (gridHits.length) {
-      const snap = getSnapFunction();
-      const px = snap(gridHits[0].point.x);
-      const py = 0; // Grid is in X-Z plane, so Y should always be 0
-      const pz = snap(gridHits[0].point.z);
+      const snapped = snapToWorkPlane({
+        plane: workPlane.plane.rawVal,
+        offset: workPlane.offset.rawVal,
+        point: gridHits[0].point,
+        snap: getSnapFunction(),
+      });
       const curr = hitPoint.rawVal;
-      if (!curr || curr[0] !== px || curr[1] !== py || curr[2] !== pz) {
-        hitPoint.val = [px, py, pz];
+      if (!curr || snapped.some((v, i) => curr[i] !== v)) {
+        hitPoint.val = snapped;
       }
     } else {
       hitPoint.val = null;
@@ -921,10 +941,17 @@ export function getGeometry({
     const point = pointsMap.get(dragPoint);
     if (!hp || !point) return;
 
-    if (point.every((val: number, i: number) => val === hp[i])) return;
+    // A drag slides the point along the work plane's two axes and leaves its
+    // out-of-plane coordinate alone, so dragging can never flatten geometry that
+    // was drawn on a different plane; switch planes to move the third axis
+    const normalAxis = getWorkPlaneAxes(workPlane.plane.rawVal).normal;
+    const target = [...hp] as [number, number, number];
+    target[normalAxis] = point[normalAxis];
+
+    if (point.every((val: number, i: number) => val === target[i])) return;
 
     const newPointsMap = new Map(pointsMap);
-    newPointsMap.set(dragPoint, hp as [number, number, number]);
+    newPointsMap.set(dragPoint, target);
     geometry.points.val = newPointsMap;
   });
 
@@ -957,14 +984,14 @@ export function getGeometry({
 
     // Update coordinate tooltip
     if (isMarkerVisible) {
-      const [x, , z] = hitPoint.val;
-      let text = `(${x.toFixed(2)}, ${z.toFixed(2)})`;
+      const [x, y, z] = hitPoint.val;
+      let text = `(${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
 
       if (mode.val === Mode.APPEND && appendPoint !== null) {
         const fromPoint = geometry.points.rawVal.get(appendPoint);
         if (fromPoint) {
           const dx = x - fromPoint[0];
-          const dy = 0 - fromPoint[1];
+          const dy = y - fromPoint[1];
           const dz = z - fromPoint[2];
           const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
           text += ` L: ${length.toFixed(2)}`;

@@ -2,6 +2,12 @@ import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import { Grid } from "../viewer/grid/getGrid";
+import {
+  WorkPlane,
+  WorkPlaneDisplay,
+  WORK_PLANES,
+  getWorkPlaneNormalName,
+} from "../viewer/common/workPlane";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
 import {
@@ -14,6 +20,7 @@ import "./styles.css";
 
 export type Display = {
   grid: Grid;
+  workPlane: WorkPlaneDisplay;
   displayScale: State<number>;
   deformationScale: State<number>;
   view2D: State<boolean>;
@@ -42,6 +49,7 @@ export function getDisplay({
   const container = document.createElement("div");
 
   const grid = display.grid;
+  const workPlane = display.workPlane;
 
   // Options come from the load case / load combination components, so the list
   // reflects whatever the user has defined
@@ -111,6 +119,34 @@ export function getDisplay({
           <option value="0.2" ?selected=${grid.spacing.val === 0.2}>0.2</option>
           <option value="0.1" ?selected=${grid.spacing.val === 0.1}>0.1</option>
         </select>
+      </div>
+      <div class="display-item">
+        <label>Work Plane</label>
+        <select
+          @change=${(e: Event) =>
+            (workPlane.plane.val = (e.target as HTMLSelectElement)
+              .value as WorkPlane)}
+        >
+          ${WORK_PLANES.map(
+            (p) =>
+              html`<option value=${p} ?selected=${workPlane.plane.val === p}>
+                ${p}
+              </option>`,
+          )}
+        </select>
+        <span class="value-display"
+          >${getWorkPlaneNormalName(workPlane.plane.val)}</span
+        >
+        <input
+          type="number"
+          title="Offset of the work plane along its normal axis (m)"
+          step=${grid.spacing.val}
+          value=${workPlane.offset.val}
+          @input=${(e: Event) =>
+            (workPlane.offset.val = Number(
+              (e.target as HTMLInputElement).value,
+            ))}
+        />
       </div>
       <div class="display-item">
         <label>Display Scale</label>
