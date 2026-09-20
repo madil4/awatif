@@ -9,6 +9,7 @@ import {
   getCombinationFactors,
   resolveLoadInclusion,
 } from "@awatif/components";
+import { getLineLoadLabels, getPointLoadLabels } from "./getLoadLabels";
 
 export function getLoads({
   geometry,
@@ -69,10 +70,13 @@ export function getLoads({
       const template = loadTemplates.get(component.templateId);
       if (!template) return;
 
+      const params = {
+        ...template.defaultParams,
+        ...component.params,
+      } as any;
+
       if (template.geometryKind === "line") {
         // Line-based template: use getLineObject3D
-        if (!("getLineObject3D" in template)) return;
-
         component.geometry.forEach((lineId) => {
           const linePair = lines.get(lineId);
           if (!linePair) return;
@@ -81,30 +85,50 @@ export function getLoads({
           const endPos = points.get(linePair[1]);
           if (!startPos || !endPos) return;
 
+          const startPosition = startPos as [number, number, number];
+          const endPosition = endPos as [number, number, number];
+
           const loadObject = template.getLineObject3D?.({
-            params: ({ ...template.defaultParams, ...component.params }) as any,
-            startPosition: startPos as [number, number, number],
-            endPosition: endPos as [number, number, number],
+            params,
+            startPosition,
+            endPosition,
             displayScale: s,
           });
 
           if (loadObject) group.add(loadObject);
+
+          // Values are labelled here, not by the template, so every template
+          // — built-in or plugin — shows its numbers the same way
+          getLineLoadLabels({
+            template,
+            params,
+            startPosition,
+            endPosition,
+            displayScale: s,
+          }).forEach((label) => group.add(label));
         });
       } else {
         // Point-based template (default): use getObject3D
-        if (!("getObject3D" in template)) return;
-
         component.geometry.forEach((pointId) => {
-          const position = points.get(pointId);
-          if (!position) return;
+          const point = points.get(pointId);
+          if (!point) return;
+
+          const position = point as [number, number, number];
 
           const loadObject = template.getObject3D?.({
-            params: ({ ...template.defaultParams, ...component.params }) as any,
-            position: position as [number, number, number],
+            params,
+            position,
             displayScale: s,
           });
 
           if (loadObject) group.add(loadObject);
+
+          getPointLoadLabels({
+            template,
+            params,
+            position,
+            displayScale: s,
+          }).forEach((label) => group.add(label));
         });
       }
     });

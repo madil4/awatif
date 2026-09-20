@@ -109,6 +109,25 @@ A template implements the interface of its component type — `LoadTemplate`,
 `MeshTemplate`, `DesignTemplate`, `LocalAxesTemplate`, … all exported from
 `@awatif/components`.
 
+### Labels
+
+A load template does not draw its own numbers. The viewer labels every
+non-zero component of whatever `getLoad` returns, with its magnitude and the
+axis it acts on (`20 kN/m (Global Z)`), in the local or global system the
+template declared — so a plugin shows correct values in the viewer without
+writing a line of `three.js`.
+
+Implement `getLabel` to word it differently, for instance to show the
+quantity the user reasons about rather than the one the solver receives:
+
+```ts
+getLabel: ({ params }) => `s = ${getSnow(params).s.toFixed(2)} kN/m²`,
+```
+
+It returns one string (`"\n"` separates lines) or `null` for no label at all.
+For text beyond the label, `getText` is exported too, and draws the same
+sprite the rest of the viewer uses.
+
 Template ids are global, so prefix them with the plugin's namespace
 (`wind:area-load`). `resolveTemplates` throws if a plugin shadows a built-in
 or another plugin, rather than silently replacing it. It can also be called

@@ -96,6 +96,16 @@ export const snowLoad: LoadTemplate<SnowLoadParams> = {
     coordinateSystem: "global",
   }),
 
+  // The viewer labels the load from `getLoad` on its own; snow is worth
+  // spelling out, since the line load the solver sees is two coefficients
+  // and a spacing away from the ground load the user typed
+  getLabel: ({ params }) => {
+    const { s, w } = getSnow(params);
+    if (w === 0) return null;
+
+    return [`s = ${s.toFixed(2)} kN/m²`, `${w.toFixed(2)} kN/m`].join("\n");
+  },
+
   getLineObject3D: ({ params, startPosition, endPosition, displayScale }) => {
     const group = new THREE.Group();
     const { w } = getSnow(params);

@@ -13,6 +13,13 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
     coordinateSystem?: "local" | "global";
   };
 
+  // The numerical label the viewer draws next to the load. Optional: without
+  // it the viewer labels every non-zero component of `getLoad` with its
+  // magnitude and axis, which is what the built-in templates rely on.
+  // Implement it to word the value differently (a derived pressure, a code
+  // reference, or several lines), and return null for no label.
+  getLabel?: ({ params }: { params: Params }) => string | null;
+
   getObject3D?: ({
     params,
     position,

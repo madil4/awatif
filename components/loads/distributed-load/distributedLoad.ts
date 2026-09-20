@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { html } from "lit-html";
 import { live } from "lit-html/directives/live.js";
 import { LoadTemplate } from "../data-model";
-import { getText } from "../getText";
 
 type DistributedLoadParams = {
   w: number; // kN/m
@@ -205,29 +204,6 @@ export const distributedLoad: LoadTemplate<DistributedLoadParams> = {
     const capLine = new THREE.Line(capGeometry, capMaterial);
     capLine.renderOrder = 5;
     group.add(capLine);
-
-    // Label at midpoint
-    const dirLabelsMap: Record<DistributedLoadParams["direction"], string> = {
-      "local-y": "Local Y",
-      "local-z": "Local Z",
-      "global-x": "Global X",
-      "global-y": "Global Y",
-      "global-z": "Global Z",
-    };
-    const dirLabel = dirLabelsMap[direction];
-
-    const midX = (x1 + x2) / 2 + offset.x + arrowDir.x * 0.15 * displayScale;
-    const midY = (y1 + y2) / 2 + offset.y + arrowDir.y * 0.15 * displayScale;
-    const midZ = (z1 + z2) / 2 + offset.z + arrowDir.z * 0.15 * displayScale;
-
-    const label = getText(
-      `${Math.abs(w)} kN/m (${dirLabel})`,
-      [midX, midY, midZ],
-      "#ffffff",
-      0.3 * displayScale,
-      { backgroundColor: "rgba(0, 0, 0, 0.6)" },
-    );
-    group.add(label);
 
     group.renderOrder = 5;
     return group;

@@ -35,6 +35,7 @@ export type {
 export { getMesh } from "./mesh/getMesh";
 export { initTriangleMesh } from "./mesh/triangle-mesh/triangleMesh";
 export { getLoads } from "./loads/getLoads";
+export { getText } from "./loads/getText";
 export { getSupports } from "./supports/getSupports";
 export { getReleases } from "./releases/getReleases";
 export {
