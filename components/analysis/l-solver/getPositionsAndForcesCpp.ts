@@ -5,16 +5,14 @@ import createModule from "./cpp/built/lSolver.js";
 let mod: any = null;
 let _initPromise: Promise<void> | null = null;
 
-export function initPositionsAndForcesCpp(): Promise<void> {
+export function initPositionsAndForcesCpp(moduleArg?: object): Promise<void> {
   if (!_initPromise) {
     _initPromise = (async () => {
-      mod = await createModule();
+      mod = await createModule(moduleArg);
     })();
   }
   return _initPromise;
 }
-
-initPositionsAndForcesCpp();
 
 export function getPositionsAndForcesCpp(
   nodes: Mesh["nodes"]["val"],
