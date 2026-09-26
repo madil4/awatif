@@ -150,6 +150,14 @@ so spreading and overriding works:
 await createApp({ ...simpleBeam, analysis: "nonlinear" });
 ```
 
+### Platform viewer
+
+`platform.html` lists every model exported from `models/` and opens the one
+you pick. In dev, open `/templates/platform.html`; `?model=<name>` selects a
+model (`?model=portalFrame`), falling back to `demo`. Each model is a fresh
+page load, so the app never has to be torn down. A new model shows up as soon
+as it is exported from `models/index.ts`.
+
 ## Pieces
 
 `createApp` is a composition of parts that can be used on their own:
