@@ -52,6 +52,8 @@ export type Model = {
 export type DisplayOptions = {
   gridSize?: number;
   gridSpacing?: number;
+  // Blender-style grid that runs to the horizon; default true
+  gridInfinite?: boolean;
   workPlane?: WorkPlane;
   workPlaneOffset?: number;
   displayScale?: number;
