@@ -78,6 +78,30 @@ export function getWorkPlaneCenter(
   return new THREE.Vector3(...center);
 }
 
+// Extent of the "infinite" grid: twice the camera's far plane, so its edge is
+// always past the point where the shader has faded it out
+export const INFINITE_GRID_SIZE = 2000;
+
+// Size and centre of the plane the grid is drawn on, shared by the visible grid
+// and the hit-plane used for snapping so they can never disagree. Infinite grids
+// are centred on the origin like Blender's; finite ones span [0, size]
+export function getGridPlacement(
+  plane: WorkPlane,
+  offset: number,
+  grid: { size: number; infinite: boolean },
+): { size: number; center: THREE.Vector3 } {
+  if (!grid.infinite)
+    return {
+      size: grid.size,
+      center: getWorkPlaneCenter(plane, offset, grid.size),
+    };
+
+  const center = new THREE.Vector3();
+  center.setComponent(AXES[plane].normal, offset);
+
+  return { size: INFINITE_GRID_SIZE, center };
+}
+
 // Snaps a raycast hit to the work plane's grid: the two spanning coordinates
 // snap to the grid spacing and the out-of-plane one is set to the offset
 // exactly, so appended points share positions across repeated clicks

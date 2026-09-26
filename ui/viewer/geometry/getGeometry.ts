@@ -5,7 +5,7 @@ import { Grid } from "../grid/getGrid";
 import {
   WorkPlaneDisplay,
   getWorkPlaneAxes,
-  getWorkPlaneCenter,
+  getGridPlacement,
   getWorkPlaneRotation,
   snapToWorkPlane,
 } from "../common/workPlane";
@@ -372,14 +372,18 @@ export function getGeometry({
   );
 
   van.derive(() => {
-    const gridSize = grid.size.val;
     const plane = workPlane.plane.val;
     const offset = workPlane.offset.val;
+    // Same placement as the drawn grid, so you can snap anywhere it is visible
+    const { size, center } = getGridPlacement(plane, offset, {
+      size: grid.size.val,
+      infinite: grid.infinite.val,
+    });
 
     gridObj.geometry.dispose();
-    gridObj.geometry = makeGridGeometry(gridSize);
+    gridObj.geometry = makeGridGeometry(size);
     gridObj.rotation.copy(getWorkPlaneRotation(plane));
-    gridObj.position.copy(getWorkPlaneCenter(plane, offset, gridSize));
+    gridObj.position.copy(center);
     gridObj.updateMatrixWorld();
   });
 

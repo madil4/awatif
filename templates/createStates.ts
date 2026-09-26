@@ -158,6 +158,7 @@ export function createDisplay(
     grid: {
       size: van.state(options.gridSize ?? 10),
       spacing: van.state(options.gridSpacing ?? 0.5),
+      infinite: van.state(options.gridInfinite ?? true),
     },
     workPlane: {
       plane: van.state<WorkPlane>(options.workPlane ?? "XZ"),

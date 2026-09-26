@@ -13,12 +13,13 @@
     "build:wasm": "emcc ./components/analysis/l-solver/cpp/lSolver.cpp -o ./components/analysis/l-solver/cpp/built/lSolver.js -O3 -s ASSERTIONS -s ALLOW_MEMORY_GROWTH -s MODULARIZE -s EXPORT_ES6 -s EXPORTED_FUNCTIONS=_malloc,_free,_lSolve -s EXPORTED_RUNTIME_METHODS=HEAPF64,HEAPU32,HEAPU8,HEAP32 -I /Users/mohamed/Applications/eigen/"
   },
   "dependencies": {
-    "@awatif/ui": "*",
     "@awatif/components": "*",
+    "@awatif/ui": "*",
     "vanjs-core": "^1.6.0"
   },
   "devDependencies": {
-    "vite": "^8.0.8"
+    "vite": "^8.0.8",
+    "vite-plugin-glsl": "^1.6.1"
   },
   "engines": {
     "node": ">=22"

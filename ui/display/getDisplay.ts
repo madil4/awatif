@@ -120,6 +120,13 @@ export function getDisplay({
           <option value="0.2" ?selected=${grid.spacing.val === 0.2}>0.2</option>
           <option value="0.1" ?selected=${grid.spacing.val === 0.1}>0.1</option>
         </select>
+        <input
+          type="checkbox"
+          title="Infinite grid centred on the origin"
+          .checked=${grid.infinite.val}
+          @change=${(e: Event) =>
+            (grid.infinite.val = (e.target as HTMLInputElement).checked)}
+        />
       </div>
       <div class="display-item">
         <label>Work Plane</label>
