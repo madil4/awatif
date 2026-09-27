@@ -79,6 +79,7 @@ export enum ComponentsType {
   LOCAL_AXES,
   LOAD_CASES,
   LOAD_COMBINATIONS,
+  GRID_LINES,
 }
 
 export type ActiveComponent = {

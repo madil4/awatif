@@ -50,6 +50,7 @@ await createApp({
 | `points`, `lines`, `polygons` | A plain list (1-based ids), a list of `[id, value]` pairs, or a `Map` |
 | `loadCases` | Names; uuids are generated for you |
 | `loadCombinations` | `{ name, factors: { <load case name>: factor } }` |
+| `gridLines` | Named grid systems (SAP2000-style): entries with `templateId: "grid-system"` and `params: { x, y, z }` lists of `{ id, ordinate, visible, bubble }`. Drawn with bubbles, and points snap to them |
 | `loads`, `supports`, `releases`, `localAxes`, `imperfections`, `mesh`, `design` | Component entries; `loadCase` is a load case **name** |
 | `extraComponents` | Escape hatch: a raw `Map<ComponentsType, ComponentEntry[]>` |
 | `display` | Plain values (`workPlane`, `view2D`, `deformationScale`, `activeLoadCase`, …) |

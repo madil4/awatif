@@ -23,6 +23,14 @@ export type {
   LoadCombinationTemplate,
 } from "./load-combinations/data-model";
 
+export type {
+  GridLine,
+  GridSystemParams,
+  GridSystemTemplate,
+} from "./grid-lines/data-model";
+export { getGridOrdinates } from "./grid-lines/getGridOrdinates";
+export type { GridOrdinates } from "./grid-lines/getGridOrdinates";
+
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
 export type { MeshTemplate, PolygonMeshTemplate } from "./mesh/data-model";

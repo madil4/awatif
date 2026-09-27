@@ -59,6 +59,20 @@ export function getComponentsBar({
 
       <button
         class="components-bar-button ${componentsBarMode.val ===
+        ComponentsType.GRID_LINES
+          ? "active"
+          : ""}"
+        @click=${() =>
+          (componentsBarMode.val =
+            componentsBarMode.val === ComponentsType.GRID_LINES
+              ? null
+              : ComponentsType.GRID_LINES)}
+      >
+        Grids
+      </button>
+
+      <button
+        class="components-bar-button ${componentsBarMode.val ===
         ComponentsType.LOADS
           ? "active"
           : ""}"

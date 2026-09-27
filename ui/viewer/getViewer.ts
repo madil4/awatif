@@ -1,13 +1,16 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import van from "vanjs-core";
 import {
   Geometry,
   Mesh,
   Components,
   templates as Templates,
+  getGridOrdinates,
 } from "@awatif/components";
 import { getGrid } from "./grid/getGrid";
 import { getAxes } from "./axes/getAxes";
+import { getGridLines } from "./gridLines/getGridLines";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
@@ -96,6 +99,11 @@ export function getViewer({
     render,
   });
 
+  // Named grid lines, shared by their drawing and by point snapping
+  const gridOrdinates = components
+    ? van.derive(() => getGridOrdinates(components.val))
+    : undefined;
+
   // Objects
   scene.add(getGrid({ grid, workPlane, render }));
   scene.add(getAxes({ displayScale, render }));
@@ -112,6 +120,7 @@ export function getViewer({
         render,
         display,
         controls,
+        gridOrdinates,
       }),
     );
 
@@ -142,6 +151,11 @@ export function getViewer({
       }),
     );
   }
+
+  if (gridOrdinates)
+    scene.add(
+      getGridLines({ gridOrdinates, displayScale, render, display }),
+    );
 
   if (components && geometry && templates) {
     scene.add(

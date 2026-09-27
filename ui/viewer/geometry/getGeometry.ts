@@ -1,3 +1,4 @@
+import type { GridOrdinates } from "@awatif/components";
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -21,6 +22,7 @@ export function getGeometry({
   render,
   display,
   controls,
+  gridOrdinates,
 }: {
   geometry: Geometry;
   grid: Grid;
@@ -31,6 +33,8 @@ export function getGeometry({
   render: () => void;
   display?: { geometry: State<boolean> };
   controls?: OrbitControls;
+  // Named grid lines to snap to before falling back to the grid spacing
+  gridOrdinates?: State<GridOrdinates>;
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -387,9 +391,37 @@ export function getGeometry({
     gridObj.updateMatrixWorld();
   });
 
+  // A named grid line wins when the cursor is within half a grid step of it;
+  // otherwise the regular spacing applies
   const getSnapFunction = () => {
     const step = grid.spacing.rawVal;
-    return (v: number) => Math.round(v / step) * step;
+    const named = gridOrdinates?.rawVal;
+
+    return (v: number, axis: number) => {
+      const lines = named?.[(["x", "y", "z"] as const)[axis]] ?? [];
+      let nearest: number | null = null;
+      for (const { ordinate } of lines)
+        if (
+          Math.abs(v - ordinate) <= step / 2 &&
+          (nearest === null || Math.abs(v - ordinate) < Math.abs(v - nearest))
+        )
+          nearest = ordinate;
+
+      return nearest ?? Math.round(v / step) * step;
+    };
+  };
+
+  // IDs of the named grid lines a snapped point sits on, e.g. "B-2"
+  const getGridLineIds = ([x, y, z]: number[]) => {
+    const named = gridOrdinates?.rawVal;
+    if (!named) return "";
+
+    const ids = ([x, y, z] as number[]).flatMap((v, axis) =>
+      (named[(["x", "y", "z"] as const)[axis]] ?? [])
+        .filter((l) => Math.abs(l.ordinate - v) < 1e-9)
+        .map((l) => l.id),
+    );
+    return ids.join("-");
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
@@ -990,6 +1022,9 @@ export function getGeometry({
     if (isMarkerVisible) {
       const [x, y, z] = hitPoint.val;
       let text = `(${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
+
+      const gridLineIds = getGridLineIds(hitPoint.val);
+      if (gridLineIds) text += ` ${gridLineIds}`;
 
       if (mode.val === Mode.APPEND && appendPoint !== null) {
         const fromPoint = geometry.points.rawVal.get(appendPoint);

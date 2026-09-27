@@ -25,6 +25,8 @@ function getTypesForMode(mode: ComponentsType | null): ComponentsType[] {
       return [ComponentsType.LOADS];
     case ComponentsType.LOAD_CASES:
       return [ComponentsType.LOAD_CASES, ComponentsType.LOAD_COMBINATIONS];
+    case ComponentsType.GRID_LINES:
+      return [ComponentsType.GRID_LINES];
     case ComponentsType.SUPPORTS:
       return [ComponentsType.SUPPORTS];
     case ComponentsType.MESH:

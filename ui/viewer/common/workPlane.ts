@@ -114,14 +114,14 @@ export function snapToWorkPlane({
   plane: WorkPlane;
   offset: number;
   point: THREE.Vector3;
-  snap: (v: number) => number;
+  snap: (v: number, axis: number) => number;
 }): [number, number, number] {
   const { span, normal } = AXES[plane];
   const hit: [number, number, number] = [point.x, point.y, point.z];
   const snapped: [number, number, number] = [0, 0, 0];
 
-  snapped[span[0]] = snap(hit[span[0]]);
-  snapped[span[1]] = snap(hit[span[1]]);
+  snapped[span[0]] = snap(hit[span[0]], span[0]);
+  snapped[span[1]] = snap(hit[span[1]], span[1]);
   snapped[normal] = offset;
 
   return snapped;

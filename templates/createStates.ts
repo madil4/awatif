@@ -127,6 +127,7 @@ export function createComponents(model: Model): {
     })),
   );
 
+  set(ComponentsType.GRID_LINES, toEntries(model.gridLines, loadCaseIds));
   set(ComponentsType.LOADS, toEntries(model.loads, loadCaseIds));
   set(ComponentsType.SUPPORTS, toEntries(model.supports, loadCaseIds));
   set(ComponentsType.RELEASES, toEntries(model.releases, loadCaseIds));
@@ -172,6 +173,7 @@ export function createDisplay(
     deformedShape: van.state(options.deformedShape ?? true),
     loads: van.state(options.loads ?? true),
     supports: van.state(options.supports ?? true),
+    gridLines: van.state(options.gridLines ?? true),
     releases: van.state(options.releases ?? true),
     lineIndex: van.state(options.lineIndex ?? false),
     pointIndex: van.state(options.pointIndex ?? false),
