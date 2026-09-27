@@ -15,6 +15,25 @@ export const portalFrame: AppConfig = {
     [3, 4], // right column
   ],
 
+  gridLines: [
+    {
+      name: "Frame Grid",
+      templateId: "grid-system",
+      geometry: [],
+      params: {
+        x: [
+          { id: "A", ordinate: 0, visible: true, bubble: "end" },
+          { id: "B", ordinate: 6, visible: true, bubble: "end" },
+        ],
+        y: [{ id: "1", ordinate: 0, visible: true, bubble: "start" }],
+        z: [
+          { id: "Z1", ordinate: 0, visible: true, bubble: "end" },
+          { id: "Z2", ordinate: 4, visible: true, bubble: "end" },
+        ],
+      },
+    },
+  ],
+
   loadCases: ["Dead", "Live", "Wind"],
   loadCombinations: [
     { name: "ULS-1", factors: { Dead: 1.35, Live: 1.5, Wind: 0.9 } },

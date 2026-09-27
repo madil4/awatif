@@ -35,6 +35,8 @@ export type Model = {
   loadCases?: string[];
   loadCombinations?: LoadCombination[];
 
+  // Named grid lines; `params` is `{ x, y, z }` lists of `{ id, ordinate, visible, bubble }`
+  gridLines?: Entry[];
   loads?: Entry[];
   supports?: Entry[];
   releases?: Entry[];
@@ -64,6 +66,7 @@ export type DisplayOptions = {
   deformedShape?: boolean;
   loads?: boolean;
   supports?: boolean;
+  gridLines?: boolean;
   releases?: boolean;
   lineIndex?: boolean;
   pointIndex?: boolean;

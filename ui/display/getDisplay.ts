@@ -30,6 +30,7 @@ export type Display = {
   deformedShape: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
+  gridLines: State<boolean>;
   releases: State<boolean>;
   lineIndex: State<boolean>;
   pointIndex: State<boolean>;
@@ -267,6 +268,17 @@ export function getDisplay({
             .checked=${display.supports.val}
             @change=${(e: Event) =>
               (display.supports.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+      </div>
+      <div class="display-item">
+        <div class="display-pair">
+          <label>Grid lines</label>
+          <input
+            type="checkbox"
+            .checked=${display.gridLines.val}
+            @change=${(e: Event) =>
+              (display.gridLines.val = (e.target as HTMLInputElement).checked)}
           />
         </div>
       </div>
