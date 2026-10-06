@@ -10,7 +10,7 @@ export type DesignTemplate<
   Design extends Record<string, any>,
 > = {
   name: string;
-  geometryKind: "line" | "polygon";
+  geometryKind: "line";
   defaultParams: Params;
 
   getParamsTemplate: ({

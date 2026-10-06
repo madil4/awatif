@@ -5,12 +5,10 @@ import { LoadCase } from "./loads/data-model";
 export type Geometry = {
   points: State<Map<number, [number, number, number]>>;
   lines: State<Map<number, [number, number]>>;
-  polygons: State<Map<number, number[]>>; // ordered point IDs (min 3)
 
   selection: State<{
     points: number[];
     lines: number[];
-    polygons: number[];
   } | null>;
 
   designs: State<Map<number, any>>;
@@ -23,7 +21,6 @@ export type Mesh = {
   geometryMapping: State<{
     pointToNodes: Map<number, number[]>;
     lineToElements: Map<number, number[]>;
-    polygonToElements: Map<number, number[]>;
   }>;
 
   supports: State<
@@ -60,8 +57,6 @@ export type ElementProps = {
   momentInertiaY: number;
   shearModulus: number;
   torsionalConstant: number;
-  thickness?: number; // shell (3-node) elements only
-  poissonRatio?: number; // shell (3-node) elements only
 };
 
 export type Nodes = NonNullable<Mesh["nodes"]>["val"];

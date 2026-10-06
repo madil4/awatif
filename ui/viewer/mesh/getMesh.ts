@@ -56,20 +56,6 @@ export function getMesh({
   lines.renderOrder = 1; // Render mesh lines above grid
   group.add(lines);
 
-  // Shell (3-node) elements get a faint fill to distinguish them from frames
-  const shellFaces = new THREE.Mesh(
-    new THREE.BufferGeometry(),
-    new THREE.MeshBasicMaterial({
-      color: MESH_COLOR,
-      transparent: true,
-      opacity: 0.15,
-      side: THREE.DoubleSide,
-      depthTest: false,
-    }),
-  );
-  shellFaces.renderOrder = 0; // Render shell fill below mesh lines
-  group.add(shellFaces);
-
   van.derive(() => {
     if (!display?.mesh || !display.mesh.val || !mesh.elements || !mesh.nodes)
       return;
@@ -78,7 +64,6 @@ export function getMesh({
     const nodes = toNodes(getDisplayPositions(mesh, display));
 
     const positions: number[] = [];
-    const facePositions: number[] = [];
 
     // For each element, create edges between consecutive nodes
     elementIndices.forEach((element) => {
@@ -92,13 +77,6 @@ export function getMesh({
           positions.push(...start, ...end);
         }
       }
-
-      if (element.length === 3) {
-        const [n1, n2, n3] = element.map((index) => nodes[index]);
-        if (n1 && n2 && n3) {
-          facePositions.push(...n1, ...n2, ...n3);
-        }
-      }
     });
 
     lines.geometry.setAttribute(
@@ -106,12 +84,6 @@ export function getMesh({
       new THREE.Float32BufferAttribute(positions, 3),
     );
     lines.geometry.computeBoundingSphere();
-
-    shellFaces.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(facePositions, 3),
-    );
-    shellFaces.geometry.computeBoundingSphere();
 
     render();
   });
@@ -122,7 +94,6 @@ export function getMesh({
 
     lines.visible = display.mesh.val;
     points.visible = display.mesh.val;
-    shellFaces.visible = display.mesh.val;
 
     render();
   });

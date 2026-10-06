@@ -9,40 +9,10 @@ import {
 } from "@awatif/components";
 import { getElementLocalAxes } from "../common/getElementLocalAxes";
 
-type SectionPalette = {
-  fill: number;
-  edge: number;
+const SECTION_PALETTE = {
+  fill: 0xb4b4b4,
+  edge: 0x6e6e6e,
 };
-
-function getSectionPalette(templateName?: string): SectionPalette {
-  const name = templateName?.toLowerCase() ?? "";
-
-  if (name.includes("steel")) {
-    return {
-      fill: 0x8fa6b8,
-      edge: 0x4e6170,
-    };
-  }
-
-  if (name.includes("concrete")) {
-    return {
-      fill: 0xcfc5b8,
-      edge: 0x8a7d70,
-    };
-  }
-
-  if (name.includes("timber")) {
-    return {
-      fill: 0xbe955f,
-      edge: 0x7a5631,
-    };
-  }
-
-  return {
-    fill: 0xb4b4b4,
-    edge: 0x6e6e6e,
-  };
-}
 
 export function getExtrude({
   geometry,
@@ -80,7 +50,6 @@ export function getExtrude({
       const params = { ...template.defaultParams, ...component.params };
       const sectionPts = template.getSection(params as any);
       if (sectionPts.length < 3) return;
-      const palette = getSectionPalette(template.name);
 
       component.geometry.forEach((lineId) => {
         const linePair = lines.get(lineId);
@@ -106,14 +75,14 @@ export function getExtrude({
         });
 
         const fillMaterial = new THREE.MeshBasicMaterial({
-          color: palette.fill,
+          color: SECTION_PALETTE.fill,
           transparent: true,
           opacity: 0.72,
           side: THREE.DoubleSide,
         });
         const mesh = new THREE.Mesh(geo, fillMaterial);
 
-        const edgeMaterial = new THREE.LineBasicMaterial({ color: palette.edge });
+        const edgeMaterial = new THREE.LineBasicMaterial({ color: SECTION_PALETTE.edge });
         const edges = new THREE.EdgesGeometry(geo, 15);
         const edgeLines = new THREE.LineSegments(edges, edgeMaterial);
         const sectionGroup = new THREE.Group();

@@ -14,7 +14,6 @@ import {
   getReport,
   getPositionsAndForcesCpp,
   initPositionsAndForcesCpp,
-  initTriangleMesh,
   getReactions,
   getDesigns,
   Geometry,
@@ -36,7 +35,6 @@ import {
 } from "@awatif/ui";
 
 await initPositionsAndForcesCpp();
-await initTriangleMesh();
 
 const geometry: Geometry = {
   points: van.state(
@@ -46,7 +44,7 @@ const geometry: Geometry = {
       [2, [7, 3, 0]],
       [3, [7, 7, 0]],
       [4, [3, 7, 0]],
-      // column tops, shared with the slab corners
+      // column tops, joined by the edge beams
       [5, [3, 3, 3]],
       [6, [7, 3, 3]],
       [7, [7, 7, 3]],
@@ -59,9 +57,13 @@ const geometry: Geometry = {
       [2, [2, 6]],
       [3, [3, 7]],
       [4, [4, 8]],
+      // edge beams
+      [5, [5, 6]],
+      [6, [6, 7]],
+      [7, [7, 8]],
+      [8, [8, 5]],
     ]),
   ),
-  polygons: van.state(new Map([[1, [5, 6, 7, 8]]])),
   selection: van.state(null),
   designs: van.state(new Map()),
 };
@@ -106,17 +108,9 @@ const components: Components = van.state(
         {
           name: "Line Mesh",
           templateId: "line-mesh",
-          geometry: [1, 2, 3, 4],
+          geometry: [1, 2, 3, 4, 5, 6, 7, 8],
           params: {
             divisions: 4,
-          },
-        },
-        {
-          name: "Triangle Mesh",
-          templateId: "triangle-mesh",
-          geometry: [1], // polygon id
-          params: {
-            maxTriangleArea: 0.5,
           },
         },
       ],
@@ -125,14 +119,9 @@ const components: Components = van.state(
       ComponentsType.DESIGN,
       [
         {
-          name: "Concrete Columns",
-          templateId: "concrete-member",
-          geometry: [1, 2, 3, 4],
-        },
-        {
-          name: "Generic Shell",
-          templateId: "generic-shell",
-          geometry: [1], // polygon id
+          name: "Generic Frame",
+          templateId: "generic-member",
+          geometry: [1, 2, 3, 4, 5, 6, 7, 8],
         },
       ],
     ],
@@ -168,7 +157,6 @@ const mesh: Mesh = {
   geometryMapping: van.state({
     pointToNodes: new Map(),
     lineToElements: new Map(),
-    polygonToElements: new Map(),
   }),
   loads: van.state(new Map()),
   supports: van.state(new Map()),
@@ -192,13 +180,9 @@ let latestAnalysis = 0;
 van.derive(async () => {
   const analysis = ++latestAnalysis;
   const assignedLineIds = new Set<number>();
-  (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) => {
-    // Only line-kind design components reference line IDs (polygon designs
-    // reference polygon IDs, an independent number space)
-    const template = templates.get(ComponentsType.DESIGN)?.get(c.templateId);
-    if (template?.geometryKind !== "line") return;
-    c.geometry.forEach((id) => assignedLineIds.add(id));
-  });
+  (components.val.get(ComponentsType.DESIGN) ?? []).forEach((c) =>
+    c.geometry.forEach((id) => assignedLineIds.add(id)),
+  );
   const unassignedLines = [...geometry.lines.val.keys()].filter(
     (id) => !assignedLineIds.has(id),
   );
@@ -210,7 +194,6 @@ van.derive(async () => {
       geometry: {
         points: geometry.points.val,
         lines: geometry.lines.val,
-        polygons: geometry.polygons.val,
       },
       components: components.val,
       templates,
@@ -258,7 +241,6 @@ van.derive(async () => {
         components: components.val,
         geometryMapping: mesh.geometryMapping.val,
         templates,
-        elements: mesh.elements.val,
       }),
       localAxes,
     );

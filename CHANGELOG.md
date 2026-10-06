@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.0 - 2026-10-07
+
+- Removed shell modeling and analysis, keeping Awatif focused on linear 3D frames.
+- Removed the Eurocode design components for concrete, steel, and timber members.
+- Removed the leftover nonlinear solver settings.
+
 ## 3.3.0 - 2026-07-21
 
 - Added end-to-end shell modeling and analysis with polygon geometry, triangle meshing, shell design properties, unified frame and shell solving, and supporting UI workflows.

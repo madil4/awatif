@@ -1,12 +1,23 @@
 # Awatif
 
-The open-source toolset for structural analysis and design — FEM, Eurocode checks, and reports, in the browser.
+The open-source 3D frame analysis toolset, in the browser — model, solve, and report.
 
-AI-native, MIT-licensed, and no install required: model frames and shells, solve, check, and generate reports in one place. Awatif is also the foundation behind the custom automation work at [awatif.co](https://awatif.co).
+AI-native, MIT-licensed, and no install required. Try it at [awatif.co/app](https://awatif.co/app/).
+
+## Status
+
+Awatif 3.4 is a **linear static 3D frame** tool:
+
+- 3D frames of two-node beam elements with six DOF per node, end moment releases, local axes, and line meshing.
+- Point and distributed loads in dead, live, and wind load cases, with ULS combinations; fixed, pinned, and roller point supports; initial imperfections.
+- Generic sections (E, A, I<sub>y</sub>, I<sub>z</sub>, G, J) with a per-member report of the section properties.
+- A C++/WASM linear solver drives the app; a TypeScript solver with the same results serves as a readable reference.
+
+Shell elements, nonlinear analysis, and Eurocode member checks are no longer part of the open-source library. Second-order frame and shell analysis is available as a licensed solver, below.
 
 ## What's inside
 
-- **`components/`** — the engineering core: `analysis` (C++/WASM linear solver), `design` (Eurocode concrete, steel, timber, and shell checks plus report generation), `mesh`, `loads`, `supports`, `releases`, and `imperfections`.
+- **`components/`** — the engineering core: `analysis` (C++/WASM linear solver and its TypeScript reference), `design` (generic section properties plus report generation), `mesh`, `loads`, `supports`, `releases`, `local-axes`, and `imperfections`.
 - **`ui/`** — the interface: 3D viewer, canvas and canvas bar, layout, display controls, analysis status, and undo.
 - **`main.ts`** — the app entry point that wires components and UI together.
 
@@ -25,10 +36,13 @@ npm run dev
 
 ## Work with me
 
-I help structural engineering teams turn repetitive work — reports, model checks, BIM handovers, calculations — into internal tools. See [awatif.co](https://awatif.co) for dates and details.
+- **[Solver APIs](https://awatif.co/api/)** (€499 per solver, perpetual licence) — let AI build the tool your workflow needs, and run a validated solver behind it, with C++, Python, JS, and C# APIs. Every solver ships with its paper, benchmarks, and a browser demo.
+  - **[3D analysis](https://awatif.co/api/buckling/)** — second-order 3D frame and shell analysis, benchmarked against Abaqus: the work you do today in SAP2000 or ETABS.
+  - **[2D excavation](https://awatif.co/api/soil/)** — staged excavation with retaining walls, struts, and groundwater, cross-validated against OpenGeoSys: the work you do today in PLAXIS.
+  - **Eurocode design** — coming soon: EC2, EC3, and EC5 member checks with national annexes and a calculation report.
+- **[Course — Become an Agentic Structural Engineer](https://awatif.co/course/)** (€399) — in four weeks, turn one repetitive workflow from your own projects into an AI agent, with two private reviews.
 
-- **Course — Agentic Structural Engineer** (€399) — turn your repetitive workflows into AI agents over four weeks. Monthly cohorts, with private reviews.
-- **Custom automation** (pilots from €2,000) — I build the tool your team runs on. [Book a call](https://awatif.co).
+Not sure which fits? [Book a call](https://awatif.co/30min-with-mo).
 
 Prefer a direct message? Find me on [LinkedIn](https://www.linkedin.com/in/madil4/).
 

@@ -19,7 +19,7 @@ export {
 
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
-export type { MeshTemplate, PolygonMeshTemplate } from "./mesh/data-model";
+export type { MeshTemplate } from "./mesh/data-model";
 
 export type {
   LocalAxesAngle,
@@ -27,7 +27,6 @@ export type {
 } from "./local-axes/data-model";
 
 export { getMesh } from "./mesh/getMesh";
-export { initTriangleMesh } from "./mesh/triangle-mesh/triangleMesh";
 export { getLoads } from "./loads/getLoads";
 export { getSupports } from "./supports/getSupports";
 export { getReleases } from "./releases/getReleases";
@@ -47,8 +46,6 @@ export {
   getPositionsAndForcesCpp,
   initPositionsAndForcesCpp,
 } from "./analysis/l-solver/getPositionsAndForcesCpp";
-export { defaultSimSettings } from "./analysis/nl-solver/data-model";
-export type { SimSettings } from "./analysis/nl-solver/data-model";
 export { getReactions } from "./analysis/l-solver/getReactions";
 export {
   getLineEndForces,

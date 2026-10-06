@@ -6,8 +6,6 @@
 #include <map>
 #include <vector>
 
-#include "shellElement.h"
-
 struct ElementProps
 {
     double elasticity = 0.0;
@@ -16,8 +14,6 @@ struct ElementProps
     double momentInertiaY = 0.0;
     double shearModulus = 0.0;
     double torsionalConstant = 0.0;
-    double poissonRatio = 0.0;
-    double thickness = 0.0;
 };
 
 std::map<int, double> parseMap(int *keys, double *values, int count)
@@ -180,7 +176,7 @@ extern "C"
 {
     void lSolve(
         double *nodes_ptr, int num_nodes,
-        unsigned int *elements_ptr, int *element_sizes_ptr, int num_elements,
+        unsigned int *elements_ptr, int num_elements,
         int *support_keys_ptr, bool *support_values_ptr, int num_supports,
         int *load_keys_ptr, double *load_values_ptr, int num_loads,
         int *elasticity_keys_ptr, double *elasticity_values_ptr, int num_elasticities,
@@ -189,8 +185,6 @@ extern "C"
         int *moment_inertia_y_keys_ptr, double *moment_inertia_y_values_ptr, int num_moment_inertias_y,
         int *shear_modulus_keys_ptr, double *shear_modulus_values_ptr, int num_shear_moduli,
         int *torsional_constant_keys_ptr, double *torsional_constant_values_ptr, int num_torsional_constants,
-        int *poisson_ratio_keys_ptr, double *poisson_ratio_values_ptr, int num_poisson_ratios,
-        int *thickness_keys_ptr, double *thickness_values_ptr, int num_thicknesses,
         int *release_keys_ptr, bool *release_values_ptr, int num_releases,
         double **positions_out, int *positions_size,
         double **forces_out, int *forces_size,
@@ -212,16 +206,10 @@ extern "C"
         std::vector<std::vector<int>> elements(num_elements);
         for (int i = 0; i < num_elements; i++)
         {
-            const int elementSize = element_sizes_ptr[i];
-            if (elementSize != 2 && elementSize != 3)
+            elements[i].resize(2);
+            for (int node = 0; node < 2; node++)
             {
-                *status_out = 4;
-                return;
-            }
-            elements[i].resize(elementSize);
-            for (int node = 0; node < elementSize; node++)
-            {
-                elements[i][node] = (int)elements_ptr[i * 3 + node];
+                elements[i][node] = (int)elements_ptr[i * 2 + node];
                 if (elements[i][node] < 0 || elements[i][node] >= num_nodes)
                 {
                     *status_out = 4;
@@ -240,8 +228,6 @@ extern "C"
         const auto momentInertiasY = parseMap(moment_inertia_y_keys_ptr, moment_inertia_y_values_ptr, num_moment_inertias_y);
         const auto shearModuli = parseMap(shear_modulus_keys_ptr, shear_modulus_values_ptr, num_shear_moduli);
         const auto torsionalConstants = parseMap(torsional_constant_keys_ptr, torsional_constant_values_ptr, num_torsional_constants);
-        const auto poissonRatios = parseMap(poisson_ratio_keys_ptr, poisson_ratio_values_ptr, num_poisson_ratios);
-        const auto thicknesses = parseMap(thickness_keys_ptr, thickness_values_ptr, num_thicknesses);
 
         std::vector<ElementProps> props(num_elements);
         for (int i = 0; i < num_elements; i++)
@@ -258,10 +244,6 @@ extern "C"
                 props[i].shearModulus = shearModuli.at(i);
             if (torsionalConstants.count(i))
                 props[i].torsionalConstant = torsionalConstants.at(i);
-            if (poissonRatios.count(i))
-                props[i].poissonRatio = poissonRatios.at(i);
-            if (thicknesses.count(i))
-                props[i].thickness = thicknesses.at(i);
         }
 
         const int dof = num_nodes * 6;
@@ -297,38 +279,20 @@ extern "C"
         }
 
         std::vector<Eigen::Triplet<double>> stiffnessTriplets;
-        stiffnessTriplets.reserve(num_elements * 324);
+        stiffnessTriplets.reserve(num_elements * 144);
 
         for (int i = 0; i < num_elements; i++)
         {
-            const int elementDof = (int)elements[i].size() * 6;
-            Eigen::MatrixXd kGlobal = Eigen::MatrixXd::Zero(elementDof, elementDof);
-            if (elements[i].size() == 2)
-            {
-                const int n0 = elements[i][0];
-                const int n1 = elements[i][1];
-                const std::vector<bool> releaseFlags = releases.count(i) ? releases.at(i) : std::vector<bool>();
-                const auto kLocal = getLocalStiffnessMatrix(nodes[n0], nodes[n1], props[i], releaseFlags);
-                const auto transformation = getTransformationMatrix(nodes[n0], nodes[n1]);
-                kGlobal = transformation.transpose() * kLocal * transformation;
-            }
-            else
-            {
-                const std::array<Eigen::Vector3d, 3> shellNodes = {
-                    nodes[elements[i][0]], nodes[elements[i][1]], nodes[elements[i][2]]};
-                ShellGeometry geometry;
-                const bool validGeometry = getShellGeometry(shellNodes, geometry);
-                const auto kLocal = getShellLocalStiffnessMatrix(
-                    shellNodes, props[i].elasticity, props[i].poissonRatio, props[i].thickness);
-                if (validGeometry)
-                {
-                    const auto transformation = getShellTransformationMatrix(geometry);
-                    kGlobal = transformation.transpose() * kLocal * transformation;
-                }
-            }
+            const int elementDof = 12;
+            const int n0 = elements[i][0];
+            const int n1 = elements[i][1];
+            const std::vector<bool> releaseFlags = releases.count(i) ? releases.at(i) : std::vector<bool>();
+            const auto kLocal = getLocalStiffnessMatrix(nodes[n0], nodes[n1], props[i], releaseFlags);
+            const auto transformation = getTransformationMatrix(nodes[n0], nodes[n1]);
+            const Eigen::MatrixXd kGlobal = transformation.transpose() * kLocal * transformation;
 
             std::vector<int> dofMap(elementDof);
-            for (int node = 0; node < (int)elements[i].size(); node++)
+            for (int node = 0; node < 2; node++)
                 for (int component = 0; component < 6; component++)
                     dofMap[node * 6 + component] = elements[i][node] * 6 + component;
 
@@ -419,17 +383,11 @@ extern "C"
             (*positions_out)[i * 3 + 2] = nodes[i].z() + deformations(i * 6 + 2);
         }
 
-        int frameCount = 0;
-        for (const auto &element : elements)
-            if (element.size() == 2)
-                frameCount++;
-        *forces_size = frameCount * 13;
-        *forces_out = *forces_size > 0 ? (double *)malloc(*forces_size * sizeof(double)) : nullptr;
+        *forces_size = num_elements * 13;
+        *forces_out = (double *)malloc(*forces_size * sizeof(double));
         int fidx = 0;
         for (int i = 0; i < num_elements; i++)
         {
-            if (elements[i].size() != 2)
-                continue;
             const int n0 = elements[i][0];
             const int n1 = elements[i][1];
             const std::vector<bool> releaseFlags = releases.count(i) ? releases.at(i) : std::vector<bool>();

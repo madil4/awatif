@@ -1,6 +1,5 @@
 import { inv, multiply, norm, subtract } from "mathjs";
 import type { Mesh } from "../../../data-model";
-import { getShellLocalStiffnessMatrix } from "./getShellLocalStiffnessMatrix";
 
 export function getLocalStiffnessMatrix(
   nodes: Mesh["nodes"]["val"],
@@ -9,17 +8,6 @@ export function getLocalStiffnessMatrix(
   releases?: Mesh["releases"]["val"],
 ): number[][] {
   if (!nodes || !elementsProps) return [];
-
-  // Releases apply only to two-node frame elements.
-  if (nodes.length === 3) {
-    const properties = elementsProps.get(index);
-    return getShellLocalStiffnessMatrix(
-      nodes,
-      properties?.elasticity ?? 0,
-      properties?.poissonRatio ?? 0,
-      properties?.thickness ?? 0,
-    );
-  }
 
   const elementProps = elementsProps.get(index);
   const Iz = elementProps?.momentInertiaZ ?? 0;

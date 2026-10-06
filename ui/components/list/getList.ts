@@ -66,36 +66,32 @@ export function getList({
   const getComponentKind = (
     type: ComponentsType,
     component: { templateId: string },
-  ): "point" | "line" | "polygon" | null => {
+  ): "point" | "line" | null => {
     const template = templates?.get(type)?.get(component.templateId) as
-      | { geometryKind?: "point" | "line" | "polygon" }
+      | { geometryKind?: "point" | "line" }
       | undefined;
     return template?.geometryKind ?? null;
   };
 
-  const getSelectedGeometry = (kind: "point" | "line" | "polygon" | null) => {
+  const getSelectedGeometry = (kind: "point" | "line" | null) => {
     const sel = geometry.selection.val;
     if (kind === "point") return sel?.points ?? [];
     if (kind === "line") return sel?.lines ?? [];
-    if (kind === "polygon") return sel?.polygons ?? [];
     return [];
   };
 
   const setSelection = (
     indices: number[],
-    kind: "point" | "line" | "polygon" | null,
+    kind: "point" | "line" | null,
   ) => {
     const current = geometry.selection.val ?? {
       points: [],
       lines: [],
-      polygons: [],
     };
     if (kind === "point") {
       geometry.selection.val = { ...current, points: indices };
     } else if (kind === "line") {
       geometry.selection.val = { ...current, lines: indices };
-    } else if (kind === "polygon") {
-      geometry.selection.val = { ...current, polygons: indices };
     } else {
       geometry.selection.val = null;
     }
@@ -164,9 +160,9 @@ export function getList({
     const selectedSet = new Set(selectedGeometry);
 
     // Update the active component's geometry and remove those indices from siblings.
-    // Only steal from siblings of the SAME geometry kind — point, line and
-    // polygon IDs are independent number spaces, so a line load and a point
-    // load can both legitimately reference index 3. For load components, also
+    // Only steal from siblings of the SAME geometry kind — point and line
+    // IDs are independent number spaces, so a line load and a point load can
+    // both legitimately reference index 3. For load components, also
     // restrict to siblings in the same load case (different load cases may share a node).
     const activeLoadCase = current.loadCase ?? "dead";
     const updatedList = list.map((c, i) => {
@@ -188,7 +184,6 @@ export function getList({
   // Sync geometry deletions -> remove deleted indices from components
   let prevPointKeys = new Set(geometry.points.val.keys());
   let prevLineKeys = new Set(geometry.lines.val.keys());
-  let prevPolygonKeys = new Set(geometry.polygons.val.keys());
 
   const findDeleted = (prev: Set<number>, current: Set<number>) => {
     const deleted = new Set<number>();
@@ -199,14 +194,14 @@ export function getList({
   };
 
   // Clean the deleted IDs from every component whose template's geometryKind
-  // matches - point, line and polygon IDs are independent number spaces
+  // matches - point and line IDs are independent number spaces
   const removeDeletedOfKind = (
     componentsMap: Map<
       ComponentsType,
       { geometry: number[]; templateId: string }[]
     >,
     deleted: Set<number>,
-    deletedKind: "point" | "line" | "polygon",
+    deletedKind: "point" | "line",
   ) => {
     if (deleted.size === 0) return;
 
@@ -228,29 +223,21 @@ export function getList({
   van.derive(() => {
     const currentPointKeys = new Set(geometry.points.val.keys());
     const currentLineKeys = new Set(geometry.lines.val.keys());
-    const currentPolygonKeys = new Set(geometry.polygons.val.keys());
 
     const deletedPoints = findDeleted(prevPointKeys, currentPointKeys);
     const deletedLines = findDeleted(prevLineKeys, currentLineKeys);
-    const deletedPolygons = findDeleted(prevPolygonKeys, currentPolygonKeys);
 
-    if (
-      deletedPoints.size > 0 ||
-      deletedLines.size > 0 ||
-      deletedPolygons.size > 0
-    ) {
+    if (deletedPoints.size > 0 || deletedLines.size > 0) {
       const updated = new Map(components.val);
 
       removeDeletedOfKind(updated, deletedPoints, "point");
       removeDeletedOfKind(updated, deletedLines, "line");
-      removeDeletedOfKind(updated, deletedPolygons, "polygon");
 
       components.val = updated;
     }
 
     prevPointKeys = currentPointKeys;
     prevLineKeys = currentLineKeys;
-    prevPolygonKeys = currentPolygonKeys;
   });
 
   // Render
