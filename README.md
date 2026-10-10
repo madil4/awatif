@@ -13,8 +13,6 @@ Awatif 3.4 is a **linear static 3D frame** tool:
 - Generic sections (E, A, I<sub>y</sub>, I<sub>z</sub>, G, J) with a per-member report of the section properties.
 - A C++/WASM linear solver drives the app; a TypeScript solver with the same results serves as a readable reference.
 
-Shell elements, nonlinear analysis, and Eurocode member checks are no longer part of the open-source library. Second-order frame and shell analysis is available as a licensed solver, below.
-
 ## What's inside
 
 - **`components/`** — the engineering core: `analysis` (C++/WASM linear solver and its TypeScript reference), `design` (generic section properties plus report generation), `mesh`, `loads`, `supports`, `releases`, `local-axes`, and `imperfections`.
