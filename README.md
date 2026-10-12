@@ -1,8 +1,8 @@
 # Awatif
 
-The open-source 3D frame analysis toolset, in the browser — model, solve, and report.
+The open-source harness for agentic structural engineering.
 
-AI-native, MIT-licensed, and no install required. Try it at [awatif.co/app](https://awatif.co/app/).
+Model, solve, and report 3D frames in the browser. MIT-licensed, no install required. Try it at [awatif.co/app](https://awatif.co/app/).
 
 ## Status
 
