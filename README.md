@@ -4,6 +4,8 @@ The open-source harness for agentic structural engineering.
 
 Model, solve, and report 3D frames in the browser. MIT-licensed, no install required. Try it at [awatif.co/app](https://awatif.co/app/).
 
+**Want an AI agent for your own workflow?** In the four-week course [Become an Agentic Structural Engineer](https://awatif.co/course/) you build one, on a repetitive workflow from your own projects. [More below](#learn-to-build-your-own-agent).
+
 ## Status
 
 Awatif 3.4 is a **linear static 3D frame** tool:
@@ -32,17 +34,17 @@ npm run dev
 
 `npm test` runs the test suite, `npm run build` produces a production bundle.
 
-## Work with me
+## Learn to build your own agent
 
-- **[Solver APIs](https://awatif.co/api/)** (€499 per solver, perpetual licence) — let AI build the tool your workflow needs, and run a validated solver behind it, with C++, Python, JS, and C# APIs. Every solver ships with its paper, benchmarks, and a browser demo.
-  - **[3D analysis](https://awatif.co/api/buckling/)** — second-order 3D frame and shell analysis, benchmarked against Abaqus: the work you do today in SAP2000 or ETABS.
-  - **[2D excavation](https://awatif.co/api/soil/)** — staged excavation with retaining walls, struts, and groundwater, cross-validated against OpenGeoSys: the work you do today in PLAXIS.
-  - **Eurocode design** — coming soon: EC2, EC3, and EC5 member checks with national annexes and a calculation report.
-- **[Course — Become an Agentic Structural Engineer](https://awatif.co/course/)** (€399) — in four weeks, turn one repetitive workflow from your own projects into an AI agent, with two private reviews.
+**[Become an Agentic Structural Engineer](https://awatif.co/course/)** (€399): in four weeks you take one repetitive workflow from your own projects and turn it into an AI agent that designs, reviews, or optimizes it. Every engineering decision stays yours.
 
-Not sure which fits? [Book a call](https://awatif.co/30min-with-mo).
+- Four live Saturday sessions, 16:00–18:00 Amsterdam time, all recorded. A new small-group cohort starts every month.
+- Two private 30-minute reviews of your project.
+- The target is one run of your workflow in at least 30% less time than it takes you today.
 
-Prefer a direct message? Find me on [LinkedIn](https://www.linkedin.com/in/madil4/).
+See what that looks like: [an agent designs a timber roof](https://awatif.co/examples/agentic/), from IFC to report and drawings.
+
+Questions? [Book a call](https://awatif.co/30min-with-mo) or message me on [LinkedIn](https://www.linkedin.com/in/madil4/).
 
 ## Contributing
 
