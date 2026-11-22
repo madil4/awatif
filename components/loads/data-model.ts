@@ -2,27 +2,6 @@ import { State } from "vanjs-core";
 import { TemplateResult } from "lit-html";
 import * as THREE from "three";
 
-// Load Cases
-export type LoadCase = "dead" | "live" | "wind";
-export type LoadCombination = "uls-live" | "uls-wind";
-export type LoadSelection = LoadCase | LoadCombination;
-
-export const ULS_COMBINATIONS: Record<
-  LoadCombination,
-  Record<LoadCase, number>
-> = {
-  "uls-live": { dead: 1.35, live: 1.5, wind: 0.9 },
-  "uls-wind": { dead: 1.35, live: 1.05, wind: 1.5 },
-};
-
-export const LOAD_SELECTION_LABELS: Record<LoadSelection, string> = {
-  dead: "Dead",
-  live: "Live",
-  wind: "Wind",
-  "uls-live": "ULS-1",
-  "uls-wind": "ULS-2",
-};
-
 export type LoadTemplate<Params extends Record<string, unknown>> = {
   name: string;
   geometryKind: "point" | "line";
@@ -33,6 +12,13 @@ export type LoadTemplate<Params extends Record<string, unknown>> = {
     load: [number, number, number, number, number, number]; //[Fx, Fy, Fz, Mx, My, Mz]
     coordinateSystem?: "local" | "global";
   };
+
+  // The numerical label the viewer draws next to the load. Optional: without
+  // it the viewer labels every non-zero component of `getLoad` with its
+  // magnitude and axis, which is what the built-in templates rely on.
+  // Implement it to word the value differently (a derived pressure, a code
+  // reference, or several lines), and return null for no label.
+  getLabel?: ({ params }: { params: Params }) => string | null;
 
   getObject3D?: ({
     params,

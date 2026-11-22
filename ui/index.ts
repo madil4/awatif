@@ -6,7 +6,9 @@ export { getAnalysisStatus } from "./analysisStatus/getAnalysisStatus";
 export { getCanvas } from "./canvas/getCanvas";
 export { getCanvasBar } from "./canvasBar/getCanvasBar";
 export { setupUndo } from "./undo/setupUndo";
+export { centerModel } from "./viewer/centerModel/getCenterModel";
 
 export type { Display } from "./display/getDisplay";
+export type { WorkPlane } from "./viewer/common/workPlane";
 export type { ActiveAnalysis } from "./components/analysisList/getAnalysisList";
 export type { AnalysisStatus } from "./analysisStatus/getAnalysisStatus";

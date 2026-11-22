@@ -1,14 +1,27 @@
 import van, { State } from "vanjs-core";
 import { html, render } from "lit-html";
+import { live } from "lit-html/directives/live.js";
 import { Grid } from "../viewer/grid/getGrid";
+import {
+  WorkPlane,
+  WorkPlaneDisplay,
+  WORK_PLANES,
+  getWorkPlaneNormalName,
+} from "../viewer/common/workPlane";
 import { PointResultsDisplay } from "../viewer/pointResult/getPointResults";
 import { LineResultsDisplay } from "../viewer/lineResult/getLineResults";
-import { LoadSelection, LOAD_SELECTION_LABELS } from "@awatif/components";
+import { centerModel } from "../viewer/centerModel/getCenterModel";
+import {
+  ActiveLoadSelection,
+  Components,
+  ComponentsType,
+} from "@awatif/components";
 
 import "./styles.css";
 
 export type Display = {
   grid: Grid;
+  workPlane: WorkPlaneDisplay;
   displayScale: State<number>;
   deformationScale: State<number>;
   view2D: State<boolean>;
@@ -17,6 +30,7 @@ export type Display = {
   deformedShape: State<boolean>;
   loads: State<boolean>;
   supports: State<boolean>;
+  gridLines: State<boolean>;
   releases: State<boolean>;
   lineIndex: State<boolean>;
   pointIndex: State<boolean>;
@@ -24,13 +38,65 @@ export type Display = {
   extrude: State<boolean>;
   pointResult: State<PointResultsDisplay>;
   lineResult: State<LineResultsDisplay>;
-  loadCase: State<LoadSelection>;
+  activeLoadSelection: State<ActiveLoadSelection>;
 };
 
-export function getDisplay({ display }: { display: Display }): HTMLElement {
+export function getDisplay({
+  display,
+  components,
+}: {
+  display: Display;
+  components: Components;
+}): HTMLElement {
   const container = document.createElement("div");
 
   const grid = display.grid;
+  const workPlane = display.workPlane;
+
+  // Options come from the load case / load combination components, so the list
+  // reflects whatever the user has defined
+  const loadSelectionSelect = () => {
+    const loadCases = components.val.get(ComponentsType.LOAD_CASES) ?? [];
+    const combinations =
+      components.val.get(ComponentsType.LOAD_COMBINATIONS) ?? [];
+    const selection = display.activeLoadSelection.val;
+
+    if (loadCases.length === 0 && combinations.length === 0)
+      return html`<select disabled>
+        <option>No load cases defined</option>
+      </select>`;
+
+    const option = (kind: "case" | "combination", id: string, name: string) =>
+      html`<option value=${`${kind}:${id}`}>${name}</option>`;
+
+    // The selection also changes programmatically (e.g. adding a load while a
+    // combination is active), so bind the value rather than the attribute
+    return html`
+      <select
+        .value=${live(selection ? `${selection.kind}:${selection.id}` : "")}
+        @change=${(e: Event) => {
+          const value = (e.target as HTMLSelectElement).value;
+          const separator = value.indexOf(":");
+          const kind = value.slice(0, separator) as "case" | "combination";
+          display.activeLoadSelection.val = {
+            kind,
+            id: value.slice(separator + 1),
+          };
+        }}
+      >
+        ${loadCases.length > 0
+          ? html`<optgroup label="Load Cases">
+              ${loadCases.map((c) => option("case", c.id ?? "", c.name))}
+            </optgroup>`
+          : null}
+        ${combinations.length > 0
+          ? html`<optgroup label="Load Combinations">
+              ${combinations.map((c) => option("combination", c.id ?? "", c.name))}
+            </optgroup>`
+          : null}
+      </select>
+    `;
+  };
 
   const template = () => html`
     <details id="display">
@@ -55,6 +121,41 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
           <option value="0.2" ?selected=${grid.spacing.val === 0.2}>0.2</option>
           <option value="0.1" ?selected=${grid.spacing.val === 0.1}>0.1</option>
         </select>
+        <input
+          type="checkbox"
+          title="Infinite grid centred on the origin"
+          .checked=${grid.infinite.val}
+          @change=${(e: Event) =>
+            (grid.infinite.val = (e.target as HTMLInputElement).checked)}
+        />
+      </div>
+      <div class="display-item">
+        <label>Work Plane</label>
+        <select
+          @change=${(e: Event) =>
+            (workPlane.plane.val = (e.target as HTMLSelectElement)
+              .value as WorkPlane)}
+        >
+          ${WORK_PLANES.map(
+            (p) =>
+              html`<option value=${p} ?selected=${workPlane.plane.val === p}>
+                ${p}
+              </option>`,
+          )}
+        </select>
+        <span class="value-display"
+          >${getWorkPlaneNormalName(workPlane.plane.val)}</span
+        >
+        <input
+          type="number"
+          title="Offset of the work plane along its normal axis (m)"
+          step=${grid.spacing.val}
+          value=${workPlane.offset.val}
+          @input=${(e: Event) =>
+            (workPlane.offset.val = Number(
+              (e.target as HTMLInputElement).value,
+            ))}
+        />
       </div>
       <div class="display-item">
         <label>Display Scale</label>
@@ -172,6 +273,17 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <div class="display-pair">
+          <label>Grid lines</label>
+          <input
+            type="checkbox"
+            .checked=${display.gridLines.val}
+            @change=${(e: Event) =>
+              (display.gridLines.val = (e.target as HTMLInputElement).checked)}
+          />
+        </div>
+      </div>
+      <div class="display-item">
+        <div class="display-pair">
           <label>Releases</label>
           <input
             type="checkbox"
@@ -264,22 +376,17 @@ export function getDisplay({ display }: { display: Display }): HTMLElement {
       </div>
       <div class="display-item">
         <label>Load Case</label>
-        <select
-          @change=${(e: Event) =>
-            (display.loadCase.val = (e.target as HTMLSelectElement)
-              .value as LoadSelection)}
+        ${loadSelectionSelect()}
+      </div>
+      <div class="display-item">
+        <label>Model</label>
+        <button
+          class="display-button"
+          title="Center the model in the view and scale annotations to match"
+          @click=${() => centerModel()}
         >
-          ${Object.entries(LOAD_SELECTION_LABELS).map(
-            ([value, label]) => html`
-              <option
-                value=${value}
-                ?selected=${display.loadCase.val === value}
-              >
-                ${label}
-              </option>
-            `,
-          )}
-        </select>
+          Center
+        </button>
       </div>
     </details>
   `;

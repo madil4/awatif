@@ -1,27 +1,40 @@
+import type { GridOrdinates } from "@awatif/components";
 import * as THREE from "three";
 import van, { State } from "vanjs-core";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Grid } from "../grid/getGrid";
+import {
+  WorkPlaneDisplay,
+  getWorkPlaneAxes,
+  getGridPlacement,
+  getWorkPlaneRotation,
+  snapToWorkPlane,
+} from "../common/workPlane";
 import { Geometry } from "@awatif/components";
 
 export function getGeometry({
   geometry,
   grid,
+  workPlane,
   displayScale,
   camera,
   rendererElm,
   render,
   display,
   controls,
+  gridOrdinates,
 }: {
   geometry: Geometry;
   grid: Grid;
+  workPlane: WorkPlaneDisplay;
   displayScale: State<number>;
   camera: THREE.Camera;
   rendererElm: HTMLCanvasElement;
   render: () => void;
   display?: { geometry: State<boolean> };
   controls?: OrbitControls;
+  // Named grid lines to snap to before falling back to the grid spacing
+  gridOrdinates?: State<GridOrdinates>;
 }): THREE.Group {
   const group = new THREE.Group();
 
@@ -288,23 +301,63 @@ export function getGeometry({
   });
 
   const hitPoint = van.state<number[] | null>(null);
-  // PlaneGeometry is XY by default, which matches the ground grid (z=0); its
-  // front face points toward +z so the camera can raycast it from above
+  // PlaneGeometry is XY by default; baking a rotation into the geometry puts it
+  // in the mesh's local X-Z so the work plane rotation applies unchanged, and
+  // DoubleSide keeps it raycastable once the camera orbits behind the plane
+  const makeGridGeometry = (size: number) =>
+    new THREE.PlaneGeometry(size, size).rotateX(Math.PI / 2);
   const gridObj = new THREE.Mesh(
-    new THREE.PlaneGeometry(grid.size.rawVal, grid.size.rawVal),
+    makeGridGeometry(grid.size.rawVal),
+    new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
   );
 
   van.derive(() => {
-    const gridSize = grid.size.val;
+    const plane = workPlane.plane.val;
+    const offset = workPlane.offset.val;
+    // Same placement as the drawn grid, so you can snap anywhere it is visible
+    const { size, center } = getGridPlacement(plane, offset, {
+      size: grid.size.val,
+      infinite: grid.infinite.val,
+    });
+
     gridObj.geometry.dispose();
-    gridObj.geometry = new THREE.PlaneGeometry(gridSize, gridSize);
-    gridObj.position.set(gridSize / 2, gridSize / 2, 0);
+    gridObj.geometry = makeGridGeometry(size);
+    gridObj.rotation.copy(getWorkPlaneRotation(plane));
+    gridObj.position.copy(center);
     gridObj.updateMatrixWorld();
   });
 
+  // A named grid line wins when the cursor is within half a grid step of it;
+  // otherwise the regular spacing applies
   const getSnapFunction = () => {
     const step = grid.spacing.rawVal;
-    return (v: number) => Math.round(v / step) * step;
+    const named = gridOrdinates?.rawVal;
+
+    return (v: number, axis: number) => {
+      const lines = named?.[(["x", "y", "z"] as const)[axis]] ?? [];
+      let nearest: number | null = null;
+      for (const { ordinate } of lines)
+        if (
+          Math.abs(v - ordinate) <= step / 2 &&
+          (nearest === null || Math.abs(v - ordinate) < Math.abs(v - nearest))
+        )
+          nearest = ordinate;
+
+      return nearest ?? Math.round(v / step) * step;
+    };
+  };
+
+  // IDs of the named grid lines a snapped point sits on, e.g. "B-2"
+  const getGridLineIds = ([x, y, z]: number[]) => {
+    const named = gridOrdinates?.rawVal;
+    if (!named) return "";
+
+    const ids = ([x, y, z] as number[]).flatMap((v, axis) =>
+      (named[(["x", "y", "z"] as const)[axis]] ?? [])
+        .filter((l) => Math.abs(l.ordinate - v) < 1e-9)
+        .map((l) => l.id),
+    );
+    return ids.join("-");
   };
 
   rendererElm.addEventListener("pointerdown", (e: PointerEvent) => {
@@ -364,13 +417,15 @@ export function getGeometry({
     // Update hit point on grid
     const gridHits = raycaster.intersectObject(gridObj, false);
     if (gridHits.length) {
-      const snap = getSnapFunction();
-      const px = snap(gridHits[0].point.x);
-      const py = snap(gridHits[0].point.y);
-      const pz = 0; // Grid is in the X-Y plane, so Z should always be 0
+      const snapped = snapToWorkPlane({
+        plane: workPlane.plane.rawVal,
+        offset: workPlane.offset.rawVal,
+        point: gridHits[0].point,
+        snap: getSnapFunction(),
+      });
       const curr = hitPoint.rawVal;
-      if (!curr || curr[0] !== px || curr[1] !== py || curr[2] !== pz) {
-        hitPoint.val = [px, py, pz];
+      if (!curr || snapped.some((v, i) => curr[i] !== v)) {
+        hitPoint.val = snapped;
       }
     } else {
       hitPoint.val = null;
@@ -774,13 +829,17 @@ export function getGeometry({
     const point = pointsMap.get(dragPoint);
     if (!hp || !point) return;
 
-    // The grid hit gives the in-plane position; keep the point's own height
-    // so dragging a point above the grid doesn't slam it onto z=0
-    const target = [hp[0], hp[1], point[2]];
+    // A drag slides the point along the work plane's two axes and leaves its
+    // out-of-plane coordinate alone, so dragging can never flatten geometry that
+    // was drawn on a different plane; switch planes to move the third axis
+    const normalAxis = getWorkPlaneAxes(workPlane.plane.rawVal).normal;
+    const target = [...hp] as [number, number, number];
+    target[normalAxis] = point[normalAxis];
+
     if (point.every((val: number, i: number) => val === target[i])) return;
 
     const newPointsMap = new Map(pointsMap);
-    newPointsMap.set(dragPoint, target as [number, number, number]);
+    newPointsMap.set(dragPoint, target);
     geometry.points.val = newPointsMap;
   });
 
@@ -813,15 +872,18 @@ export function getGeometry({
 
     // Update coordinate tooltip
     if (isMarkerVisible) {
-      const [x, y] = hitPoint.val;
-      let text = `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+      const [x, y, z] = hitPoint.val;
+      let text = `(${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`;
+
+      const gridLineIds = getGridLineIds(hitPoint.val);
+      if (gridLineIds) text += ` ${gridLineIds}`;
 
       if (mode.val === Mode.APPEND && appendPoint !== null) {
         const fromPoint = geometry.points.rawVal.get(appendPoint);
         if (fromPoint) {
           const dx = x - fromPoint[0];
           const dy = y - fromPoint[1];
-          const dz = 0 - fromPoint[2];
+          const dz = z - fromPoint[2];
           const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
           text += ` L: ${length.toFixed(2)}`;
         }

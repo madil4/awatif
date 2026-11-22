@@ -7,15 +7,29 @@ export type {
 } from "./data-model";
 export { ComponentsType } from "./data-model";
 
-export type {
-  LoadCase,
-  LoadCombination,
-  LoadSelection,
-} from "./loads/data-model";
+export type { LoadTemplate } from "./loads/data-model";
+export type { ActiveLoadSelection } from "./loads/activeSelection";
 export {
-  ULS_COMBINATIONS,
-  LOAD_SELECTION_LABELS,
-} from "./loads/data-model";
+  getCombinationFactors,
+  resolveLoadInclusion,
+  getSelectionName,
+  getCombinationBreakdown,
+} from "./loads/activeSelection";
+
+export type { LoadCaseTemplate } from "./load-cases/data-model";
+export type {
+  LoadCombinationEntry,
+  LoadCombinationParams,
+  LoadCombinationTemplate,
+} from "./load-combinations/data-model";
+
+export type {
+  GridLine,
+  GridSystemParams,
+  GridSystemTemplate,
+} from "./grid-lines/data-model";
+export { getGridOrdinates } from "./grid-lines/getGridOrdinates";
+export type { GridOrdinates } from "./grid-lines/getGridOrdinates";
 
 export type { LineElementForces, DesignTemplate } from "./design/data-model";
 
@@ -28,6 +42,7 @@ export type {
 
 export { getMesh } from "./mesh/getMesh";
 export { getLoads } from "./loads/getLoads";
+export { getText } from "./loads/getText";
 export { getSupports } from "./supports/getSupports";
 export { getReleases } from "./releases/getReleases";
 export {
@@ -55,3 +70,5 @@ export {
 } from "./design/helpers";
 
 export { templates } from "./templates";
+export { definePlugin, resolveTemplates } from "./plugins";
+export type { ComponentTemplates, Plugin } from "./plugins";

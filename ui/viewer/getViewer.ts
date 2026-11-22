@@ -1,13 +1,16 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import van from "vanjs-core";
 import {
   Geometry,
   Mesh,
   Components,
   templates as Templates,
+  getGridOrdinates,
 } from "@awatif/components";
 import { getGrid } from "./grid/getGrid";
 import { getAxes } from "./axes/getAxes";
+import { getGridLines } from "./gridLines/getGridLines";
 import { getGeometry } from "./geometry/getGeometry";
 import { getMesh } from "./mesh/getMesh";
 import { getLoads } from "./loads/getLoads";
@@ -20,6 +23,8 @@ import { getPointResults } from "./pointResult/getPointResults";
 import { getLineResults } from "./lineResult/getLineResults";
 import { getExtrude } from "./extrude/getExtrude";
 import { getView2D } from "./view2D/getView2D";
+import { setupCenterModel } from "./centerModel/getCenterModel";
+import { createCameraAnimator } from "./common/camera";
 import { Display } from "../display/getDisplay";
 
 import "./style.css";
@@ -30,12 +35,15 @@ export function getViewer({
   components,
   display,
   templates,
+  autoCenter,
 }: {
   geometry?: Geometry;
   mesh?: Mesh;
   components?: Components;
   display: Display;
   templates?: typeof Templates;
+  // Frame the model on instantiation instead of the grid; default true
+  autoCenter?: boolean;
 }): HTMLDivElement {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
@@ -68,17 +76,36 @@ export function getViewer({
   controls.addEventListener("change", render);
 
   const grid = display.grid;
+  const workPlane = display.workPlane;
   const displayScale = display.displayScale;
+
+  const animator = createCameraAnimator({ camera, controls, render });
 
   getView2D({
     camera,
     controls,
+    animator,
     display,
+  });
+
+  setupCenterModel({
+    camera,
+    controls,
+    animator,
+    display,
+    geometry,
+    mesh,
+    autoCenter,
     render,
   });
 
+  // Named grid lines, shared by their drawing and by point snapping
+  const gridOrdinates = components
+    ? van.derive(() => getGridOrdinates(components.val))
+    : undefined;
+
   // Objects
-  scene.add(getGrid({ grid, render }));
+  scene.add(getGrid({ grid, workPlane, render }));
   scene.add(getAxes({ displayScale, render }));
 
   if (geometry)
@@ -86,12 +113,14 @@ export function getViewer({
       getGeometry({
         geometry,
         grid,
+        workPlane,
         displayScale,
         camera,
         rendererElm: renderer.domElement,
         render,
         display,
         controls,
+        gridOrdinates,
       }),
     );
 
@@ -122,6 +151,11 @@ export function getViewer({
       }),
     );
   }
+
+  if (gridOrdinates)
+    scene.add(
+      getGridLines({ gridOrdinates, displayScale, render, display }),
+    );
 
   if (components && geometry && templates) {
     scene.add(

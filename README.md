@@ -19,7 +19,9 @@ Awatif 3.4 is a **linear static 3D frame** tool:
 
 - **`components/`** — the engineering core: `analysis` (C++/WASM linear solver and its TypeScript reference), `design` (generic section properties plus report generation), `mesh`, `loads`, `supports`, `releases`, `local-axes`, and `imperfections`.
 - **`ui/`** — the interface: 3D viewer, canvas and canvas bar, layout, display controls, analysis status, and undo.
-- **`main.ts`** — the app entry point that wires components and UI together.
+- **`templates/`** — `createApp`, the one call that turns a model description into a running app,
+  plus ready-made starter models (`blank`, `simpleBeam`, `portalFrame`, `flatSlab`, `demo`).
+- **`main.ts`** — the app entry point: it picks a model and calls `createApp`.
 
 ## Quick start
 

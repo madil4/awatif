@@ -23,6 +23,10 @@ function getTypesForMode(mode: ComponentsType | null): ComponentsType[] {
   switch (mode) {
     case ComponentsType.LOADS:
       return [ComponentsType.LOADS];
+    case ComponentsType.LOAD_CASES:
+      return [ComponentsType.LOAD_CASES, ComponentsType.LOAD_COMBINATIONS];
+    case ComponentsType.GRID_LINES:
+      return [ComponentsType.GRID_LINES];
     case ComponentsType.SUPPORTS:
       return [ComponentsType.SUPPORTS];
     case ComponentsType.MESH:
@@ -62,7 +66,7 @@ export function getComponents({
 }): HTMLElement {
   const container = document.createElement("div");
   const activeComponent = van.state<ActiveComponent>(null);
-  const loadCase = display?.loadCase;
+  const activeLoadSelection = display?.activeLoadSelection;
 
   const types = van.derive(() => getTypesForMode(componentsBarMode.val));
 
@@ -72,7 +76,7 @@ export function getComponents({
     components,
     activeComponent,
     templates,
-    loadCase,
+    activeLoadSelection,
   });
 
   const parameters = getParameters({
@@ -85,7 +89,8 @@ export function getComponents({
   const componentsBar = getComponentsBar({
     componentsBarMode,
     activeAnalysis,
-    loadCase,
+    activeLoadSelection,
+    components,
     analysisStatus,
     display,
   });
