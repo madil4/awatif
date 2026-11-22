@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eval Inspector</title>
+    <style>
+      :root { --bg:#fff; --fg:#1f2328; --muted:#656d76; --line:#d0d7de; --panel:#f6f8fa; --accent:#0969da; --ok:#1a7f37; --bad:#cf222e; }
+      @media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --fg:#e6edf3; --muted:#8b949e; --line:#30363d; --panel:#161b22; --accent:#58a6ff; --ok:#3fb950; --bad:#f85149; } }
+      * { box-sizing: border-box; }
+      body { margin:0; height:100vh; display:flex; flex-direction:column; background:var(--bg); color:var(--fg); font:14px system-ui, sans-serif; }
+      header { display:flex; align-items:center; gap:12px; padding:8px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+      header h1 { font-size:15px; margin:0; }
+      header a { color:var(--accent); }
+      select, button { font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:4px 8px; }
+      .tabs { display:flex; gap:4px; padding:6px 12px 0; border-bottom:1px solid var(--line); overflow-x:auto; }
+      .tabs button { border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0; background:none; color:var(--muted); cursor:pointer; white-space:nowrap; }
+      .tabs button.active { background:var(--bg); border-color:var(--line); color:var(--fg); font-weight:600; margin-bottom:-1px; }
+      .tabs.runs { background:var(--panel); }
+      .score { font-size:11px; margin-left:6px; }
+      .ok { color:var(--ok); }
+      .bad { color:var(--bad); }
+      main { flex:1; min-height:0; display:flex; }
+      aside { width:380px; flex:none; border-right:1px solid var(--line); overflow:auto; padding:12px; }
+      aside h3 { margin:14px 0 6px; font-size:12px; text-transform:uppercase; color:var(--muted); }
+      aside h3:first-child { margin-top:0; }
+      aside p { margin:0; white-space:pre-wrap; }
+      aside ul { list-style:none; margin:0; padding:0; }
+      aside li { padding:4px 0; border-bottom:1px solid var(--line); }
+      aside li small { display:block; color:var(--muted); }
+      .view { flex:1; min-width:0; display:flex; flex-direction:column; }
+      #content { flex:1; min-height:0; display:flex; flex-direction:column; }
+      iframe { flex:1; border:0; width:100%; }
+      pre { flex:1; margin:0; padding:12px; overflow:auto; font:12px/1.5 ui-monospace, Consolas, monospace; background:var(--panel); }
+      .empty { padding:24px; color:var(--muted); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Eval Inspector</h1>
+      <label>Result <select id="result"></select></label>
+      <a id="report" target="_blank">HTML report</a>
+      <button id="refresh" title="Rescan the results folder">Refresh</button>
+    </header>
+    <div class="tabs" id="cases"></div>
+    <div class="tabs runs" id="runs"></div>
+    <main>
+      <aside id="side"></aside>
+      <div class="view">
+        <div class="tabs" id="views"></div>
+        <div id="content"></div>
+      </div>
+    </main>
+    <script type="module">
+      const $ = (id) => document.getElementById(id);
+      const el = (tag, props = {}, ...kids) => {
+        const n = Object.assign(document.createElement(tag), props);
+        n.append(...kids);
+        return n;
+      };
+      const store = {
+        get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+      };
+      const empty = (msg) => $("content").replaceChildren(el("div", { className: "empty" }, msg));
+      const showText = (path) => {
+        const pre = el("pre", {}, "loading…");
+        fetch("/api/file?p=" + encodeURIComponent(path)).then((r) => r.text()).then((t) => (pre.textContent = t));
+        return pre;
+      };
+
+      let data;
+      const state = { result: store.get("res"), case: store.get("case"), run: store.get("run"), view: store.get("view") || "model", file: null };
+
+      const tabs = (host, items, active, onPick) =>
+        host.replaceChildren(
+          ...items.map(({ id, label, extra }) =>
+            el("button", { className: id === active ? "active" : "", onclick: () => onPick(id) }, label, extra ?? ""),
+          ),
+        );
+      const score = (r) => el("span", { className: "score " + (r.passed ? "ok" : "bad") }, `${Math.round(r.score * 100)}%`);
+
+      async function load() {
+        data = await (await fetch("/api/runs")).json();
+        render();
+      }
+
+      function render() {
+        const results = data.results;
+        if (!results.length) return empty("No results found in evals/results");
+        const res = results.find((r) => r.id === state.result) ?? results[0];
+        state.result = res.id;
+        $("result").replaceChildren(...results.map((r) => el("option", { value: r.id, selected: r.id === res.id }, r.id)));
+        $("report").href = "/" + res.report;
+
+        const c = res.cases.find((x) => x.id === state.case) ?? res.cases[0];
+        if (!c) return empty("No cases in this result");
+        state.case = c.id;
+        tabs($("cases"), res.cases.map((x) => ({ id: x.id, label: x.id })), c.id, (id) => {
+          state.case = id; state.run = null; store.set("case", id); render();
+        });
+
+        const run = c.runs.find((r) => r.id === state.run) ?? c.runs[0];
+        state.run = run?.id;
+        tabs($("runs"), c.runs.map((r) => ({ id: r.id, label: r.id, extra: score(r) })), run?.id, (id) => {
+          state.run = id; store.set("run", id); render();
+        });
+
+        renderSide(c, run);
+        renderView(run);
+        store.set("res", res.id);
+      }
+
+      function renderSide(c, run) {
+        const side = $("side");
+        side.replaceChildren(el("h3", {}, "Prompt"), el("p", {}, c.prompt || "(none)"));
+        if (run?.error) side.append(el("h3", {}, "Error"), el("p", { className: "bad" }, run.error));
+        side.append(el("h3", {}, "Graders"));
+        const list = el("ul");
+        (run?.graders ?? []).forEach((g) =>
+          list.append(
+            el("li", {}, el("span", { className: g.passed ? "ok" : "bad" }, g.passed ? "✓ " : "✗ "),
+              g.name + (g.weight !== 1 ? ` (×${g.weight})` : "") + (g.scored ? "" : " — display only"),
+              g.explanation ? el("small", {}, g.explanation) : ""),
+          ),
+        );
+        side.append(list.children.length ? list : el("p", {}, "No graders"));
+      }
+
+      function renderView(run) {
+        const views = [{ id: "model", label: "Model" }, { id: "source", label: "Files" }, { id: "trace", label: "Trace" }];
+        if (!views.some((v) => v.id === state.view)) state.view = "model";
+        tabs($("views"), views, state.view, (id) => { state.view = id; store.set("view", id); renderView(run); });
+        const c = $("content");
+        if (!run?.collected) return empty("Run not collected. Run `npm run eval:collect` after an eval with --keep-temp.");
+
+        if (state.view === "model") {
+          if (!run.html) return empty("This run has no platform.html");
+          c.replaceChildren(el("iframe", { src: run.html }));
+        } else if (state.view === "source") {
+          const files = run.files;
+          if (!files.length) return empty("No files were created in this run");
+          const cur = files.includes(state.file) ? state.file : files.find((f) => f.endsWith("model.ts")) ?? files[0];
+          state.file = cur;
+          const sel = el("select", { style: "margin:8px 12px", onchange: () => { state.file = sel.value; renderView(run); } },
+            ...files.map((f) => el("option", { value: f, selected: f === cur }, f.split("/cwd/")[1])));
+          c.replaceChildren(sel, showText(cur));
+        } else {
+          if (!run.trace) return empty("No trace for this run");
+          c.replaceChildren(showText(run.trace));
+        }
+      }
+
+      $("result").onchange = (e) => { state.result = e.target.value; state.case = null; state.run = null; render(); };
+      $("refresh").onclick = load;
+      load();
+    </script>
+  </body>
+</html>

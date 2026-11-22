@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+{{IMPORT_MAP}}
+{{HEAD_ASSETS}}
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body { background: var(--surface-canvas); color: var(--ink); font-family: var(--font-sans); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+{{BODY_SCRIPTS}}
+{{VIEWER_SCRIPT}}
+<script type="module">
+/* Starter viewer. The six-region layout, tree, inspector and styling come from the design system; the
+   viewport is the three.js Awatif viewer (assets/awatif-viewer.js), which is required: orbit, pan, zoom,
+   click to select, double-click to frame. Replace MODEL with the app's model. */
+var SV = window.StructViewer, UI = window.AwatifUI, AV = window.AwatifViewer, h = React.createElement, useState = React.useState, useEffect = React.useEffect, useRef = React.useRef, F = React.Fragment;
+var TITLE = {{TITLE_JSON}};
+var LOGO = "{{LOGO_SRC}}";
+
+/* 1. The model: positions in m, forces in kN. Replace with the app's real Awatif model. */
+var MODEL = {
+  points: [[0, 0, 0], [0, 0, 4], [6, 0, 4], [6, 0, 0]],
+  lines: [[1, 2], [2, 3], [3, 4]],
+  loadCases: ['Dead', 'Live'],
+  loadCombinations: [{ name: 'ULS', factors: { Dead: 1.35, Live: 1.5 } }],
+  gridLines: [{ name: 'Grid', templateId: 'grid-system', geometry: [], params: {
+    x: [{ id: 'A', ordinate: 0, visible: true, bubble: 'end' }, { id: 'B', ordinate: 6, visible: true, bubble: 'end' }],
+    y: [], z: [] } }],
+  supports: [{ name: 'Bases', templateId: 'point-support', geometry: [1, 4], params: { type: 'fixed' } }],
+  loads: [
+    { name: 'Roof', templateId: 'distributed-load', geometry: [2], params: { w: -20, direction: 'global-z' }, loadCase: 'Dead' },
+    { name: 'Wind', templateId: 'point-load', geometry: [2], params: { Fx: 10, Fy: 0, Fz: 0, Mx: 0, My: 0, Mz: 0 }, loadCase: 'Live' }],
+  mesh: [{ name: 'Mesh', templateId: 'line-mesh', geometry: [1, 2, 3], params: { divisions: 8 } }],
+  design: [{ name: 'Frame', templateId: 'concrete-member', geometry: [1, 2, 3], params: { width: 350, depth: 350, concreteGrade: 'C30' } }]
+};
+
+function App() {
+  var a = useState(null), selId = a[0], setSel = a[1];
+  var b = useState(null), hoverId = b[0], setHover = b[1];
+  var tree = UI.buildTree(MODEL);
+  var ins = selId ? UI.inspector(MODEL, selId) : null;
+  var loadSel = UI.loadSelectionOptions(MODEL);
+  var firstLoad = loadSel.length ? loadSel[0].options[0] : null;
+  var dim = { color: 'var(--ink-muted)' };
+  var host = useRef(null), viewer = useRef(null);
+
+  /* 2. Mount the three.js viewer once; it reports picks back into the shared selection. */
+  useEffect(function () {
+    viewer.current = AV.createViewer(host.current, MODEL, { onSelect: setSel, onHover: setHover });
+    viewer.current.setLoadSelection(firstLoad);
+    if (window.onViewerReady) window.onViewerReady(host.current, viewer.current);
+    return function () { viewer.current.dispose(); };
+  }, []);
+  useEffect(function () { if (viewer.current) viewer.current.select(selId); }, [selId]);
+
+  var toolbar = h(F, null,
+    h('img', { src: LOGO, alt: '', style: { height: 24, width: 'auto' } }),
+    h('span', { className: 'h3' }, TITLE),
+    h('span', { className: 'sv-toolbar__sep' }),
+    firstLoad ? h(SV.Select, { 'aria-label': 'Load selection', options: loadSel, defaultValue: firstLoad, onChange: function (v) { viewer.current.setLoadSelection(v); } }) : null,
+    h('span', { className: 'sv-toolbar__spacer' }),
+    h(SV.Button, { size: 'sm', variant: 'ghost', onClick: function () { viewer.current.fit(); } }, 'Fit view'),
+    h(SV.Button, { size: 'sm', variant: 'ghost', onClick: function () { var r = document.documentElement; r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark'; } }, 'Theme'));
+
+  var left = h(SV.Panel, { title: 'Model', flush: true },
+    h(SV.TreeView, { nodes: tree, selectedId: selId, defaultExpanded: tree.map(function (g) { return g.id; }), onSelect: function (id) { setSel(id); } }));
+
+  var right = h(SV.Panel, { title: 'Inspector', flush: true },
+    ins
+      ? h(F, null,
+          h('div', { style: { padding: 'var(--space-3)', borderBottom: '1px solid var(--border)' } }, h('div', { className: 'h3' }, ins.title), h('div', { className: 'caption', style: dim }, ins.sub)),
+          h(SV.PropertyGrid, { key: selId, groups: ins.groups }))
+      : h('p', { className: 'ui', style: Object.assign({ margin: 0, padding: 'var(--space-3)' }, dim) }, 'Select an item in the model tree or the viewport.'));
+
+  var status = h(F, null,
+    h('span', null, selId ? 'Selected: ' + selId : 'Nothing selected'),
+    hoverId ? h('span', { style: dim }, 'Hover: ' + hoverId) : null,
+    h('span', { style: { flex: 1 } }),
+    h('span', { style: dim }, 'Drag to orbit, right-drag to pan, scroll to zoom, double-click to fit'),
+    h('span', null, 'Units: m, kN'));
+
+  return h(SV.AppShell, { toolbar: toolbar, left: left, right: right, statusbar: status },
+    h('div', { id: 'viewport', ref: host, style: { position: 'absolute', inset: 0, background: 'var(--viewport)' } }));
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>

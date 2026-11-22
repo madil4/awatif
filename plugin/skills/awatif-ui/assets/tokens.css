@@ -1,0 +1,142 @@
+/* Structural Viewer - generated from tokens.json by scripts/build_tokens_css.py. Do not edit by hand. */
+@font-face { font-family: "Nunito"; src: url("fonts/Nunito-Variable.woff2") format("woff2"); font-weight: 200 1000; font-style: normal; font-display: swap; }
+:root, [data-theme="light"] {
+  --surface-canvas: #f2f5f6;
+  --surface-panel: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e7edef;
+  --surface-hover: #edf2f4;
+  --surface-selected: #dcebf0;
+  --viewport: #e9eff2;
+  --viewport-grid: #cdd8dd;
+  --ink: #12232b;
+  --ink-muted: #455d69;
+  --ink-faint: #526a76;
+  --ink-link: #25687f;
+  --on-action: #ffffff;
+  --border: #d3dde1;
+  --border-control: #6b838e;
+  --focus-ring: #1d5f78;
+  --brand: #3f8ba4;
+  --action: #27677d;
+  --action-hover: #1f566a;
+  --accent: #c26a00;
+  --status-ok: #1b6b57;
+  --status-ok-bg: #dcefe9;
+  --status-warn: #8a5300;
+  --status-warn-bg: #fbebcf;
+  --status-fail: #b3261e;
+  --status-fail-bg: #fbe0dd;
+  --status-info: #1f5fa0;
+  --status-info-bg: #dde9f6;
+  --elem-point: #2b2f33;
+  --elem-line: #1f5f78;
+  --elem-polygon: #6f8791;
+  --elem-mesh: #5f757f;
+  --elem-gridline: #5d747f;
+  --elem-support: #8a5300;
+  --elem-release: #8a3d6e;
+  --elem-axis: #3d6b1f;
+  --elem-load: #b3261e;
+  --elem-reaction: #1f5fa0;
+  --elem-selected: var(--accent);
+  --elem-hover: #1f8fb0;
+  --elem-undeformed: #5d747f;
+  --elem-deformed: #c2410c;
+  --contour-1: #440154;
+  --contour-2: #472d7b;
+  --contour-3: #3b528b;
+  --contour-4: #2c728e;
+  --contour-5: #21908d;
+  --contour-6: #27ad81;
+  --contour-7: #5cc863;
+  --contour-8: #aadc32;
+  --contour-9: #fde725;
+  --div-neg-2: #2166ac;
+  --div-neg-1: #92c5de;
+  --div-mid: #f1f1f1;
+  --div-pos-1: #f4a582;
+  --div-pos-2: #b2182b;
+  --shadow-float: 0 6px 20px #12232b26, 0 1px 3px #12232b1f;
+}
+[data-theme="dark"] {
+  --surface-canvas: #0d1417;
+  --surface-panel: #141c20;
+  --surface-raised: #1a252a;
+  --surface-sunken: #0a1013;
+  --surface-hover: #1b262b;
+  --surface-selected: #1d3a45;
+  --viewport: #0a1013;
+  --viewport-grid: #1c2a30;
+  --ink: #e8eff2;
+  --ink-muted: #a6b7bf;
+  --ink-faint: #8fa3ac;
+  --ink-link: #78bcd3;
+  --on-action: #06161c;
+  --border: #26343a;
+  --border-control: #6f8892;
+  --focus-ring: #7ec4dc;
+  --brand: #3f8ba4;
+  --action: #4a9cb6;
+  --action-hover: #5bb0ca;
+  --accent: #ffb74d;
+  --status-ok: #52c4a2;
+  --status-ok-bg: #143429;
+  --status-warn: #f0b24a;
+  --status-warn-bg: #3a2a0e;
+  --status-fail: #ff8a80;
+  --status-fail-bg: #3f1a17;
+  --status-info: #7fb2ec;
+  --status-info-bg: #162c46;
+  --elem-point: #e8eff2;
+  --elem-line: #5bb0ca;
+  --elem-polygon: #8fa3ac;
+  --elem-mesh: #8fa3ac;
+  --elem-gridline: #8fa3ac;
+  --elem-support: #f0b24a;
+  --elem-release: #e29bc6;
+  --elem-axis: #9ccc65;
+  --elem-load: #ff8a80;
+  --elem-reaction: #7fb2ec;
+  --elem-selected: var(--accent);
+  --elem-hover: #7ec4dc;
+  --elem-undeformed: #8fa3ac;
+  --elem-deformed: #ff9e5e;
+  --shadow-float: 0 6px 20px #00000080, 0 1px 3px #00000066;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --layout-toolbar: 44px;
+  --layout-statusbar: 28px;
+  --layout-left: 280px;
+  --layout-right: 320px;
+  --layout-bottom: 240px;
+  --layout-row: 28px;
+  --layout-row-compact: 24px;
+  --layout-control: 32px;
+  --layout-control-sm: 28px;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+.display { font-family: var(--font-sans); font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.01em; }
+.h1 { font-family: var(--font-sans); font-size: 24px; line-height: 32px; font-weight: 800; }
+.h2 { font-family: var(--font-sans); font-size: 18px; line-height: 26px; font-weight: 700; }
+.h3 { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 700; }
+.body { font-family: var(--font-sans); font-size: 14px; line-height: 22px; font-weight: 400; }
+.ui { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 500; }
+.ui-strong { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 700; }
+.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.01em; }
+.caption { font-family: var(--font-sans); font-size: 11px; line-height: 16px; font-weight: 600; }
+.overline { font-family: var(--font-sans); font-size: 11px; line-height: 16px; font-weight: 800; letter-spacing: 0.08em; }
+.data { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 600; }
+.data-mono { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 400; }

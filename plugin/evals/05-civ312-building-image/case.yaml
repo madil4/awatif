@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: 05-civ312-building-image
+context:
+  scaffold_script: fixture.sh

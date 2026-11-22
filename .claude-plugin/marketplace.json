@@ -1,0 +1,14 @@
+{
+  "name": "awatif-marketplace",
+  "description": "Plugins for the Awatif platform",
+  "owner": {
+    "name": "Kaison Cheung"
+  },
+  "plugins": [
+    {
+      "name": "awatif-structural",
+      "source": "./plugin",
+      "description": "Claude Code plugin for working with Awatif structural analysis"
+    }
+  ]
+}
